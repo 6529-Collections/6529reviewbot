@@ -5,6 +5,8 @@
 const assert = require("assert");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const appServer = require("../src/app-server.cjs");
+const budgetAdmission = require("../src/budget-admission.cjs");
+const budgetLedger = require("../src/budget-ledger.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
@@ -67,6 +69,8 @@ assert.equal(reviewBot.enforceInputLimit({ system: "system", user: "abcdef" }, 3
 
 assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
+assert.equal(typeof usageLedger.awsCliBin(), "string");
+assert.equal(typeof budgetLedger.awsCliBin(), "string");
 
 assert.deepEqual(reviewBot.normalizeOpenAIUsage({
   input_tokens: 10,
@@ -201,6 +205,67 @@ assert.throws(
   /REVIEWBOT_TRUSTED_PERMISSION must be one of/
 );
 
+const budgetSubject = budgetAdmission.budgetSubjectFromEvent(
+  normalizedPullRequest,
+  { requestor: "maintainer" },
+  { provider: "anthropic", model: "claude-opus-4-8" }
+);
+assert.equal(budgetSubject.repo, "6529-Collections/example");
+assert.equal(budgetAdmission.evaluateBudgetAdmission({
+  event: normalizedPullRequest,
+  admission: { requestor: "maintainer" },
+  spendSnapshot: { unavailable: true },
+  policy: budgetAdmission.budgetPolicyFromEnv({}),
+}).status, "allowed");
+const cappedPolicy = budgetAdmission.budgetPolicyFromEnv({
+  REVIEWBOT_BUDGET_GLOBAL_DAILY_USD: "2",
+});
+const reviewKindPolicy = budgetAdmission.budgetPolicyFromEnv({
+  REVIEWBOT_BUDGET_REVIEW_KIND_DAILY_USD: "1",
+});
+assert.deepEqual(
+  budgetAdmission
+    .budgetPoliciesForSubject(budgetSubject, reviewKindPolicy)
+    .map((item) => `${item.scopeType}:${item.scopeValue}`),
+  ["review_kind:general", "review_kind:wcag", "review_kind:i18n", "review_kind:security"]
+);
+assert.equal(budgetAdmission.evaluateBudgetAdmission({
+  event: normalizedPullRequest,
+  admission: { requestor: "maintainer" },
+  spendSnapshot: { unavailable: true, reason: "ledger offline" },
+  policy: cappedPolicy,
+}).code, "budget_snapshot_unavailable");
+assert.equal(budgetAdmission.evaluateBudgetAdmission({
+  event: normalizedPullRequest,
+  admission: { requestor: "maintainer" },
+  spendSnapshot: {
+    unavailable: false,
+    totals: {
+      "global:*": { dailyUsd: 1.5, weeklyUsd: 1.5, monthlyUsd: 1.5 },
+    },
+  },
+  policy: cappedPolicy,
+  estimate: { estimatedCostUsd: 1 },
+}).code, "budget_exceeded");
+assert.equal(budgetAdmission.evaluateBudgetAdmission({
+  event: normalizedPullRequest,
+  admission: { requestor: "maintainer" },
+  spendSnapshot: {
+    unavailable: false,
+    totals: {
+      "global:*": { dailyUsd: 1.5, weeklyUsd: 1.5, monthlyUsd: 1.5 },
+    },
+  },
+  policy: budgetAdmission.budgetPolicyFromEnv({
+    REVIEWBOT_BUDGET_MODE: "warn",
+    REVIEWBOT_BUDGET_GLOBAL_DAILY_USD: "2",
+  }),
+  estimate: { estimatedCostUsd: 1 },
+}).status, "warning");
+const spendQuery = budgetLedger.buildScopeSpendQuery("reviewbot", "requestor", "maintainer");
+assert.match(spendQuery.sql, /metadata->>'requestor'/);
+assert.equal(spendQuery.parameters[0].value.stringValue, "maintainer");
+
 let enqueuedEvent = null;
 appServer.handleGitHubWebhook({
   headers: {
@@ -239,6 +304,36 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(defaultQueueResult.statusCode, 200);
   assert.equal(defaultQueueResult.body.enqueued, false);
+  let budgetDeniedQueued = false;
+  const budgetDeniedResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    budgetPolicy: cappedPolicy,
+    resolveBudgetSnapshot: async () => ({
+      unavailable: false,
+      totals: {
+        "global:*": { dailyUsd: 2, weeklyUsd: 2, monthlyUsd: 2 },
+      },
+    }),
+    estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
+    enqueueReview: async () => {
+      budgetDeniedQueued = true;
+      return { accepted: true };
+    },
+  });
+  assert.equal(budgetDeniedResult.body.budget.code, "budget_exceeded");
+  assert.equal(budgetDeniedResult.body.enqueued, false);
+  assert.equal(budgetDeniedQueued, false);
   console.log("smoke tests ok");
 }).catch((error) => {
   console.error(error);

@@ -41,6 +41,26 @@ REVIEWBOT_DENY_USERS=
 Public repositories require trusted actors by default. Private repositories are
 open by default. See [admission-policy.md](admission-policy.md).
 
+## Budget Admission
+
+```text
+REVIEWBOT_BUDGET_MODE=enforce
+REVIEWBOT_BUDGET_DEFAULT_ESTIMATED_COST_USD=1
+REVIEWBOT_BUDGET_GLOBAL_DAILY_USD=
+REVIEWBOT_BUDGET_GLOBAL_WEEKLY_USD=
+REVIEWBOT_BUDGET_GLOBAL_MONTHLY_USD=
+REVIEWBOT_BUDGET_ORG_DAILY_USD=
+REVIEWBOT_BUDGET_REPO_DAILY_USD=
+REVIEWBOT_BUDGET_REQUESTOR_DAILY_USD=
+REVIEWBOT_BUDGET_PR_DAILY_USD=
+REVIEWBOT_BUDGET_PROVIDER_DAILY_USD=
+REVIEWBOT_BUDGET_MODEL_DAILY_USD=
+REVIEWBOT_BUDGET_REVIEW_KIND_DAILY_USD=
+```
+
+Every budget scope supports `_DAILY_USD`, `_WEEKLY_USD`, and `_MONTHLY_USD`.
+See [budget-admission.md](budget-admission.md).
+
 ## Providers
 
 ```text
@@ -119,7 +139,11 @@ REVIEW_USAGE_DB_SECRET_ARN=arn:aws:secretsmanager:...
 REVIEW_USAGE_DB_NAME=reviewbot
 REVIEW_USAGE_DB_SCHEMA=reviewbot
 REVIEW_USAGE_FAIL_CLOSED=false
+AWS_CLI_BIN=
 ```
 
 When `REVIEW_USAGE_FAIL_CLOSED=false`, a failed ledger write logs a warning but
 does not fail the PR review.
+
+`AWS_CLI_BIN` is optional. Set it only when the runtime needs a specific AWS
+CLI binary path.

@@ -79,13 +79,17 @@ Comment command routing:
 @6529bot review all
 ```
 
-The app normalizes events, evaluates admission policy, and passes admitted
-review events to an injectable queue function. Without a real queue, valid
-admitted review events are acknowledged but reported as not enqueued.
+The app normalizes events, evaluates admission policy, evaluates budget
+admission, and passes admitted review events to an injectable queue function.
+Without a real queue, valid admitted review events are acknowledged but
+reported as not enqueued.
 
 Actor context must be resolved from GitHub App credentials before production
 use. Until a resolver supplies collaborator or org membership context, public
 repo events fail closed as untrusted.
+
+If budget caps are configured and the app cannot resolve current spend, budget
+admission fails closed in `enforce` mode.
 
 ## Local Smoke Test
 

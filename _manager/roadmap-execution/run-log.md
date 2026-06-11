@@ -29,3 +29,8 @@
 - Merged PR #5 as `9e500b411266ae9cada88f628c99fb70199f9d03`.
 - Started `codex/policy-admission` increment for trusted-actor admission,
   public repo budget-abuse prevention, requestor attribution, and docs.
+- Merged PR #6 as `d256d41b5ef26e4082c9707bbbd538e247c2e4c4`.
+- Started `codex/budget-admission` increment for pre-provider budget checks,
+  usage-ledger spend snapshots, budget docs, and app-server enforcement.
+- Verified live read-only budget ledger access through Aurora Data API:
+  loaded 1 enabled policy and a `global:*` snapshot with zero current spend.

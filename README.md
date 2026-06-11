@@ -153,6 +153,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Configuration](docs/configuration.md)
 - [GitHub App](docs/github-app.md)
 - [Admission policy](docs/admission-policy.md)
+- [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)
 - [Roadmap](docs/roadmap.md)
 - [AWS usage ledger](docs/aws-usage-ledger.md)

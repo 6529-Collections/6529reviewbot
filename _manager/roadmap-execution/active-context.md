@@ -16,12 +16,12 @@ merged PRs.
 - Initial foundation PR: merged as PR #1, merge commit `50e4b47`
 - Roadmap/memory PR: merged as PR #4, merge commit `5693061`
 - GitHub App skeleton PR: merged as PR #5, merge commit `9e500b4`
-- Current branch: `codex/policy-admission`
+- Current branch: `codex/budget-admission`
 - Current local changes:
-  - pure admission policy engine
-  - app-server admission enforcement before queueing
-  - smoke-test coverage for trusted/untrusted/draft/private policy cases
-  - admission policy operator docs
+  - pure budget admission engine
+  - app-server budget enforcement before queueing
+  - Data API helper for usage-ledger budget snapshots
+  - budget admission operator docs
 
 ## Key Decisions
 
@@ -47,11 +47,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, self-review, and merge the policy/admission PR.
-2. Add budget admission module and tests.
-3. Refactor review execution behind a job interface.
-4. Add bot API aggregate/admin contracts.
-5. Add 6529.io frontend integration.
+1. Validate, self-review, and merge the budget admission PR.
+2. Refactor review execution behind a job interface.
+3. Add bot API aggregate/admin contracts.
+4. Add 6529.io frontend integration.
+5. Sweep docs for community-release readiness.
 
 ## Open Risks
 

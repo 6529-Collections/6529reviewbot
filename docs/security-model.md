@@ -32,6 +32,12 @@ Public repositories require trusted actors by default. Admission policy runs
 before queueing review work, budget checks, or provider calls. If the app has
 not resolved actor trust, public repo events fail closed as untrusted.
 
+### Budget Before Providers
+
+Budget admission runs before queueing review work or calling model providers.
+When budget caps are configured, missing spend data fails closed in enforce
+mode.
+
 ### Path Safety
 
 Changed-file context rejects:
