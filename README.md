@@ -152,6 +152,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [Review workflows](docs/review-workflows.md)
+- [Roadmap](docs/roadmap.md)
 - [AWS usage ledger](docs/aws-usage-ledger.md)
 - [Operations runbook](docs/operations.md)
 - [Release process](docs/release.md)
