@@ -1,0 +1,120 @@
+name: 6529bot Review
+
+on:
+  workflow_call:
+    inputs:
+      pr_number:
+        description: Target pull request number.
+        required: true
+        type: string
+      head_sha:
+        description: Target PR head SHA.
+        required: false
+        default: ""
+        type: string
+      event_action:
+        description: Caller pull_request action or manual.
+        required: false
+        default: manual
+        type: string
+      review_kinds_json:
+        description: JSON array of review kinds. Empty uses defaults by event action.
+        required: false
+        default: ""
+        type: string
+      provider:
+        description: Model provider.
+        required: false
+        default: anthropic
+        type: string
+      model:
+        description: Optional model override.
+        required: false
+        default: ""
+        type: string
+      bot_ref:
+        description: Ref of 6529reviewbot to checkout.
+        required: false
+        default: main
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  id-token: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(vars.REVIEW_BOT_TIMEOUT_MINUTES || '20') }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(vars.REVIEW_BOT_MAX_PARALLEL || '4') }}
+      matrix:
+        review_kind: ${{ fromJSON(inputs.review_kinds_json != '' && inputs.review_kinds_json || (inputs.event_action == 'synchronize' && (vars.REVIEW_BOT_SYNCHRONIZE_KINDS || '["followup"]') || (vars.REVIEW_BOT_INITIAL_KINDS || '["general","wcag","i18n","security"]'))) }}
+    concurrency:
+      group: review-bot-${{ github.repository }}-${{ inputs.pr_number }}-${{ matrix.review_kind }}-${{ inputs.provider }}-${{ inputs.model || 'default' }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
+        with:
+          ref: ${{ inputs.head_sha || github.sha }}
+          path: target
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Checkout 6529reviewbot
+        uses: actions/checkout@9f698171ed81b15d1823a05fc7211befd50c8ae0 # v6.0.3
+        with:
+          repository: 6529-Collections/6529reviewbot
+          ref: ${{ inputs.bot_ref }}
+          path: bot
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "22"
+
+      - name: Configure AWS credentials for usage ledger
+        if: ${{ vars.REVIEW_USAGE_ENABLED == 'true' }}
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+        with:
+          role-to-assume: ${{ vars.REVIEW_USAGE_AWS_ROLE_ARN }}
+          aws-region: ${{ vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
+
+      - name: Run 6529bot review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PR_HEAD_SHA: ${{ inputs.head_sha }}
+          REVIEW_WORKSPACE: ${{ github.workspace }}/target
+          REVIEW_KIND: ${{ matrix.review_kind }}
+          REVIEW_PROVIDER: ${{ inputs.provider || vars.REVIEW_PROVIDER || 'anthropic' }}
+          REVIEW_MODEL: ${{ inputs.model || vars.REVIEW_MODEL || '' }}
+          REVIEW_DEFAULT_ANTHROPIC_MODEL: ${{ vars.REVIEW_DEFAULT_ANTHROPIC_MODEL || 'claude-opus-4-8' }}
+          REVIEW_DEFAULT_OPENAI_MODEL: ${{ vars.REVIEW_DEFAULT_OPENAI_MODEL || 'gpt-5.5' }}
+          REVIEW_DEFAULT_OPENROUTER_MODEL: ${{ vars.REVIEW_DEFAULT_OPENROUTER_MODEL || '' }}
+          REVIEW_USAGE_ENABLED: ${{ vars.REVIEW_USAGE_ENABLED || 'false' }}
+          REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
+          REVIEW_USAGE_DB_RESOURCE_ARN: ${{ vars.REVIEW_USAGE_DB_RESOURCE_ARN || '' }}
+          REVIEW_USAGE_DB_SECRET_ARN: ${{ vars.REVIEW_USAGE_DB_SECRET_ARN || '' }}
+          REVIEW_USAGE_DB_NAME: ${{ vars.REVIEW_USAGE_DB_NAME || 'reviewbot' }}
+          REVIEW_USAGE_DB_SCHEMA: ${{ vars.REVIEW_USAGE_DB_SCHEMA || 'reviewbot' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          set -euo pipefail
+          case "$REVIEW_KIND" in
+            general) script="bot/bin/general-pr-review.cjs" ;;
+            followup) script="bot/bin/followup-commit-review.cjs" ;;
+            wcag) script="bot/bin/wcag-aa-analysis.cjs" ;;
+            i18n) script="bot/bin/i18n-analysis.cjs" ;;
+            security) script="bot/bin/security-analysis.cjs" ;;
+            *) echo "::error::Unsupported REVIEW_KIND '${REVIEW_KIND}'."; exit 1 ;;
+          esac
+          node "$script"
