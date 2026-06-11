@@ -7,10 +7,12 @@ const admissionPolicy = require("../src/admission-policy.cjs");
 const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
+const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const usageApi = require("../src/usage-api.cjs");
+const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 
 const settings = withEnv(
@@ -73,6 +75,10 @@ assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
 assert.equal(typeof usageLedger.awsCliBin(), "string");
 assert.equal(typeof budgetLedger.awsCliBin(), "string");
+assert.equal(
+  dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
+  true
+);
 
 assert.deepEqual(reviewBot.normalizeOpenAIUsage({
   input_tokens: 10,
@@ -362,6 +368,50 @@ assert.equal(budgetAdmission.evaluateBudgetAdmission({
 const spendQuery = budgetLedger.buildScopeSpendQuery("reviewbot", "requestor", "maintainer");
 assert.match(spendQuery.sql, /metadata->>'requestor'/);
 assert.equal(spendQuery.parameters[0].value.stringValue, "maintainer");
+const usageEventsQuery = usageApiLedger.buildUsageEventsQuery("reviewbot", {
+  from: "2026-06-01T00:00:00.000Z",
+  to: "2026-06-11T00:00:00.000Z",
+}, 25);
+assert.match(usageEventsQuery.sql, /ai_review_usage_events/);
+assert.match(usageEventsQuery.sql, /created_at >= cast\(:from_ts as timestamptz\)/);
+assert.equal(usageEventsQuery.parameters[2].value.longValue, 25);
+assert.throws(() => usageApiLedger.buildUsageEventsQuery("reviewbot", {}, 25), /bounded range/);
+const usageApiLedgerRecord = [
+  { stringValue: "2026-06-10 01:00:00+00" },
+  { stringValue: "6529-Collections/public-repo" },
+  { longValue: 10 },
+  { stringValue: "author" },
+  { stringValue: "head" },
+  { stringValue: "run" },
+  { stringValue: "job" },
+  { stringValue: "general" },
+  { stringValue: "anthropic" },
+  { stringValue: "claude-opus-4-8" },
+  { stringValue: "anthropic:claude-opus-4-8" },
+  { longValue: 100 },
+  { longValue: 25 },
+  { longValue: 50 },
+  { longValue: 0 },
+  { longValue: 150 },
+  { stringValue: "0.10" },
+  { isNull: true },
+  { stringValue: "USD" },
+  { booleanValue: false },
+  { stringValue: "{\"requestor\":\"maintainer\"}" },
+];
+const publicLedgerEvent = usageApiLedger.usageRecordToEvent(usageApiLedgerRecord, {
+  visibility: "public",
+  apiSettings: usageApi.usageApiSettingsFromEnv({
+    REVIEWBOT_USAGE_API_PUBLIC_ORGS: "6529-Collections",
+  }),
+});
+assert.equal(publicLedgerEvent.repoPrivate, false);
+assert.equal(publicLedgerEvent.metadata.requestor, "maintainer");
+const privateByDefaultLedgerEvent = usageApiLedger.usageRecordToEvent(usageApiLedgerRecord, {
+  visibility: "public",
+  apiSettings: usageApi.usageApiSettingsFromEnv({}),
+});
+assert.equal(privateByDefaultLedgerEvent.repoPrivate, true);
 
 let enqueuedJobs = null;
 appServer.handleGitHubWebhook({

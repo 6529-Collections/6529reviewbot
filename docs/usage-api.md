@@ -78,5 +78,29 @@ authorizeUsageApiAdmin(request)
 Default loaders return `503` because no database reader is configured. The
 default admin authorizer returns `403`.
 
-The Aurora reader should live behind this contract. `6529.io` should call these
-HTTP endpoints rather than reading Aurora directly.
+## Aurora Reader
+
+When `REVIEW_USAGE_ENABLED=true`, `bin/server.cjs` installs the read-only
+Aurora Data API loaders from `src/usage-api-ledger.cjs`.
+
+Required ledger settings are the same settings used for usage writes:
+
+```text
+REVIEW_USAGE_AWS_REGION
+REVIEW_USAGE_DB_RESOURCE_ARN
+REVIEW_USAGE_DB_SECRET_ARN
+REVIEW_USAGE_DB_NAME
+REVIEW_USAGE_DB_SCHEMA
+```
+
+Public repo-name disclosure is allowlist based:
+
+```text
+REVIEWBOT_USAGE_API_PUBLIC_REPOS=6529-Collections/6529reviewbot
+REVIEWBOT_USAGE_API_PUBLIC_ORGS=6529-Collections
+```
+
+If a repo does not match either allowlist, public summaries still include its
+cost and review counts but collapse the repo name to `private`.
+
+`6529.io` should call these HTTP endpoints rather than reading Aurora directly.

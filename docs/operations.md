@@ -63,6 +63,8 @@ Check:
 - `GET /api/public/usage/summary?days=30`;
 - the bot API data loader or Aurora reader;
 - `REVIEWBOT_USAGE_API_PUBLIC_ENABLED`;
+- `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and
+  `REVIEWBOT_USAGE_API_PUBLIC_ORGS`;
 - 6529.io auth handoff for admin routes;
 - whether private repo data is intentionally collapsed in public responses.
 
