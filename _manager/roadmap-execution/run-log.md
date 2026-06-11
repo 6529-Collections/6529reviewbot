@@ -40,3 +40,9 @@
 - Merged PR #8 as `43dfbea9634a165b1986c5fbb52401d34e0296cf`.
 - Started `codex/usage-api-contracts` increment for public/admin usage summary
   routes, budget policy route contracts, injectable admin auth, and docs.
+- Merged PR #9 as `f5af84041570322f923ba60cd0a74822de35cfc6`.
+- Started `codex/usage-api-ledger-loader` increment for read-only Aurora usage
+  API loaders, Data API helper reuse, public repo allowlists, and server
+  auto-wiring when usage ledger is enabled.
+- Live read-only Aurora smoke for the usage API loader passed with zero events
+  returned for the last 30 days.

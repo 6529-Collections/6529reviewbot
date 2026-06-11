@@ -30,6 +30,11 @@ The budget admission helper reads current spend from
 `ai_review_usage_events` and compares it with these policies before queueing
 model work.
 
+The usage API reader also reads `ai_review_usage_events` and
+`ai_review_budget_policies` through the RDS Data API. The reader is read-only
+from the application perspective and should use least-privilege SQL access in
+production.
+
 ## Views
 
 ```text

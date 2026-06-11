@@ -18,6 +18,9 @@ function usageApiSettingsFromEnv(env = process.env) {
     defaultDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_DEFAULT_DAYS, DEFAULT_DAYS, "REVIEWBOT_USAGE_API_DEFAULT_DAYS"),
     maxDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_DAYS, DEFAULT_MAX_DAYS, "REVIEWBOT_USAGE_API_MAX_DAYS"),
     maxItems: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_ITEMS, DEFAULT_MAX_ITEMS, "REVIEWBOT_USAGE_API_MAX_ITEMS"),
+    maxEvents: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_EVENTS, 5000, "REVIEWBOT_USAGE_API_MAX_EVENTS"),
+    publicRepos: csvList(env.REVIEWBOT_USAGE_API_PUBLIC_REPOS || ""),
+    publicOrganizations: csvList(env.REVIEWBOT_USAGE_API_PUBLIC_ORGS || ""),
   };
 }
 
@@ -330,6 +333,13 @@ async function defaultLoadBudgetPolicies() {
 
 function parseBool(value) {
   return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
+}
+
+function csvList(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function positiveIntEnv(value, fallback, name) {

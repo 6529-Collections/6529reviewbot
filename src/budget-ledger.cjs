@@ -1,14 +1,21 @@
 "use strict";
 
-const { execFileSync } = require("child_process");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
 const { budgetPoliciesForSubject, budgetScopeKey } = require("./budget-admission.cjs");
+const {
+  assertDataApiSettings,
+  awsCliBin,
+  executeStatement,
+  fieldValue,
+  longParam,
+  nullableNumber,
+  numberValue,
+  shouldUseShellForAwsCli,
+  stringParam,
+} = require("./data-api.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
 
 function readEnabledBudgetPolicies(settings) {
-  assertDataApiSettings(settings);
+  assertDataApiSettings(settings, "Budget ledger");
   const sql = `
 select scope_type, scope_value, daily_budget_usd, weekly_budget_usd, monthly_budget_usd, enabled
 from ${quoteIdent(settings.schema)}.ai_review_budget_policies
@@ -27,7 +34,7 @@ order by scope_type, scope_value
 }
 
 function readBudgetSpendSnapshot(settings, subject, policy) {
-  assertDataApiSettings(settings);
+  assertDataApiSettings(settings, "Budget ledger");
   const policies = budgetPoliciesForSubject(subject, policy);
   const totals = {};
   for (const budget of policies) {
@@ -42,7 +49,9 @@ function readBudgetSpendSnapshot(settings, subject, policy) {
 
 function readScopeSpend(settings, scopeType, scopeValue) {
   const query = buildScopeSpendQuery(settings.schema, scopeType, scopeValue);
-  const response = executeStatement(settings, query.sql, query.parameters);
+  const response = executeStatement(settings, query.sql, query.parameters, {
+    tempPrefix: "6529-budget-ledger-",
+  });
   const record = response.records[0] || [];
   return {
     dailyUsd: numberValue(record[0]),
@@ -120,85 +129,6 @@ function scopeWhere(scopeType, scopeValue) {
     };
   }
   throw new Error(`Unsupported budget scope '${scopeType}'.`);
-}
-
-function assertDataApiSettings(settings) {
-  const missing = [];
-  for (const key of ["region", "resourceArn", "secretArn", "database", "schema"]) {
-    if (!settings[key]) {
-      missing.push(key);
-    }
-  }
-  if (missing.length) {
-    throw new Error(`Budget ledger settings are missing: ${missing.join(", ")}`);
-  }
-}
-
-function executeStatement(settings, sql, parameters) {
-  const payload = {
-    resourceArn: settings.resourceArn,
-    secretArn: settings.secretArn,
-    database: settings.database,
-    sql,
-    parameters,
-  };
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-budget-ledger-"));
-  const payloadPath = path.join(tmpDir, "payload.json");
-  try {
-    fs.writeFileSync(payloadPath, JSON.stringify(payload), "utf8");
-    const stdout = execFileSync(
-      awsCliBin(),
-      ["rds-data", "execute-statement", "--region", settings.region, "--cli-input-json", `file://${payloadPath}`],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: shouldUseShellForAwsCli() }
-    );
-    return JSON.parse(stdout);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-}
-
-function awsCliBin() {
-  return process.env.AWS_CLI_BIN || "aws";
-}
-
-function shouldUseShellForAwsCli() {
-  return process.platform === "win32" && !process.env.AWS_CLI_BIN;
-}
-
-function fieldValue(field = {}) {
-  if (field.isNull) {
-    return null;
-  }
-  if (Object.prototype.hasOwnProperty.call(field, "stringValue")) {
-    return field.stringValue;
-  }
-  if (Object.prototype.hasOwnProperty.call(field, "longValue")) {
-    return field.longValue;
-  }
-  if (Object.prototype.hasOwnProperty.call(field, "doubleValue")) {
-    return field.doubleValue;
-  }
-  if (Object.prototype.hasOwnProperty.call(field, "booleanValue")) {
-    return field.booleanValue;
-  }
-  return null;
-}
-
-function numberValue(field) {
-  const value = fieldValue(field);
-  return value === null ? 0 : Number(value);
-}
-
-function nullableNumber(value) {
-  return value === null || value === undefined ? null : Number(value);
-}
-
-function stringParam(name, value) {
-  return { name, value: { stringValue: String(value) } };
-}
-
-function longParam(name, value) {
-  return { name, value: { longValue: Number(value) } };
 }
 
 module.exports = {
