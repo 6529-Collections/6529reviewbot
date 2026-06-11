@@ -24,6 +24,7 @@ usage telemetry to AWS.
 
 - `src/`: bot engine, provider adapters, usage-ledger code.
 - `bin/`: thin entrypoints for each review kind.
+- `bin/server.cjs`: local HTTP entrypoint for the central app skeleton.
 - `docs/`: architecture, configuration, operations, and runbooks.
 - `templates/`: examples for integrating caller repositories.
 - `.github/`: issue templates, PR template, CI/security workflows.

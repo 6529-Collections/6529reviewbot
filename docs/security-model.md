@@ -8,6 +8,7 @@ The main risks are:
 - leaking AWS credentials or database secrets;
 - letting PR authors execute code with secrets;
 - trusting spoofed bot metadata;
+- accepting forged GitHub webhook deliveries;
 - posting misleading review comments;
 - unbounded provider spend;
 - reading files outside the target checkout.
@@ -18,6 +19,12 @@ The main risks are:
 
 The bot reads target files as text. It must not run install, build, test, or
 package-manager commands from the target repository.
+
+### Webhook Authenticity
+
+GitHub webhook deliveries must be verified with `X-Hub-Signature-256` before
+JSON parsing or event routing. Webhook bodies are capped by
+`REVIEWBOT_WEBHOOK_MAX_BODY_BYTES`.
 
 ### Path Safety
 

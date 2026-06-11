@@ -23,3 +23,6 @@
   memory under `_manager/roadmap-execution/`.
 - Opened PR #4 for roadmap and memory; CodeRabbit requested wording fixes in
   `docs/roadmap.md` and this run log; accepted both. PR is pending merge.
+- Merged PR #4 as `56930617d998050426d70a2256fb11ba70a51a94`.
+- Started `codex/github-app-skeleton` runtime increment for webhook
+  verification, event normalization, minimal HTTP server, and docs.

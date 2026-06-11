@@ -12,6 +12,19 @@ REVIEW_PROVIDER
 `GH_REPO` is the target repository in `owner/name` form. `PR_NUMBER` is the
 target pull request number.
 
+## GitHub App Webhook
+
+```text
+GITHUB_WEBHOOK_SECRET
+REVIEWBOT_GITHUB_WEBHOOK_SECRET
+REVIEWBOT_WEBHOOK_PATH=/webhooks/github
+REVIEWBOT_WEBHOOK_MAX_BODY_BYTES=2097152
+PORT=8080
+```
+
+`GITHUB_WEBHOOK_SECRET` and `REVIEWBOT_GITHUB_WEBHOOK_SECRET` are aliases. The
+server requires one of them before it will accept GitHub webhooks.
+
 ## Providers
 
 ```text
