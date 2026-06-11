@@ -79,10 +79,13 @@ Comment command routing:
 @6529bot review all
 ```
 
-The current skeleton only normalizes events and passes accepted review events
-to an injectable queue function. Without a real queue, valid review events are
-acknowledged but reported as not enqueued. The policy/admission layer must run
-before any model call in a later increment.
+The app normalizes events, evaluates admission policy, and passes admitted
+review events to an injectable queue function. Without a real queue, valid
+admitted review events are acknowledged but reported as not enqueued.
+
+Actor context must be resolved from GitHub App credentials before production
+use. Until a resolver supplies collaborator or org membership context, public
+repo events fail closed as untrusted.
 
 ## Local Smoke Test
 

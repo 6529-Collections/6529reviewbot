@@ -3,6 +3,7 @@
 "use strict";
 
 const assert = require("assert");
+const admissionPolicy = require("../src/admission-policy.cjs");
 const appServer = require("../src/app-server.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -158,6 +159,48 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
 assert.equal(commentEvent.kind, "comment_command");
 assert.deepEqual(commentEvent.reviewKinds, ["security"]);
 
+const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
+assert.equal(
+  admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "author", permission: "read" }, publicPolicy).status,
+  "denied"
+);
+assert.equal(
+  admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "maintainer", permission: "write" }, publicPolicy).status,
+  "allowed"
+);
+assert.equal(
+  admissionPolicy.evaluateAdmission(commentEvent, { login: "maintainer", permission: "maintain" }, publicPolicy).requestor,
+  "maintainer"
+);
+const privateEvent = {
+  ...normalizedPullRequest,
+  repository: { ...normalizedPullRequest.repository, private: true },
+};
+assert.equal(
+  admissionPolicy.evaluateAdmission(privateEvent, { login: "external", permission: "none" }, publicPolicy).status,
+  "allowed"
+);
+const draftEvent = { ...normalizedPullRequest, draft: true };
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, publicPolicy).code,
+  "draft_pull_request"
+);
+const denyPolicy = admissionPolicy.admissionPolicyFromEnv({
+  REVIEWBOT_DENY_USERS: "maintainer",
+});
+assert.equal(
+  admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "maintainer", permission: "admin" }, denyPolicy).code,
+  "blocked_actor"
+);
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, denyPolicy).code,
+  "blocked_actor"
+);
+assert.throws(
+  () => admissionPolicy.admissionPolicyFromEnv({ REVIEWBOT_TRUSTED_PERMISSION: "owner" }),
+  /REVIEWBOT_TRUSTED_PERMISSION must be one of/
+);
+
 let enqueuedEvent = null;
 appServer.handleGitHubWebhook({
   headers: {
@@ -175,6 +218,7 @@ appServer.handleGitHubWebhook({
     enqueuedEvent = event;
     return { accepted: true, jobId: "job-1" };
   },
+  resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
 }).then(async (webhookResult) => {
   assert.equal(webhookResult.statusCode, 202);
   assert.equal(webhookResult.body.enqueued, true);
@@ -191,6 +235,7 @@ appServer.handleGitHubWebhook({
       webhookPath: "/webhooks/github",
       maxBodyBytes: 2048,
     },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
   });
   assert.equal(defaultQueueResult.statusCode, 200);
   assert.equal(defaultQueueResult.body.enqueued, false);

@@ -26,6 +26,12 @@ GitHub webhook deliveries must be verified with `X-Hub-Signature-256` before
 JSON parsing or event routing. Webhook bodies are capped by
 `REVIEWBOT_WEBHOOK_MAX_BODY_BYTES`.
 
+### Admission Before Spend
+
+Public repositories require trusted actors by default. Admission policy runs
+before queueing review work, budget checks, or provider calls. If the app has
+not resolved actor trust, public repo events fail closed as untrusted.
+
 ### Path Safety
 
 Changed-file context rejects:

@@ -15,12 +15,13 @@ merged PRs.
 - Base branch: `main`
 - Initial foundation PR: merged as PR #1, merge commit `50e4b47`
 - Roadmap/memory PR: merged as PR #4, merge commit `5693061`
-- Current branch: `codex/github-app-skeleton`
+- GitHub App skeleton PR: merged as PR #5, merge commit `9e500b4`
+- Current branch: `codex/policy-admission`
 - Current local changes:
-  - app webhook verifier and event normalizer
-  - minimal HTTP server entrypoint
-  - smoke-test coverage for signed webhook routing
-  - GitHub App operator docs
+  - pure admission policy engine
+  - app-server admission enforcement before queueing
+  - smoke-test coverage for trusted/untrusted/draft/private policy cases
+  - admission policy operator docs
 
 ## Key Decisions
 
@@ -46,11 +47,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, self-review, and merge the GitHub App skeleton PR.
-2. Add policy/admission module and tests.
-3. Add budget admission module and tests.
-4. Refactor review execution behind a job interface.
-5. Add bot API aggregate/admin contracts.
+1. Validate, self-review, and merge the policy/admission PR.
+2. Add budget admission module and tests.
+3. Refactor review execution behind a job interface.
+4. Add bot API aggregate/admin contracts.
+5. Add 6529.io frontend integration.
 
 ## Open Risks
 

@@ -33,6 +33,7 @@ The runner is responsible for:
 
 - resolving the target PR;
 - verifying GitHub webhook signatures before routing events;
+- evaluating admission policy before queueing model work;
 - checking whether the PR should be skipped;
 - checking out target source into an isolated workspace;
 - configuring provider and AWS credentials;
