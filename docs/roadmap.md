@@ -95,7 +95,7 @@ Recommended flow:
 
 1. Webhook arrives.
 2. App identifies repo, PR, actor, event type, command, and head SHA.
-3. Policy engine decides allowed, denied, or requires trusted trigger.
+3. Policy engine decides allowed, denied, or requires a trusted trigger.
 4. Budget engine estimates and admits or rejects the run.
 5. Worker runs the model with hard context, timeout, and token caps.
 6. Usage ledger records actual provider/model/token/cost data.
