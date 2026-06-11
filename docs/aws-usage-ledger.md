@@ -19,6 +19,17 @@ reviewbot.ai_model_prices
 reviewbot.ai_review_budget_policies
 ```
 
+`ai_review_budget_policies` stores enabled budget caps by scope:
+
+```text
+scope_type, scope_value, daily_budget_usd, weekly_budget_usd,
+monthly_budget_usd, enabled
+```
+
+The budget admission helper reads current spend from
+`ai_review_usage_events` and compares it with these policies before queueing
+model work.
+
 ## Views
 
 ```text

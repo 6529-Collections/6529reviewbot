@@ -140,12 +140,13 @@ function executeDataApi(region, payload) {
   try {
     fs.writeFileSync(payloadPath, JSON.stringify(payload), "utf8");
     execFileSync(
-      "aws",
+      awsCliBin(),
       ["rds-data", "execute-statement", "--region", region, "--cli-input-json", `file://${payloadPath}`],
       {
         encoding: "utf8",
         maxBuffer: 16 * 1024 * 1024,
         stdio: ["ignore", "pipe", "pipe"],
+        shell: shouldUseShellForAwsCli(),
       }
     );
   } finally {
@@ -155,6 +156,14 @@ function executeDataApi(region, payload) {
       // Ignore temporary cleanup failures.
     }
   }
+}
+
+function awsCliBin() {
+  return process.env.AWS_CLI_BIN || "aws";
+}
+
+function shouldUseShellForAwsCli() {
+  return process.platform === "win32" && !process.env.AWS_CLI_BIN;
 }
 
 function stringParam(name, value) {
@@ -203,4 +212,6 @@ module.exports = {
   usageLedgerSettingsFromEnv,
   writeUsageEvent,
   quoteIdent,
+  awsCliBin,
+  shouldUseShellForAwsCli,
 };
