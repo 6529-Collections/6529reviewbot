@@ -6,6 +6,8 @@
 
 The intended production identity is a GitHub App named `6529bot`. The app
 should be installed only on repositories that intentionally use the bot.
+Webhook verification and initial event normalization live in
+`src/github-webhook.cjs` and `src/app-server.cjs`.
 
 Minimum repository permissions:
 
@@ -30,6 +32,7 @@ AWS OIDC trust should live.
 The runner is responsible for:
 
 - resolving the target PR;
+- verifying GitHub webhook signatures before routing events;
 - checking whether the PR should be skipped;
 - checking out target source into an isolated workspace;
 - configuring provider and AWS credentials;

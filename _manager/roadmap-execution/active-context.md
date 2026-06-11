@@ -14,11 +14,13 @@ merged PRs.
 - Remote: `6529-Collections/6529reviewbot`
 - Base branch: `main`
 - Initial foundation PR: merged as PR #1, merge commit `50e4b47`
+- Roadmap/memory PR: merged as PR #4, merge commit `5693061`
+- Current branch: `codex/github-app-skeleton`
 - Current local changes:
-  - `README.md` links to the roadmap
-  - `docs/roadmap.md` captures roadmap, budget, 6529.io dashboard, and secret
-    ownership decisions
-  - `_manager/roadmap-execution/` captures durable workstream memory
+  - app webhook verifier and event normalizer
+  - minimal HTTP server entrypoint
+  - smoke-test coverage for signed webhook routing
+  - GitHub App operator docs
 
 ## Key Decisions
 
@@ -44,11 +46,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Commit and merge the roadmap/memory docs PR.
-2. Create a central app skeleton with webhook verification and event routing.
-3. Add policy/admission module and tests.
-4. Add budget admission module and tests.
-5. Refactor review execution behind a job interface.
+1. Validate, self-review, and merge the GitHub App skeleton PR.
+2. Add policy/admission module and tests.
+3. Add budget admission module and tests.
+4. Refactor review execution behind a job interface.
+5. Add bot API aggregate/admin contracts.
 
 ## Open Risks
 

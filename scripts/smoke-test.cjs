@@ -3,6 +3,8 @@
 "use strict";
 
 const assert = require("assert");
+const appServer = require("../src/app-server.cjs");
+const githubWebhook = require("../src/github-webhook.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 
@@ -79,7 +81,124 @@ assert.deepEqual(reviewBot.normalizeOpenAIUsage({
   totalTokens: 15,
 });
 
-console.log("smoke tests ok");
+const webhookBody = Buffer.from(JSON.stringify({
+  action: "opened",
+  repository: {
+    id: 1,
+    full_name: "6529-Collections/example",
+    private: false,
+    default_branch: "main",
+  },
+  installation: { id: 99 },
+  sender: { login: "maintainer" },
+  pull_request: {
+    number: 12,
+    user: { login: "author" },
+    head: {
+      sha: "abc123",
+      repo: { full_name: "6529-Collections/example" },
+    },
+    base: {
+      sha: "def456",
+      repo: { full_name: "6529-Collections/example" },
+    },
+    draft: false,
+  },
+}));
+const webhookSecret = "test-secret";
+const webhookSignature = githubWebhook.signGitHubWebhook(webhookSecret, webhookBody);
+assert.equal(githubWebhook.verifyGitHubWebhookSignature(webhookSecret, webhookBody, webhookSignature), true);
+assert.equal(githubWebhook.verifyGitHubWebhookSignature(webhookSecret, webhookBody, "sha256=bad"), false);
+assert.throws(
+  () => githubWebhook.assertGitHubWebhookSignature(webhookSecret, webhookBody, {}),
+  /Invalid GitHub webhook signature/
+);
+
+const normalizedPullRequest = githubWebhook.normalizeGitHubWebhook(
+  {
+    "x-github-event": "pull_request",
+    "x-github-delivery": "delivery-1",
+  },
+  JSON.parse(webhookBody.toString("utf8"))
+);
+assert.equal(normalizedPullRequest.kind, "pull_request");
+assert.equal(normalizedPullRequest.shouldEnqueue, true);
+assert.deepEqual(normalizedPullRequest.reviewKinds, ["general", "wcag", "i18n", "security"]);
+
+assert.deepEqual(githubWebhook.parseReviewCommand("/6529bot review security wcag").reviewKinds, [
+  "security",
+  "wcag",
+]);
+assert.deepEqual(githubWebhook.parseReviewCommand("@6529bot review all").reviewKinds, [
+  "general",
+  "wcag",
+  "i18n",
+  "security",
+]);
+assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
+
+const commentEvent = githubWebhook.normalizeGitHubWebhook(
+  { "x-github-event": "issue_comment" },
+  {
+    action: "created",
+    repository: { full_name: "6529-Collections/example" },
+    sender: { login: "maintainer" },
+    issue: {
+      number: 12,
+      pull_request: { url: "https://api.github.com/repos/6529-Collections/example/pulls/12" },
+      user: { login: "author" },
+    },
+    comment: {
+      id: 456,
+      body: "/6529bot security",
+      user: { login: "maintainer" },
+    },
+  }
+);
+assert.equal(commentEvent.kind, "comment_command");
+assert.deepEqual(commentEvent.reviewKinds, ["security"]);
+
+let enqueuedEvent = null;
+appServer.handleGitHubWebhook({
+  headers: {
+    "x-hub-signature-256": webhookSignature,
+    "x-github-event": "pull_request",
+    "x-github-delivery": "delivery-1",
+  },
+  rawBody: webhookBody,
+  settings: {
+    webhookSecret,
+    webhookPath: "/webhooks/github",
+    maxBodyBytes: 2048,
+  },
+  enqueueReview: async (event) => {
+    enqueuedEvent = event;
+    return { accepted: true, jobId: "job-1" };
+  },
+}).then(async (webhookResult) => {
+  assert.equal(webhookResult.statusCode, 202);
+  assert.equal(webhookResult.body.enqueued, true);
+  assert.equal(enqueuedEvent.prNumber, 12);
+  const defaultQueueResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+  });
+  assert.equal(defaultQueueResult.statusCode, 200);
+  assert.equal(defaultQueueResult.body.enqueued, false);
+  console.log("smoke tests ok");
+}).catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
 function withEnv(nextEnv, fn) {
   const oldEnv = process.env;

@@ -19,6 +19,7 @@
   "scripts": {
     "check": "node scripts/check.cjs",
     "test": "node scripts/smoke-test.cjs",
+    "start": "node bin/server.cjs",
     "review:general": "node bin/general-pr-review.cjs",
     "review:followup": "node bin/followup-commit-review.cjs",
     "review:wcag": "node bin/wcag-aa-analysis.cjs",
