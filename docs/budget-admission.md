@@ -1,7 +1,8 @@
 # Budget Admission
 
 Budget admission decides whether an admitted review request may be queued for
-model work. It runs after trusted-actor admission and before any provider call.
+model work. It runs after trusted-actor admission, after review-job expansion,
+and before any provider call.
 
 ## Modes
 
@@ -26,9 +27,8 @@ REVIEWBOT_BUDGET_DEFAULT_ESTIMATED_COST_USD=1
 ```
 
 The default estimate is used when provider-specific cost estimation is not yet
-available. For multi-kind events, the estimate is multiplied by the number of
-review kinds. For review-kind caps, the estimate is split evenly across the
-requested kinds.
+available. The GitHub App evaluates one review kind and one provider/model lane
+at a time, so the default estimate applies to one job.
 
 ## Caps
 
@@ -114,5 +114,6 @@ for an external contributor PR, the maintainer is the budget requestor.
 On Windows, the ledger helpers invoke the AWS CLI through a shell when no
 explicit path is configured.
 
-The next worker layer should pass provider/model context and, when available,
-provider-specific estimated cost into budget admission.
+The GitHub App server passes provider/model context into each budget decision.
+A queue adapter or worker can provide a provider-specific estimated cost through
+`estimateBudgetCost(jobEvent, admission, job)`.

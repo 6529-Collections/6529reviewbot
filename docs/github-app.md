@@ -2,7 +2,7 @@
 
 `6529reviewbot` is designed to run as a central GitHub App named `6529bot`.
 The current app skeleton provides the webhook verification and event routing
-surface that later policy, budget, queue, and worker layers will build on.
+surface that policy, budget, queue, and worker layers build on.
 
 ## Runtime Endpoints
 
@@ -79,17 +79,31 @@ Comment command routing:
 @6529bot review all
 ```
 
-The app normalizes events, evaluates admission policy, evaluates budget
-admission, and passes admitted review events to an injectable queue function.
-Without a real queue, valid admitted review events are acknowledged but
-reported as not enqueued.
+The app normalizes events, evaluates admission policy, expands admitted events
+into review jobs, evaluates budget admission per job, and passes admitted jobs
+to an injectable queue function. Without a real queue, valid admitted review
+jobs are acknowledged but reported as not enqueued.
 
 Actor context must be resolved from GitHub App credentials before production
 use. Until a resolver supplies collaborator or org membership context, public
 repo events fail closed as untrusted.
 
 If budget caps are configured and the app cannot resolve current spend, budget
-admission fails closed in `enforce` mode.
+admission fails closed in `enforce` mode. If every job is denied by budget
+admission, the queue function is not called.
+
+## Queue Contract
+
+Production code should inject:
+
+- `resolveActorContext(event)` to resolve GitHub App permissions;
+- `resolveBudgetSnapshot(jobEvent, admission, job)` to read current spend;
+- `estimateBudgetCost(jobEvent, admission, job)` to provide job-specific cost
+  estimates when available;
+- `enqueueReviewJobs(jobs, controls)` to dispatch admitted jobs to the worker.
+
+Each queued job has one review kind and one provider/model lane. See
+[review-jobs.md](review-jobs.md).
 
 ## Local Smoke Test
 

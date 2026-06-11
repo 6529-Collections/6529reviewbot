@@ -34,11 +34,16 @@ The runner is responsible for:
 - resolving the target PR;
 - verifying GitHub webhook signatures before routing events;
 - evaluating admission policy before queueing model work;
-- evaluating budget policy before queueing model work;
+- expanding admitted events into explicit review jobs;
+- evaluating budget policy per review job before queueing model work;
 - checking whether the PR should be skipped;
 - checking out target source into an isolated workspace;
 - configuring provider and AWS credentials;
 - invoking the relevant review-mode entrypoint.
+
+Review jobs are the contract between the App and workers. One job represents
+one repository, PR, head SHA, review kind, provider, and model. This allows the
+same review kind to run through multiple model lanes without collisions.
 
 ## 3. Review Engine
 

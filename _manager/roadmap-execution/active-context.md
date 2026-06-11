@@ -16,12 +16,13 @@ merged PRs.
 - Initial foundation PR: merged as PR #1, merge commit `50e4b47`
 - Roadmap/memory PR: merged as PR #4, merge commit `5693061`
 - GitHub App skeleton PR: merged as PR #5, merge commit `9e500b4`
-- Current branch: `codex/budget-admission`
+- Budget admission PR: merged as PR #7, merge commit `69c1739`
+- Current branch: `codex/review-job-interface`
 - Current local changes:
-  - pure budget admission engine
-  - app-server budget enforcement before queueing
-  - Data API helper for usage-ledger budget snapshots
-  - budget admission operator docs
+  - explicit review job schema and provider/model lane parsing
+  - App-server fanout from admitted GitHub events into per-lane jobs
+  - per-job budget admission before queueing
+  - review job tests and public documentation
 
 ## Key Decisions
 
@@ -57,6 +58,6 @@ merged PRs.
 
 - GitHub App credentials and deployment target are not created yet.
 - 6529.io auth integration contract is not defined yet.
-- AWS budget/admission queries need to be designed against current ledger
-  schema.
+- Budget admission now runs per job so provider, model, and review-kind caps
+  can differ.
 - OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.

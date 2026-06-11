@@ -8,6 +8,7 @@ const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
+const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 
@@ -163,6 +164,59 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
 assert.equal(commentEvent.kind, "comment_command");
 assert.deepEqual(commentEvent.reviewKinds, ["security"]);
 
+const twoLanePolicy = reviewJob.reviewJobPolicyFromEnv({
+  REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5,anthropic:claude-opus-4-8",
+  REVIEWBOT_MAX_JOBS_PER_DELIVERY: "20",
+});
+assert.deepEqual(
+  twoLanePolicy.lanes.map((lane) => `${lane.provider}:${lane.model}`),
+  ["anthropic:claude-opus-4-8", "openai:gpt-5.5"]
+);
+const reviewJobs = reviewJob.createReviewJobs(
+  normalizedPullRequest,
+  {
+    admission: { requestor: "maintainer" },
+    createdAt: "2026-06-11T00:00:00.000Z",
+  },
+  twoLanePolicy
+);
+assert.equal(reviewJobs.length, 8);
+assert.equal(reviewJobs.filter((job) => job.reviewKind === "general").length, 2);
+assert.equal(reviewJobs[0].requestor, "maintainer");
+assert.equal(reviewJobs[0].provider, "anthropic");
+assert.equal(reviewJobs[1].provider, "openai");
+const replayedReviewJobs = reviewJob.createReviewJobs(normalizedPullRequest, {
+  admission: { requestor: "maintainer" },
+  createdAt: "2027-01-01T00:00:00.000Z",
+}, twoLanePolicy);
+assert.equal(reviewJobs[0].id, replayedReviewJobs[0].id);
+const firstJobEvent = reviewJob.eventForReviewJob(normalizedPullRequest, reviewJobs[0]);
+assert.deepEqual(firstJobEvent.reviewKinds, [reviewJobs[0].reviewKind]);
+assert.equal(firstJobEvent.run.provider, reviewJobs[0].provider);
+assert.equal(firstJobEvent.run.model, reviewJobs[0].model);
+assert.equal(
+  reviewJob.publicReviewJobSummary({
+    ...reviewJobs[0],
+    status: "admitted",
+    budget: { status: "allowed", allowed: true, code: "within_budget", estimatedCostUsd: 1 },
+  }).budget.code,
+  "within_budget"
+);
+assert.equal(
+  reviewJob.budgetSummaryForJobs([
+    { budget: { status: "allowed", allowed: true, code: "within_budget" } },
+    { budget: { status: "denied", allowed: false, code: "budget_exceeded" } },
+  ]).status,
+  "partial"
+);
+assert.throws(
+  () => reviewJob.createReviewJobs(normalizedPullRequest, {}, {
+    ...twoLanePolicy,
+    maxJobsPerDelivery: 2,
+  }),
+  /above REVIEWBOT_MAX_JOBS_PER_DELIVERY=2/
+);
+
 const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
 assert.equal(
   admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "author", permission: "read" }, publicPolicy).status,
@@ -266,7 +320,7 @@ const spendQuery = budgetLedger.buildScopeSpendQuery("reviewbot", "requestor", "
 assert.match(spendQuery.sql, /metadata->>'requestor'/);
 assert.equal(spendQuery.parameters[0].value.stringValue, "maintainer");
 
-let enqueuedEvent = null;
+let enqueuedJobs = null;
 appServer.handleGitHubWebhook({
   headers: {
     "x-hub-signature-256": webhookSignature,
@@ -279,15 +333,17 @@ appServer.handleGitHubWebhook({
     webhookPath: "/webhooks/github",
     maxBodyBytes: 2048,
   },
-  enqueueReview: async (event) => {
-    enqueuedEvent = event;
+  enqueueReviewJobs: async (jobs) => {
+    enqueuedJobs = jobs;
     return { accepted: true, jobId: "job-1" };
   },
   resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
 }).then(async (webhookResult) => {
   assert.equal(webhookResult.statusCode, 202);
   assert.equal(webhookResult.body.enqueued, true);
-  assert.equal(enqueuedEvent.prNumber, 12);
+  assert.equal(enqueuedJobs.length, 4);
+  assert.equal(enqueuedJobs[0].prNumber, 12);
+  assert.equal(webhookResult.body.jobs.length, 4);
   const defaultQueueResult = await appServer.handleGitHubWebhook({
     headers: {
       "x-hub-signature-256": webhookSignature,
@@ -304,6 +360,8 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(defaultQueueResult.statusCode, 200);
   assert.equal(defaultQueueResult.body.enqueued, false);
+  assert.equal(defaultQueueResult.body.jobs.length, 4);
+  assert.equal(defaultQueueResult.body.queue.jobCount, 4);
   let budgetDeniedQueued = false;
   const budgetDeniedResult = await appServer.handleGitHubWebhook({
     headers: {
@@ -326,13 +384,14 @@ appServer.handleGitHubWebhook({
       },
     }),
     estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
-    enqueueReview: async () => {
+    enqueueReviewJobs: async () => {
       budgetDeniedQueued = true;
       return { accepted: true };
     },
   });
   assert.equal(budgetDeniedResult.body.budget.code, "budget_exceeded");
   assert.equal(budgetDeniedResult.body.enqueued, false);
+  assert.equal(budgetDeniedResult.body.deniedJobs.length, 4);
   assert.equal(budgetDeniedQueued, false);
   console.log("smoke tests ok");
 }).catch((error) => {

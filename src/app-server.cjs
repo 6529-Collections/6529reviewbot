@@ -11,6 +11,14 @@ const {
   evaluateBudgetAdmission,
 } = require("./budget-admission.cjs");
 const {
+  attachBudgetToReviewJob,
+  budgetSummaryForJobs,
+  createReviewJobs,
+  eventForReviewJob,
+  publicReviewJobSummary,
+  reviewJobPolicyFromEnv,
+} = require("./review-job.cjs");
+const {
   assertGitHubWebhookSignature,
   assertWebhookSettings,
   normalizeGitHubWebhook,
@@ -22,24 +30,26 @@ const {
 function createReviewbotServer(options = {}) {
   const settings = options.settings || webhookSettingsFromEnv();
   assertWebhookSettings(settings);
-  const enqueueReview = options.enqueueReview || defaultEnqueueReview;
+  const enqueueReviewJobs = options.enqueueReviewJobs || options.enqueueReview || defaultEnqueueReviewJobs;
   const admissionPolicy = options.admissionPolicy || admissionPolicyFromEnv();
   const resolveActorContext = options.resolveActorContext || defaultResolveActorContext;
   const budgetPolicy = options.budgetPolicy || budgetPolicyFromEnv();
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
+  const jobPolicy = options.jobPolicy || reviewJobPolicyFromEnv();
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
     try {
       const result = await handleHttpRequest(request, {
         settings,
-        enqueueReview,
+        enqueueReviewJobs,
         admissionPolicy,
         resolveActorContext,
         budgetPolicy,
         resolveBudgetSnapshot,
         estimateBudgetCost,
+        jobPolicy,
         logger,
       });
       sendJson(response, result.statusCode, result.body);
@@ -75,12 +85,13 @@ async function handleHttpRequest(request, options) {
     headers: request.headers,
     rawBody,
     settings: options.settings,
-    enqueueReview: options.enqueueReview,
+    enqueueReviewJobs: options.enqueueReviewJobs,
     admissionPolicy: options.admissionPolicy,
     resolveActorContext: options.resolveActorContext,
     budgetPolicy: options.budgetPolicy,
     resolveBudgetSnapshot: options.resolveBudgetSnapshot,
     estimateBudgetCost: options.estimateBudgetCost,
+    jobPolicy: options.jobPolicy,
   });
 }
 
@@ -116,18 +127,49 @@ async function handleGitHubWebhook(input) {
     };
   }
 
+  const candidateJobs = createReviewJobs(event, { admission }, input.jobPolicy || reviewJobPolicyFromEnv());
+  if (candidateJobs.length === 0) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(event),
+        admission,
+        jobs: [],
+      },
+    };
+  }
+
+  const budgetedJobs = [];
+  const admittedJobs = [];
+  const deniedJobs = [];
   const resolveBudgetSnapshot = input.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
-  const spendSnapshot = await resolveBudgetSnapshot(event, admission);
-  const estimate = await (input.estimateBudgetCost || defaultEstimateBudgetCost)(event, admission);
-  const budget = evaluateBudgetAdmission({
-    event,
-    admission,
-    run: event.run || {},
-    policy: input.budgetPolicy || budgetPolicyFromEnv(),
-    spendSnapshot,
-    estimate,
-  });
-  if (!budget.allowed) {
+  const estimateBudgetCost = input.estimateBudgetCost || defaultEstimateBudgetCost;
+  const budgetPolicy = input.budgetPolicy || budgetPolicyFromEnv();
+  for (const job of candidateJobs) {
+    const jobEvent = eventForReviewJob(event, job);
+    const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job);
+    const estimate = await estimateBudgetCost(jobEvent, admission, job);
+    const budget = evaluateBudgetAdmission({
+      event: jobEvent,
+      admission,
+      run: jobEvent.run,
+      policy: budgetPolicy,
+      spendSnapshot,
+      estimate,
+    });
+    const budgetedJob = attachBudgetToReviewJob(job, budget);
+    budgetedJobs.push(budgetedJob);
+    if (budget.allowed) {
+      admittedJobs.push(budgetedJob);
+    } else {
+      deniedJobs.push(budgetedJob);
+    }
+  }
+
+  const budget = budgetSummaryForJobs(budgetedJobs);
+  if (admittedJobs.length === 0) {
     return {
       statusCode: 200,
       body: {
@@ -136,12 +178,20 @@ async function handleGitHubWebhook(input) {
         event: publicEventSummary(event),
         admission,
         budget,
+        jobs: [],
+        deniedJobs: deniedJobs.map(publicReviewJobSummary),
       },
     };
   }
 
-  const enqueueReview = input.enqueueReview || defaultEnqueueReview;
-  const enqueueResult = await enqueueReview(event, { admission, budget });
+  const enqueueReviewJobs = input.enqueueReviewJobs || input.enqueueReview || defaultEnqueueReviewJobs;
+  const enqueueResult = await enqueueReviewJobs(admittedJobs, {
+    event,
+    admission,
+    budget,
+    deniedJobs,
+    allJobs: budgetedJobs,
+  });
   const accepted = enqueueResult?.accepted !== false;
   return {
     statusCode: accepted ? 202 : 200,
@@ -151,6 +201,8 @@ async function handleGitHubWebhook(input) {
       event: publicEventSummary(event),
       admission,
       budget,
+      jobs: admittedJobs.map(publicReviewJobSummary),
+      deniedJobs: deniedJobs.map(publicReviewJobSummary),
       queue: enqueueResult || null,
     },
   };
@@ -174,11 +226,11 @@ async function defaultEstimateBudgetCost() {
   return {};
 }
 
-async function defaultEnqueueReview(event) {
+async function defaultEnqueueReviewJobs(jobs) {
   return {
     accepted: false,
     reason: "No review queue configured.",
-    eventKind: event.kind,
+    jobCount: jobs.length,
   };
 }
 
@@ -209,6 +261,7 @@ function safeError(error) {
 module.exports = {
   createReviewbotServer,
   defaultEstimateBudgetCost,
+  defaultEnqueueReviewJobs,
   defaultResolveActorContext,
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,
