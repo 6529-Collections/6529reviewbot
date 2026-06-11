@@ -108,6 +108,23 @@ REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 
 See [review-jobs.md](review-jobs.md).
 
+## Usage API
+
+```text
+REVIEWBOT_USAGE_API_PUBLIC_ENABLED=true
+REVIEWBOT_USAGE_API_ADMIN_ENABLED=true
+REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
+REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
+REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
+REVIEWBOT_USAGE_API_DEFAULT_DAYS=30
+REVIEWBOT_USAGE_API_MAX_DAYS=365
+REVIEWBOT_USAGE_API_MAX_ITEMS=50
+```
+
+Admin endpoints still fail closed unless the server injects an admin
+authorizer. Production should use the existing 6529.io auth system. See
+[usage-api.md](usage-api.md).
+
 ## Cost And Context Controls
 
 ```text

@@ -17,12 +17,13 @@ merged PRs.
 - Roadmap/memory PR: merged as PR #4, merge commit `5693061`
 - GitHub App skeleton PR: merged as PR #5, merge commit `9e500b4`
 - Budget admission PR: merged as PR #7, merge commit `69c1739`
-- Current branch: `codex/review-job-interface`
+- Review job interface PR: merged as PR #8, merge commit `43dfbea`
+- Current branch: `codex/usage-api-contracts`
 - Current local changes:
-  - explicit review job schema and provider/model lane parsing
-  - App-server fanout from admitted GitHub events into per-lane jobs
-  - per-job budget admission before queueing
-  - review job tests and public documentation
+  - usage API summary contracts for public and admin dashboards
+  - App-server GET routes for public usage, admin usage, and budget policies
+  - injectable admin authorization and usage/budget data loaders
+  - public/private response-shape tests and documentation
 
 ## Key Decisions
 
@@ -50,9 +51,10 @@ merged PRs.
 
 1. Validate, self-review, and merge the budget admission PR.
 2. Refactor review execution behind a job interface.
-3. Add bot API aggregate/admin contracts.
-4. Add 6529.io frontend integration.
-5. Sweep docs for community-release readiness.
+3. Validate, self-review, and merge the usage API contract PR.
+4. Add Aurora read-side loaders behind the usage API.
+5. Add 6529.io frontend integration.
+6. Sweep docs for community-release readiness.
 
 ## Open Risks
 

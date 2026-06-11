@@ -9,12 +9,18 @@ surface that policy, budget, queue, and worker layers build on.
 ```text
 GET  /healthz
 POST /webhooks/github
+GET  /api/public/usage/summary
+GET  /api/admin/usage/summary
+GET  /api/admin/budget/policies
 ```
 
 `GET /healthz` returns a basic health response.
 
 `POST /webhooks/github` accepts GitHub webhook deliveries. The path can be
 changed with `REVIEWBOT_WEBHOOK_PATH`.
+
+The usage API paths are configurable and are intended for 6529.io dashboards.
+Admin usage routes require an injected authorizer before they return data.
 
 ## Required Environment
 

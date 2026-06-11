@@ -56,6 +56,16 @@ Check:
 - `REVIEW_MAX_PRIOR_COMMENTS_CHARS`;
 - oversize behavior.
 
+## If Usage Dashboards Stop Updating
+
+Check:
+
+- `GET /api/public/usage/summary?days=30`;
+- the bot API data loader or Aurora reader;
+- `REVIEWBOT_USAGE_API_PUBLIC_ENABLED`;
+- 6529.io auth handoff for admin routes;
+- whether private repo data is intentionally collapsed in public responses.
+
 ## If A Bot Comment Looks Wrong
 
 Check:
