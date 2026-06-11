@@ -24,6 +24,8 @@ requests.
   Serverless v2 database.
 - Expands each admitted trigger into explicit review jobs so the same review
   kind can run through multiple provider/model lanes when configured.
+- Exposes a read-side usage API contract for public transparency and
+  6529.io-authenticated admin dashboards.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
 
 ## Repository Status
@@ -115,6 +117,15 @@ REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
 REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
 ```
 
+Usage API:
+
+```text
+REVIEWBOT_USAGE_API_PUBLIC_ENABLED=true
+REVIEWBOT_USAGE_API_ADMIN_ENABLED=true
+REVIEWBOT_USAGE_API_DEFAULT_DAYS=30
+REVIEWBOT_USAGE_API_MAX_DAYS=365
+```
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -162,6 +173,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Configuration](docs/configuration.md)
 - [GitHub App](docs/github-app.md)
 - [Review jobs](docs/review-jobs.md)
+- [Usage API](docs/usage-api.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)

@@ -1,6 +1,6 @@
 # Architecture
 
-`6529reviewbot` has four layers.
+`6529reviewbot` has five layers.
 
 ## 1. GitHub App Identity
 
@@ -76,6 +76,16 @@ The ledger records one row per review run with:
 - provider request identifiers;
 - cost fields when available;
 - metadata needed for audit/debugging.
+
+## 5. Usage API
+
+The usage API is the read-side contract for dashboards and admin tools. Public
+endpoints return aggregate usage data that is safe for 6529.io transparency
+pages. Admin endpoints require an injected authorizer and should be called only
+after the existing 6529.io auth system verifies operator permissions.
+
+The API does not expose Aurora credentials, provider keys, GitHub App secrets,
+or raw provider responses to browser clients.
 
 ## Trust Boundaries
 

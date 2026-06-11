@@ -19,6 +19,11 @@ const {
   reviewJobPolicyFromEnv,
 } = require("./review-job.cjs");
 const {
+  handleUsageApiRequest,
+  isUsageApiPath,
+  usageApiSettingsFromEnv,
+} = require("./usage-api.cjs");
+const {
   assertGitHubWebhookSignature,
   assertWebhookSettings,
   normalizeGitHubWebhook,
@@ -37,6 +42,7 @@ function createReviewbotServer(options = {}) {
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
   const jobPolicy = options.jobPolicy || reviewJobPolicyFromEnv();
+  const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -50,6 +56,10 @@ function createReviewbotServer(options = {}) {
         resolveBudgetSnapshot,
         estimateBudgetCost,
         jobPolicy,
+        usageApiSettings,
+        loadUsageEvents: options.loadUsageEvents,
+        loadBudgetPolicies: options.loadBudgetPolicies,
+        authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
         logger,
       });
       sendJson(response, result.statusCode, result.body);
@@ -70,6 +80,23 @@ async function handleHttpRequest(request, options) {
   const url = new URL(request.url || "/", "http://localhost");
   if (request.method === "GET" && url.pathname === "/healthz") {
     return { statusCode: 200, body: { ok: true } };
+  }
+
+  const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
+  if (isUsageApiPath(url.pathname, usageApiSettings)) {
+    return await handleUsageApiRequest(
+      {
+        method: request.method || "",
+        url,
+        headers: request.headers || {},
+      },
+      {
+        settings: usageApiSettings,
+        loadUsageEvents: options.loadUsageEvents,
+        loadBudgetPolicies: options.loadBudgetPolicies,
+        authorizeAdmin: options.authorizeUsageApiAdmin,
+      }
+    );
   }
 
   if (url.pathname !== options.settings.webhookPath) {

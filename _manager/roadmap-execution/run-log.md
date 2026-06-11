@@ -37,3 +37,6 @@
 - Merged PR #7 as `69c1739587d9e4224664e6766b0481a848becf33`.
 - Started `codex/review-job-interface` increment for App-to-worker job fanout,
   provider/model lanes, per-job budget admission, and worker contract docs.
+- Merged PR #8 as `43dfbea9634a165b1986c5fbb52401d34e0296cf`.
+- Started `codex/usage-api-contracts` increment for public/admin usage summary
+  routes, budget policy route contracts, injectable admin auth, and docs.

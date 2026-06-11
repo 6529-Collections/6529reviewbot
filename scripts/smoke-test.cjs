@@ -10,6 +10,7 @@ const budgetLedger = require("../src/budget-ledger.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
+const usageApi = require("../src/usage-api.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 
 const settings = withEnv(
@@ -217,6 +218,48 @@ assert.throws(
   /above REVIEWBOT_MAX_JOBS_PER_DELIVERY=2/
 );
 
+const usageEvents = [
+  {
+    createdAt: "2026-06-10T01:00:00.000Z",
+    repoFullName: "6529-Collections/public-repo",
+    prNumber: 10,
+    requestor: "maintainer",
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    totalTokens: 1000,
+    actualCostUsd: 1.25,
+  },
+  {
+    createdAt: "2026-06-10T02:00:00.000Z",
+    repoFullName: "6529-Collections/private-repo",
+    repoPrivate: true,
+    prNumber: 11,
+    metadata: { requestor: "admin" },
+    reviewKind: "security",
+    provider: "openai",
+    model: "gpt-5.5",
+    inputTokens: 500,
+    outputTokens: 250,
+    estimatedCostUsd: 0.75,
+    budgetSkipped: true,
+  },
+];
+const publicUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
+  visibility: "public",
+  range: { days: 7 },
+});
+assert.equal(publicUsageSummary.totals.reviewRuns, 2);
+assert.equal(publicUsageSummary.totals.costUsd, 2);
+assert.equal(publicUsageSummary.byRepo.some((item) => item.key === "private"), true);
+assert.equal(Object.prototype.hasOwnProperty.call(publicUsageSummary, "byRequestor"), false);
+const adminUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
+  visibility: "admin",
+  range: { days: 7 },
+});
+assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
+assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
+
 const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
 assert.equal(
   admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "author", permission: "read" }, publicPolicy).status,
@@ -339,6 +382,56 @@ appServer.handleGitHubWebhook({
   },
   resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
 }).then(async (webhookResult) => {
+  const usageApiSettings = usageApi.usageApiSettingsFromEnv({
+    REVIEWBOT_USAGE_API_DEFAULT_DAYS: "7",
+    REVIEWBOT_USAGE_API_MAX_DAYS: "30",
+  });
+  const usageRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/public/usage/summary?days=7",
+    headers: {},
+  }, {
+    usageApiSettings,
+    loadUsageEvents: async ({ range, visibility }) => {
+      assert.equal(range.days, 7);
+      assert.equal(visibility, "public");
+      return { events: usageEvents };
+    },
+  });
+  assert.equal(usageRouteResult.statusCode, 200);
+  assert.equal(usageRouteResult.body.visibility, "public");
+  const adminDenied = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/usage/summary"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    loadUsageEvents: async () => ({ events: usageEvents }),
+  });
+  assert.equal(adminDenied.statusCode, 403);
+  const adminAllowed = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/budget/policies"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+    loadBudgetPolicies: async () => ({
+      policies: [{ scopeType: "global", scopeValue: "*", dailyBudgetUsd: 5, enabled: true }],
+    }),
+  });
+  assert.equal(adminAllowed.statusCode, 200);
+  assert.equal(adminAllowed.body.policies[0].scopeType, "global");
+  try {
+    usageApi.usageRangeFromRequest(
+      { url: new URL("http://localhost/api/public/usage/summary?days=bad") },
+      usageApiSettings,
+      new Date("2026-06-11T00:00:00.000Z")
+    );
+    assert.fail("expected invalid days query to throw");
+  } catch (error) {
+    assert.equal(error.statusCode, 400);
+  }
   assert.equal(webhookResult.statusCode, 202);
   assert.equal(webhookResult.body.enqueued, true);
   assert.equal(enqueuedJobs.length, 4);
