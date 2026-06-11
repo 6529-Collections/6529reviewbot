@@ -21,6 +21,5 @@
   - secret ownership split between bot backend and 6529.io.
 - Began autonomous roadmap execution workstream and created durable manager
   memory under `_manager/roadmap-execution/`.
-- Opened PR #4 for roadmap and memory. CodeRabbit requested one wording fix in
-  `docs/roadmap.md`; accepted and changed "requires trusted trigger" to
-  "requires a trusted trigger."
+- Opened PR #4 for roadmap and memory; CodeRabbit requested wording fixes in
+  `docs/roadmap.md` and this run log; accepted both. PR is pending merge.
