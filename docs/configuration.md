@@ -86,6 +86,28 @@ REVIEW_DEFAULT_OPENROUTER_MODEL=
 
 OpenRouter has no built-in default. Configure it explicitly.
 
+## Review Job Lanes
+
+The central App expands admitted events into review jobs. Each job has one
+review kind and one provider/model lane.
+
+```text
+REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
+```
+
+Leave `REVIEWBOT_REVIEW_LANES` empty to create one lane from `REVIEW_PROVIDER`
+and `REVIEW_MODEL`, or from the provider default variables above.
+
+Use explicit OpenRouter lanes because OpenRouter model routing affects cost and
+provider trust:
+
+```text
+REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
+```
+
+See [review-jobs.md](review-jobs.md).
+
 ## Cost And Context Controls
 
 ```text

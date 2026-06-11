@@ -34,3 +34,6 @@
   usage-ledger spend snapshots, budget docs, and app-server enforcement.
 - Verified live read-only budget ledger access through Aurora Data API:
   loaded 1 enabled policy and a `global:*` snapshot with zero current spend.
+- Merged PR #7 as `69c1739587d9e4224664e6766b0481a848becf33`.
+- Started `codex/review-job-interface` increment for App-to-worker job fanout,
+  provider/model lanes, per-job budget admission, and worker contract docs.

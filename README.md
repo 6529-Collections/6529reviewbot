@@ -22,6 +22,8 @@ requests.
   depending on visible comment text.
 - Tracks provider/model/token/cost usage in a separate AWS Aurora PostgreSQL
   Serverless v2 database.
+- Expands each admitted trigger into explicit review jobs so the same review
+  kind can run through multiple provider/model lanes when configured.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
 
 ## Repository Status
@@ -106,6 +108,13 @@ REVIEW_DEFAULT_OPENAI_MODEL=gpt-5.5
 REVIEW_DEFAULT_OPENROUTER_MODEL=
 ```
 
+Central App job fanout:
+
+```text
+REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
+```
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -152,6 +161,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [GitHub App](docs/github-app.md)
+- [Review jobs](docs/review-jobs.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)

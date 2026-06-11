@@ -2,6 +2,10 @@
 
 The bot supports five review modes.
 
+In the central GitHub App, a trigger becomes one or more review jobs. Each job
+has one review mode and one provider/model lane. See
+[review-jobs.md](review-jobs.md).
+
 ## General PR Review
 
 Entrypoint:
