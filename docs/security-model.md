@@ -1,0 +1,73 @@
+# Security Model
+
+## Primary Risks
+
+The main risks are:
+
+- leaking provider keys or GitHub tokens;
+- leaking AWS credentials or database secrets;
+- letting PR authors execute code with secrets;
+- trusting spoofed bot metadata;
+- posting misleading review comments;
+- unbounded provider spend;
+- reading files outside the target checkout.
+
+## Controls
+
+### No Target Code Execution
+
+The bot reads target files as text. It must not run install, build, test, or
+package-manager commands from the target repository.
+
+### Path Safety
+
+Changed-file context rejects:
+
+- absolute paths;
+- Windows drive paths;
+- parent traversal;
+- `.git` paths;
+- symlinks;
+- paths outside `REVIEW_WORKSPACE`.
+
+### Metadata Trust
+
+Hidden 6529bot markers are trusted only from `REVIEW_TRUSTED_MARKER_AUTHORS`.
+This prevents a PR author from planting fake metadata in a comment to steer
+follow-up review state.
+
+### Prompt Hygiene
+
+The prompt explicitly treats diffs, code, commits, and comments as untrusted
+data. Hidden 6529bot metadata is stripped from prior comments before comments
+enter the prompt.
+
+### Provider Safety
+
+Provider requests are bounded by:
+
+- input character caps;
+- output token caps;
+- changed-file and changed-line budget checks;
+- provider timeout;
+- sanitized provider error logging.
+
+### AWS Safety
+
+The usage ledger should use:
+
+- GitHub Actions OIDC;
+- a repo-scoped IAM trust policy;
+- least-privilege RDS Data API permissions;
+- a separate Aurora PostgreSQL Serverless v2 cluster;
+- no inbound database security-group rules.
+
+## Review Checklist For Security-Sensitive Changes
+
+- Does the change execute target repo code?
+- Can untrusted comments affect hidden metadata state?
+- Can a changed file path escape the workspace?
+- Can secrets reach provider prompts or PR comments?
+- Does the workflow request broader permissions than needed?
+- Does the change increase maximum spend or remove a hard cap?
+- Does AWS access remain scoped to the usage-ledger resources?

@@ -1,0 +1,28 @@
+{
+  "name": "@6529/6529reviewbot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-neutral AI pull request review bot for 6529 repositories.",
+  "license": "MIT",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/6529-Collections/6529reviewbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/6529-Collections/6529reviewbot/issues"
+  },
+  "homepage": "https://github.com/6529-Collections/6529reviewbot#readme",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node scripts/check.cjs",
+    "test": "node scripts/smoke-test.cjs",
+    "review:general": "node bin/general-pr-review.cjs",
+    "review:followup": "node bin/followup-commit-review.cjs",
+    "review:wcag": "node bin/wcag-aa-analysis.cjs",
+    "review:i18n": "node bin/i18n-analysis.cjs",
+    "review:security": "node bin/security-analysis.cjs"
+  }
+}
