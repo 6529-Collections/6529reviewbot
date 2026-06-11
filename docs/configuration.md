@@ -25,6 +25,22 @@ PORT=8080
 `GITHUB_WEBHOOK_SECRET` and `REVIEWBOT_GITHUB_WEBHOOK_SECRET` are aliases. The
 server requires one of them before it will accept GitHub webhooks.
 
+## Admission Policy
+
+```text
+REVIEWBOT_PUBLIC_REPO_MODE=trusted
+REVIEWBOT_PRIVATE_REPO_MODE=open
+REVIEWBOT_DRAFT_PR_MODE=skip
+REVIEWBOT_TRUSTED_USERS=
+REVIEWBOT_TRUSTED_TEAMS=
+REVIEWBOT_TRUSTED_ORGS=
+REVIEWBOT_TRUSTED_PERMISSION=write
+REVIEWBOT_DENY_USERS=
+```
+
+Public repositories require trusted actors by default. Private repositories are
+open by default. See [admission-policy.md](admission-policy.md).
+
 ## Providers
 
 ```text

@@ -26,3 +26,6 @@
 - Merged PR #4 as `56930617d998050426d70a2256fb11ba70a51a94`.
 - Started `codex/github-app-skeleton` runtime increment for webhook
   verification, event normalization, minimal HTTP server, and docs.
+- Merged PR #5 as `9e500b411266ae9cada88f628c99fb70199f9d03`.
+- Started `codex/policy-admission` increment for trusted-actor admission,
+  public repo budget-abuse prevention, requestor attribution, and docs.

@@ -2,6 +2,11 @@
 
 const http = require("http");
 const {
+  admissionPolicyFromEnv,
+  evaluateAdmission,
+  requestorForEvent,
+} = require("./admission-policy.cjs");
+const {
   assertGitHubWebhookSignature,
   assertWebhookSettings,
   normalizeGitHubWebhook,
@@ -14,6 +19,8 @@ function createReviewbotServer(options = {}) {
   const settings = options.settings || webhookSettingsFromEnv();
   assertWebhookSettings(settings);
   const enqueueReview = options.enqueueReview || defaultEnqueueReview;
+  const admissionPolicy = options.admissionPolicy || admissionPolicyFromEnv();
+  const resolveActorContext = options.resolveActorContext || defaultResolveActorContext;
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -21,6 +28,8 @@ function createReviewbotServer(options = {}) {
       const result = await handleHttpRequest(request, {
         settings,
         enqueueReview,
+        admissionPolicy,
+        resolveActorContext,
         logger,
       });
       sendJson(response, result.statusCode, result.body);
@@ -57,6 +66,8 @@ async function handleHttpRequest(request, options) {
     rawBody,
     settings: options.settings,
     enqueueReview: options.enqueueReview,
+    admissionPolicy: options.admissionPolicy,
+    resolveActorContext: options.resolveActorContext,
   });
 }
 
@@ -77,8 +88,23 @@ async function handleGitHubWebhook(input) {
     };
   }
 
+  const resolveActorContext = input.resolveActorContext || defaultResolveActorContext;
+  const actorContext = await resolveActorContext(event);
+  const admission = evaluateAdmission(event, actorContext, input.admissionPolicy || admissionPolicyFromEnv());
+  if (!admission.allowed) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(event),
+        admission,
+      },
+    };
+  }
+
   const enqueueReview = input.enqueueReview || defaultEnqueueReview;
-  const enqueueResult = await enqueueReview(event);
+  const enqueueResult = await enqueueReview(event, admission);
   const accepted = enqueueResult?.accepted !== false;
   return {
     statusCode: accepted ? 202 : 200,
@@ -86,8 +112,16 @@ async function handleGitHubWebhook(input) {
       ok: true,
       enqueued: accepted,
       event: publicEventSummary(event),
+      admission,
       queue: enqueueResult || null,
     },
+  };
+}
+
+async function defaultResolveActorContext(event) {
+  return {
+    login: requestorForEvent(event),
+    permission: "none",
   };
 }
 
@@ -125,6 +159,7 @@ function safeError(error) {
 
 module.exports = {
   createReviewbotServer,
+  defaultResolveActorContext,
   handleGitHubWebhook,
   handleHttpRequest,
   publicEventSummary,
