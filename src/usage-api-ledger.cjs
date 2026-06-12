@@ -51,7 +51,11 @@ function readUsageEvents(settings, options = {}) {
   const apiSettings = options.apiSettings || usageApiSettingsFromEnv();
   const range = options.range || {};
   assertUsageRange(range);
-  const limit = positiveLimit(options.limit || apiSettings.maxEvents);
+  const maxLimit = positiveLimit(apiSettings.maxEvents);
+  const limit = positiveLimit(options.limit ?? maxLimit);
+  if (limit > maxLimit) {
+    throw new Error(`Usage event query limit must be <= ${maxLimit}.`);
+  }
   const query = buildUsageEventsQuery(
     settings.schema,
     range,

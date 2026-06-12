@@ -1414,3 +1414,9 @@
   - `npm run validate:api-contract` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #117 by adding
+  `REVIEWBOT_USAGE_API_MAX_ITEMS` to `.env.example`, enforcing
+  `REVIEWBOT_USAGE_API_MAX_EVENTS` at the direct ledger-reader boundary, and
+  adding smoke coverage for oversized internal usage-event limits. `npm test`,
+  `npm run check:docs`, `npm run release:check`, and `git diff --check` passed
+  again.

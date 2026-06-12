@@ -2544,6 +2544,28 @@ assert.equal(recentUsageEventsApiQuery.limit, 3);
 assert.equal(recentUsageEventsApiQuery.range.days, 7);
 assert.equal(recentUsageEventsApiQuery.range.to, "2026-06-12T12:00:00.000Z");
 assert.throws(() => usageApiLedger.buildUsageEventsQuery("reviewbot", {}, 25), /bounded range/);
+assert.throws(
+  () =>
+    usageApiLedger.readUsageEvents(
+      {
+        enabled: true,
+        region: "us-east-1",
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+        secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+        database: "reviewbot",
+        schema: "reviewbot",
+      },
+      {
+        range: {
+          from: "2026-06-12T00:00:00.000Z",
+          to: "2026-06-13T00:00:00.000Z",
+        },
+        apiSettings: usageApi.usageApiSettingsFromEnv({ REVIEWBOT_USAGE_API_MAX_EVENTS: "5" }),
+        limit: 6,
+      }
+    ),
+  /Usage event query limit must be <= 5/
+);
 const jobEventsQuery = usageApiLedger.buildJobEventsQuery("reviewbot", {
   status: "dispatch_failed",
   limit: 10,
