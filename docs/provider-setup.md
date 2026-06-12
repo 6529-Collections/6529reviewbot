@@ -26,7 +26,7 @@ For every enabled provider:
 4. configure 6529bot budget caps before allowing public repository spend;
 5. add or verify the model in `config/model-catalog.json`;
 6. apply reviewed price rows with `npm run model-prices -- -- --file <file>
-   --apply`;
+   --apply`, including fresh `sourceCheckedAt` evidence for the provider docs;
 7. run `npm run preflight -- -- --strict` from the release candidate
    environment.
 
@@ -62,7 +62,8 @@ Operator checklist:
 - confirm the key has the minimum access needed for Messages API requests;
 - confirm provider account limits are compatible with 6529bot budgets;
 - verify current model pricing in Anthropic-owned pricing docs;
-- apply the matching `ai_model_prices` row before relying on cost estimates.
+- apply the matching fresh `ai_model_prices` row before relying on cost
+  estimates.
 
 Useful provider links:
 
@@ -100,7 +101,8 @@ Operator checklist:
   explicitly required;
 - set project budgets and alerts in the provider console;
 - verify current model pricing in OpenAI-owned pricing docs;
-- apply the matching `ai_model_prices` row before relying on cost estimates.
+- apply the matching fresh `ai_model_prices` row before relying on cost
+  estimates.
 
 Useful provider links:
 
@@ -141,8 +143,8 @@ Operator checklist:
 - choose explicit models or routes, not an unreviewed generic router;
 - review the underlying model provider, data handling, latency, and pricing;
 - keep OpenRouter routing choices in central policy, not target repo PRs;
-- apply local `ai_model_prices` rows only when direct cost is unavailable or
-  when operators want a fallback estimate.
+- apply fresh local `ai_model_prices` rows only when direct cost is unavailable
+  or when operators want a fallback estimate.
 
 Useful provider links:
 

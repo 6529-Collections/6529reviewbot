@@ -1018,3 +1018,16 @@
   - align machine-readable v0 release gate wording with the new fresh
     source-check requirement;
   - update the sample release-gate status and roadmap progress list.
+- Merged `6529reviewbot` PR #93 as `17bd42e` after CI and Dependency Review
+  passed. CodeRabbit completed successfully after merge with no actionable
+  comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27427922979`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27427923015`, completed successfully.
+- Started `codex/release-notes-price-evidence` increment:
+  - add model price source freshness and accepted override fields to the
+    release notes template;
+  - add model price dry-run/apply checks and override evidence to the release
+    checklist and operations runbook;
+  - make provider setup require fresh `sourceCheckedAt` evidence before relying
+    on local cost estimates.

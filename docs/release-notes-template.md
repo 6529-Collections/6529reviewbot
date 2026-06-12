@@ -44,6 +44,7 @@ repositories.
 - Run-control mode and caps:
 - Ledger schema status:
 - Model pricing status:
+- Model price source freshness policy:
 - Alert delivery:
 - Empty provider output fail-closed evidence:
 - Worker diagnostic redaction evidence:
@@ -73,6 +74,7 @@ are true:
 - 6529.io private admin UI:
 - Dogfood repositories:
 - Provider pricing/model update process:
+- Accepted model-price overrides:
 - Incident response readiness:
 - Compatibility guarantees:
 

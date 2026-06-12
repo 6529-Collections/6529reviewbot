@@ -59,6 +59,22 @@ Apply reviewed central budget policies from a configured operator environment:
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
 ```
 
+Review model price rows without touching AWS:
+
+```bash
+npm run model-prices -- -- --file <reviewed-model-price-file.json>
+```
+
+Apply reviewed model price rows from a configured operator environment:
+
+```bash
+npm run model-prices -- -- --file <reviewed-model-price-file.json> --apply
+```
+
+The apply path rejects stale or future-dated source checks and zero-rate rows
+by default. Record explicit operator evidence before using
+`--allow-stale-source` or `--allow-zero-price`.
+
 Run a dry operator-alert pass:
 
 ```bash
