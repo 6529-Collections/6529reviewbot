@@ -25,6 +25,7 @@ Ready for community review:
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
+- admin runtime status API backed by no-network preflight checks;
 - repeatable Aurora ledger schema tooling;
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;

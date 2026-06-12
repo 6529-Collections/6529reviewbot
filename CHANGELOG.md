@@ -33,6 +33,7 @@ stabilized.
 - Local and central GitHub Actions worker adapters.
 - Public/admin usage API contracts and read-only Aurora usage readers.
 - Admin-only recent job-events API for queue and worker diagnostics.
+- Admin-only runtime status API backed by no-network preflight checks.
 - 6529.io admin auth bridge contract.
 - Scheduled spend alerts for budget utilization and unusual spend spikes.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job

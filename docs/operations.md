@@ -68,6 +68,15 @@ dry-run unless `--dispatch` is passed.
 For active spend, secret, webhook, provider, ledger, or bad-comment incidents,
 use [Incident Response](incident-response.md).
 
+Private operator dashboards can call:
+
+```text
+GET /api/admin/status?profile=server
+```
+
+to show the same no-network preflight checks without exposing runtime secrets
+to the browser.
+
 ## If Reviews Stop Posting
 
 Check:
@@ -84,6 +93,7 @@ Check:
 - fork/external PR skip logic;
 - PR draft state;
 - changed-file and changed-line budgets.
+- `GET /api/admin/status?profile=server` warnings and errors.
 
 ## If Usage Rows Stop Writing
 
@@ -168,6 +178,7 @@ Check:
 - `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and
   `REVIEWBOT_USAGE_API_PUBLIC_ORGS`;
 - 6529.io auth handoff for admin routes;
+- `GET /api/admin/status?profile=server`;
 - whether private repo data is intentionally collapsed in public responses.
 
 ## If A Bot Comment Looks Wrong

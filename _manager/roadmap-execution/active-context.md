@@ -51,9 +51,11 @@ merged PRs.
 - Provider setup guide PR: merged as PR #35, merge commit `199bccc`
 - Support bundle PR: merged as PR #36, merge commit `cc6369d`
 - v0 release gates PR: merged as PR #37, merge commit `f8e86b2`
-- Current branch: `codex/admin-job-events-api`
-- Current local changes: admin-only recent job-events endpoint, Aurora Data API
-  reader, server wiring, smoke coverage, and usage/operator docs
+- Admin job-events API PR: merged as PR #38, merge commit `283b9d3`
+- Current branch: `codex/admin-status-api`
+- Current local changes: admin-only runtime status endpoint backed by
+  no-network preflight checks, server wiring, smoke coverage, and
+  usage/operator docs
 
 ## Key Decisions
 
@@ -107,6 +109,9 @@ merged PRs.
 - Recent job lifecycle diagnostics should be available through the private
   admin API, not through public transparency endpoints or direct browser access
   to Aurora.
+- Runtime configuration warnings should be available to private operator
+  dashboards through bot-owned APIs backed by preflight, never through direct
+  browser access to process environment or secrets.
 
 ## Constraints
 
@@ -118,11 +123,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the admin job-events API PR if checks and
+1. Validate, publish, and merge the admin runtime status API PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   admin diagnostics API lands.
+   admin status API lands.
 
 ## Open Risks
 
@@ -145,3 +150,5 @@ merged PRs.
 - v0 gates still require external operator evidence before tagging.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
+- Private admin UI still needs production wiring to the usage, job-events, and
+  status endpoints through the 6529.io auth bridge.

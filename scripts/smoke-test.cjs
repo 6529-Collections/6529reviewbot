@@ -1547,6 +1547,23 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(usageRouteResult.statusCode, 200);
   assert.equal(usageRouteResult.body.visibility, "public");
+  const adminStatusRouteUrl = new URL("http://localhost/api/admin/status?profile=worker&strict=1");
+  const adminStatusRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/status?profile=worker&strict=1",
+    headers: signedAdminHeadersFor(adminStatusRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadAdminStatus: async ({ query }) => {
+      assert.equal(query.profile, "worker");
+      assert.equal(query.strict, true);
+      return { preflight: { ok: false, warnings: [{ name: "test", message: "warning" }] } };
+    },
+  });
+  assert.equal(adminStatusRouteResult.statusCode, 200);
+  assert.equal(adminStatusRouteResult.body.kind, "runtime_status");
+  assert.equal(adminStatusRouteResult.body.preflight.ok, false);
   const adminJobsRouteUrl = new URL("http://localhost/api/admin/jobs/recent?limit=1");
   const adminJobsRouteResult = await appServer.handleHttpRequest({
     method: "GET",
@@ -1595,6 +1612,28 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminBridgeAllowed.statusCode, 200);
   assert.equal(adminBridgeAllowed.body.visibility, "admin");
+  const adminStatusUrl = new URL("http://localhost/api/admin/status?profile=server");
+  const adminStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminStatusUrl,
+    headers: signedAdminHeadersFor(adminStatusUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadAdminStatus: async ({ query }) => {
+      assert.equal(query.profile, "server");
+      assert.equal(query.strict, false);
+      return { preflight: { ok: true, checks: [{ name: "webhook", status: "ok" }] } };
+    },
+  });
+  assert.equal(adminStatus.statusCode, 200);
+  assert.equal(adminStatus.body.preflight.checks[0].name, "webhook");
+  assert.throws(
+    () => usageApi.adminStatusQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/status?profile=operator") }
+    ),
+    /profile must be one of/
+  );
   const adminJobsUrl = new URL("http://localhost/api/admin/jobs/recent?status=dispatch_failed&limit=2");
   const adminJobEvents = await usageApi.handleUsageApiRequest({
     method: "GET",
