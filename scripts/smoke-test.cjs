@@ -1265,6 +1265,26 @@ const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
 assert.equal(localWorkerResult.accepted, true);
 assert.equal(localWorkerResult.claimStatus, "completed");
 assert.equal(localWorkerResult.stdout, "general:6529-Collections/example");
+assert.equal(
+  workerAdapter.redactSensitiveText("Bearer ghp_abcdefghijklmnopqrstuvwxyz1234567890"),
+  "Bearer [redacted]"
+);
+const redactedLocalWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
+  policy: workerAdapter.workerAdapterPolicyFromEnv({
+    REVIEWBOT_WORKER_ADAPTER: "local",
+  }),
+  includeOutput: true,
+  localCommandArgs: [
+    "-e",
+    [
+      "process.stdout.write('sk-ant-api03-secretvalue');",
+      "process.stderr.write('github_pat_abcdefghijklmnopqrstuvwxyz1234567890');",
+    ].join(""),
+  ],
+});
+assert.equal(redactedLocalWorkerResult.accepted, true);
+assert.equal(redactedLocalWorkerResult.stdout, "sk-[redacted]");
+assert.equal(redactedLocalWorkerResult.stderr, "github_pat_[redacted]");
 const failedLocalWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
     REVIEWBOT_WORKER_ADAPTER: "local",
@@ -1350,6 +1370,22 @@ const missingApiTokenResultPromise = workerAdapter.dispatchReviewJobToGitHubActi
       REVIEWBOT_WORKER_ADAPTER: "github_actions",
       REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
       REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    }),
+  }
+);
+const failedApiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(
+  forkReviewJob,
+  {
+    policy: workerAdapter.workerAdapterPolicyFromEnv({
+      REVIEWBOT_WORKER_ADAPTER: "github_actions",
+      REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+      REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+      REVIEWBOT_WORKER_GITHUB_TOKEN: "dispatch-token",
+    }),
+    fetchImpl: async () => ({
+      status: 403,
+      text: async () =>
+        "bad token Bearer ghp_abcdefghijklmnopqrstuvwxyz1234567890 sk-ant-api03-secretvalue",
     }),
   }
 );
@@ -2287,6 +2323,13 @@ appServer.handleGitHubWebhook({
   assert.equal(missingApiTokenResult.accepted, false);
   assert.equal(missingApiTokenResult.dispatchMode, "api");
   assert.match(missingApiTokenResult.reason, /GITHUB_TOKEN/);
+  const failedApiDispatchResult = await failedApiDispatchResultPromise;
+  assert.equal(failedApiDispatchResult.accepted, false);
+  assert.equal(failedApiDispatchResult.dispatchMode, "api");
+  assert.match(failedApiDispatchResult.reason, /Bearer \[redacted\]/);
+  assert.match(failedApiDispatchResult.reason, /sk-\[redacted\]/);
+  assert.doesNotMatch(failedApiDispatchResult.reason, /ghp_abcdefghijklmnopqrstuvwxyz/);
+  assert.doesNotMatch(failedApiDispatchResult.reason, /sk-ant-api03-secretvalue/);
   const claimedDecision = await claimedDecisionPromise;
   assert.equal(claimedDecision.code, "run_control_claimed");
   assert.equal(claimedDecision.allowed, true);

@@ -119,9 +119,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dispatch exception coverage PR: merged as PR #83, merge commit `09e27a5`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/fail-empty-provider-output`
-- Current local changes: fail closed when a live provider returns empty review
-  text so the bot cannot post a misleading generic no-finding comment.
+- Empty provider output hardening PR: merged as PR #84, merge commit
+  `d4df15e`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-worker-diagnostics`
+- Current local changes: redact common token and private-key shapes from worker
+  diagnostics before queue results or claim metadata can carry them.
 
 ## Key Decisions
 
@@ -306,7 +308,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the empty-provider-output hardening PR.
+1. Validate, publish, and merge the worker diagnostic redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
