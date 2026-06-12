@@ -58,6 +58,8 @@ stabilized.
 - CI now runs the full release check on pull requests and pushes to `main`.
 - OpenSSF Scorecard write permissions are scoped to the Scorecard job instead
   of the workflow level.
+- OpenSSF Scorecard result publishing now avoids the optional SARIF upload step
+  until that verifier path accepts the pinned upload action cleanly.
 - `actions/checkout` pins now use the peeled `v6.0.3` commit SHA instead of
   the annotated tag object SHA.
 - v0 release gate renderer can merge an operator-owned status/evidence file.

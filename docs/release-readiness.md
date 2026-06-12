@@ -64,8 +64,10 @@ Ready for community review:
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
-- OpenSSF Scorecard keeps workflow-level permissions read-only and scopes
-  `security-events: write` plus `id-token: write` to the Scorecard job;
+- OpenSSF Scorecard keeps workflow-level permissions read-only, scopes
+  `id-token: write` to the Scorecard job for result publishing, and leaves
+  optional SARIF upload disabled until the publishing verifier accepts the
+  pinned upload action path cleanly;
 - GitHub Action pins use commit SHAs that belong to the action repository;
   annotated release tags are peeled before pinning;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in

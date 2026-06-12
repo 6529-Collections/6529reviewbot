@@ -742,3 +742,18 @@
   - document that annotated action tags must be peeled before pinning;
   - update release docs, security checklist, roadmap, changelog, and manager
     memory.
+- Merged `6529reviewbot` PR #70 as `d709bef` after CI and Dependency Review
+  passed.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - the Scorecard analysis itself passed the pinned-dependency and token
+    permission checks;
+  - publishing still failed because the optional
+    `github/codeql-action/upload-sarif` step was rejected by the Scorecard
+    workflow verifier even though it used an action-repository commit ref;
+  - first-party Scorecard result publishing through `publish_results: true`
+    remains enabled.
+- Started `codex/remove-scorecard-sarif-upload` increment:
+  - remove the optional SARIF upload step from the Scorecard workflow;
+  - remove the now-unused `security-events: write` job permission;
+  - document that SARIF upload stays disabled until the verifier-safe action
+    path is re-reviewed.

@@ -58,6 +58,9 @@ Target deployment:
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
 - Annotated GitHub Action tags are pinned to their peeled commit SHA, not the
   tag-object SHA.
+- OpenSSF Scorecard keeps workflow-level permissions read-only; result
+  publishing uses only job-level `id-token: write`, and optional SARIF upload
+  stays disabled unless the verifier-safe action path is re-reviewed.
 - `npm run check:workflow-actions` passes for committed workflow templates.
 - Reusable workflow callers map only declared provider secrets and do not use
   `secrets: inherit`.
