@@ -89,7 +89,10 @@ private operator dashboards. It accepts:
 
 The response deliberately reports configuration posture and secret presence
 only. It must never include provider keys, GitHub App private keys, webhook
-secrets, AWS credentials, database passwords, or raw webhook payloads.
+secrets, AWS credentials, database passwords, or raw webhook payloads. The API
+response boundary redacts common secret-shaped diagnostic strings and omits
+unsafe-keyed or deeply nested custom diagnostic values before returning the
+payload.
 
 ## Job Events
 
@@ -103,6 +106,13 @@ private 6529.io admin surface. It accepts:
 
 - `limit`: positive integer up to `REVIEWBOT_USAGE_API_MAX_ITEMS`;
 - `status`: optional exact status filter, for example `dispatch_failed`.
+
+The endpoint is admin-only because it can include private repository names,
+requestors, provider/model routing, and operational failure details. It still
+sanitizes loader output before responding: string fields are bounded, common
+secret-shaped values are redacted, and `metadata` is reduced to safe-keyed
+scalar values. Loader `503` reasons are redacted through the same diagnostic
+path before they become JSON errors.
 
 Example response:
 

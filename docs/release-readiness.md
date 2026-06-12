@@ -44,6 +44,8 @@ Ready for community review:
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin runtime status API backed by no-network preflight checks;
+- admin API diagnostic responses redact and bound custom loader output before
+  job-event, runtime-status, or unavailable JSON reaches 6529.io;
 - repeatable Aurora ledger schema tooling;
 - example AWS IAM/OIDC templates for least-privilege Data API and SNS access;
 - reviewed GitHub App manifest template for production registration;
