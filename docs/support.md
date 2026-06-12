@@ -43,12 +43,13 @@ The bundle includes:
 - git branch and commit;
 - selected safe runtime settings;
 - secret/account-linked setting presence as `set` or `unset`, including
-  provider keys, GitHub App credentials, and central workflow dispatch token
-  sources;
+  provider keys, GitHub App credentials, central workflow dispatch token
+  sources, and central worker repository names;
 - preflight errors and warnings.
 
 It does not include secret values. It also does not include target repository
-diffs, prompts, provider responses, or webhook payloads.
+diffs, prompts, provider responses, webhook payloads, private worker
+repository names, or absolute local config paths.
 
 Use `--include-git-status` only when file names in your local checkout are safe
 to disclose:

@@ -129,10 +129,12 @@ merged PRs.
   `958b2ae`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert webhook scanner PR: merged as PR #88, merge commit `36ecf97`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-preflight-fixtures`
-- Current local changes: fix enabled usage-ledger preflight validation and add
-  release-time synthetic preflight fixtures for central App server and worker
-  postures.
+- Release preflight fixture PR: merged as PR #89, merge commit `018281c`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/support-bundle-privacy`
+- Current local changes: reduce support-bundle exposure of central worker repo
+  names and absolute local model-catalog paths while preserving presence
+  signals for maintainers.
 
 ## Key Decisions
 
@@ -317,7 +319,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the release preflight fixture PR.
+1. Validate, publish, and merge the support-bundle privacy PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

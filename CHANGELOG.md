@@ -113,6 +113,8 @@ stabilized.
 - Usage-write cost estimation from active provider/model price rows.
 - Provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - Sanitized support bundle CLI and support playbook.
+- Support bundles report central worker repository names only as presence and
+  redact absolute local config paths.
 - No-network production preflight CLI for runtime configuration validation.
 - Release checks now run no-network preflight fixtures for central App server
   and worker configuration postures.

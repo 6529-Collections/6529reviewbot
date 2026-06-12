@@ -974,3 +974,13 @@
     it;
   - add a release-time no-network preflight fixture check for central App
     server and worker postures.
+- Merged `6529reviewbot` PR #89 as `018281c` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27424485515`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27424485444`, completed successfully.
+- Started `codex/support-bundle-privacy` increment:
+  - move `REVIEWBOT_WORKER_GITHUB_REPO` from safe support-bundle output to
+    presence-only reporting;
+  - redact absolute `*_PATH` safe values so public bundles do not reveal local
+    filesystem detail.

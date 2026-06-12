@@ -634,16 +634,26 @@ assert.equal(
 );
 const supportEnv = {
   REVIEW_PROVIDER: "anthropic",
+  REVIEWBOT_MODEL_CATALOG_PATH: path.resolve("/private/model-catalog.json"),
   REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEWBOT_WORKER_GITHUB_REPO: "private-org/private-worker",
   ANTHROPIC_API_KEY: "secret-key",
   REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:secret",
   GITHUB_WEBHOOK_SECRET: "",
 };
 const supportSummary = supportBundle.environmentSummary(supportEnv);
 assert.equal(supportSummary.safe.REVIEW_PROVIDER, "anthropic");
+assert.equal(supportSummary.safe.REVIEWBOT_MODEL_CATALOG_PATH, "[absolute-path-set]");
+assert.equal(
+  supportBundle.safeEnvValue("REVIEWBOT_MODEL_CATALOG_PATH", "C:\\private\\model-catalog.json"),
+  "[absolute-path-set]"
+);
+assert.equal(supportSummary.safe.REVIEWBOT_WORKER_GITHUB_REPO, undefined);
+assert.equal(supportSummary.presence.REVIEWBOT_WORKER_GITHUB_REPO, "set");
 assert.equal(supportSummary.presence.ANTHROPIC_API_KEY, "set");
 assert.equal(supportSummary.presence.GITHUB_WEBHOOK_SECRET, "unset");
 assert.equal(JSON.stringify(supportSummary).includes("secret-key"), false);
+assert.equal(JSON.stringify(supportSummary).includes("private-org/private-worker"), false);
 const collectedSupportBundle = supportBundle.collectSupportBundle({
   env: {
     ...supportEnv,
