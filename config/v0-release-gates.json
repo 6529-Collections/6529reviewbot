@@ -50,7 +50,7 @@
     },
     {
       "id": "model-prices",
-      "title": "Model pricing rows have been reviewed against current provider docs and applied, or release notes keep conservative default estimates.",
+      "title": "Model pricing rows have source URLs, fresh source-checked timestamps, and current provider-doc review before apply, or release notes keep conservative default estimates.",
       "evidence": "docs/model-pricing.md"
     },
     {

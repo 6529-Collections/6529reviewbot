@@ -1007,3 +1007,14 @@
     exposing the configured file path in status output;
   - document the price-evidence freshness policy in the README, release gates,
     security checklist, and operator runbooks.
+- Merged `6529reviewbot` PR #92 as `d8ec89e` after CI and Dependency Review
+  passed. CodeRabbit initially stayed pending, then completed successfully
+  after merge with no inline comments and only its generic docstring-coverage
+  warning.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27427475018`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27427475455`, completed successfully.
+- Started `codex/operator-checks-price-evidence` increment:
+  - align machine-readable v0 release gate wording with the new fresh
+    source-check requirement;
+  - update the sample release-gate status and roadmap progress list.

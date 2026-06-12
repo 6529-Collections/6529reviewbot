@@ -372,6 +372,8 @@ Completed in `6529reviewbot`:
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - zero-rate guard for model price apply, with explicit override for
   provider-documented free prices.
+- source-check freshness guard for model price apply and optional preflight,
+  with explicit override for accepted stale evidence.
 - installation and onboarding guide for conservative central App dogfood.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
