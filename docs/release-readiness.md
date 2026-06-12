@@ -22,9 +22,9 @@ Ready for community review:
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
 - 6529.io admin auth bridge contract;
-- scheduled spend alerts with stdout, webhook, and SNS delivery.
+- scheduled spend alerts with stdout, webhook, and SNS delivery;
 - dogfood runbook, conservative config templates, and repository config
-  validation tooling.
+  validation tooling;
 - production deployment runbook and central worker template that mints
   short-lived GitHub App installation tokens.
 
@@ -60,6 +60,9 @@ Before announcing broad community use:
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable
 local and manual gates.
+
+Use [v0 Release Plan](v0-release-plan.md) for the exact pre-v1 tagging gates
+and public release note expectations.
 
 ## Conservative Dogfood Defaults
 
