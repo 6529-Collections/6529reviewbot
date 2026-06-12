@@ -167,10 +167,13 @@ merged PRs.
 - GitHub App manifest conversion diagnostic redaction PR: merged as PR #105,
   merge commit `6fe47d2`; post-merge CI and OpenSSF Scorecard completed
   successfully.
-- Current branch: `codex/redact-support-git-status`
-- Current local changes: support bundle git output uses the shared diagnostics
-  redaction path before JSON or Markdown output; smoke tests cover
-  token-shaped branch names and `git status --short` file names.
+- Support bundle git-output redaction PR: merged as PR #106, merge commit
+  `5ca19e8`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-support-bundle-values`
+- Current local changes: support bundle selected safe environment values and
+  preflight messages use the shared diagnostics redaction path before JSON or
+  Markdown output; smoke tests cover malformed token-shaped values and
+  hand-built bundle rendering.
 
 ## Key Decisions
 
@@ -380,7 +383,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the support-bundle git-output redaction PR.
+1. Validate, publish, and merge the support-bundle value/message redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

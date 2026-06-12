@@ -7,6 +7,9 @@ const { redactSensitiveText } = require("./diagnostics.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
+const SUPPORT_VALUE_MAX_CHARS = 1000;
+const SUPPORT_GIT_MAX_CHARS = 4000;
+
 const SAFE_ENV_KEYS = [
   "NODE_ENV",
   "REVIEW_PROVIDER",
@@ -118,7 +121,7 @@ function safeEnvValue(key, value) {
   if (key.endsWith("_PATH") && isAbsolutePath) {
     return "[absolute-path-set]";
   }
-  return text;
+  return supportText(text);
 }
 
 function preflightSummary(result) {
@@ -126,16 +129,18 @@ function preflightSummary(result) {
     ok: Boolean(result.ok),
     errors: (result.errors || []).map((item) => ({
       name: item.name,
-      message: item.message,
+      message: supportText(item.message),
     })),
     warnings: (result.warnings || []).map((item) => ({
       name: item.name,
-      message: item.message,
+      message: supportText(item.message),
     })),
   };
 }
 
 function formatSupportBundleMarkdown(bundle) {
+  const gitBranch = supportText(bundle.git.branch || "unknown");
+  const gitCommit = supportText(bundle.git.commit || "unknown");
   const lines = [
     "# 6529reviewbot Support Bundle",
     "",
@@ -151,11 +156,16 @@ function formatSupportBundleMarkdown(bundle) {
     "",
     "## Git",
     "",
-    `- branch: ${bundle.git.branch || "unknown"}`,
-    `- commit: ${bundle.git.commit || "unknown"}`,
+    `- branch: ${gitBranch}`,
+    `- commit: ${gitCommit}`,
   ];
   if (bundle.git.status !== undefined) {
-    lines.push("", "```text", bundle.git.status || "clean", "```");
+    lines.push(
+      "",
+      "```text",
+      supportText(bundle.git.status || "clean", SUPPORT_GIT_MAX_CHARS),
+      "```"
+    );
   }
   lines.push("", "## Environment", "", "Safe values:");
   lines.push(...markdownKeyValues(bundle.environment.safe));
@@ -174,14 +184,14 @@ function markdownKeyValues(values) {
   if (!entries.length) {
     return ["- none"];
   }
-  return entries.map(([key, value]) => `- ${key}: ${value}`);
+  return entries.map(([key, value]) => `- ${key}: ${supportText(value)}`);
 }
 
 function markdownMessages(messages) {
   if (!messages || messages.length === 0) {
     return ["- none"];
   }
-  return messages.map((item) => `- ${item.name}: ${item.message}`);
+  return messages.map((item) => `- ${item.name}: ${supportText(item.message)}`);
 }
 
 function safeGit(run, args) {
@@ -189,10 +199,14 @@ function safeGit(run, args) {
     const output = String(
       run("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })
     ).trim();
-    return redactSensitiveText(output).slice(0, 4000);
+    return supportText(output, SUPPORT_GIT_MAX_CHARS);
   } catch {
     return "";
   }
+}
+
+function supportText(value, maxChars = SUPPORT_VALUE_MAX_CHARS) {
+  return redactSensitiveText(value).slice(0, maxChars);
 }
 
 module.exports = {

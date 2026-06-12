@@ -112,9 +112,10 @@ path before printing operator diagnostics. GitHub App manifest conversion
 response-error bodies and summary strings are redacted before operator-facing
 output, but generated credentials still belong only in the private secret
 store. Support bundles also redact common token and private-key shapes from git
-branch/status output when `--include-git-status` is used, though file names may
-still disclose private operational context. Redaction is a guardrail, not
-permission to publish verbose worker diagnostics.
+branch/status output, selected safe environment values, and preflight messages
+before JSON or Markdown rendering, though file names may still disclose private
+operational context when `--include-git-status` is used. Redaction is a
+guardrail, not permission to publish verbose worker diagnostics.
 
 ### Runtime Control Safety
 

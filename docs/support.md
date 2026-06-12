@@ -47,9 +47,11 @@ The bundle includes:
   sources, and central worker repository names;
 - preflight errors and warnings.
 
-It does not include secret values. It also does not include target repository
-diffs, prompts, provider responses, webhook payloads, private worker
-repository names, or absolute local config paths.
+It does not include secret values. Selected safe settings and preflight
+messages are still filtered for common token and private-key shapes before JSON
+or Markdown output. It also does not include target repository diffs, prompts,
+provider responses, webhook payloads, private worker repository names, or
+absolute local config paths.
 
 Use `--include-git-status` only when file names in your local checkout are safe
 to disclose. The support bundle redacts common token and private-key shapes in
