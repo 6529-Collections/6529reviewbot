@@ -186,5 +186,19 @@ GITHUB_WEBHOOK_SECRET=local-secret npm start
 Then send a signed GitHub-compatible webhook payload to
 `http://localhost:8080/webhooks/github`.
 
+For delivery debugging without running the server, replay a saved payload:
+
+```bash
+npm run webhook:replay -- -- \
+  --payload payload.json \
+  --actor-permission write \
+  --repository-config templates/dogfood-repository-config.yml \
+  --assume-empty-budget
+```
+
+Replay is dry-run by default. It reports the normalized event, admission
+decision, budget decision, generated jobs, and dry-run queue result without
+dispatching workers.
+
 Do not use live GitHub App secrets or provider keys in local examples,
 screenshots, logs, or PR descriptions.

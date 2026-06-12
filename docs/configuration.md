@@ -188,6 +188,34 @@ options with sensible defaults; set them only for non-standard worker
 environments.
 See [worker-adapters.md](worker-adapters.md).
 
+## Webhook Replay Diagnostics
+
+```bash
+npm run webhook:replay -- -- --payload payload.json --assume-empty-budget
+```
+
+The replay command reads a saved GitHub webhook JSON payload, signs it locally,
+and runs it through the same webhook verification, event normalization,
+repository config, admission, budget, and job-fanout path as the App server.
+It is dry-run by default and does not dispatch workers or call providers.
+
+Useful diagnostic flags:
+
+```text
+--event pull_request
+--delivery replay-123
+--actor maintainer
+--actor-permission write
+--org-member
+--repository-config templates/dogfood-repository-config.yml
+--assume-empty-budget
+--estimated-cost-usd 0.25
+--dispatch
+```
+
+Use `--dispatch` only from a controlled bot environment after checking the
+payload, actor, repository config, and budget assumptions.
+
 ## Usage API
 
 ```text

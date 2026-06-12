@@ -125,6 +125,16 @@ Validate a target repository config before opening its PR:
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Replay a saved GitHub webhook payload without dispatching workers:
+
+```bash
+npm run webhook:replay -- -- \
+  --payload payload.json \
+  --actor-permission write \
+  --repository-config templates/dogfood-repository-config.yml \
+  --assume-empty-budget
+```
+
 ## Runtime Configuration
 
 Minimum required environment:
@@ -165,6 +175,12 @@ Worker adapter:
 REVIEWBOT_WORKER_ADAPTER=noop|local|github_actions
 REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+```
+
+Webhook replay diagnostics:
+
+```bash
+npm run webhook:replay -- -- --payload payload.json --assume-empty-budget
 ```
 
 GitHub App installation auth:
