@@ -47,6 +47,8 @@ stabilized.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.
+- Quiet budget policy validation mode for CI/release checks.
+- Conservative dogfood budget policy example validated by release checks.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
 - Example AWS IAM/OIDC templates for central GitHub Actions, Aurora Data API,
   Secrets Manager, and SNS access.

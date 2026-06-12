@@ -35,6 +35,7 @@ The first `v0` tag can include:
 - budget admission against the isolated AWS usage ledger;
 - dry-run/apply tooling for central DB budget policies loaded during
   production admission;
+- conservative dogfood budget policy example validated by release checks;
 - review job fanout by review kind and provider/model lane;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;

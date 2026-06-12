@@ -282,7 +282,11 @@ budgetPolicies.applyBudgetPolicies({
 assert.equal(appliedBudgetPolicyStatements, 2);
 assert.deepEqual(
   budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--schema", "reviewbot", "--apply"]),
-  { apply: true, file: "budgets.json", schema: "reviewbot" }
+  { apply: true, file: "budgets.json", quiet: false, schema: "reviewbot" }
+);
+assert.deepEqual(
+  budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--quiet"]),
+  { apply: false, file: "budgets.json", quiet: true }
 );
 
 withEnv(

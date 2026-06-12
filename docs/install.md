@@ -136,13 +136,14 @@ See [aws-usage-ledger.md](aws-usage-ledger.md) and
 Review and apply conservative central budget rows before enabling live workers:
 
 ```bash
-npm run budget-policies -- -- --file config/budget-policies.example.json
+npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
 ```
 
-The committed example is empty. Keep the real operator file outside public
-commits if it contains private requestor, repo, or rollout notes. See
-[budget-policies.md](budget-policies.md).
+The dogfood example is a starting point, not a live policy. Replace placeholder
+requestors and adjust caps in an operator-owned file before applying. Keep the
+real operator file outside public commits if it contains private requestor,
+repo, or rollout notes. See [budget-policies.md](budget-policies.md).
 
 ## 5. Start The App In Noop Mode
 

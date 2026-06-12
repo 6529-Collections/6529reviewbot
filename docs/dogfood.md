@@ -78,12 +78,15 @@ handle multiline secrets poorly.
 Apply central budget policy rows before live workers:
 
 ```bash
+npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
 ```
 
 Start with global, target-repo, requestor, provider, model, and review-kind
-caps. Central DB rows are loaded before budget admission when
+caps. The dogfood example is a starting point, not a live policy. Replace
+placeholder requestors and adjust caps in an operator-owned file before
+applying. Central DB rows are loaded before budget admission when
 `REVIEW_USAGE_ENABLED=true`.
 
 Start with:

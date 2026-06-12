@@ -292,6 +292,7 @@ Completed in `6529reviewbot`:
 - production server budget spend snapshot wiring;
 - dry-run/apply tooling for central budget policies and production admission
   loading from enabled DB rows;
+- conservative dogfood budget policy example validated by release checks;
 - review-job fanout with provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
