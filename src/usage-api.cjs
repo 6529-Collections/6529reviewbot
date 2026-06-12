@@ -145,6 +145,8 @@ async function handleUsageApiRequest(request, options = {}) {
     range,
     visibility: route.visibility,
     maxItems: settings.maxItems,
+    publicRepos: settings.publicRepos,
+    publicOrganizations: settings.publicOrganizations,
   });
   return {
     statusCode: 200,
@@ -265,7 +267,7 @@ function summarizeUsageEvents(events, options = {}) {
     byDay: groupedUsage(normalized, (event) => dayKey(event.createdAt))
       .sort((a, b) => b.key.localeCompare(a.key))
       .slice(0, maxItems),
-    byRepo: sortedGroups(normalized, (event) => repoKey(event, visibility), maxItems),
+    byRepo: sortedGroups(normalized, (event) => repoKey(event, visibility, options), maxItems),
     byProviderModel: sortedGroups(
       normalized,
       (event) => `${event.provider || "unknown"}:${event.model || "unknown"}`,
@@ -389,11 +391,18 @@ function dayKey(value) {
   return Number.isNaN(date.getTime()) ? "unknown" : date.toISOString().slice(0, 10);
 }
 
-function repoKey(event, visibility) {
-  if (visibility !== "admin" && event.repoPrivate) {
+function repoKey(event, visibility, options = {}) {
+  const repo = event.repoFullName || "";
+  if (visibility === "admin") {
+    return repo || "unknown";
+  }
+  if (!repo) {
+    return "unknown";
+  }
+  if (event.repoPrivate) {
     return "private";
   }
-  return event.repoFullName || "unknown";
+  return isPublicUsageRepo(repo, options) ? repo : "private";
 }
 
 function prKey(event) {
@@ -510,6 +519,26 @@ function csvList(value) {
     .filter(Boolean);
 }
 
+function isPublicUsageRepo(repoFullName, settings = usageApiSettingsFromEnv()) {
+  const normalized = String(repoFullName || "").trim().toLowerCase();
+  const parts = normalized.split("/");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    return false;
+  }
+  const [org, repoName] = parts;
+  const repo = `${org}/${repoName}`;
+  const publicRepos = new Set(
+    (settings.publicRepos || []).map((item) => String(item || "").toLowerCase())
+  );
+  if (publicRepos.has(repo)) {
+    return true;
+  }
+  const publicOrganizations = new Set(
+    (settings.publicOrganizations || []).map((item) => String(item || "").toLowerCase())
+  );
+  return publicOrganizations.has(org);
+}
+
 function positiveIntEnv(value, fallback, name) {
   if (value === undefined || value === "") {
     return fallback;
@@ -529,6 +558,7 @@ module.exports = {
   DEFAULT_PUBLIC_SUMMARY_PATH,
   adminStatusQueryFromRequest,
   handleUsageApiRequest,
+  isPublicUsageRepo,
   isUsageApiPath,
   jobEventsQueryFromRequest,
   normalizeJobEvent,

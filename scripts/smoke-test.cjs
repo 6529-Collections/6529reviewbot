@@ -2201,11 +2201,63 @@ const publicUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
 assert.equal(publicUsageSummary.totals.reviewRuns, 2);
 assert.equal(publicUsageSummary.totals.costUsd, 2);
 assert.equal(publicUsageSummary.byRepo.some((item) => item.key === "private"), true);
+assert.equal(
+  publicUsageSummary.byRepo.some((item) => item.key === "6529-Collections/public-repo"),
+  false
+);
 assert.equal(Object.prototype.hasOwnProperty.call(publicUsageSummary, "byRequestor"), false);
+const publicUsageSummaryWithRepoAllowlist = usageApi.summarizeUsageEvents(usageEvents, {
+  visibility: "public",
+  range: { days: 7 },
+  publicRepos: ["6529-Collections/public-repo"],
+});
+assert.equal(
+  publicUsageSummaryWithRepoAllowlist.byRepo.some(
+    (item) => item.key === "6529-Collections/public-repo"
+  ),
+  true
+);
+assert.equal(
+  publicUsageSummaryWithRepoAllowlist.byRepo.some((item) => item.key === "private"),
+  true
+);
+const publicUsageSummaryWithOrgAllowlist = usageApi.summarizeUsageEvents(usageEvents, {
+  visibility: "public",
+  range: { days: 7 },
+  publicOrganizations: ["6529-Collections"],
+});
+assert.equal(
+  publicUsageSummaryWithOrgAllowlist.byRepo.some(
+    (item) => item.key === "6529-Collections/public-repo"
+  ),
+  true
+);
+assert.equal(
+  usageApi.isPublicUsageRepo("6529-Collections/public-repo", {
+    publicRepos: ["6529-Collections/public-repo"],
+  }),
+  true
+);
+assert.equal(
+  usageApi.isPublicUsageRepo("6529-Collections/public-repo/extra", {
+    publicOrganizations: ["6529-Collections"],
+  }),
+  false
+);
+assert.equal(
+  usageApi.isPublicUsageRepo("6529-Collections/", {
+    publicOrganizations: ["6529-Collections"],
+  }),
+  false
+);
 const adminUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
   visibility: "admin",
   range: { days: 7 },
 });
+assert.equal(
+  adminUsageSummary.byRepo.some((item) => item.key === "6529-Collections/public-repo"),
+  true
+);
 assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
 assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
 const alertNow = new Date("2026-06-12T12:00:00.000Z");
@@ -2856,6 +2908,28 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(usageRouteResult.statusCode, 200);
   assert.equal(usageRouteResult.body.visibility, "public");
+  assert.equal(
+    usageRouteResult.body.byRepo.some((item) => item.key === "6529-Collections/public-repo"),
+    false
+  );
+  const allowlistedUsageRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/public/usage/summary?days=7",
+    headers: {},
+  }, {
+    usageApiSettings: usageApi.usageApiSettingsFromEnv({
+      REVIEWBOT_USAGE_API_DEFAULT_DAYS: "7",
+      REVIEWBOT_USAGE_API_MAX_DAYS: "30",
+      REVIEWBOT_USAGE_API_PUBLIC_ORGS: "6529-Collections",
+    }),
+    loadUsageEvents: async () => ({ events: usageEvents }),
+  });
+  assert.equal(
+    allowlistedUsageRouteResult.body.byRepo.some(
+      (item) => item.key === "6529-Collections/public-repo"
+    ),
+    true
+  );
   const manifestCompleteRouteResult = await appServer.handleHttpRequest({
     method: "GET",
     url: "/github-app/manifest-complete?code=temporary-code&state=test-state",

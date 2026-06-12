@@ -1295,3 +1295,25 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #112 as `e0a62cc` after CI, Dependency Review,
+  OpenSSF Scorecard, and CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27440518581`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27440518580`, completed successfully.
+- Started `codex/public-usage-repo-allowlist` increment:
+  - enforce `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and
+    `REVIEWBOT_USAGE_API_PUBLIC_ORGS` in the public usage summarizer itself,
+    not only in the Aurora loader;
+  - share the repo disclosure helper with the ledger adapter;
+  - add smoke coverage for direct summaries and HTTP route responses with and
+    without allowlists;
+  - update usage/security/release-readiness docs, changelog, and manager
+    memory.
+- Local validation for `codex/public-usage-repo-allowlist`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #113 by requiring exact `owner/repo`
+  shape before a repo name can match a public org allowlist; malformed repo
+  names now collapse in public summaries. `npm test`, `npm run release:check`,
+  and `git diff --check` passed again.

@@ -9,7 +9,10 @@ const {
   nullableNumber,
   stringParam,
 } = require("./data-api.cjs");
-const { usageApiSettingsFromEnv } = require("./usage-api.cjs");
+const {
+  isPublicUsageRepo,
+  usageApiSettingsFromEnv,
+} = require("./usage-api.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function usageApiLedgerLoadersFromEnv(env = process.env) {
@@ -333,22 +336,6 @@ function nullableBoolean(value) {
     return null;
   }
   return Boolean(value);
-}
-
-function isPublicUsageRepo(repoFullName, apiSettings = usageApiSettingsFromEnv()) {
-  const repo = String(repoFullName || "").toLowerCase();
-  if (!repo.includes("/")) {
-    return false;
-  }
-  const publicRepos = new Set((apiSettings.publicRepos || []).map((item) => item.toLowerCase()));
-  if (publicRepos.has(repo)) {
-    return true;
-  }
-  const org = repo.split("/")[0];
-  const publicOrganizations = new Set(
-    (apiSettings.publicOrganizations || []).map((item) => item.toLowerCase())
-  );
-  return publicOrganizations.has(org);
 }
 
 function safeJson(value) {

@@ -68,6 +68,8 @@ Ready for community review:
 - no-network production preflight command;
 - release-time preflight fixtures for central App server and worker
   configuration postures;
+- public usage summaries enforce repo/org allowlists before repo names are
+  disclosed, even when data comes from a custom loader;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
   bad-comment incidents;
 - sanitized support bundle and support playbook;
