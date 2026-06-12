@@ -16,6 +16,7 @@ Auth from GitHub Actions: AWS OIDC
 ```text
 reviewbot.ai_review_usage_events
 reviewbot.ai_review_job_events
+reviewbot.ai_review_run_claims
 reviewbot.ai_model_prices
 reviewbot.ai_review_budget_policies
 ```
@@ -43,6 +44,10 @@ permissions for the chosen delivery mode.
 `ai_review_job_events` stores append-only review-job lifecycle events such as
 budget admission and worker dispatch results. These rows are operational audit
 data, not cost accounting. See [job-ledger.md](job-ledger.md).
+
+`ai_review_run_claims` stores durable run-control claims for dedupe and
+concurrency. It represents active or recently completed job ownership, not
+prompt or provider data. See [run-control.md](run-control.md).
 
 ## Schema Tooling
 

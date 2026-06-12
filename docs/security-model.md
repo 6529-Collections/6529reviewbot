@@ -15,6 +15,7 @@ The main risks are:
 - letting PR-controlled config expand model access or budget;
 - posting misleading review comments;
 - unbounded provider spend;
+- duplicate or over-parallel review dispatch;
 - exposing private admin usage data;
 - reading files outside the target checkout.
 
@@ -51,6 +52,14 @@ budget authority.
 Budget admission runs before queueing review work or calling model providers.
 When budget caps are configured, missing spend data fails closed in enforce
 mode.
+
+### Run Control Before Dispatch
+
+Run control claims budget-admitted jobs before worker dispatch. It is the
+dedupe and concurrency boundary for replayed webhook deliveries, repeated
+comment commands, and provider/model fanout. Production claim writes must be
+atomic; a stale read-only count is not enough to enforce concurrency under
+parallel webhook load.
 
 ### Path Safety
 
@@ -122,4 +131,5 @@ repositories.
 - Does the workflow request broader permissions than needed?
 - Does repository config still come from the base ref and merge restrictively?
 - Does the change increase maximum spend or remove a hard cap?
+- Can duplicate webhook deliveries or comment commands bypass run control?
 - Does AWS access remain scoped to the usage-ledger resources?

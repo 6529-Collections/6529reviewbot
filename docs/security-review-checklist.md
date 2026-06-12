@@ -2,7 +2,7 @@
 
 Use this checklist before a dogfood expansion, a public pre-v1 tag, or a change
 that touches provider calls, GitHub permissions, AWS access, prompt
-construction, hidden metadata, or budget admission.
+construction, hidden metadata, budget admission, or run control.
 
 ## Scope
 
@@ -49,6 +49,9 @@ Target deployment:
   before applying to Aurora.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
+- Run-control claims happen before worker dispatch when enabled.
+- Run-control dedupe keys include provider and model so multi-model lanes do
+  not block each other.
 - Public usage summaries redact private repo names unless allowlisted.
 - Admin usage routes fail closed unless the 6529.io auth bridge authorizes the
   request.

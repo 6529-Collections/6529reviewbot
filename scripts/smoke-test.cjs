@@ -24,6 +24,7 @@ const preflightCli = require("../bin/preflight.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
+const runControl = require("../src/run-control.cjs");
 const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
 const spendAlerts = require("../src/spend-alerts.cjs");
 const usageApi = require("../src/usage-api.cjs");
@@ -155,6 +156,7 @@ assert.equal(capturedJobLedgerWrite.options.tempPrefix, "6529-job-ledger-");
 const renderedLedgerSchema = ledgerSchema.renderLedgerSchema("reviewbot");
 assert.match(renderedLedgerSchema, /ai_review_usage_events/);
 assert.match(renderedLedgerSchema, /ai_review_job_events/);
+assert.match(renderedLedgerSchema, /ai_review_run_claims/);
 assert.match(renderedLedgerSchema, /daily_ai_review_spend_by_requester/);
 assert.throws(() => ledgerSchema.ledgerSchemaStatements("reviewbot;drop"), /Invalid SQL identifier/);
 let appliedSchemaStatements = 0;
@@ -526,6 +528,17 @@ const replayedReviewJobs = reviewJob.createReviewJobs(normalizedPullRequest, {
   createdAt: "2027-01-01T00:00:00.000Z",
 }, twoLanePolicy);
 assert.equal(reviewJobs[0].id, replayedReviewJobs[0].id);
+const redeliveredReviewJobs = reviewJob.createReviewJobs(
+  { ...normalizedPullRequest, deliveryId: "delivery-2" },
+  {
+    admission: { requestor: "maintainer" },
+    createdAt: "2027-01-01T00:00:00.000Z",
+  },
+  twoLanePolicy
+);
+assert.notEqual(reviewJobs[0].id, redeliveredReviewJobs[0].id);
+assert.equal(reviewJobs[0].runKey, redeliveredReviewJobs[0].runKey);
+assert.notEqual(reviewJobs[0].runKey, reviewJobs[1].runKey);
 const firstJobEvent = reviewJob.eventForReviewJob(normalizedPullRequest, reviewJobs[0]);
 assert.deepEqual(firstJobEvent.reviewKinds, [reviewJobs[0].reviewKind]);
 assert.equal(firstJobEvent.run.provider, reviewJobs[0].provider);
@@ -620,6 +633,61 @@ assert.throws(
     maxJobsPerDelivery: 2,
   }),
   /above REVIEWBOT_MAX_JOBS_PER_DELIVERY=2/
+);
+assert.equal(
+  runControl.evaluateRunControl({
+    job: reviewJobs[0],
+    policy: runControl.runControlPolicyFromEnv({}),
+    snapshot: { unavailable: true },
+  }).code,
+  "run_control_off"
+);
+const runControlPolicy = runControl.runControlPolicyFromEnv({
+  REVIEWBOT_RUN_CONTROL_MODE: "enforce",
+  REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT: "1",
+});
+const runControlDenied = runControl.evaluateRunControl({
+  job: reviewJobs[0],
+  policy: runControlPolicy,
+  snapshot: {
+    unavailable: false,
+    active: {
+      "repo:6529-Collections/example": 1,
+    },
+  },
+});
+assert.equal(runControlDenied.code, "concurrency_limit_exceeded");
+assert.equal(runControlDenied.allowed, false);
+assert.equal(
+  runControl.evaluateRunControl({
+    job: reviewJobs[0],
+    policy: runControlPolicy,
+    snapshot: {
+      unavailable: false,
+      duplicate: {
+        runKey: reviewJobs[0].runKey,
+        jobId: "older-job",
+        status: "claimed",
+      },
+    },
+  }).code,
+  "duplicate_run"
+);
+assert.equal(
+  runControl.evaluateRunControl({
+    job: reviewJobs[0],
+    policy: runControl.runControlPolicyFromEnv({
+      REVIEWBOT_RUN_CONTROL_MODE: "warn",
+      REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT: "1",
+    }),
+    snapshot: {
+      unavailable: false,
+      active: {
+        "repo:6529-Collections/example": 1,
+      },
+    },
+  }).allowed,
+  true
 );
 
 const usageEvents = [
@@ -1232,6 +1300,43 @@ appServer.handleGitHubWebhook({
   assert.equal(budgetDeniedResult.body.enqueued, false);
   assert.equal(budgetDeniedResult.body.deniedJobs.length, 4);
   assert.equal(budgetDeniedQueued, false);
+  let runControlDeniedQueued = false;
+  const runControlDeniedResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    runControlPolicy,
+    claimReviewJob: async (job, context) =>
+      runControl.evaluateRunControl({
+        job,
+        policy: context.policy,
+        snapshot: {
+          unavailable: false,
+          duplicate: {
+            runKey: job.runKey,
+            jobId: "older-job",
+            status: "claimed",
+          },
+        },
+      }),
+    enqueueReviewJobs: async () => {
+      runControlDeniedQueued = true;
+      return { accepted: true };
+    },
+  });
+  assert.equal(runControlDeniedResult.body.runControl.code, "duplicate_run");
+  assert.equal(runControlDeniedResult.body.enqueued, false);
+  assert.equal(runControlDeniedResult.body.deniedJobs.length, 4);
+  assert.equal(runControlDeniedQueued, false);
   console.log("smoke tests ok");
 }).catch((error) => {
   console.error(error);

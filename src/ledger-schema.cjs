@@ -67,6 +67,33 @@ create table if not exists ${schemaIdent}.ai_review_job_events (
 )`,
     },
     {
+      name: "create_run_claims",
+      sql: `
+create table if not exists ${schemaIdent}.ai_review_run_claims (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  completed_at timestamptz,
+  expires_at timestamptz,
+  run_key text not null unique,
+  job_id text not null,
+  status text not null,
+  repo_full_name text not null,
+  org text,
+  pr_number bigint,
+  requestor text,
+  pr_head_sha text,
+  review_kind text not null,
+  provider text not null,
+  model text not null,
+  lane text,
+  delivery_id text,
+  comment_id text,
+  command_name text,
+  metadata jsonb not null default '{}'::jsonb
+)`,
+    },
+    {
       name: "create_model_prices",
       sql: `
 create table if not exists ${schemaIdent}.ai_model_prices (
@@ -149,6 +176,30 @@ create index if not exists ai_review_job_events_status_created_idx
       sql: `
 create index if not exists ai_review_job_events_requestor_created_idx
   on ${schemaIdent}.ai_review_job_events (requestor, created_at desc)`,
+    },
+    {
+      name: "index_run_claims_status_expires",
+      sql: `
+create index if not exists ai_review_run_claims_status_expires_idx
+  on ${schemaIdent}.ai_review_run_claims (status, expires_at)`,
+    },
+    {
+      name: "index_run_claims_repo_status",
+      sql: `
+create index if not exists ai_review_run_claims_repo_status_idx
+  on ${schemaIdent}.ai_review_run_claims (repo_full_name, status, created_at desc)`,
+    },
+    {
+      name: "index_run_claims_requestor_status",
+      sql: `
+create index if not exists ai_review_run_claims_requestor_status_idx
+  on ${schemaIdent}.ai_review_run_claims (requestor, status, created_at desc)`,
+    },
+    {
+      name: "index_run_claims_provider_model_status",
+      sql: `
+create index if not exists ai_review_run_claims_provider_model_status_idx
+  on ${schemaIdent}.ai_review_run_claims (provider, model, status, created_at desc)`,
     },
     {
       name: "view_daily_spend_by_requester",

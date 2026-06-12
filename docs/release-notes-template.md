@@ -21,6 +21,7 @@ repositories.
 - Provider lanes: Anthropic, OpenAI, and OpenRouter through explicit config.
 - Public-repo trusted-actor admission before model calls.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
+- Run-control claims for duplicate delivery and concurrency protection.
 - Dry-run-by-default Aurora ledger schema tooling.
 - No-network production preflight command.
 - Public/admin usage API contracts for 6529.io surfaces.
@@ -33,6 +34,7 @@ repositories.
 - Default Anthropic model:
 - Repository config template:
 - Budget mode and caps:
+- Run-control mode and caps:
 - Ledger schema status:
 - Alert delivery:
 - 6529.io dashboard/admin status:
@@ -45,6 +47,8 @@ are true:
 
 - trusted-actor admission is enabled;
 - budget mode is `enforce`;
+- run-control mode is `enforce`, or the release notes explain why it is
+  deferred;
 - provider keys and AWS credentials live only in bot-owned infrastructure;
 - target repo configuration is loaded from the base ref;
 - scheduled spend alerts route to an operator-owned channel.

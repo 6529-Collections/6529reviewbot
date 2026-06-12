@@ -18,6 +18,7 @@ Ready for community review:
   resolution;
 - budget admission against the isolated AWS usage ledger;
 - review job fanout across review kinds and provider/model lanes;
+- run-control contract for duplicate delivery claims and concurrency caps;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
@@ -36,6 +37,7 @@ Not yet v1-ready:
 
 - production GitHub App registration and deployment execution;
 - production worker deployment choice and scaling policy;
+- production DB-backed run-control claim implementation;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;
 - production SNS/webhook alert routing;
@@ -81,8 +83,17 @@ REVIEWBOT_BUDGET_MODE=enforce
 REVIEWBOT_BUDGET_GLOBAL_DAILY_USD=25
 REVIEWBOT_BUDGET_REPO_DAILY_USD=10
 REVIEWBOT_BUDGET_REQUESTOR_DAILY_USD=5
+REVIEWBOT_RUN_CONTROL_MODE=off
 REVIEWBOT_ALERTS_ENABLED=true
 REVIEWBOT_ALERTS_NOTIFY_MODE=sns
+```
+
+After a durable run-control claim store is wired, move to:
+
+```text
+REVIEWBOT_RUN_CONTROL_MODE=enforce
+REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=2
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=1
 ```
 
 Use target repo config only to narrow central policy:
@@ -113,7 +124,7 @@ When releasing publicly, describe the project as:
 - designed to keep provider keys, AWS access, and bot code out of target repo
   PR control;
 - intended to protect public repos with trusted-actor admission and budget
-  gates before model calls.
+  gates plus run-control claims before model calls.
 
 Avoid implying that arbitrary public repositories can safely enable automatic
 model calls without trusted-actor admission and budgets.

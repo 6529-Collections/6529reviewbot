@@ -40,9 +40,10 @@ merged PRs.
 - Job lifecycle ledger PR: merged as PR #24, merge commit `91701f2`
 - Ledger schema tooling PR: merged as PR #25, merge commit `0ffd197`
 - Production preflight PR: merged as PR #26, merge commit `9b57580`
-- Current branch: `codex/incident-runbooks`
-- Current local changes: incident response runbook and release/security/docs
-  references
+- Incident response runbook PR: merged as PR #27, merge commit `0c9ee6b`
+- Current branch: `codex/run-control`
+- Current local changes: run-control contract for duplicate delivery claims and
+  concurrency caps, plus schema/docs/tests
 
 ## Key Decisions
 
@@ -68,6 +69,9 @@ merged PRs.
   operators start the central App or worker.
 - Incident response should have containment-first runbooks that keep private
   payloads, secrets, and attacker-controlled content out of public artifacts.
+- Run control should claim budget-admitted jobs before worker dispatch. Dedupe
+  keys must include provider and model so multi-model review lanes do not block
+  each other.
 
 ## Constraints
 
@@ -79,11 +83,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate and publish the incident response runbook PR.
-2. Monitor bot feedback and merge the incident runbook PR if clean.
-3. Continue dogfood target-repo PRs once required human review completes.
-4. Prepare the next release-polish or operator-readiness slice after the
-   incident runbook PR lands.
+1. Validate, publish, and merge the run-control PR if checks and review are
+   clean.
+2. Continue dogfood target-repo PRs once required human review completes.
+3. Prepare the next release-polish or operator-readiness slice after the
+   run-control PR lands.
 
 ## Open Risks
 
@@ -95,7 +99,7 @@ merged PRs.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
 - OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.
-- Ledger schema still needs to be applied in the target Aurora database during
-  deployment.
+- Ledger schema, including run claims, still needs to be applied in the target
+  Aurora database during deployment.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

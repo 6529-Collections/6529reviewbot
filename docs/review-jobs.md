@@ -42,6 +42,12 @@ The job ID is deterministic for the delivery, PR, head SHA, review kind, and
 lane. Replays can therefore detect duplicated work without trusting prompt
 text or visible comments.
 
+Jobs also carry a `runKey`. Unlike `id`, the run key intentionally excludes
+the GitHub delivery id, so duplicate webhook deliveries for the same PR head,
+comment command, review kind, provider, and model can be deduped. Provider and
+model are included in the run key so the same review kind can still run through
+multiple lanes.
+
 ## Lanes
 
 Lanes are configured centrally:
@@ -96,10 +102,15 @@ Flow:
 2. Evaluate trusted-actor admission.
 3. Expand the event into review jobs.
 4. Evaluate budget admission for each job's provider, model, and review kind.
-5. Queue only budget-admitted jobs.
+5. Claim run-control slots for dedupe and concurrency.
+6. Queue only budget-admitted and run-control-admitted jobs.
 
 The webhook response includes admitted `jobs` and budget-denied `deniedJobs`
 summaries so operators can see exactly what happened.
+
+Run-control-denied jobs also appear in `deniedJobs`, and the response includes
+a `runControl` summary once jobs reach the claim stage. See
+[run-control.md](run-control.md).
 
 ## Worker Contract
 
