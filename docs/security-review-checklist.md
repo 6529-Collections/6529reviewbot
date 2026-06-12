@@ -112,9 +112,9 @@ Target deployment:
 - Public usage summaries redact private repo names unless allowlisted.
 - Admin usage routes fail closed unless the 6529.io auth bridge authorizes the
   request.
-- Admin job-events, run-claims, and runtime-status routes fail closed, expose
-  only bounded operational fields, and do not return secrets, raw prompts,
-  provider payloads, or raw webhook bodies.
+- Admin raw usage-events, job-events, run-claims, and runtime-status routes
+  fail closed, expose only bounded operational fields, and do not return
+  secrets, raw prompts, provider payloads, or raw webhook bodies.
 - Machine-readable API contracts are updated when usage/admin response shapes
   change, and `npm run validate:api-contract` passes.
 - Preflight, admin runtime status, and support bundles report secret presence

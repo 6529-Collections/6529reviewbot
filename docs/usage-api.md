@@ -13,6 +13,7 @@ The machine-readable OpenAPI contract lives at
 ```text
 GET /api/public/usage/summary?days=30
 GET /api/admin/usage/summary?days=30
+GET /api/admin/usage/events/recent?days=7&limit=50
 GET /api/admin/budget/policies
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
@@ -24,6 +25,7 @@ The default paths can be changed with:
 ```text
 REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
+REVIEWBOT_USAGE_API_ADMIN_USAGE_EVENTS_PATH=/api/admin/usage/events/recent
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
@@ -62,6 +64,75 @@ separate human-login system.
 The preferred mode is a short-lived HMAC assertion signed by trusted `6529.io`
 server-side infrastructure. See
 [admin-auth-bridge.md](admin-auth-bridge.md).
+
+## Usage Events
+
+`GET /api/admin/usage/events/recent` returns recent normalized usage events for
+private operator dashboards and incident triage. It accepts:
+
+- `days`: lookback window capped by `REVIEWBOT_USAGE_API_MAX_DAYS`;
+- `limit`: positive integer capped by `REVIEWBOT_USAGE_API_MAX_EVENTS`.
+
+When `limit` is omitted, the endpoint defaults to the smaller of
+`REVIEWBOT_USAGE_API_MAX_ITEMS` and `REVIEWBOT_USAGE_API_MAX_EVENTS` so the
+admin UI starts with a small page while the raw usage-event reader keeps one
+hard row cap end-to-end.
+
+This endpoint is admin-only because raw usage rows can include private repo
+names, PR numbers, requestors, provider/model routing, token counts, and cost
+estimates. It is the private complement to the public aggregate summary and
+should be called by server-side 6529.io infrastructure that signs the admin
+request. The browser should not read Aurora directly.
+
+The response boundary sanitizes custom loader output: string fields are
+bounded, common secret-shaped values are redacted, and `metadata` is reduced
+to safe-keyed scalar values. It must never include prompts, diffs, provider
+responses, worker output, raw webhook payloads, or credentials.
+
+Example response:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "usage_events",
+  "range": {
+    "days": 7,
+    "from": "2026-06-05T12:00:00.000Z",
+    "to": "2026-06-12T12:00:00.000Z"
+  },
+  "limit": 50,
+  "events": [
+    {
+      "createdAt": "2026-06-10T01:00:00.000Z",
+      "repoFullName": "6529-Collections/private-repo",
+      "prNumber": 12,
+      "prAuthor": "author",
+      "prHeadSha": "abc123",
+      "workflowRunId": "123456",
+      "workflowJob": "review-job",
+      "requestor": "maintainer",
+      "reviewKind": "security",
+      "provider": "openai",
+      "model": "gpt-5.2",
+      "lane": "openai:gpt-5.2",
+      "inputTokens": 1000,
+      "cachedInputTokens": 0,
+      "outputTokens": 250,
+      "reasoningTokens": 0,
+      "totalTokens": 1250,
+      "estimatedCostUsd": 0.75,
+      "actualCostUsd": null,
+      "costUsd": 0.75,
+      "currency": "USD",
+      "budgetSkipped": false,
+      "metadata": {
+        "requestor": "maintainer"
+      }
+    }
+  ]
+}
+```
 
 ## Budget Policies
 
@@ -229,7 +300,7 @@ Example response:
 The HTTP server accepts injectable loaders:
 
 ```js
-loadUsageEvents({ request, settings, range, visibility })
+loadUsageEvents({ request, settings, range, visibility, query })
 loadBudgetPolicies({ request, settings })
 loadJobEvents({ request, settings, query })
 loadRunClaims({ request, settings, query })

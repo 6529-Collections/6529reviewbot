@@ -307,7 +307,9 @@ Completed in `6529reviewbot`:
   completion;
 - public and admin usage API contracts;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
-- admin runtime status API backed by no-network preflight checks;
+- admin recent usage-events, job-events, run-claims, and runtime-status APIs
+  for private 6529.io operator surfaces;
+- admin runtime status is backed by no-network preflight checks;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

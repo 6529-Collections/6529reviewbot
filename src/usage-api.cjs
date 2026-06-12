@@ -4,6 +4,7 @@ const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 
 const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
+const DEFAULT_ADMIN_USAGE_EVENTS_PATH = "/api/admin/usage/events/recent";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
@@ -26,6 +27,8 @@ function usageApiSettingsFromEnv(env = process.env) {
     adminEnabled: parseBool(env.REVIEWBOT_USAGE_API_ADMIN_ENABLED || "true"),
     publicSummaryPath: env.REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH || DEFAULT_PUBLIC_SUMMARY_PATH,
     adminSummaryPath: env.REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH || DEFAULT_ADMIN_SUMMARY_PATH,
+    adminUsageEventsPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_USAGE_EVENTS_PATH || DEFAULT_ADMIN_USAGE_EVENTS_PATH,
     adminBudgetPoliciesPath:
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
     adminJobEventsPath:
@@ -46,6 +49,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
   return [
     settings.publicSummaryPath,
     settings.adminSummaryPath,
+    settings.adminUsageEventsPath,
     settings.adminBudgetPoliciesPath,
     settings.adminJobEventsPath,
     settings.adminRunClaimsPath,
@@ -93,6 +97,31 @@ async function handleUsageApiRequest(request, options = {}) {
         visibility: "admin",
         kind: "budget_policies",
         policies: (result.policies || []).map(publicBudgetPolicy),
+      },
+    };
+  }
+
+  if (route.kind === "usage_events") {
+    const query = usageEventsQueryFromRequest(request, settings, options.now || new Date());
+    const result = await (options.loadUsageEvents || defaultLoadUsageEvents)({
+      request,
+      settings,
+      range: query.range,
+      visibility: "admin",
+      query,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Usage events are unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "usage_events",
+        range: query.range,
+        limit: query.limit,
+        events: (result.events || []).map(normalizeAdminUsageEvent),
       },
     };
   }
@@ -206,6 +235,9 @@ function usageApiRoute(pathname, settings) {
   if (pathname === settings.adminSummaryPath) {
     return { visibility: "admin", kind: "usage_summary" };
   }
+  if (pathname === settings.adminUsageEventsPath) {
+    return { visibility: "admin", kind: "usage_events" };
+  }
   if (pathname === settings.adminBudgetPoliciesPath) {
     return { visibility: "admin", kind: "budget_policies" };
   }
@@ -258,6 +290,28 @@ function adminStatusQueryFromRequest(request) {
     profile,
     strict: parseQueryBool(request.url.searchParams.get("strict")),
   };
+}
+
+function usageEventsQueryFromRequest(request, settings, now = new Date()) {
+  const range = usageRangeFromRequest(request, settings, now);
+  const requestedLimit = request.url.searchParams.get("limit");
+  const defaultLimit = Math.min(settings.maxItems, settings.maxEvents);
+  const maxLimit = settings.maxEvents;
+  let limit;
+  try {
+    limit = requestedLimit
+      ? positiveIntEnv(requestedLimit, defaultLimit, "limit")
+      : defaultLimit;
+  } catch (error) {
+    error.statusCode = 400;
+    throw error;
+  }
+  if (limit > maxLimit) {
+    const error = new Error(`limit must be <= ${maxLimit}.`);
+    error.statusCode = 400;
+    throw error;
+  }
+  return { range, limit };
 }
 
 function jobEventsQueryFromRequest(request, settings) {
@@ -426,6 +480,35 @@ function normalizeJobEvent(event = {}) {
   };
 }
 
+function normalizeAdminUsageEvent(event = {}) {
+  const normalized = normalizeUsageEvent(event);
+  return {
+    createdAt: adminText(normalized.createdAt),
+    repoFullName: adminText(normalized.repoFullName),
+    prNumber: normalized.prNumber,
+    prAuthor: adminText(normalized.prAuthor),
+    prHeadSha: adminText(normalized.prHeadSha || event.prHeadSha || event.pr_head_sha || ""),
+    workflowRunId: adminText(normalized.workflowRunId || event.workflowRunId || event.workflow_run_id || ""),
+    workflowJob: adminText(normalized.workflowJob || event.workflowJob || event.workflow_job || ""),
+    requestor: adminText(normalized.requestor),
+    reviewKind: adminText(normalized.reviewKind),
+    provider: adminText(normalized.provider),
+    model: adminText(normalized.model),
+    lane: adminText(normalized.lane),
+    inputTokens: normalized.inputTokens,
+    cachedInputTokens: normalized.cachedInputTokens,
+    outputTokens: normalized.outputTokens,
+    reasoningTokens: normalized.reasoningTokens,
+    totalTokens: normalized.totalTokens,
+    estimatedCostUsd: normalized.estimatedCostUsd,
+    actualCostUsd: normalized.actualCostUsd,
+    costUsd: normalized.costUsd,
+    currency: adminText(normalized.currency),
+    budgetSkipped: normalized.budgetSkipped,
+    metadata: normalizeJobMetadata(normalized.metadata),
+  };
+}
+
 function normalizeRunClaim(claim = {}) {
   return {
     claimId: nullableNumber(claim.claimId ?? claim.id),
@@ -466,6 +549,9 @@ function normalizeUsageEvent(event = {}) {
     repoPrivate: Boolean(event.repoPrivate || event.repo_private),
     prNumber: nullableNumber(event.prNumber ?? event.pr_number),
     prAuthor: event.prAuthor || event.pr_author || "",
+    prHeadSha: event.prHeadSha || event.pr_head_sha || "",
+    workflowRunId: event.workflowRunId || event.workflow_run_id || "",
+    workflowJob: event.workflowJob || event.workflow_job || "",
     requestor: event.requestor || metadata.requestor || event.prAuthor || event.pr_author || "",
     reviewKind: event.reviewKind || event.review_kind || "",
     provider: event.provider || "",
@@ -481,6 +567,7 @@ function normalizeUsageEvent(event = {}) {
     costUsd: actualCostUsd ?? estimatedCostUsd ?? 0,
     currency: event.currency || "USD",
     budgetSkipped: Boolean(event.budgetSkipped || event.budget_skipped),
+    metadata,
   };
 }
 
@@ -775,12 +862,14 @@ module.exports = {
   DEFAULT_ADMIN_RUN_CLAIMS_PATH,
   DEFAULT_ADMIN_STATUS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
+  DEFAULT_ADMIN_USAGE_EVENTS_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
   adminStatusQueryFromRequest,
   handleUsageApiRequest,
   isPublicUsageRepo,
   isUsageApiPath,
   jobEventsQueryFromRequest,
+  normalizeAdminUsageEvent,
   normalizeJobEvent,
   normalizeRunClaim,
   normalizeUsageEvent,
@@ -789,5 +878,6 @@ module.exports = {
   sanitizeAdminDiagnosticPayload,
   summarizeUsageEvents,
   usageApiSettingsFromEnv,
+  usageEventsQueryFromRequest,
   usageRangeFromRequest,
 };

@@ -89,6 +89,7 @@ stabilized.
 - Public usage summaries now enforce repo/org allowlists before showing repo
   names, even when custom loaders provide non-private public repo events.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
+- Admin-only recent usage-events API for private raw usage diagnostics.
 - Admin-only recent job-events API for queue and worker diagnostics.
 - Admin-only recent run-claims API for stale active claim triage.
 - Admin-only runtime status API backed by no-network preflight checks.
