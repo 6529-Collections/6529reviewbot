@@ -65,6 +65,9 @@ decision. The command signs the local payload, runs the App pipeline, and
 prints the same public response shape the webhook handler would produce. It is
 dry-run unless `--dispatch` is passed.
 
+For active spend, secret, webhook, provider, ledger, or bad-comment incidents,
+use [Incident Response](incident-response.md).
+
 ## If Reviews Stop Posting
 
 Check:

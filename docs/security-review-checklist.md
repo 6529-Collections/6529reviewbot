@@ -53,6 +53,8 @@ Target deployment:
 - Admin usage routes fail closed unless the 6529.io auth bridge authorizes the
   request.
 - Alerting paths do not include secrets or raw prompts in messages.
+- Incident response docs cover spend spikes, secret exposure, provider
+  outages, webhook abuse, ledger outages, and bad bot comments.
 - Documentation does not include live secrets, private PR data, provider
   diagnostics, or AWS account details beyond intended public ARNs/examples.
 

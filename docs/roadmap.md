@@ -293,6 +293,7 @@ Completed in `6529reviewbot`:
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.
 - no-network production preflight checks.
+- incident response runbook for operator containment and recovery.
 
 In progress in `6529reviewbot`:
 

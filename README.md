@@ -72,6 +72,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
+- [Incident Response](docs/incident-response.md): containment and recovery runbooks.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 
@@ -326,6 +327,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Roadmap](docs/roadmap.md)
 - [AWS usage ledger](docs/aws-usage-ledger.md)
 - [Operations runbook](docs/operations.md)
+- [Incident response](docs/incident-response.md)
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
 - [Security review checklist](docs/security-review-checklist.md)

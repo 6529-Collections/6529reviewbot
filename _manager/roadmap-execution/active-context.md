@@ -39,9 +39,10 @@ merged PRs.
 - Model catalog defaults PR: merged as PR #23, merge commit `8cba107`
 - Job lifecycle ledger PR: merged as PR #24, merge commit `91701f2`
 - Ledger schema tooling PR: merged as PR #25, merge commit `0ffd197`
-- Current branch: `codex/production-preflight`
-- Current local changes: no-network runtime preflight CLI, smoke coverage, and
-  operator/release docs
+- Production preflight PR: merged as PR #26, merge commit `9b57580`
+- Current branch: `codex/incident-runbooks`
+- Current local changes: incident response runbook and release/security/docs
+  references
 
 ## Key Decisions
 
@@ -65,6 +66,8 @@ merged PRs.
   docs, not only hand-written SQL snippets in prose.
 - Deployment readiness should be checkable without network calls before
   operators start the central App or worker.
+- Incident response should have containment-first runbooks that keep private
+  payloads, secrets, and attacker-controlled content out of public artifacts.
 
 ## Constraints
 
@@ -76,11 +79,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate and publish the production preflight PR.
-2. Monitor bot feedback and merge the preflight PR if clean.
+1. Validate and publish the incident response runbook PR.
+2. Monitor bot feedback and merge the incident runbook PR if clean.
 3. Continue dogfood target-repo PRs once required human review completes.
 4. Prepare the next release-polish or operator-readiness slice after the
-   preflight PR lands.
+   incident runbook PR lands.
 
 ## Open Risks
 

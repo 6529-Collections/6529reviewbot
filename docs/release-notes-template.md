@@ -56,6 +56,7 @@ are true:
 - 6529.io private admin UI:
 - Dogfood repositories:
 - Provider pricing/model update process:
+- Incident response readiness:
 - Compatibility guarantees:
 
 ## Upgrade Notes
