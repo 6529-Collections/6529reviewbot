@@ -42,8 +42,10 @@ Ready for community review:
 - documented maintainer comment-command contract;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and central worker template that mints
-  short-lived GitHub App installation tokens.
-- machine-readable v0 release gates and checklist renderer.
+  short-lived GitHub App installation tokens;
+- machine-readable v0 release gates and checklist renderer;
+- PR and security-review templates that call out API contracts, admin/private
+  data boundaries, budget controls, runtime pauses, and release validation.
 
 Not yet v1-ready:
 
@@ -80,6 +82,11 @@ local and manual gates.
 
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
+
+Use the repository pull request template as the routine contributor gate for
+changes that affect behavior, security, cost, or API contracts. It is not a
+replacement for the release checklist, but it should catch review-sensitive
+changes before they reach release prep.
 
 ## Conservative Dogfood Defaults
 

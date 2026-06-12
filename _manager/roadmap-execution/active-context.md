@@ -56,11 +56,11 @@ merged PRs.
 - Runtime pause controls PR: merged as PR #40, merge commit `137c949`
 - Comment-command docs PR: merged as PR #41, merge commit `752f1a5`
 - Installation/onboarding guide PR: merged as PR #42, merge commit `b945e57`
-- Current branch: `codex/usage-api-openapi-contract`
-- Current local changes: OpenAPI contract for usage/admin endpoints,
-  lightweight validator, release-check integration, package script, README and
-  usage docs, changelog, release readiness, roadmap, v0 plan, and
-  manager-memory updates
+- Usage API OpenAPI contract PR: merged as PR #43, merge commit `174b275`
+- Current branch: `codex/release-template-hardening`
+- Current local changes: PR template, security checklist, release process,
+  release readiness, roadmap, changelog, and manager-memory updates for
+  routine API/security/cost/release review prompts.
 
 ## Key Decisions
 
@@ -136,11 +136,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the OpenAPI usage/admin API contract PR if checks and
+1. Validate, publish, and merge the release-template hardening PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after the API
-   contract lands.
+3. Prepare the next operator-readiness or release-polish slice after this PR
+   lands.
 
 ## Open Risks
 
