@@ -21,11 +21,12 @@ merged PRs.
 - Usage API contract PR: merged as PR #9, merge commit `f5af840`
 - Aurora usage loader PR: merged as PR #10, merge commit `edaadc6`
 - Dashboard progress docs PR: merged as PR #11, merge commit `f635a2d`
+- Repository config PR: merged as PR #12, merge commit `6edb52d`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/repo-org-config-policy`
-- Current local changes: repo configuration loading, validation, docs, and
-  smoke tests in progress
+- Current branch: `codex/worker-execution-adapters`
+- Current local changes: worker adapter PR review fixes for fork checkout,
+  bounded GitHub Actions dispatch, docs, and smoke tests
 
 ## Key Decisions
 
@@ -54,11 +55,10 @@ merged PRs.
 
 ## Next Actions
 
-1. Finish, PR, and merge repo/org configuration loading and validation.
-2. Add worker execution adapters beyond the current job interface.
-3. Add admin auth bridge contract for 6529.io private controls.
-4. Add alerting and scheduled budget-spike checks.
-5. Sweep docs for community-release readiness.
+1. Push and merge worker execution adapters after review-fix checks pass.
+2. Add admin auth bridge contract for 6529.io private controls.
+3. Add alerting and scheduled budget-spike checks.
+4. Sweep docs for community-release readiness.
 
 ## Open Risks
 
@@ -69,5 +69,5 @@ merged PRs.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
 - OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.
-- Frontend PR #2605 is open and verified locally, but merge is blocked by
-  required review and pending CodeQL/Snyk/CodeRabbit checks.
+- Frontend PR #2605 is open and verified locally; all checks are green, but
+  merge is still blocked by required human review.

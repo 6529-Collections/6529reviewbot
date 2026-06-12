@@ -1,6 +1,6 @@
 # Architecture
 
-`6529reviewbot` has five layers.
+`6529reviewbot` has six layers.
 
 ## 1. GitHub App Identity
 
@@ -51,7 +51,19 @@ disable work, narrow review kinds, choose from centrally allowed lanes, and add
 tighter budget/admission rules. It cannot expand model/provider access beyond
 central App policy.
 
-## 3. Review Engine
+## 3. Worker Adapters
+
+Worker adapters bridge admitted jobs to execution. The current adapters are:
+
+- `noop`, the default safe adapter that does not execute jobs;
+- `local`, which runs the review CLI in the current bot checkout;
+- `github_actions`, which dispatches a central bot workflow with job inputs.
+
+Adapters run only after webhook authenticity, admission, job fanout, and budget
+checks. They do not make target repositories owners of provider keys, AWS
+credentials, or bot implementation code.
+
+## 4. Review Engine
 
 The review engine lives in `src/review-bot.cjs`.
 
@@ -66,7 +78,7 @@ It gathers bounded context:
 
 It then builds a prompt for one review kind and calls the selected provider.
 
-## 4. Usage Ledger
+## 5. Usage Ledger
 
 The usage ledger lives in AWS Aurora PostgreSQL Serverless v2 and is written
 through the RDS Data API. GitHub Actions should assume an AWS IAM role through
@@ -83,7 +95,7 @@ The ledger records one row per review run with:
 - cost fields when available;
 - metadata needed for audit/debugging.
 
-## 5. Usage API
+## 6. Usage API
 
 The usage API is the read-side contract for dashboards and admin tools. Public
 endpoints return aggregate usage data that is safe for 6529.io transparency

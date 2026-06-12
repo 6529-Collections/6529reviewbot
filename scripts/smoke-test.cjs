@@ -15,6 +15,7 @@ const reviewBot = require("../src/review-bot.cjs");
 const usageApi = require("../src/usage-api.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
+const workerAdapter = require("../src/worker-adapter.cjs");
 
 const settings = withEnv(
   {
@@ -269,6 +270,51 @@ const firstJobEvent = reviewJob.eventForReviewJob(normalizedPullRequest, reviewJ
 assert.deepEqual(firstJobEvent.reviewKinds, [reviewJobs[0].reviewKind]);
 assert.equal(firstJobEvent.run.provider, reviewJobs[0].provider);
 assert.equal(firstJobEvent.run.model, reviewJobs[0].model);
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).GH_REPO, "6529-Collections/example");
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEW_KIND, "general");
+assert.match(workerAdapter.reviewCommandArgs(reviewJobs[0])[0], /general-pr-review\.cjs$/);
+const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
+  policy: workerAdapter.workerAdapterPolicyFromEnv({
+    REVIEWBOT_WORKER_ADAPTER: "local",
+  }),
+  includeOutput: true,
+  localCommandArgs: [
+    "-e",
+    "process.stdout.write(`${process.env.REVIEW_KIND}:${process.env.GH_REPO}`)",
+  ],
+});
+assert.equal(localWorkerResult.accepted, true);
+assert.equal(localWorkerResult.stdout, "general:6529-Collections/example");
+let dispatchedWorkflow = null;
+const forkReviewJob = { ...reviewJobs[0], headRepoFullName: "external/fork" };
+const dispatchResult = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
+  policy: {
+    mode: "github_actions",
+    githubRepo: "6529-Collections/6529reviewbot",
+    githubWorkflow: "review-job.yml",
+    githubRef: "main",
+    ghBin: "gh",
+    localTimeoutMs: 1234,
+  },
+  spawnSync: (bin, args, options) => {
+    dispatchedWorkflow = { bin, args, options };
+    return { status: 0, stdout: "queued", stderr: "" };
+  },
+});
+assert.equal(dispatchResult.accepted, true);
+assert.equal(dispatchedWorkflow.bin, "gh");
+assert.equal(dispatchedWorkflow.options.timeout, 1234);
+assert.deepEqual(
+  workerAdapter.githubWorkflowFields(forkReviewJob).target_repo,
+  "6529-Collections/example"
+);
+assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
+assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
+assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/example"), true);
+assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[0]], {}, {
+  policy: { mode: "noop" },
+});
 assert.equal(
   reviewJob.publicReviewJobSummary({
     ...reviewJobs[0],
@@ -556,6 +602,9 @@ appServer.handleGitHubWebhook({
   const loadedRepoConfig = await loadedRepoConfigPromise;
   assert.equal(loadedRepoConfig.status, "loaded");
   assert.equal(loadedRepoConfig.config.enabled, false);
+  const noopQueue = await noopQueuePromise;
+  assert.equal(noopQueue.accepted, false);
+  assert.equal(noopQueue.reason, "No worker adapter configured.");
 
   const usageApiSettings = usageApi.usageApiSettingsFromEnv({
     REVIEWBOT_USAGE_API_DEFAULT_DAYS: "7",
