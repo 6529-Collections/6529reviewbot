@@ -1,0 +1,254 @@
+# Installation And Onboarding
+
+This guide is the shortest path from a fresh `6529reviewbot` checkout to a
+conservative dogfood installation of the central GitHub App named `6529bot`.
+
+`6529reviewbot` is pre-v1 infrastructure. Start with one trusted repository,
+`noop` workers, strict budgets, and command-only reviews. Move to live model
+calls only after webhook delivery, admission, budget, ledger, and rollback
+paths are verified.
+
+## 1. Prepare The Bot Repository
+
+```bash
+npm install
+npm run release:check
+npm run preflight
+```
+
+Read:
+
+- [architecture.md](architecture.md)
+- [security-model.md](security-model.md)
+- [release-readiness.md](release-readiness.md)
+- [v0-release-plan.md](v0-release-plan.md)
+
+## 2. Create The GitHub App
+
+Create a GitHub App named `6529bot`.
+
+Minimum recommended permissions:
+
+```text
+Contents: read
+Issues: write
+Metadata: read
+Pull requests: read
+Members: read
+```
+
+Subscribe to:
+
+```text
+Issue comment
+Pull request
+```
+
+Set the webhook URL to:
+
+```text
+https://<bot-host>/webhooks/github
+```
+
+Store the webhook secret and App private key only in the bot runtime secret
+store. See [github-app.md](github-app.md) and [deployment.md](deployment.md).
+
+## 3. Configure Central Runtime
+
+Start from:
+
+```text
+templates/dogfood-central-env.example
+```
+
+Keep these conservative defaults for the first pass:
+
+```text
+REVIEWBOT_ENABLED=true
+REVIEWBOT_PUBLIC_REPO_MODE=trusted
+REVIEWBOT_DRAFT_PR_MODE=skip
+REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github
+REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
+REVIEWBOT_WORKER_ADAPTER=noop
+REVIEWBOT_BUDGET_MODE=enforce
+REVIEWBOT_JOB_LEDGER_ENABLED=true
+REVIEW_USAGE_ENABLED=true
+```
+
+Configure secret families in bot-owned infrastructure:
+
+- GitHub App id, private key, and webhook secret;
+- provider keys for the enabled lanes;
+- AWS Data API access for the isolated Aurora ledger;
+- alert delivery credentials, if not using `stdout`;
+- 6529.io admin-auth HMAC secret, when private admin routes are enabled.
+
+Provider setup is documented in [provider-setup.md](provider-setup.md). Runtime
+settings are documented in [configuration.md](configuration.md).
+
+## 4. Prepare The Ledger
+
+Preview and apply the schema from an operator environment with AWS access:
+
+```bash
+npm run ledger:schema
+npm run ledger:schema -- -- --apply
+```
+
+If provider cost estimates should come from maintained price rows, review a
+price file and apply it:
+
+```bash
+npm run model-prices -- --file config/model-prices.example.json
+npm run model-prices -- --file <reviewed-price-file.json> --apply
+```
+
+See [aws-usage-ledger.md](aws-usage-ledger.md) and
+[model-pricing.md](model-pricing.md).
+
+## 5. Start The App In Noop Mode
+
+Run a no-network preflight first:
+
+```bash
+npm run preflight -- --strict
+```
+
+Start the server in the chosen hosting environment:
+
+```bash
+npm start
+```
+
+Verify:
+
+```text
+GET /healthz
+```
+
+Then confirm GitHub App `ping` deliveries are acknowledged. For local saved
+payload debugging, use:
+
+```bash
+npm run webhook:replay -- --payload payload.json --assume-empty-budget
+```
+
+Replay is dry-run unless `--dispatch` is passed.
+
+## 6. Add A Worker Path
+
+Keep `noop` until the central App response shows the expected event,
+configuration, admission, budget, runtime-control, and job fanout decisions.
+
+For GitHub Actions workers, install:
+
+```text
+templates/review-job-workflow.yml
+```
+
+as:
+
+```text
+.github/workflows/review-job.yml
+```
+
+in this repository. Then set:
+
+```text
+REVIEWBOT_WORKER_ADAPTER=github_actions
+REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
+REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+```
+
+The worker mints a short-lived installation token for the target repo. Target
+repositories do not receive provider keys, AWS credentials, or long-lived bot
+tokens. See [worker-adapters.md](worker-adapters.md).
+
+## 7. Wire 6529.io Surfaces
+
+Public 6529.io pages should call:
+
+```text
+GET /api/public/usage/summary?days=30
+```
+
+Private admin pages should call server-side 6529.io infrastructure that signs
+admin requests to:
+
+```text
+GET /api/admin/usage/summary?days=30
+GET /api/admin/budget/policies
+GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
+GET /api/admin/status?profile=server
+```
+
+The browser must not receive bot admin signing secrets, provider keys, GitHub
+App private keys, or AWS credentials. See [usage-api.md](usage-api.md) and
+[admin-auth-bridge.md](admin-auth-bridge.md).
+
+## 8. Onboard One Target Repository
+
+Install the GitHub App on one selected repository.
+
+Add a repository config file on the target repository base branch:
+
+```text
+.github/6529bot.yml
+```
+
+Start with command-only mode:
+
+```bash
+cp templates/dogfood-command-only-config.yml <target-repo>/.github/6529bot.yml
+```
+
+Validate the config before opening the target repo PR:
+
+```bash
+npm run validate:repo-config -- <target-repo>/.github/6529bot.yml
+```
+
+After the config merges, trigger a trusted maintainer command:
+
+```text
+/6529bot security
+```
+
+See [comment-commands.md](comment-commands.md) and [dogfood.md](dogfood.md).
+
+## 9. Move Gradually To Live Coverage
+
+Only after command-only reviews are healthy:
+
+1. Keep one provider/model lane.
+2. Enable limited initial reviews with
+   `templates/dogfood-repository-config.yml`.
+3. Keep strict repo, requestor, PR, provider, model, and review-kind budgets.
+4. Enable run-control ledger claims before using `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
+5. Watch usage summaries, job events, alerts, and PR comment quality.
+
+## 10. Roll Back
+
+Fast rollback options, from broadest to narrowest:
+
+```text
+REVIEWBOT_ENABLED=false
+REVIEWBOT_WORKER_ADAPTER=noop
+REVIEWBOT_PUBLIC_REPO_MODE=off
+REVIEWBOT_DISABLED_REPOS=<owner/repo>
+```
+
+Target repository rollback:
+
+```yaml
+enabled: false
+```
+
+Last resort:
+
+- uninstall the GitHub App from the target repository;
+- disable provider keys in the bot secret store;
+- disable alert or AWS access from the bot runtime.
+
+Use [incident-response.md](incident-response.md) for active incidents.

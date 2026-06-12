@@ -49,6 +49,7 @@ The first `v0` tag can include:
 - no-network production preflight command;
 - incident response runbook;
 - sanitized support bundle and support playbook;
+- install and onboarding guide;
 - dogfood templates, deployment docs, release checks, and security-review
   checklists.
 

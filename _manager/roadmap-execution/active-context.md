@@ -54,10 +54,11 @@ merged PRs.
 - Admin job-events API PR: merged as PR #38, merge commit `283b9d3`
 - Admin runtime status API PR: merged as PR #39, merge commit `9134361`
 - Runtime pause controls PR: merged as PR #40, merge commit `137c949`
-- Current branch: `codex/comment-command-docs`
-- Current local changes: dedicated maintainer comment-command contract docs,
-  README and operator-doc links, changelog, release readiness, roadmap, v0
-  plan, and manager-memory updates
+- Comment-command docs PR: merged as PR #41, merge commit `752f1a5`
+- Current branch: `codex/install-onboarding-guide`
+- Current local changes: ordered installation/onboarding guide, README and
+  runbook links, dogfood env/rollback runtime-control updates, changelog,
+  release readiness, roadmap, v0 plan, and manager-memory updates
 
 ## Key Decisions
 
@@ -118,6 +119,8 @@ merged PRs.
   run before budget reservation and worker dispatch.
 - Maintainer comment commands are part of the public product contract and
   should be documented separately from webhook implementation details.
+- Community-facing onboarding should have one ordered install path that links
+  to the deeper deployment, dogfood, provider, ledger, and admin-auth docs.
 
 ## Constraints
 
@@ -129,11 +132,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the comment-command docs PR if checks and
+1. Validate, publish, and merge the install/onboarding guide PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   command contract docs land.
+   onboarding guide lands.
 
 ## Open Risks
 

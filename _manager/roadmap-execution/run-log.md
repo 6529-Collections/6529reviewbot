@@ -403,3 +403,15 @@
     and examples;
   - README, GitHub App, review workflows, dogfood, release readiness, v0 plan,
     changelog, roadmap, and manager-memory links/updates.
+- Merged `6529reviewbot` PR #41 as `752f1a5` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/install-onboarding-guide` increment:
+  - ordered `docs/install.md` for fresh checkout, GitHub App creation, central
+    runtime configuration, ledger setup, noop server verification, worker
+    wiring, 6529.io API wiring, target repo onboarding, gradual live rollout,
+    and rollback;
+  - dogfood central env template now lists runtime-control pause variables;
+  - dogfood rollback now includes scoped and global runtime-control stops;
+  - README, deployment, dogfood, changelog, release readiness, v0 plan,
+    roadmap, and manager-memory updates.

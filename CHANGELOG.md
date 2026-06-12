@@ -50,6 +50,7 @@ stabilized.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.
 - Comment-command contract documentation for maintainer-triggered reviews.
+- Installation and onboarding guide for conservative central App dogfood.
 - Production deployment runbook for GitHub App, worker, usage API, and 6529.io
   wiring.
 - Release check script and manual security review checklist for dogfood and
