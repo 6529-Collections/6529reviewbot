@@ -63,6 +63,7 @@ Ready for community review:
   mints short-lived GitHub App installation tokens;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
+- CI runs `npm run release:check` on pull requests and pushes to `main`;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
   dry-run mode;
 - machine-readable v0 release gates with optional status/evidence rendering;

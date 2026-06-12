@@ -703,3 +703,12 @@
   - skip fenced code blocks and external URLs while checking local targets;
   - wire the checker into release checks;
   - update release-readiness docs, roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #67 as `93c738b` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/ci-release-check` increment:
+  - switch the default CI workflow from separate `check`/`test` commands to
+    the full `npm run release:check`;
+  - document that PR CI now covers docs links, public artifact scanning,
+    workflow pins, API contracts, model catalog, and templates;
+  - update release docs, roadmap, changelog, and manager memory.

@@ -332,6 +332,7 @@ Completed in `6529reviewbot`:
 - installed central worker and dormant-by-default alert workflows with
   action-ref validation.
 - repeatable release check script and manual security review checklist.
+- CI enforcement of `npm run release:check` on pull requests and `main`.
 - documentation link checker for the public docs surface.
 - public artifact leak scanner for docs, examples, workflows, and durable
   manager memory.
