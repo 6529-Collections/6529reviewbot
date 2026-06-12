@@ -43,9 +43,10 @@ merged PRs.
 - Incident response runbook PR: merged as PR #27, merge commit `0c9ee6b`
 - Run control contract PR: merged as PR #28, merge commit `ac7bc12`
 - Run control ledger PR: merged as PR #29, merge commit `ba902fe`
-- Current branch: `codex/budget-ledger-wiring`
-- Current local changes: production server wiring for budget spend snapshots
-  from the usage ledger, plus docs/tests
+- Budget ledger wiring PR: merged as PR #30, merge commit `25bd1b9`
+- Current branch: `codex/run-claim-status`
+- Current local changes: run-control claim status updates after dispatch
+  attempts, plus docs/tests
 
 ## Key Decisions
 
@@ -78,6 +79,9 @@ merged PRs.
 - Production server budget checks should use the same isolated usage ledger
   when `REVIEW_USAGE_ENABLED=true`, and the resolver must receive merged
   repository budget policy.
+- Run-control claims should be marked `dispatch_failed` or `dispatch_error`
+  when queueing fails so failed dispatches do not consume active concurrency
+  slots until TTL.
 
 ## Constraints
 
@@ -89,11 +93,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the budget-ledger wiring PR if checks and
-   review are clean.
+1. Validate, publish, and merge the run-claim status PR if checks and review
+   are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   budget-ledger wiring PR lands.
+   run-claim status PR lands.
 
 ## Open Risks
 

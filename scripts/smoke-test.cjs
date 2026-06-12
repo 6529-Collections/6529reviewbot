@@ -720,6 +720,36 @@ assert.equal(
   runClaimQuery.parameters.find((param) => param.name === "run_key").value.stringValue,
   reviewJobs[0].runKey
 );
+const runClaimUpdateQuery = runControlLedger.buildRunClaimStatusUpdate(
+  "reviewbot",
+  reviewJobs[0],
+  "dispatch_failed",
+  { metadata: { queueReason: "closed", ignored: { nested: true } } }
+);
+assert.match(runClaimUpdateQuery.sql, /completed_at/);
+assert.equal(
+  runClaimUpdateQuery.parameters.find((param) => param.name === "status").value.stringValue,
+  "dispatch_failed"
+);
+assert.match(
+  runClaimUpdateQuery.parameters.find((param) => param.name === "metadata").value.stringValue,
+  /queueReason/
+);
+let updatedRunClaim = null;
+const updateRunClaimResult = runControlLedger.updateRunClaimStatus(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  "dispatch_failed",
+  {
+    metadata: { queueReason: "closed" },
+    executeStatement: (settings, sql, parameters, options) => {
+      updatedRunClaim = { settings, sql, parameters, options };
+      return {};
+    },
+  }
+);
+assert.equal(updateRunClaimResult.skipped, false);
+assert.equal(updatedRunClaim.options.tempPrefix, "6529-run-control-update-");
 const claimedDecisionPromise = runControlLedger.claimReviewJobWithLedger(
   runControlLedgerSettings,
   reviewJobs[0],
@@ -1423,6 +1453,36 @@ appServer.handleGitHubWebhook({
   assert.equal(budgetDeniedResult.body.enqueued, false);
   assert.equal(budgetDeniedResult.body.deniedJobs.length, 4);
   assert.equal(budgetDeniedQueued, false);
+  const dispatchStatusUpdates = [];
+  const dispatchFailedResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    runControlPolicy,
+    claimReviewJob: async (job, context) =>
+      runControl.evaluateRunControl({
+        job,
+        policy: context.policy,
+        snapshot: { unavailable: false, active: {} },
+      }),
+    enqueueReviewJobs: async () => ({ accepted: false, reason: "queue closed" }),
+    updateRunClaimStatus: async (job, status, options) => {
+      dispatchStatusUpdates.push({ job, status, options });
+    },
+  });
+  assert.equal(dispatchFailedResult.body.enqueued, false);
+  assert.equal(dispatchStatusUpdates.length, 4);
+  assert.equal(dispatchStatusUpdates[0].status, "dispatch_failed");
+  assert.equal(dispatchStatusUpdates[0].options.metadata.queueReason, "queue closed");
   let runControlDeniedQueued = false;
   const runControlDeniedResult = await appServer.handleGitHubWebhook({
     headers: {

@@ -66,6 +66,24 @@ async function claimReviewJobWithLedger(settings, job, context = {}, options = {
   }
 }
 
+function updateRunClaimStatus(settings, job, status, options = {}) {
+  if (!settings.enabled) {
+    return { skipped: true };
+  }
+  try {
+    assertDataApiSettings(settings, "Run-control ledger");
+    const query = buildRunClaimStatusUpdate(settings.schema, job, status, options);
+    const execute = options.executeStatement || executeStatement;
+    execute(settings, query.sql, query.parameters, {
+      tempPrefix: "6529-run-control-update-",
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    return { skipped: false };
+  } catch (error) {
+    return { skipped: false, error };
+  }
+}
+
 function buildRunClaimQuery(schema, job, policy, options = {}) {
   assertClaimableJob(job);
   const schemaIdent = quoteIdent(schema);
@@ -356,6 +374,31 @@ function runClaimRecordToDecision(record, job, policy) {
   return unavailableDecision(job, policy, "Run-control claim conflicted.");
 }
 
+function buildRunClaimStatusUpdate(schema, job, status, options = {}) {
+  assertClaimableJob(job);
+  const normalizedStatus = claimStatus(status);
+  return {
+    sql: `
+update ${quoteIdent(schema)}.ai_review_run_claims
+set
+  status = :status,
+  updated_at = now(),
+  completed_at = case
+    when :terminal_status then coalesce(completed_at, now())
+    else completed_at
+  end,
+  metadata = metadata || cast(:metadata as jsonb)
+where run_key = :run_key
+`,
+    parameters: [
+      stringParam("status", normalizedStatus),
+      boolParam("terminal_status", isTerminalClaimStatus(normalizedStatus)),
+      stringParam("metadata", JSON.stringify(safeMetadata(options.metadata))),
+      stringParam("run_key", job.runKey),
+    ],
+  };
+}
+
 function cappedScopes(subject, policy) {
   const result = [];
   for (const scopeType of RUN_CONTROL_SCOPES) {
@@ -378,6 +421,42 @@ function unavailableDecision(job, policy, reason) {
     policy,
     snapshot: { unavailable: true, reason },
   });
+}
+
+function claimStatus(status) {
+  const normalized = String(status || "").trim();
+  const allowed = [
+    "claimed",
+    "dispatching",
+    "running",
+    "completed",
+    "dispatch_failed",
+    "dispatch_error",
+    "expired",
+  ];
+  if (!allowed.includes(normalized)) {
+    throw new Error(`Unsupported run-control claim status '${status}'.`);
+  }
+  return normalized;
+}
+
+function isTerminalClaimStatus(status) {
+  return ["completed", "dispatch_failed", "dispatch_error", "expired"].includes(status);
+}
+
+function safeMetadata(metadata = {}) {
+  const result = {};
+  for (const [key, value] of Object.entries(metadata || {})) {
+    if (value === undefined || value === null) {
+      continue;
+    }
+    if (typeof value === "string") {
+      result[key] = value.slice(0, 1000);
+    } else if (typeof value === "number" || typeof value === "boolean") {
+      result[key] = value;
+    }
+  }
+  return result;
 }
 
 function parseBool(value) {
@@ -439,7 +518,9 @@ function safeError(error) {
 
 module.exports = {
   buildRunClaimQuery,
+  buildRunClaimStatusUpdate,
   claimReviewJobWithLedger,
   runClaimRecordToDecision,
   runControlLedgerSettingsFromEnv,
+  updateRunClaimStatus,
 };

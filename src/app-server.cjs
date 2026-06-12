@@ -72,6 +72,7 @@ function createReviewbotServer(options = {}) {
     ((event) => loadRepositoryConfigForEvent(event, { policy: repositoryConfigPolicy }));
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
   const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
+  const updateRunClaimStatus = options.updateRunClaimStatus || defaultUpdateRunClaimStatus;
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -91,6 +92,7 @@ function createReviewbotServer(options = {}) {
         loadRepositoryConfig,
         usageApiSettings,
         recordJobEvent,
+        updateRunClaimStatus,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
@@ -158,6 +160,7 @@ async function handleHttpRequest(request, options) {
     repositoryConfigPolicy: options.repositoryConfigPolicy,
     loadRepositoryConfig: options.loadRepositoryConfig,
     recordJobEvent: options.recordJobEvent,
+    updateRunClaimStatus: options.updateRunClaimStatus,
   });
 }
 
@@ -356,10 +359,20 @@ async function handleGitHubWebhook(input) {
       allJobs: allKnownJobs,
     });
   } catch (error) {
+    await recordRunClaimDispatchExceptionStatuses(
+      input.updateRunClaimStatus,
+      dispatchableJobs,
+      error
+    );
     await recordDispatchExceptionEvents(input.recordJobEvent, dispatchableJobs, error);
     throw error;
   }
   const accepted = enqueueResult?.accepted !== false;
+  await recordRunClaimDispatchStatuses(
+    input.updateRunClaimStatus,
+    dispatchableJobs,
+    enqueueResult || {}
+  );
   await recordJobEvents(
     input.recordJobEvent,
     dispatchJobEventsFromQueueResult(dispatchableJobs, enqueueResult || {})
@@ -422,6 +435,10 @@ async function defaultRecordJobEvent() {
   return { skipped: true };
 }
 
+async function defaultUpdateRunClaimStatus() {
+  return { skipped: true };
+}
+
 async function recordBudgetJobEvents(recordJobEvent, jobs) {
   await recordJobEvents(
     recordJobEvent,
@@ -450,6 +467,53 @@ async function recordRunControlJobEvents(recordJobEvent, jobs) {
     );
   }
   await recordJobEvents(recordJobEvent, events);
+}
+
+async function recordRunClaimDispatchExceptionStatuses(updateRunClaimStatus, jobs, error) {
+  await recordRunClaimDispatchStatuses(
+    updateRunClaimStatus,
+    jobs,
+    {
+      accepted: false,
+      reason: safeError(error),
+      jobs: (jobs || []).map((job) => ({
+        jobId: job.id,
+        accepted: false,
+        reason: safeError(error),
+      })),
+      claimStatus: "dispatch_error",
+    }
+  );
+}
+
+async function recordRunClaimDispatchStatuses(updateRunClaimStatus, jobs, queueResult = {}) {
+  const updater = updateRunClaimStatus || defaultUpdateRunClaimStatus;
+  const perJobResults = new Map();
+  for (const result of queueResult.jobs || []) {
+    if (result.jobId) {
+      perJobResults.set(result.jobId, result);
+    }
+  }
+  for (const job of jobs || []) {
+    if (!job.runControl || job.runControl.status === "skipped") {
+      continue;
+    }
+    const result = perJobResults.get(job.id);
+    const hasPerJobResult = Boolean(result);
+    const accepted = hasPerJobResult ? Boolean(result.accepted) : queueResult.accepted !== false;
+    const status =
+      queueResult.claimStatus || (accepted ? "dispatching" : "dispatch_failed");
+    await updater(job, status, {
+      metadata: {
+        queueStatus: queueResult.status || "",
+        queueReason: result?.reason || queueResult.reason || "",
+        adapter: result?.adapter || queueResult.adapter || "",
+        workflow: result?.workflow || queueResult.workflow || "",
+        workflowRepo: result?.workflowRepo || queueResult.workflowRepo || "",
+        workflowRef: result?.workflowRef || queueResult.workflowRef || "",
+      },
+    });
+  }
 }
 
 async function recordDispatchExceptionEvents(recordJobEvent, jobs, error) {
@@ -534,6 +598,7 @@ module.exports = {
   defaultEnqueueReviewJobs,
   defaultClaimReviewJob,
   defaultRecordJobEvent,
+  defaultUpdateRunClaimStatus,
   defaultResolveActorContext,
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,
