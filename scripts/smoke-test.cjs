@@ -503,6 +503,29 @@ assert(
     })
     .errors.some((error) => error.name === "provider_keys")
 );
+assert(
+  preflight
+    .runPreflight({
+      env: {
+        ...preflightEnv,
+        REVIEWBOT_WORKER_ADAPTER: "github_actions",
+        REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+      },
+    })
+    .warnings.some((warning) => warning.message.includes("fall back to the gh CLI"))
+);
+assert(
+  preflight
+    .runPreflight({
+      env: {
+        ...preflightEnv,
+        REVIEWBOT_WORKER_ADAPTER: "github_actions",
+        REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+        REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+      },
+    })
+    .errors.some((error) => error.name === "worker_adapter")
+);
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
   true
@@ -1175,6 +1198,40 @@ assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/exam
 assert.equal(dispatchedWorkflow.args.includes(`run_key=${forkReviewJob.runKey}`), true);
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+let apiDispatchRequest = null;
+const apiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
+  policy: workerAdapter.workerAdapterPolicyFromEnv({
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_WORKFLOW: "review-job.yml",
+    REVIEWBOT_WORKER_GITHUB_REF: "main",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_TOKEN: "dispatch-token",
+    REVIEWBOT_WORKER_GITHUB_API_URL: "https://api.github.test/",
+    REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS: "1234",
+  }),
+  fetchImpl: async (url, options) => {
+    apiDispatchRequest = {
+      url,
+      options,
+      body: JSON.parse(options.body),
+    };
+    return { status: 204, text: async () => "" };
+  },
+  spawnSync: () => {
+    throw new Error("API dispatch should not shell out to gh.");
+  },
+});
+const missingApiTokenResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(
+  forkReviewJob,
+  {
+    policy: workerAdapter.workerAdapterPolicyFromEnv({
+      REVIEWBOT_WORKER_ADAPTER: "github_actions",
+      REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+      REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    }),
+  }
+);
 let missingInstallationDispatchCalled = false;
 const missingInstallationResult = workerAdapter.dispatchReviewJobToGitHubActions(
   { ...forkReviewJob, installationId: null },
@@ -1959,6 +2016,25 @@ appServer.handleGitHubWebhook({
   assert.equal(serverEntrypointQueue.accepted, false);
   assert.equal(serverEntrypointQueue.adapter, "noop");
   assert.equal(serverEntrypointQueue.reason, "No worker adapter configured.");
+  const apiDispatchResult = await apiDispatchResultPromise;
+  assert.equal(apiDispatchResult.accepted, true);
+  assert.equal(apiDispatchResult.dispatchMode, "api");
+  assert.equal(apiDispatchResult.statusCode, 204);
+  assert.equal(
+    apiDispatchRequest.url,
+    "https://api.github.test/repos/6529-Collections/6529reviewbot/actions/workflows/review-job.yml/dispatches"
+  );
+  assert.equal(apiDispatchRequest.options.method, "POST");
+  assert.equal(apiDispatchRequest.options.headers.authorization, "Bearer dispatch-token");
+  assert.match(apiDispatchRequest.options.body, /"review_kind":"general"/);
+  assert.equal(apiDispatchRequest.body.ref, "main");
+  assert.equal(apiDispatchRequest.body.inputs.target_repo, "6529-Collections/example");
+  assert.equal(apiDispatchRequest.body.inputs.head_repo, "external/fork");
+  assert.equal(apiDispatchRequest.body.inputs.installation_id, "99");
+  const missingApiTokenResult = await missingApiTokenResultPromise;
+  assert.equal(missingApiTokenResult.accepted, false);
+  assert.equal(missingApiTokenResult.dispatchMode, "api");
+  assert.match(missingApiTokenResult.reason, /GITHUB_TOKEN/);
   const claimedDecision = await claimedDecisionPromise;
   assert.equal(claimedDecision.code, "run_control_claimed");
   assert.equal(claimedDecision.allowed, true);

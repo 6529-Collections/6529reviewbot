@@ -156,11 +156,20 @@ function runPreflight(options = {}) {
     if (policy.mode === "github_actions" && !policy.githubRepo) {
       throw new Error("REVIEWBOT_WORKER_GITHUB_REPO or GITHUB_REPOSITORY is required for github_actions.");
     }
+    if (policy.mode === "github_actions" && policy.githubDispatchMode === "api" && !policy.githubToken) {
+      throw new Error("REVIEWBOT_WORKER_GITHUB_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required for github_actions API dispatch.");
+    }
+    if (policy.mode === "github_actions" && policy.githubDispatchMode === "auto" && !policy.githubToken) {
+      addWarning(result, "worker_adapter", "GitHub Actions dispatch has no API token; the server will fall back to the gh CLI.");
+    }
     return {
       mode: policy.mode,
       githubRepo: policy.githubRepo,
       githubWorkflow: policy.githubWorkflow,
       githubRef: policy.githubRef,
+      githubDispatchMode: policy.githubDispatchMode,
+      githubApiUrl: policy.githubApiUrl,
+      githubTokenConfigured: Boolean(policy.githubToken),
     };
   });
 

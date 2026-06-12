@@ -260,13 +260,21 @@ REVIEWBOT_WORKER_LOCAL_TIMEOUT_MS=900000
 REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
+REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
+REVIEWBOT_WORKER_GITHUB_TOKEN=
+REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
+REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_WORKER_GH_BIN=gh
 ```
 
 `noop` is the safe default. Use `local` for controlled local workers and
 `github_actions` to dispatch admitted jobs to a central workflow in this repo.
-The node binary, working directory, and `gh` binary overrides are advanced
-options with sensible defaults; set them only for non-standard worker
+Production container deployments should set
+`REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api` with a bot-owned dispatch token so
+the server does not depend on local GitHub CLI state. `auto` uses API dispatch
+when a token is present and falls back to `gh` otherwise. The node binary,
+working directory, GitHub API URL, timeout, and `gh` binary overrides are
+advanced options with sensible defaults; set them only for non-standard worker
 environments.
 See [worker-adapters.md](worker-adapters.md).
 

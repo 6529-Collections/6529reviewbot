@@ -15,14 +15,13 @@ The checked-in `Dockerfile` builds a production runtime image that includes:
 - Node.js 22;
 - production npm dependencies from `package-lock.json`;
 - `bin/`, `src/`, `config/`, and `templates/`;
-- `git` and `gh` for local-worker debugging and GitHub Actions worker
-  dispatch;
+- CA certificates for outbound HTTPS;
 - a non-root `node` runtime user;
 - a `/healthz` Docker health check.
 
-It intentionally does not copy docs, manager memory, local checkouts,
-`node_modules`, `.env` files, private evidence, or git metadata into the
-runtime image.
+It intentionally does not copy docs, manager memory, local checkouts, local
+`node_modules`, `.env` files, private evidence, git metadata, or GitHub CLI
+state into the runtime image.
 
 ## Build
 
@@ -63,6 +62,7 @@ Minimum local smoke settings:
 ```text
 REVIEWBOT_GITHUB_WEBHOOK_SECRET=<secret-store-value>
 REVIEWBOT_WORKER_ADAPTER=noop
+REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api
 REVIEWBOT_REPOSITORY_CONFIG_SOURCE=none
 REVIEW_USAGE_ENABLED=false
 REVIEWBOT_JOB_LEDGER_ENABLED=false
@@ -94,19 +94,25 @@ Recommended startup sequence:
 2. Verify `/healthz`, preflight, GitHub App ping, repository config loading,
    admission, budget decisions, and job fanout.
 3. Enable `REVIEWBOT_WORKER_ADAPTER=github_actions` only after the central
-   review-job workflow has its provider, GitHub App, and AWS secrets.
+   review-job workflow has its provider, GitHub App, AWS, and dispatch
+   secrets.
 
-`github_actions` dispatch uses the bundled `gh` binary. Configure
-`REVIEWBOT_WORKER_GITHUB_REPO`, `REVIEWBOT_WORKER_GITHUB_WORKFLOW`, and
-`REVIEWBOT_WORKER_GITHUB_REF`, and provide a GitHub credential to the container
-environment that can dispatch workflows in the bot repository. Keep that
-credential separate from the GitHub App installation tokens used for target
-repository checkout and comments.
+For container deployments, set `REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api`.
+Configure `REVIEWBOT_WORKER_GITHUB_REPO`,
+`REVIEWBOT_WORKER_GITHUB_WORKFLOW`, `REVIEWBOT_WORKER_GITHUB_REF`, and a
+bot-owned `REVIEWBOT_WORKER_GITHUB_TOKEN` that can dispatch workflows in the
+central bot repository. Keep that credential separate from the GitHub App
+installation tokens used for target repository checkout and comments.
+
+The `gh` dispatch mode remains available for compatibility outside this image,
+but the runtime image does not include GitHub CLI state. Use the API path for
+production.
 
 The `local` adapter can run inside the container for tightly controlled worker
 deployments, but it still needs an operator-provided target checkout, `gh`
-authentication, provider keys, and AWS settings. Do not use `local` mode for
-untrusted target repository code execution.
+authentication, provider keys, AWS settings, and usually a custom image with
+the required local worker toolchain. Do not use `local` mode for untrusted
+target repository code execution.
 
 ## Hosting Notes
 

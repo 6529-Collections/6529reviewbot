@@ -41,6 +41,8 @@ The first `v0` tag can include:
   and concurrency caps;
 - run-control worker completion updates for durable claims;
 - local and central GitHub Actions worker adapters;
+- native GitHub Actions workflow-dispatch API support with `gh` fallback for
+  compatibility environments;
 - worker capacity and backpressure runbook for conservative live scaling;
 - central App server container packaging with non-root runtime, health check,
   and runtime-only secret injection guidance;

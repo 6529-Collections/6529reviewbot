@@ -30,6 +30,7 @@ repositories.
 ## Tested Configuration
 
 - Worker path:
+- GitHub Actions dispatch mode:
 - App server runtime:
 - Container image digest, if used:
 - GitHub App permissions/events:
