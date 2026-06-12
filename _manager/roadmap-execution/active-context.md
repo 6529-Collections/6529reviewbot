@@ -68,10 +68,12 @@ merged PRs.
   `f7677bb`
 - Operator evidence template PR: merged as PR #51, merge commit `6c128a7`
 - Dogfood budget policy example PR: merged as PR #52, merge commit `a62dbe5`
-- Current branch: `codex/ledger-additive-migrations`
-- Current local changes: additive ledger table migrations for older dogfood
-  databases, smoke coverage, AWS ledger/release/security docs, changelog,
-  roadmap, and manager-memory updates.
+- Ledger additive migrations PR: merged as PR #53, merge commit `6811de2`
+- Current branch: `codex/budget-scope-check-migration`
+- Current local changes: canonical budget-scope check constraint refresh,
+  legacy `requester` to `requestor` normalization, smoke coverage, AWS
+  ledger/release/security docs, changelog, roadmap, and manager-memory
+  updates.
 
 ## Key Decisions
 
@@ -160,6 +162,9 @@ merged PRs.
 - The ledger schema CLI must handle older dogfood databases with missing
   managed columns through additive migrations before applying policies or price
   rows.
+- The ledger schema CLI should also refresh managed budget-scope constraints so
+  older databases accept the canonical `global`, `org`, `repo`, `requestor`,
+  `pr`, `provider`, `model`, and `review_kind` scopes.
 
 ## Constraints
 
@@ -171,10 +176,10 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the ledger additive migration PR if checks and
-   review are clean.
+1. Validate, publish, and merge the budget-scope constraint migration PR if
+   checks and review are clean.
 2. Re-run live ledger schema apply and then the conservative operator budget
-   policy apply after the migration lands.
+   policy apply after the constraint migration lands.
 3. Continue dogfood target-repo PRs once required human review completes.
 4. Prepare the next operator-readiness or release-polish slice after this PR
    lands.
@@ -200,8 +205,9 @@ merged PRs.
 - Live operator Aurora ledger schema has been applied and read-only verified
   with expected base tables and daily aggregate views. Keep unredacted resource
   identifiers in the private operator runbook, not in this public repo.
-- Live budget-policy apply currently needs the additive migration in this
-  branch because an older budget table is missing the managed `notes` column.
+- Live budget-policy apply currently needs the budget-scope constraint
+  migration in this branch because the older budget table rejects the canonical
+  `org` scope.
 - Provider pricing rows still require operator verification and key/limit
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter

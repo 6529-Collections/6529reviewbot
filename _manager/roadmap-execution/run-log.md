@@ -542,3 +542,18 @@
     `source_url` columns;
   - additive schema migration for missing budget-policy `notes`;
   - smoke coverage and AWS ledger/release/security/roadmap docs.
+- Merged `6529reviewbot` PR #53 as `6811de2` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Re-applied the live ledger schema with the additive migrations; it completed
+  successfully and reported all managed table, index, constraint-column, and
+  view statements applied.
+- Retried the conservative operator budget caps. The apply then hit an older
+  `ai_review_budget_policies_scope_type_check` constraint that allowed
+  `requester` but rejected the canonical `org` scope.
+- Started `codex/budget-scope-check-migration` increment:
+  - named budget-scope check constraint for new budget policy tables;
+  - repeatable legacy `requester` to `requestor` normalization;
+  - repeatable managed budget-scope constraint drop/add using canonical app
+    scopes;
+  - smoke coverage and AWS ledger/release/security/roadmap docs.

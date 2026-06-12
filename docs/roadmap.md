@@ -324,6 +324,7 @@ Completed in `6529reviewbot`:
 - example AWS IAM/OIDC templates for central Data API and SNS access.
 - ledger schema re-apply support for managed daily aggregate views.
 - additive ledger table migrations for older dogfood databases.
+- budget-scope constraint refreshes for older dogfood databases.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - installation and onboarding guide for conservative central App dogfood.
