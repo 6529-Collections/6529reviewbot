@@ -49,6 +49,8 @@ Ready for community review:
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and central worker template that mints
   short-lived GitHub App installation tokens;
+- pinned central worker and alert workflow templates with release-check action
+  pinning validation;
 - machine-readable v0 release gates and checklist renderer;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.

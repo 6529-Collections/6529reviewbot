@@ -104,6 +104,24 @@ not required. Same-repo PR checkouts use the installation token; fork PR
 checkouts are unauthenticated and therefore suitable only for public forks
 unless the worker is extended with an explicitly approved fork access path.
 
+The template pins third-party actions by commit SHA, disables persisted checkout
+credentials, configures an operator-provided AWS OIDC role when
+`REVIEW_USAGE_AWS_ROLE_ARN` is set, and adds a workflow-level concurrency group
+by `run_key`. Keep those controls when copying the template into the central
+bot repository.
+
+The template defaults to a 20 minute job timeout. Override it with:
+
+```text
+REVIEWBOT_WORKER_TIMEOUT_MINUTES=20
+```
+
+Validate action pinning locally with:
+
+```bash
+npm run check:workflow-actions
+```
+
 ## Worker Environment
 
 Every local worker receives:

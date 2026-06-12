@@ -100,6 +100,7 @@ Run local checks:
 ```bash
 npm run check
 npm test
+npm run check:workflow-actions
 ```
 
 Run the full release gate:

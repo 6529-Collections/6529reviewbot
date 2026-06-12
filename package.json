@@ -36,6 +36,7 @@
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:manifest": "node bin/render-github-app-manifest.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
+    "check:workflow-actions": "node scripts/check-workflow-actions.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",
     "validate:repo-config": "node bin/validate-repository-config.cjs",
