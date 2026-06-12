@@ -15,6 +15,7 @@ const {
   longParam,
   stringParam,
 } = require("./data-api.cjs");
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function runControlLedgerSettingsFromEnv(env = process.env) {
@@ -452,7 +453,7 @@ function safeMetadata(metadata = {}) {
       continue;
     }
     if (typeof value === "string") {
-      result[key] = value.slice(0, 1000);
+      result[key] = redactSensitiveText(value).slice(0, 1000);
     } else if (typeof value === "number" || typeof value === "boolean") {
       result[key] = value;
     }
@@ -513,8 +514,7 @@ function parseJson(value) {
 }
 
 function safeError(error) {
-  const message = error && error.message ? error.message : String(error);
-  return message.split(/\r?\n/)[0].slice(0, 500);
+  return safeErrorLine(error);
 }
 
 module.exports = {

@@ -152,9 +152,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Root `.env.example` scanner PR: merged as PR #98, merge commit `78b9a03`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-app-dispatch-errors`
-- Current local changes: redact App server dispatch exception diagnostics
-  before writing run-claim metadata or job-event reasons.
+- App dispatch-error redaction PR: merged as PR #99, merge commit `705799a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-ledger-diagnostics`
+- Current local changes: apply shared diagnostic redaction across ledger,
+  preflight, alert, and worker lifecycle error paths, and redact job/run-claim
+  metadata strings before persistence.
 
 ## Key Decisions
 
@@ -284,6 +287,9 @@ merged PRs.
 - App server dispatch exceptions should be redacted before being copied into
   run-claim metadata or job-event reasons; worker-output redaction alone is not
   enough for custom queue/dispatch adapters.
+- Ledger and run-control normalization should redact common secret shapes in
+  diagnostic reason and metadata strings before persistence, while still
+  treating those rows as private admin data.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -351,7 +357,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the App dispatch-error redaction PR.
+1. Validate, publish, and merge the ledger diagnostic redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

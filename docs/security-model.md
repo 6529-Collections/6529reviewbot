@@ -103,8 +103,10 @@ token and private-key shapes before returning them. GitHub API dispatch failure
 bodies are redacted the same way before they can enter queue results or
 run-control metadata. App server dispatch exceptions are also reduced to a
 short redacted line before they are copied into run-claim or job-event
-diagnostics. Redaction is a guardrail, not permission to publish verbose worker
-diagnostics.
+diagnostics. Job-event reasons, job-event metadata strings, run-claim metadata
+strings, preflight errors, alert delivery errors, and worker lifecycle warnings
+use the same redaction path. Redaction is a guardrail, not permission to
+publish verbose worker diagnostics.
 
 ### Runtime Control Safety
 

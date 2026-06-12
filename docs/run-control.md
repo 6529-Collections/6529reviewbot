@@ -168,6 +168,10 @@ The run-claim table stores operational routing data only. It must not store
 prompts, diffs, provider responses, raw webhook payloads, worker output, or
 credentials.
 
+Status-update metadata is also operational diagnostic data. String metadata
+values redact common bearer, GitHub, provider-key, and private-key shapes before
+the update is written, but raw claim rows should still stay private.
+
 ## Dogfood Verification
 
 The built-in Aurora-backed claimer has been smoke-tested against the isolated

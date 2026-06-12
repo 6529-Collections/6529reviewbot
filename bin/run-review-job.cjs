@@ -3,6 +3,7 @@
 "use strict";
 
 const fs = require("fs");
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const { runReviewJobLocally } = require("../src/worker-adapter.cjs");
 const {
   runControlLedgerSettingsFromEnv,
@@ -81,7 +82,5 @@ module.exports = {
 };
 
 function safeError(error) {
-  return String(error?.message || error || "unknown error")
-    .split(/\r?\n/)[0]
-    .slice(0, 500);
+  return safeErrorLine(error || "unknown error");
 }

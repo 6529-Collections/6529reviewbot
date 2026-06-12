@@ -6,6 +6,7 @@ const { admissionPolicyFromEnv } = require("./admission-policy.cjs");
 const { alertNotifierSettingsFromEnv } = require("./alert-notifier.cjs");
 const { budgetPolicyFromEnv } = require("./budget-admission.cjs");
 const { assertDataApiSettings } = require("./data-api.cjs");
+const { safeErrorLine } = require("./diagnostics.cjs");
 const {
   DEFAULT_MAX_SOURCE_AGE_DAYS,
   describeFreshnessIssue,
@@ -386,7 +387,7 @@ function formatPreflightResult(result) {
 }
 
 function safeError(error) {
-  return error && error.message ? error.message : String(error);
+  return safeErrorLine(error);
 }
 
 function stringEnv(value) {

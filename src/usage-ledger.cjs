@@ -5,6 +5,7 @@ const {
   executeStatement,
   shouldUseShellForAwsCli,
 } = require("./data-api.cjs");
+const { safeErrorLine } = require("./diagnostics.cjs");
 
 function usageLedgerSettingsFromEnv(env = process.env) {
   return {
@@ -168,8 +169,7 @@ function quoteIdent(value) {
 }
 
 function safeError(error) {
-  const message = error && error.message ? error.message : String(error);
-  return message.split(/\r?\n/)[0].slice(0, 500);
+  return safeErrorLine(error);
 }
 
 module.exports = {
