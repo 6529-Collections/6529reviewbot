@@ -114,6 +114,8 @@ stabilized.
 - Provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - Sanitized support bundle CLI and support playbook.
 - No-network production preflight CLI for runtime configuration validation.
+- Release checks now run no-network preflight fixtures for central App server
+  and worker configuration postures.
 - Incident response runbook for operator containment and recovery.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.

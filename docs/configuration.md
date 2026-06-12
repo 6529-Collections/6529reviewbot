@@ -335,6 +335,11 @@ Warnings describe intentionally disabled or external pieces, such as `noop`
 workers or `github_actions` provider secrets that live in the central worker
 environment. `--strict` treats warnings as failures for release gates.
 
+`npm run check:preflight` runs deterministic no-network fixtures for the
+central App server and worker postures. It is included in
+`npm run release:check` so parser drift or missing required settings are caught
+before maintainers rely on a live environment.
+
 ## Usage API
 
 ```text

@@ -963,3 +963,14 @@
   - add public artifact scanner detection for common Slack and Discord alert
     webhook URL secrets;
   - document the expanded scanner coverage in the support playbook.
+- Merged `6529reviewbot` PR #88 as `36ecf97` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27423816671`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27423816809`, completed successfully.
+- Started `codex/release-preflight-fixtures` increment:
+  - found that enabled usage-ledger preflight imports
+    `assertUsageLedgerConfigured`, but `src/usage-ledger.cjs` did not export
+    it;
+  - add a release-time no-network preflight fixture check for central App
+    server and worker postures.
