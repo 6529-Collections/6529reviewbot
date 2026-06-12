@@ -199,6 +199,12 @@ Preview model pricing SQL without touching AWS:
 npm run model-prices -- -- --file config/model-prices.example.json
 ```
 
+Applying price rows rejects zero-rate placeholders by default:
+
+```bash
+npm run model-prices -- -- --file <reviewed-price-file.json> --apply
+```
+
 Preview central budget policy SQL without touching AWS:
 
 ```bash

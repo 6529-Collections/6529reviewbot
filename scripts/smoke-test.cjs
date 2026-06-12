@@ -140,6 +140,24 @@ assert.equal(
   ),
   null
 );
+assert.throws(
+  () =>
+    modelPrices.assertNoZeroPriceRows({
+      version: 1,
+      currency: "USD",
+      prices: [
+        {
+          provider: "anthropic",
+          model: "claude-opus-4-8",
+          inputUsdPerMillion: 0,
+          outputUsdPerMillion: 1,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "https://example.com/provider-pricing",
+        },
+      ],
+    }),
+  /zero inputUsdPerMillion/
+);
 let priceLookupSql = "";
 const lookedUpPrice = modelPrices.readCurrentModelPrice({
   enabled: true,
@@ -226,7 +244,11 @@ modelPrices.applyModelPrices({
 assert.equal(appliedModelPriceStatements, 2);
 assert.deepEqual(
   modelPricesCli.parseArgs(["--file", "prices.json", "--schema", "reviewbot", "--apply"]),
-  { apply: true, file: "prices.json", schema: "reviewbot" }
+  { allowZeroPrice: false, apply: true, file: "prices.json", schema: "reviewbot" }
+);
+assert.deepEqual(
+  modelPricesCli.parseArgs(["--file", "prices.json", "--apply", "--allow-zero-price"]),
+  { allowZeroPrice: true, apply: true, file: "prices.json" }
 );
 const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
   version: 1,

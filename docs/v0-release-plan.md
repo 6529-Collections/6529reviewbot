@@ -48,6 +48,8 @@ The first `v0` tag can include:
 - admin runtime status API for no-network preflight warnings;
 - repeatable Aurora ledger schema tooling;
 - dry-run/apply tooling for operator-maintained model price rows;
+- zero-rate model price apply guard with explicit override for documented free
+  rates;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled operator alert checks for spend and job health with stdout,
@@ -110,7 +112,8 @@ Do not create the `v0` tag until all of these are true:
    explicitly keep budget control to environment/repository caps.
 10. Model pricing rows have been reviewed against current provider docs and
    applied with `npm run model-prices -- -- --file <file> --apply`, or release
-   notes explicitly keep conservative default cost estimates.
+   notes explicitly keep conservative default cost estimates. Any zero-rate
+   rows must be documented before using `--allow-zero-price`.
 11. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.

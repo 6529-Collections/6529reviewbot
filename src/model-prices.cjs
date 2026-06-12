@@ -244,7 +244,11 @@ function estimateUsageCostUsd(usage = {}, price = {}) {
 
 function applyModelPrices(settings, document, options = {}) {
   assertDataApiSettings(settings, "Model price ledger");
-  const statements = options.statements || modelPriceStatements(settings.schema, document);
+  const priceFile = validateModelPriceFile(document);
+  if (!options.allowZeroPrice) {
+    assertNoZeroPriceRows(priceFile);
+  }
+  const statements = options.statements || modelPriceStatements(settings.schema, priceFile);
   const execute = options.executeStatement || executeStatement;
   const results = [];
   for (const statement of statements) {
@@ -255,6 +259,29 @@ function applyModelPrices(settings, document, options = {}) {
     results.push({ name: statement.name, applied: true });
   }
   return results;
+}
+
+function assertNoZeroPriceRows(document, source = "model price file") {
+  const priceFile = validateModelPriceFile(document, source);
+  for (const price of priceFile.prices) {
+    for (const field of priceRateFields()) {
+      if (price[field] === 0) {
+        throw new Error(
+          `${source} ${price.provider}:${price.model} has zero ${field}; use --allow-zero-price only for a provider-documented free rate.`
+        );
+      }
+    }
+  }
+  return priceFile;
+}
+
+function priceRateFields() {
+  return [
+    "inputUsdPerMillion",
+    "cachedInputUsdPerMillion",
+    "outputUsdPerMillion",
+    "reasoningUsdPerMillion",
+  ];
 }
 
 function renderModelPriceSql(schema, document) {
@@ -367,6 +394,7 @@ function assertPlainObject(value, source) {
 
 module.exports = {
   applyModelPrices,
+  assertNoZeroPriceRows,
   currentModelPriceStatement,
   estimateUsageCostUsd,
   loadModelPriceFile,

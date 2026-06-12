@@ -43,8 +43,10 @@ operator-owned file with current provider pricing and source URLs:
 }
 ```
 
-Do not apply zeroes or placeholder prices. Every non-empty price file should be
-reviewed against current provider documentation before use.
+Do not apply zeroes or placeholder prices. The apply path rejects zero-rate
+rows by default because a placeholder zero can silently understate spend.
+Every non-empty price file should be reviewed against current provider
+documentation before use.
 
 ## Dry Run
 
@@ -65,12 +67,20 @@ From a configured operator environment:
 npm run model-prices -- -- --file prices.json --apply
 ```
 
+If a provider really documents a free token class or free model, record that
+source in `sourceUrl` and `notes`, then use the explicit override:
+
+```bash
+npm run model-prices -- -- --file prices.json --apply --allow-zero-price
+```
+
 The apply path:
 
 1. closes the current open-ended price row for the same provider/model;
 2. inserts a new row with `effective_from`;
 3. updates the same provider/model/effective timestamp if the file is replayed;
 4. keeps prior rows for audit/history.
+5. rejects zero-rate rows unless `--allow-zero-price` is supplied.
 
 The command uses the same RDS Data API settings as the usage ledger:
 
@@ -96,6 +106,8 @@ Every pricing update should record:
 - notes about units or caveats.
 
 The CLI enforces a source URL and rejects rows without at least one price field.
+It also rejects zero-rate rows during apply unless the operator passes
+`--allow-zero-price`.
 Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default
 estimates.
