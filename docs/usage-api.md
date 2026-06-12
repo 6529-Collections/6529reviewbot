@@ -10,6 +10,7 @@ GitHub App, or provider secrets.
 GET /api/public/usage/summary?days=30
 GET /api/admin/usage/summary?days=30
 GET /api/admin/budget/policies
+GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 ```
 
 The default paths can be changed with:
@@ -18,6 +19,7 @@ The default paths can be changed with:
 REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
+REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 ```
 
 ## Public Summary
@@ -77,9 +79,46 @@ ledger is enabled. They are intentionally not part of the public usage summary:
 raw job events can reveal private repo names, requestors, provider/model
 routing, and operational failure details.
 
-The admin API can grow a dedicated job-events endpoint once the 6529.io admin
-surface needs raw queue diagnostics. Until then, operators should use the
-queries in [job-ledger.md](job-ledger.md).
+`GET /api/admin/jobs/recent` returns recent normalized job events for the
+private 6529.io admin surface. It accepts:
+
+- `limit`: positive integer up to `REVIEWBOT_USAGE_API_MAX_ITEMS`;
+- `status`: optional exact status filter, for example `dispatch_failed`.
+
+Example response:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "job_events",
+  "limit": 50,
+  "status": "dispatch_failed",
+  "events": [
+    {
+      "eventId": 99,
+      "createdAt": "2026-06-10 02:00:00+00",
+      "jobId": "job-1",
+      "status": "dispatch_failed",
+      "stage": "dispatch",
+      "repoFullName": "6529-Collections/private-repo",
+      "prNumber": 12,
+      "requestor": "maintainer",
+      "reviewKind": "security",
+      "provider": "openai",
+      "model": "gpt-5.2",
+      "lane": "openai:gpt-5.2",
+      "adapter": "github_actions",
+      "accepted": false,
+      "reason": "queue disabled",
+      "exitCode": 1,
+      "metadata": {
+        "workflow": "review-job"
+      }
+    }
+  ]
+}
+```
 
 ## Loader Contract
 
@@ -88,6 +127,7 @@ The HTTP server accepts injectable loaders:
 ```js
 loadUsageEvents({ request, settings, range, visibility })
 loadBudgetPolicies({ request, settings })
+loadJobEvents({ request, settings, query })
 authorizeUsageApiAdmin(request)
 ```
 

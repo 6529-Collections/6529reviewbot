@@ -196,6 +196,19 @@ order by active_claims desc;
 Completed and failed worker claims are terminal and should disappear from this
 active query without waiting for claim TTL expiry.
 
+## Admin API
+
+The private 6529.io admin surface can read recent lifecycle rows through:
+
+```text
+GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
+```
+
+The endpoint is backed by `reviewbot.ai_review_job_events`, uses the same
+admin-auth bridge as the usage API, and caps `limit` with
+`REVIEWBOT_USAGE_API_MAX_ITEMS`. Keep raw rows private; public pages should use
+aggregates instead of exposing repository names, requestors, or failure text.
+
 ## Privacy
 
 The job ledger can contain private repo names, PR numbers, requestors, provider

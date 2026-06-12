@@ -23,7 +23,10 @@ const {
   runControlLedgerSettingsFromEnv,
   updateRunClaimStatus,
 } = require("../src/run-control-ledger.cjs");
-const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
+const {
+  createUsageApiLedgerLoaders,
+  usageApiLedgerLoadersFromEnv,
+} = require("../src/usage-api-ledger.cjs");
 const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
 
 const port = Number.parseInt(process.env.PORT || process.env.REVIEWBOT_PORT || "8080", 10);
@@ -32,7 +35,8 @@ if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
 }
 
 const serverOptions = {};
-if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
+const usageApiReadersEnabled = parseBool(process.env.REVIEW_USAGE_ENABLED || "false");
+if (usageApiReadersEnabled) {
   Object.assign(serverOptions, usageApiLedgerLoadersFromEnv());
   const budgetLedgerSettings = usageLedgerSettingsFromEnv();
   serverOptions.resolveBudgetSnapshot = async (jobEvent, admission, job, budgetPolicy) =>
@@ -45,6 +49,11 @@ if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
 const jobLedgerSettings = jobLedgerSettingsFromEnv();
 if (jobLedgerSettings.enabled) {
   serverOptions.recordJobEvent = async (event) => writeJobEvent(jobLedgerSettings, event);
+  if (!serverOptions.loadJobEvents) {
+    serverOptions.loadJobEvents = createUsageApiLedgerLoaders({
+      ledgerSettings: jobLedgerSettings,
+    }).loadJobEvents;
+  }
 }
 const runControlLedgerSettings = runControlLedgerSettingsFromEnv();
 if (runControlLedgerSettings.enabled) {

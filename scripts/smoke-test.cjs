@@ -1313,6 +1313,15 @@ assert.match(usageEventsQuery.sql, /ai_review_usage_events/);
 assert.match(usageEventsQuery.sql, /created_at >= cast\(:from_ts as timestamptz\)/);
 assert.equal(usageEventsQuery.parameters[2].value.longValue, 25);
 assert.throws(() => usageApiLedger.buildUsageEventsQuery("reviewbot", {}, 25), /bounded range/);
+const jobEventsQuery = usageApiLedger.buildJobEventsQuery("reviewbot", {
+  status: "dispatch_failed",
+  limit: 10,
+});
+assert.match(jobEventsQuery.sql, /ai_review_job_events/);
+assert.match(jobEventsQuery.sql, /where status = :status/);
+assert.equal(jobEventsQuery.parameters[0].value.stringValue, "dispatch_failed");
+assert.equal(jobEventsQuery.parameters[1].value.longValue, 10);
+assert.throws(() => usageApiLedger.buildJobEventsQuery("reviewbot", { limit: 0 }), /positive integer/);
 const usageApiLedgerRecord = [
   { stringValue: "2026-06-10 01:00:00+00" },
   { stringValue: "6529-Collections/public-repo" },
@@ -1349,6 +1358,32 @@ const privateByDefaultLedgerEvent = usageApiLedger.usageRecordToEvent(usageApiLe
   apiSettings: usageApi.usageApiSettingsFromEnv({}),
 });
 assert.equal(privateByDefaultLedgerEvent.repoPrivate, true);
+const jobEventLedgerRecord = [
+  { longValue: 99 },
+  { stringValue: "2026-06-10 02:00:00+00" },
+  { stringValue: "job-1" },
+  { stringValue: "dispatch_failed" },
+  { stringValue: "dispatch" },
+  { stringValue: "6529-Collections/private-repo" },
+  { longValue: 12 },
+  { stringValue: "author" },
+  { stringValue: "head" },
+  { stringValue: "delivery-1" },
+  { stringValue: "maintainer" },
+  { stringValue: "security" },
+  { stringValue: "openai" },
+  { stringValue: "gpt-5.2" },
+  { stringValue: "openai:gpt-5.2" },
+  { stringValue: "github_actions" },
+  { booleanValue: false },
+  { stringValue: "queue disabled" },
+  { longValue: 1 },
+  { stringValue: "{\"workflow\":\"review-job\"}" },
+];
+const jobEvent = usageApiLedger.jobEventRecordToEvent(jobEventLedgerRecord);
+assert.equal(jobEvent.eventId, 99);
+assert.equal(jobEvent.accepted, false);
+assert.equal(jobEvent.metadata.workflow, "review-job");
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: new URL("http://localhost/api/admin/usage/summary"),
@@ -1512,6 +1547,21 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(usageRouteResult.statusCode, 200);
   assert.equal(usageRouteResult.body.visibility, "public");
+  const adminJobsRouteUrl = new URL("http://localhost/api/admin/jobs/recent?limit=1");
+  const adminJobsRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/jobs/recent?limit=1",
+    headers: signedAdminHeadersFor(adminJobsRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadJobEvents: async ({ query }) => {
+      assert.equal(query.limit, 1);
+      return { events: [{ jobId: "job-route", status: "dispatch_accepted" }] };
+    },
+  });
+  assert.equal(adminJobsRouteResult.statusCode, 200);
+  assert.equal(adminJobsRouteResult.body.events[0].jobId, "job-route");
   const adminDenied = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/admin/usage/summary"),
@@ -1545,6 +1595,42 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminBridgeAllowed.statusCode, 200);
   assert.equal(adminBridgeAllowed.body.visibility, "admin");
+  const adminJobsUrl = new URL("http://localhost/api/admin/jobs/recent?status=dispatch_failed&limit=2");
+  const adminJobEvents = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminJobsUrl,
+    headers: signedAdminHeadersFor(adminJobsUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadJobEvents: async ({ query }) => {
+      assert.equal(query.status, "dispatch_failed");
+      assert.equal(query.limit, 2);
+      return {
+        events: [{
+          eventId: 1,
+          jobId: "job-1",
+          status: "dispatch_failed",
+          stage: "dispatch",
+          repoFullName: "6529-Collections/private",
+          prNumber: 12,
+          accepted: false,
+          metadata: { workflow: "review-job" },
+        }],
+      };
+    },
+  });
+  assert.equal(adminJobEvents.statusCode, 200);
+  assert.equal(adminJobEvents.body.kind, "job_events");
+  assert.equal(adminJobEvents.body.events[0].accepted, false);
+  assert.equal(adminJobEvents.body.events[0].metadata.workflow, "review-job");
+  assert.throws(
+    () => usageApi.jobEventsQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/jobs/recent?limit=999") },
+      usageApiSettings
+    ),
+    /limit must be <= 50/
+  );
   let alertOutput = "";
   const stdoutNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
     settings: alertNotifier.alertNotifierSettingsFromEnv({

@@ -95,6 +95,7 @@ function createReviewbotServer(options = {}) {
         updateRunClaimStatus,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
+        loadJobEvents: options.loadJobEvents,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
         logger,
       });
@@ -130,6 +131,7 @@ async function handleHttpRequest(request, options) {
         settings: usageApiSettings,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
+        loadJobEvents: options.loadJobEvents,
         authorizeAdmin: options.authorizeUsageApiAdmin,
       }
     );
