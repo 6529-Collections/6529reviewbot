@@ -3,6 +3,10 @@
 "use strict";
 
 const { createReviewbotServer } = require("../src/app-server.cjs");
+const {
+  adminAuthSettingsFromEnv,
+  createUsageApiAdminAuthorizer,
+} = require("../src/admin-auth.cjs");
 const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
 
 const port = Number.parseInt(process.env.PORT || process.env.REVIEWBOT_PORT || "8080", 10);
@@ -13,6 +17,10 @@ if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
 const serverOptions = {};
 if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
   Object.assign(serverOptions, usageApiLedgerLoadersFromEnv());
+}
+const adminAuthSettings = adminAuthSettingsFromEnv();
+if (adminAuthSettings.mode !== "disabled") {
+  serverOptions.authorizeUsageApiAdmin = createUsageApiAdminAuthorizer(adminAuthSettings);
 }
 
 const server = createReviewbotServer(serverOptions);

@@ -30,6 +30,8 @@ requests.
   or central GitHub Actions workflows.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
+- Verifies private admin API calls through a server-side `6529.io` auth bridge
+  instead of a separate login system.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
 
 ## Repository Status
@@ -150,6 +152,13 @@ When enabled, the App reads `.github/6529bot.yml` or another supported config
 file from the target repository's base ref. Repo config can narrow central
 policy, but it cannot add unapproved model lanes or raise central budget caps.
 
+Admin auth bridge:
+
+```text
+REVIEWBOT_ADMIN_AUTH_MODE=disabled|shared_secret|hmac
+REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES=reviewbot-admin,admin
+```
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -200,6 +209,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Review jobs](docs/review-jobs.md)
 - [Worker adapters](docs/worker-adapters.md)
 - [Usage API](docs/usage-api.md)
+- [Admin auth bridge](docs/admin-auth-bridge.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)

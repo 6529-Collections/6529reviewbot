@@ -104,3 +104,18 @@
   - worker adapter docs and `.env.example` list the advanced binary and working
     directory overrides.
   Validation: `npm test`, `npm run check`, `git diff --check`.
+- Merged `6529reviewbot` PR #13 as `1d84b10` after CI, Dependency Review, and
+  CodeRabbit passed.
+- Started `codex/admin-auth-bridge` increment for private 6529.io admin
+  controls:
+  - `src/admin-auth.cjs` supports fail-closed disabled mode, internal
+    shared-secret mode, and preferred short-lived HMAC assertions;
+  - `bin/server.cjs` wires the admin authorizer only when explicitly
+    configured;
+  - docs explain secret ownership, canonical signing payloads, TTL limits, and
+    why this is a bridge to existing 6529.io auth rather than a second login
+    system;
+  - smoke tests cover shared-secret auth, HMAC success, missing roles,
+    path/query signature tampering, expired assertions, TTL limits, and usage
+    API admin access.
+  Validation: `npm test`, `npm run check`, `git diff --check`.
