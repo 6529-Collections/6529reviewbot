@@ -156,11 +156,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Ledger diagnostic redaction PR: merged as PR #100, merge commit `a13a3ad`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-repository-config-reasons`
-- Current local changes: repository config invalid/unavailable reasons are
-  shortened and redacted before webhook/admin summaries expose them; smoke
-  tests cover a secret-shaped unsupported key and public summary multiline
-  reason redaction.
+- Repository config reason redaction PR: merged as PR #101, merge commit
+  `e61d08f`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-readiness-next-hardening`
+- Current local changes: admin auth required-role configuration is validated
+  and deduplicated at settings load/preflight time so a malformed
+  `REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES` cannot silently make the 6529.io bridge
+  impossible to satisfy.
 
 ## Key Decisions
 
@@ -296,6 +298,9 @@ merged PRs.
 - Repository config load reasons come from repository-owned text and GitHub API
   diagnostics, so they should be bounded and redacted before public webhook or
   private admin summaries display them.
+- Admin auth config and incoming assertions should share the same role format
+  contract. Misconfigured required roles should fail during startup/preflight,
+  not after operators discover that every admin request is denied.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -363,7 +368,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Publish and merge the repository-config reason redaction PR.
+1. Validate, publish, and merge the admin auth required-role validation PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

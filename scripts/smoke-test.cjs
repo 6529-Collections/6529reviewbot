@@ -2333,6 +2333,19 @@ const hmacAuthSettings = adminAuth.adminAuthSettingsFromEnv({
   REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES: "reviewbot-admin",
   REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS: "300",
 });
+assert.deepEqual(
+  adminAuth.adminAuthSettingsFromEnv({
+    REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES: "reviewbot-admin,ReviewBot-Admin",
+  }).requiredRoles,
+  ["reviewbot-admin"]
+);
+assert.throws(
+  () =>
+    adminAuth.adminAuthSettingsFromEnv({
+      REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES: "reviewbot-admin,bad role",
+    }),
+  /REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES/
+);
 const adminUsageUrl = new URL("http://localhost/api/admin/usage/summary?days=7");
 const signedAdminHeaders = signedAdminHeadersFor(adminUsageUrl);
 assert.equal(adminAuth.authorizeAdminRequest({

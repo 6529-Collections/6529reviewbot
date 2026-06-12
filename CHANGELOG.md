@@ -67,6 +67,8 @@ stabilized.
 - Admin-only recent job-events API for queue and worker diagnostics.
 - Admin-only runtime status API backed by no-network preflight checks.
 - 6529.io admin auth bridge contract.
+- Admin auth bridge required-role configuration is validated before the bridge
+  accepts signed 6529.io admin assertions.
 - Scheduled operator alerts for budget utilization, unusual spend spikes,
   failed jobs, and stale run-control claims.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
