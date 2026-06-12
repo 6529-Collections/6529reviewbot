@@ -53,6 +53,8 @@ stabilized.
   validator path prefixes redact common secret shapes.
 - GitHub App manifest conversion error bodies and summary strings redact
   common secret shapes before operator-facing output.
+- Support bundle git branch/status output redacts common secret shapes before
+  JSON or Markdown support output is generated.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the

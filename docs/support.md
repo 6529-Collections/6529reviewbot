@@ -52,7 +52,9 @@ diffs, prompts, provider responses, webhook payloads, private worker
 repository names, or absolute local config paths.
 
 Use `--include-git-status` only when file names in your local checkout are safe
-to disclose:
+to disclose. The support bundle redacts common token and private-key shapes in
+git output, but file names can still reveal project names, customer names,
+private modules, or incident details:
 
 ```bash
 npm run support:bundle -- --include-git-status
