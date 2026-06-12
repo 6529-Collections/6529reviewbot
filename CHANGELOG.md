@@ -59,6 +59,8 @@ stabilized.
   defensively redacted before support output is generated.
 - Release-gate status notes and evidence redact common secret shapes before
   JSON or Markdown output.
+- Operator-maintained model-price and budget-policy notes redact common secret
+  shapes and are capped before dry-run SQL output or DB apply.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the

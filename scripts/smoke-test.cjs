@@ -107,16 +107,22 @@ const modelPriceFile = modelPrices.validateModelPriceFile({
       effectiveFrom: "2026-06-12T00:00:00.000Z",
       sourceUrl: "https://example.com/provider-pricing",
       sourceCheckedAt: "2026-06-12T12:00:00.000Z",
-      notes: "test price row",
+      notes: `test price row sk-proj-abcdefghijklmnopqrstuvwxyz123456 ${"x".repeat(1200)}`,
     },
   ],
 });
 assert.equal(modelPriceFile.prices[0].provider, "anthropic");
 assert.equal(modelPriceFile.prices[0].sourceCheckedAt, "2026-06-12T12:00:00.000Z");
+assert.equal(modelPriceFile.prices[0].notes.length, 1000);
+assert.match(modelPriceFile.prices[0].notes, /sk-\[redacted\]/);
 const modelPriceStatements = modelPrices.modelPriceStatements("reviewbot", modelPriceFile);
 assert.equal(modelPriceStatements.length, 2);
-assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /ai_model_prices/);
-assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /source_checked_at/);
+const renderedModelPriceSql = modelPrices.renderModelPriceSql("reviewbot", modelPriceFile);
+assert.match(renderedModelPriceSql, /ai_model_prices/);
+assert.match(renderedModelPriceSql, /source_checked_at/);
+assert.match(renderedModelPriceSql, /sk-\[redacted\]/);
+assert(!renderedModelPriceSql.includes("abcdefghijklmnopqrstuvwxyz123456"));
+assert(!renderedModelPriceSql.includes("x".repeat(1001)));
 const currentPriceStatement = modelPrices.currentModelPriceStatement("reviewbot", {
   provider: "anthropic",
   model: "claude-opus-4-8",
@@ -357,7 +363,7 @@ const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
       scopeValue: "*",
       dailyUsd: 25,
       monthlyUsd: 500,
-      notes: "dogfood global cap",
+      notes: `dogfood global cap github_pat_abcdefghijklmnopqrstuvwxyz1234567890 ${"y".repeat(1200)}`,
     },
     {
       scopeType: "provider",
@@ -367,6 +373,8 @@ const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
     },
   ],
 });
+assert.equal(budgetPolicyFile.policies[0].notes.length, 1000);
+assert.match(budgetPolicyFile.policies[0].notes, /github_pat_\[redacted\]/);
 assert.equal(budgetPolicyFile.policies[1].scopeValue, "anthropic");
 assert.throws(
   () => budgetPolicies.validateBudgetPolicyFile({
@@ -391,7 +399,11 @@ assert.throws(
 );
 const budgetPolicyStatements = budgetPolicies.budgetPolicyStatements("reviewbot", budgetPolicyFile);
 assert.equal(budgetPolicyStatements.length, 2);
-assert.match(budgetPolicies.renderBudgetPolicySql("reviewbot", budgetPolicyFile), /ai_review_budget_policies/);
+const renderedBudgetPolicySql = budgetPolicies.renderBudgetPolicySql("reviewbot", budgetPolicyFile);
+assert.match(renderedBudgetPolicySql, /ai_review_budget_policies/);
+assert.match(renderedBudgetPolicySql, /github_pat_\[redacted\]/);
+assert(!renderedBudgetPolicySql.includes("abcdefghijklmnopqrstuvwxyz1234567890"));
+assert(!renderedBudgetPolicySql.includes("y".repeat(1001)));
 assert.equal(
   budgetPolicies.mergeBudgetPolicyRows({ mode: "enforce", explicitPolicies: [] }, budgetPolicyFile.policies)
     .explicitPolicies.length,

@@ -3,10 +3,13 @@
 const fs = require("fs");
 const { BUDGET_SCOPES } = require("./budget-admission.cjs");
 const { stringParam } = require("./data-api.cjs");
+const { redactSensitiveText } = require("./diagnostics.cjs");
 const { REVIEW_KINDS } = require("./github-webhook.cjs");
 const { normalizeProvider } = require("./model-catalog.cjs");
 const { executeStatement, assertDataApiSettings } = require("./data-api.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
+
+const BUDGET_POLICY_NOTE_MAX_CHARS = 1000;
 
 function loadBudgetPolicyFile(filePath) {
   return validateBudgetPolicyFile(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
@@ -69,7 +72,7 @@ function normalizeBudgetPolicy(policy, source) {
     weeklyBudgetUsd: nullableUsd(policy.weeklyUsd ?? policy.weeklyBudgetUsd, `${source}.weeklyUsd`),
     monthlyBudgetUsd: nullableUsd(policy.monthlyUsd ?? policy.monthlyBudgetUsd, `${source}.monthlyUsd`),
     enabled: booleanField(policy.enabled, true, `${source}.enabled`),
-    notes: optionalString(policy.notes),
+    notes: optionalRedactedString(policy.notes),
   };
   if (normalized.enabled && !hasCaps(normalized)) {
     throw new Error(`${source} must include at least one budget cap when enabled is true.`);
@@ -257,6 +260,11 @@ function stringField(value, source) {
 
 function optionalString(value) {
   return value === undefined || value === null ? "" : String(value).trim();
+}
+
+function optionalRedactedString(value, maxChars = BUDGET_POLICY_NOTE_MAX_CHARS) {
+  const text = optionalString(value);
+  return text ? redactSensitiveText(text).slice(0, maxChars) : "";
 }
 
 function decimalOrNullParam(name, value) {

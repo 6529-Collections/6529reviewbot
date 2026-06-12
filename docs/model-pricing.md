@@ -64,7 +64,9 @@ npm run model-prices -- -- --file prices.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
-exactly what will be inserted.
+exactly what will be inserted. `notes` values are redacted for common token and
+private-key shapes and capped at 1000 characters before they are rendered or
+applied.
 
 ## Apply
 
@@ -133,6 +135,9 @@ The CLI enforces a source URL, source-checked timestamp, and at least one price
 field. It also rejects zero-rate rows during apply unless the operator passes
 `--allow-zero-price`, and rejects stale or future-dated source-checked
 timestamps unless the operator passes `--allow-stale-source`.
+Do not put secrets, private account details, provider diagnostics, or private
+PR payloads in `notes`; the redaction guardrail is there for accidental
+token-shaped text, not as a reason to store sensitive data in pricing rows.
 Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default
 estimates.

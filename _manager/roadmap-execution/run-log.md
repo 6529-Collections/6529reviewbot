@@ -1226,3 +1226,20 @@
   1000-character release-gate status evidence/notes truncation contract in
   smoke tests; `npm test`, `npm run release:check`, and `git diff --check`
   passed again.
+- Merged `6529reviewbot` PR #108 as `03e4c0f` after CI, Dependency Review,
+  OpenSSF Scorecard, and CodeRabbit passed with no remaining actionable
+  comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27437738432`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27437738451`, completed successfully.
+- Started `codex/redact-policy-price-notes` increment:
+  - redact and cap model-price `notes` before dry-run SQL output or DB apply;
+  - redact and cap central budget-policy `notes` before dry-run SQL output or
+    DB apply;
+  - add smoke coverage for token-shaped notes and rendered SQL output;
+  - update model-pricing, budget-policy, security, changelog, and manager
+    memory.
+- Local validation for `codex/redact-policy-price-notes`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
