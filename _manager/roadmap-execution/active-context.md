@@ -148,10 +148,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release gate parity-check PR: merged as PR #96, merge commit `8cc28de`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-status-completeness`
-- Current local changes: harden v0 release gate status files so the final
-  `--require-ready` tag/no-tag check fails when private operator evidence omits
-  any current public release gate.
+- Release status completeness PR: merged as PR #97, merge commit `a081839`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/scan-root-env-example`
+- Current local changes: include the tracked root `.env.example` in public
+  artifact leak scanning and release/support documentation.
 
 ## Key Decisions
 
@@ -275,6 +276,9 @@ merged PRs.
   cover docs, examples, workflows, config, and manager memory while allowing
   obvious placeholders and avoiding source test fixtures that intentionally
   contain fake secret shapes.
+- Public release artifact scanning should include the root `.env.example`
+  because it is a tracked setup file where live-looking secrets can
+  accidentally be pasted during operator work.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -342,7 +346,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the release-status completeness PR.
+1. Validate, publish, and merge the root `.env.example` scanner PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

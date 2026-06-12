@@ -1061,3 +1061,12 @@
     --require-ready` check fail when a status file omits any current gate;
   - add smoke coverage for missing status ids and complete status files;
   - document the need to refresh private evidence when public gates change.
+- Merged `6529reviewbot` PR #97 as `a081839` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27430221092`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27430221140`, completed successfully.
+- Started `codex/scan-root-env-example` increment:
+  - include the tracked root `.env.example` in the public artifact scanner;
+  - add smoke coverage for `.env.example` scanner scope;
+  - document that release/support leak scans cover `.env.example`.
