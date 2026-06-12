@@ -84,14 +84,17 @@ Preferred dogfood path:
 
 3. Open the generated form only from the operator workstation.
 4. Submit the manifest to GitHub.
-5. Complete GitHub's manifest conversion in the operator environment:
+5. GitHub redirects to `/github-app/manifest-complete` with a one-hour code.
+   The App server responds with operator guidance. Application code does not
+   echo the code in the response, exchange it, store it, or log it.
+6. Complete GitHub's manifest conversion in the operator environment:
 
    ```bash
    npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
    ```
 
-6. Move the returned credentials directly into the bot runtime secret store.
-7. Record only redacted completion evidence.
+7. Move the returned credentials directly into the bot runtime secret store.
+8. Record only redacted completion evidence.
 
 Manual fallback path:
 
@@ -108,6 +111,11 @@ exchange that code and write GitHub's generated credential response to an
 explicit private path. The conversion command prints only a redacted summary
 and refuses to write inside this public repository unless
 `--allow-repo-output` is passed for isolated tests.
+
+The manifest's setup and callback URLs are also safe operator guidance
+endpoints. They acknowledge the browser redirect and point operators back to
+the install/deployment runbooks; they do not start model work or expose
+secrets.
 
 ## Settings To Verify
 

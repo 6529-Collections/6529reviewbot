@@ -39,6 +39,18 @@ Use the conversion CLI from a private operator environment:
 npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
 ```
 
+The production server should return safe operator guidance at:
+
+```text
+GET /github-app/manifest-complete
+GET /github-app/setup
+GET /github-app/callback
+```
+
+These endpoints are for browser handoff during App registration/install. They
+do not start review work, exchange manifest codes, or expose generated
+credentials.
+
 Use [github-app-registration.md](github-app-registration.md) as the complete
 registration packet for operator roles, settings verification,
 post-registration acceptance checks, credential rotation, and rollback.

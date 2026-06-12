@@ -325,6 +325,8 @@ Completed in `6529reviewbot`:
   registration forms.
 - GitHub App manifest conversion CLI that writes one-time generated
   credentials only to an explicit private output path.
+- Public-safe GitHub App browser handoff routes for manifest, setup, and
+  callback redirects.
 - GitHub App registration packet for operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback.
 - installed central worker and dormant-by-default alert workflows with

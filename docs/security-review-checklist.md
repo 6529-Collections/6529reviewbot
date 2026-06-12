@@ -33,6 +33,8 @@ Target deployment:
   origin and contains no `<bot-host>` placeholders.
 - The [GitHub App Registration Packet](github-app-registration.md) acceptance
   and credential-custody checks are complete or explicitly deferred.
+- GitHub App browser handoff routes do not echo manifest codes, generated
+  credentials, webhook payloads, or private repository details.
 - Public repositories require trusted actors or are disabled.
 - Comment-command requestor attribution points to the comment author.
 - Hidden bot metadata is trusted only from configured bot accounts.

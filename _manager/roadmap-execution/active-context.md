@@ -81,10 +81,11 @@ merged PRs.
 - GitHub App manifest conversion CLI PR: merged as PR #61, merge commit
   `8ed1478`
 - Worker capacity runbook PR: merged as PR #62, merge commit `5c4583d`
-- Current branch: `codex/explicit-reusable-workflow-secrets`
-- Current local changes: reusable workflow hardening so caller repos map only
-  declared provider secrets instead of inheriting every caller secret, plus
-  compatibility docs and release/security links.
+- Reusable workflow secret-boundary PR: merged as PR #63, merge commit
+  `19f7943`
+- Current branch: `codex/github-app-operator-routes`
+- Current local changes: public-safe GitHub App manifest/setup/callback
+  guidance routes plus tests and registration/deployment docs.
 
 ## Key Decisions
 
@@ -175,6 +176,9 @@ merged PRs.
   preferred production path. It must not use `secrets: inherit`; callers should
   pass only the declared provider secrets if they intentionally accept
   caller-repo execution.
+- GitHub App browser handoff routes may acknowledge the presence of a manifest
+  code or setup redirect, but they must not echo temporary codes, generated
+  credentials, raw webhook payloads, or private repository details.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -221,7 +225,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the reusable workflow secret-boundary PR.
+1. Validate, publish, and merge the GitHub App operator guidance routes PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

@@ -74,6 +74,8 @@ stabilized.
   registration-form output.
 - GitHub App manifest conversion CLI for one-time generated credentials with
   explicit private output and redacted summaries.
+- Public-safe GitHub App registration/setup/callback guidance routes that do
+  not echo manifest codes or generated credentials.
 - GitHub App registration packet for operator roles, credential custody,
   post-registration checks, permission changes, rotation, and rollback.
 - Pinned central worker and alert workflow template actions plus a

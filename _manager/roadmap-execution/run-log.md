@@ -662,3 +662,14 @@
   - link the secret-boundary guidance from README, architecture, security,
     AWS ledger, release, release readiness, security checklist, roadmap,
     changelog, and manager memory.
+- Merged `6529reviewbot` PR #63 as `19f7943` after CI and Dependency Review
+  passed; CodeRabbit had no actionable review threads, and the normal merge
+  path allowed the merge.
+- Started `codex/github-app-operator-routes` increment:
+  - add public-safe JSON guidance routes for GitHub App manifest completion,
+    setup, and callback redirects;
+  - avoid echoing manifest codes or generated credentials in route responses;
+  - smoke-test that manifest completion detects a code without returning the
+    code value;
+  - update GitHub App, install, deployment, release readiness, security
+    checklist, roadmap, changelog, and manager memory.
