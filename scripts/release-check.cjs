@@ -17,6 +17,7 @@ const repoConfigTemplates = [
 runNode("scripts/check.cjs");
 runNode("scripts/smoke-test.cjs");
 runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);
+runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/validate-repository-config.cjs", repoConfigTemplates);
 parseYamlDirectories(["templates", ".github/workflows"]);
 run(gitBin(), ["diff", "--check"]);

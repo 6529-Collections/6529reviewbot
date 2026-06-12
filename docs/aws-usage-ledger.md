@@ -150,5 +150,7 @@ limit 50;
 - OpenRouter may return direct usage cost when usage accounting is enabled.
 - OpenAI and Anthropic cost estimation requires maintained pricing rows in
   `ai_model_prices`.
+- Use [Model Pricing](model-pricing.md) to dry-run and apply reviewed
+  provider/model price rows.
 - Usage writes can be configured fail-open or fail-closed with
   `REVIEW_USAGE_FAIL_CLOSED`.

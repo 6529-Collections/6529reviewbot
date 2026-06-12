@@ -302,3 +302,12 @@
     enabled;
   - smoke coverage validates SQL update construction and dispatch-failed
     status propagation.
+- Merged `6529reviewbot` PR #31 as `7d16d96` after CI and Dependency Review
+  passed; CodeRabbit remained in progress with no review threads, and the
+  normal merge path allowed the merge.
+- Started `codex/model-price-tooling` increment:
+  - model price file parser and validator;
+  - dry-run/apply CLI for `ai_model_prices`;
+  - empty example price file to avoid stale committed prices;
+  - release check dry-runs the example file;
+  - docs and release gates describe operator-maintained price updates.

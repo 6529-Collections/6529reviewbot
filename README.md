@@ -68,6 +68,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Configuration](docs/configuration.md): central runtime settings.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
+- [Model Pricing](docs/model-pricing.md): operator-maintained price rows.
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
 - [Run Control](docs/run-control.md): dedupe and concurrency claims.
@@ -143,6 +144,12 @@ Print the Aurora ledger schema without touching AWS:
 
 ```bash
 npm run ledger:schema
+```
+
+Preview model pricing SQL without touching AWS:
+
+```bash
+npm run model-prices -- --file config/model-prices.example.json
 ```
 
 Replay a saved GitHub webhook payload without dispatching workers:
@@ -327,6 +334,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Production deployment](docs/deployment.md)
 - [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
+- [Model pricing](docs/model-pricing.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
 - [Run control](docs/run-control.md)
