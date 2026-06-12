@@ -16,6 +16,7 @@ const budgetLedger = require("../src/budget-ledger.cjs");
 const budgetPolicies = require("../src/budget-policies.cjs");
 const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
 const dataApi = require("../src/data-api.cjs");
+const diagnostics = require("../src/diagnostics.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -2932,6 +2933,15 @@ appServer.handleGitHubWebhook({
   assert.equal(dispatchStatusUpdates[0].options.metadata.queueReason, "queue closed");
   const dispatchExceptionStatusUpdates = [];
   const dispatchExceptionEvents = [];
+  const sensitiveDispatchError =
+    "dispatch token mint failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456";
+  assert.equal(
+    appServer.redactSensitiveText("Bearer abcdefghijklmnopqrstuvwxyz123456"),
+    "Bearer [redacted]"
+  );
+  assert.doesNotThrow(() =>
+    diagnostics.safeErrorLine({ stack: { not: "a string" } })
+  );
   await assert.rejects(
     () =>
       appServer.handleGitHubWebhook({
@@ -2955,7 +2965,7 @@ appServer.handleGitHubWebhook({
             snapshot: { unavailable: false, active: {} },
           }),
         enqueueReviewJobs: async () => {
-          throw new Error("dispatch token mint failed");
+          throw new Error(sensitiveDispatchError);
         },
         updateRunClaimStatus: async (job, status, options) => {
           dispatchExceptionStatusUpdates.push({ job, status, options });
@@ -2973,6 +2983,15 @@ appServer.handleGitHubWebhook({
       /dispatch token mint failed/.test(entry.options.metadata.queueReason)
     )
   );
+  assert(
+    dispatchExceptionStatusUpdates.every(
+      (entry) =>
+        entry.options.metadata.queueReason.includes("Bearer [redacted]") &&
+        entry.options.metadata.queueReason.includes("sk-[redacted]") &&
+        !entry.options.metadata.queueReason.includes("abcdefghijklmnopqrstuvwxyz123456") &&
+        !entry.options.metadata.queueReason.includes("sk-proj-")
+    )
+  );
   const dispatchExceptionDispatchEvents = dispatchExceptionEvents.filter(
     (event) => event.status === "dispatch_error"
   );
@@ -2982,6 +3001,15 @@ appServer.handleGitHubWebhook({
   assert(
     dispatchExceptionDispatchEvents.every((event) =>
       /dispatch token mint failed/.test(event.reason)
+    )
+  );
+  assert(
+    dispatchExceptionDispatchEvents.every(
+      (event) =>
+        event.reason.includes("Bearer [redacted]") &&
+        event.reason.includes("sk-[redacted]") &&
+        !event.reason.includes("abcdefghijklmnopqrstuvwxyz123456") &&
+        !event.reason.includes("sk-proj-")
     )
   );
   const completedDispatchStatusUpdates = [];

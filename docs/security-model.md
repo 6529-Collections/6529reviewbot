@@ -101,8 +101,10 @@ Worker stdout and stderr are omitted from adapter results by default. When an
 operator explicitly opts into diagnostic tails, the adapter redacts common
 token and private-key shapes before returning them. GitHub API dispatch failure
 bodies are redacted the same way before they can enter queue results or
-run-control metadata. Redaction is a guardrail, not permission to publish
-verbose worker diagnostics.
+run-control metadata. App server dispatch exceptions are also reduced to a
+short redacted line before they are copied into run-claim or job-event
+diagnostics. Redaction is a guardrail, not permission to publish verbose worker
+diagnostics.
 
 ### Runtime Control Safety
 

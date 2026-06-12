@@ -47,6 +47,8 @@ stabilized.
 - Worker diagnostics redact common bearer, GitHub, provider API key, and
   private-key shapes before optional output tails or GitHub API dispatch
   failures are returned.
+- App server dispatch exception diagnostics are redacted before they are
+  written to run-claim metadata or job-event reasons.
 - Live provider calls fail closed when the provider returns empty visible
   review text instead of posting a generic no-finding comment.
 - The production server can mint a short-lived GitHub App installation token
