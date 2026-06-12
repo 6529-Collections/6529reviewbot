@@ -61,7 +61,8 @@ REVIEW_DEFAULT_<PROVIDER>_MODEL
 ```
 
 The built-in Anthropic default is `claude-opus-4-8`, but the default is still
-configuration-driven so the model can be updated in one place.
+configuration-driven through [Model Catalog](model-catalog.md) so the model can
+be updated in one place.
 
 OpenRouter lanes should name an explicit model:
 

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "defaultProvider": "anthropic",
+  "providers": {
+    "anthropic": {
+      "defaultModel": "claude-opus-4-8",
+      "requireExplicitModel": false,
+      "models": {
+        "claude-opus-4-8": {
+          "status": "default",
+          "notes": "Default Anthropic lane requested for 6529bot. Update this catalog when the default model changes."
+        }
+      }
+    },
+    "openai": {
+      "defaultModel": "gpt-5.5",
+      "requireExplicitModel": false,
+      "models": {
+        "gpt-5.5": {
+          "status": "default",
+          "notes": "Default OpenAI lane placeholder. Keep this catalog current with the deployed provider policy."
+        }
+      }
+    },
+    "openrouter": {
+      "defaultModel": "",
+      "requireExplicitModel": true,
+      "models": {}
+    }
+  }
+}

@@ -97,12 +97,14 @@ OPENROUTER_API_KEY
 Provider defaults:
 
 ```text
+REVIEWBOT_MODEL_CATALOG_PATH=config/model-catalog.json
 REVIEW_DEFAULT_ANTHROPIC_MODEL=claude-opus-4-8
 REVIEW_DEFAULT_OPENAI_MODEL=gpt-5.5
 REVIEW_DEFAULT_OPENROUTER_MODEL=
 ```
 
 OpenRouter has no built-in default. Configure it explicitly.
+Built-in defaults live in [Model Catalog](model-catalog.md).
 
 ## Review Job Lanes
 

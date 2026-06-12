@@ -1,13 +1,12 @@
 "use strict";
 
 const crypto = require("crypto");
-
-const DEFAULT_MODELS = {
-  anthropic: "claude-opus-4-8",
-  openai: "gpt-5.5",
-  openrouter: "",
-};
-const PROVIDERS = ["anthropic", "openai", "openrouter"];
+const {
+  PROVIDERS,
+  defaultModelForProvider: catalogDefaultModelForProvider,
+  defaultProvider,
+  normalizeProvider,
+} = require("./model-catalog.cjs");
 const DEFAULT_MAX_JOBS_PER_DELIVERY = 50;
 
 function reviewJobPolicyFromEnv(env = process.env) {
@@ -29,17 +28,20 @@ function parseReviewLanes(value, env = process.env) {
         .map((item) => item.trim())
         .filter(Boolean)
         .map((item) => parseReviewLane(item, env))
-    : [
-        normalizeReviewLane({
-          provider: env.REVIEWBOT_DEFAULT_PROVIDER || env.REVIEW_PROVIDER || "anthropic",
-          model:
-            env.REVIEWBOT_DEFAULT_MODEL ||
-            env.REVIEW_MODEL ||
-            defaultModelForProvider(env.REVIEWBOT_DEFAULT_PROVIDER || env.REVIEW_PROVIDER || "anthropic", env),
-        }),
-      ];
+    : [defaultReviewLane(env)];
 
   return dedupeLanes(lanes);
+}
+
+function defaultReviewLane(env) {
+  const provider = defaultProvider(env);
+  return normalizeReviewLane({
+    provider,
+    model:
+      env.REVIEWBOT_DEFAULT_MODEL ||
+      env.REVIEW_MODEL ||
+      catalogDefaultModelForProvider(provider, env),
+  });
 }
 
 function parseReviewLane(value, env = process.env) {
@@ -50,13 +52,13 @@ function parseReviewLane(value, env = process.env) {
     );
   }
   const provider = match[1];
-  const model = match[2] || defaultModelForProvider(provider, env);
+  const model = match[2] || catalogDefaultModelForProvider(provider, env);
   return normalizeReviewLane({ provider, model });
 }
 
 function normalizeReviewLane(lane) {
   const provider = normalizeProvider(lane.provider);
-  const model = String(lane.model || "").trim() || defaultModelForProvider(provider);
+  const model = String(lane.model || "").trim() || catalogDefaultModelForProvider(provider);
   if (!model) {
     throw new Error(
       `No model configured for provider '${provider}'. Set REVIEWBOT_REVIEW_LANES, REVIEWBOT_DEFAULT_MODEL, REVIEW_MODEL, or REVIEW_DEFAULT_${provider.toUpperCase()}_MODEL.`
@@ -81,24 +83,6 @@ function dedupeLanes(lanes) {
     result.push(lane);
   }
   return result;
-}
-
-function defaultModelForProvider(provider, env = process.env) {
-  const normalized = normalizeProvider(provider);
-  return (
-    env[`REVIEWBOT_DEFAULT_${normalized.toUpperCase()}_MODEL`] ||
-    env[`REVIEW_DEFAULT_${normalized.toUpperCase()}_MODEL`] ||
-    DEFAULT_MODELS[normalized] ||
-    ""
-  );
-}
-
-function normalizeProvider(provider) {
-  const normalized = String(provider || "").trim().toLowerCase();
-  if (!PROVIDERS.includes(normalized)) {
-    throw new Error(`Review job provider must be one of ${PROVIDERS.join(", ")}. Got '${provider}'.`);
-  }
-  return normalized;
 }
 
 function createReviewJobs(event, controls = {}, policy = reviewJobPolicyFromEnv()) {
@@ -315,7 +299,6 @@ function slugPart(value) {
 
 module.exports = {
   DEFAULT_MAX_JOBS_PER_DELIVERY,
-  DEFAULT_MODELS,
   PROVIDERS,
   attachBudgetToReviewJob,
   budgetSummaryForJobs,

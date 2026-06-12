@@ -29,6 +29,7 @@
     "alerts:spend": "node bin/run-spend-alert-check.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
+    "validate:model-catalog": "node bin/validate-model-catalog.cjs",
     "validate:repo-config": "node bin/validate-repository-config.cjs",
     "release:check": "node scripts/release-check.cjs"
   },

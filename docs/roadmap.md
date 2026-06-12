@@ -158,6 +158,10 @@ Finalize the user-facing bot contract:
 - opt-in repo configuration file format;
 - model defaults with a clean update path as providers release new models.
 
+The built-in provider defaults now live in `config/model-catalog.json` and are
+validated by the release check. Production can still override defaults through
+environment configuration while testing provider changes.
+
 Current model direction:
 
 - Anthropic defaults to `claude-opus-4-8` through configuration, not scattered

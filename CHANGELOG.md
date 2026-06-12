@@ -13,6 +13,7 @@ stabilized.
 - Standalone review engine for general, follow-up, WCAG 2.2 AA, i18n, and
   crypto/security review modes.
 - Provider configuration for Anthropic, OpenAI, and OpenRouter.
+- Validated model catalog for provider defaults and model-update workflow.
 - GitHub App webhook skeleton with signature verification and normalized PR
   and comment-command events.
 - GitHub App installation-token handling for repository config reads and actor
