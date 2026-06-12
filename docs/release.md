@@ -32,6 +32,8 @@ After stabilization:
   passes before tagging; deferred gates remain allowed only when release notes
   name the risk and follow-up owner
 - `npm run release:check`
+- `npm run check:release-gates` confirms the machine-readable v0 gates match
+  the numbered required-gates list
 - `npm run check:docs` passes before publishing docs-heavy release notes
 - `npm run check:public-artifacts` passes before publishing release notes or
   public operator evidence

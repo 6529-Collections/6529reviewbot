@@ -80,6 +80,8 @@ stabilized.
 - `actions/checkout` pins now use the peeled `v6.0.3` commit SHA instead of
   the annotated tag object SHA.
 - v0 release gate renderer can merge an operator-owned status/evidence file.
+- Release checks validate that machine-readable v0 gates match the numbered
+  required-gates list in the release plan.
 - Run-control ledger claim, duplicate-denial, and completion-update path
   verified against the isolated dogfood ledger.
 - Spend-alert read/evaluation path verified against the isolated dogfood

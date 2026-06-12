@@ -803,7 +803,7 @@ assert.equal(
 );
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
-assert(gates.gates.length >= 16);
+assert(gates.gates.length >= 19);
 assert.match(
   gates.gates.find((gate) => gate.id === "container-image").title,
   /built from a reviewed commit/

@@ -19,6 +19,7 @@ runNode("scripts/check-doc-links.cjs");
 runNode("scripts/check-workflow-actions.cjs");
 runNode("scripts/check-public-artifacts.cjs");
 runNode("scripts/check-preflight-fixtures.cjs");
+runNode("scripts/check-release-gate-parity.cjs");
 runNode("scripts/smoke-test.cjs");
 runNode("bin/validate-usage-api-openapi.cjs", ["docs/usage-api.openapi.json"]);
 runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);

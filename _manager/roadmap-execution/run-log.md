@@ -1041,3 +1041,12 @@
     release plan;
   - add smoke-test assertions for the container-image gate and model-price
     freshness wording.
+- Merged `6529reviewbot` PR #95 as `ce616e1` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27428697897`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27428697926`, completed successfully.
+- Started `codex/release-gate-parity-check` increment:
+  - add a release-check script that compares `config/v0-release-gates.json`
+    count with the numbered required-gates list in `docs/v0-release-plan.md`;
+  - wire the parity script into `npm run release:check` and release docs.
