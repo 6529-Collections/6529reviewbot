@@ -59,6 +59,7 @@ The dispatch fields are:
 
 ```text
 job_id
+run_key
 installation_id
 target_repo
 head_repo
@@ -70,6 +71,9 @@ model
 lane
 requestor
 ```
+
+`run_key` is the durable run-control claim key. The central worker uses it to
+mark the claim `running`, then `completed` or `failed`.
 
 `installation_id` is the target repository's GitHub App installation id. The
 central workflow uses it to mint a short-lived installation token for target
@@ -114,6 +118,7 @@ REVIEW_KIND
 REVIEW_PROVIDER
 REVIEW_MODEL
 REVIEWBOT_JOB_ID
+REVIEWBOT_RUN_KEY
 REVIEWBOT_JOB_LANE
 REVIEWBOT_DELIVERY_ID
 REVIEWBOT_GITHUB_INSTALLATION_ID
@@ -130,6 +135,11 @@ call a provider; it is visible in the queue result returned by the App. The
 App can also persist budget and dispatch lifecycle rows to the job ledger so
 retries, alerts, and dashboards can reason about failed dispatches after the
 webhook response is gone. See [job-ledger.md](job-ledger.md).
+
+Local workers run synchronously, so their adapter results can mark run-control
+claims `completed` or `failed` immediately. GitHub Actions workers are
+asynchronous; the App marks them `dispatching`, and `bin/run-review-job.cjs`
+closes the claim from inside the workflow.
 
 Worker stdout and stderr are not included in adapter results by default. This
 keeps webhook responses and queue logs from accidentally carrying prompt text,

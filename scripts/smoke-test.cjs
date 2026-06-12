@@ -18,6 +18,7 @@ const githubAppInstallationToken = require("../bin/github-app-installation-token
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
+const runReviewJobCli = require("../bin/run-review-job.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
@@ -704,6 +705,7 @@ assert.equal(firstJobEvent.run.model, reviewJobs[0].model);
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).GH_REPO, "6529-Collections/example");
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEW_KIND, "general");
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEWBOT_GITHUB_INSTALLATION_ID, "99");
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEWBOT_RUN_KEY, reviewJobs[0].runKey);
 assert.match(workerAdapter.reviewCommandArgs(reviewJobs[0])[0], /general-pr-review\.cjs$/);
 const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
@@ -716,7 +718,31 @@ const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   ],
 });
 assert.equal(localWorkerResult.accepted, true);
+assert.equal(localWorkerResult.claimStatus, "completed");
 assert.equal(localWorkerResult.stdout, "general:6529-Collections/example");
+const failedLocalWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
+  policy: workerAdapter.workerAdapterPolicyFromEnv({
+    REVIEWBOT_WORKER_ADAPTER: "local",
+  }),
+  localCommandArgs: ["-e", "process.exit(1)"],
+});
+assert.equal(failedLocalWorkerResult.accepted, false);
+assert.equal(failedLocalWorkerResult.claimStatus, "failed");
+const workerClaimUpdates = [];
+const lifecycleWorkerResult = runReviewJobCli.runJobWithClaimStatus(reviewJobs[0], {
+  runControlSettings: { enabled: false },
+  runReviewJobLocally: () => ({
+    accepted: true,
+    adapter: "local",
+    exitCode: 0,
+  }),
+  updateWorkerRunClaim: (settings, job, status, metadata) => {
+    workerClaimUpdates.push({ settings, job, status, metadata });
+    return { skipped: false };
+  },
+});
+assert.equal(lifecycleWorkerResult.accepted, true);
+assert.deepEqual(workerClaimUpdates.map((item) => item.status), ["running", "completed"]);
 let dispatchedWorkflow = null;
 const forkReviewJob = { ...reviewJobs[0], headRepoFullName: "external/fork" };
 const dispatchResult = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
@@ -742,8 +768,10 @@ assert.deepEqual(
 );
 assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
 assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).installation_id, "99");
+assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).run_key, forkReviewJob.runKey);
 assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
 assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/example"), true);
+assert.equal(dispatchedWorkflow.args.includes(`run_key=${forkReviewJob.runKey}`), true);
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
 let missingInstallationDispatchCalled = false;
@@ -881,6 +909,12 @@ assert.equal(
 assert.match(
   runClaimUpdateQuery.parameters.find((param) => param.name === "metadata").value.stringValue,
   /queueReason/
+);
+assert.equal(
+  runControlLedger
+    .buildRunClaimStatusUpdate("reviewbot", reviewJobs[0], "failed")
+    .parameters.find((param) => param.name === "status").value.stringValue,
+  "failed"
 );
 let updatedRunClaim = null;
 const updateRunClaimResult = runControlLedger.updateRunClaimStatus(
@@ -1630,6 +1664,46 @@ appServer.handleGitHubWebhook({
   assert.equal(dispatchStatusUpdates.length, 4);
   assert.equal(dispatchStatusUpdates[0].status, "dispatch_failed");
   assert.equal(dispatchStatusUpdates[0].options.metadata.queueReason, "queue closed");
+  const completedDispatchStatusUpdates = [];
+  const completedDispatchResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    runControlPolicy,
+    claimReviewJob: async (job, context) =>
+      runControl.evaluateRunControl({
+        job,
+        policy: context.policy,
+        snapshot: { unavailable: false, active: {} },
+      }),
+    enqueueReviewJobs: async (jobs) => ({
+      accepted: true,
+      status: "accepted",
+      adapter: "local",
+      jobs: jobs.map((job) => ({
+        jobId: job.id,
+        accepted: true,
+        adapter: "local",
+        claimStatus: "completed",
+      })),
+    }),
+    updateRunClaimStatus: async (job, status, options) => {
+      completedDispatchStatusUpdates.push({ job, status, options });
+    },
+  });
+  assert.equal(completedDispatchResult.statusCode, 202);
+  assert.equal(completedDispatchStatusUpdates.length, 4);
+  assert.equal(completedDispatchStatusUpdates[0].status, "completed");
+  assert.equal(completedDispatchStatusUpdates[0].options.metadata.adapter, "local");
   let runControlDeniedQueued = false;
   const runControlDeniedResult = await appServer.handleGitHubWebhook({
     headers: {

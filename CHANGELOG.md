@@ -26,7 +26,8 @@ stabilized.
 - Review job fanout across review kinds and provider/model lanes.
 - Run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps.
-- Run-control claim status updates after worker dispatch attempts.
+- Run-control claim status updates after dispatch attempts and worker
+  completion.
 - Durable job lifecycle ledger for budget and dispatch audit events.
 - Base-ref repository config loading and restrictive policy merge.
 - Local and central GitHub Actions worker adapters.

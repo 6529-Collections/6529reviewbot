@@ -20,6 +20,7 @@ Ready for community review:
 - review job fanout across review kinds and provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
+- run-control worker completion updates for durable claims;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;

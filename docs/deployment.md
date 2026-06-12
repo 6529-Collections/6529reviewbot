@@ -102,6 +102,21 @@ REVIEW_USAGE_DB_NAME
 REVIEW_USAGE_DB_SCHEMA
 ```
 
+Required repository variables when durable run-control claims should be closed
+by the worker:
+
+```text
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true
+REVIEWBOT_RUN_CONTROL_LEDGER_AWS_REGION
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_RESOURCE_ARN
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_SECRET_ARN
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_NAME
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_SCHEMA
+```
+
+If those run-control variables are blank, the worker falls back to the usage
+ledger settings for the same database and schema.
+
 Before enabling live writes, apply the ledger schema from a configured
 operator environment:
 
@@ -163,7 +178,9 @@ or GitHub App private keys.
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
 - `noop` mode returns jobs without dispatching workers.
 - Job ledger rows record budget decisions and dispatch outcomes when enabled.
-- `github_actions` mode passes `installation_id` into the workflow.
+- `github_actions` mode passes `installation_id` and `run_key` into the
+  workflow.
+- Workers mark run-control claims `running`, then `completed` or `failed`.
 - Worker mints a short-lived installation token without logging it.
 - Target checkout uses the installation token.
 - Model usage is recorded in the isolated usage ledger.

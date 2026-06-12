@@ -6,6 +6,9 @@ on:
       job_id:
         required: true
         type: string
+      run_key:
+        required: true
+        type: string
       installation_id:
         required: true
         type: string
@@ -90,6 +93,7 @@ jobs:
       - name: Write job payload
         env:
           JOB_ID: ${{ inputs.job_id }}
+          RUN_KEY: ${{ inputs.run_key }}
           INSTALLATION_ID: ${{ inputs.installation_id }}
           TARGET_REPO: ${{ inputs.target_repo }}
           HEAD_REPO: ${{ inputs.head_repo }}
@@ -108,6 +112,7 @@ jobs:
             `${JSON.stringify(
               {
                 id: process.env.JOB_ID,
+                runKey: process.env.RUN_KEY,
                 installationId: process.env.INSTALLATION_ID,
                 repository: { fullName: process.env.TARGET_REPO },
                 headRepoFullName: process.env.HEAD_REPO,
@@ -138,4 +143,10 @@ jobs:
           REVIEW_USAGE_DB_SECRET_ARN: ${{ vars.REVIEW_USAGE_DB_SECRET_ARN }}
           REVIEW_USAGE_DB_NAME: ${{ vars.REVIEW_USAGE_DB_NAME }}
           REVIEW_USAGE_DB_SCHEMA: ${{ vars.REVIEW_USAGE_DB_SCHEMA }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED || 'false' }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_AWS_REGION: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_AWS_REGION || vars.REVIEW_USAGE_AWS_REGION }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_DB_RESOURCE_ARN: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_DB_RESOURCE_ARN || vars.REVIEW_USAGE_DB_RESOURCE_ARN }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_DB_SECRET_ARN: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_DB_SECRET_ARN || vars.REVIEW_USAGE_DB_SECRET_ARN }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_DB_NAME: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_DB_NAME || vars.REVIEW_USAGE_DB_NAME }}
+          REVIEWBOT_RUN_CONTROL_LEDGER_DB_SCHEMA: ${{ vars.REVIEWBOT_RUN_CONTROL_LEDGER_DB_SCHEMA || vars.REVIEW_USAGE_DB_SCHEMA }}
         run: npm run worker:job -- -- --job-file job.json

@@ -134,12 +134,21 @@ after dispatch attempts:
 
 ```text
 dispatching       Queue accepted the job.
+running           Worker started executing the job.
+completed         Worker finished successfully.
+failed            Worker finished unsuccessfully after dispatch.
 dispatch_failed   Queue rejected the job.
 dispatch_error    Queue threw before returning a result.
 ```
 
-`dispatch_failed` and `dispatch_error` are terminal for concurrency purposes,
-so failed queue attempts do not consume active slots until the TTL.
+`completed`, `failed`, `dispatch_failed`, and `dispatch_error` are terminal
+for concurrency purposes, so finished or failed jobs do not consume active
+slots until the TTL.
+
+The central review-job runner updates `running` before it calls the provider
+worker and then writes `completed` or `failed` when the worker returns. The
+GitHub Actions worker therefore needs the job `runKey` plus run-control ledger
+environment variables when durable claims are enabled.
 
 ## Durable Table
 

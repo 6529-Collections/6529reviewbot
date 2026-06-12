@@ -319,3 +319,13 @@
   - token cost estimator that handles cached input and reasoning tokens;
   - fail-open lookup behavior unless usage ledger fail-closed is enabled;
   - docs and smoke coverage for cost estimation behavior.
+- Merged `6529reviewbot` PR #33 as `7aa4bd3` after CI and Dependency Review
+  passed; CodeRabbit again had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/run-claim-completion` increment:
+  - worker dispatch payloads carry `runKey`;
+  - local workers return terminal run-claim statuses;
+  - central `bin/run-review-job.cjs` marks claims `running`, then `completed`
+    or `failed`;
+  - starter GitHub Actions workflow passes run-control ledger environment;
+  - docs and smoke coverage describe worker claim completion.

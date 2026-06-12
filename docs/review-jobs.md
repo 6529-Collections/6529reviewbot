@@ -125,6 +125,7 @@ PR_HEAD_SHA=<job.headSha>
 REVIEW_KIND=<job.reviewKind>
 REVIEW_PROVIDER=<job.provider>
 REVIEW_MODEL=<job.model>
+REVIEWBOT_RUN_KEY=<job.runKey>
 ```
 
 Workers must still enforce engine-level context, token, timeout, and source
@@ -135,5 +136,9 @@ Workers can also pass the full job JSON to:
 ```bash
 node bin/run-review-job.cjs --job-file job.json
 ```
+
+`bin/run-review-job.cjs` is preferred for central workers because it updates
+the durable run-control claim from `running` to `completed` or `failed` when
+`REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true`.
 
 See [worker-adapters.md](worker-adapters.md).

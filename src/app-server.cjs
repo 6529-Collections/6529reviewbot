@@ -502,7 +502,7 @@ async function recordRunClaimDispatchStatuses(updateRunClaimStatus, jobs, queueR
     const hasPerJobResult = Boolean(result);
     const accepted = hasPerJobResult ? Boolean(result.accepted) : queueResult.accepted !== false;
     const status =
-      queueResult.claimStatus || (accepted ? "dispatching" : "dispatch_failed");
+      result?.claimStatus || queueResult.claimStatus || (accepted ? "dispatching" : "dispatch_failed");
     await updater(job, status, {
       metadata: {
         queueStatus: queueResult.status || "",

@@ -33,6 +33,7 @@ The first `v0` tag can include:
 - review job fanout by review kind and provider/model lane;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
+- run-control worker completion updates for durable claims;
 - local and central GitHub Actions worker adapters;
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
