@@ -108,8 +108,11 @@ strings, preflight errors, alert delivery errors, and worker lifecycle warnings
 use the same redaction path. Repository config load reasons are also shortened
 and redacted before they appear in webhook or admin summaries. Utility CLI
 fatal errors and validator path prefixes use the same common-secret redaction
-path before printing operator diagnostics. Redaction is a guardrail, not
-permission to publish verbose worker diagnostics.
+path before printing operator diagnostics. GitHub App manifest conversion
+response-error bodies and summary strings are redacted before operator-facing
+output, but generated credentials still belong only in the private secret
+store. Redaction is a guardrail, not permission to publish verbose worker
+diagnostics.
 
 ### Runtime Control Safety
 

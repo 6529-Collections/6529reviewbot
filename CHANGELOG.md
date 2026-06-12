@@ -51,6 +51,8 @@ stabilized.
   diagnostic redaction path.
 - Utility CLI fatal errors now use the shared diagnostic redaction path, and
   validator path prefixes redact common secret shapes.
+- GitHub App manifest conversion error bodies and summary strings redact
+  common secret shapes before operator-facing output.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the

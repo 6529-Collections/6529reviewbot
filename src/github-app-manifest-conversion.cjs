@@ -2,6 +2,10 @@
 
 const fs = require("fs");
 const path = require("path");
+const {
+  redactSensitiveText,
+  safeErrorLine,
+} = require("./diagnostics.cjs");
 
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
 const DEFAULT_GITHUB_MANIFEST_CONVERSION_TIMEOUT_MS = 10000;
@@ -118,12 +122,12 @@ function writeManifestConversionOutput(outputPath, result, options = {}) {
 function manifestConversionSummary(result, options = {}) {
   return {
     id: result.id,
-    slug: result.slug || "",
-    name: result.name,
-    owner: result.owner?.login || "",
-    htmlUrl: result.html_url || "",
-    externalUrl: result.external_url || "",
-    outputPath: options.outputPath || "",
+    slug: safeSummaryText(result.slug || ""),
+    name: safeSummaryText(result.name),
+    owner: safeSummaryText(result.owner?.login || ""),
+    htmlUrl: safeSummaryText(result.html_url || ""),
+    externalUrl: safeSummaryText(result.external_url || ""),
+    outputPath: safeSummaryText(options.outputPath || ""),
     permissions: result.permissions || {},
     events: result.events || [],
     credentials: {
@@ -239,11 +243,20 @@ async function responseErrorSuffix(response) {
   if (typeof response.text !== "function") {
     return "";
   }
-  const text = await response.text();
+  let text = "";
+  try {
+    text = await response.text();
+  } catch (error) {
+    return `: ${safeErrorLine(error, 200)}`;
+  }
   if (!text) {
     return "";
   }
-  return `: ${text.slice(0, 200)}`;
+  return `: ${redactSensitiveText(text).slice(0, 200)}`;
+}
+
+function safeSummaryText(value) {
+  return redactSensitiveText(value).slice(0, 1000);
 }
 
 function isPathInside(candidate, root) {
