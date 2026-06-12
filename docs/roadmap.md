@@ -314,7 +314,8 @@ Completed in `6529reviewbot`:
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
-- pinned worker and alert workflow templates with action-ref validation.
+- installed central worker and dormant-by-default alert workflows with
+  action-ref validation.
 - repeatable release check script and manual security review checklist.
 - machine-readable v0 release gates and checklist renderer.
 - validated model catalog for provider defaults.

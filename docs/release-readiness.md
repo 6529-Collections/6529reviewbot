@@ -50,10 +50,10 @@ Ready for community review:
   validation tooling;
 - documented maintainer comment-command contract;
 - installation and onboarding guide for conservative central App dogfood;
-- production deployment runbook and central worker template that mints
-  short-lived GitHub App installation tokens;
-- pinned central worker and alert workflow templates with release-check action
-  pinning validation;
+- production deployment runbook and installed central worker workflow that
+  mints short-lived GitHub App installation tokens;
+- installed central worker and dormant-by-default alert workflows with
+  release-check action pinning validation;
 - machine-readable v0 release gates and checklist renderer;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.

@@ -53,8 +53,8 @@ The first `v0` tag can include:
 - reviewed GitHub App manifest template for repeatable App registration;
 - GitHub App manifest renderer for production-host validation before App
   creation;
-- pinned central worker and alert workflow templates plus a local action-ref
-  pinning guard;
+- installed central worker and dormant-by-default alert workflows plus a local
+  action-ref pinning guard;
 - example AWS IAM/OIDC templates for central Data API and SNS access;
 - no-network production preflight command;
 - incident response runbook;
