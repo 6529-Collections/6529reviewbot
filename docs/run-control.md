@@ -23,7 +23,7 @@ enforce   Deny duplicate or over-concurrency jobs.
 
 Default mode is `off` so development and early dogfood deployments do not need
 a durable claim store on day one. Production should use `enforce` after the
-claim table has been applied and wired into the App server.
+claim table has been applied and the built-in run-control ledger is enabled.
 
 If mode is `enforce` and no claim store is configured, the default claim hook
 fails closed before worker dispatch. This prevents operators from believing
@@ -74,7 +74,8 @@ For example, `REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=0` can stop all
 provider jobs when combined with a claim implementation that reports active
 provider counts.
 
-Recommended dogfood starting point after the claim store is wired:
+Recommended dogfood starting point after the claim table is applied and
+`REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` is set:
 
 ```text
 REVIEWBOT_RUN_CONTROL_MODE=enforce
@@ -89,7 +90,33 @@ REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=3
 The hook receives a budget-admitted job and should return the normalized
 decision from `src/run-control.cjs`.
 
-Production claim implementations must be atomic:
+`bin/server.cjs` wires the built-in Aurora/RDS Data API implementation when:
+
+```text
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true
+```
+
+By default, the run-control ledger reuses the usage-ledger Data API settings.
+Override them only if run claims live in a different cluster, database, or
+schema:
+
+```text
+REVIEWBOT_RUN_CONTROL_LEDGER_AWS_REGION=
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_NAME=
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_RESOURCE_ARN=
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_SCHEMA=
+REVIEWBOT_RUN_CONTROL_LEDGER_DB_SECRET_ARN=
+REVIEWBOT_RUN_CONTROL_LEDGER_CLAIM_TTL_SECONDS=3600
+```
+
+The built-in claimer serializes claim attempts with a PostgreSQL advisory lock
+before checking duplicates, active scope counts, and inserting the claim. That
+is conservative but appropriate for dogfood volume. `CLAIM_TTL_SECONDS` gates
+how long a claim counts as active for concurrency; `DEDUPE_TTL_SECONDS` remains
+the duplicate-run window. A future high-throughput worker can replace the
+global advisory lock with finer-grained scope locks behind the same hook.
+
+Claim implementations must be atomic:
 
 1. Look up or insert the job's `runKey`.
 2. Reject duplicates that are still active or inside the dedupe window.
@@ -99,8 +126,8 @@ Production claim implementations must be atomic:
 
 The schema CLI includes `reviewbot.ai_review_run_claims` for this purpose.
 Implementations should update claim rows when dispatch starts, completes,
-fails, or expires. Expiration is important because worker crashes should not
-block a PR forever.
+fails, or expires. The built-in claimer sets `expires_at` on every claim so
+worker crashes do not block a PR forever.
 
 ## Durable Table
 

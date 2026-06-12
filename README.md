@@ -30,7 +30,7 @@ requests.
   or central GitHub Actions workflows.
 - Records review-job budget and dispatch lifecycle events in a separate
   operator job ledger when enabled.
-- Adds a run-control hook for duplicate-job claims and concurrency caps before
+- Adds run-control claims for duplicate-job and concurrency protection before
   worker dispatch.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
@@ -202,6 +202,7 @@ Run control:
 
 ```text
 REVIEWBOT_RUN_CONTROL_MODE=off|warn|enforce
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
 REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=

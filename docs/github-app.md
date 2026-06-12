@@ -163,9 +163,11 @@ If budget caps are configured and the app cannot resolve current spend, budget
 admission fails closed in `enforce` mode. If every job is denied by budget
 admission, the queue function is not called.
 
-If run control is set to `enforce` and no claim store is wired, run control
-fails closed before dispatch. This avoids silently accepting duplicate or
-over-parallel work when operators intended claims to be active.
+If run control is set to `enforce` and no claim store is enabled or injected,
+run control fails closed before dispatch. This avoids silently accepting
+duplicate or over-parallel work when operators intended claims to be active.
+`bin/server.cjs` wires the built-in Aurora-backed claimer when
+`REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true`.
 
 ## Queue Contract
 

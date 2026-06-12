@@ -18,7 +18,8 @@ Ready for community review:
   resolution;
 - budget admission against the isolated AWS usage ledger;
 - review job fanout across review kinds and provider/model lanes;
-- run-control contract for duplicate delivery claims and concurrency caps;
+- run-control contract and Aurora-backed claimer for duplicate delivery claims
+  and concurrency caps;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
@@ -37,7 +38,6 @@ Not yet v1-ready:
 
 - production GitHub App registration and deployment execution;
 - production worker deployment choice and scaling policy;
-- production DB-backed run-control claim implementation;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;
 - production SNS/webhook alert routing;
@@ -84,14 +84,16 @@ REVIEWBOT_BUDGET_GLOBAL_DAILY_USD=25
 REVIEWBOT_BUDGET_REPO_DAILY_USD=10
 REVIEWBOT_BUDGET_REQUESTOR_DAILY_USD=5
 REVIEWBOT_RUN_CONTROL_MODE=off
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
 REVIEWBOT_ALERTS_ENABLED=true
 REVIEWBOT_ALERTS_NOTIFY_MODE=sns
 ```
 
-After a durable run-control claim store is wired, move to:
+After the durable run-control claim table is applied, move to:
 
 ```text
 REVIEWBOT_RUN_CONTROL_MODE=enforce
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true
 REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=2
 REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=1
 ```
