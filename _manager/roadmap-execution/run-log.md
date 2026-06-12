@@ -1123,3 +1123,6 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- CodeRabbit reviewed PR #102 and suggested adding the 1-80 character role
+  length to `docs/configuration.md`; accepted the nitpick for consistency with
+  `docs/admin-auth-bridge.md`.
