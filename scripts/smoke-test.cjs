@@ -35,6 +35,7 @@ const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
+const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -510,6 +511,28 @@ assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "
   json: true,
   quiet: true,
 });
+assert.equal(publicArtifactsCheck.isPublicTextArtifact("docs/release.md"), true);
+assert.equal(publicArtifactsCheck.isPublicTextArtifact("scripts/smoke-test.cjs"), false);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "arn:aws:iam::123456789012:role/example\n").length,
+  0
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "arn:aws:iam::111122223333:role/live\n")[0].rule,
+  "aws_arn"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "Account: 111122223333\n")[0].rule,
+  "aws_account_id"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwx123456\n")[0].rule,
+  "github_token"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "OPENAI_API_KEY=sk-proj-abcdefghijklmnopqrstuvwx123456\n")[0].rule,
+  "provider_api_key"
+);
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
 assert(gates.gates.length >= 16);

@@ -16,6 +16,7 @@ const repoConfigTemplates = [
 
 runNode("scripts/check.cjs");
 runNode("scripts/check-workflow-actions.cjs");
+runNode("scripts/check-public-artifacts.cjs");
 runNode("scripts/smoke-test.cjs");
 runNode("bin/validate-usage-api-openapi.cjs", ["docs/usage-api.openapi.json"]);
 runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);

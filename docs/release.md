@@ -30,6 +30,8 @@ After stabilization:
   passes before tagging; deferred gates remain allowed only when release notes
   name the risk and follow-up owner
 - `npm run release:check`
+- `npm run check:public-artifacts` passes before publishing release notes or
+  public operator evidence
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App

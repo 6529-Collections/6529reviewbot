@@ -118,6 +118,9 @@ runbook when evidence contains live deployment details.
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
+`npm run check:public-artifacts` is included in `npm run release:check` and
+scans public docs, configs, templates, workflows, and durable manager memory
+for live-looking credentials or cloud identifiers before release.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a
