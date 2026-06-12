@@ -2758,18 +2758,23 @@ appServer.handleGitHubWebhook({
     /dispatch token mint failed/
   );
   assert.equal(dispatchExceptionStatusUpdates.length, 4);
-  assert.equal(dispatchExceptionStatusUpdates[0].status, "dispatch_error");
-  assert.match(
-    dispatchExceptionStatusUpdates[0].options.metadata.queueReason,
-    /dispatch token mint failed/
+  assert(dispatchExceptionStatusUpdates.every((entry) => entry.status === "dispatch_error"));
+  assert(
+    dispatchExceptionStatusUpdates.every((entry) =>
+      /dispatch token mint failed/.test(entry.options.metadata.queueReason)
+    )
   );
   const dispatchExceptionDispatchEvents = dispatchExceptionEvents.filter(
     (event) => event.status === "dispatch_error"
   );
   assert.equal(dispatchExceptionDispatchEvents.length, 4);
-  assert.equal(dispatchExceptionDispatchEvents[0].stage, "dispatch");
-  assert.equal(dispatchExceptionDispatchEvents[0].accepted, false);
-  assert.match(dispatchExceptionDispatchEvents[0].reason, /dispatch token mint failed/);
+  assert(dispatchExceptionDispatchEvents.every((event) => event.stage === "dispatch"));
+  assert(dispatchExceptionDispatchEvents.every((event) => event.accepted === false));
+  assert(
+    dispatchExceptionDispatchEvents.every((event) =>
+      /dispatch token mint failed/.test(event.reason)
+    )
+  );
   const completedDispatchStatusUpdates = [];
   const completedDispatchResult = await appServer.handleGitHubWebhook({
     headers: {
