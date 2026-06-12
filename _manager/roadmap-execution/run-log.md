@@ -415,3 +415,14 @@
   - dogfood rollback now includes scoped and global runtime-control stops;
   - README, deployment, dogfood, changelog, release readiness, v0 plan,
     roadmap, and manager-memory updates.
+- Merged `6529reviewbot` PR #42 as `b945e57` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/usage-api-openapi-contract` increment:
+  - OpenAPI 3.1 contract for public usage summary and private admin summary,
+    budget policies, recent job events, and runtime status;
+  - lightweight validator CLI and `npm run validate:api-contract`;
+  - release-check integration so endpoint contract drift is caught locally and
+    in CI;
+  - README, usage API docs, changelog, release readiness, v0 plan, roadmap, and
+    manager-memory updates.

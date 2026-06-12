@@ -34,6 +34,7 @@ stabilized.
 - Base-ref repository config loading and restrictive policy merge.
 - Local and central GitHub Actions worker adapters.
 - Public/admin usage API contracts and read-only Aurora usage readers.
+- Validated OpenAPI contract for 6529.io usage/admin API integration.
 - Admin-only recent job-events API for queue and worker diagnostics.
 - Admin-only runtime status API backed by no-network preflight checks.
 - 6529.io admin auth bridge contract.

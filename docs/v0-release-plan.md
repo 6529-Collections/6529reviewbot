@@ -40,6 +40,7 @@ The first `v0` tag can include:
 - local and central GitHub Actions worker adapters;
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
+- validated OpenAPI contract for usage/admin API integration;
 - admin runtime status API for no-network preflight warnings;
 - repeatable Aurora ledger schema tooling;
 - dry-run/apply tooling for operator-maintained model price rows;

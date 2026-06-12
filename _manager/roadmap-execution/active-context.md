@@ -55,10 +55,12 @@ merged PRs.
 - Admin runtime status API PR: merged as PR #39, merge commit `9134361`
 - Runtime pause controls PR: merged as PR #40, merge commit `137c949`
 - Comment-command docs PR: merged as PR #41, merge commit `752f1a5`
-- Current branch: `codex/install-onboarding-guide`
-- Current local changes: ordered installation/onboarding guide, README and
-  runbook links, dogfood env/rollback runtime-control updates, changelog,
-  release readiness, roadmap, v0 plan, and manager-memory updates
+- Installation/onboarding guide PR: merged as PR #42, merge commit `b945e57`
+- Current branch: `codex/usage-api-openapi-contract`
+- Current local changes: OpenAPI contract for usage/admin endpoints,
+  lightweight validator, release-check integration, package script, README and
+  usage docs, changelog, release readiness, roadmap, v0 plan, and
+  manager-memory updates
 
 ## Key Decisions
 
@@ -121,6 +123,8 @@ merged PRs.
   should be documented separately from webhook implementation details.
 - Community-facing onboarding should have one ordered install path that links
   to the deeper deployment, dogfood, provider, ledger, and admin-auth docs.
+- 6529.io integration should have a machine-readable usage/admin API contract
+  that release checks validate.
 
 ## Constraints
 
@@ -132,11 +136,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the install/onboarding guide PR if checks and
+1. Validate, publish, and merge the OpenAPI usage/admin API contract PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after the
-   onboarding guide lands.
+3. Prepare the next release-polish or operator-readiness slice after the API
+   contract lands.
 
 ## Open Risks
 

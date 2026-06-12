@@ -4,6 +4,10 @@ The usage API is the read-side contract for dashboards, warnings, and admin
 tools. It is designed so `6529.io` can display bot usage without holding AWS,
 GitHub App, or provider secrets.
 
+The machine-readable OpenAPI contract lives at
+[usage-api.openapi.json](usage-api.openapi.json) and is validated by
+`npm run release:check`.
+
 ## Endpoints
 
 ```text

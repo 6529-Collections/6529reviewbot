@@ -163,6 +163,12 @@ Preview model pricing SQL without touching AWS:
 npm run model-prices -- --file config/model-prices.example.json
 ```
 
+Validate the dashboard/admin API contract:
+
+```bash
+npm run validate:api-contract
+```
+
 Generate a sanitized support bundle:
 
 ```bash
