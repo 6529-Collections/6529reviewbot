@@ -1,7 +1,7 @@
 # Release Process
 
 This repository ships the central `6529bot` App/worker implementation and
-keeps reusable workflow templates for dogfood and compatibility.
+keeps workflow scaffolds for dogfood and compatibility.
 
 ## Versioning
 
