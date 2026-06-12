@@ -6,6 +6,9 @@ on:
       job_id:
         required: true
         type: string
+      installation_id:
+        required: true
+        type: string
       target_repo:
         required: true
         type: string
@@ -57,14 +60,6 @@ jobs:
       - name: Checkout bot
         uses: actions/checkout@v4
 
-      - name: Checkout target repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.head_repo }}
-          ref: ${{ inputs.head_sha }}
-          path: target
-          token: ${{ secrets.REVIEWBOT_GITHUB_TOKEN }}
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -74,9 +69,28 @@ jobs:
       - name: Install bot dependencies
         run: npm ci
 
+      - name: Mint target installation token
+        id: installation-token
+        env:
+          REVIEWBOT_GITHUB_APP_ID: ${{ secrets.REVIEWBOT_GITHUB_APP_ID }}
+          REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64: ${{ secrets.REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64 }}
+        run: |
+          node bin/github-app-installation-token.cjs \
+            --installation-id "${{ inputs.installation_id }}" \
+            --github-actions-output
+
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.head_repo }}
+          ref: ${{ inputs.head_sha }}
+          path: target
+          token: ${{ inputs.head_repo == inputs.target_repo && steps.installation-token.outputs.token || '' }}
+
       - name: Write job payload
         env:
           JOB_ID: ${{ inputs.job_id }}
+          INSTALLATION_ID: ${{ inputs.installation_id }}
           TARGET_REPO: ${{ inputs.target_repo }}
           HEAD_REPO: ${{ inputs.head_repo }}
           PR_NUMBER: ${{ inputs.pr_number }}
@@ -94,6 +108,7 @@ jobs:
             `${JSON.stringify(
               {
                 id: process.env.JOB_ID,
+                installationId: process.env.INSTALLATION_ID,
                 repository: { fullName: process.env.TARGET_REPO },
                 headRepoFullName: process.env.HEAD_REPO,
                 prNumber: process.env.PR_NUMBER,
@@ -112,7 +127,7 @@ jobs:
 
       - name: Run 6529bot review job
         env:
-          GH_TOKEN: ${{ secrets.REVIEWBOT_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.installation-token.outputs.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

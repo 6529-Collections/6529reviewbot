@@ -25,10 +25,12 @@ Ready for community review:
 - scheduled spend alerts with stdout, webhook, and SNS delivery.
 - dogfood runbook, conservative config templates, and repository config
   validation tooling.
+- production deployment runbook and central worker template that mints
+  short-lived GitHub App installation tokens.
 
 Not yet v1-ready:
 
-- production GitHub App registration and deployment;
+- production GitHub App registration and deployment execution;
 - production worker deployment choice and scaling policy;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;

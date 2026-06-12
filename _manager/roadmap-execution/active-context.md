@@ -27,11 +27,14 @@ merged PRs.
 - Scheduled spend alerts PR: merged as PR #15, merge commit `c079b7a`
 - Release readiness docs PR: merged as PR #16, merge commit `6bb7e93`
 - GitHub App installation auth PR: merged as PR #17, merge commit `d667ffd`
+- Dogfood onboarding kit PR: merged as PR #18, merge commit `b5f458d`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/dogfood-onboarding-kit`
-- Current local changes: dogfood runbook, conservative config templates, and
-  repository config validation tooling
+- Frontend dogfood config PR:
+  `https://github.com/6529-Collections/6529seize-frontend/pull/2606`
+- Current branch: `codex/production-app-deployment-wiring`
+- Current local changes: production deployment runbook and central worker
+  short-lived GitHub App installation-token flow
 
 ## Key Decisions
 
@@ -60,9 +63,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge dogfood onboarding kit.
-2. Dogfood on a target repo with conservative defaults.
-3. Prepare production GitHub App deployment and 6529.io wiring.
+1. Push and merge production deployment wiring.
+2. Continue dogfood target-repo PRs once required human review completes.
+3. Prepare release hardening and Scorecard/dependency/security review.
 
 ## Open Risks
 

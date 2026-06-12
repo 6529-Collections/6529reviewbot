@@ -59,6 +59,7 @@ The dispatch fields are:
 
 ```text
 job_id
+installation_id
 target_repo
 head_repo
 pr_number
@@ -70,13 +71,17 @@ lane
 requestor
 ```
 
+`installation_id` is the target repository's GitHub App installation id. The
+central workflow uses it to mint a short-lived installation token for target
+checkout and PR comments.
+
 `target_repo` is the repository that owns the PR and receives comments.
 `head_repo` is the repository that owns the submitted head SHA, which can differ
 for fork PRs.
 
-The receiving workflow should validate the inputs, check out `head_repo` at
-`head_sha` read-only, set provider/AWS secrets from the central bot environment,
-and run:
+The receiving workflow should validate the inputs, mint a short-lived
+installation token, check out `head_repo` at `head_sha` read-only, set
+provider/AWS secrets from the central bot environment, and run:
 
 ```bash
 npm run worker:job -- --job-file job.json
@@ -88,7 +93,12 @@ or pipe the same job JSON to:
 node bin/run-review-job.cjs
 ```
 
-See `templates/review-job-workflow.yml` for a starter workflow.
+See `templates/review-job-workflow.yml` for a starter workflow. The template
+uses `REVIEWBOT_GITHUB_APP_ID` and `REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64`
+to mint the target installation token. A long-lived target repository token is
+not required. Same-repo PR checkouts use the installation token; fork PR
+checkouts are unauthenticated and therefore suitable only for public forks
+unless the worker is extended with an explicitly approved fork access path.
 
 ## Worker Environment
 
@@ -106,6 +116,7 @@ REVIEW_MODEL
 REVIEWBOT_JOB_ID
 REVIEWBOT_JOB_LANE
 REVIEWBOT_DELIVERY_ID
+REVIEWBOT_GITHUB_INSTALLATION_ID
 REVIEWBOT_REQUESTOR
 ```
 

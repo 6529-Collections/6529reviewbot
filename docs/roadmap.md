@@ -281,10 +281,11 @@ Completed in `6529reviewbot`:
 - alerting and scheduled spend checks.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
+- production deployment runbook and central worker installation-token flow.
 
 In progress in `6529reviewbot`:
 
-- dogfood onboarding and production wiring.
+- production deployment execution support and release hardening.
 
 In progress outside this repository:
 

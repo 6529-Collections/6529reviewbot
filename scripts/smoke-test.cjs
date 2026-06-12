@@ -13,6 +13,7 @@ const budgetLedger = require("../src/budget-ledger.cjs");
 const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
+const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -159,6 +160,18 @@ const githubAppSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
 assert.equal(githubAppAuth.isGitHubAppAuthConfigured(githubAppSettings), true);
 assert.equal(githubAppSettings.fetchTimeoutMs, 5000);
 assert.equal(githubAppAuth.createGitHubAppJwt(githubAppSettings).split(".").length, 3);
+assert.deepEqual(
+  githubAppInstallationToken.parseArgs([
+    "--installation-id",
+    "99",
+    "--github-actions-output",
+  ]),
+  { githubActionsOutput: true, installationId: "99" }
+);
+assert.throws(
+  () => githubAppInstallationToken.parseArgs(["--installation-id", "--github-actions-output"]),
+  /requires a value/
+);
 const githubAppConfigText = Buffer.from("enabled: false\n").toString("base64");
 const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
   settings: githubAppSettings,
@@ -367,6 +380,7 @@ assert.equal(firstJobEvent.run.provider, reviewJobs[0].provider);
 assert.equal(firstJobEvent.run.model, reviewJobs[0].model);
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).GH_REPO, "6529-Collections/example");
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEW_KIND, "general");
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEWBOT_GITHUB_INSTALLATION_ID, "99");
 assert.match(workerAdapter.reviewCommandArgs(reviewJobs[0])[0], /general-pr-review\.cjs$/);
 const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
@@ -404,9 +418,32 @@ assert.deepEqual(
   "6529-Collections/example"
 );
 assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
+assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).installation_id, "99");
 assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
 assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/example"), true);
+assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+let missingInstallationDispatchCalled = false;
+const missingInstallationResult = workerAdapter.dispatchReviewJobToGitHubActions(
+  { ...forkReviewJob, installationId: null },
+  {
+    policy: {
+      mode: "github_actions",
+      githubRepo: "6529-Collections/6529reviewbot",
+      githubWorkflow: "review-job.yml",
+      githubRef: "main",
+      ghBin: "gh",
+      localTimeoutMs: 1234,
+    },
+    spawnSync: () => {
+      missingInstallationDispatchCalled = true;
+      return { status: 0, stdout: "queued", stderr: "" };
+    },
+  }
+);
+assert.equal(missingInstallationResult.accepted, false);
+assert.match(missingInstallationResult.reason, /installationId is required/);
+assert.equal(missingInstallationDispatchCalled, false);
 const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[0]], {}, {
   policy: { mode: "noop" },
 });

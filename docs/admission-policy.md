@@ -71,9 +71,7 @@ maintainer is the requestor for budget and audit purposes.
 The pure policy engine lives in `src/admission-policy.cjs`.
 
 `src/app-server.cjs` calls it after webhook normalization and before queueing.
-The current default actor resolver provides only the actor login and no trusted
-permissions, so public repo events are denied unless a real GitHub context
-resolver is injected.
-
-The next implementation layer should resolve actor context from GitHub App
-credentials, including collaborator permission and org membership.
+When GitHub App auth is configured, `bin/server.cjs` injects a resolver that
+uses installation tokens to read collaborator permission and best-effort org
+membership. Without that resolver, the default actor context contains only the
+actor login and public repo events fail closed.
