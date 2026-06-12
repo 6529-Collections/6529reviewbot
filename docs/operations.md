@@ -54,6 +54,8 @@ Check:
 - target repo workflow permissions;
 - GitHub App installation;
 - replaying the saved GitHub delivery with `npm run webhook:replay`;
+- recent `reviewbot.ai_review_job_events` rows for `dispatch_failed` or
+  `dispatch_error`;
 - `GH_TOKEN` scope;
 - provider key availability;
 - fork/external PR skip logic;
@@ -71,6 +73,18 @@ Check:
 - Secrets Manager secret ARN;
 - IAM role policy;
 - `REVIEW_USAGE_FAIL_CLOSED`.
+
+## If Job Ledger Rows Stop Writing
+
+Check:
+
+- `REVIEWBOT_JOB_LEDGER_ENABLED`;
+- `REVIEWBOT_JOB_LEDGER_FAIL_CLOSED`;
+- the shared `REVIEW_USAGE_DB_*` settings, unless job-ledger-specific database
+  overrides are configured;
+- whether the `reviewbot.ai_review_job_events` table exists;
+- Data API and IAM permissions for inserting into that table;
+- whether the App is intentionally running with best-effort job telemetry.
 
 ## If A GitHub Delivery Needs Replay
 

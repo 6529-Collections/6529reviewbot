@@ -70,6 +70,17 @@ server-side infrastructure. See
 The endpoint is admin-only because it may reveal private repo names, requester
 scopes, or operational budget controls.
 
+## Job Events
+
+Review-job lifecycle rows live in `reviewbot.ai_review_job_events` when the job
+ledger is enabled. They are intentionally not part of the public usage summary:
+raw job events can reveal private repo names, requestors, provider/model
+routing, and operational failure details.
+
+The admin API can grow a dedicated job-events endpoint once the 6529.io admin
+surface needs raw queue diagnostics. Until then, operators should use the
+queries in [job-ledger.md](job-ledger.md).
+
 ## Loader Contract
 
 The HTTP server accepts injectable loaders:

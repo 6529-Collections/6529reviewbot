@@ -212,3 +212,17 @@
   - catalog validator in the release gate;
   - README, configuration, review-jobs, roadmap, changelog, and manager-memory
     updates.
+- Addressed CodeRabbit feedback on PR #23 by moving the catalog env example,
+  clarifying explicit-lane smoke coverage, and adding explicit unsupported
+  provider validation.
+- Merged `6529reviewbot` PR #23 as `8cba107` after CI and Dependency Review
+  passed; CodeRabbit's follow-up status was stale but the normal merge path
+  allowed the merge.
+- Started `codex/job-state-ledger` increment:
+  - job ledger settings and Aurora Data API insert builder;
+  - App hook for budget and dispatch lifecycle event recording;
+  - server wiring behind `REVIEWBOT_JOB_LEDGER_ENABLED`;
+  - smoke coverage for SQL payload construction and webhook lifecycle events;
+  - README, architecture, configuration, GitHub App, deployment, operations,
+    usage API, AWS ledger, worker adapter, roadmap, changelog, and
+    manager-memory updates.

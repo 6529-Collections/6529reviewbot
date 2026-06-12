@@ -56,6 +56,8 @@ REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github
 REVIEWBOT_PUBLIC_REPO_MODE=trusted
 REVIEWBOT_DRAFT_PR_MODE=skip
 REVIEWBOT_BUDGET_MODE=enforce
+REVIEWBOT_JOB_LEDGER_ENABLED=true
+REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
 REVIEWBOT_WORKER_ADAPTER=noop
 ```
 
@@ -134,6 +136,7 @@ or GitHub App private keys.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - `noop` mode returns jobs without dispatching workers.
+- Job ledger rows record budget decisions and dispatch outcomes when enabled.
 - `github_actions` mode passes `installation_id` into the workflow.
 - Worker mints a short-lived installation token without logging it.
 - Target checkout uses the installation token.
