@@ -57,10 +57,11 @@ merged PRs.
 - Comment-command docs PR: merged as PR #41, merge commit `752f1a5`
 - Installation/onboarding guide PR: merged as PR #42, merge commit `b945e57`
 - Usage API OpenAPI contract PR: merged as PR #43, merge commit `174b275`
-- Current branch: `codex/release-template-hardening`
-- Current local changes: PR template, security checklist, release process,
-  release readiness, roadmap, changelog, and manager-memory updates for
-  routine API/security/cost/release review prompts.
+- Release template hardening PR: merged as PR #44, merge commit `9678649`
+- Current branch: `codex/budget-policy-tooling`
+- Current local changes: central budget policy JSON validator, dry-run/apply
+  CLI, release-check integration, production server DB policy loading for
+  admission, tests, docs, release gates, and manager-memory updates.
 
 ## Key Decisions
 
@@ -125,6 +126,9 @@ merged PRs.
   to the deeper deployment, dogfood, provider, ledger, and admin-auth docs.
 - 6529.io integration should have a machine-readable usage/admin API contract
   that release checks validate.
+- Central DB budget policy rows should be treated as active spend controls.
+  Production loads enabled rows before budget admission whenever
+  `REVIEW_USAGE_ENABLED=true`; repository config may only add stricter caps.
 
 ## Constraints
 
@@ -136,7 +140,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the release-template hardening PR if checks and
+1. Validate, publish, and merge the budget-policy tooling PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR
@@ -154,6 +158,8 @@ merged PRs.
 - Provider pricing rows still need operator verification against current
   provider docs before dogfood release; missing/partial price rows leave usage
   estimates empty.
+- Central budget policy rows still need operator-reviewed real caps applied in
+  the target Aurora database before live dogfood spend.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
 - Provider pricing rows still require operator verification and key/limit

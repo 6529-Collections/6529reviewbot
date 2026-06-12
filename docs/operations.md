@@ -38,6 +38,18 @@ Apply or repair missing tables from a configured operator environment:
 npm run ledger:schema -- -- --apply
 ```
 
+Review central budget policies without touching AWS:
+
+```bash
+npm run budget-policies -- -- --file config/budget-policies.example.json
+```
+
+Apply reviewed central budget policies from a configured operator environment:
+
+```bash
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
+```
+
 Run a dry spend-alert pass:
 
 ```bash
@@ -148,6 +160,7 @@ Check:
 
 - the latest `npm run alerts:spend -- -- --dry-run --force` output;
 - enabled rows in `reviewbot.ai_review_budget_policies`;
+- the dry-run SQL from `npm run budget-policies -- -- --file <policy-file>`;
 - `REVIEW_BOT_INITIAL_KINDS`;
 - provider/model overrides;
 - `REVIEW_MAX_OUTPUT_TOKENS`;

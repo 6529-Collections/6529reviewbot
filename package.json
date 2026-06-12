@@ -28,6 +28,7 @@
     "worker:job": "node bin/run-review-job.cjs",
     "alerts:spend": "node bin/run-spend-alert-check.cjs",
     "ledger:schema": "node bin/apply-ledger-schema.cjs",
+    "budget-policies": "node bin/apply-budget-policies.cjs",
     "model-prices": "node bin/apply-model-prices.cjs",
     "preflight": "node bin/preflight.cjs",
     "support:bundle": "node bin/support-bundle.cjs",

@@ -66,6 +66,7 @@ function createReviewbotServer(options = {}) {
   const admissionPolicy = options.admissionPolicy || admissionPolicyFromEnv();
   const resolveActorContext = options.resolveActorContext || defaultResolveActorContext;
   const budgetPolicy = options.budgetPolicy || budgetPolicyFromEnv();
+  const loadBudgetPolicy = options.loadBudgetPolicy || defaultLoadBudgetPolicy;
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
   const runControlPolicy = options.runControlPolicy || runControlPolicyFromEnv();
@@ -90,6 +91,7 @@ function createReviewbotServer(options = {}) {
         admissionPolicy,
         resolveActorContext,
         budgetPolicy,
+        loadBudgetPolicy,
         runtimeControlPolicy,
         resolveBudgetSnapshot,
         estimateBudgetCost,
@@ -164,6 +166,7 @@ async function handleHttpRequest(request, options) {
     admissionPolicy: options.admissionPolicy,
     resolveActorContext: options.resolveActorContext,
     budgetPolicy: options.budgetPolicy,
+    loadBudgetPolicy: options.loadBudgetPolicy,
     runtimeControlPolicy: options.runtimeControlPolicy,
     resolveBudgetSnapshot: options.resolveBudgetSnapshot,
     estimateBudgetCost: options.estimateBudgetCost,
@@ -313,8 +316,15 @@ async function handleGitHubWebhook(input) {
   const deniedJobs = [];
   const resolveBudgetSnapshot = input.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = input.estimateBudgetCost || defaultEstimateBudgetCost;
+  const loadBudgetPolicy = input.loadBudgetPolicy || defaultLoadBudgetPolicy;
+  const baseBudgetPolicy = await loadBudgetPolicy(input.budgetPolicy || budgetPolicyFromEnv(), {
+    event: controlledEvent,
+    admission,
+    configuration,
+    repositoryConfig,
+  });
   const budgetPolicy = mergeRepositoryBudgetPolicy(
-    input.budgetPolicy || budgetPolicyFromEnv(),
+    baseBudgetPolicy,
     repositoryConfig
   );
   for (const job of runtimeControlledJobs.jobs) {
@@ -465,6 +475,10 @@ async function defaultResolveBudgetSnapshot() {
     unavailable: true,
     reason: "No budget spend snapshot resolver configured.",
   };
+}
+
+async function defaultLoadBudgetPolicy(policy) {
+  return policy;
 }
 
 async function defaultEstimateBudgetCost() {
@@ -671,6 +685,7 @@ module.exports = {
   defaultClaimReviewJob,
   defaultRecordJobEvent,
   defaultUpdateRunClaimStatus,
+  defaultLoadBudgetPolicy,
   defaultResolveActorContext,
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,

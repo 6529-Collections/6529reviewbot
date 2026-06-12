@@ -436,3 +436,15 @@
     admin job/status APIs, machine-readable API contracts, and secret-redacted
     diagnostics;
   - release docs, changelog, roadmap, and manager-memory updates.
+- Merged `6529reviewbot` PR #44 as `9678649` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/budget-policy-tooling` increment:
+  - central budget policy JSON validator and dry-run/apply CLI;
+  - empty public example file and release-check integration;
+  - production server loading of enabled DB policy rows into admission when
+    `REVIEW_USAGE_ENABLED=true`;
+  - smoke coverage for file validation, SQL rendering, Data API apply, CLI
+    parsing, and DB-loaded budget denial before queueing;
+  - README, budget, ledger, install, dogfood, operations, deployment, release,
+    roadmap, and manager-memory docs.

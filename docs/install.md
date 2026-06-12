@@ -100,12 +100,23 @@ If provider cost estimates should come from maintained price rows, review a
 price file and apply it:
 
 ```bash
-npm run model-prices -- --file config/model-prices.example.json
-npm run model-prices -- --file <reviewed-price-file.json> --apply
+npm run model-prices -- -- --file config/model-prices.example.json
+npm run model-prices -- -- --file <reviewed-price-file.json> --apply
 ```
 
 See [aws-usage-ledger.md](aws-usage-ledger.md) and
 [model-pricing.md](model-pricing.md).
+
+Review and apply conservative central budget rows before enabling live workers:
+
+```bash
+npm run budget-policies -- -- --file config/budget-policies.example.json
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
+```
+
+The committed example is empty. Keep the real operator file outside public
+commits if it contains private requestor, repo, or rollout notes. See
+[budget-policies.md](budget-policies.md).
 
 ## 5. Start The App In Noop Mode
 
@@ -224,7 +235,8 @@ Only after command-only reviews are healthy:
 1. Keep one provider/model lane.
 2. Enable limited initial reviews with
    `templates/dogfood-repository-config.yml`.
-3. Keep strict repo, requestor, PR, provider, model, and review-kind budgets.
+3. Keep strict central DB budgets plus repo, requestor, PR, provider, model,
+   and review-kind caps.
 4. Enable run-control ledger claims before using `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
 5. Watch usage summaries, job events, alerts, and PR comment quality.
 

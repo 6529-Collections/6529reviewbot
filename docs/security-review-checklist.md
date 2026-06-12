@@ -53,6 +53,8 @@ Target deployment:
   before applying to Aurora.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
+- Central DB budget policy rows are reviewed, applied from operator-owned
+  files, and loaded into admission before worker dispatch.
 - Model pricing rows, if used, include source URLs and have been checked
   against current provider pricing.
 - Run-control claims happen before worker dispatch when enabled.

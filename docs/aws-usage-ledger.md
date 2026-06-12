@@ -32,6 +32,11 @@ The budget admission helper reads current spend from
 `ai_review_usage_events` and compares it with these policies before queueing
 model work.
 
+Use [Budget Policies](budget-policies.md) to dry-run and apply reviewed rows.
+In production, `bin/server.cjs` loads enabled rows for every webhook when
+`REVIEW_USAGE_ENABLED=true`, so DB caps are active admission controls rather
+than dashboard-only metadata.
+
 The usage API reader also reads `ai_review_usage_events` and
 `ai_review_budget_policies` through the RDS Data API. The reader is read-only
 from the application perspective and should use least-privilege SQL access in
@@ -155,5 +160,7 @@ limit 50;
   a partial or misleading cost.
 - Use [Model Pricing](model-pricing.md) to dry-run and apply reviewed
   provider/model price rows.
+- Use [Budget Policies](budget-policies.md) to dry-run and apply reviewed
+  central budget caps.
 - Usage writes can be configured fail-open or fail-closed with
   `REVIEW_USAGE_FAIL_CLOSED`.

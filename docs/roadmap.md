@@ -283,6 +283,8 @@ Completed in `6529reviewbot`:
   permission resolution;
 - budget admission against the AWS usage ledger;
 - production server budget spend snapshot wiring;
+- dry-run/apply tooling for central budget policies and production admission
+  loading from enabled DB rows;
 - review-job fanout with provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;

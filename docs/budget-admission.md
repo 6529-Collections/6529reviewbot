@@ -70,7 +70,15 @@ Supported scopes:
 - `review_kind`
 
 The database-backed `reviewbot.ai_review_budget_policies` table can also hold
-enabled scope policies with daily, weekly, and monthly caps.
+enabled scope policies with daily, weekly, and monthly caps. Use
+[Budget Policies](budget-policies.md) to dry-run and apply those rows from a
+reviewed JSON file.
+
+When `REVIEW_USAGE_ENABLED=true`, the production server loads enabled DB
+policies for each webhook and merges them into the base budget policy before
+repository config is applied. If the DB policy read fails, the webhook stops
+before queueing work. Repository config can add stricter caps, but it cannot
+remove or raise central DB caps.
 
 ## Fail-Closed Behavior
 
@@ -117,9 +125,11 @@ for an external contributor PR, the maintainer is the budget requestor.
 
 - Pure decision logic: `src/budget-admission.cjs`
 - Data API snapshot helper: `src/budget-ledger.cjs`
+- Central budget policy tooling: `src/budget-policies.cjs` and
+  `bin/apply-budget-policies.cjs`
 - App-server enforcement: `src/app-server.cjs`
 - Production server wiring: `bin/server.cjs` injects the Data API snapshot
-  resolver when `REVIEW_USAGE_ENABLED=true`
+  resolver and central DB policy loader when `REVIEW_USAGE_ENABLED=true`
 
 `AWS_CLI_BIN` can be set when the runtime needs a specific AWS CLI binary path.
 On Windows, the ledger helpers invoke the AWS CLI through a shell when no
