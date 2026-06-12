@@ -77,6 +77,110 @@ assert.equal(modelPriceFile.prices[0].provider, "anthropic");
 const modelPriceStatements = modelPrices.modelPriceStatements("reviewbot", modelPriceFile);
 assert.equal(modelPriceStatements.length, 2);
 assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /ai_model_prices/);
+const currentPriceStatement = modelPrices.currentModelPriceStatement("reviewbot", {
+  provider: "anthropic",
+  model: "claude-opus-4-8",
+  at: "2026-06-12T01:00:00.000Z",
+});
+assert.match(currentPriceStatement.sql, /effective_from <= cast\(:at_ts as timestamptz\)/);
+assert.equal(
+  currentPriceStatement.parameters.find((param) => param.name === "model").value.stringValue,
+  "claude-opus-4-8"
+);
+const modelPriceRecord = [
+  { stringValue: "anthropic" },
+  { stringValue: "claude-opus-4-8" },
+  { stringValue: "1" },
+  { stringValue: "0.1" },
+  { stringValue: "2" },
+  { stringValue: "3" },
+  { stringValue: "USD" },
+  { stringValue: "2026-06-12 00:00:00+00" },
+  { isNull: true },
+  { stringValue: "https://example.com/provider-pricing" },
+  { stringValue: "test price row" },
+];
+assert.equal(modelPrices.modelPriceFromRecord(modelPriceRecord).cachedInputUsdPerMillion, 0.1);
+assert.equal(
+  modelPrices.estimateUsageCostUsd(
+    { inputTokens: 1000, cachedInputTokens: 250, outputTokens: 500, reasoningTokens: 100 },
+    modelPrices.modelPriceFromRecord(modelPriceRecord)
+  ),
+  0.002075
+);
+assert.equal(
+  modelPrices.estimateUsageCostUsd(
+    { inputTokens: 1000, outputTokens: 500 },
+    { currency: "USD", inputUsdPerMillion: 1 }
+  ),
+  null
+);
+let priceLookupSql = "";
+const lookedUpPrice = modelPrices.readCurrentModelPrice({
+  enabled: true,
+  region: "us-east-1",
+  resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  database: "reviewbot",
+  schema: "reviewbot",
+}, {
+  provider: "anthropic",
+  model: "claude-opus-4-8",
+  at: "2026-06-12T01:00:00.000Z",
+}, {
+  executeStatement: (settings, sql, parameters, options) => {
+    priceLookupSql = sql;
+    assert.equal(settings.schema, "reviewbot");
+    assert.equal(options.tempPrefix, "6529-model-price-read-");
+    assert(parameters.some((param) => param.name === "at_ts"));
+    return { records: [modelPriceRecord] };
+  },
+});
+assert.match(priceLookupSql, /ai_model_prices/);
+assert.equal(lookedUpPrice.outputUsdPerMillion, 2);
+assert.equal(
+  reviewBot.estimateUsageCostForRecord(
+    {
+      provider: "anthropic",
+      model: "claude-opus-4-8",
+      usageLedger: {
+        enabled: true,
+        failClosed: false,
+        region: "us-east-1",
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+        secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+        database: "reviewbot",
+        schema: "reviewbot",
+      },
+    },
+    { inputTokens: 1000, outputTokens: 500 },
+    {
+      actualCostUsd: 0.12,
+    }
+  ),
+  null
+);
+assert.equal(
+  reviewBot.estimateUsageCostForRecord(
+    {
+      provider: "anthropic",
+      model: "claude-opus-4-8",
+      usageLedger: {
+        enabled: true,
+        failClosed: false,
+        region: "us-east-1",
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+        secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+        database: "reviewbot",
+        schema: "reviewbot",
+      },
+    },
+    { inputTokens: 1000, outputTokens: 500 },
+    { actualCostUsd: null },
+    { readCurrentModelPrice: () => modelPrices.modelPriceFromRecord(modelPriceRecord) }
+  ),
+  0.002
+);
 let appliedModelPriceStatements = 0;
 modelPrices.applyModelPrices({
   enabled: true,

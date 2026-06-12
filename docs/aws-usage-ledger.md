@@ -148,8 +148,11 @@ limit 50;
 - Token counts are provider-reported.
 - Dollar cost is exact only when a provider returns cost directly.
 - OpenRouter may return direct usage cost when usage accounting is enabled.
-- OpenAI and Anthropic cost estimation requires maintained pricing rows in
-  `ai_model_prices`.
+- When a provider does not return direct cost, the review runner looks up the
+  current provider/model row in `ai_model_prices` and writes
+  `estimated_cost_usd` when all applicable token rates are present.
+- Missing applicable rates leave `estimated_cost_usd` empty rather than writing
+  a partial or misleading cost.
 - Use [Model Pricing](model-pricing.md) to dry-run and apply reviewed
   provider/model price rows.
 - Usage writes can be configured fail-open or fail-closed with

@@ -311,3 +311,11 @@
   - empty example price file to avoid stale committed prices;
   - release check dry-runs the example file;
   - docs and release gates describe operator-maintained price updates.
+- Merged `6529reviewbot` PR #32 as `5a3bf47` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/model-price-estimation` increment:
+  - active model price lookup for review-runner usage writes;
+  - token cost estimator that handles cached input and reasoning tokens;
+  - fail-open lookup behavior unless usage ledger fail-closed is enabled;
+  - docs and smoke coverage for cost estimation behavior.

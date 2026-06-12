@@ -45,9 +45,10 @@ merged PRs.
 - Run control ledger PR: merged as PR #29, merge commit `ba902fe`
 - Budget ledger wiring PR: merged as PR #30, merge commit `25bd1b9`
 - Run claim status PR: merged as PR #31, merge commit `7d16d96`
-- Current branch: `codex/model-price-tooling`
-- Current local changes: dry-run/apply tooling for operator-maintained model
-  price rows, plus docs/tests
+- Model price tooling PR: merged as PR #32, merge commit `5a3bf47`
+- Current branch: `codex/model-price-estimation`
+- Current local changes: usage-write cost estimation from active model price
+  rows, plus docs/tests
 
 ## Key Decisions
 
@@ -85,6 +86,9 @@ merged PRs.
   slots until TTL.
 - Model pricing should be operator-maintained through reviewed price files and
   source URLs instead of hardcoded stale prices in the public repo.
+- Usage writes should use active provider/model price rows for estimated cost
+  only when all applicable token rates are available; missing rates should not
+  create partial cost estimates.
 
 ## Constraints
 
@@ -96,8 +100,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model price tooling PR if checks and review
-   are clean.
+1. Validate, publish, and merge the model price estimation PR if checks and
+   review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
    model price tooling PR lands.
@@ -112,7 +116,8 @@ merged PRs.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
 - Provider pricing rows still need operator verification against current
-  provider docs before dogfood release.
+  provider docs before dogfood release; missing/partial price rows leave usage
+  estimates empty.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
