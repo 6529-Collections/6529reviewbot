@@ -83,9 +83,11 @@ merged PRs.
 - Worker capacity runbook PR: merged as PR #62, merge commit `5c4583d`
 - Reusable workflow secret-boundary PR: merged as PR #63, merge commit
   `19f7943`
-- Current branch: `codex/github-app-operator-routes`
-- Current local changes: public-safe GitHub App manifest/setup/callback
-  guidance routes plus tests and registration/deployment docs.
+- GitHub App operator guidance routes PR: merged as PR #64, merge commit
+  `8c77d41`
+- Current branch: `codex/release-gate-readiness-summary`
+- Current local changes: release-gate summary/require-ready CLI support,
+  smoke coverage, release docs, and manager memory.
 
 ## Key Decisions
 
@@ -179,6 +181,9 @@ merged PRs.
 - GitHub App browser handoff routes may acknowledge the presence of a manifest
   code or setup redirect, but they must not echo temporary codes, generated
   credentials, raw webhook payloads, or private repository details.
+- Release gate status files should be operator-owned when evidence contains
+  private deployment detail. The public CLI can summarize completion/defer
+  counts and fail tagging when gates are still pending or blocked.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -225,7 +230,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App operator guidance routes PR.
+1. Validate, publish, and merge the release gate readiness summary PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

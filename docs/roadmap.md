@@ -333,6 +333,8 @@ Completed in `6529reviewbot`:
   action-ref validation.
 - repeatable release check script and manual security review checklist.
 - machine-readable v0 release gates and checklist renderer.
+- v0 release gate readiness summaries and tag/no-tag enforcement for
+  operator-owned status files.
 - optional v0 release gate status files for public-safe completion/defer
   evidence.
 - validated model catalog for provider defaults.
@@ -359,8 +361,8 @@ Completed in `6529reviewbot`:
 
 In progress in `6529reviewbot`:
 
-- production deployment execution support, dogfood operations, and dashboard
-  wiring.
+- production deployment execution support, dogfood operations, release
+  evidence collection, and dashboard wiring.
 
 In progress outside this repository:
 

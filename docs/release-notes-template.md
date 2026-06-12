@@ -43,6 +43,7 @@ repositories.
 - Preflight result:
 - v0 gate checklist:
 - v0 gate status file/evidence:
+- v0 gate summary:
 
 ## Safety Requirements
 

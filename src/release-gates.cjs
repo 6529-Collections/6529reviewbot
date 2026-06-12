@@ -117,6 +117,52 @@ function renderReleaseGatesMarkdown(document) {
   return `${lines.join("\n")}\n`;
 }
 
+function summarizeReleaseGates(document) {
+  const gates = validateReleaseGates(document);
+  const counts = Object.fromEntries(RELEASE_GATE_STATUSES.map((status) => [status, 0]));
+  for (const gate of gates.gates) {
+    counts[gate.status || "pending"] += 1;
+  }
+  return {
+    release: gates.release,
+    total: gates.gates.length,
+    complete: counts.complete,
+    deferred: counts.deferred,
+    pending: counts.pending,
+    blocked: counts.blocked,
+    ready: counts.pending === 0 && counts.blocked === 0,
+    hasDeferrals: counts.deferred > 0,
+  };
+}
+
+function renderReleaseGateSummaryMarkdown(document) {
+  const summary = summarizeReleaseGates(document);
+  const lines = [
+    `# ${summary.release} Release Gate Summary`,
+    "",
+    `Ready to tag: ${summary.ready ? "yes" : "no"}`,
+    `Complete: ${summary.complete}/${summary.total}`,
+    `Deferred: ${summary.deferred}`,
+    `Pending: ${summary.pending}`,
+    `Blocked: ${summary.blocked}`,
+  ];
+  if (summary.hasDeferrals) {
+    lines.push("");
+    lines.push("Deferred gates must be called out in the release notes with risk and follow-up ownership.");
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+function assertReleaseGatesReady(document) {
+  const summary = summarizeReleaseGates(document);
+  if (!summary.ready) {
+    throw new Error(
+      `release gates are not ready: ${summary.pending} pending, ${summary.blocked} blocked.`
+    );
+  }
+  return summary;
+}
+
 function optionalGateStatus(value, source, options = {}) {
   const evidenceKey = options.evidenceKey || "evidence";
   if (value.status === undefined && value[evidenceKey] === undefined && value.notes === undefined) {
@@ -173,10 +219,13 @@ function idField(value, source) {
 }
 
 module.exports = {
+  assertReleaseGatesReady,
   loadReleaseGateStatus,
   loadReleaseGates,
   mergeReleaseGateStatus,
+  renderReleaseGateSummaryMarkdown,
   renderReleaseGatesMarkdown,
+  summarizeReleaseGates,
   validateReleaseGateStatus,
   validateReleaseGates,
 };

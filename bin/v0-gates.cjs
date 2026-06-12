@@ -3,10 +3,13 @@
 "use strict";
 
 const {
+  assertReleaseGatesReady,
   loadReleaseGateStatus,
   loadReleaseGates,
   mergeReleaseGateStatus,
+  renderReleaseGateSummaryMarkdown,
   renderReleaseGatesMarkdown,
+  summarizeReleaseGates,
 } = require("../src/release-gates.cjs");
 
 function main(argv = process.argv.slice(2)) {
@@ -15,14 +18,20 @@ function main(argv = process.argv.slice(2)) {
   if (args.statusFile) {
     gates = mergeReleaseGateStatus(gates, loadReleaseGateStatus(args.statusFile));
   }
+  const summary = summarizeReleaseGates(gates);
+  if (args.requireReady) {
+    assertReleaseGatesReady(gates);
+  }
   if (args.quiet) {
-    return gates;
+    return { gates, summary };
   }
   const output = args.json
-    ? `${JSON.stringify(gates, null, 2)}\n`
-    : renderReleaseGatesMarkdown(gates);
+    ? `${JSON.stringify(args.summary ? summary : gates, null, 2)}\n`
+    : args.summary
+      ? renderReleaseGateSummaryMarkdown(gates)
+      : renderReleaseGatesMarkdown(gates);
   process.stdout.write(output);
-  return gates;
+  return { gates, summary };
 }
 
 function parseArgs(argv) {
@@ -30,6 +39,8 @@ function parseArgs(argv) {
     file: "config/v0-release-gates.json",
     json: false,
     quiet: false,
+    requireReady: false,
+    summary: false,
     statusFile: "",
   };
   for (let index = 0; index < argv.length; index += 1) {
@@ -40,6 +51,14 @@ function parseArgs(argv) {
     }
     if (arg === "--quiet") {
       result.quiet = true;
+      continue;
+    }
+    if (arg === "--require-ready") {
+      result.requireReady = true;
+      continue;
+    }
+    if (arg === "--summary") {
+      result.summary = true;
       continue;
     }
     if (arg === "--file" || arg === "--status-file") {
@@ -71,11 +90,15 @@ Usage:
   npm run v0:gates
   npm run v0:gates -- -- --json
   npm run v0:gates -- -- --status-file config/v0-release-status.example.json
+  npm run v0:gates -- -- --status-file <operator-status-file> --summary
+  npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 
 Options:
   --file <path>         Release gates JSON file. Default: config/v0-release-gates.json
   --status-file <path>  Optional release gate status/evidence JSON file.
   --json                Print normalized JSON instead of Markdown.
+  --summary             Print only the release readiness summary.
+  --require-ready       Fail unless there are zero pending or blocked gates.
   --quiet               Validate gates without printing them.
 `;
 }

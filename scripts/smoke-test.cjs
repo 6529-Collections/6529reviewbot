@@ -519,6 +519,16 @@ const gatesWithStatus = releaseGates.mergeReleaseGateStatus(gates, gateStatus);
 assert.equal(gatesWithStatus.gates.find((gate) => gate.id === "ledger-schema").status, "complete");
 assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /\[x\] \*\*ledger-schema\*\*/);
 assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /_\(deferred\)_/);
+const gateSummary = releaseGates.summarizeReleaseGates(gatesWithStatus);
+assert.equal(gateSummary.ready, false);
+assert.equal(gateSummary.complete, 1);
+assert.equal(gateSummary.deferred, 1);
+assert.equal(gateSummary.pending, gatesWithStatus.gates.length - 2);
+assert.match(releaseGates.renderReleaseGateSummaryMarkdown(gatesWithStatus), /Ready to tag: no/);
+assert.throws(
+  () => releaseGates.assertReleaseGatesReady(gatesWithStatus),
+  /release gates are not ready/
+);
 assert.throws(
   () => releaseGates.validateReleaseGates({
     version: 1,
@@ -554,11 +564,15 @@ assert.deepEqual(
     "status.json",
     "--json",
     "--quiet",
+    "--summary",
+    "--require-ready",
   ]),
   {
     file: "gates.json",
     json: true,
     quiet: true,
+    requireReady: true,
+    summary: true,
     statusFile: "status.json",
   }
 );
