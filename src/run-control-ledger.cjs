@@ -430,6 +430,7 @@ function claimStatus(status) {
     "dispatching",
     "running",
     "completed",
+    "failed",
     "dispatch_failed",
     "dispatch_error",
     "expired",
@@ -441,7 +442,7 @@ function claimStatus(status) {
 }
 
 function isTerminalClaimStatus(status) {
-  return ["completed", "dispatch_failed", "dispatch_error", "expired"].includes(status);
+  return ["completed", "failed", "dispatch_failed", "dispatch_error", "expired"].includes(status);
 }
 
 function safeMetadata(metadata = {}) {

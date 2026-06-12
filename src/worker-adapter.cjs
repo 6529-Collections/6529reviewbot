@@ -106,6 +106,7 @@ function runReviewJobLocally(job, options = {}) {
   if (result.error) {
     return workerResult(job, false, {
       adapter: "local",
+      claimStatus: "failed",
       reason: safeError(result.error),
       ...outputSummary(result, options.includeOutput),
     });
@@ -113,6 +114,7 @@ function runReviewJobLocally(job, options = {}) {
 
   return workerResult(job, result.status === 0, {
     adapter: "local",
+    claimStatus: result.status === 0 ? "completed" : "failed",
     exitCode: result.status,
     ...outputSummary(result, options.includeOutput),
   });
@@ -186,6 +188,7 @@ function jobEnv(job) {
     REVIEW_PROVIDER: job.provider,
     REVIEW_MODEL: job.model,
     REVIEWBOT_JOB_ID: job.id,
+    REVIEWBOT_RUN_KEY: job.runKey || "",
     REVIEWBOT_JOB_LANE: job.lane || "",
     REVIEWBOT_DELIVERY_ID: job.deliveryId || "",
     REVIEWBOT_GITHUB_INSTALLATION_ID: job.installationId ? String(job.installationId) : "",
@@ -200,6 +203,7 @@ function githubWorkflowFields(job) {
   }
   return {
     job_id: job.id,
+    run_key: job.runKey || "",
     installation_id: String(job.installationId),
     target_repo: job.repository.fullName,
     head_repo: headRepoFullNameForJob(job),

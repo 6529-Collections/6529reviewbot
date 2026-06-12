@@ -46,9 +46,10 @@ merged PRs.
 - Budget ledger wiring PR: merged as PR #30, merge commit `25bd1b9`
 - Run claim status PR: merged as PR #31, merge commit `7d16d96`
 - Model price tooling PR: merged as PR #32, merge commit `5a3bf47`
-- Current branch: `codex/model-price-estimation`
-- Current local changes: usage-write cost estimation from active model price
-  rows, plus docs/tests
+- Model price estimation PR: merged as PR #33, merge commit `7aa4bd3`
+- Current branch: `codex/run-claim-completion`
+- Current local changes: worker completion updates for durable run-control
+  claims, plus docs/tests/template updates
 
 ## Key Decisions
 
@@ -89,6 +90,9 @@ merged PRs.
 - Usage writes should use active provider/model price rows for estimated cost
   only when all applicable token rates are available; missing rates should not
   create partial cost estimates.
+- Remote workers need the job `runKey` so they can close durable run-control
+  claims after execution; local workers can report terminal claim status
+  synchronously.
 
 ## Constraints
 
@@ -100,7 +104,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model price estimation PR if checks and
+1. Validate, publish, and merge the run-claim completion PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
@@ -120,5 +124,7 @@ merged PRs.
   estimates empty.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
+- Durable run-claim completion depends on central workers receiving `runKey`
+  and run-control ledger environment variables.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

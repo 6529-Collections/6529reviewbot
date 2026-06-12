@@ -193,6 +193,9 @@ group by repo_full_name
 order by active_claims desc;
 ```
 
+Completed and failed worker claims are terminal and should disappear from this
+active query without waiting for claim TTL expiry.
+
 ## Privacy
 
 The job ledger can contain private repo names, PR numbers, requestors, provider
