@@ -123,10 +123,11 @@ merged PRs.
   `d4df15e`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Worker diagnostics redaction PR: merged as PR #85, merge commit `acadad7`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/docs-runtime-hardening-sweep`
-- Current local changes: sweep public docs so README, release readiness,
-  changelog, and security model describe empty-output fail-closed behavior and
-  worker diagnostic redaction.
+- Runtime hardening docs sweep PR: merged as PR #86, merge commit `dfe24ca`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/docs-security-checklist-hardening`
+- Current local changes: add explicit release-review checklist and release-note
+  prompts for empty provider output and worker diagnostic redaction controls.
 
 ## Key Decisions
 
@@ -311,7 +312,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the runtime-hardening docs sweep PR.
+1. Validate, publish, and merge the security checklist hardening docs PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

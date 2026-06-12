@@ -22,6 +22,8 @@ repositories.
 - Public-repo trusted-actor admission before model calls.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
 - Run-control claims for duplicate delivery and concurrency protection.
+- Empty provider output fails closed before comment posting.
+- Worker diagnostics redact common token and private-key shapes.
 - Dry-run-by-default Aurora ledger schema tooling.
 - Dry-run-by-default model pricing update tooling.
 - No-network production preflight command.
@@ -43,6 +45,7 @@ repositories.
 - Ledger schema status:
 - Model pricing status:
 - Alert delivery:
+- Empty provider output / diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
 - Preflight result:
 - v0 gate checklist:
