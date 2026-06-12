@@ -64,6 +64,8 @@ Ready for community review:
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
+- OpenSSF Scorecard keeps workflow-level permissions read-only and scopes
+  `security-events: write` plus `id-token: write` to the Scorecard job;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
   dry-run mode;
 - machine-readable v0 release gates with optional status/evidence rendering;

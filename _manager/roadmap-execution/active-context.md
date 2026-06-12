@@ -89,9 +89,10 @@ merged PRs.
   `cf01360`
 - Public artifact leak scanner PR: merged as PR #66, merge commit `a8e8a61`
 - Documentation link checker PR: merged as PR #67, merge commit `93c738b`
-- Current branch: `codex/ci-release-check`
-- Current local changes: CI now runs `npm run release:check` plus release
-  docs, roadmap, changelog, and manager memory updates.
+- CI release-check PR: merged as PR #68, merge commit `392fb07`
+- Current branch: `codex/fix-scorecard-permissions`
+- Current local changes: OpenSSF Scorecard permission fix plus release docs,
+  roadmap, changelog, and manager memory updates.
 
 ## Key Decisions
 
@@ -198,6 +199,9 @@ merged PRs.
 - The default pull-request CI should exercise the same release check operators
   run locally, so docs links, public artifact scanning, workflow pins, API
   contracts, model catalogs, and templates do not drift between releases.
+- OpenSSF Scorecard publishing rejects workflow-level write permissions.
+  Keep the workflow-level token read-only and scope `security-events: write`
+  and `id-token: write` to the Scorecard job.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -244,7 +248,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the CI release-check PR.
+1. Validate, publish, and merge the OpenSSF Scorecard permission fix PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

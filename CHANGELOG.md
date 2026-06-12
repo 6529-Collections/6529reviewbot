@@ -56,6 +56,8 @@ stabilized.
 - Installed central review-job and dormant-by-default spend-alert workflows in
   the bot repository.
 - CI now runs the full release check on pull requests and pushes to `main`.
+- OpenSSF Scorecard write permissions are scoped to the Scorecard job instead
+  of the workflow level.
 - v0 release gate renderer can merge an operator-owned status/evidence file.
 - Run-control ledger claim, duplicate-denial, and completion-update path
   verified against the isolated dogfood ledger.

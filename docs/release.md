@@ -63,6 +63,8 @@ After stabilization:
 - [Security review checklist](security-review-checklist.md) completed
 - CodeRabbit or equivalent review feedback resolved
 - CI, Dependency Review, and OpenSSF Scorecard reviewed
+- OpenSSF Scorecard workflow-level permissions remain read-only; job-level
+  writes are limited to SARIF upload and result publishing
 
 ## Breaking Changes
 
