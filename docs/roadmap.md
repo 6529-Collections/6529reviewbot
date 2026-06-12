@@ -292,6 +292,7 @@ Completed in `6529reviewbot`:
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.
+- no-network production preflight checks.
 
 In progress in `6529reviewbot`:
 

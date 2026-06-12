@@ -65,6 +65,12 @@ Start with `noop` worker mode for the first webhook pass. Switch to
 `github_actions` or a controlled `local` worker after webhook verification,
 repository config loading, admission, budget, and usage paths are clean.
 
+Run a no-network configuration preflight before starting the server:
+
+```bash
+npm run preflight
+```
+
 ## Central GitHub Actions Worker
 
 Install `templates/review-job-workflow.yml` as
@@ -95,7 +101,7 @@ Before enabling live writes, apply the ledger schema from a configured
 operator environment:
 
 ```bash
-npm run ledger:schema -- --apply
+npm run ledger:schema -- -- --apply
 ```
 
 The App server dispatches each admitted job with the target installation id.
@@ -135,13 +141,14 @@ or GitHub App private keys.
 ## Verification Checklist
 
 - `GET /healthz` succeeds.
+- `npm run preflight` passes, or every warning is understood.
 - Invalid webhook signatures fail.
 - GitHub App `ping` is acknowledged.
 - Pull request and issue-comment events are normalized.
 - A saved pull request delivery can be replayed with `npm run webhook:replay`
   in dry-run mode.
 - `npm run ledger:schema` prints the expected ledger schema, and
-  `npm run ledger:schema -- --apply` has been run in the target database.
+  `npm run ledger:schema -- -- --apply` has been run in the target database.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - `noop` mode returns jobs without dispatching workers.

@@ -28,6 +28,7 @@
     "worker:job": "node bin/run-review-job.cjs",
     "alerts:spend": "node bin/run-spend-alert-check.cjs",
     "ledger:schema": "node bin/apply-ledger-schema.cjs",
+    "preflight": "node bin/preflight.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",

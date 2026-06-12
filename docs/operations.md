@@ -9,6 +9,12 @@ npm run check
 npm test
 ```
 
+Validate the configured runtime without network calls:
+
+```bash
+npm run preflight
+```
+
 Verify AWS ledger connectivity:
 
 ```bash
@@ -29,7 +35,7 @@ npm run ledger:schema
 Apply or repair missing tables from a configured operator environment:
 
 ```bash
-npm run ledger:schema -- --apply
+npm run ledger:schema -- -- --apply
 ```
 
 Run a dry spend-alert pass:

@@ -236,6 +236,24 @@ Useful diagnostic flags:
 Use `--dispatch` only from a controlled bot environment after checking the
 payload, actor, repository config, and budget assumptions.
 
+## Production Preflight
+
+```bash
+npm run preflight
+npm run preflight -- -- --json
+npm run preflight -- -- --strict
+```
+
+The preflight command validates runtime configuration without calling GitHub,
+AWS, model providers, or alert endpoints. It reuses the actual settings parsers
+for webhook, GitHub App auth, model catalog, review lanes, admission, budget,
+repository config, worker adapter, usage/job ledgers, usage API, admin auth,
+and alerts.
+
+Warnings describe intentionally disabled or external pieces, such as `noop`
+workers or `github_actions` provider secrets that live in the central worker
+environment. `--strict` treats warnings as failures for release gates.
+
 ## Usage API
 
 ```text

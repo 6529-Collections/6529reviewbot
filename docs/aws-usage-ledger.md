@@ -55,7 +55,7 @@ npm run ledger:schema
 Apply the schema from a configured operator environment:
 
 ```bash
-npm run ledger:schema -- --apply
+npm run ledger:schema -- -- --apply
 ```
 
 The apply mode uses the RDS Data API settings below. It is intentionally
@@ -65,8 +65,8 @@ Use a non-default schema name only when the deployment intentionally separates
 bot data:
 
 ```bash
-npm run ledger:schema -- --schema reviewbot
-npm run ledger:schema -- --schema reviewbot --apply
+npm run ledger:schema -- -- --schema reviewbot
+npm run ledger:schema -- -- --schema reviewbot --apply
 ```
 
 ## Views
