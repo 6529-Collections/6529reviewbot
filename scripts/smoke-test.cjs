@@ -471,6 +471,7 @@ const preflightResult = preflight.runPreflight({ env: preflightEnv });
 assert.equal(preflightResult.ok, true);
 assert.equal(preflightResult.errors.length, 0);
 assert(preflightResult.warnings.some((warning) => warning.name === "worker_adapter"));
+assert(preflightResult.warnings.some((warning) => warning.name === "webhook"));
 assert.equal(preflight.runPreflight({ env: preflightEnv, strict: true }).ok, false);
 assert(
   preflight
@@ -843,16 +844,23 @@ const webhookSecret = "test-secret";
 const webhookSignature = githubWebhook.signGitHubWebhook(webhookSecret, webhookBody);
 assert.equal(githubWebhook.verifyGitHubWebhookSignature(webhookSecret, webhookBody, webhookSignature), true);
 assert.equal(githubWebhook.verifyGitHubWebhookSignature(webhookSecret, webhookBody, "sha256=bad"), false);
+assert.doesNotThrow(() =>
+  githubWebhook.assertGitHubWebhookSignature(
+    webhookSecret,
+    webhookBody,
+    new Headers({ "x-hub-signature-256": webhookSignature })
+  )
+);
 assert.throws(
   () => githubWebhook.assertGitHubWebhookSignature(webhookSecret, webhookBody, {}),
   /Invalid GitHub webhook signature/
 );
 
 const normalizedPullRequest = githubWebhook.normalizeGitHubWebhook(
-  {
+  new Headers({
     "x-github-event": "pull_request",
     "x-github-delivery": "delivery-1",
-  },
+  }),
   JSON.parse(webhookBody.toString("utf8"))
 );
 assert.equal(normalizedPullRequest.kind, "pull_request");

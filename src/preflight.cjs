@@ -12,6 +12,8 @@ const {
 } = require("./github-app-auth.cjs");
 const {
   assertWebhookSettings,
+  isWeakWebhookSecret,
+  MIN_WEBHOOK_SECRET_LENGTH,
   webhookSettingsFromEnv,
 } = require("./github-webhook.cjs");
 const {
@@ -56,8 +58,19 @@ function runPreflight(options = {}) {
   check(result, "webhook", () => {
     const settings = webhookSettingsFromEnv(env);
     assertWebhookSettings(settings);
+    if (isWeakWebhookSecret(settings.webhookSecret)) {
+      addWarning(
+        result,
+        "webhook",
+        `Webhook secret is shorter than ${MIN_WEBHOOK_SECRET_LENGTH} characters; production should use a high-entropy secret.`
+      );
+    }
     state.webhookSettings = settings;
-    return { path: settings.webhookPath, maxBodyBytes: settings.maxBodyBytes };
+    return {
+      path: settings.webhookPath,
+      maxBodyBytes: settings.maxBodyBytes,
+      webhookSecretLooksStrong: !isWeakWebhookSecret(settings.webhookSecret),
+    };
   });
 
   check(result, "github_app_auth", () => {
