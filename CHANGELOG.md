@@ -41,6 +41,11 @@ stabilized.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.
+- Worker diagnostics redact common bearer, GitHub, provider API key, and
+  private-key shapes before optional output tails or GitHub API dispatch
+  failures are returned.
+- Live provider calls fail closed when the provider returns empty visible
+  review text instead of posting a generic no-finding comment.
 - The production server can mint a short-lived GitHub App installation token
   for central workflow dispatch when `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID`
   is configured.

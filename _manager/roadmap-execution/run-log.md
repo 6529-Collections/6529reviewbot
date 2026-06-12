@@ -935,3 +935,12 @@
   - sanitize worker adapter diagnostics before returning queue results;
   - cover local stdout/stderr summaries and GitHub API dispatch error bodies;
   - document redacted diagnostics as helpful but not public-log-safe.
+- Merged `6529reviewbot` PR #85 as `acadad7` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27422064280`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27422064412`, completed successfully.
+- Started `codex/docs-runtime-hardening-sweep` increment:
+  - align README, changelog, release readiness, and security model with
+    empty-provider-output fail-closed behavior;
+  - document worker diagnostic redaction in the top-level public narrative.

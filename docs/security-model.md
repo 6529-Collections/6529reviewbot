@@ -92,7 +92,17 @@ Provider requests are bounded by:
 - output token caps;
 - changed-file and changed-line budget checks;
 - provider timeout;
-- sanitized provider error logging.
+- sanitized provider error logging;
+- empty visible provider output failing closed before comment posting.
+
+### Diagnostic Safety
+
+Worker stdout and stderr are omitted from adapter results by default. When an
+operator explicitly opts into diagnostic tails, the adapter redacts common
+token and private-key shapes before returning them. GitHub API dispatch failure
+bodies are redacted the same way before they can enter queue results or
+run-control metadata. Redaction is a guardrail, not permission to publish
+verbose worker diagnostics.
 
 ### Runtime Control Safety
 
