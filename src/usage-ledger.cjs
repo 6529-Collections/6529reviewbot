@@ -1,9 +1,10 @@
 "use strict";
 
-const { execFileSync } = require("child_process");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
+const {
+  awsCliBin,
+  executeStatement,
+  shouldUseShellForAwsCli,
+} = require("./data-api.cjs");
 
 function usageLedgerSettingsFromEnv(env = process.env) {
   return {
@@ -36,7 +37,7 @@ function assertUsageLedgerConfigured(settings) {
   }
 }
 
-function writeUsageEvent(settings, event, log = console.warn) {
+function writeUsageEvent(settings, event, log = console.warn, options = {}) {
   if (!settings.enabled) {
     return { skipped: true };
   }
@@ -92,38 +93,33 @@ insert into ${quoteIdent(settings.schema)}.ai_review_usage_events (
   cast(:metadata as jsonb)
 )`;
 
-    const payload = {
-      resourceArn: settings.resourceArn,
-      secretArn: settings.secretArn,
-      database: settings.database,
-      sql,
-      parameters: [
-        stringParam("repo_full_name", event.repoFullName),
-        longParam("pr_number", event.prNumber),
-        stringParam("pr_author", event.prAuthor),
-        stringParam("pr_head_sha", event.prHeadSha),
-        stringParam("workflow_run_id", event.workflowRunId),
-        stringParam("workflow_job", event.workflowJob),
-        stringParam("review_kind", event.reviewKind),
-        stringParam("provider", event.provider),
-        stringParam("model", event.model),
-        stringParam("lane", event.lane),
-        stringParam("request_id", event.requestId),
-        stringParam("provider_response_id", event.providerResponseId),
-        longParam("input_tokens", event.inputTokens || 0),
-        longParam("cached_input_tokens", event.cachedInputTokens || 0),
-        longParam("output_tokens", event.outputTokens || 0),
-        longParam("reasoning_tokens", event.reasoningTokens || 0),
-        longParam("total_tokens", event.totalTokens || 0),
-        decimalParam("estimated_cost_usd", event.estimatedCostUsd),
-        decimalParam("actual_cost_usd", event.actualCostUsd),
-        stringParam("currency", event.currency || "USD"),
-        boolParam("budget_skipped", Boolean(event.budgetSkipped)),
-        stringParam("metadata", JSON.stringify(event.metadata || {})),
-      ],
-    };
+    const parameters = [
+      stringParam("repo_full_name", event.repoFullName),
+      longParam("pr_number", event.prNumber),
+      stringParam("pr_author", event.prAuthor),
+      stringParam("pr_head_sha", event.prHeadSha),
+      stringParam("workflow_run_id", event.workflowRunId),
+      stringParam("workflow_job", event.workflowJob),
+      stringParam("review_kind", event.reviewKind),
+      stringParam("provider", event.provider),
+      stringParam("model", event.model),
+      stringParam("lane", event.lane),
+      stringParam("request_id", event.requestId),
+      stringParam("provider_response_id", event.providerResponseId),
+      longParam("input_tokens", event.inputTokens || 0),
+      longParam("cached_input_tokens", event.cachedInputTokens || 0),
+      longParam("output_tokens", event.outputTokens || 0),
+      longParam("reasoning_tokens", event.reasoningTokens || 0),
+      longParam("total_tokens", event.totalTokens || 0),
+      decimalParam("estimated_cost_usd", event.estimatedCostUsd),
+      decimalParam("actual_cost_usd", event.actualCostUsd),
+      stringParam("currency", event.currency || "USD"),
+      boolParam("budget_skipped", Boolean(event.budgetSkipped)),
+      stringParam("metadata", JSON.stringify(event.metadata || {})),
+    ];
 
-    executeDataApi(settings.region, payload);
+    const executor = options.executeStatement || executeStatement;
+    executor(settings, sql, parameters, { tempPrefix: "6529-usage-ledger-" });
     return { skipped: false };
   } catch (error) {
     if (settings.failClosed) {
@@ -132,38 +128,6 @@ insert into ${quoteIdent(settings.schema)}.ai_review_usage_events (
     log(`usage ledger write failed: ${safeError(error)}`);
     return { skipped: false, error };
   }
-}
-
-function executeDataApi(region, payload) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529reviewbot-"));
-  const payloadPath = path.join(tmpDir, "rds-data-input.json");
-  try {
-    fs.writeFileSync(payloadPath, JSON.stringify(payload), "utf8");
-    execFileSync(
-      awsCliBin(),
-      ["rds-data", "execute-statement", "--region", region, "--cli-input-json", `file://${payloadPath}`],
-      {
-        encoding: "utf8",
-        maxBuffer: 16 * 1024 * 1024,
-        stdio: ["ignore", "pipe", "pipe"],
-        shell: shouldUseShellForAwsCli(),
-      }
-    );
-  } finally {
-    try {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
-    } catch {
-      // Ignore temporary cleanup failures.
-    }
-  }
-}
-
-function awsCliBin() {
-  return process.env.AWS_CLI_BIN || "aws";
-}
-
-function shouldUseShellForAwsCli() {
-  return process.platform === "win32" && !process.env.AWS_CLI_BIN;
 }
 
 function stringParam(name, value) {
