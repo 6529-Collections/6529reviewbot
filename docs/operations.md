@@ -59,10 +59,10 @@ Apply reviewed central budget policies from a configured operator environment:
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
 ```
 
-Run a dry spend-alert pass:
+Run a dry operator-alert pass:
 
 ```bash
-npm run alerts:spend -- -- --dry-run --force
+npm run alerts:operator -- -- --dry-run --force
 ```
 
 Validate target repo config before rollout:
@@ -172,7 +172,7 @@ private repository payloads into public issues, PRs, or release notes.
 
 Check:
 
-- the latest `npm run alerts:spend -- -- --dry-run --force` output;
+- the latest `npm run alerts:operator -- -- --dry-run --force` output;
 - enabled rows in `reviewbot.ai_review_budget_policies`;
 - the dry-run SQL from `npm run budget-policies -- -- --file <policy-file>`;
 - `REVIEW_BOT_INITIAL_KINDS`;
@@ -198,6 +198,23 @@ If alerts did not send, check:
 - `REVIEWBOT_ALERTS_WEBHOOK_URL` or `REVIEWBOT_ALERTS_SNS_TOPIC_ARN`;
 - AWS OIDC credentials for SNS mode;
 - whether `REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED` should fail the scheduled job.
+
+## If Workers Fail Or Claims Look Stuck
+
+Check:
+
+- `REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED`;
+- `REVIEWBOT_JOB_LEDGER_ENABLED`;
+- recent `job_failure` and `stale_run_claim` alerts from
+  `npm run alerts:operator -- -- --dry-run --force`;
+- `GET /api/admin/jobs/recent?status=dispatch_failed&limit=50`;
+- active rows in `reviewbot.ai_review_run_claims` with `claimed`,
+  `dispatching`, or `running` status;
+- worker workflow status, runner capacity, and provider keys.
+
+If job-health alerts fire, preserve private run keys and workflow URLs in the
+operator evidence record, then apply the backpressure controls in
+[Worker Capacity And Backpressure](worker-capacity.md).
 
 ## If Usage Dashboards Stop Updating
 

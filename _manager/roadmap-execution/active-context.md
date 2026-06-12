@@ -93,10 +93,12 @@ merged PRs.
 - OpenSSF Scorecard permission fix PR: merged as PR #69, merge commit
   `0b56a84`
 - Peeled checkout action pin PR: merged as PR #70, merge commit `d709bef`
-- Current branch: `codex/remove-scorecard-sarif-upload`
-- Current local changes: remove the optional Scorecard SARIF upload step,
-  drop the now-unused `security-events: write` job permission, and update
-  release/security docs plus manager memory.
+- Scorecard SARIF upload removal PR: merged as PR #71, merge commit
+  `6dfa0d2`; the post-merge OpenSSF Scorecard run completed successfully.
+- Current branch: `codex/job-health-alerts`
+- Current local changes: add scheduled operator-alert evaluation for failed
+  jobs and stale active run-control claims, extend bounded ledger readers, wire
+  the central alert workflow variables, and sweep docs.
 
 ## Key Decisions
 
@@ -212,6 +214,9 @@ merged PRs.
 - The optional Scorecard SARIF upload path can be deferred when the publishing
   verifier rejects the pinned upload action; first-party Scorecard result
   publication remains the required signal.
+- Scheduled operator alerts should cover both spend and worker health. The job
+  health path reads bounded recent job events and active run-control claims,
+  then reports failed jobs and stale claims through private operator channels.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -258,7 +263,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the Scorecard SARIF upload removal PR.
+1. Validate, publish, and merge the job-health alerts PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
@@ -290,8 +295,6 @@ merged PRs.
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
-- Central worker and alert workflow templates still need installation into the
-  actual production bot repository workflows after operator review.
 - v0 gates still require external operator evidence before tagging.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

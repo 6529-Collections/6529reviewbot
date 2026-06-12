@@ -133,10 +133,11 @@ JavaScript, public repo variables, or logs.
 
 ### Alerting Safety
 
-Scheduled spend alerts can include private repo names, requestors, providers,
-models, and current spend. Route webhook and SNS notifications through private
-operator channels unless the deployment explicitly treats the data as public.
-Alert delivery secrets belong to the central bot environment, not target
+Scheduled operator alerts can include private repo names, requestors,
+providers, models, current spend, job ids, and failure or stale-claim timing
+summaries. Route webhook and SNS notifications through private operator
+channels unless the deployment explicitly treats the data as public. Alert
+delivery secrets belong to the central bot environment, not target
 repositories.
 
 ## Review Checklist For Security-Sensitive Changes
@@ -146,7 +147,7 @@ repositories.
 - Can a changed file path escape the workspace?
 - Can secrets reach provider prompts or PR comments?
 - Can bot admin assertions be forged, replayed, or extended beyond the TTL?
-- Can alert payloads or notification credentials leak private usage data?
+- Can alert payloads or notification credentials leak private usage or job data?
 - Does the workflow request broader permissions than needed?
 - Does repository config still come from the base ref and merge restrictively?
 - Does the change increase maximum spend or remove a hard cap?

@@ -50,7 +50,8 @@ The first `v0` tag can include:
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
-- scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
+- scheduled operator alert checks for spend and job health with stdout,
+  webhook, and SNS delivery modes;
 - reviewed GitHub App manifest template for repeatable App registration;
 - GitHub App manifest renderer for production-host validation before App
   creation;
@@ -115,7 +116,7 @@ Do not create the `v0` tag until all of these are true:
    the worker adapter kept conservative.
 12. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage.
-13. Scheduled spend alerts route to an operator-owned channel.
+13. Scheduled operator alerts route to an operator-owned channel.
 14. `npm run release:check` passes from a clean `main`.
 15. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.

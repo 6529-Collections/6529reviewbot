@@ -36,15 +36,17 @@ requests.
   6529.io-authenticated admin dashboards.
 - Verifies private admin API calls through a server-side `6529.io` auth bridge
   instead of a separate login system.
-- Runs scheduled spend checks for budget utilization and unusual usage spikes.
+- Runs scheduled operator alerts for budget utilization, unusual spend spikes,
+  failed jobs, and stale run-control claims.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
 
 ## Repository Status
 
 This repository is public and MIT licensed. It is pre-v1 infrastructure: the
 core review engine, GitHub App skeleton, admission and budget policy, worker
-adapters, usage APIs, admin auth bridge, and scheduled spend alerts are present,
-but production deployment, dogfooding, and release tags are still pending.
+adapters, usage APIs, admin auth bridge, and scheduled operator alerts are
+present, but production deployment, dogfooding, and release tags are still
+pending.
 
 For the current release gates, see
 [docs/release-readiness.md](docs/release-readiness.md).
@@ -335,13 +337,16 @@ REVIEWBOT_ADMIN_AUTH_MODE=disabled|shared_secret|hmac
 REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES=reviewbot-admin,admin
 ```
 
-Scheduled spend alerts:
+Scheduled operator alerts:
 
 ```text
 REVIEWBOT_ALERTS_ENABLED=false
 REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
 REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
 REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
+REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=false
+REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD=1
+REVIEWBOT_ALERTS_STALE_CLAIM_HOURS=2
 ```
 
 Job lifecycle audit:
@@ -427,7 +432,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)
 - [Admin auth bridge](docs/admin-auth-bridge.md)
-- [Alerting and scheduled spend checks](docs/alerting.md)
+- [Alerting and scheduled operator checks](docs/alerting.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)

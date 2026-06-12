@@ -757,3 +757,19 @@
   - remove the now-unused `security-events: write` job permission;
   - document that SARIF upload stays disabled until the verifier-safe action
     path is re-reviewed.
+- Merged `6529reviewbot` PR #71 as `6dfa0d2` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27413184306`;
+  - job `scorecard` completed successfully;
+  - the workflow now publishes results through `ossf/scorecard-action` without
+    the optional SARIF upload step.
+- Started `codex/job-health-alerts` increment:
+  - add job-health alert evaluation for failed jobs and stale active
+    run-control claims;
+  - extend bounded ledger readers for recent job events and run-claim rows;
+  - wire the central scheduled alert workflow to pass opt-in job-health
+    thresholds;
+  - update alerting, operations, job-ledger, worker-capacity, release, and
+    manager-memory docs.

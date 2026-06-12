@@ -42,9 +42,10 @@ The usage API reader also reads `ai_review_usage_events` and
 from the application perspective and should use least-privilege SQL access in
 production.
 
-The scheduled spend-alert checker reads the same tables. It should run from
-the central bot environment with read-only ledger access and notification
-permissions for the chosen delivery mode.
+The scheduled operator-alert checker reads the same usage tables and, when
+job-health alerts are enabled, the job-event and run-claim tables. It should
+run from the central bot environment with read-only ledger access and
+notification permissions for the chosen delivery mode.
 
 `ai_review_job_events` stores append-only review-job lifecycle events such as
 budget admission and worker dispatch results. These rows are operational audit

@@ -271,7 +271,8 @@ or GitHub App private keys.
 - Target checkout uses the installation token.
 - Model usage is recorded in the isolated usage ledger.
 - Public and admin usage API responses match the 6529.io visibility contract.
-- Alerts run from the central bot environment.
+- Operator alerts run from the central bot environment, including spend,
+  failed-job, and stale-claim checks when enabled.
 
 ## Rollback
 

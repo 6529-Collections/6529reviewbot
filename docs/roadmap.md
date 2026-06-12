@@ -280,7 +280,7 @@ Before broad community release:
 8. Add worker execution adapters.
 9. Add worker capacity and backpressure policy.
 10. Add the 6529.io admin auth bridge contract.
-11. Add alerting and scheduled spend checks.
+11. Add alerting and scheduled operator checks.
 12. Dogfood on one target repo with conservative limits.
 13. Iterate docs, release process, and install flow toward a v1 tag.
 
@@ -316,7 +316,7 @@ Completed in `6529reviewbot`:
 - worker capacity and backpressure runbook for conservative live scaling;
 - reusable workflow compatibility docs and explicit provider-secret mapping;
 - 6529.io admin auth bridge contract;
-- alerting and scheduled spend checks.
+- alerting and scheduled operator checks for spend and job health.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - production deployment runbook and central worker installation-token flow.
@@ -361,6 +361,7 @@ Completed in `6529reviewbot`:
   ledger with aggregate scope counts.
 - spend-alert read/evaluation path verified against the isolated ledger in
   dry-run mode.
+- job-health alert evaluation for failed jobs and stale run-control claims.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - installation and onboarding guide for conservative central App dogfood.

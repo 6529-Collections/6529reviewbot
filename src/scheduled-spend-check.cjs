@@ -2,9 +2,15 @@
 
 const { readEnabledBudgetPolicies } = require("./budget-ledger.cjs");
 const { alertNotifierSettingsFromEnv, sendAlerts } = require("./alert-notifier.cjs");
+const {
+  ACTIVE_CLAIM_STATUSES,
+  FAILURE_STATUSES,
+  evaluateJobHealthAlerts,
+  jobHealthAlertPolicyFromEnv,
+} = require("./job-health-alerts.cjs");
 const { evaluateSpendAlerts, spendAlertPolicyFromEnv } = require("./spend-alerts.cjs");
 const { usageApiSettingsFromEnv } = require("./usage-api.cjs");
-const { readUsageEvents } = require("./usage-api-ledger.cjs");
+const { readJobEvents, readRunClaims, readUsageEvents } = require("./usage-api-ledger.cjs");
 const { usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function scheduledSpendCheckSettingsFromEnv(env = process.env) {
@@ -22,6 +28,7 @@ function scheduledSpendCheckSettingsFromEnv(env = process.env) {
   );
   return {
     alertPolicy,
+    jobHealthPolicy: jobHealthAlertPolicyFromEnv(env),
     notifierSettings: alertNotifierSettingsFromEnv(env),
     ledgerSettings: usageLedgerSettingsFromEnv(env),
     apiSettings,
@@ -55,12 +62,15 @@ async function runScheduledSpendCheck(options = {}) {
       apiSettings: settings.apiSettings,
     });
   const budgetPolicies = options.budgetPolicies || readEnabledBudgetPolicies(settings.ledgerSettings);
-  const alerts = evaluateSpendAlerts({
-    events,
-    budgetPolicies,
-    now,
-    policy: settings.alertPolicy,
-  });
+  const alerts = [
+    ...evaluateSpendAlerts({
+      events,
+      budgetPolicies,
+      now,
+      policy: settings.alertPolicy,
+    }),
+    ...readAndEvaluateJobHealthAlerts(settings, options, now),
+  ];
   const notification = options.dryRun
     ? { ok: true, delivered: false, mode: "dry_run", alertCount: alerts.length }
     : await sendAlerts(alerts, {
@@ -79,6 +89,41 @@ async function runScheduledSpendCheck(options = {}) {
     alerts,
     notification,
   };
+}
+
+function readAndEvaluateJobHealthAlerts(settings, options, now) {
+  const policy = settings.jobHealthPolicy || jobHealthAlertPolicyFromEnv(options.env);
+  if (!policy.enabled) {
+    return [];
+  }
+  const failureCutoff = new Date(now.getTime() - policy.failureLookbackHours * 60 * 60 * 1000);
+  const staleBefore = new Date(now.getTime() - policy.staleClaimHours * 60 * 60 * 1000);
+  const jobEvents =
+    options.jobEvents ||
+    readJobEvents(settings.ledgerSettings, {
+      query: {
+        statuses: FAILURE_STATUSES,
+        createdAfter: failureCutoff.toISOString(),
+        createdBefore: now.toISOString(),
+        limit: policy.maxAlerts * 10,
+      },
+    });
+  const runClaims =
+    options.runClaims ||
+    readRunClaims(settings.ledgerSettings, {
+      query: {
+        statuses: ACTIVE_CLAIM_STATUSES,
+        updatedBefore: staleBefore.toISOString(),
+        onlyUnexpired: true,
+        limit: policy.maxAlerts * 10,
+      },
+    });
+  return evaluateJobHealthAlerts({
+    jobEvents,
+    runClaims,
+    now,
+    policy,
+  });
 }
 
 function alertRange(now, lookbackDays) {
@@ -111,6 +156,7 @@ function positiveInt(value, fallback, name) {
 module.exports = {
   alertRange,
   defaultLookbackDays,
+  readAndEvaluateJobHealthAlerts,
   runScheduledSpendCheck,
   scheduledSpendCheckSettingsFromEnv,
 };

@@ -24,6 +24,7 @@ const githubAppManifestConversion = require("../src/github-app-manifest-conversi
 const githubAppManifestConversionCli = require("../bin/convert-github-app-manifest.cjs");
 const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
+const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
@@ -1481,6 +1482,43 @@ assert.equal(
   generatedAlerts.some((alert) => alert.kind === "spend_spike" && alert.scopeType === "repo"),
   true
 );
+const jobHealthPolicy = jobHealthAlerts.jobHealthAlertPolicyFromEnv({
+  REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED: "true",
+  REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS: "6",
+  REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD: "1",
+  REVIEWBOT_ALERTS_STALE_CLAIM_HOURS: "2",
+  REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD: "1",
+});
+const generatedJobHealthAlerts = jobHealthAlerts.evaluateJobHealthAlerts({
+  now: alertNow,
+  policy: jobHealthPolicy,
+  jobEvents: [
+    {
+      createdAt: "2026-06-12T10:00:00.000Z",
+      jobId: "failed-job",
+      status: "dispatch_failed",
+      repoFullName: "6529-Collections/example",
+    },
+  ],
+  runClaims: [
+    {
+      updatedAt: "2026-06-12T08:30:00.000Z",
+      expiresAt: "2026-06-12T13:00:00.000Z",
+      jobId: "stale-job",
+      status: "running",
+      repoFullName: "6529-Collections/example",
+    },
+  ],
+});
+assert.equal(generatedJobHealthAlerts.some((alert) => alert.kind === "job_failure"), true);
+assert.equal(generatedJobHealthAlerts.some((alert) => alert.kind === "stale_run_claim"), true);
+assert.throws(
+  () =>
+    jobHealthAlerts.jobHealthAlertPolicyFromEnv({
+      REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD: "0",
+    }),
+  /positive integer/
+);
 
 const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
 const mergedAdmissionPolicy = repositoryConfig.mergeRepositoryAdmissionPolicy(
@@ -1616,6 +1654,27 @@ assert.match(jobEventsQuery.sql, /ai_review_job_events/);
 assert.match(jobEventsQuery.sql, /where status = :status/);
 assert.equal(jobEventsQuery.parameters[0].value.stringValue, "dispatch_failed");
 assert.equal(jobEventsQuery.parameters[1].value.longValue, 10);
+const recentJobEventsQuery = usageApiLedger.buildJobEventsQuery("reviewbot", {
+  statuses: ["dispatch_failed", "dispatch_error"],
+  createdAfter: "2026-06-12T00:00:00.000Z",
+  createdBefore: "2026-06-12T12:00:00.000Z",
+  limit: 5,
+});
+assert.match(recentJobEventsQuery.sql, /status in \(:status_0, :status_1\)/);
+assert.match(recentJobEventsQuery.sql, /created_at >= cast\(:created_after as timestamptz\)/);
+assert.equal(recentJobEventsQuery.parameters[0].value.stringValue, "dispatch_failed");
+assert.equal(recentJobEventsQuery.parameters[4].value.longValue, 5);
+const runClaimsQuery = usageApiLedger.buildRunClaimsQuery("reviewbot", {
+  statuses: ["claimed", "running"],
+  updatedBefore: "2026-06-12T10:00:00.000Z",
+  onlyUnexpired: true,
+  limit: 7,
+});
+assert.match(runClaimsQuery.sql, /ai_review_run_claims/);
+assert.match(runClaimsQuery.sql, /updated_at < cast\(:updated_before as timestamptz\)/);
+assert.match(runClaimsQuery.sql, /expires_at is null or expires_at > now\(\)/);
+assert.equal(runClaimsQuery.parameters[0].value.stringValue, "claimed");
+assert.equal(runClaimsQuery.parameters[3].value.longValue, 7);
 assert.throws(() => usageApiLedger.buildJobEventsQuery("reviewbot", { limit: 0 }), /positive integer/);
 const usageApiLedgerRecord = [
   { stringValue: "2026-06-10 01:00:00+00" },
@@ -1679,6 +1738,32 @@ const jobEvent = usageApiLedger.jobEventRecordToEvent(jobEventLedgerRecord);
 assert.equal(jobEvent.eventId, 99);
 assert.equal(jobEvent.accepted, false);
 assert.equal(jobEvent.metadata.workflow, "review-job");
+const runClaimLedgerRecord = [
+  { longValue: 101 },
+  { stringValue: "2026-06-12 08:00:00+00" },
+  { stringValue: "2026-06-12 08:30:00+00" },
+  { isNull: true },
+  { stringValue: "2026-06-12 13:00:00+00" },
+  { stringValue: "run-key" },
+  { stringValue: "job-claim" },
+  { stringValue: "running" },
+  { stringValue: "6529-Collections/private-repo" },
+  { stringValue: "6529-Collections" },
+  { longValue: 12 },
+  { stringValue: "maintainer" },
+  { stringValue: "head" },
+  { stringValue: "security" },
+  { stringValue: "openai" },
+  { stringValue: "gpt-5.5" },
+  { stringValue: "openai:gpt-5.5" },
+  { stringValue: "delivery-1" },
+  { stringValue: "review" },
+  { stringValue: "{\"worker\":\"review-job\"}" },
+];
+const runClaim = usageApiLedger.runClaimRecordToClaim(runClaimLedgerRecord);
+assert.equal(runClaim.claimId, 101);
+assert.equal(runClaim.status, "running");
+assert.equal(runClaim.metadata.worker, "review-job");
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: new URL("http://localhost/api/admin/usage/summary"),
@@ -2018,6 +2103,23 @@ appServer.handleGitHubWebhook({
     dryRun: true,
     now: alertNow,
     events: alertEvents,
+    jobEvents: [
+      {
+        createdAt: "2026-06-12T10:00:00.000Z",
+        jobId: "failed-job",
+        status: "dispatch_failed",
+        repoFullName: "6529-Collections/example",
+      },
+    ],
+    runClaims: [
+      {
+        updatedAt: "2026-06-12T08:30:00.000Z",
+        expiresAt: "2026-06-12T13:00:00.000Z",
+        jobId: "stale-job",
+        status: "running",
+        repoFullName: "6529-Collections/example",
+      },
+    ],
     budgetPolicies: [
       {
         scopeType: "repo",
@@ -2028,6 +2130,7 @@ appServer.handleGitHubWebhook({
     ],
     settings: {
       alertPolicy,
+      jobHealthPolicy,
       notifierSettings: alertNotifier.alertNotifierSettingsFromEnv({
         REVIEWBOT_ALERTS_NOTIFY_MODE: "none",
       }),
@@ -2036,7 +2139,7 @@ appServer.handleGitHubWebhook({
       lookbackDays: 35,
     },
   });
-  assert.equal(scheduledAlertResult.alertCount, generatedAlerts.length);
+  assert.equal(scheduledAlertResult.alertCount, generatedAlerts.length + generatedJobHealthAlerts.length);
   assert.equal(scheduledAlertResult.notification.mode, "dry_run");
   try {
     usageApi.usageRangeFromRequest(

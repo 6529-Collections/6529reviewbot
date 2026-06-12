@@ -1,4 +1,4 @@
-name: 6529bot Spend Alerts
+name: 6529bot Operator Alerts
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 jobs:
-  spend-alerts:
+  operator-alerts:
     if: ${{ vars.REVIEWBOT_ALERTS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +35,7 @@ jobs:
       - name: Install bot dependencies
         run: npm ci
 
-      - name: Run spend alert check
+      - name: Run operator alert check
         env:
           REVIEWBOT_ALERTS_ENABLED: true
           REVIEWBOT_ALERTS_NOTIFY_MODE: ${{ vars.REVIEWBOT_ALERTS_NOTIFY_MODE || 'sns' }}
@@ -47,10 +47,15 @@ jobs:
           REVIEWBOT_ALERTS_SPIKE_BASELINE_DAYS: ${{ vars.REVIEWBOT_ALERTS_SPIKE_BASELINE_DAYS || '7' }}
           REVIEWBOT_ALERTS_SPIKE_MULTIPLIER: ${{ vars.REVIEWBOT_ALERTS_SPIKE_MULTIPLIER || '3' }}
           REVIEWBOT_ALERTS_SPIKE_MIN_USD: ${{ vars.REVIEWBOT_ALERTS_SPIKE_MIN_USD || '25' }}
+          REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED: ${{ vars.REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED || 'false' }}
+          REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS: ${{ vars.REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS || '6' }}
+          REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD: ${{ vars.REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD || '1' }}
+          REVIEWBOT_ALERTS_STALE_CLAIM_HOURS: ${{ vars.REVIEWBOT_ALERTS_STALE_CLAIM_HOURS || '2' }}
+          REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD: ${{ vars.REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD || '1' }}
           REVIEW_USAGE_ENABLED: true
           REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION }}
           REVIEW_USAGE_DB_RESOURCE_ARN: ${{ vars.REVIEW_USAGE_DB_RESOURCE_ARN }}
           REVIEW_USAGE_DB_SECRET_ARN: ${{ vars.REVIEW_USAGE_DB_SECRET_ARN }}
           REVIEW_USAGE_DB_NAME: ${{ vars.REVIEW_USAGE_DB_NAME }}
           REVIEW_USAGE_DB_SCHEMA: ${{ vars.REVIEW_USAGE_DB_SCHEMA }}
-        run: npm run alerts:spend
+        run: npm run alerts:operator

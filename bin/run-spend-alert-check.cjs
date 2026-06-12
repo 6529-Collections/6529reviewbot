@@ -27,8 +27,12 @@ function publicResult(result) {
       index,
       kind: alert.kind,
       severity: alert.severity,
+      scopeType: alert.scopeType,
+      status: alert.status,
       period: alert.period,
       windowHours: alert.windowHours,
+      lookbackHours: alert.lookbackHours,
+      staleClaimHours: alert.staleClaimHours,
     })),
   };
 }
