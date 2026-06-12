@@ -69,11 +69,12 @@ merged PRs.
 - Operator evidence template PR: merged as PR #51, merge commit `6c128a7`
 - Dogfood budget policy example PR: merged as PR #52, merge commit `a62dbe5`
 - Ledger additive migrations PR: merged as PR #53, merge commit `6811de2`
-- Current branch: `codex/budget-scope-check-migration`
-- Current local changes: canonical budget-scope check constraint refresh,
-  legacy `requester` to `requestor` normalization, smoke coverage, AWS
-  ledger/release/security docs, changelog, roadmap, and manager-memory
-  updates.
+- Budget-scope constraint migration PR: merged as PR #54, merge commit
+  `04916c7`
+- Current branch: `codex/record-budget-apply`
+- Current local changes: public-safe record that live ledger schema re-apply
+  and conservative dogfood budget policy apply succeeded, with aggregate scope
+  verification only.
 
 ## Key Decisions
 
@@ -165,6 +166,9 @@ merged PRs.
 - The ledger schema CLI should also refresh managed budget-scope constraints so
   older databases accept the canonical `global`, `org`, `repo`, `requestor`,
   `pr`, `provider`, `model`, and `review_kind` scopes.
+- Conservative dogfood budget policies have been applied to the live isolated
+  ledger and aggregate scope counts were verified. Keep live resource
+  identifiers and operator-owned policy files outside the public repo.
 
 ## Constraints
 
@@ -176,13 +180,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the budget-scope constraint migration PR if
-   checks and review are clean.
-2. Re-run live ledger schema apply and then the conservative operator budget
-   policy apply after the constraint migration lands.
-3. Continue dogfood target-repo PRs once required human review completes.
-4. Prepare the next operator-readiness or release-polish slice after this PR
-   lands.
+1. Publish and merge the public-safe live budget-apply evidence update.
+2. Continue dogfood target-repo PRs once required human review completes.
+3. Prepare the next operator-readiness slice: provider price rows, production
+   App/deployment evidence, or worker/alert installation depending on what is
+   most useful next.
 
 ## Open Risks
 
@@ -196,8 +198,6 @@ merged PRs.
 - Provider pricing rows still need operator verification against current
   provider docs before dogfood release; missing/partial price rows leave usage
   estimates empty.
-- Central budget policy rows still need operator-reviewed real caps applied in
-  the target Aurora database before live dogfood spend.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
 - The GitHub App manifest still needs production-host rendering and actual App
@@ -205,9 +205,9 @@ merged PRs.
 - Live operator Aurora ledger schema has been applied and read-only verified
   with expected base tables and daily aggregate views. Keep unredacted resource
   identifiers in the private operator runbook, not in this public repo.
-- Live budget-policy apply currently needs the budget-scope constraint
-  migration in this branch because the older budget table rejects the canonical
-  `org` scope.
+- Live conservative dogfood budget policies have been applied and aggregate
+  scope counts verified. Exact operator files and live identifiers stay out of
+  the public repo.
 - Provider pricing rows still require operator verification and key/limit
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter

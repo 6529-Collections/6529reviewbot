@@ -557,3 +557,17 @@
   - repeatable managed budget-scope constraint drop/add using canonical app
     scopes;
   - smoke coverage and AWS ledger/release/security/roadmap docs.
+- Merged `6529reviewbot` PR #54 as `04916c7` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Re-applied the live ledger schema with the budget-scope constraint refresh;
+  it completed successfully and reported the legacy scope normalization,
+  managed constraint drop, and managed constraint add statements applied.
+- Applied conservative dogfood budget policies to the live isolated ledger:
+  - six statements applied;
+  - aggregate verification showed one row each for `global`, `org`, `repo`,
+    `provider`, `model`, and `review_kind`;
+  - no raw policy notes, live resource identifiers, prompts, payloads, or
+    provider data were committed to the public repo.
+- Started `codex/record-budget-apply` increment to record this public-safe
+  evidence in docs and manager memory.
