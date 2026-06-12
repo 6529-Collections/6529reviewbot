@@ -16,6 +16,7 @@ const {
   estimateUsageCostUsd,
   readCurrentModelPrice,
 } = require("./model-prices.cjs");
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
@@ -1087,9 +1088,7 @@ function providerErrorSummary(body) {
 
 function safeErrorField(value) {
   if (typeof value === "string") {
-    return value
-      .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [redacted]")
-      .replace(/sk-[A-Za-z0-9._-]+/g, "sk-[redacted]");
+    return redactSensitiveText(value).slice(0, 500);
   }
   if (typeof value === "number" || typeof value === "boolean") {
     return value;
@@ -1377,9 +1376,7 @@ function numberOrNull(value) {
 }
 
 function safeOneLineError(error) {
-  return String(error?.message || error || "unknown error")
-    .split(/\r?\n/)[0]
-    .slice(0, 500);
+  return safeErrorLine(error);
 }
 
 function log(message) {
@@ -1392,7 +1389,7 @@ function warn(message) {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exit(1);
   });
 }

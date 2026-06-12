@@ -2,7 +2,9 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
+
 require("../src/review-bot.cjs").main("wcag").catch((error) => {
-  console.error(error && error.stack ? error.stack : String(error));
+  console.error(safeErrorLine(error));
   process.exit(1);
 });

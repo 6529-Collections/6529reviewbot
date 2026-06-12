@@ -463,6 +463,22 @@ assert.equal(reviewBot.isSafeRepositoryPath(".git/config"), false);
 assert.equal(reviewBot.stripReviewBotMetadata('hello <!-- 6529-review-bot:{"x":1} --> world'), "hello  world");
 assert.equal(reviewBot.truncate("abcdef", 0), "");
 assert.equal(reviewBot.enforceInputLimit({ system: "system", user: "abcdef" }, 3).user, "");
+const providerErrorSummary = reviewBot.providerErrorSummary({
+  error: {
+    type: "provider_error",
+    message: [
+      "failed with Bearer abcdefghijklmnopqrstuvwxyz123456",
+      "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+      "sk-proj-abcdefghijklmnopqrstuvwx123456",
+      "-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----",
+    ].join(", "),
+  },
+});
+assert(providerErrorSummary.includes("Bearer [redacted]"));
+assert(providerErrorSummary.includes("github_pat_[redacted]"));
+assert(providerErrorSummary.includes("sk-[redacted]"));
+assert(providerErrorSummary.includes("[redacted-private-key]"));
+assert.equal(providerErrorSummary.includes("sk-proj-"), false);
 
 assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);

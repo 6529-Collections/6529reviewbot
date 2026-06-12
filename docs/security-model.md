@@ -92,7 +92,7 @@ Provider requests are bounded by:
 - output token caps;
 - changed-file and changed-line budget checks;
 - provider timeout;
-- sanitized provider error logging;
+- sanitized provider error logging and review-runner fatal output;
 - empty visible provider output failing closed before comment posting.
 
 ### Diagnostic Safety
