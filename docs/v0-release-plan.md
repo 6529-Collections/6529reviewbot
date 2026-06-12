@@ -53,6 +53,8 @@ The first `v0` tag can include:
 - reviewed GitHub App manifest template for repeatable App registration;
 - GitHub App manifest renderer for production-host validation before App
   creation;
+- GitHub App registration packet for operator roles, credential custody,
+  post-registration checks, rotation, and rollback;
 - installed central worker and dormant-by-default alert workflows plus a local
   action-ref pinning guard;
 - example AWS IAM/OIDC templates for central Data API and SNS access;
@@ -83,7 +85,8 @@ Do not create the `v0` tag until all of these are true:
 
 1. The production GitHub App named `6529bot` exists from the reviewed manifest
    template or equivalent manual settings, with documented permissions, events,
-   webhook secret handling, and private-key rotation.
+   webhook secret handling, private-key rotation, and completed registration
+   packet evidence.
 2. The central App server and at least one worker path are deployed or the
    release notes explicitly mark the release as local/dogfood-only.
 3. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets

@@ -40,6 +40,8 @@ Ready for community review:
 - reviewed GitHub App manifest template for production registration;
 - GitHub App manifest renderer for host-specific validation and local
   registration-form generation;
+- GitHub App registration packet covering operator roles, credential custody,
+  acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
@@ -77,7 +79,8 @@ Not yet v1-ready:
 Before announcing broad community use:
 
 1. Create and configure the production GitHub App named `6529bot` from the
-   reviewed manifest template or equivalent manual settings.
+   reviewed manifest template or equivalent manual settings, using the
+   [GitHub App Registration Packet](github-app-registration.md).
 2. Deploy the central App server and worker path in controlled 6529
    infrastructure.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and

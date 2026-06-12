@@ -76,10 +76,10 @@ merged PRs.
 - Central workflow installation PR: merged as PR #56, merge commit `7de5779`
 - Release gate status PR: merged as PR #57, merge commit `8933a01`
 - Run-control smoke evidence PR: merged as PR #58, merge commit `9fdd374`
-- Current branch: `codex/record-alert-dry-run`
-- Current local changes: public-safe record of live spend-alert dry-run against
-  the isolated ledger, including successful read/evaluation path, zero alerts,
-  and no notification delivery.
+- Spend-alert dry-run evidence PR: merged as PR #59, merge commit `6590b79`
+- Current branch: `codex/github-app-registration-packet`
+- Current local changes: GitHub App registration packet and linked release,
+  install, deployment, security, roadmap, and evidence documentation.
 
 ## Key Decisions
 
@@ -156,6 +156,9 @@ merged PRs.
 - GitHub App manifest rendering should be dry-run and validation-oriented:
   render host-specific settings and optional local registration forms without
   exchanging GitHub manifest codes or receiving generated credentials.
+- GitHub App registration should have a public-safe operator packet covering
+  roles, credential custody, post-registration acceptance checks, permission
+  changes, rotation, rollback, and redacted release evidence.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -187,6 +190,10 @@ merged PRs.
 - The spend-alert read/evaluation path has been dogfooded against the isolated
   ledger in dry-run mode. Real scheduled delivery still needs an
   operator-owned notification channel before broad release.
+- Registration evidence may say that a manifest was rendered, settings were
+  verified, and pings were acknowledged, but must not include App ids, client
+  secrets, private keys, webhook secrets, installation ids, raw payloads, or
+  live AWS identifiers.
 
 ## Constraints
 
@@ -198,8 +205,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the public-safe alert dry-run evidence PR if
-   checks and review are clean.
+1. Validate, publish, and merge the GitHub App registration packet PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

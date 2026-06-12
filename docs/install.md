@@ -41,13 +41,13 @@ secret store only.
 Validate the rendered manifest:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
 ```
 
 When using GitHub's manifest flow, render a local registration form:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com \
+npm run github-app:manifest -- -- --host https://reviewbot.example.com \
   --form \
   --owner 6529-Collections \
   --state <unguessable-state>
@@ -77,7 +77,8 @@ https://<bot-host>/webhooks/github
 ```
 
 Store the webhook secret and App private key only in the bot runtime secret
-store. See [github-app.md](github-app.md) and [deployment.md](deployment.md).
+store. See [github-app-registration.md](github-app-registration.md),
+[github-app.md](github-app.md), and [deployment.md](deployment.md).
 
 ## 3. Configure Central Runtime
 

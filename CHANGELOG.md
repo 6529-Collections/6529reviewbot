@@ -69,6 +69,8 @@ stabilized.
   registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration-form output.
+- GitHub App registration packet for operator roles, credential custody,
+  post-registration checks, permission changes, rotation, and rollback.
 - Pinned central worker and alert workflow template actions plus a
   release-check guard for step-level action refs.
 - Production server loading of enabled central DB budget policy rows during

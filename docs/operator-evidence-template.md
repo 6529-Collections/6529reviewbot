@@ -23,6 +23,7 @@ Private evidence location:
 ```text
 App name:
 Manifest rendered with npm run github-app:manifest:
+GitHub App registration packet completed:
 Permissions match docs/github-app.md:
 Webhook URL set:
 Webhook secret stored in bot secret store:

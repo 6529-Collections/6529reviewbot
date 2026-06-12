@@ -68,6 +68,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Installation](docs/install.md): central App setup and target repo onboarding.
 - [Configuration](docs/configuration.md): central runtime settings.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
+- [GitHub App Registration](docs/github-app-registration.md): operator packet
+  for App creation, credential custody, verification, and rotation.
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
 - [Model Pricing](docs/model-pricing.md): operator-maintained price rows.
 - [Budget Policies](docs/budget-policies.md): operator-maintained central caps.
@@ -160,13 +162,13 @@ npm run validate:repo-config -- templates/dogfood-repository-config.yml
 Validate the GitHub App manifest template:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
 ```
 
 Render a production-hosted manifest without generating any secrets:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com
+npm run github-app:manifest -- -- --host https://reviewbot.example.com
 ```
 
 Print the Aurora ledger schema without touching AWS:
@@ -397,6 +399,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Production deployment](docs/deployment.md)
 - [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
+- [GitHub App registration](docs/github-app-registration.md)
 - [Model pricing](docs/model-pricing.md)
 - [Budget policies](docs/budget-policies.md)
 - [Provider setup](docs/provider-setup.md)

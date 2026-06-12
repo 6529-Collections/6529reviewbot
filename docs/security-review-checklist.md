@@ -31,6 +31,8 @@ Target deployment:
   explicitly reviewed manual equivalent.
 - The production GitHub App manifest was rendered with the final HTTPS bot
   origin and contains no `<bot-host>` placeholders.
+- The [GitHub App Registration Packet](github-app-registration.md) acceptance
+  and credential-custody checks are complete or explicitly deferred.
 - Public repositories require trusted actors or are disabled.
 - Comment-command requestor attribution points to the comment author.
 - Hidden bot metadata is trusted only from configured bot accounts.

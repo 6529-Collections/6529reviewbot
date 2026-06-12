@@ -25,13 +25,17 @@ store, not committed back to the public repository.
 Render and validate the manifest before registration:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
 ```
 
 If using the GitHub App manifest flow, generate an operator-owned registration
 form with `--form --owner <org> --state <unguessable-state>`. Complete the
 GitHub manifest conversion in the operator environment and move the returned
 credentials directly into the bot secret store.
+
+Use [github-app-registration.md](github-app-registration.md) as the complete
+registration packet for operator roles, settings verification,
+post-registration acceptance checks, credential rotation, and rollback.
 
 Recommended settings:
 
@@ -208,6 +212,8 @@ or GitHub App private keys.
 
 - `GET /healthz` succeeds.
 - `npm run preflight` passes, or every warning is understood.
+- [GitHub App Registration Packet](github-app-registration.md) acceptance
+  checks are complete or explicitly deferred in release evidence.
 - AWS OIDC trust and identity policies were reviewed from
   `infra/aws/*.example.json` or equivalent least-privilege templates.
 - `npm run check:workflow-actions` passes after editing central worker or alert

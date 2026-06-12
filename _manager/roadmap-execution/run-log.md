@@ -618,3 +618,14 @@
   - notification delivery stayed in dry-run mode.
 - Started `codex/record-alert-dry-run` increment to record this public-safe
   alert evidence in docs and manager memory.
+- Merged `6529reviewbot` PR #59 as `6590b79` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/github-app-registration-packet` increment:
+  - add an operator-facing GitHub App registration packet for `6529bot`;
+  - document registration roles, manifest review, GitHub-generated secret
+    custody, post-registration acceptance checks, permission changes,
+    rotation, rollback, and public-safe evidence;
+  - link the packet from README, installation, GitHub App, deployment, release,
+    release readiness, security checklist, operator evidence, v0 gates,
+    roadmap, changelog, and manager memory.

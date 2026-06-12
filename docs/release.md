@@ -20,10 +20,12 @@ After stabilization:
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook
+- [GitHub App registration packet](github-app-registration.md) completed or
+  explicitly deferred in the release notes
 - `npm run v0:gates` rendered, or rendered with
   `--status-file <operator-status-file>`, with deferred gates documented
 - `npm run release:check`
-- `npm run github-app:manifest -- --host <production-bot-origin> --quiet`
+- `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run check:workflow-actions`
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed
