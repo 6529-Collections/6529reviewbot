@@ -272,3 +272,13 @@
   - ledger schema includes `ai_review_run_claims`;
   - preflight validates run-control settings;
   - docs, changelog, release gates, and manager memory describe the contract.
+- Merged `6529reviewbot` PR #28 as `ac7bc12` after CI and Dependency Review
+  passed; CodeRabbit stayed pending with no review threads, and the normal
+  merge path allowed the merge.
+- Started `codex/run-control-ledger` increment:
+  - built-in Aurora/RDS Data API claimer for `ai_review_run_claims`;
+  - server wiring through `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED`;
+  - preflight validation for run-control ledger settings;
+  - smoke coverage for claimed, duplicate, concurrency-denied, and disabled
+    ledger decisions;
+  - docs and memory update from contract-only to built-in claimer.

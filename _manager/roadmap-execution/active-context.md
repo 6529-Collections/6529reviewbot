@@ -41,9 +41,10 @@ merged PRs.
 - Ledger schema tooling PR: merged as PR #25, merge commit `0ffd197`
 - Production preflight PR: merged as PR #26, merge commit `9b57580`
 - Incident response runbook PR: merged as PR #27, merge commit `0c9ee6b`
-- Current branch: `codex/run-control`
-- Current local changes: run-control contract for duplicate delivery claims and
-  concurrency caps, plus schema/docs/tests
+- Run control contract PR: merged as PR #28, merge commit `ac7bc12`
+- Current branch: `codex/run-control-ledger`
+- Current local changes: built-in Aurora/RDS Data API claimer for durable
+  run-control claims, plus server wiring/docs/tests
 
 ## Key Decisions
 
@@ -69,9 +70,10 @@ merged PRs.
   operators start the central App or worker.
 - Incident response should have containment-first runbooks that keep private
   payloads, secrets, and attacker-controlled content out of public artifacts.
-- Run control should claim budget-admitted jobs before worker dispatch. Dedupe
-  keys must include provider and model so multi-model review lanes do not block
-  each other.
+- Run control should claim budget-admitted jobs before worker dispatch. The
+  built-in Aurora-backed claimer serializes claim attempts conservatively for
+  dogfood. Dedupe keys must include provider and model so multi-model review
+  lanes do not block each other.
 
 ## Constraints
 
@@ -83,11 +85,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the run-control PR if checks and review are
-   clean.
+1. Validate, publish, and merge the run-control ledger PR if checks and review
+   are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   run-control PR lands.
+   run-control ledger PR lands.
 
 ## Open Risks
 

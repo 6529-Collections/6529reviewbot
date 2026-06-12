@@ -142,12 +142,15 @@ REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
+REVIEWBOT_RUN_CONTROL_LEDGER_CLAIM_TTL_SECONDS=3600
 ```
 
 Run control claims jobs after budget admission and before worker dispatch. Use
 it to dedupe replayed deliveries and cap parallel runs by org, repo, PR,
 requestor, provider, model, or review kind. Default mode is `off`; production
-should move to `enforce` only after a durable claim store is wired in. See
+should move to `enforce` only after the durable claim table is applied and
+`REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` is configured. See
 [run-control.md](run-control.md).
 
 ## Repository Configuration

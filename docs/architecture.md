@@ -64,8 +64,8 @@ too many parallel jobs by org, repo, PR, requestor, provider, model, or review
 kind.
 
 The claim key includes provider and model, so the same review kind can run
-through multiple lanes intentionally. Claim state lives in
-`reviewbot.ai_review_run_claims` once the durable claim store is wired.
+through multiple lanes intentionally. The built-in Aurora-backed claimer stores
+claim state in `reviewbot.ai_review_run_claims`.
 
 ## 4. Worker Adapters
 

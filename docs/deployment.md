@@ -57,6 +57,7 @@ REVIEWBOT_PUBLIC_REPO_MODE=trusted
 REVIEWBOT_DRAFT_PR_MODE=skip
 REVIEWBOT_BUDGET_MODE=enforce
 REVIEWBOT_RUN_CONTROL_MODE=off
+REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
 REVIEWBOT_JOB_LEDGER_ENABLED=true
 REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
 REVIEWBOT_WORKER_ADAPTER=noop
@@ -65,9 +66,9 @@ REVIEWBOT_WORKER_ADAPTER=noop
 Start with `noop` worker mode for the first webhook pass. Switch to
 `github_actions` or a controlled `local` worker after webhook verification,
 repository config loading, admission, budget, and usage paths are clean.
-Keep run control `off` until the durable claim table is applied and the claim
-hook is wired. Then move to `enforce` with conservative repo, PR, and
-requestor concurrency caps.
+Keep run control `off` until the durable claim table is applied. Then set
+`REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` and move to `enforce` with
+conservative repo, PR, and requestor concurrency caps.
 
 Run a no-network configuration preflight before starting the server:
 
@@ -156,6 +157,8 @@ or GitHub App private keys.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - Run-control claims dedupe replayed deliveries before queue work.
+- `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
+  `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
 - `noop` mode returns jobs without dispatching workers.
 - Job ledger rows record budget decisions and dispatch outcomes when enabled.
 - `github_actions` mode passes `installation_id` into the workflow.

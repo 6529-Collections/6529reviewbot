@@ -4,6 +4,7 @@ const { adminAuthSettingsFromEnv } = require("./admin-auth.cjs");
 const { admissionPolicyFromEnv } = require("./admission-policy.cjs");
 const { alertNotifierSettingsFromEnv } = require("./alert-notifier.cjs");
 const { budgetPolicyFromEnv } = require("./budget-admission.cjs");
+const { assertDataApiSettings } = require("./data-api.cjs");
 const {
   githubAppAuthSettingsFromEnv,
   isGitHubAppAuthConfigured,
@@ -20,6 +21,7 @@ const { ledgerSchemaStatements } = require("./ledger-schema.cjs");
 const { loadModelCatalog } = require("./model-catalog.cjs");
 const { repositoryConfigPolicyFromEnv } = require("./repository-config.cjs");
 const { reviewJobPolicyFromEnv } = require("./review-job.cjs");
+const { runControlLedgerSettingsFromEnv } = require("./run-control-ledger.cjs");
 const { runControlPolicyFromEnv } = require("./run-control.cjs");
 const { spendAlertPolicyFromEnv } = require("./spend-alerts.cjs");
 const { usageApiSettingsFromEnv } = require("./usage-api.cjs");
@@ -101,14 +103,22 @@ function runPreflight(options = {}) {
 
   check(result, "run_control", () => {
     const policy = runControlPolicyFromEnv(env);
+    const ledgerSettings = runControlLedgerSettingsFromEnv(env);
     if (policy.mode === "off") {
       addWarning(result, "run_control", "Run control is disabled; duplicate and concurrency claims will not be enforced.");
+    }
+    if (policy.mode !== "off" && !ledgerSettings.enabled) {
+      addWarning(result, "run_control", "Run control is enabled but the built-in run-control ledger is disabled; the server must inject claimReviewJob.");
+    }
+    if (ledgerSettings.enabled) {
+      assertDataApiSettings(ledgerSettings, "Run-control ledger");
     }
     return {
       mode: policy.mode,
       dedupeEnabled: policy.dedupeEnabled,
       dedupeTtlSeconds: policy.dedupeTtlSeconds,
       maxConcurrent: policy.maxConcurrent,
+      ledgerEnabled: ledgerSettings.enabled,
     };
   });
 

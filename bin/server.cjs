@@ -16,6 +16,10 @@ const {
   jobLedgerSettingsFromEnv,
   writeJobEvent,
 } = require("../src/job-ledger.cjs");
+const {
+  claimReviewJobWithLedger,
+  runControlLedgerSettingsFromEnv,
+} = require("../src/run-control-ledger.cjs");
 const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
 
 const port = Number.parseInt(process.env.PORT || process.env.REVIEWBOT_PORT || "8080", 10);
@@ -30,6 +34,11 @@ if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
 const jobLedgerSettings = jobLedgerSettingsFromEnv();
 if (jobLedgerSettings.enabled) {
   serverOptions.recordJobEvent = async (event) => writeJobEvent(jobLedgerSettings, event);
+}
+const runControlLedgerSettings = runControlLedgerSettingsFromEnv();
+if (runControlLedgerSettings.enabled) {
+  serverOptions.claimReviewJob = async (job, context) =>
+    claimReviewJobWithLedger(runControlLedgerSettings, job, context);
 }
 const adminAuthSettings = adminAuthSettingsFromEnv();
 if (adminAuthSettings.mode !== "disabled") {

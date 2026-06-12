@@ -25,6 +25,7 @@ const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const runControl = require("../src/run-control.cjs");
+const runControlLedger = require("../src/run-control-ledger.cjs");
 const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
 const spendAlerts = require("../src/spend-alerts.cjs");
 const usageApi = require("../src/usage-api.cjs");
@@ -192,6 +193,16 @@ assert.equal(preflightResult.errors.length, 0);
 assert(preflightResult.warnings.some((warning) => warning.name === "worker_adapter"));
 assert.equal(preflight.runPreflight({ env: preflightEnv, strict: true }).ok, false);
 assert.equal(preflight.runPreflight({ env: {} }).errors[0].name, "webhook");
+assert(
+  preflight
+    .runPreflight({
+      env: {
+        ...preflightEnv,
+        REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED: "true",
+      },
+    })
+    .errors.some((error) => error.name === "run_control")
+);
 assert.match(preflight.formatPreflightResult(preflightResult), /preflight: ok/);
 assert.deepEqual(
   preflightCli.parseArgs(["--profile", "worker", "--json", "--strict"]),
@@ -689,6 +700,107 @@ assert.equal(
   }).allowed,
   true
 );
+const runControlLedgerSettings = runControlLedger.runControlLedgerSettingsFromEnv({
+  REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED: "true",
+  REVIEW_USAGE_AWS_REGION: "us-east-1",
+  REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  REVIEW_USAGE_DB_SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  REVIEW_USAGE_DB_NAME: "reviewbot",
+  REVIEW_USAGE_DB_SCHEMA: "reviewbot",
+});
+const runClaimQuery = runControlLedger.buildRunClaimQuery(
+  "reviewbot",
+  reviewJobs[0],
+  runControlPolicy,
+  { claimTtlSeconds: 60 }
+);
+assert.match(runClaimQuery.sql, /pg_advisory_xact_lock/);
+assert.match(runClaimQuery.sql, /ai_review_run_claims/);
+assert.equal(
+  runClaimQuery.parameters.find((param) => param.name === "run_key").value.stringValue,
+  reviewJobs[0].runKey
+);
+const claimedDecisionPromise = runControlLedger.claimReviewJobWithLedger(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  { policy: runControlPolicy },
+  {
+    executeStatement: () => ({
+      records: [
+        [
+          { stringValue: "claimed" },
+          { stringValue: reviewJobs[0].runKey },
+          { stringValue: reviewJobs[0].id },
+          { stringValue: "claimed" },
+          { stringValue: "2026-06-12T00:00:00.000Z" },
+          { isNull: true },
+          { stringValue: "[]" },
+        ],
+      ],
+    }),
+  }
+);
+const duplicateDecisionPromise = runControlLedger.claimReviewJobWithLedger(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  { policy: runControlPolicy },
+  {
+    executeStatement: () => ({
+      records: [
+        [
+          { stringValue: "duplicate_run" },
+          { stringValue: reviewJobs[0].runKey },
+          { stringValue: "older-job" },
+          { stringValue: "claimed" },
+          { stringValue: "2026-06-12T00:00:00.000Z" },
+          {
+            stringValue: JSON.stringify({
+              runKey: reviewJobs[0].runKey,
+              jobId: "older-job",
+              status: "claimed",
+              createdAt: "2026-06-12T00:00:00.000Z",
+            }),
+          },
+          { stringValue: "[]" },
+        ],
+      ],
+    }),
+  }
+);
+const concurrencyDecisionPromise = runControlLedger.claimReviewJobWithLedger(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  { policy: runControlPolicy },
+  {
+    executeStatement: () => ({
+      records: [
+        [
+          { stringValue: "concurrency_limit_exceeded" },
+          { isNull: true },
+          { isNull: true },
+          { isNull: true },
+          { isNull: true },
+          { isNull: true },
+          {
+            stringValue: JSON.stringify([
+              {
+                scopeType: "repo",
+                scopeValue: "6529-Collections/example",
+                active: 1,
+                maxConcurrent: 1,
+              },
+            ]),
+          },
+        ],
+      ],
+    }),
+  }
+);
+const disabledRunControlLedgerPromise = runControlLedger.claimReviewJobWithLedger(
+  { ...runControlLedgerSettings, enabled: false },
+  reviewJobs[0],
+  { policy: runControlPolicy }
+);
 
 const usageEvents = [
   {
@@ -1099,6 +1211,12 @@ appServer.handleGitHubWebhook({
   const noopQueue = await noopQueuePromise;
   assert.equal(noopQueue.accepted, false);
   assert.equal(noopQueue.reason, "No worker adapter configured.");
+  const claimedDecision = await claimedDecisionPromise;
+  assert.equal(claimedDecision.code, "run_control_claimed");
+  assert.equal(claimedDecision.allowed, true);
+  assert.equal((await duplicateDecisionPromise).code, "duplicate_run");
+  assert.equal((await concurrencyDecisionPromise).code, "concurrency_limit_exceeded");
+  assert.equal((await disabledRunControlLedgerPromise).code, "run_control_snapshot_unavailable");
 
   const usageApiSettings = usageApi.usageApiSettingsFromEnv({
     REVIEWBOT_USAGE_API_DEFAULT_DAYS: "7",

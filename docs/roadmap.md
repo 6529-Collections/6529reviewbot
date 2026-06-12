@@ -277,7 +277,8 @@ Completed in `6529reviewbot`:
   permission resolution;
 - budget admission against the AWS usage ledger;
 - review-job fanout with provider/model lanes;
-- run-control contract for duplicate delivery claims and concurrency caps;
+- run-control contract and Aurora-backed claimer for duplicate delivery claims
+  and concurrency caps;
 - public and admin usage API contracts;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
