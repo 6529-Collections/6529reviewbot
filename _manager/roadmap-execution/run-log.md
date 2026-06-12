@@ -895,3 +895,13 @@
   - refactor `usage-ledger.cjs` onto the shared Data API execution helper;
   - preserve exported `awsCliBin` and `shouldUseShellForAwsCli` compatibility;
   - add smoke coverage for usage write SQL/parameters without touching AWS.
+- Merged `6529reviewbot` PR #81 as `54c893d` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27419596591`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27419596595`, completed successfully.
+- Started `codex/harden-alert-sns-runner` increment:
+  - keep default Windows AWS CLI shell compatibility;
+  - avoid shell mode when notifier settings carry an explicit AWS CLI binary;
+  - add smoke coverage for the custom runner path.
