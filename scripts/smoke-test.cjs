@@ -3,6 +3,7 @@
 "use strict";
 
 const assert = require("assert");
+const childProcess = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs");
 const os = require("os");
@@ -479,6 +480,20 @@ assert(providerErrorSummary.includes("github_pat_[redacted]"));
 assert(providerErrorSummary.includes("sk-[redacted]"));
 assert(providerErrorSummary.includes("[redacted-private-key]"));
 assert.equal(providerErrorSummary.includes("sk-proj-"), false);
+const cliSecret = "sk-proj-abcdefghijklmnopqrstuvwx123456";
+const cliFatal = runCliForSmoke(["bin/preflight.cjs", cliSecret]);
+assert.equal(cliFatal.status, 1);
+assert(cliFatal.stderr.includes("sk-[redacted]"));
+assert.equal(cliFatal.stderr.includes(cliSecret), false);
+assert.equal(cliFatal.stderr.includes("\n    at "), false);
+const catalogSecretPath = "github_pat_abcdefghijklmnopqrstuvwxyz1234567890.json";
+const catalogFatal = runCliForSmoke([
+  "bin/validate-model-catalog.cjs",
+  catalogSecretPath,
+]);
+assert.equal(catalogFatal.status, 1);
+assert(catalogFatal.stderr.includes("github_pat_[redacted]"));
+assert.equal(catalogFatal.stderr.includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
 
 assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
@@ -3268,6 +3283,14 @@ function signedAdminHeadersFor(url, options = {}) {
     "x-6529-admin-expires-at": expiresAt,
     "x-6529-admin-signature": `sha256=${signature}`,
   };
+}
+
+function runCliForSmoke(args) {
+  return childProcess.spawnSync(process.execPath, args, {
+    cwd: path.resolve(__dirname, ".."),
+    encoding: "utf8",
+    env: process.env,
+  });
 }
 
 function withEnv(nextEnv, fn) {

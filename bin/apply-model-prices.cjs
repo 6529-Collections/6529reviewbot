@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   applyModelPrices,
   loadModelPriceFile,
@@ -106,7 +107,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error.message);
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   }
 }

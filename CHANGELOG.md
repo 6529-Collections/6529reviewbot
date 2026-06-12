@@ -49,6 +49,8 @@ stabilized.
   failures are returned.
 - Review runner provider error summaries and fatal CLI output use the shared
   diagnostic redaction path.
+- Utility CLI fatal errors now use the shared diagnostic redaction path, and
+  validator path prefixes redact common secret shapes.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the

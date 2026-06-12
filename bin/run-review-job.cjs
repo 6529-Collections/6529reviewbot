@@ -70,7 +70,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exit(1);
   }
 }

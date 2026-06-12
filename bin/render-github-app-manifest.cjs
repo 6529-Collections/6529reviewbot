@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   DEFAULT_GITHUB_APP_MANIFEST_TEMPLATE_PATH,
   loadGitHubAppManifestTemplate,
@@ -115,7 +116,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error.message);
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   }
 }

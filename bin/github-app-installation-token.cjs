@@ -3,6 +3,7 @@
 "use strict";
 
 const fs = require("fs");
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   createGitHubAppIntegration,
   githubAppAuthSettingsFromEnv,
@@ -125,7 +126,7 @@ function printUsage() {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exit(1);
   });
 }

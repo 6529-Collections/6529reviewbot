@@ -5,6 +5,10 @@
 const fs = require("fs");
 const path = require("path");
 const {
+  redactSensitiveText,
+  safeErrorLine,
+} = require("../src/diagnostics.cjs");
+const {
   parseRepositoryConfigText,
 } = require("../src/repository-config.cjs");
 
@@ -22,7 +26,7 @@ for (const filePath of args) {
     validateFile(filePath);
   } catch (error) {
     failed = true;
-    console.error(`${filePath}: invalid: ${error.message}`);
+    console.error(`${safePath(filePath)}: invalid: ${safeErrorLine(error)}`);
   }
 }
 
@@ -38,12 +42,16 @@ function validateFile(filePath) {
     ? config.lanes.map((lane) => `${lane.provider}:${lane.model}`).join(", ")
     : "central default";
 
-  console.log(`${filePath}: ok`);
+  console.log(`${safePath(filePath)}: ok`);
   console.log(`  enabled: ${config.enabled}`);
   console.log(`  initial: ${config.reviewKinds.initial.join(", ") || "none"}`);
   console.log(`  followup: ${config.reviewKinds.followup.join(", ") || "none"}`);
   console.log(`  lanes: ${laneSummary}`);
   console.log(`  maxJobsPerDelivery: ${config.limits.maxJobsPerDelivery || "central default"}`);
+}
+
+function safePath(filePath) {
+  return redactSensitiveText(filePath).slice(0, 500);
 }
 
 function printUsage() {

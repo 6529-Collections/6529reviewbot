@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   applyBudgetPolicies,
   loadBudgetPolicyFile,
@@ -84,7 +85,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error.message);
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   }
 }
