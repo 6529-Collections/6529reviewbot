@@ -177,10 +177,14 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Local private path scanner PR: merged as PR #110, merge commit `360a7e9`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/worker-dispatch-app-preflight`
-- Current local changes: worker-dispatch preflight now rejects partial
-  `REVIEWBOT_WORKER_GITHUB_APP_*` credential overrides and warns when the
-  central dispatcher reuses the main GitHub App instead of a dispatch-only App.
+- Alert/AWS diagnostic redaction PR: merged as PR #111, merge commit
+  `ba7f63c`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Worker-dispatch preflight hardening PR: merged as PR #112, merge commit
+  `e0a62cc`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/public-usage-repo-allowlist`
+- Current local changes: public usage summaries now enforce repo/org allowlists
+  before showing repo names, even when a custom loader provides public repo
+  events with `repoPrivate: false`.
 
 ## Key Decisions
 
@@ -390,7 +394,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the worker-dispatch App preflight hardening PR.
+1. Validate, publish, and merge the public usage repo allowlist hardening PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
@@ -403,8 +407,9 @@ merged PRs.
   6529.io production.
 - Budget admission now runs per job so provider, model, and review-kind caps
   can differ.
-- Public usage summaries require explicit repo/org allowlists before repo names
-  are disclosed; otherwise repo detail collapses to `private`.
+- Public usage summaries enforce explicit repo/org allowlists before repo names
+  are disclosed; otherwise repo detail collapses to `private`, even when a
+  custom loader forgets to mark the event private.
 - Provider pricing rows still need operator verification against current
   provider docs before dogfood release; missing/partial price rows leave usage
   estimates empty.

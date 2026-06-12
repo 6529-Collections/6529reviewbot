@@ -82,6 +82,8 @@ stabilized.
 - Reusable workflow secret contract now maps only explicit provider secrets
   instead of inheriting all caller secrets.
 - Public/admin usage API contracts and read-only Aurora usage readers.
+- Public usage summaries now enforce repo/org allowlists before showing repo
+  names, even when custom loaders provide non-private public repo events.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
 - Admin-only recent job-events API for queue and worker diagnostics.
 - Admin-only runtime status API backed by no-network preflight checks.

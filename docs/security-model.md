@@ -130,6 +130,16 @@ reservation and worker dispatch. Operators should use `REVIEWBOT_ENABLED=false`
 as the first emergency stop when spend, provider credentials, or model output
 looks unsafe.
 
+### Usage Disclosure Safety
+
+Public usage summaries disclose repository names only when they match
+`REVIEWBOT_USAGE_API_PUBLIC_REPOS` or `REVIEWBOT_USAGE_API_PUBLIC_ORGS`.
+Private repositories and unallowlisted public repositories are collapsed into a
+generic bucket before public output, even when a custom usage loader supplies a
+non-private event. Admin endpoints remain authenticated because they can show
+private repo names, requester aggregates, PR-level aggregates, raw job events,
+and operational budget policy details.
+
 ### AWS Safety
 
 The usage ledger should use:

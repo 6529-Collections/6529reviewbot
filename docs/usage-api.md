@@ -34,7 +34,8 @@ The public summary is safe for a public 6529.io transparency page. It includes:
 
 - totals for review runs, cost, tokens, and budget-skipped runs;
 - daily aggregates;
-- repo aggregates, with private repos collapsed into a `private` bucket;
+- repo aggregates, with private and unallowlisted repos collapsed into a
+  `private` bucket;
 - provider/model aggregates;
 - review-kind aggregates.
 
@@ -177,5 +178,8 @@ REVIEWBOT_USAGE_API_PUBLIC_ORGS=6529-Collections
 
 If a repo does not match either allowlist, public summaries still include its
 cost and review counts but collapse the repo name to `private`.
+The HTTP summarizer enforces this disclosure rule even when a custom loader
+supplies `repoPrivate: false`; loaders should still mark unallowlisted repos as
+private early, but the API boundary is the final guard before public output.
 
 `6529.io` should call these HTTP endpoints rather than reading Aurora directly.
