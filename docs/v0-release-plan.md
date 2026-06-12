@@ -41,6 +41,7 @@ The first `v0` tag can include:
   and concurrency caps;
 - run-control worker completion updates for durable claims;
 - local and central GitHub Actions worker adapters;
+- worker capacity and backpressure runbook for conservative live scaling;
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
 - validated OpenAPI contract for usage/admin API integration;
@@ -88,8 +89,9 @@ Do not create the `v0` tag until all of these are true:
    template or equivalent manual settings, with documented permissions, events,
    webhook secret handling, private-key rotation, and completed registration
    packet evidence.
-2. The central App server and at least one worker path are deployed or the
-   release notes explicitly mark the release as local/dogfood-only.
+2. The central App server and at least one worker path are deployed with a
+   reviewed worker capacity policy, or the release notes explicitly mark the
+   release as local/dogfood-only.
 3. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
    are configured only in bot-owned infrastructure.
 4. AWS IAM/OIDC trust and identity policies are reviewed from the templates in

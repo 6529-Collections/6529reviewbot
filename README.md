@@ -84,6 +84,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
+- [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
+  worker evidence.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
@@ -414,6 +416,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Run control](docs/run-control.md)
 - [Support](docs/support.md)
 - [Worker adapters](docs/worker-adapters.md)
+- [Worker capacity](docs/worker-capacity.md)
 - [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)
 - [Admin auth bridge](docs/admin-auth-bridge.md)

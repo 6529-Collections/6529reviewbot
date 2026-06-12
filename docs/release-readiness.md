@@ -32,6 +32,7 @@ Ready for community review:
   dogfooded against the isolated ledger with aggregate status verification;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
+- worker capacity and backpressure runbook for live scaling decisions;
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin runtime status API backed by no-network preflight checks;
@@ -69,7 +70,7 @@ Ready for community review:
 Not yet v1-ready:
 
 - production GitHub App registration and deployment execution;
-- production worker deployment choice and scaling policy;
+- production worker deployment execution;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;
 - production SNS/webhook alert routing;

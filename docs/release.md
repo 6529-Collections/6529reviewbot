@@ -34,6 +34,8 @@ After stabilization:
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when
   central budget rows changed, plus `--apply` from the operator environment
 - `npm run preflight -- -- --strict` in the release candidate environment
+- [Worker capacity and backpressure](worker-capacity.md) reviewed for live
+  worker releases
 - docs updated
 - pull request template security, cost, and contract questions answered
 - workflow pins reviewed

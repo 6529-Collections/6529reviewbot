@@ -116,6 +116,9 @@ The template defaults to a 20 minute job timeout. Override it with:
 REVIEWBOT_WORKER_TIMEOUT_MINUTES=20
 ```
 
+Use [worker-capacity.md](worker-capacity.md) for the production scaling policy,
+backpressure controls, starting concurrency caps, and worker evidence.
+
 Validate action pinning locally with:
 
 ```bash

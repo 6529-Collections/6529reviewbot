@@ -10,8 +10,8 @@
     },
     {
       "id": "server-worker",
-      "title": "Central App server and at least one worker path are deployed, or release notes mark the release local/dogfood-only.",
-      "evidence": "docs/deployment.md"
+      "title": "Central App server and at least one worker path are deployed with reviewed worker capacity policy, or release notes mark the release local/dogfood-only.",
+      "evidence": "docs/worker-capacity.md"
     },
     {
       "id": "secret-boundary",

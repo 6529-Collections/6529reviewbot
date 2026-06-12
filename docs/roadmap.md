@@ -52,6 +52,8 @@ each caller repo may need variables, secrets, OIDC trust, and workflow rules.
   custody, acceptance checks, permission changes, rotation, and rollback.
 - Decide whether jobs run in GitHub Actions in this repository, an external
   worker, or both.
+- Keep worker capacity and backpressure policy explicit before live dogfood
+  traffic scales.
 - Define the event flow for PR open, synchronize, reopen, ready-for-review, and
   comment commands.
 - Keep the reusable workflow as a compatibility/development path only if it
@@ -274,10 +276,11 @@ Before broad community release:
 6. Add the `6529.io` public transparency page and private admin page.
 7. Add repo/org configuration loading and validation.
 8. Add worker execution adapters.
-9. Add the 6529.io admin auth bridge contract.
-10. Add alerting and scheduled spend checks.
-11. Dogfood on one target repo with conservative limits.
-12. Iterate docs, release process, and install flow toward a v1 tag.
+9. Add worker capacity and backpressure policy.
+10. Add the 6529.io admin auth bridge contract.
+11. Add alerting and scheduled spend checks.
+12. Dogfood on one target repo with conservative limits.
+13. Iterate docs, release process, and install flow toward a v1 tag.
 
 ## Current Progress
 
@@ -308,6 +311,7 @@ Completed in `6529reviewbot`:
   base-ref GitHub contents loading;
 - worker execution adapters for local workers and central GitHub Actions
   dispatch;
+- worker capacity and backpressure runbook for conservative live scaling;
 - 6529.io admin auth bridge contract;
 - alerting and scheduled spend checks.
 - dogfood runbook, conservative dogfood templates, and repository config

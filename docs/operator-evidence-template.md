@@ -75,6 +75,7 @@ Fail-open/fail-closed behavior accepted:
 
 ```text
 Worker path:
+Worker capacity policy reviewed:
 npm run check:workflow-actions passed after installing workflows:
 npm run preflight -- --strict result:
 Run-control mode:

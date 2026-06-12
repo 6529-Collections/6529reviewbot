@@ -101,6 +101,8 @@ REVIEWBOT_WORKER_ADAPTER=noop
 Start with `noop` worker mode for the first webhook pass. Switch to
 `github_actions` or a controlled `local` worker after webhook verification,
 repository config loading, admission, budget, and usage paths are clean.
+Use [worker-capacity.md](worker-capacity.md) before enabling live worker
+traffic beyond command-only dogfood.
 Keep run control `off` until the durable claim table is applied. Then set
 `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` and move to `enforce` with
 conservative repo, PR, and requestor concurrency caps.
@@ -246,6 +248,9 @@ or GitHub App private keys.
 - `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
 - `noop` mode returns jobs without dispatching workers.
+- Worker capacity and backpressure settings match
+  [worker-capacity.md](worker-capacity.md), or release notes explicitly defer
+  live scaling beyond command-only dogfood.
 - Job ledger rows record budget decisions and dispatch outcomes when enabled.
 - `github_actions` mode passes `installation_id` and `run_key` into the
   workflow.

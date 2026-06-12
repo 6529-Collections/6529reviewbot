@@ -33,6 +33,7 @@ stabilized.
 - Durable job lifecycle ledger for budget and dispatch audit events.
 - Base-ref repository config loading and restrictive policy merge.
 - Local and central GitHub Actions worker adapters.
+- Worker capacity and backpressure runbook for conservative live scaling.
 - Public/admin usage API contracts and read-only Aurora usage readers.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
 - Admin-only recent job-events API for queue and worker diagnostics.
