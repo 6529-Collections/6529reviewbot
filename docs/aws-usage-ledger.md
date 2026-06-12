@@ -116,6 +116,8 @@ REVIEW_USAGE_DB_SCHEMA=reviewbot
 If target repositories call the reusable workflow directly, GitHub evaluates
 repository variables and OIDC identity from the caller side. In that model, use
 an explicit broker or configure trust and variables for each allowed caller.
+Do not rely on `secrets: inherit`; see
+[reusable-workflow.md](reusable-workflow.md) for the caller-secret boundary.
 
 The IAM role trust policy must match the workflow identity that actually
 assumes the role. For centralized execution, trust
