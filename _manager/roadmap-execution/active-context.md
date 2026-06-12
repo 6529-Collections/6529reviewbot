@@ -139,9 +139,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully. CodeRabbit
   completed after merge with no inline comments and only its generic docstring
   coverage warning.
-- Current branch: `codex/operator-checks-price-evidence`
-- Current local changes: align machine-readable v0 release gates, sample gate
-  status, and roadmap progress with the model price freshness policy.
+- Price evidence release-gate PR: merged as PR #93, merge commit `17bd42e`;
+  post-merge CI and OpenSSF Scorecard completed successfully. CodeRabbit
+  completed after merge with no actionable comments.
+- Current branch: `codex/release-notes-price-evidence`
+- Current local changes: align release notes, release checklist, operations
+  runbook, and provider setup with the model price freshness policy.
 
 ## Key Decisions
 
@@ -329,7 +332,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model price release-gate alignment PR.
+1. Validate, publish, and merge the model price release-notes alignment PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

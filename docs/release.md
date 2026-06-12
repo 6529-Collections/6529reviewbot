@@ -49,6 +49,11 @@ After stabilization:
   changed
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when
   central budget rows changed, plus `--apply` from the operator environment
+- `npm run model-prices -- -- --file <reviewed-model-price-file.json>` when
+  provider/model price rows changed, plus `--apply` from the operator
+  environment unless the release keeps conservative default estimates
+- release notes name any accepted model-price `--allow-stale-source` or
+  `--allow-zero-price` override and its operator evidence
 - `npm run preflight -- -- --strict` in the release candidate environment
 - [Worker capacity and backpressure](worker-capacity.md) reviewed for live
   worker releases
