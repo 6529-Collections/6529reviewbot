@@ -4,6 +4,7 @@ const YAML = require("yaml");
 const { REVIEW_KINDS, INITIAL_REVIEW_KINDS } = require("./github-webhook.cjs");
 const { TRUSTED_PERMISSION_ORDER } = require("./admission-policy.cjs");
 const { BUDGET_SCOPES } = require("./budget-admission.cjs");
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { parseReviewLanes } = require("./review-job.cjs");
 
 const CONFIG_VERSION = 1;
@@ -110,7 +111,7 @@ async function loadRepositoryConfigFromGitHub(event, options = {}) {
         source: "github",
         path: configPath,
         ref,
-        reason: error.message,
+        reason: safeErrorLine(error),
       });
     }
   }
@@ -356,7 +357,7 @@ function publicRepositoryConfigSummary(loadResult, config) {
     source: loadResult.source || "",
     path: loadResult.path || "",
     ref: loadResult.ref || "",
-    reason: loadResult.reason || "",
+    reason: safeRepositoryConfigReason(loadResult.reason || ""),
     enabled: Boolean(config?.enabled),
     reviewKinds: config?.reviewKinds || null,
     lanes: (config?.lanes || []).map((lane) => ({
@@ -368,14 +369,19 @@ function publicRepositoryConfigSummary(loadResult, config) {
 }
 
 function repositoryConfigLoadResult(result) {
-  return {
+  const output = {
     source: result.source || "",
     path: result.path || "",
     ref: result.ref || "",
-    reason: result.reason || "",
     config: result.config || defaultRepositoryConfig(),
     ...result,
   };
+  output.reason = safeRepositoryConfigReason(output.reason || "");
+  return output;
+}
+
+function safeRepositoryConfigReason(value) {
+  return redactSensitiveText(value).split(/\r?\n/)[0].slice(0, 500);
 }
 
 function normalizeReviewKindsConfig(raw) {

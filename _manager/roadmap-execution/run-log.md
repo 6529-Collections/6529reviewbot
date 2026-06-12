@@ -1093,3 +1093,18 @@
   - redact job-event reasons, job-event metadata strings, and run-claim
     metadata strings before persistence;
   - add smoke coverage for job-event and run-claim metadata redaction.
+- Merged `6529reviewbot` PR #100 as `a13a3ad` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27432328666`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27432328178`, completed successfully.
+- Started `codex/redact-repository-config-reasons` increment:
+  - shorten and redact repository config invalid/unavailable reasons through
+    the normalized load-result path and public summary boundary;
+  - add smoke coverage for a secret-shaped unsupported config key and
+    multiline public-summary reason redaction;
+  - update README, changelog, repository config docs, and the security model.
+- Local validation for `codex/redact-repository-config-reasons`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

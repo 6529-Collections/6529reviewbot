@@ -105,8 +105,9 @@ run-control metadata. App server dispatch exceptions are also reduced to a
 short redacted line before they are copied into run-claim or job-event
 diagnostics. Job-event reasons, job-event metadata strings, run-claim metadata
 strings, preflight errors, alert delivery errors, and worker lifecycle warnings
-use the same redaction path. Redaction is a guardrail, not permission to
-publish verbose worker diagnostics.
+use the same redaction path. Repository config load reasons are also shortened
+and redacted before they appear in webhook or admin summaries. Redaction is a
+guardrail, not permission to publish verbose worker diagnostics.
 
 ### Runtime Control Safety
 
