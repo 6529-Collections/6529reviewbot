@@ -1,11 +1,20 @@
 "use strict";
 
 const DEFAULT_DIAGNOSTIC_MAX_CHARS = 4000;
+const ALERT_WEBHOOK_URL_PATTERN = new RegExp(
+  [
+    String.raw`\bhttps://hooks\.slack\.com/services/[A-Za-z0-9/_-]{20,}`,
+    String.raw`\bhttps://(?:discord(?:app)?\.com)/api/webhooks/[0-9]{10,}/[A-Za-z0-9._-]{20,}`,
+  ].join("|"),
+  "g"
+);
 const SENSITIVE_TEXT_PATTERNS = [
   [/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [redacted]"],
+  [/\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g, "[redacted-aws-access-key-id]"],
   [/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "github_pat_[redacted]"],
   [/\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{20,}\b/g, "[redacted-github-token]"],
   [/\bsk-[A-Za-z0-9._-]{8,}\b/g, "sk-[redacted]"],
+  [ALERT_WEBHOOK_URL_PATTERN, "[redacted-alert-webhook-url]"],
   [
     /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
     "[redacted-private-key]",

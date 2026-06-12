@@ -198,6 +198,6 @@ Worker stdout and stderr are not included in adapter results by default. This
 keeps webhook responses and queue logs from accidentally carrying prompt text,
 provider output, or credentials. Local debugging callers may opt into output
 tails explicitly. Those diagnostic tails and GitHub API dispatch error bodies
-are redacted for common token and private-key shapes before they are returned,
-but operators should still avoid routing verbose worker diagnostics to public
-logs or comments.
+are redacted for common token, alert-webhook, AWS access-key id, and
+private-key shapes before they are returned, but operators should still avoid
+routing verbose worker diagnostics to public logs or comments.

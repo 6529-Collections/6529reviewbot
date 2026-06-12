@@ -23,7 +23,8 @@ repositories.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
 - Run-control claims for duplicate delivery and concurrency protection.
 - Empty provider output fails closed before comment posting.
-- Worker diagnostics redact common token and private-key shapes.
+- Worker diagnostics redact common token, alert-webhook, AWS access-key id, and
+  private-key shapes.
 - Dry-run-by-default Aurora ledger schema tooling.
 - Dry-run-by-default model pricing update tooling.
 - No-network production preflight command.

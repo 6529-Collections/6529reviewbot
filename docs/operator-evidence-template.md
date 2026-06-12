@@ -6,9 +6,9 @@ changes that depend on resources outside the public repository.
 Keep live secrets, full account ids, private repository names, webhook payloads,
 provider responses, prompt text, and raw AWS ARNs out of public issues and PRs.
 Store unredacted evidence in the operator runbook or secret-management system.
-The release-gate CLI redacts common token and private-key shapes when rendering
-status notes/evidence, but this template should still use public-safe summaries
-when it is copied outside the private operator workspace.
+The release-gate CLI redacts common secret-shaped values when rendering status
+notes/evidence, but this template should still use public-safe summaries when
+it is copied outside the private operator workspace.
 
 ## Header
 
