@@ -41,6 +41,7 @@ function normalizeModelPrice(price, source) {
   const provider = normalizeProvider(price.provider);
   const model = stringField(price.model, `${source}.model`);
   const effectiveFrom = isoDateField(price.effectiveFrom, `${source}.effectiveFrom`);
+  const sourceCheckedAt = isoDateField(price.sourceCheckedAt, `${source}.sourceCheckedAt`);
   const normalized = {
     provider,
     model,
@@ -57,6 +58,7 @@ function normalizeModelPrice(price, source) {
     currency: "USD",
     effectiveFrom,
     sourceUrl: urlField(price.sourceUrl, `${source}.sourceUrl`),
+    sourceCheckedAt,
     notes: optionalString(price.notes),
   };
   if (
@@ -100,6 +102,7 @@ insert into ${schemaIdent}.ai_model_prices (
   currency,
   effective_from,
   source_url,
+  source_checked_at,
   notes
 ) values (
   :provider,
@@ -111,6 +114,7 @@ insert into ${schemaIdent}.ai_model_prices (
   :currency,
   cast(:effective_from as timestamptz),
   :source_url,
+  cast(:source_checked_at as timestamptz),
   :notes
 ) on conflict (provider, model, effective_from) do update set
   input_usd_per_million = excluded.input_usd_per_million,
@@ -119,6 +123,7 @@ insert into ${schemaIdent}.ai_model_prices (
   reasoning_usd_per_million = excluded.reasoning_usd_per_million,
   currency = excluded.currency,
   source_url = excluded.source_url,
+  source_checked_at = excluded.source_checked_at,
   notes = excluded.notes`,
       parameters: [
         ...basePriceParams(price),
@@ -128,6 +133,7 @@ insert into ${schemaIdent}.ai_model_prices (
         decimalOrNullParam("reasoning_usd_per_million", price.reasoningUsdPerMillion),
         stringParam("currency", price.currency),
         stringOrNullParam("source_url", price.sourceUrl),
+        stringParam("source_checked_at", price.sourceCheckedAt),
         stringOrNullParam("notes", price.notes),
       ],
     });
@@ -152,6 +158,7 @@ select
   effective_from::text,
   effective_to::text,
   source_url,
+  source_checked_at::text,
   notes
 from ${quoteIdent(schema)}.ai_model_prices
 where provider = :provider
@@ -194,7 +201,8 @@ function modelPriceFromRecord(record) {
     effectiveFrom: fieldValue(record[7]) || "",
     effectiveTo: fieldValue(record[8]) || "",
     sourceUrl: fieldValue(record[9]) || "",
-    notes: fieldValue(record[10]) || "",
+    sourceCheckedAt: fieldValue(record[10]) || "",
+    notes: fieldValue(record[11]) || "",
   };
 }
 

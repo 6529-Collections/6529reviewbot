@@ -54,6 +54,7 @@ Ready for community review:
 - GitHub App registration packet covering operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;
+- model price rows require provider source URLs and source-checked timestamps;
 - model-price apply safety that rejects zero-rate placeholder rows unless an
   operator explicitly allows a documented free price;
 - usage-write cost estimation from active provider/model price rows;

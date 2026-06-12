@@ -116,10 +116,11 @@ Do not create the `v0` tag until all of these are true:
 10. Central budget policy rows have been reviewed and applied with
    `npm run budget-policies -- -- --file <file> --apply`, or release notes
    explicitly keep budget control to environment/repository caps.
-11. Model pricing rows have been reviewed against current provider docs and
-   applied with `npm run model-prices -- -- --file <file> --apply`, or release
-   notes explicitly keep conservative default cost estimates. Any zero-rate
-   rows must be documented before using `--allow-zero-price`.
+11. Model pricing rows have source URLs, source-checked timestamps, have been
+   reviewed against current provider docs, and have been applied with
+   `npm run model-prices -- -- --file <file> --apply`, or release notes
+   explicitly keep conservative default cost estimates. Any zero-rate rows
+   must be documented before using `--allow-zero-price`.
 12. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.

@@ -131,10 +131,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release preflight fixture PR: merged as PR #89, merge commit `018281c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/support-bundle-privacy`
-- Current local changes: reduce support-bundle exposure of central worker repo
-  names and absolute local model-catalog paths while preserving presence
-  signals for maintainers.
+- Support bundle privacy PR: merged as PR #90, merge commit `fae8322`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-price-source-checked-at`
+- Current local changes: add required model price `sourceCheckedAt` validation
+  and ledger storage so operator-maintained price rows carry a verifiable
+  source review timestamp.
 
 ## Key Decisions
 
@@ -319,7 +321,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the support-bundle privacy PR.
+1. Validate, publish, and merge the model price source-checked timestamp PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

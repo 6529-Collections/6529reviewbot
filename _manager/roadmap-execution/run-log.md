@@ -984,3 +984,14 @@
     presence-only reporting;
   - redact absolute `*_PATH` safe values so public bundles do not reveal local
     filesystem detail.
+- Merged `6529reviewbot` PR #90 as `fae8322` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's Windows path sanitizer comment
+  before merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27425340037`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27425340032`, completed successfully.
+- Started `codex/model-price-source-checked-at` increment:
+  - require model price rows to include when the provider pricing source was
+    checked;
+  - store `source_checked_at` in the ledger so operator price evidence is
+    auditable without committing current price rows to the public repo.

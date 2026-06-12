@@ -92,6 +92,8 @@ stabilized.
 - Quiet budget policy validation mode for CI/release checks.
 - Conservative dogfood budget policy example validated by release checks.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
+- Model pricing rows now carry a required source-checked timestamp for
+  auditable operator price verification.
 - Model price apply rejects zero-rate placeholder rows unless explicitly
   allowed for documented free prices.
 - Example AWS IAM/OIDC templates for central GitHub Actions, Aurora Data API,

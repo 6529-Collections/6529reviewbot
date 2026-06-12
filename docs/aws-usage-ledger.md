@@ -32,6 +32,11 @@ The budget admission helper reads current spend from
 `ai_review_usage_events` and compares it with these policies before queueing
 model work.
 
+`ai_model_prices` stores operator-maintained provider/model price rows. Rows
+include the provider source URL and the timestamp when the operator checked
+that source, so cost-estimate evidence is auditable without committing current
+price rows to the public repo.
+
 Use [Budget Policies](budget-policies.md) to dry-run and apply reviewed rows.
 In production, `bin/server.cjs` loads enabled rows for every webhook when
 `REVIEW_USAGE_ENABLED=true`, so DB caps are active admission controls rather

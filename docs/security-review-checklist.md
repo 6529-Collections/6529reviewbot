@@ -97,8 +97,8 @@ Target deployment:
 - Budget admission happens before queueing model jobs.
 - Central DB budget policy rows are reviewed, applied from operator-owned
   files, and loaded into admission before worker dispatch.
-- Model pricing rows, if used, include source URLs and have been checked
-  against current provider pricing.
+- Model pricing rows, if used, include source URLs, source-checked
+  timestamps, and have been checked against current provider pricing.
 - Zero-rate model pricing rows are either absent or explicitly justified with
   provider documentation before using `--allow-zero-price`.
 - Run-control claims happen before worker dispatch when enabled.

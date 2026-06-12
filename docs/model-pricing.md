@@ -21,7 +21,8 @@ config/model-prices.example.json
 ```
 
 The example file is empty on purpose. For a real deployment, create an
-operator-owned file with current provider pricing and source URLs:
+operator-owned file with current provider pricing, source URLs, and checked
+timestamps:
 
 ```json
 {
@@ -37,6 +38,7 @@ operator-owned file with current provider pricing and source URLs:
       "reasoningUsdPerMillion": null,
       "effectiveFrom": "2026-06-12T00:00:00.000Z",
       "sourceUrl": "https://provider.example/pricing",
+      "sourceCheckedAt": "2026-06-12T12:00:00.000Z",
       "notes": "Replace zeroes with verified current provider pricing before applying."
     }
   ]
@@ -103,10 +105,12 @@ Every pricing update should record:
 - input/cached-input/output/reasoning rates that apply;
 - effective timestamp;
 - provider source URL;
+- source-checked timestamp showing when the operator verified the provider
+  pricing source;
 - notes about units or caveats.
 
-The CLI enforces a source URL and rejects rows without at least one price field.
-It also rejects zero-rate rows during apply unless the operator passes
+The CLI enforces a source URL, source-checked timestamp, and at least one price
+field. It also rejects zero-rate rows during apply unless the operator passes
 `--allow-zero-price`.
 Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default

@@ -112,6 +112,7 @@ create table if not exists ${schemaIdent}.ai_model_prices (
   effective_from timestamptz not null default now(),
   effective_to timestamptz,
   source_url text,
+  source_checked_at timestamptz,
   notes text
 )`,
     },
@@ -132,6 +133,12 @@ alter table ${schemaIdent}.ai_model_prices
       sql: `
 alter table ${schemaIdent}.ai_model_prices
   add column if not exists source_url text`,
+    },
+    {
+      name: "alter_model_prices_add_source_checked_at",
+      sql: `
+alter table ${schemaIdent}.ai_model_prices
+  add column if not exists source_checked_at timestamptz`,
     },
     {
       name: "create_budget_policies",

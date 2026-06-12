@@ -104,14 +104,17 @@ const modelPriceFile = modelPrices.validateModelPriceFile({
       outputUsdPerMillion: 2,
       effectiveFrom: "2026-06-12T00:00:00.000Z",
       sourceUrl: "https://example.com/provider-pricing",
+      sourceCheckedAt: "2026-06-12T12:00:00.000Z",
       notes: "test price row",
     },
   ],
 });
 assert.equal(modelPriceFile.prices[0].provider, "anthropic");
+assert.equal(modelPriceFile.prices[0].sourceCheckedAt, "2026-06-12T12:00:00.000Z");
 const modelPriceStatements = modelPrices.modelPriceStatements("reviewbot", modelPriceFile);
 assert.equal(modelPriceStatements.length, 2);
 assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /ai_model_prices/);
+assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /source_checked_at/);
 const currentPriceStatement = modelPrices.currentModelPriceStatement("reviewbot", {
   provider: "anthropic",
   model: "claude-opus-4-8",
@@ -133,9 +136,14 @@ const modelPriceRecord = [
   { stringValue: "2026-06-12 00:00:00+00" },
   { isNull: true },
   { stringValue: "https://example.com/provider-pricing" },
+  { stringValue: "2026-06-12 12:00:00+00" },
   { stringValue: "test price row" },
 ];
 assert.equal(modelPrices.modelPriceFromRecord(modelPriceRecord).cachedInputUsdPerMillion, 0.1);
+assert.equal(
+  modelPrices.modelPriceFromRecord(modelPriceRecord).sourceCheckedAt,
+  "2026-06-12 12:00:00+00"
+);
 assert.equal(
   modelPrices.estimateUsageCostUsd(
     { inputTokens: 1000, cachedInputTokens: 250, outputTokens: 500, reasoningTokens: 100 },
@@ -163,10 +171,28 @@ assert.throws(
           outputUsdPerMillion: 1,
           effectiveFrom: "2026-06-12T00:00:00.000Z",
           sourceUrl: "https://example.com/provider-pricing",
+          sourceCheckedAt: "2026-06-12T12:00:00.000Z",
         },
       ],
     }),
   /zero inputUsdPerMillion/
+);
+assert.throws(
+  () =>
+    modelPrices.validateModelPriceFile({
+      version: 1,
+      currency: "USD",
+      prices: [
+        {
+          provider: "anthropic",
+          model: "claude-opus-4-8",
+          inputUsdPerMillion: 1,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "https://example.com/provider-pricing",
+        },
+      ],
+    }),
+  /sourceCheckedAt/
 );
 let priceLookupSql = "";
 const lookedUpPrice = modelPrices.readCurrentModelPrice({
@@ -483,6 +509,7 @@ assert.match(renderedLedgerSchema, /ai_review_job_events/);
 assert.match(renderedLedgerSchema, /ai_review_run_claims/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_model_prices/);
 assert.match(renderedLedgerSchema, /add column if not exists source_url text/);
+assert.match(renderedLedgerSchema, /add column if not exists source_checked_at timestamptz/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_review_budget_policies/);
 assert.match(renderedLedgerSchema, /set scope_type = 'requestor'\s+where scope_type = 'requester'/);
 assert.match(renderedLedgerSchema, /drop constraint if exists ai_review_budget_policies_scope_type_check/);
