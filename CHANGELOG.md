@@ -47,6 +47,8 @@ stabilized.
 - Worker diagnostics redact common bearer, GitHub, provider API key, and
   private-key shapes before optional output tails or GitHub API dispatch
   failures are returned.
+- Review runner provider error summaries and fatal CLI output use the shared
+  diagnostic redaction path.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the

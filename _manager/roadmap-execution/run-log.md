@@ -1126,3 +1126,20 @@
 - CodeRabbit reviewed PR #102 and suggested adding the 1-80 character role
   length to `docs/configuration.md`; accepted the nitpick for consistency with
   `docs/admin-auth-bridge.md`.
+- Merged `6529reviewbot` PR #102 as `f3792a3` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's docs quick win before merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27433865691`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27433865775`, completed successfully.
+- Started `codex/redact-review-runner-errors` increment:
+  - move review-runner provider error summaries and one-line warning helpers
+    onto the shared diagnostic redaction path;
+  - make all five review-mode CLI entrypoints print a bounded redacted fatal
+    error line instead of a raw stack;
+  - add smoke coverage for provider error redaction of bearer, GitHub,
+    provider-key, and private-key shapes;
+  - update the changelog, security model, and manager memory.
+- Local validation for `codex/redact-review-runner-errors`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
