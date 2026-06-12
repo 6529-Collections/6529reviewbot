@@ -332,6 +332,8 @@ Completed in `6529reviewbot`:
 - installed central worker and dormant-by-default alert workflows with
   action-ref validation.
 - repeatable release check script and manual security review checklist.
+- public artifact leak scanner for docs, examples, workflows, and durable
+  manager memory.
 - machine-readable v0 release gates and checklist renderer.
 - v0 release gate readiness summaries and tag/no-tag enforcement for
   operator-owned status files.

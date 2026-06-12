@@ -85,9 +85,11 @@ merged PRs.
   `19f7943`
 - GitHub App operator guidance routes PR: merged as PR #64, merge commit
   `8c77d41`
-- Current branch: `codex/release-gate-readiness-summary`
-- Current local changes: release-gate summary/require-ready CLI support,
-  smoke coverage, release docs, and manager memory.
+- Release gate readiness summary PR: merged as PR #65, merge commit
+  `cf01360`
+- Current branch: `codex/public-artifact-secret-scan`
+- Current local changes: public artifact leak scanner for docs, examples,
+  workflows, and durable manager memory plus release-check wiring.
 
 ## Key Decisions
 
@@ -184,6 +186,10 @@ merged PRs.
 - Release gate status files should be operator-owned when evidence contains
   private deployment detail. The public CLI can summarize completion/defer
   counts and fail tagging when gates are still pending or blocked.
+- Public release artifacts need a repeatable leak scan. The scanner should
+  cover docs, examples, workflows, config, and manager memory while allowing
+  obvious placeholders and avoiding source test fixtures that intentionally
+  contain fake secret shapes.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -230,7 +236,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the release gate readiness summary PR.
+1. Validate, publish, and merge the public artifact leak scanner PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

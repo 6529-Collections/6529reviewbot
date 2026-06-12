@@ -91,6 +91,8 @@ Target deployment:
   change, and `npm run validate:api-contract` passes.
 - Preflight, admin runtime status, and support bundles report secret presence
   or missing configuration only, never secret values.
+- `npm run check:public-artifacts` passes for public docs, configs, templates,
+  workflows, and durable manager memory before publishing release evidence.
 - Alerting paths do not include secrets or raw prompts in messages.
 - Incident response docs cover spend spikes, secret exposure, provider
   outages, webhook abuse, ledger outages, and bad bot comments.
@@ -100,6 +102,7 @@ Target deployment:
 ## Required Evidence
 
 - `npm run release:check`
+- `npm run check:public-artifacts`
 - `npm run validate:api-contract` when public or admin API contracts changed.
 - `npm run preflight -- -- --strict` in the release candidate environment, or a
   documented acceptance of each warning.

@@ -37,6 +37,7 @@
     "github-app:manifest": "node bin/render-github-app-manifest.cjs",
     "github-app:convert": "node bin/convert-github-app-manifest.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
+    "check:public-artifacts": "node scripts/check-public-artifacts.cjs",
     "check:workflow-actions": "node scripts/check-workflow-actions.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",

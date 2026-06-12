@@ -95,6 +95,8 @@ stabilized.
   wiring.
 - Release check script and manual security review checklist for dogfood and
   pre-v1 release gates.
+- Public artifact leak scan for docs, examples, workflows, and durable manager
+  memory.
 - Machine-readable v0 release gates and checklist renderer.
 - v0 release gate readiness summaries and `--require-ready` tag/no-tag checks.
 - v0 release plan and release notes template for pre-v1 dogfood/community

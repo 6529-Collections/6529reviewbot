@@ -87,6 +87,17 @@ If a public issue accidentally includes sensitive data, hide or delete the
 content through GitHub moderation tools, rotate the exposed secret if needed,
 and move the discussion to a private channel.
 
+Before copying support findings into public docs, issues, release notes, or
+manager memory, run:
+
+```bash
+npm run check:public-artifacts
+```
+
+The scan redacts matches in output and fails on live-looking cloud account
+ids, ARNs, provider keys, GitHub tokens, AWS access keys, and private key
+blocks in public artifacts.
+
 ## Escalation
 
 Escalate privately when a report involves:

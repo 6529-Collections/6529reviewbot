@@ -683,3 +683,15 @@
   - keep deferrals allowed only with documented notes so pre-v1 releases can
     be explicit about accepted risk;
   - update release docs, roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #65 as `cf01360` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/public-artifact-secret-scan` increment:
+  - add a release-check scanner for public docs, configs, workflows, examples,
+    and durable manager memory;
+  - flag live-looking AWS account ids/ARNs, GitHub tokens, provider keys, AWS
+    access keys, and private key blocks while redacting values in output;
+  - allow placeholder account ids and avoid source test fixtures so fake
+    fixture secrets do not hide real public-artifact leaks;
+  - update release/security/support docs, roadmap, changelog, and manager
+    memory.
