@@ -1420,3 +1420,9 @@
   adding smoke coverage for oversized internal usage-event limits. `npm test`,
   `npm run check:docs`, `npm run release:check`, and `git diff --check` passed
   again.
+- Addressed follow-up CodeRabbit feedback on PR #117 by making the admin
+  usage-events HTTP parser and ledger reader share one hard raw-row cap:
+  `REVIEWBOT_USAGE_API_MAX_EVENTS`; `REVIEWBOT_USAGE_API_MAX_ITEMS` remains the
+  small default page-size knob when lower. Updated docs, OpenAPI, and smoke
+  coverage. `npm test`, `npm run validate:api-contract`,
+  `npm run release:check`, and `git diff --check` passed again.

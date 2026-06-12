@@ -386,8 +386,14 @@ authorizer. Production should use the existing 6529.io auth system. See
 [usage-api.md](usage-api.md).
 
 `REVIEWBOT_USAGE_API_MAX_ITEMS` caps grouped usage summary rows and recent
-job-event rows returned by admin endpoints. Keep it low enough that the admin
-page cannot accidentally turn diagnostics into an unbounded table scan.
+job-event rows returned by admin endpoints. For raw admin usage-event reads it
+sets the default page size when it is lower than
+`REVIEWBOT_USAGE_API_MAX_EVENTS`.
+
+`REVIEWBOT_USAGE_API_MAX_EVENTS` caps raw usage-event reads, including the
+admin recent usage-events endpoint and summary loaders. Keep both limits low
+enough that the admin page cannot accidentally turn diagnostics into an
+unbounded table scan.
 
 `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and `REVIEWBOT_USAGE_API_PUBLIC_ORGS`
 control which repo names may appear on public summaries. Any repo that does not

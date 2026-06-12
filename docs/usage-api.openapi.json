@@ -105,7 +105,7 @@
               "minimum": 1,
               "default": 50
             },
-            "description": "Maximum rows to return, capped by REVIEWBOT_USAGE_API_MAX_ITEMS."
+            "description": "Maximum rows to return, capped by REVIEWBOT_USAGE_API_MAX_EVENTS. When omitted, the server defaults to the smaller of REVIEWBOT_USAGE_API_MAX_ITEMS and REVIEWBOT_USAGE_API_MAX_EVENTS."
           }
         ],
         "responses": {

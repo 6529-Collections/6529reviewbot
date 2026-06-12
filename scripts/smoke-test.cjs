@@ -2543,6 +2543,26 @@ const recentUsageEventsApiQuery = usageApi.usageEventsQueryFromRequest(
 assert.equal(recentUsageEventsApiQuery.limit, 3);
 assert.equal(recentUsageEventsApiQuery.range.days, 7);
 assert.equal(recentUsageEventsApiQuery.range.to, "2026-06-12T12:00:00.000Z");
+const defaultUsageEventsApiQuery = usageApi.usageEventsQueryFromRequest(
+  { url: new URL("http://localhost/api/admin/usage/events/recent?days=7") },
+  usageApi.usageApiSettingsFromEnv({
+    REVIEWBOT_USAGE_API_MAX_ITEMS: "50",
+    REVIEWBOT_USAGE_API_MAX_EVENTS: "5",
+  }),
+  new Date("2026-06-12T12:00:00.000Z")
+);
+assert.equal(defaultUsageEventsApiQuery.limit, 5);
+assert.throws(
+  () =>
+    usageApi.usageEventsQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/usage/events/recent?limit=6") },
+      usageApi.usageApiSettingsFromEnv({
+        REVIEWBOT_USAGE_API_MAX_ITEMS: "50",
+        REVIEWBOT_USAGE_API_MAX_EVENTS: "5",
+      })
+    ),
+  /limit must be <= 5/
+);
 assert.throws(() => usageApiLedger.buildUsageEventsQuery("reviewbot", {}, 25), /bounded range/);
 assert.throws(
   () =>
@@ -3419,10 +3439,10 @@ appServer.handleGitHubWebhook({
   );
   assert.throws(
     () => usageApi.usageEventsQueryFromRequest(
-      { url: new URL("http://localhost/api/admin/usage/events/recent?limit=999") },
+      { url: new URL("http://localhost/api/admin/usage/events/recent?limit=5001") },
       usageApiSettings
     ),
-    /limit must be <= 50/
+    /limit must be <= 5000/
   );
   assert.throws(
     () => usageApi.runClaimsQueryFromRequest(

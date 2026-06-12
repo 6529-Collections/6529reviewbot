@@ -295,17 +295,19 @@ function adminStatusQueryFromRequest(request) {
 function usageEventsQueryFromRequest(request, settings, now = new Date()) {
   const range = usageRangeFromRequest(request, settings, now);
   const requestedLimit = request.url.searchParams.get("limit");
+  const defaultLimit = Math.min(settings.maxItems, settings.maxEvents);
+  const maxLimit = settings.maxEvents;
   let limit;
   try {
     limit = requestedLimit
-      ? positiveIntEnv(requestedLimit, settings.maxItems, "limit")
-      : settings.maxItems;
+      ? positiveIntEnv(requestedLimit, defaultLimit, "limit")
+      : defaultLimit;
   } catch (error) {
     error.statusCode = 400;
     throw error;
   }
-  if (limit > settings.maxItems) {
-    const error = new Error(`limit must be <= ${settings.maxItems}.`);
+  if (limit > maxLimit) {
+    const error = new Error(`limit must be <= ${maxLimit}.`);
     error.statusCode = 400;
     throw error;
   }

@@ -71,7 +71,12 @@ server-side infrastructure. See
 private operator dashboards and incident triage. It accepts:
 
 - `days`: lookback window capped by `REVIEWBOT_USAGE_API_MAX_DAYS`;
-- `limit`: positive integer capped by `REVIEWBOT_USAGE_API_MAX_ITEMS`.
+- `limit`: positive integer capped by `REVIEWBOT_USAGE_API_MAX_EVENTS`.
+
+When `limit` is omitted, the endpoint defaults to the smaller of
+`REVIEWBOT_USAGE_API_MAX_ITEMS` and `REVIEWBOT_USAGE_API_MAX_EVENTS` so the
+admin UI starts with a small page while the raw usage-event reader keeps one
+hard row cap end-to-end.
 
 This endpoint is admin-only because raw usage rows can include private repo
 names, PR numbers, requestors, provider/model routing, token counts, and cost
