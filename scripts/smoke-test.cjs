@@ -804,6 +804,14 @@ assert.equal(
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
 assert(gates.gates.length >= 16);
+assert.match(
+  gates.gates.find((gate) => gate.id === "container-image").title,
+  /built from a reviewed commit/
+);
+assert.match(
+  gates.gates.find((gate) => gate.id === "model-prices").title,
+  /fresh source-checked timestamps/
+);
 assert.match(releaseGates.renderReleaseGatesMarkdown(gates), /Release Gates/);
 const gateStatus = releaseGates.loadReleaseGateStatus("config/v0-release-status.example.json");
 const gatesWithStatus = releaseGates.mergeReleaseGateStatus(gates, gateStatus);

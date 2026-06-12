@@ -1031,3 +1031,13 @@
     checklist and operations runbook;
   - make provider setup require fresh `sourceCheckedAt` evidence before relying
     on local cost estimates.
+- Merged `6529reviewbot` PR #94 as `82627cd` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27428316250`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27428316266`, completed successfully.
+- Started `codex/container-image-release-gate` increment:
+  - add the missing machine-readable v0 `container-image` gate from the prose
+    release plan;
+  - add smoke-test assertions for the container-image gate and model-price
+    freshness wording.
