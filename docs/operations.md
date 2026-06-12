@@ -89,6 +89,10 @@ dry-run unless `--dispatch` is passed.
 For active spend, secret, webhook, provider, ledger, or bad-comment incidents,
 use [Incident Response](incident-response.md).
 
+For containerized App server deployments, use
+[Container Deployment](container-deployment.md) for image contents, runtime
+secret boundaries, health checks, and rollback.
+
 For worker queue pressure, provider rate limits, stuck jobs, or scale-up
 decisions, use [Worker Capacity And Backpressure](worker-capacity.md).
 

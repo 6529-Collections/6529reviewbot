@@ -63,6 +63,19 @@ GitHub App credentials stored only in bot-owned secret store:
 6529.io admin HMAC secret stored only in server-side 6529 infrastructure:
 ```
 
+## App Server Runtime
+
+```text
+Runtime type: direct Node / container / other
+Source commit:
+Container image digest, if used:
+Container vulnerability scan reviewed:
+Runtime secrets injected by hosting platform:
+Image contains no committed .env or private evidence files:
+Health check /healthz result:
+Worker adapter:
+```
+
 ## Budget And Pricing
 
 ```text

@@ -33,6 +33,11 @@ stabilized.
 - Durable job lifecycle ledger for budget and dispatch audit events.
 - Base-ref repository config loading and restrictive policy merge.
 - Local and central GitHub Actions worker adapters.
+- Production server entrypoint now wires the configured worker adapter instead
+  of falling back to the generic no-queue handler.
+- Container packaging for the central App server with a non-root runtime,
+  `/healthz` health check, bundled GitHub CLI for dispatch, and runtime-only
+  secret injection guidance.
 - Worker capacity and backpressure runbook for conservative live scaling.
 - Reusable workflow secret contract now maps only explicit provider secrets
   instead of inheriting all caller secrets.

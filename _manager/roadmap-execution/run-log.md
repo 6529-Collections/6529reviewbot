@@ -798,3 +798,17 @@
     release gate status skeletons;
   - refuse to overwrite existing status files unless `--force` is supplied;
   - document the release-candidate evidence bootstrap flow.
+- Merged `6529reviewbot` PR #74 as `7de7a4d` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27414690610`;
+  - job `scorecard` completed successfully.
+- Started `codex/container-deployment-packaging` increment:
+  - wire the production `bin/server.cjs` entrypoint to the configured worker
+    adapter instead of the generic no-queue fallback;
+  - add runtime-only container packaging for the central App server;
+  - document build, secret injection, worker dispatch, health checks, and
+    rollback;
+  - extend env examples for job-health alert controls;
+  - update release, security, roadmap, changelog, and manager-memory docs.

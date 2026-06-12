@@ -42,6 +42,8 @@ The first `v0` tag can include:
 - run-control worker completion updates for durable claims;
 - local and central GitHub Actions worker adapters;
 - worker capacity and backpressure runbook for conservative live scaling;
+- central App server container packaging with non-root runtime, health check,
+  and runtime-only secret injection guidance;
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
 - validated OpenAPI contract for usage/admin API integration;
@@ -95,38 +97,40 @@ Do not create the `v0` tag until all of these are true:
 2. The central App server and at least one worker path are deployed with a
    reviewed worker capacity policy, or the release notes explicitly mark the
    release as local/dogfood-only.
-3. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
+3. If the App server is containerized, the image was built from a reviewed
+   commit, scanned, and recorded by digest in private operator evidence.
+4. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
    are configured only in bot-owned infrastructure.
-4. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
+5. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
    `infra/aws` or equivalent least-privilege documents.
-5. The 6529.io public usage dashboard is merged, deployed, and wired to the
+6. The 6529.io public usage dashboard is merged, deployed, and wired to the
    public usage API or explicitly deferred in the release notes.
-6. The 6529.io private admin surface is wired to the HMAC auth bridge or
+7. The 6529.io private admin surface is wired to the HMAC auth bridge or
    explicitly deferred behind operator-only APIs.
-7. Dogfood repository configuration has been merged into at least one trusted
+8. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode.
-8. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
+9. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
-9. Central budget policy rows have been reviewed and applied with
+10. Central budget policy rows have been reviewed and applied with
    `npm run budget-policies -- -- --file <file> --apply`, or release notes
    explicitly keep budget control to environment/repository caps.
-10. Model pricing rows have been reviewed against current provider docs and
+11. Model pricing rows have been reviewed against current provider docs and
    applied with `npm run model-prices -- -- --file <file> --apply`, or release
    notes explicitly keep conservative default cost estimates. Any zero-rate
    rows must be documented before using `--allow-zero-price`.
-11. Run-control claims are either enforced with conservative caps using the
+12. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.
-12. A limited initial-review dogfood run has completed with conservative budget
+13. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage.
-13. Scheduled operator alerts route to an operator-owned channel.
-14. `npm run release:check` passes from a clean `main`.
-15. `npm run preflight -- -- --strict` passes in the release candidate
+14. Scheduled operator alerts route to an operator-owned channel.
+15. `npm run release:check` passes from a clean `main`.
+16. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.
-16. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
-17. `docs/security-review-checklist.md` has been completed for the release
+17. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
+18. `docs/security-review-checklist.md` has been completed for the release
     candidate.
-18. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
+19. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
 Render the same gates as an operator checklist:

@@ -64,6 +64,8 @@ Ready for community review:
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
+- repository-owned container packaging for the central App server with
+  non-root runtime, health check, and runtime-only secret injection guidance;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
@@ -98,7 +100,8 @@ Before announcing broad community use:
    reviewed manifest template or equivalent manual settings, using the
    [GitHub App Registration Packet](github-app-registration.md).
 2. Deploy the central App server and worker path in controlled 6529
-   infrastructure.
+   infrastructure, using the reviewed container image or an equivalent
+   operator-reviewed runtime.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and
    alerting secrets only in the bot environment.
 4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.

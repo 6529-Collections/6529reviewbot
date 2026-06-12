@@ -6,6 +6,8 @@ another 6529-owned runtime.
 
 For an ordered first-install path, start with
 [install.md](install.md), then return here for production details.
+For containerized deployment, use
+[container-deployment.md](container-deployment.md) with this runbook.
 
 For release or dogfood evidence, use
 [operator-evidence-template.md](operator-evidence-template.md). Keep
@@ -124,6 +126,12 @@ Run a no-network configuration preflight before starting the server:
 ```bash
 npm run preflight
 ```
+
+The repository-owned `Dockerfile` can run the central App server in a
+container image. Build and deploy it only from a reviewed commit, inject
+GitHub App, provider, AWS, alert, and admin-auth secrets at runtime, and keep
+the image digest and vulnerability scan in the private operator evidence
+record. See [container-deployment.md](container-deployment.md).
 
 Use [AWS IAM Templates](../infra/aws/README.md) as the starting point for
 GitHub Actions OIDC trust and least-privilege Data API/SNS policies. Replace

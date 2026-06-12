@@ -38,6 +38,9 @@ After stabilization:
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App
+- [Container deployment](container-deployment.md) reviewed when shipping the
+  App server image; image digest, builder identity, and vulnerability scan are
+  captured in private operator evidence
 - `npm run check:workflow-actions`
 - GitHub CI runs `npm run release:check` on the release PR
 - `npm run validate:api-contract` if public or admin usage API contracts
