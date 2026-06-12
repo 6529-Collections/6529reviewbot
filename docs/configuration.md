@@ -203,6 +203,33 @@ REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
 system sign short-lived admin assertions for bot-owned private API endpoints.
 See [admin-auth-bridge.md](admin-auth-bridge.md).
 
+## Alerting And Scheduled Spend Checks
+
+```text
+REVIEWBOT_ALERTS_ENABLED=false
+REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
+REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED=false
+REVIEWBOT_ALERTS_WEBHOOK_URL=
+REVIEWBOT_ALERTS_WEBHOOK_TIMEOUT_MS=10000
+REVIEWBOT_ALERTS_SNS_TOPIC_ARN=
+REVIEWBOT_ALERTS_SNS_REGION=
+REVIEWBOT_ALERTS_SNS_SUBJECT=6529bot spend alert
+REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
+REVIEWBOT_ALERTS_BUDGET_CRITICAL_PERCENT=100
+REVIEWBOT_ALERTS_SPIKE_WINDOW_HOURS=24
+REVIEWBOT_ALERTS_SPIKE_BASELINE_DAYS=7
+REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
+REVIEWBOT_ALERTS_SPIKE_MIN_USD=25
+REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo,requestor,provider,model,review_kind
+REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND=true
+REVIEWBOT_ALERTS_LOOKBACK_DAYS=35
+REVIEWBOT_ALERTS_MAX_EVENTS=5000
+```
+
+Scheduled spend checks read the usage ledger, evaluate budget utilization and
+spend spikes, and send alerts through stdout, a webhook, or SNS. See
+[alerting.md](alerting.md).
+
 ## Cost And Context Controls
 
 ```text

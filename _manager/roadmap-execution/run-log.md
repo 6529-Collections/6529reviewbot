@@ -122,3 +122,18 @@
 - Addressed CodeRabbit feedback on PR #14 by documenting multi-role HMAC
   canonicalization and regenerating signed admin headers immediately before
   the smoke-test integration request.
+- Merged `6529reviewbot` PR #14 as `17e6dd2` after CI, Dependency Review,
+  CodeRabbit, and resolved review threads passed.
+- Started `codex/scheduled-spend-alerts` increment:
+  - `src/spend-alerts.cjs` evaluates budget utilization and spend-spike alerts
+    from usage events and budget policies;
+  - `src/alert-notifier.cjs` supports `none`, `stdout`, `webhook`, and SNS
+    delivery modes;
+  - `src/scheduled-spend-check.cjs` and `bin/run-spend-alert-check.cjs` run
+    scheduled checks from the existing Aurora usage ledger;
+  - `templates/spend-alert-workflow.yml` provides a central hourly workflow
+    scaffold;
+  - docs cover alerting configuration, runbook usage, security boundaries, and
+    AWS ledger integration.
+  Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
+  all files under `templates/`.

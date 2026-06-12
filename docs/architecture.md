@@ -109,6 +109,17 @@ or raw provider responses to browser clients.
 requests. The preferred mode is a short-lived HMAC assertion signed by trusted
 6529.io infrastructure, not a separate bot login system.
 
+## 7. Scheduled Alerts
+
+`src/scheduled-spend-check.cjs` reads the same Aurora usage ledger and budget
+policy table as the usage API. It evaluates spend alerts without calling model
+providers, then delivers through `stdout`, a webhook, or SNS via
+`src/alert-notifier.cjs`.
+
+Scheduled checks should run from central bot infrastructure. Target
+repositories should not receive AWS usage-ledger credentials or notification
+secrets.
+
 ## Trust Boundaries
 
 The bot treats target PR content as hostile:

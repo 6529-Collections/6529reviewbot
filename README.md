@@ -32,6 +32,7 @@ requests.
   6529.io-authenticated admin dashboards.
 - Verifies private admin API calls through a server-side `6529.io` auth bridge
   instead of a separate login system.
+- Runs scheduled spend checks for budget utilization and unusual usage spikes.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
 
 ## Repository Status
@@ -159,6 +160,15 @@ REVIEWBOT_ADMIN_AUTH_MODE=disabled|shared_secret|hmac
 REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES=reviewbot-admin,admin
 ```
 
+Scheduled spend alerts:
+
+```text
+REVIEWBOT_ALERTS_ENABLED=false
+REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
+REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
+REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
+```
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -210,6 +220,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Worker adapters](docs/worker-adapters.md)
 - [Usage API](docs/usage-api.md)
 - [Admin auth bridge](docs/admin-auth-bridge.md)
+- [Alerting and scheduled spend checks](docs/alerting.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)
