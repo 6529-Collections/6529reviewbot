@@ -125,9 +125,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Runtime hardening docs sweep PR: merged as PR #86, merge commit `dfe24ca`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/docs-security-checklist-hardening`
-- Current local changes: add explicit release-review checklist and release-note
-  prompts for empty provider output and worker diagnostic redaction controls.
+- Runtime hardening release checks PR: merged as PR #87, merge commit
+  `958b2ae`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/scan-alert-webhook-urls`
+- Current local changes: expand public artifact scanning to catch common alert
+  webhook URL leaks in public docs, configs, templates, and manager memory.
 
 ## Key Decisions
 
@@ -312,7 +314,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the security checklist hardening docs PR.
+1. Validate, publish, and merge the alert-webhook public artifact scanner PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

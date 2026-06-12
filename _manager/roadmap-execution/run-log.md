@@ -953,3 +953,13 @@
   - add manual security checklist items for empty provider output fail-closed
     behavior and worker diagnostic redaction;
   - prompt release notes to describe evidence for those controls.
+- Merged `6529reviewbot` PR #87 as `958b2ae` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's release-template nit before
+  merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27423183591`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27423183558`, completed successfully.
+- Started `codex/scan-alert-webhook-urls` increment:
+  - add public artifact scanner detection for common Slack and Discord alert
+    webhook URL secrets;
+  - document the expanded scanner coverage in the support playbook.

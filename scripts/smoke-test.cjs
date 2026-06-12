@@ -677,6 +677,20 @@ assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "OPENAI_API_KEY=sk-proj-abcdefghijklmnopqrstuvwx123456\n")[0].rule,
   "provider_api_key"
 );
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "REVIEWBOT_ALERTS_WEBHOOK_URL=https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwxyz\n"
+  )[0].rule,
+  "alert_webhook_url"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "REVIEWBOT_ALERTS_WEBHOOK_URL=https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDE\n"
+  )[0].rule,
+  "alert_webhook_url"
+);
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
 assert(gates.gates.length >= 16);
