@@ -184,6 +184,13 @@ membership is best-effort and depends on the App installation having enough
 organization visibility. A failed org-membership lookup does not erase a
 successfully resolved collaborator permission.
 
+Operators can test either credential profile from a private environment:
+
+```bash
+npm run github-app:token -- --profile main --installation-id <target-installation-id>
+npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+```
+
 ## Supported Events
 
 The skeleton normalizes these GitHub events:

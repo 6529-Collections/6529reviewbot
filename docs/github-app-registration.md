@@ -250,7 +250,13 @@ Private key rotation:
 
 5. Confirm repository config loading and actor permission resolution still
    work.
-6. Delete the old private key from GitHub App settings and the secret store.
+6. If rotating the dispatch-only App, mint the token through the worker profile:
+
+   ```bash
+   npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+   ```
+
+7. Delete the old private key from GitHub App settings and the secret store.
 
 Provider keys, AWS access, and admin-auth secrets rotate through their own
 runbooks. Do not combine rotations unless an incident requires broad

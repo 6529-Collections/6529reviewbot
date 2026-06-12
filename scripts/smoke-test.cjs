@@ -872,17 +872,42 @@ const githubAppSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
 assert.equal(githubAppAuth.isGitHubAppAuthConfigured(githubAppSettings), true);
 assert.equal(githubAppSettings.fetchTimeoutMs, 5000);
 assert.equal(githubAppAuth.createGitHubAppJwt(githubAppSettings).split(".").length, 3);
+assert.equal(githubAppInstallationToken.parseArgs([]).profile, "main");
 assert.deepEqual(
   githubAppInstallationToken.parseArgs([
     "--installation-id",
     "99",
+    "--profile",
+    "worker-dispatch",
     "--github-actions-output",
   ]),
-  { githubActionsOutput: true, installationId: "99" }
+  {
+    githubActionsOutput: true,
+    installationId: "99",
+    profile: "worker-dispatch",
+  }
 );
 assert.throws(
   () => githubAppInstallationToken.parseArgs(["--installation-id", "--github-actions-output"]),
   /requires a value/
+);
+assert.throws(
+  () => githubAppInstallationToken.parseArgs(["--profile", "unknown"]),
+  /must be one of/
+);
+assert.equal(
+  githubAppInstallationToken.installationIdFromEnv("worker-dispatch", {
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+    REVIEWBOT_GITHUB_INSTALLATION_ID: "99",
+  }),
+  "777"
+);
+assert.equal(
+  githubAppInstallationToken.githubAppAuthSettingsForProfile("worker-dispatch", {
+    REVIEWBOT_WORKER_GITHUB_APP_ID: "dispatch-app",
+    REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey,
+  }).appId,
+  "dispatch-app"
 );
 const githubAppConfigText = Buffer.from("enabled: false\n").toString("base64");
 const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({

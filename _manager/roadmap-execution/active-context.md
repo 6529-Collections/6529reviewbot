@@ -105,13 +105,13 @@ merged PRs.
   `31f0f6f`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Native GitHub Actions dispatch PR: merged as PR #76, merge commit
   `e145528`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/github-app-dispatch-token`
-- Current local changes: let the production server mint a short-lived GitHub
-  App installation token for central workflow dispatch when
-  `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` is configured, while retaining the
-  explicit token and `gh` fallback paths. Docs and smoke coverage now prefer a
-  separate dispatch-only GitHub App installed only on the central bot repo,
-  while documenting the reviewed main-App fallback.
+- GitHub App dispatch-token PR: merged as PR #77, merge commit `6f50666`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/github-app-token-cli-profile`
+- Current local changes: make `npm run github-app:token` profile-aware so
+  operators can mint test installation tokens for either the main
+  target-repository App or the dispatch-only worker App without reshaping env
+  vars by hand.
 
 ## Key Decisions
 
