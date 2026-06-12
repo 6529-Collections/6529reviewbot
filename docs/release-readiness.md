@@ -38,6 +38,7 @@ Ready for community review:
   validation tooling;
 - production deployment runbook and central worker template that mints
   short-lived GitHub App installation tokens.
+- machine-readable v0 release gates and checklist renderer.
 
 Not yet v1-ready:
 
@@ -72,8 +73,8 @@ Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable
 local and manual gates.
 
-Use [v0 Release Plan](v0-release-plan.md) for the exact pre-v1 tagging gates
-and public release note expectations.
+Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
+pre-v1 tagging gates and public release note expectations.
 
 ## Conservative Dogfood Defaults
 

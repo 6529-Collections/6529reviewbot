@@ -31,6 +31,7 @@
     "model-prices": "node bin/apply-model-prices.cjs",
     "preflight": "node bin/preflight.cjs",
     "support:bundle": "node bin/support-bundle.cjs",
+    "v0:gates": "node bin/v0-gates.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",

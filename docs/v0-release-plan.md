@@ -98,6 +98,12 @@ Do not create the `v0` tag until all of these are true:
 16. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
+Render the same gates as an operator checklist:
+
+```bash
+npm run v0:gates
+```
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 

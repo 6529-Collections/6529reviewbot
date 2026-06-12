@@ -41,6 +41,7 @@ repositories.
 - Alert delivery:
 - 6529.io dashboard/admin status:
 - Preflight result:
+- v0 gate checklist:
 
 ## Safety Requirements
 
@@ -82,6 +83,7 @@ before updating.
 ## Validation
 
 - `npm run release:check`:
+- `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
 - CI:
 - Dependency Review:

@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "description": "Pre-v1 dogfood/community-review release gates.",
+  "gates": [
+    {
+      "id": "github-app",
+      "title": "Production GitHub App named 6529bot exists with documented permissions, events, webhook secret handling, and private-key rotation.",
+      "evidence": "docs/github-app.md"
+    },
+    {
+      "id": "server-worker",
+      "title": "Central App server and at least one worker path are deployed, or release notes mark the release local/dogfood-only.",
+      "evidence": "docs/deployment.md"
+    },
+    {
+      "id": "secret-boundary",
+      "title": "Provider keys, GitHub App secrets, AWS Data API access, and alert secrets are configured only in bot-owned infrastructure.",
+      "evidence": "docs/provider-setup.md"
+    },
+    {
+      "id": "public-dashboard",
+      "title": "6529.io public usage dashboard is merged, deployed, and wired to the public usage API, or explicitly deferred.",
+      "evidence": "docs/usage-api.md"
+    },
+    {
+      "id": "admin-surface",
+      "title": "6529.io private admin surface is wired to the HMAC auth bridge, or explicitly deferred behind operator-only APIs.",
+      "evidence": "docs/admin-auth-bridge.md"
+    },
+    {
+      "id": "dogfood-config",
+      "title": "Dogfood repository configuration has been merged into at least one trusted 6529 repository and tested in command-only mode.",
+      "evidence": "docs/dogfood.md"
+    },
+    {
+      "id": "ledger-schema",
+      "title": "Aurora ledger schema has been applied, or release notes mark ledger setup as manual.",
+      "evidence": "npm run ledger:schema -- -- --apply"
+    },
+    {
+      "id": "model-prices",
+      "title": "Model pricing rows have been reviewed against current provider docs and applied, or release notes keep conservative default estimates.",
+      "evidence": "docs/model-pricing.md"
+    },
+    {
+      "id": "run-control",
+      "title": "Run-control claims are enforced with conservative caps, or release notes explicitly defer enforcement.",
+      "evidence": "docs/run-control.md"
+    },
+    {
+      "id": "initial-review-dogfood",
+      "title": "Limited initial-review dogfood run completed with conservative budget caps, visible comments, and ledgered usage.",
+      "evidence": "docs/dogfood.md"
+    },
+    {
+      "id": "alerts",
+      "title": "Scheduled spend alerts route to an operator-owned channel.",
+      "evidence": "docs/alerting.md"
+    },
+    {
+      "id": "release-check",
+      "title": "npm run release:check passes from a clean main checkout.",
+      "evidence": "npm run release:check"
+    },
+    {
+      "id": "preflight",
+      "title": "npm run preflight -- -- --strict passes in the release candidate environment, or warnings are accepted in release notes.",
+      "evidence": "npm run preflight -- -- --strict"
+    },
+    {
+      "id": "remote-security-checks",
+      "title": "GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.",
+      "evidence": ".github/workflows"
+    },
+    {
+      "id": "manual-security-review",
+      "title": "docs/security-review-checklist.md has been completed for the release candidate.",
+      "evidence": "docs/security-review-checklist.md"
+    },
+    {
+      "id": "release-docs",
+      "title": "CHANGELOG.md, README.md, release notes, templates, and deployment docs match the tagged behavior.",
+      "evidence": "docs/release-notes-template.md"
+    }
+  ]
+}

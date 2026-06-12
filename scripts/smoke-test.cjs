@@ -19,6 +19,8 @@ const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const runReviewJobCli = require("../bin/run-review-job.cjs");
+const releaseGates = require("../src/release-gates.cjs");
+const releaseGatesCli = require("../bin/v0-gates.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
@@ -405,6 +407,27 @@ assert.equal(collectedSupportBundle.environment.presence.GITHUB_WEBHOOK_SECRET, 
 assert.match(supportBundle.formatSupportBundleMarkdown(collectedSupportBundle), /Support Bundle/);
 assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "--quiet"]), {
   includeGitStatus: true,
+  json: true,
+  quiet: true,
+});
+const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
+assert.equal(gates.release, "v0.1.0");
+assert(gates.gates.length >= 16);
+assert.match(releaseGates.renderReleaseGatesMarkdown(gates), /Release Gates/);
+assert.throws(
+  () => releaseGates.validateReleaseGates({
+    version: 1,
+    release: "v0.1.0",
+    description: "bad",
+    gates: [
+      { id: "dup", title: "one", evidence: "x" },
+      { id: "dup", title: "two", evidence: "y" },
+    ],
+  }),
+  /duplicated/
+);
+assert.deepEqual(releaseGatesCli.parseArgs(["--file", "gates.json", "--json", "--quiet"]), {
+  file: "gates.json",
   json: true,
   quiet: true,
 });

@@ -116,6 +116,12 @@ Review the pre-v1 release boundary before tagging:
 cat docs/v0-release-plan.md
 ```
 
+Render the v0 release gate checklist:
+
+```bash
+npm run v0:gates
+```
+
 Print a prompt for a target PR without calling a model:
 
 ```bash
