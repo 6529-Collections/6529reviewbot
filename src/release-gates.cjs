@@ -2,8 +2,14 @@
 
 const fs = require("fs");
 
+const RELEASE_GATE_STATUSES = ["pending", "complete", "deferred", "blocked"];
+
 function loadReleaseGates(filePath = "config/v0-release-gates.json") {
   return validateReleaseGates(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
+}
+
+function loadReleaseGateStatus(filePath) {
+  return validateReleaseGateStatus(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
 }
 
 function validateReleaseGates(document, source = "release gates") {
@@ -28,6 +34,7 @@ function validateReleaseGates(document, source = "release gates") {
       id,
       title: stringField(gate.title, `${source}.gates[${index}].title`),
       evidence: stringField(gate.evidence, `${source}.gates[${index}].evidence`),
+      ...optionalGateStatus(gate, `${source}.gates[${index}]`, { evidenceKey: "statusEvidence" }),
     };
   });
   return {
@@ -35,6 +42,51 @@ function validateReleaseGates(document, source = "release gates") {
     release,
     description,
     gates,
+  };
+}
+
+function validateReleaseGateStatus(document, source = "release gate status") {
+  assertObject(document, source);
+  if (document.version !== 1) {
+    throw new Error(`${source} version must be 1.`);
+  }
+  const release = optionalString(document.release);
+  assertObject(document.gates, `${source}.gates`);
+  const gates = {};
+  for (const [rawId, rawStatus] of Object.entries(document.gates)) {
+    const id = idField(rawId, `${source}.gates key`);
+    assertObject(rawStatus, `${source}.gates.${id}`);
+    const statusInput = { ...rawStatus };
+    if (statusInput.evidence === undefined && statusInput.statusEvidence !== undefined) {
+      statusInput.evidence = statusInput.statusEvidence;
+    }
+    gates[id] = optionalGateStatus(statusInput, `${source}.gates.${id}`);
+  }
+  return {
+    version: 1,
+    release,
+    gates,
+  };
+}
+
+function mergeReleaseGateStatus(gatesDocument, statusDocument) {
+  const gates = validateReleaseGates(gatesDocument);
+  const status = validateReleaseGateStatus(statusDocument);
+  if (status.release && status.release !== gates.release) {
+    throw new Error(`release gate status release '${status.release}' does not match '${gates.release}'.`);
+  }
+  const knownGateIds = new Set(gates.gates.map((gate) => gate.id));
+  for (const id of Object.keys(status.gates)) {
+    if (!knownGateIds.has(id)) {
+      throw new Error(`release gate status references unknown gate '${id}'.`);
+    }
+  }
+  return {
+    ...gates,
+    gates: gates.gates.map((gate) => ({
+      ...gate,
+      ...(status.gates[gate.id] || { status: "pending" }),
+    })),
   };
 }
 
@@ -50,10 +102,40 @@ function renderReleaseGatesMarkdown(document) {
     "",
   ];
   for (const gate of gates.gates) {
-    lines.push(`- [ ] **${gate.id}**: ${gate.title}`);
+    const status = gate.status || "pending";
+    const checkbox = status === "complete" ? "x" : " ";
+    const suffix = status === "pending" ? "" : ` _(${status})_`;
+    lines.push(`- [${checkbox}] **${gate.id}**${suffix}: ${gate.title}`);
     lines.push(`  Evidence: ${gate.evidence}`);
+    if (gate.statusEvidence) {
+      lines.push(`  Status evidence: ${gate.statusEvidence}`);
+    }
+    if (gate.notes) {
+      lines.push(`  Notes: ${gate.notes}`);
+    }
   }
   return `${lines.join("\n")}\n`;
+}
+
+function optionalGateStatus(value, source, options = {}) {
+  const evidenceKey = options.evidenceKey || "evidence";
+  if (value.status === undefined && value[evidenceKey] === undefined && value.notes === undefined) {
+    return {};
+  }
+  const status = enumField(value.status || "pending", RELEASE_GATE_STATUSES, `${source}.status`);
+  const statusEvidence = optionalString(value[evidenceKey]);
+  const notes = optionalString(value.notes);
+  if (status === "complete" && !statusEvidence) {
+    throw new Error(`${source}.${evidenceKey} must be set when status is complete.`);
+  }
+  if ((status === "deferred" || status === "blocked") && !notes) {
+    throw new Error(`${source}.notes must explain ${status} gates.`);
+  }
+  return {
+    status,
+    statusEvidence,
+    notes,
+  };
 }
 
 function assertObject(value, source) {
@@ -70,6 +152,18 @@ function stringField(value, source) {
   return text;
 }
 
+function optionalString(value) {
+  return value === undefined || value === null ? "" : String(value).trim();
+}
+
+function enumField(value, allowed, source) {
+  const text = stringField(value, source);
+  if (!allowed.includes(text)) {
+    throw new Error(`${source} must be one of: ${allowed.join(", ")}.`);
+  }
+  return text;
+}
+
 function idField(value, source) {
   const text = stringField(value, source);
   if (!/^[a-z0-9][a-z0-9-]*$/.test(text)) {
@@ -79,7 +173,10 @@ function idField(value, source) {
 }
 
 module.exports = {
+  loadReleaseGateStatus,
   loadReleaseGates,
+  mergeReleaseGateStatus,
   renderReleaseGatesMarkdown,
+  validateReleaseGateStatus,
   validateReleaseGates,
 };
