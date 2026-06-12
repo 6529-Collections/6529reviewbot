@@ -140,8 +140,10 @@ private pending status skeleton for the current gate list.
 Use `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
 for the final public-safe gate counts, and use
 `npm run v0:gates -- -- --status-file <operator-status-file> --require-ready`
-as the tag/no-tag check. The status file can stay in the private operator
-runbook when evidence contains live deployment details.
+as the tag/no-tag check. `--require-ready` fails if any current gate is missing
+from the status file, so regenerate or update private evidence when the public
+gate list changes. The status file can stay in the private operator runbook
+when evidence contains live deployment details.
 
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private

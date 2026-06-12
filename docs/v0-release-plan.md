@@ -169,6 +169,10 @@ Before tagging, require that the status file has no pending or blocked gates:
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 ```
 
+`--require-ready` also verifies that the status file lists every gate in the
+current canonical gate list. If a new public gate is added, regenerate the
+private status file with `--init-status` or add the new gate before tagging.
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 

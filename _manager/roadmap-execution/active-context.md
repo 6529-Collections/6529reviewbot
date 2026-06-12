@@ -146,10 +146,12 @@ merged PRs.
   `82627cd`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Container image release-gate PR: merged as PR #95, merge commit `ce616e1`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-gate-parity-check`
-- Current local changes: add release automation that checks
-  `config/v0-release-gates.json` stays in count parity with the numbered
-  required gates in `docs/v0-release-plan.md`.
+- Release gate parity-check PR: merged as PR #96, merge commit `8cc28de`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-status-completeness`
+- Current local changes: harden v0 release gate status files so the final
+  `--require-ready` tag/no-tag check fails when private operator evidence omits
+  any current public release gate.
 
 ## Key Decisions
 
@@ -315,6 +317,9 @@ merged PRs.
 - Release gate definitions should stay stable while operator-owned status
   files record completion, deferrals, blockers, and evidence for a specific
   release candidate.
+- Final release-gate status checks should reject stale private status files
+  that omit newly added public gates, so readiness evidence cannot look complete
+  after the canonical gate list changes.
 - The built-in run-control ledger path has been dogfooded against the isolated
   ledger with a synthetic job. Public docs can record aggregate outcomes, while
   exact run keys and live resource identifiers stay in private operator
@@ -337,7 +342,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the release-gate parity-check PR.
+1. Validate, publish, and merge the release-status completeness PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

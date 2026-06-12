@@ -818,6 +818,13 @@ const gatesWithStatus = releaseGates.mergeReleaseGateStatus(gates, gateStatus);
 assert.equal(gatesWithStatus.gates.find((gate) => gate.id === "ledger-schema").status, "complete");
 assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /\[x\] \*\*ledger-schema\*\*/);
 assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /_\(deferred\)_/);
+const missingGateStatusIds = releaseGates.missingReleaseGateStatusIds(gates, gateStatus);
+assert(missingGateStatusIds.includes("container-image"));
+assert.equal(missingGateStatusIds.includes("ledger-schema"), false);
+assert.throws(
+  () => releaseGates.mergeReleaseGateStatus(gates, gateStatus, { requireComplete: true }),
+  /release gate status is missing/
+);
 const gateSummary = releaseGates.summarizeReleaseGates(gatesWithStatus);
 assert.equal(gateSummary.ready, false);
 assert.equal(gateSummary.complete, 1);
@@ -844,6 +851,23 @@ assert.throws(
   () => releaseGates.assertReleaseGatesReady(gatesWithStatus),
   /release gates are not ready/
 );
+const completeGateStatus = {
+  version: 1,
+  release: gates.release,
+  gates: Object.fromEntries(
+    gates.gates.map((gate) => [
+      gate.id,
+      {
+        status: "complete",
+        evidence: `Private operator evidence: ${gate.id}.`,
+      },
+    ])
+  ),
+};
+const readyGates = releaseGates.mergeReleaseGateStatus(gates, completeGateStatus, {
+  requireComplete: true,
+});
+assert.equal(releaseGates.assertReleaseGatesReady(readyGates).ready, true);
 assert.throws(
   () => releaseGates.validateReleaseGates({
     version: 1,

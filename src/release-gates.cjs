@@ -69,9 +69,33 @@ function validateReleaseGateStatus(document, source = "release gate status") {
   };
 }
 
-function mergeReleaseGateStatus(gatesDocument, statusDocument) {
+function missingReleaseGateStatusIds(gatesDocument, statusDocument) {
   const gates = validateReleaseGates(gatesDocument);
   const status = validateReleaseGateStatus(statusDocument);
+  assertReleaseGateStatusCompatible(gates, status);
+  return missingReleaseGateStatusIdsFromValidated(gates, status);
+}
+
+function mergeReleaseGateStatus(gatesDocument, statusDocument, options = {}) {
+  const gates = validateReleaseGates(gatesDocument);
+  const status = validateReleaseGateStatus(statusDocument);
+  assertReleaseGateStatusCompatible(gates, status);
+  const missingIds = missingReleaseGateStatusIdsFromValidated(gates, status);
+  if (options.requireComplete && missingIds.length) {
+    throw new Error(
+      `release gate status is missing ${missingIds.length} current gate(s): ${missingIds.join(", ")}.`
+    );
+  }
+  return {
+    ...gates,
+    gates: gates.gates.map((gate) => ({
+      ...gate,
+      ...(status.gates[gate.id] || { status: "pending" }),
+    })),
+  };
+}
+
+function assertReleaseGateStatusCompatible(gates, status) {
   if (status.release && status.release !== gates.release) {
     throw new Error(`release gate status release '${status.release}' does not match '${gates.release}'.`);
   }
@@ -81,13 +105,12 @@ function mergeReleaseGateStatus(gatesDocument, statusDocument) {
       throw new Error(`release gate status references unknown gate '${id}'.`);
     }
   }
-  return {
-    ...gates,
-    gates: gates.gates.map((gate) => ({
-      ...gate,
-      ...(status.gates[gate.id] || { status: "pending" }),
-    })),
-  };
+}
+
+function missingReleaseGateStatusIdsFromValidated(gates, status) {
+  return gates.gates
+    .map((gate) => gate.id)
+    .filter((id) => status.gates[id] === undefined);
 }
 
 function renderReleaseGatesMarkdown(document) {
@@ -257,6 +280,7 @@ module.exports = {
   loadReleaseGateStatus,
   loadReleaseGates,
   mergeReleaseGateStatus,
+  missingReleaseGateStatusIds,
   renderReleaseGateSummaryMarkdown,
   renderReleaseGatesMarkdown,
   summarizeReleaseGates,
