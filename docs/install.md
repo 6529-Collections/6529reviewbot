@@ -57,7 +57,7 @@ After GitHub redirects back with the one-hour manifest code, exchange it from a
 private operator environment:
 
 ```bash
-npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+npm run github-app:convert -- -- --code <code> --output <private-json-path>
 ```
 
 The redirect page intentionally shows only operator guidance. It does not echo

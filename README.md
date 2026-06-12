@@ -197,7 +197,7 @@ npm run github-app:manifest -- -- --host https://reviewbot.example.com
 Convert GitHub's one-hour manifest code from a private operator environment:
 
 ```bash
-npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+npm run github-app:convert -- -- --code <code> --output <private-json-path>
 ```
 
 Mint a short-lived installation token from a configured private operator

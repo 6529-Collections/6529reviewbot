@@ -943,6 +943,34 @@ assert.equal(
   )[0].rule,
   "alert_webhook_url"
 );
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "output C:\\private\\6529bot-app.json\n")[0]
+    .rule,
+  "local_private_path"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    String.raw`{"output":"C:\\private\\6529bot-app.json"}`
+  )[0].rule,
+  "local_private_path"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "output C:/Users/operator/6529bot-app.json\n"
+  )[0].rule,
+  "local_private_path"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "output /home/operator/6529bot-app.json\n")[0]
+    .rule,
+  "local_private_path"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile("docs/example.md", "checkout D:\\repos\\6529reviewbot\n").length,
+  0
+);
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
 assert(gates.gates.length >= 19);

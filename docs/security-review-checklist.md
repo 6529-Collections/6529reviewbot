@@ -123,7 +123,8 @@ Target deployment:
 - Incident response docs cover spend spikes, secret exposure, provider
   outages, webhook abuse, ledger outages, and bad bot comments.
 - Documentation does not include live secrets, private PR data, provider
-  diagnostics, or AWS account details beyond intended public ARNs/examples.
+  diagnostics, local private paths, or AWS account details beyond intended
+  public ARNs/examples.
 
 ## Required Evidence
 

@@ -61,6 +61,8 @@ stabilized.
   JSON or Markdown output.
 - Operator-maintained model-price and budget-policy notes redact common secret
   shapes and are capped before dry-run SQL output or DB apply.
+- Public artifact scanning now flags common local private paths, and GitHub App
+  conversion examples use placeholders instead of concrete private paths.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the
