@@ -90,8 +90,11 @@ merged PRs.
 - Public artifact leak scanner PR: merged as PR #66, merge commit `a8e8a61`
 - Documentation link checker PR: merged as PR #67, merge commit `93c738b`
 - CI release-check PR: merged as PR #68, merge commit `392fb07`
-- Current branch: `codex/fix-scorecard-permissions`
-- Current local changes: OpenSSF Scorecard permission fix plus release docs,
+- OpenSSF Scorecard permission fix PR: merged as PR #69, merge commit
+  `0b56a84`
+- Current branch: `codex/peel-checkout-action-pin`
+- Current local changes: replace `actions/checkout` annotated tag-object SHA
+  with the peeled commit SHA across workflows/templates plus release docs,
   roadmap, changelog, and manager memory updates.
 
 ## Key Decisions
@@ -202,6 +205,9 @@ merged PRs.
 - OpenSSF Scorecard publishing rejects workflow-level write permissions.
   Keep the workflow-level token read-only and scope `security-events: write`
   and `id-token: write` to the Scorecard job.
+- Scorecard publishing also verifies that pinned GitHub Action refs belong to
+  the action repository. For annotated release tags, pin the peeled commit SHA,
+  not the tag-object SHA.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -248,7 +254,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the OpenSSF Scorecard permission fix PR.
+1. Validate, publish, and merge the peeled checkout action pin PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

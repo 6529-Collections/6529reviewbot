@@ -56,6 +56,8 @@ Target deployment:
 - Central worker jobs mint short-lived GitHub App installation tokens.
 - Long-lived target repository bot tokens are not required for central workers.
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
+- Annotated GitHub Action tags are pinned to their peeled commit SHA, not the
+  tag-object SHA.
 - `npm run check:workflow-actions` passes for committed workflow templates.
 - Reusable workflow callers map only declared provider secrets and do not use
   `secrets: inherit`.

@@ -48,6 +48,8 @@ After stabilization:
 - docs updated
 - pull request template security, cost, and contract questions answered
 - workflow pins reviewed
+- annotated GitHub Action tags pinned to their peeled commit SHA, not the
+  tag-object SHA
 - reusable workflow caller-secret mapping reviewed when compatibility workflow
   changes
 - security model reviewed for trust-boundary changes

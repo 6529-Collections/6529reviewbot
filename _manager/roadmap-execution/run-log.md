@@ -726,3 +726,19 @@
     from workflow level to the `scorecard` job;
   - keep workflow-level permissions read-only;
   - update release docs, roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #69 as `0b56a84` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow-level permission verification passed;
+  - publishing still failed because `actions/checkout@v6.0.3` was pinned to
+    annotated tag object `9f698171...`, which Scorecard reported as an
+    imposter commit that does not belong to `actions/checkout`;
+  - GitHub's tag API resolved the tag object to peeled commit
+    `df4cb1c069e1874edd31b4311f1884172cec0e10`.
+- Started `codex/peel-checkout-action-pin` increment:
+  - replace every installed/template `actions/checkout` pin with the peeled
+    `v6.0.3` commit SHA;
+  - document that annotated action tags must be peeled before pinning;
+  - update release docs, security checklist, roadmap, changelog, and manager
+    memory.
