@@ -58,9 +58,13 @@ Target deployment:
   PR number, provider, model, or review kind are missing.
 - Central worker jobs mint short-lived GitHub App installation tokens.
 - Long-lived target repository bot tokens are not required for central workers.
-- GitHub Actions dispatch credentials are bot-owned, scoped to the central bot
-  repository workflow-dispatch path, and separate from target repository
-  installation tokens.
+- GitHub Actions dispatch uses a short-lived GitHub App installation token for
+  the central bot repository when possible; any explicit dispatch token is
+  bot-owned, scoped to the central workflow-dispatch path, and separate from
+  target repository installation tokens.
+- The preferred dispatch App is installed only on the central bot repository;
+  the target-repository App does not request `Actions: write` unless a separate
+  security review accepts that broader permission.
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
 - Annotated GitHub Action tags are pinned to their peeled commit SHA, not the
   tag-object SHA.

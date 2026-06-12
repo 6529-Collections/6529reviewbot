@@ -103,10 +103,15 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Container deployment packaging PR: merged as PR #75, merge commit
   `31f0f6f`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/native-github-actions-dispatch`
-- Current local changes: add native GitHub Actions workflow-dispatch API
-  support for the `github_actions` worker adapter, keep `gh` CLI fallback for
-  compatibility, slim the container image, and update operator docs.
+- Native GitHub Actions dispatch PR: merged as PR #76, merge commit
+  `e145528`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/github-app-dispatch-token`
+- Current local changes: let the production server mint a short-lived GitHub
+  App installation token for central workflow dispatch when
+  `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` is configured, while retaining the
+  explicit token and `gh` fallback paths. Docs and smoke coverage now prefer a
+  separate dispatch-only GitHub App installed only on the central bot repo,
+  while documenting the reviewed main-App fallback.
 
 ## Key Decisions
 
@@ -216,8 +221,13 @@ merged PRs.
   runtime, run as a non-root user, and keep image digests and scan evidence in
   private operator records.
 - Production GitHub Actions worker dispatch should prefer the GitHub REST API
-  with a bot-owned token scoped to the central bot repository. The `gh` CLI
-  path remains a compatibility fallback, not the preferred container path.
+  with a short-lived GitHub App installation token scoped to the central bot
+  repository. The cleanest permission boundary is a separate dispatch-only
+  GitHub App installed only on `6529-Collections/6529reviewbot` with
+  `Actions: write`; reusing the target-repository App requires explicit review
+  because `Actions: write` would apply to every installation. Explicit dispatch
+  tokens remain a fallback; the `gh` CLI path is only for compatibility, not
+  the preferred container path.
 - Public release artifacts need a repeatable leak scan. The scanner should
   cover docs, examples, workflows, config, and manager memory while allowing
   obvious placeholders and avoiding source test fixtures that intentionally
@@ -286,7 +296,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the native GitHub Actions dispatch PR.
+1. Validate, publish, and merge the GitHub App dispatch-token PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
@@ -322,8 +332,8 @@ merged PRs.
 - The central App server container image exists locally in source but still
   needs an operator-owned registry publish, image vulnerability scan, and
   production deployment evidence before broad release.
-- Native workflow dispatch still needs a production bot-owned token with the
-  minimum GitHub permissions required to dispatch the central worker workflow.
+- Native workflow dispatch still needs production creation of the central-only
+  dispatch GitHub App, or an explicitly reviewed fallback dispatch token.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
 - Private admin UI still needs production wiring to the usage, job-events, and

@@ -16,6 +16,7 @@ const {
 const {
   createGitHubAppIntegration,
   githubAppAuthSettingsFromEnv,
+  githubAppAuthSettingsFromWorkerDispatchEnv,
   isGitHubAppAuthConfigured,
 } = require("../src/github-app-auth.cjs");
 const {
@@ -33,11 +34,21 @@ const {
   usageApiLedgerLoadersFromEnv,
 } = require("../src/usage-api-ledger.cjs");
 const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
-const { createReviewJobEnqueuer } = require("../src/worker-adapter.cjs");
+const {
+  createReviewJobEnqueuer,
+  enqueueReviewJobsWithAdapter,
+  workerAdapterPolicyFromEnv,
+} = require("../src/worker-adapter.cjs");
 
-function createServerOptionsFromEnv(env = process.env) {
+function createServerOptionsFromEnv(env = process.env, options = {}) {
   const serverOptions = {};
-  serverOptions.enqueueReviewJobs = createReviewJobEnqueuer({ env });
+  const workerFetchImpl = options.workerFetchImpl || options.fetchImpl;
+  const workerPolicy = workerAdapterPolicyFromEnv(env);
+  serverOptions.enqueueReviewJobs = createReviewJobEnqueuer({
+    env,
+    fetchImpl: workerFetchImpl,
+    policy: workerPolicy,
+  });
   serverOptions.loadAdminStatus = async ({ query }) => ({
     preflight: runPreflight({
       profile: query.profile,
@@ -80,9 +91,34 @@ function createServerOptionsFromEnv(env = process.env) {
   }
   const githubAppAuthSettings = githubAppAuthSettingsFromEnv(env);
   if (isGitHubAppAuthConfigured(githubAppAuthSettings)) {
-    const githubApp = createGitHubAppIntegration({ settings: githubAppAuthSettings });
+    const githubApp = createGitHubAppIntegration({
+      settings: githubAppAuthSettings,
+      fetchImpl: options.githubFetchImpl || options.fetchImpl,
+    });
     serverOptions.resolveActorContext = githubApp.resolveActorContext;
     serverOptions.loadRepositoryConfig = githubApp.loadRepositoryConfig;
+  }
+  const workerDispatchGitHubAppSettings =
+    githubAppAuthSettingsFromWorkerDispatchEnv(env);
+  if (
+    workerPolicy.githubInstallationId &&
+    isGitHubAppAuthConfigured(workerDispatchGitHubAppSettings)
+  ) {
+    const workerDispatchGitHubApp = createGitHubAppIntegration({
+      settings: workerDispatchGitHubAppSettings,
+      fetchImpl: options.workerGitHubFetchImpl || options.fetchImpl,
+    });
+    serverOptions.enqueueReviewJobs = async (jobs, controls) =>
+      enqueueReviewJobsWithAdapter(jobs, controls, {
+        env,
+        fetchImpl: workerFetchImpl,
+        policy: {
+          ...workerPolicy,
+          githubToken: await workerDispatchGitHubApp.getInstallationToken(
+            workerPolicy.githubInstallationId
+          ),
+        },
+      });
   }
   return serverOptions;
 }

@@ -313,8 +313,8 @@ Completed in `6529reviewbot`:
   base-ref GitHub contents loading;
 - worker execution adapters for local workers and central GitHub Actions
   dispatch;
-- native GitHub Actions workflow-dispatch API support with `gh` CLI fallback
-  for compatibility;
+- native GitHub Actions workflow-dispatch API support with short-lived App
+  installation tokens and `gh` CLI fallback for compatibility;
 - worker capacity and backpressure runbook for conservative live scaling;
 - reusable workflow compatibility docs and explicit provider-secret mapping;
 - 6529.io admin auth bridge contract;

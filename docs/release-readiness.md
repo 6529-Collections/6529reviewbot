@@ -32,8 +32,8 @@ Ready for community review:
   dogfooded against the isolated ledger with aggregate status verification;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
-- native GitHub Actions workflow-dispatch API support with `gh` fallback for
-  compatibility environments;
+- native GitHub Actions workflow-dispatch API support with short-lived App
+  installation tokens and `gh` fallback for compatibility environments;
 - worker capacity and backpressure runbook for live scaling decisions;
 - reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;

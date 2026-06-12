@@ -99,10 +99,18 @@ Recommended startup sequence:
 
 For container deployments, set `REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api`.
 Configure `REVIEWBOT_WORKER_GITHUB_REPO`,
-`REVIEWBOT_WORKER_GITHUB_WORKFLOW`, `REVIEWBOT_WORKER_GITHUB_REF`, and a
-bot-owned `REVIEWBOT_WORKER_GITHUB_TOKEN` that can dispatch workflows in the
-central bot repository. Keep that credential separate from the GitHub App
-installation tokens used for target repository checkout and comments.
+`REVIEWBOT_WORKER_GITHUB_WORKFLOW`, `REVIEWBOT_WORKER_GITHUB_REF`, and
+`REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` for the GitHub App installation on
+the central bot repository. Prefer a separate dispatch-only GitHub App through
+`REVIEWBOT_WORKER_GITHUB_APP_ID` and
+`REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64`, installed only on the bot
+repository with `Actions: write` permission. If those worker-specific
+credentials are blank, the server reuses the main App credentials, which means
+operators must explicitly accept `Actions: write` on every repository where
+that App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN` remains available as an
+explicit bot-owned fallback when operators cannot use an App installation id.
+Keep any dispatch credential separate from the GitHub App installation tokens
+used for target repository checkout and comments.
 
 The `gh` dispatch mode remains available for compatibility outside this image,
 but the runtime image does not include GitHub CLI state. Use the API path for

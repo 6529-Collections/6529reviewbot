@@ -112,6 +112,7 @@ REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
 REVIEWBOT_WORKER_ADAPTER=noop
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api
 REVIEWBOT_WORKER_GITHUB_TOKEN=
+REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID=
 ```
 
 Start with `noop` worker mode for the first webhook pass. Switch to
@@ -215,10 +216,17 @@ unless an operator adds an explicitly approved fork access path.
 The server-side dispatcher still needs a credential that can dispatch workflows
 in `6529-Collections/6529reviewbot`. Prefer
 `REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api` with
-`REVIEWBOT_WORKER_GITHUB_TOKEN` stored in the bot secret store. Keep that
-credential scoped to this repository and separate from target repository
-access. The `gh` CLI dispatch mode remains a compatibility fallback for
-operator environments that intentionally manage GitHub CLI authentication.
+`REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` for the GitHub App installation on
+the central bot repository. The server then mints a short-lived installation
+token. The preferred setup uses a separate dispatch-only GitHub App configured
+through `REVIEWBOT_WORKER_GITHUB_APP_*`, installed only on the central bot
+repository with `Actions: write`. If those worker-specific credentials are
+blank, the server reuses the main App credentials and operators must accept
+`Actions: write` on every repository where that App is installed.
+`REVIEWBOT_WORKER_GITHUB_TOKEN` remains an explicit bot-owned fallback. Keep
+dispatch credentials scoped to this repository and separate from target
+repository access. The `gh` CLI dispatch mode remains a compatibility fallback
+for operator environments that intentionally manage GitHub CLI authentication.
 
 ## 6529.io Wiring
 

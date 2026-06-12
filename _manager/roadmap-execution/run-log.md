@@ -827,3 +827,29 @@
     GitHub CLI state for production dispatch;
   - update configuration, worker, container, security, release, and support
     docs.
+- Merged `6529reviewbot` PR #76 as `e145528` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27416485221`;
+  - job `scorecard` completed successfully.
+- Started `codex/github-app-dispatch-token` increment:
+  - let the production server mint a short-lived GitHub App installation token
+    for the central bot repository when
+    `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` is configured;
+  - keep explicit dispatch tokens and `gh` CLI dispatch as fallback paths;
+  - make preflight treat App installation id plus App credentials as a valid
+    API dispatch token source;
+  - update worker, configuration, deployment, container, security, support, and
+    release docs.
+- Hardened `codex/github-app-dispatch-token` before PR:
+  - documented the preferred dispatch-only GitHub App boundary so the
+    target-repository App manifest stays least-privilege and does not silently
+    gain `Actions: write`;
+  - added smoke coverage for both split dispatch-App credentials and the
+    explicitly reviewed main-App fallback;
+  - verified `npm test`, `npm run check`, `npm run check:docs`,
+    `npm run check:public-artifacts`, `npm run release:check`, and
+    `git diff --check`;
+  - built `6529reviewbot:codex-dispatch-token` and verified `/healthz` returned
+    `{"ok":true}` with no-op runtime settings.

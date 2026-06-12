@@ -526,6 +526,41 @@ assert(
     })
     .errors.some((error) => error.name === "worker_adapter")
 );
+const appDispatchPreflight = preflight.runPreflight({
+  env: {
+    ...preflightEnv,
+    REVIEWBOT_GITHUB_APP_ID: "12345",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: "configured",
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+  },
+});
+assert.equal(
+  appDispatchPreflight.errors.some((error) => error.name === "worker_adapter"),
+  false
+);
+assert.equal(
+  appDispatchPreflight.checks.find((check) => check.name === "worker_adapter")
+    .githubInstallationIdConfigured,
+  true
+);
+const splitDispatchAppPreflight = preflight.runPreflight({
+  env: {
+    ...preflightEnv,
+    REVIEWBOT_WORKER_GITHUB_APP_ID: "12345",
+    REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: "configured",
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+  },
+});
+assert.equal(
+  splitDispatchAppPreflight.errors.some((error) => error.name === "worker_adapter"),
+  false
+);
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
   true
@@ -1261,6 +1296,87 @@ const serverEntrypointOptions = serverCli.createServerOptionsFromEnv({
   REVIEW_USAGE_ENABLED: "false",
 });
 const serverEntrypointQueuePromise = serverEntrypointOptions.enqueueReviewJobs([reviewJobs[0]], {});
+let serverDispatchRequest = null;
+const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
+  {
+    REVIEWBOT_WORKER_GITHUB_APP_ID: "12345",
+    REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
+    REVIEWBOT_WORKER_GITHUB_APP_API_URL: "https://api.github.test",
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_WORKFLOW: "review-job.yml",
+    REVIEWBOT_WORKER_GITHUB_REF: "main",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+    REVIEWBOT_WORKER_GITHUB_API_URL: "https://api.github.test",
+    REVIEW_USAGE_ENABLED: "false",
+  },
+  {
+    fetchImpl: async (url, options) => {
+      if (String(url).endsWith("/app/installations/777/access_tokens")) {
+        return {
+          ok: true,
+          status: 201,
+          json: async () => ({
+            token: "server-installation-token",
+            expires_at: "2026-06-12T13:00:00Z",
+          }),
+        };
+      }
+      if (String(url).includes("/actions/workflows/")) {
+        serverDispatchRequest = {
+          url,
+          options,
+          body: JSON.parse(options.body),
+        };
+        return { status: 204, text: async () => "" };
+      }
+      throw new Error(`Unexpected fetch URL: ${url}`);
+    },
+  }
+);
+const serverAppDispatchPromise = serverAppDispatchOptions.enqueueReviewJobs([forkReviewJob], {});
+let serverMainAppDispatchRequest = null;
+const serverMainAppDispatchOptions = serverCli.createServerOptionsFromEnv(
+  {
+    REVIEWBOT_GITHUB_APP_ID: "12345",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
+    REVIEWBOT_GITHUB_APP_API_URL: "https://api.github.test",
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_WORKFLOW: "review-job.yml",
+    REVIEWBOT_WORKER_GITHUB_REF: "main",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+    REVIEWBOT_WORKER_GITHUB_API_URL: "https://api.github.test",
+    REVIEW_USAGE_ENABLED: "false",
+  },
+  {
+    fetchImpl: async (url, options) => {
+      if (String(url).endsWith("/app/installations/777/access_tokens")) {
+        return {
+          ok: true,
+          status: 201,
+          json: async () => ({
+            token: "main-app-installation-token",
+            expires_at: "2026-06-12T13:00:00Z",
+          }),
+        };
+      }
+      if (String(url).includes("/actions/workflows/")) {
+        serverMainAppDispatchRequest = {
+          url,
+          options,
+          body: JSON.parse(options.body),
+        };
+        return { status: 204, text: async () => "" };
+      }
+      throw new Error(`Unexpected fetch URL: ${url}`);
+    },
+  }
+);
+const serverMainAppDispatchPromise =
+  serverMainAppDispatchOptions.enqueueReviewJobs([forkReviewJob], {});
 assert.equal(serverCli.serverPortFromEnv({ REVIEWBOT_PORT: "8181" }), 8181);
 assert.throws(() => serverCli.serverPortFromEnv({ PORT: "8080abc" }), /valid TCP port/);
 assert.equal(
@@ -2016,6 +2132,25 @@ appServer.handleGitHubWebhook({
   assert.equal(serverEntrypointQueue.accepted, false);
   assert.equal(serverEntrypointQueue.adapter, "noop");
   assert.equal(serverEntrypointQueue.reason, "No worker adapter configured.");
+  const serverAppDispatchResult = await serverAppDispatchPromise;
+  assert.equal(serverAppDispatchResult.accepted, true);
+  assert.equal(serverAppDispatchResult.jobs[0].dispatchMode, "api");
+  assert.equal(
+    serverDispatchRequest.options.headers.authorization,
+    "Bearer server-installation-token"
+  );
+  assert.equal(serverDispatchRequest.body.inputs.run_key, forkReviewJob.runKey);
+  const serverMainAppDispatchResult = await serverMainAppDispatchPromise;
+  assert.equal(serverMainAppDispatchResult.accepted, true);
+  assert.equal(serverMainAppDispatchResult.jobs[0].dispatchMode, "api");
+  assert.equal(
+    serverMainAppDispatchRequest.options.headers.authorization,
+    "Bearer main-app-installation-token"
+  );
+  assert.equal(
+    serverMainAppDispatchRequest.body.inputs.run_key,
+    forkReviewJob.runKey
+  );
   const apiDispatchResult = await apiDispatchResultPromise;
   assert.equal(apiDispatchResult.accepted, true);
   assert.equal(apiDispatchResult.dispatchMode, "api");

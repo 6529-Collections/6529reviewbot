@@ -262,6 +262,10 @@ REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
 REVIEWBOT_WORKER_GITHUB_TOKEN=
+REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID=
+REVIEWBOT_WORKER_GITHUB_APP_ID=
+REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY=
+REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
 REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_WORKER_GH_BIN=gh
@@ -270,12 +274,17 @@ REVIEWBOT_WORKER_GH_BIN=gh
 `noop` is the safe default. Use `local` for controlled local workers and
 `github_actions` to dispatch admitted jobs to a central workflow in this repo.
 Production container deployments should set
-`REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api` with a bot-owned dispatch token so
-the server does not depend on local GitHub CLI state. `auto` uses API dispatch
-when a token is present and falls back to `gh` otherwise. The node binary,
-working directory, GitHub API URL, timeout, and `gh` binary overrides are
-advanced options with sensible defaults; set them only for non-standard worker
-environments.
+`REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api` and
+`REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID` so the server mints a short-lived
+installation token. Use the optional `REVIEWBOT_WORKER_GITHUB_APP_*`
+credentials for a dispatch-only GitHub App installed on the central bot
+repository, or omit them to reuse the main App credentials after accepting the
+broader `Actions: write` permission tradeoff on every repository where that
+App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN` is the explicit bot-owned
+token fallback. `auto` uses API dispatch when either token source is present
+and falls back to `gh` otherwise. The node binary, working directory, GitHub
+API URL, timeout, and `gh` binary overrides are advanced options with sensible
+defaults; set them only for non-standard worker environments.
 See [worker-adapters.md](worker-adapters.md).
 
 ## Webhook Replay Diagnostics

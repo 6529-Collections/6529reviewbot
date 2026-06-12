@@ -43,8 +43,8 @@ The bundle includes:
 - git branch and commit;
 - selected safe runtime settings;
 - secret/account-linked setting presence as `set` or `unset`, including
-  provider keys, GitHub App credentials, and the central workflow dispatch
-  token;
+  provider keys, GitHub App credentials, and central workflow dispatch token
+  sources;
 - preflight errors and warnings.
 
 It does not include secret values. It also does not include target repository

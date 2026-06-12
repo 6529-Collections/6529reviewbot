@@ -56,24 +56,36 @@ REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
 REVIEWBOT_WORKER_GITHUB_TOKEN=
+REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID=
+REVIEWBOT_WORKER_GITHUB_APP_ID=
+REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY=
+REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
 REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_WORKER_GH_BIN=gh
 ```
 
-Dispatch mode defaults to `auto`. When `REVIEWBOT_WORKER_GITHUB_TOKEN`,
-`GH_TOKEN`, or `GITHUB_TOKEN` is present, `auto` dispatches the central worker
-through GitHub's REST API. Without a token, `auto` falls back to the `gh` CLI
-for compatibility with older operator environments.
+Dispatch mode defaults to `auto`. When `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID`
+is set, the server can mint a short-lived installation token for the central
+bot repository and dispatch through GitHub's REST API. Prefer a separate
+dispatch-only GitHub App configured through `REVIEWBOT_WORKER_GITHUB_APP_*`
+and installed only on the bot repository with `Actions: write`. If those
+worker-specific credentials are blank, the server reuses the main GitHub App
+credentials, which requires accepting `Actions: write` on every repository
+where that App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN`, `GH_TOKEN`, or
+`GITHUB_TOKEN` can be used as an explicit bot-owned dispatch token fallback.
+Without either token source, `auto` falls back to the `gh` CLI for
+compatibility with older operator environments.
 
 Use `api` in production container deployments so preflight fails closed if the
-dispatch token is missing. Use `gh` only for local compatibility or operator
-workstations that intentionally manage GitHub CLI authentication.
+App installation id or dispatch token is missing. Use `gh` only for local
+compatibility or operator workstations that intentionally manage GitHub CLI
+authentication.
 
-The API dispatch token must be bot-owned and scoped only to dispatch workflows
-in the central bot repository. It is separate from the short-lived GitHub App
-installation tokens that the worker mints for target repository checkout and
-comments.
+The dispatch token source must be bot-owned and scoped only to dispatch
+workflows in the central bot repository. It is separate from the short-lived
+GitHub App installation tokens that workers mint for target repository
+checkout and comments.
 
 The dispatch fields are:
 

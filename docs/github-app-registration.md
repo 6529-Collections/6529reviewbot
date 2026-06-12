@@ -148,10 +148,13 @@ Webhook active: yes
 SSL verification: enabled
 Webhook secret: high-entropy value stored only in bot runtime secrets
 Installation scope: selected repositories during dogfood
+Actions: write absent from the target-repository App manifest
 ```
 
 `Members: read` is only a best-effort organization membership signal.
 Repository collaborator permission remains the primary trusted-actor signal.
+Central workflow dispatch should use a separate dispatch-only App installed
+only on the bot repository, or an explicitly reviewed token fallback.
 
 ## Secrets Created By Registration
 
@@ -274,6 +277,11 @@ Treat GitHub App permission or event changes as release-sensitive:
 
 Do not add broad permissions as a convenience shortcut. The App should request
 only what the server and workers actually use.
+
+Central workflow dispatch is the main exception to keep separate. Prefer a
+dispatch-only App installed only on `6529-Collections/6529reviewbot` with
+`Actions: write`; adding that permission to the target-repository App requires
+an explicit security review because it affects every installed repository.
 
 ## Rollback
 

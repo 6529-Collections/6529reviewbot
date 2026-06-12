@@ -41,6 +41,9 @@ stabilized.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.
+- The production server can mint a short-lived GitHub App installation token
+  for central workflow dispatch when `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID`
+  is configured.
 - Worker capacity and backpressure runbook for conservative live scaling.
 - Reusable workflow secret contract now maps only explicit provider secrets
   instead of inheriting all caller secrets.
