@@ -286,27 +286,32 @@ const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
 assert.equal(localWorkerResult.accepted, true);
 assert.equal(localWorkerResult.stdout, "general:6529-Collections/example");
 let dispatchedWorkflow = null;
-const dispatchResult = workerAdapter.dispatchReviewJobToGitHubActions(reviewJobs[0], {
+const forkReviewJob = { ...reviewJobs[0], headRepoFullName: "external/fork" };
+const dispatchResult = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
   policy: {
     mode: "github_actions",
     githubRepo: "6529-Collections/6529reviewbot",
     githubWorkflow: "review-job.yml",
     githubRef: "main",
     ghBin: "gh",
+    localTimeoutMs: 1234,
   },
-  spawnSync: (bin, args) => {
-    dispatchedWorkflow = { bin, args };
+  spawnSync: (bin, args, options) => {
+    dispatchedWorkflow = { bin, args, options };
     return { status: 0, stdout: "queued", stderr: "" };
   },
 });
 assert.equal(dispatchResult.accepted, true);
 assert.equal(dispatchedWorkflow.bin, "gh");
+assert.equal(dispatchedWorkflow.options.timeout, 1234);
 assert.deepEqual(
-  workerAdapter.githubWorkflowFields(reviewJobs[0]).target_repo,
+  workerAdapter.githubWorkflowFields(forkReviewJob).target_repo,
   "6529-Collections/example"
 );
+assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
 assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
 assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/example"), true);
+assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
 const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[0]], {}, {
   policy: { mode: "noop" },
 });

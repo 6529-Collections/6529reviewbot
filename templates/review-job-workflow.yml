@@ -9,6 +9,9 @@ on:
       target_repo:
         required: true
         type: string
+      head_repo:
+        required: true
+        type: string
       pr_number:
         required: true
         type: string
@@ -57,7 +60,7 @@ jobs:
       - name: Checkout target repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.target_repo }}
+          repository: ${{ inputs.head_repo }}
           ref: ${{ inputs.head_sha }}
           path: target
           token: ${{ secrets.REVIEWBOT_GITHUB_TOKEN }}
@@ -75,6 +78,7 @@ jobs:
         env:
           JOB_ID: ${{ inputs.job_id }}
           TARGET_REPO: ${{ inputs.target_repo }}
+          HEAD_REPO: ${{ inputs.head_repo }}
           PR_NUMBER: ${{ inputs.pr_number }}
           HEAD_SHA: ${{ inputs.head_sha }}
           REVIEW_KIND: ${{ inputs.review_kind }}
@@ -91,6 +95,7 @@ jobs:
               {
                 id: process.env.JOB_ID,
                 repository: { fullName: process.env.TARGET_REPO },
+                headRepoFullName: process.env.HEAD_REPO,
                 prNumber: process.env.PR_NUMBER,
                 headSha: process.env.HEAD_SHA,
                 reviewKind: process.env.REVIEW_KIND,

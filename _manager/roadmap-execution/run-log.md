@@ -96,3 +96,11 @@
   - `templates/review-job-workflow.yml` provides a central workflow scaffold;
   - worker stdout/stderr are excluded from adapter results unless explicitly
     requested for local debugging.
+- Addressed CodeRabbit feedback on PR #13:
+  - GitHub Actions dispatch now sends separate `target_repo` and `head_repo`
+    fields so fork PR checkouts can use the submitted head repository while
+    comments and reporting still target the base repository;
+  - `gh workflow run` dispatch is bounded by the worker timeout policy;
+  - worker adapter docs and `.env.example` list the advanced binary and working
+    directory overrides.
+  Validation: `npm test`, `npm run check`, `git diff --check`.

@@ -60,6 +60,7 @@ The dispatch fields are:
 ```text
 job_id
 target_repo
+head_repo
 pr_number
 head_sha
 review_kind
@@ -69,8 +70,13 @@ lane
 requestor
 ```
 
-The receiving workflow should validate the inputs, check out the target repo
-read-only, set provider/AWS secrets from the central bot environment, and run:
+`target_repo` is the repository that owns the PR and receives comments.
+`head_repo` is the repository that owns the submitted head SHA, which can differ
+for fork PRs.
+
+The receiving workflow should validate the inputs, check out `head_repo` at
+`head_sha` read-only, set provider/AWS secrets from the central bot environment,
+and run:
 
 ```bash
 npm run worker:job -- --job-file job.json

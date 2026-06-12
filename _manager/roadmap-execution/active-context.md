@@ -25,8 +25,8 @@ merged PRs.
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
 - Current branch: `codex/worker-execution-adapters`
-- Current local changes: worker adapter code, CLI, workflow template, docs, and
-  smoke tests in progress
+- Current local changes: worker adapter PR review fixes for fork checkout,
+  bounded GitHub Actions dispatch, docs, and smoke tests
 
 ## Key Decisions
 
@@ -55,8 +55,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Finish, PR, and merge worker execution adapters beyond the current job
-   interface.
+1. Push and merge worker execution adapters after review-fix checks pass.
 2. Add admin auth bridge contract for 6529.io private controls.
 3. Add alerting and scheduled budget-spike checks.
 4. Sweep docs for community-release readiness.

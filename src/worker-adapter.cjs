@@ -147,6 +147,7 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
     encoding: "utf8",
     maxBuffer: 4 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"],
+    timeout: policy.localTimeoutMs,
   });
 
   if (result.error) {
@@ -190,6 +191,7 @@ function githubWorkflowFields(job) {
   return {
     job_id: job.id,
     target_repo: job.repository.fullName,
+    head_repo: headRepoFullNameForJob(job),
     pr_number: String(job.prNumber),
     head_sha: job.headSha || "",
     review_kind: job.reviewKind,
@@ -198,6 +200,17 @@ function githubWorkflowFields(job) {
     lane: job.lane || "",
     requestor: job.requestor || "",
   };
+}
+
+function headRepoFullNameForJob(job) {
+  return (
+    job.headRepoFullName ||
+    job.headRepository?.fullName ||
+    job.headRepository?.nameWithOwner ||
+    job.headRepo?.fullName ||
+    job.headRepo?.nameWithOwner ||
+    job.repository.fullName
+  );
 }
 
 function reviewCommandArgs(job) {
@@ -290,6 +303,7 @@ module.exports = {
   dispatchReviewJobToGitHubActions,
   enqueueReviewJobsWithAdapter,
   githubWorkflowFields,
+  headRepoFullNameForJob,
   jobEnv,
   outputSummary,
   reviewCommandArgs,
