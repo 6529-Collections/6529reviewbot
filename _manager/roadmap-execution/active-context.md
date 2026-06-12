@@ -92,10 +92,11 @@ merged PRs.
 - CI release-check PR: merged as PR #68, merge commit `392fb07`
 - OpenSSF Scorecard permission fix PR: merged as PR #69, merge commit
   `0b56a84`
-- Current branch: `codex/peel-checkout-action-pin`
-- Current local changes: replace `actions/checkout` annotated tag-object SHA
-  with the peeled commit SHA across workflows/templates plus release docs,
-  roadmap, changelog, and manager memory updates.
+- Peeled checkout action pin PR: merged as PR #70, merge commit `d709bef`
+- Current branch: `codex/remove-scorecard-sarif-upload`
+- Current local changes: remove the optional Scorecard SARIF upload step,
+  drop the now-unused `security-events: write` job permission, and update
+  release/security docs plus manager memory.
 
 ## Key Decisions
 
@@ -203,11 +204,14 @@ merged PRs.
   run locally, so docs links, public artifact scanning, workflow pins, API
   contracts, model catalogs, and templates do not drift between releases.
 - OpenSSF Scorecard publishing rejects workflow-level write permissions.
-  Keep the workflow-level token read-only and scope `security-events: write`
-  and `id-token: write` to the Scorecard job.
+  Keep the workflow-level token read-only and scope `id-token: write` to the
+  Scorecard job for result publishing.
 - Scorecard publishing also verifies that pinned GitHub Action refs belong to
   the action repository. For annotated release tags, pin the peeled commit SHA,
   not the tag-object SHA.
+- The optional Scorecard SARIF upload path can be deferred when the publishing
+  verifier rejects the pinned upload action; first-party Scorecard result
+  publication remains the required signal.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -254,7 +258,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the peeled checkout action pin PR.
+1. Validate, publish, and merge the Scorecard SARIF upload removal PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

@@ -335,6 +335,8 @@ Completed in `6529reviewbot`:
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
   verification.
+- OpenSSF Scorecard optional SARIF upload disabled until its publishing
+  verifier path accepts pinned upload-action refs cleanly.
 - GitHub Action checkout pins use the peeled commit SHA for annotated release
   tags.
 - documentation link checker for the public docs surface.
