@@ -14,6 +14,9 @@ GET  /api/admin/usage/summary
 GET  /api/admin/budget/policies
 GET  /api/admin/jobs/recent
 GET  /api/admin/status
+GET  /github-app/manifest-complete
+GET  /github-app/setup
+GET  /github-app/callback
 ```
 
 `GET /healthz` returns a basic health response.
@@ -24,6 +27,10 @@ changed with `REVIEWBOT_WEBHOOK_PATH`.
 The usage API paths are configurable and are intended for 6529.io dashboards.
 Admin usage routes, job diagnostics, and runtime status require an injected
 authorizer before they return data.
+
+The GitHub App browser handoff routes return public-safe operator guidance for
+manifest conversion, setup, and callback redirects. They do not echo temporary
+manifest codes, exchange credentials, or trigger review work.
 
 ## Required Environment
 
@@ -88,6 +95,17 @@ operator environment:
 ```bash
 npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
 ```
+
+The server exposes safe guidance responses for the manifest redirect, setup,
+and callback URLs:
+
+```text
+GET /github-app/manifest-complete
+GET /github-app/setup
+GET /github-app/callback
+```
+
+Those routes do not echo the manifest code or any generated credential values.
 
 Do not commit the generated App id, client secret, webhook secret, or private
 key returned by GitHub. Store those values only in the bot-owned runtime secret

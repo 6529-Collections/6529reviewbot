@@ -60,6 +60,9 @@ private operator environment:
 npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
 ```
 
+The redirect page intentionally shows only operator guidance. It does not echo
+the code value or exchange credentials on the public App server.
+
 Minimum recommended permissions:
 
 ```text

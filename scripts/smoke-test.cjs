@@ -1799,6 +1799,16 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(usageRouteResult.statusCode, 200);
   assert.equal(usageRouteResult.body.visibility, "public");
+  const manifestCompleteRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/github-app/manifest-complete?code=temporary-code&state=test-state",
+    headers: {},
+  }, {});
+  assert.equal(manifestCompleteRouteResult.statusCode, 200);
+  assert.equal(manifestCompleteRouteResult.body.kind, "github_app_manifest_complete");
+  assert.equal(manifestCompleteRouteResult.body.codeReceived, true);
+  assert.equal(JSON.stringify(manifestCompleteRouteResult.body).includes("temporary-code"), false);
+  assert.equal(appServer.isGitHubAppOperatorPath("/github-app/setup"), true);
   const adminStatusRouteUrl = new URL("http://localhost/api/admin/status?profile=worker&strict=1");
   const adminStatusRouteResult = await appServer.handleHttpRequest({
     method: "GET",

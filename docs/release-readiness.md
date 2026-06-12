@@ -44,6 +44,7 @@ Ready for community review:
   registration-form generation;
 - GitHub App manifest conversion CLI that writes one-time generated
   credentials only to an explicit private output path;
+- public-safe GitHub App registration/setup/callback guidance routes;
 - GitHub App registration packet covering operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;

@@ -130,6 +130,13 @@ async function handleHttpRequest(request, options) {
     return { statusCode: 200, body: { ok: true } };
   }
 
+  if (request.method === "GET" && isGitHubAppOperatorPath(url.pathname)) {
+    return {
+      statusCode: 200,
+      body: githubAppOperatorResponse(url),
+    };
+  }
+
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
   if (isUsageApiPath(url.pathname, usageApiSettings)) {
     return await handleUsageApiRequest(
@@ -668,6 +675,45 @@ function publicEventSummary(event) {
   };
 }
 
+function isGitHubAppOperatorPath(pathname) {
+  return [
+    "/github-app/manifest-complete",
+    "/github-app/setup",
+    "/github-app/callback",
+  ].includes(pathname);
+}
+
+function githubAppOperatorResponse(url) {
+  if (url.pathname === "/github-app/manifest-complete") {
+    return {
+      ok: true,
+      kind: "github_app_manifest_complete",
+      codeReceived: Boolean(url.searchParams.get("code")),
+      stateReceived: Boolean(url.searchParams.get("state")),
+      nextStep:
+        "From a private operator environment, run: npm run github-app:convert -- -- --code <code-from-url> --output <private-json-path>",
+      warning:
+        "Do not paste the manifest code, generated App credentials, webhook payloads, or private repository details into public issues, pull requests, logs, or release notes.",
+    };
+  }
+  if (url.pathname === "/github-app/setup") {
+    return {
+      ok: true,
+      kind: "github_app_setup",
+      nextStep:
+        "Install 6529bot on selected repositories only, then continue with docs/install.md and docs/github-app-registration.md.",
+      warning:
+        "Keep provider keys, GitHub App credentials, AWS access, and alert routing secrets in bot-owned infrastructure.",
+    };
+  }
+  return {
+    ok: true,
+    kind: "github_app_callback",
+    nextStep:
+      "6529bot does not use a browser OAuth callback for normal review operation. Use GitHub App installation credentials and the central App server instead.",
+  };
+}
+
 function sendJson(response, statusCode, body) {
   response.statusCode = statusCode;
   response.setHeader("content-type", "application/json; charset=utf-8");
@@ -690,6 +736,8 @@ module.exports = {
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,
   handleHttpRequest,
+  githubAppOperatorResponse,
+  isGitHubAppOperatorPath,
   normalizeConfigLoadResult,
   publicEventSummary,
 };
