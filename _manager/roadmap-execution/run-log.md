@@ -140,3 +140,12 @@
 - Addressed CodeRabbit feedback on PR #15 by redacting CLI alert output,
   adding SNS publish timeouts, validating spike dimensions, and quoting and
   ordering the alert environment examples.
+- Merged `6529reviewbot` PR #15 as `c079b7a` after CI, Dependency Review,
+  CodeRabbit, and resolved review threads passed.
+- Started `codex/release-docs-sweep` increment:
+  - added `docs/release-readiness.md` with current readiness, community release
+    gates, dogfood defaults, and public communication guidance;
+  - updated README status, changelog, roadmap, and release process so they
+    match the current implementation state.
+  Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
+  all workflow and template files.
