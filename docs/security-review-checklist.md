@@ -83,6 +83,8 @@ Target deployment:
   files, and loaded into admission before worker dispatch.
 - Model pricing rows, if used, include source URLs and have been checked
   against current provider pricing.
+- Zero-rate model pricing rows are either absent or explicitly justified with
+  provider documentation before using `--allow-zero-price`.
 - Run-control claims happen before worker dispatch when enabled.
 - Run-control dedupe keys include provider and model so multi-model lanes do
   not block each other.

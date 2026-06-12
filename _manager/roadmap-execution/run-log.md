@@ -773,3 +773,17 @@
     thresholds;
   - update alerting, operations, job-ledger, worker-capacity, release, and
     manager-memory docs.
+- Merged `6529reviewbot` PR #72 as `a78f874` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27413929619`;
+  - job `scorecard` completed successfully.
+- Rechecked frontend PRs #2605 and #2606:
+  - all automated checks are green;
+  - both remain blocked only by required human review.
+- Started `codex/model-price-zero-guard` increment:
+  - reject zero-rate model price rows during `--apply` by default;
+  - add `--allow-zero-price` for provider-documented free rates;
+  - update model-pricing, install, release, security, changelog, and manager
+    docs.

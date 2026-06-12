@@ -19,7 +19,9 @@ function main(argv = process.argv.slice(2)) {
     return { applied: false, count: document.prices.length };
   }
   const settings = { ...usageLedgerSettingsFromEnv(), schema };
-  const results = applyModelPrices(settings, document);
+  const results = applyModelPrices(settings, document, {
+    allowZeroPrice: args.allowZeroPrice,
+  });
   process.stdout.write(
     `${JSON.stringify({ applied: true, statements: results.length }, null, 2)}\n`
   );
@@ -27,11 +29,15 @@ function main(argv = process.argv.slice(2)) {
 }
 
 function parseArgs(argv) {
-  const result = { apply: false, file: "config/model-prices.example.json" };
+  const result = { allowZeroPrice: false, apply: false, file: "config/model-prices.example.json" };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--apply") {
       result.apply = true;
+      continue;
+    }
+    if (arg === "--allow-zero-price") {
+      result.allowZeroPrice = true;
       continue;
     }
     if (arg === "--file" || arg === "--schema") {
@@ -63,6 +69,8 @@ Options:
   --file <path>    JSON price file. Default: config/model-prices.example.json
   --schema <name>  Database schema. Default: REVIEW_USAGE_DB_SCHEMA or reviewbot
   --apply          Apply through the RDS Data API. Default is dry-run SQL.
+  --allow-zero-price
+                   Permit zero-rate rows when the provider documents a free price.
 `;
 }
 

@@ -95,10 +95,12 @@ merged PRs.
 - Peeled checkout action pin PR: merged as PR #70, merge commit `d709bef`
 - Scorecard SARIF upload removal PR: merged as PR #71, merge commit
   `6dfa0d2`; the post-merge OpenSSF Scorecard run completed successfully.
-- Current branch: `codex/job-health-alerts`
-- Current local changes: add scheduled operator-alert evaluation for failed
-  jobs and stale active run-control claims, extend bounded ledger readers, wire
-  the central alert workflow variables, and sweep docs.
+- Job-health operator alerts PR: merged as PR #72, merge commit `a78f874`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-price-zero-guard`
+- Current local changes: make model-price apply reject zero-rate rows by
+  default, add an explicit `--allow-zero-price` override for documented free
+  prices, update smoke coverage and pricing/release docs.
 
 ## Key Decisions
 
@@ -136,6 +138,8 @@ merged PRs.
   slots until TTL.
 - Model pricing should be operator-maintained through reviewed price files and
   source URLs instead of hardcoded stale prices in the public repo.
+- Model price apply should reject zero-rate placeholders by default; a real
+  zero price requires explicit operator intent and provider documentation.
 - Usage writes should use active provider/model price rows for estimated cost
   only when all applicable token rates are available; missing rates should not
   create partial cost estimates.
@@ -263,7 +267,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the job-health alerts PR.
+1. Validate, publish, and merge the model-price zero guard PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

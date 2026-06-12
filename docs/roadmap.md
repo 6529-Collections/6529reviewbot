@@ -364,6 +364,8 @@ Completed in `6529reviewbot`:
 - job-health alert evaluation for failed jobs and stale run-control claims.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
+- zero-rate guard for model price apply, with explicit override for
+  provider-documented free prices.
 - installation and onboarding guide for conservative central App dogfood.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
