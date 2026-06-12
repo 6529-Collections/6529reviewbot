@@ -243,6 +243,7 @@ Private admin routes should call:
 
 ```text
 GET /api/admin/usage/summary?days=30
+GET /api/admin/usage/events/recent?days=7&limit=50
 GET /api/admin/budget/policies
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50

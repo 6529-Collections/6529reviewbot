@@ -84,6 +84,50 @@
         }
       }
     },
+    "/api/admin/usage/events/recent": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Recent raw usage events",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Days"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 50
+            },
+            "description": "Maximum rows to return, capped by REVIEWBOT_USAGE_API_MAX_ITEMS."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recent usage events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageEventsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/budget/policies": {
       "get": {
         "tags": ["Admin"],
@@ -452,6 +496,117 @@
           },
           "budgetSkippedRuns": {
             "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsageEventsResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "range", "limit", "events"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "usage_events"
+          },
+          "range": {
+            "$ref": "#/components/schemas/UsageRange"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageEvent"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsageEvent": {
+        "type": "object",
+        "required": ["createdAt", "repoFullName", "prNumber", "requestor", "reviewKind", "provider", "model", "totalTokens", "costUsd", "currency", "budgetSkipped", "metadata"],
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "repoFullName": {
+            "type": "string"
+          },
+          "prNumber": {
+            "type": ["number", "null"]
+          },
+          "prAuthor": {
+            "type": "string"
+          },
+          "prHeadSha": {
+            "type": "string"
+          },
+          "workflowRunId": {
+            "type": "string"
+          },
+          "workflowJob": {
+            "type": "string"
+          },
+          "requestor": {
+            "type": "string"
+          },
+          "reviewKind": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "lane": {
+            "type": "string"
+          },
+          "inputTokens": {
+            "type": "integer"
+          },
+          "cachedInputTokens": {
+            "type": "integer"
+          },
+          "outputTokens": {
+            "type": "integer"
+          },
+          "reasoningTokens": {
+            "type": "integer"
+          },
+          "totalTokens": {
+            "type": "integer"
+          },
+          "estimatedCostUsd": {
+            "type": ["number", "null"]
+          },
+          "actualCostUsd": {
+            "type": ["number", "null"]
+          },
+          "costUsd": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "budgetSkipped": {
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Bounded scalar metadata. Common secret-shaped strings are redacted and nested objects or arrays are omitted.",
+            "additionalProperties": {
+              "type": ["string", "number", "boolean", "null"]
+            }
           }
         },
         "additionalProperties": false

@@ -2265,6 +2265,37 @@ assert.equal(
   true
 );
 assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
+const unsafeAdminUsageEvent = usageApi.normalizeAdminUsageEvent({
+  createdAt: "2026-06-10T01:00:00.000Z",
+  repoFullName: "6529-Collections/private",
+  prNumber: 12,
+  prAuthor: "author",
+  prHeadSha: "head",
+  workflowRunId: "run-1",
+  workflowJob: "review-job",
+  requestor: "maintainer",
+  reviewKind: "security",
+  provider: "openai",
+  model: "gpt-5.5",
+  lane: "openai:gpt-5.5",
+  inputTokens: 10,
+  outputTokens: 20,
+  metadata: {
+    detail:
+      "usage row has Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+    nested: { token: "sk-proj-should-not-pass" },
+    "bad key": "sk-proj-should-not-pass",
+  },
+});
+assert.equal(unsafeAdminUsageEvent.repoFullName, "6529-Collections/private");
+assert.equal(unsafeAdminUsageEvent.totalTokens, 30);
+assert(unsafeAdminUsageEvent.metadata.detail.includes("Bearer [redacted]"));
+assert(unsafeAdminUsageEvent.metadata.detail.includes("sk-[redacted]"));
+assert.equal(unsafeAdminUsageEvent.metadata.detail.includes("sk-proj-"), false);
+assert.equal(
+  Object.prototype.hasOwnProperty.call(unsafeAdminUsageEvent.metadata, "nested"),
+  false
+);
 assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
 const alertNow = new Date("2026-06-12T12:00:00.000Z");
 const alertEvents = [
@@ -2500,6 +2531,18 @@ const usageEventsQuery = usageApiLedger.buildUsageEventsQuery("reviewbot", {
 assert.match(usageEventsQuery.sql, /ai_review_usage_events/);
 assert.match(usageEventsQuery.sql, /created_at >= cast\(:from_ts as timestamptz\)/);
 assert.equal(usageEventsQuery.parameters[2].value.longValue, 25);
+const recentUsageEventsApiQuery = usageApi.usageEventsQueryFromRequest(
+  { url: new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=3") },
+  usageApi.usageApiSettingsFromEnv({
+    REVIEWBOT_USAGE_API_DEFAULT_DAYS: "30",
+    REVIEWBOT_USAGE_API_MAX_DAYS: "30",
+    REVIEWBOT_USAGE_API_MAX_ITEMS: "50",
+  }),
+  new Date("2026-06-12T12:00:00.000Z")
+);
+assert.equal(recentUsageEventsApiQuery.limit, 3);
+assert.equal(recentUsageEventsApiQuery.range.days, 7);
+assert.equal(recentUsageEventsApiQuery.range.to, "2026-06-12T12:00:00.000Z");
 assert.throws(() => usageApiLedger.buildUsageEventsQuery("reviewbot", {}, 25), /bounded range/);
 const jobEventsQuery = usageApiLedger.buildJobEventsQuery("reviewbot", {
   status: "dispatch_failed",
@@ -3015,6 +3058,47 @@ appServer.handleGitHubWebhook({
     ),
     true
   );
+  const adminUsageEventsRouteUrl = new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=1");
+  const adminUsageEventsRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/usage/events/recent?days=7&limit=1",
+    headers: signedAdminHeadersFor(adminUsageEventsRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadUsageEvents: async ({ range, visibility, query }) => {
+      assert.equal(range.days, 7);
+      assert.equal(visibility, "admin");
+      assert.equal(query.limit, 1);
+      return {
+        events: [{
+          createdAt: "2026-06-10T01:00:00.000Z",
+          repoFullName: "6529-Collections/private",
+          prNumber: 12,
+          requestor: "maintainer",
+          reviewKind: "security",
+          provider: "openai",
+          model: "gpt-5.5",
+          inputTokens: 10,
+          outputTokens: 20,
+          metadata: {
+            detail:
+              "usage row has github_pat_abcdefghijklmnopqrstuvwxyz1234567890 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+            nested: { token: "sk-proj-should-not-pass" },
+          },
+        }],
+      };
+    },
+  });
+  assert.equal(adminUsageEventsRouteResult.statusCode, 200);
+  assert.equal(adminUsageEventsRouteResult.body.kind, "usage_events");
+  assert.equal(adminUsageEventsRouteResult.body.limit, 1);
+  assert.equal(adminUsageEventsRouteResult.body.events[0].repoFullName, "6529-Collections/private");
+  assert(adminUsageEventsRouteResult.body.events[0].metadata.detail.includes("github_pat_[redacted]"));
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(adminUsageEventsRouteResult.body.events[0].metadata, "nested"),
+    false
+  );
   const manifestCompleteRouteResult = await appServer.handleHttpRequest({
     method: "GET",
     url: "/github-app/manifest-complete?code=temporary-code&state=test-state",
@@ -3165,6 +3249,23 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminAllowed.statusCode, 200);
   assert.equal(adminAllowed.body.policies[0].scopeType, "global");
+  const adminUsageEventsUrl = new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=2");
+  const adminUsageEvents = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminUsageEventsUrl,
+    headers: signedAdminHeadersFor(adminUsageEventsUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadUsageEvents: async ({ query, visibility }) => {
+      assert.equal(visibility, "admin");
+      assert.equal(query.limit, 2);
+      return { events: usageEvents };
+    },
+  });
+  assert.equal(adminUsageEvents.statusCode, 200);
+  assert.equal(adminUsageEvents.body.kind, "usage_events");
+  assert.equal(adminUsageEvents.body.events[0].repoFullName, "6529-Collections/public-repo");
   const adminBridgeAllowed = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: adminUsageUrl,
@@ -3290,6 +3391,13 @@ appServer.handleGitHubWebhook({
   assert.throws(
     () => usageApi.jobEventsQueryFromRequest(
       { url: new URL("http://localhost/api/admin/jobs/recent?limit=999") },
+      usageApiSettings
+    ),
+    /limit must be <= 50/
+  );
+  assert.throws(
+    () => usageApi.usageEventsQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/usage/events/recent?limit=999") },
       usageApiSettings
     ),
     /limit must be <= 50/

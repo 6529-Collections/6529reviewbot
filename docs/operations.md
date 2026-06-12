@@ -243,6 +243,7 @@ operator evidence record, then apply the backpressure controls in
 Check:
 
 - `GET /api/public/usage/summary?days=30`;
+- `GET /api/admin/usage/events/recent?days=7&limit=50`;
 - the bot API data loader or Aurora reader;
 - `REVIEWBOT_USAGE_API_PUBLIC_ENABLED`;
 - `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and

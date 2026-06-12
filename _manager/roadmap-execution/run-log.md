@@ -1385,3 +1385,32 @@
   terminal `status` filters, documenting that rule, and ordering recent
   run-claim ledger reads newest-first. `npm test`, `npm run check:docs`,
   `npm run release:check`, and `git diff --check` passed again.
+- Merged `6529reviewbot` PR #116 as `076a02f` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review thread marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27444700213`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27444700230`, completed successfully.
+- Local clean-main validation after PR #116 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-usage-events-api` increment:
+  - add admin-only `GET /api/admin/usage/events/recent` for bounded recent raw
+    usage-event triage without direct browser-side Aurora access;
+  - reuse the existing usage event loader with an endpoint-specific `limit`;
+  - sanitize raw usage-event strings and scalar metadata at the response
+    boundary;
+  - update OpenAPI, usage, configuration, install, deployment, operations,
+    GitHub App, security-review, release-readiness, README, changelog, and
+    manager memory.
+- Local validation for `codex/admin-usage-events-api`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
+- Self-review tightened the Aurora usage-event reader so direct internal
+  callers also get a positive bounded `limit` before Data API execution.
+- Final pre-PR validation for `codex/admin-usage-events-api`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

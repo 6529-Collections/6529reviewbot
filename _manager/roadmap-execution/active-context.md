@@ -187,10 +187,12 @@ merged PRs.
   `cbb9388`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Scheduled alert payload sanitization PR: merged as PR #115, merge commit
   `aba63a5`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-run-claims-api`
-- Current local changes: adding an admin-only run-claims API route for stale
-  active run-control claim triage, including ledger wiring, OpenAPI/docs,
-  smoke coverage, and manager-memory updates.
+- Admin run-claims API PR: merged as PR #116, merge commit `076a02f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-usage-events-api`
+- Current local changes: adding an admin-only recent usage-events API route for
+  private raw usage triage, including bounded loader limits, response
+  sanitization, OpenAPI/docs, smoke coverage, and manager-memory updates.
 
 ## Key Decisions
 
@@ -401,6 +403,9 @@ merged PRs.
 - Private admin dashboards should be able to inspect stale active run-control
   claims through bot-owned admin APIs, not through browser-side Aurora access
   or ad hoc SQL consoles.
+- Private admin dashboards also need bounded recent raw usage events through
+  bot-owned admin APIs; public transparency pages should stay on aggregate
+  summaries with repo disclosure allowlists.
 
 ## Constraints
 
@@ -413,11 +418,9 @@ merged PRs.
 ## Next Actions
 
 1. Continue dogfood target-repo PRs once required human review completes.
-2. Validate, publish, review, and merge the admin run-claims API PR.
-3. Prepare the next operator-readiness slice from the remaining v0 risks:
-   provider price evidence, production App/deployment evidence, admin UI
-   wiring, worker/alert installation, or another output-boundary hardening
-   sweep.
+2. Validate, publish, review, and merge the admin usage-events API PR.
+3. Keep release docs, runbooks, and manager memory aligned after each merged
+   slice.
 
 ## Open Risks
 

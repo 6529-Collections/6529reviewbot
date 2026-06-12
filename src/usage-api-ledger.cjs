@@ -26,8 +26,13 @@ function createUsageApiLedgerLoaders(options = {}) {
   const ledgerSettings = options.ledgerSettings || usageLedgerSettingsFromEnv();
   const apiSettings = options.apiSettings || usageApiSettingsFromEnv();
   return {
-    loadUsageEvents: async ({ range, visibility }) => ({
-      events: readUsageEvents(ledgerSettings, { range, visibility, apiSettings }),
+    loadUsageEvents: async ({ range, visibility, query }) => ({
+      events: readUsageEvents(ledgerSettings, {
+        range,
+        visibility,
+        apiSettings,
+        limit: query?.limit,
+      }),
     }),
     loadBudgetPolicies: async () => ({
       policies: readEnabledBudgetPolicies(ledgerSettings),
@@ -46,7 +51,12 @@ function readUsageEvents(settings, options = {}) {
   const apiSettings = options.apiSettings || usageApiSettingsFromEnv();
   const range = options.range || {};
   assertUsageRange(range);
-  const query = buildUsageEventsQuery(settings.schema, range, apiSettings.maxEvents);
+  const limit = positiveLimit(options.limit || apiSettings.maxEvents);
+  const query = buildUsageEventsQuery(
+    settings.schema,
+    range,
+    limit
+  );
   const response = executeStatement(settings, query.sql, query.parameters, {
     tempPrefix: "6529-usage-api-",
     maxBuffer: 32 * 1024 * 1024,
@@ -61,6 +71,7 @@ function readUsageEvents(settings, options = {}) {
 
 function buildUsageEventsQuery(schema, range = {}, limit = 5000) {
   assertUsageRange(range);
+  const safeLimit = positiveLimit(limit);
   return {
     sql: `
 select
@@ -94,7 +105,7 @@ limit :limit
     parameters: [
       stringParam("from_ts", range.from),
       stringParam("to_ts", range.to),
-      longParam("limit", limit),
+      longParam("limit", safeLimit),
     ],
   };
 }

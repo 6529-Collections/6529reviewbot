@@ -9,6 +9,7 @@ const { safeErrorLine } = require("../src/diagnostics.cjs");
 const REQUIRED_PATHS = [
   "/api/public/usage/summary",
   "/api/admin/usage/summary",
+  "/api/admin/usage/events/recent",
   "/api/admin/budget/policies",
   "/api/admin/jobs/recent",
   "/api/admin/run-claims/recent",
