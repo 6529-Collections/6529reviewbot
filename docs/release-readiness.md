@@ -33,6 +33,8 @@ Ready for community review:
 - repeatable Aurora ledger schema tooling;
 - example AWS IAM/OIDC templates for least-privilege Data API and SNS access;
 - reviewed GitHub App manifest template for production registration;
+- GitHub App manifest renderer for host-specific validation and local
+  registration-form generation;
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;

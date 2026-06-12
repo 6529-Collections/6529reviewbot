@@ -48,6 +48,8 @@ stabilized.
   Secrets Manager, and SNS access.
 - Reviewable GitHub App manifest template for production `6529bot`
   registration.
+- GitHub App manifest renderer for host-specific validation and local
+  registration-form output.
 - Production server loading of enabled central DB budget policy rows during
   admission.
 - Usage-write cost estimation from active provider/model price rows.

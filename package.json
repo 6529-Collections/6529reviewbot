@@ -34,6 +34,7 @@
     "support:bundle": "node bin/support-bundle.cjs",
     "v0:gates": "node bin/v0-gates.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
+    "github-app:manifest": "node bin/render-github-app-manifest.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",

@@ -60,10 +60,11 @@ merged PRs.
 - Release template hardening PR: merged as PR #44, merge commit `9678649`
 - Central budget policy tooling PR: merged as PR #45, merge commit `38a5ca9`
 - AWS IAM policy templates PR: merged as PR #46, merge commit `461bea3`
-- Current branch: `codex/github-app-manifest`
-- Current local changes: GitHub App manifest template, release-check JSON
-  parsing for template JSON, registration docs, release gates, changelog,
-  roadmap, and manager-memory updates.
+- GitHub App manifest template PR: merged as PR #47, merge commit `fecf502`
+- Current branch: `codex/github-app-manifest-renderer`
+- Current local changes: GitHub App manifest renderer CLI/module,
+  release-check rendering validation, smoke coverage, registration docs,
+  release gates, changelog, roadmap, and manager-memory updates.
 
 ## Key Decisions
 
@@ -137,6 +138,9 @@ merged PRs.
 - GitHub App registration should start from a reviewable manifest artifact
   when possible. Generated App ids, client secrets, webhook secrets, and
   private keys stay in the bot runtime secret store.
+- GitHub App manifest rendering should be dry-run and validation-oriented:
+  render host-specific settings and optional local registration forms without
+  exchanging GitHub manifest codes or receiving generated credentials.
 
 ## Constraints
 
@@ -148,7 +152,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App manifest PR if checks and
+1. Validate, publish, and merge the GitHub App manifest renderer PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR
@@ -170,7 +174,7 @@ merged PRs.
   the target Aurora database before live dogfood spend.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
-- The GitHub App manifest still needs `<bot-host>` replacement and actual App
+- The GitHub App manifest still needs production-host rendering and actual App
   creation in GitHub before production use.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.

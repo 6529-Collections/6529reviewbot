@@ -63,6 +63,25 @@ manifest. The committed template uses GitHub's manifest fields for default
 permissions, events, webhook URL, setup URL, and callback URLs so the
 registration settings are reviewable before any live App credentials exist.
 
+Render the template for a concrete HTTPS host with:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com
+```
+
+To generate an operator-owned registration form for an organization install:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com \
+  --form \
+  --owner 6529-Collections \
+  --state <unguessable-state>
+```
+
+The helper validates the reviewed template, replaces only the `<bot-host>`
+placeholder, and emits either JSON or a local HTML form. It does not exchange
+GitHub's temporary manifest code and never receives generated credentials.
+
 Do not commit the generated App id, client secret, webhook secret, or private
 key returned by GitHub. Store those values only in the bot-owned runtime secret
 store. If operators register the App manually through the GitHub UI, match the

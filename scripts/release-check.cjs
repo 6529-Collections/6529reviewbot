@@ -22,6 +22,7 @@ runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.exam
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
+runNode("bin/render-github-app-manifest.cjs", ["--host", "https://reviewbot.example.com", "--quiet"]);
 runNode("bin/validate-repository-config.cjs", repoConfigTemplates);
 parseJsonDirectories(["infra/aws", "templates"]);
 parseYamlDirectories(["templates", ".github/workflows"]);

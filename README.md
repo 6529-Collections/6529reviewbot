@@ -156,7 +156,13 @@ npm run validate:repo-config -- templates/dogfood-repository-config.yml
 Validate the GitHub App manifest template:
 
 ```bash
-node -e "JSON.parse(require('fs').readFileSync('templates/github-app-manifest.example.json','utf8'))"
+npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+```
+
+Render a production-hosted manifest without generating any secrets:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com
 ```
 
 Print the Aurora ledger schema without touching AWS:

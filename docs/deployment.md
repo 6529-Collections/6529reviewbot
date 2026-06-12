@@ -17,6 +17,17 @@ registration. The generated App id, client secret, webhook secret, and private
 key are live credentials and must be stored only in the bot runtime secret
 store, not committed back to the public repository.
 
+Render and validate the manifest before registration:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+```
+
+If using the GitHub App manifest flow, generate an operator-owned registration
+form with `--form --owner <org> --state <unguessable-state>`. Complete the
+GitHub manifest conversion in the operator environment and move the returned
+credentials directly into the bot secret store.
+
 Recommended settings:
 
 ```text
