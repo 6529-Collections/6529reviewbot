@@ -2,9 +2,13 @@
 
 const crypto = require("crypto");
 const { requestorForEvent } = require("./admission-policy.cjs");
-const { loadRepositoryConfigForEvent } = require("./repository-config.cjs");
+const {
+  loadRepositoryConfigForEvent,
+  repositoryConfigPolicyFromEnv,
+} = require("./repository-config.cjs");
 
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
+const DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS = 10000;
 const DEFAULT_JWT_TTL_SECONDS = 540;
 const DEFAULT_TOKEN_REFRESH_BUFFER_SECONDS = 60;
 
@@ -27,6 +31,11 @@ function githubAppAuthSettingsFromEnv(env = process.env) {
       DEFAULT_JWT_TTL_SECONDS,
       "REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS"
     ),
+    fetchTimeoutMs: positiveInt(
+      env.REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS,
+      DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS,
+      "REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS"
+    ),
     tokenRefreshBufferSeconds: positiveInt(
       env.REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS,
       DEFAULT_TOKEN_REFRESH_BUFFER_SECONDS,
@@ -43,6 +52,8 @@ function createGitHubAppIntegration(options = {}) {
   const settings = options.settings || githubAppAuthSettingsFromEnv(options.env);
   const fetchImpl = options.fetchImpl || fetch;
   const tokenCache = new Map();
+  const fetchWithGitHubAppTimeout = (url, requestOptions) =>
+    fetchWithTimeout(fetchImpl, url, requestOptions, settings.fetchTimeoutMs);
 
   async function getInstallationToken(installationId) {
     if (!isGitHubAppAuthConfigured(settings)) {
@@ -59,10 +70,15 @@ function createGitHubAppIntegration(options = {}) {
       return cached.token;
     }
 
-    const response = await githubFetchJson(fetchImpl, `${settings.apiUrl}/app/installations/${installationId}/access_tokens`, {
-      method: "POST",
-      headers: githubHeaders(createGitHubAppJwt(settings)),
-    });
+    const response = await githubFetchJson(
+      fetchImpl,
+      `${settings.apiUrl}/app/installations/${installationId}/access_tokens`,
+      {
+        method: "POST",
+        headers: githubHeaders(createGitHubAppJwt(settings)),
+      },
+      settings.fetchTimeoutMs
+    );
     if (!response.token) {
       throw new Error("GitHub installation token response did not include a token.");
     }
@@ -88,7 +104,12 @@ function createGitHubAppIntegration(options = {}) {
       const token = await getInstallationToken(event.installationId);
       const permission = await readCollaboratorPermission(fetchImpl, settings, token, event.repository.fullName, login);
       const org = ownerFromRepo(event.repository.fullName);
-      const isOrgMember = await readOrgMembership(fetchImpl, settings, token, org, login);
+      let isOrgMember = false;
+      try {
+        isOrgMember = await readOrgMembership(fetchImpl, settings, token, org, login);
+      } catch {
+        isOrgMember = false;
+      }
       return {
         ...base,
         permission,
@@ -101,10 +122,20 @@ function createGitHubAppIntegration(options = {}) {
   }
 
   async function loadRepositoryConfig(event, options = {}) {
+    const policy = options.policy || repositoryConfigPolicyFromEnv(options.env);
+    if (policy.source === "none") {
+      return await loadRepositoryConfigForEvent(event, {
+        ...options,
+        policy,
+        fetchImpl: fetchWithGitHubAppTimeout,
+      });
+    }
+
     const token = await getInstallationToken(event.installationId);
     return await loadRepositoryConfigForEvent(event, {
       ...options,
-      fetchImpl,
+      policy,
+      fetchImpl: fetchWithGitHubAppTimeout,
       githubToken: token,
     });
   }
@@ -138,9 +169,14 @@ function createGitHubAppJwt(settings = githubAppAuthSettingsFromEnv(), now = new
 async function readCollaboratorPermission(fetchImpl, settings, token, repoFullName, login) {
   const [owner, repo] = splitRepo(repoFullName);
   const url = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/collaborators/${encodeURIComponent(login)}/permission`;
-  const response = await fetchImpl(url, {
-    headers: githubHeaders(token),
-  });
+  const response = await fetchWithTimeout(
+    fetchImpl,
+    url,
+    {
+      headers: githubHeaders(token),
+    },
+    settings.fetchTimeoutMs
+  );
   if (response.status === 404) {
     return "none";
   }
@@ -156,9 +192,14 @@ async function readOrgMembership(fetchImpl, settings, token, org, login) {
     return false;
   }
   const url = `${settings.apiUrl}/orgs/${encodeURIComponent(org)}/members/${encodeURIComponent(login)}`;
-  const response = await fetchImpl(url, {
-    headers: githubHeaders(token),
-  });
+  const response = await fetchWithTimeout(
+    fetchImpl,
+    url,
+    {
+      headers: githubHeaders(token),
+    },
+    settings.fetchTimeoutMs
+  );
   if (response.status === 204) {
     return true;
   }
@@ -171,12 +212,34 @@ async function readOrgMembership(fetchImpl, settings, token, org, login) {
   return false;
 }
 
-async function githubFetchJson(fetchImpl, url, options) {
-  const response = await fetchImpl(url, options);
+async function githubFetchJson(fetchImpl, url, options, timeoutMs) {
+  const response = await fetchWithTimeout(fetchImpl, url, options, timeoutMs);
   if (!response.ok) {
     throw new Error(`GitHub API returned HTTP ${response.status}.`);
   }
   return await response.json();
+}
+
+async function fetchWithTimeout(fetchImpl, url, options = {}, timeoutMs = DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  if (typeof timeout.unref === "function") {
+    timeout.unref();
+  }
+
+  try {
+    return await fetchImpl(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (controller.signal.aborted || error?.name === "AbortError") {
+      throw new Error(`GitHub API request timed out after ${timeoutMs}ms.`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function githubHeaders(token) {
@@ -231,6 +294,7 @@ function positiveInt(value, fallback, name) {
 }
 
 module.exports = {
+  DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS,
   DEFAULT_GITHUB_API_URL,
   createGitHubAppIntegration,
   createGitHubAppJwt,

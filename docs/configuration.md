@@ -32,6 +32,7 @@ REVIEWBOT_GITHUB_APP_ID=
 REVIEWBOT_GITHUB_APP_PRIVATE_KEY=
 REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_GITHUB_APP_API_URL=https://api.github.com
+REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS=540
 REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS=60
 ```
@@ -39,7 +40,8 @@ REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS=60
 When the App id and private key are configured, `bin/server.cjs` resolves actor
 repository permissions and repository config through GitHub App installation
 tokens. The private key may be supplied as a PEM string with escaped newlines or
-as base64.
+as base64. GitHub API calls made by this auth bridge use the configured timeout
+and fail closed when token or collaborator-permission reads cannot complete.
 
 ## Admission Policy
 
@@ -151,7 +153,8 @@ GITHUB_TOKEN=
 
 The default source is `none`, which means the App uses central policy only.
 Production GitHub App deployments should set `REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github`
-after an installation-token path is wired in.
+after an installation-token path is wired in. When the source is `none`, the App
+does not mint an installation token for repository config loading.
 
 Repository config is intentionally not a second source of unlimited authority.
 It can disable the bot, narrow review kinds, select from centrally allowed

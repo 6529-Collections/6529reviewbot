@@ -153,15 +153,18 @@ const githubAppKey = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 }).
 const githubAppPrivateKey = githubAppKey.export({ type: "pkcs1", format: "pem" });
 const githubAppSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
   REVIEWBOT_GITHUB_APP_ID: "12345",
+  REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS: "5000",
   REVIEWBOT_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
 });
 assert.equal(githubAppAuth.isGitHubAppAuthConfigured(githubAppSettings), true);
+assert.equal(githubAppSettings.fetchTimeoutMs, 5000);
 assert.equal(githubAppAuth.createGitHubAppJwt(githubAppSettings).split(".").length, 3);
 const githubAppConfigText = Buffer.from("enabled: false\n").toString("base64");
 const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
   settings: githubAppSettings,
   fetchImpl: async (url, options = {}) => {
     const urlText = String(url);
+    assert.equal(typeof options.signal?.aborted, "boolean");
     if (urlText.endsWith("/app/installations/99/access_tokens")) {
       assert.match(options.headers.authorization, /^Bearer /);
       return {
@@ -198,6 +201,41 @@ const githubActorContextPromise = githubAppIntegration.resolveActorContext(norma
 const githubRepoConfigPromise = githubAppIntegration.loadRepositoryConfig(normalizedPullRequest, {
   policy: repositoryConfig.repositoryConfigPolicyFromEnv({
     REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
+  }),
+});
+const githubMembershipFailurePromise = githubAppAuth.createGitHubAppIntegration({
+  settings: githubAppSettings,
+  fetchImpl: async (url, options = {}) => {
+    const urlText = String(url);
+    assert.equal(typeof options.signal?.aborted, "boolean");
+    if (urlText.endsWith("/app/installations/99/access_tokens")) {
+      return {
+        ok: true,
+        status: 201,
+        json: async () => ({ token: "installation-token" }),
+      };
+    }
+    if (urlText.includes("/collaborators/maintainer/permission")) {
+      return { ok: true, status: 200, json: async () => ({ permission: "write" }) };
+    }
+    if (urlText.includes("/orgs/6529-Collections/members/maintainer")) {
+      return { ok: false, status: 500, json: async () => ({}) };
+    }
+    return { ok: false, status: 404, json: async () => ({}) };
+  },
+}).resolveActorContext(normalizedPullRequest);
+let disabledConfigRequestedToken = false;
+const disabledGithubRepoConfigPromise = githubAppAuth.createGitHubAppIntegration({
+  settings: githubAppSettings,
+  fetchImpl: async (url) => {
+    if (String(url).endsWith("/app/installations/99/access_tokens")) {
+      disabledConfigRequestedToken = true;
+    }
+    return { ok: false, status: 500, json: async () => ({}) };
+  },
+}).loadRepositoryConfig(normalizedPullRequest, {
+  policy: repositoryConfig.repositoryConfigPolicyFromEnv({
+    REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "none",
   }),
 });
 
@@ -784,9 +822,16 @@ appServer.handleGitHubWebhook({
   assert.equal(githubActorContext.login, "maintainer");
   assert.equal(githubActorContext.permission, "write");
   assert.equal(githubActorContext.isOrgMember, true);
+  const githubMembershipFailureContext = await githubMembershipFailurePromise;
+  assert.equal(githubMembershipFailureContext.permission, "write");
+  assert.equal(githubMembershipFailureContext.isOrgMember, false);
+  assert.deepEqual(githubMembershipFailureContext.organizations, []);
   const githubRepoConfig = await githubRepoConfigPromise;
   assert.equal(githubRepoConfig.status, "loaded");
   assert.equal(githubRepoConfig.config.enabled, false);
+  const disabledGithubRepoConfig = await disabledGithubRepoConfigPromise;
+  assert.equal(disabledGithubRepoConfig.status, "not_configured");
+  assert.equal(disabledConfigRequestedToken, false);
   const loadedRepoConfig = await loadedRepoConfigPromise;
   assert.equal(loadedRepoConfig.status, "loaded");
   assert.equal(loadedRepoConfig.config.enabled, false);

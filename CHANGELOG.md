@@ -17,6 +17,7 @@ stabilized.
   and comment-command events.
 - GitHub App installation-token handling for repository config reads and actor
   permission resolution.
+- Timeout handling and fail-closed hardening for GitHub App API calls.
 - Trusted-actor admission for public repositories.
 - Budget admission against the isolated AWS usage ledger.
 - Review job fanout across review kinds and provider/model lanes.

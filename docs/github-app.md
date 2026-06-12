@@ -56,6 +56,7 @@ REVIEWBOT_GITHUB_APP_ID=
 REVIEWBOT_GITHUB_APP_PRIVATE_KEY=
 REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_GITHUB_APP_API_URL=https://api.github.com
+REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS=10000
 ```
 
 When configured, the server creates short-lived GitHub App JWTs, exchanges them
@@ -70,7 +71,8 @@ allowing the central App to enforce trusted-actor admission.
 
 Repository collaborator permission is the primary trusted-actor signal. Org
 membership is best-effort and depends on the App installation having enough
-organization visibility.
+organization visibility. A failed org-membership lookup does not erase a
+successfully resolved collaborator permission.
 
 ## Supported Events
 
