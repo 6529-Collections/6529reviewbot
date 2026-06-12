@@ -368,3 +368,15 @@
     behavior, and App server loader forwarding;
   - README, configuration, usage API, deployment, job-ledger, architecture,
     changelog, roadmap, and manager-memory updates.
+- Merged `6529reviewbot` PR #38 as `283b9d3` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/admin-status-api` increment:
+  - admin-only `GET /api/admin/status` route with `server` and `worker`
+    profile selection plus optional strict mode;
+  - production server wiring to the existing no-network preflight checks;
+  - smoke coverage for direct handler behavior, query validation, and App
+    server loader forwarding;
+  - README, configuration, usage API, deployment, operations, release
+    readiness, v0 release plan, changelog, roadmap, and manager-memory
+    updates.

@@ -4,6 +4,7 @@ const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
+const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
 const DEFAULT_DAYS = 30;
 const DEFAULT_MAX_DAYS = 365;
 const DEFAULT_MAX_ITEMS = 50;
@@ -18,6 +19,7 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
     adminJobEventsPath:
       env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
+    adminStatusPath: env.REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH || DEFAULT_ADMIN_STATUS_PATH,
     defaultDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_DEFAULT_DAYS, DEFAULT_DAYS, "REVIEWBOT_USAGE_API_DEFAULT_DAYS"),
     maxDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_DAYS, DEFAULT_MAX_DAYS, "REVIEWBOT_USAGE_API_MAX_DAYS"),
     maxItems: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_ITEMS, DEFAULT_MAX_ITEMS, "REVIEWBOT_USAGE_API_MAX_ITEMS"),
@@ -33,6 +35,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminSummaryPath,
     settings.adminBudgetPoliciesPath,
     settings.adminJobEventsPath,
+    settings.adminStatusPath,
   ].includes(pathname);
 }
 
@@ -103,6 +106,30 @@ async function handleUsageApiRequest(request, options = {}) {
     };
   }
 
+  if (route.kind === "runtime_status") {
+    const query = adminStatusQueryFromRequest(request);
+    const result = await (options.loadAdminStatus || defaultLoadAdminStatus)({
+      request,
+      settings,
+      query,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Runtime status is unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "runtime_status",
+        generatedAt: new Date().toISOString(),
+        profile: query.profile,
+        strict: query.strict,
+        preflight: result.preflight || result.status || null,
+      },
+    };
+  }
+
   const range = usageRangeFromRequest(request, settings, options.now || new Date());
   const result = await (options.loadUsageEvents || defaultLoadUsageEvents)({
     request,
@@ -143,6 +170,9 @@ function usageApiRoute(pathname, settings) {
   if (pathname === settings.adminJobEventsPath) {
     return { visibility: "admin", kind: "job_events" };
   }
+  if (pathname === settings.adminStatusPath) {
+    return { visibility: "admin", kind: "runtime_status" };
+  }
   return null;
 }
 
@@ -172,6 +202,19 @@ function usageRangeFromRequest(request, settings, now) {
   };
 }
 
+function adminStatusQueryFromRequest(request) {
+  const profile = String(request.url.searchParams.get("profile") || "server").trim();
+  if (!["server", "worker"].includes(profile)) {
+    const error = new Error("profile must be one of: server, worker.");
+    error.statusCode = 400;
+    throw error;
+  }
+  return {
+    profile,
+    strict: parseQueryBool(request.url.searchParams.get("strict")),
+  };
+}
+
 function jobEventsQueryFromRequest(request, settings) {
   const requestedLimit = request.url.searchParams.get("limit");
   let limit;
@@ -195,6 +238,13 @@ function jobEventsQueryFromRequest(request, settings) {
     throw error;
   }
   return { limit, status };
+}
+
+function parseQueryBool(value) {
+  if (value === null || value === undefined || value === "") {
+    return false;
+  }
+  return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }
 
 function summarizeUsageEvents(events, options = {}) {
@@ -442,6 +492,13 @@ async function defaultLoadJobEvents() {
   };
 }
 
+async function defaultLoadAdminStatus() {
+  return {
+    unavailable: true,
+    reason: "No runtime status loader configured.",
+  };
+}
+
 function parseBool(value) {
   return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }
@@ -467,8 +524,10 @@ function positiveIntEnv(value, fallback, name) {
 module.exports = {
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
+  DEFAULT_ADMIN_STATUS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
+  adminStatusQueryFromRequest,
   handleUsageApiRequest,
   isUsageApiPath,
   jobEventsQueryFromRequest,

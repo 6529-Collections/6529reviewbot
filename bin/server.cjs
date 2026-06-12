@@ -23,6 +23,7 @@ const {
   runControlLedgerSettingsFromEnv,
   updateRunClaimStatus,
 } = require("../src/run-control-ledger.cjs");
+const { runPreflight } = require("../src/preflight.cjs");
 const {
   createUsageApiLedgerLoaders,
   usageApiLedgerLoadersFromEnv,
@@ -35,6 +36,12 @@ if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
 }
 
 const serverOptions = {};
+serverOptions.loadAdminStatus = async ({ query }) => ({
+  preflight: runPreflight({
+    profile: query.profile,
+    strict: query.strict,
+  }),
+});
 const usageApiReadersEnabled = parseBool(process.env.REVIEW_USAGE_ENABLED || "false");
 if (usageApiReadersEnabled) {
   Object.assign(serverOptions, usageApiLedgerLoadersFromEnv());

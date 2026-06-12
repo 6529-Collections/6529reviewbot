@@ -96,6 +96,7 @@ function createReviewbotServer(options = {}) {
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
         loadJobEvents: options.loadJobEvents,
+        loadAdminStatus: options.loadAdminStatus,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
         logger,
       });
@@ -132,6 +133,7 @@ async function handleHttpRequest(request, options) {
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
         loadJobEvents: options.loadJobEvents,
+        loadAdminStatus: options.loadAdminStatus,
         authorizeAdmin: options.authorizeUsageApiAdmin,
       }
     );

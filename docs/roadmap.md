@@ -126,6 +126,7 @@ Recommended split:
   - private repo detail;
   - budget policies;
   - alert recipients and thresholds;
+  - runtime configuration warnings;
   - pause/disable controls for org, repo, provider, model, and review kind;
   - recent raw usage events and failed jobs through admin-only bot APIs;
   - emergency kill switch.
@@ -283,6 +284,7 @@ Completed in `6529reviewbot`:
 - run-control claim status updates after dispatch attempts and worker
   completion;
 - public and admin usage API contracts;
+- admin runtime status API backed by no-network preflight checks;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

@@ -11,6 +11,7 @@ GET /api/public/usage/summary?days=30
 GET /api/admin/usage/summary?days=30
 GET /api/admin/budget/policies
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
+GET /api/admin/status?profile=server&strict=false
 ```
 
 The default paths can be changed with:
@@ -20,6 +21,7 @@ REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
+REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
 ```
 
 ## Public Summary
@@ -71,6 +73,18 @@ server-side infrastructure. See
 
 The endpoint is admin-only because it may reveal private repo names, requester
 scopes, or operational budget controls.
+
+## Runtime Status
+
+`GET /api/admin/status` returns the no-network runtime preflight snapshot for
+private operator dashboards. It accepts:
+
+- `profile`: `server` or `worker`; defaults to `server`;
+- `strict`: when true, warnings make the preflight `ok` field false.
+
+The response deliberately reports configuration posture and secret presence
+only. It must never include provider keys, GitHub App private keys, webhook
+secrets, AWS credentials, database passwords, or raw webhook payloads.
 
 ## Job Events
 
@@ -128,6 +142,7 @@ The HTTP server accepts injectable loaders:
 loadUsageEvents({ request, settings, range, visibility })
 loadBudgetPolicies({ request, settings })
 loadJobEvents({ request, settings, query })
+loadAdminStatus({ request, settings, query })
 authorizeUsageApiAdmin(request)
 ```
 

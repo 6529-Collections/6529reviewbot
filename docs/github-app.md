@@ -13,6 +13,7 @@ GET  /api/public/usage/summary
 GET  /api/admin/usage/summary
 GET  /api/admin/budget/policies
 GET  /api/admin/jobs/recent
+GET  /api/admin/status
 ```
 
 `GET /healthz` returns a basic health response.
@@ -21,8 +22,8 @@ GET  /api/admin/jobs/recent
 changed with `REVIEWBOT_WEBHOOK_PATH`.
 
 The usage API paths are configurable and are intended for 6529.io dashboards.
-Admin usage routes and job diagnostics require an injected authorizer before
-they return data.
+Admin usage routes, job diagnostics, and runtime status require an injected
+authorizer before they return data.
 
 ## Required Environment
 

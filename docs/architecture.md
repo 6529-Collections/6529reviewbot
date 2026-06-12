@@ -140,6 +140,10 @@ worker diagnostics. Those rows are private operator data because they can name
 private repositories, requestors, exact provider/model routes, and dispatch
 failure reasons.
 
+Private admin status exposes the same no-network preflight checks used by the
+CLI so 6529.io can show warnings without receiving secrets or direct
+environment access.
+
 The API does not expose Aurora credentials, provider keys, GitHub App secrets,
 or raw provider responses to browser clients.
 
