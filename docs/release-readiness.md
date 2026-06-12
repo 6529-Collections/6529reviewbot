@@ -39,6 +39,7 @@ Ready for community review:
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
 - documented maintainer comment-command contract;
+- installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and central worker template that mints
   short-lived GitHub App installation tokens.
 - machine-readable v0 release gates and checklist renderer.

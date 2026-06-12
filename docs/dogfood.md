@@ -4,6 +4,8 @@ Use this runbook to enable `6529bot` on the first 6529 repositories without
 moving provider keys, AWS credentials, or bot implementation code into target
 repositories.
 
+For end-to-end setup order, see [install.md](install.md).
+
 ## Goals
 
 - Prove the central GitHub App event path on real PRs.
@@ -129,6 +131,8 @@ Fast rollback options, from narrowest to broadest:
 
 - set `enabled: false` in `.github/6529bot.yml`;
 - set repo-level budget caps to `0`;
+- set central `REVIEWBOT_DISABLED_REPOS=<owner/repo>`;
+- set central `REVIEWBOT_ENABLED=false`;
 - set central `REVIEWBOT_WORKER_ADAPTER=noop`;
 - set central `REVIEWBOT_PUBLIC_REPO_MODE=off`;
 - uninstall the GitHub App from the target repo;

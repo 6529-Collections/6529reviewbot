@@ -4,6 +4,9 @@ This runbook describes the intended production shape for `6529bot`: a central
 GitHub App server plus controlled worker execution from the bot repository or
 another 6529-owned runtime.
 
+For an ordered first-install path, start with
+[install.md](install.md), then return here for production details.
+
 ## GitHub App Registration
 
 Create a GitHub App named `6529bot`.

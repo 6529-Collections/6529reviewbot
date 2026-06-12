@@ -65,6 +65,7 @@ AGENTS.md                    Instructions for coding agents working here
 ## Documentation Map
 
 - [Architecture](docs/architecture.md): system boundaries and trust model.
+- [Installation](docs/install.md): central App setup and target repo onboarding.
 - [Configuration](docs/configuration.md): central runtime settings.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
