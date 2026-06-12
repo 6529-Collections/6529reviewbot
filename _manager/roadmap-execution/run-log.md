@@ -238,3 +238,14 @@
   - smoke coverage validates SQL rendering, invalid schema rejection, mocked
     apply execution, and CLI argument parsing;
   - docs and release gates now reference `npm run ledger:schema`.
+- Merged `6529reviewbot` PR #25 as `0ffd197` after CI and Dependency Review
+  passed; CodeRabbit stayed in pending with no review threads, and the normal
+  merge path allowed the merge.
+- Started `codex/production-preflight` increment:
+  - `src/preflight.cjs` validates runtime settings without network calls;
+  - `bin/preflight.cjs` exposes text and JSON output plus strict mode;
+  - smoke coverage validates success-with-warnings, strict mode, missing
+    webhook secret handling, CLI parsing, and local-worker provider key checks;
+  - README, configuration, deployment, operations, release, security checklist,
+    v0 plan, release notes template, roadmap, changelog, and manager memory
+    mention `npm run preflight`.

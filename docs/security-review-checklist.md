@@ -59,6 +59,8 @@ Target deployment:
 ## Required Evidence
 
 - `npm run release:check`
+- `npm run preflight -- -- --strict` in the release candidate environment, or a
+  documented acceptance of each warning.
 - CI passed on the release PR or tag.
 - Dependency Review passed.
 - OpenSSF Scorecard completed and findings were reviewed.

@@ -19,6 +19,7 @@ After stabilization:
 - [Release readiness](release-readiness.md) reviewed
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - `npm run release:check`
+- `npm run preflight -- -- --strict` in the release candidate environment
 - docs updated
 - workflow pins reviewed
 - security model reviewed for trust-boundary changes

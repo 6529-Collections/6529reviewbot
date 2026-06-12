@@ -19,6 +19,8 @@ const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
+const preflight = require("../src/preflight.cjs");
+const preflightCli = require("../bin/preflight.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -171,6 +173,37 @@ assert.equal(appliedSchemaStatements, ledgerSchema.ledgerSchemaStatements("revie
 assert.deepEqual(
   applyLedgerSchemaCli.parseArgs(["--schema", "reviewbot", "--apply"]),
   { apply: true, schema: "reviewbot" }
+);
+const preflightEnv = {
+  GITHUB_WEBHOOK_SECRET: "secret",
+  REVIEW_PROVIDER: "anthropic",
+  REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8",
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "false",
+  REVIEWBOT_JOB_LEDGER_ENABLED: "false",
+  REVIEWBOT_ALERTS_ENABLED: "false",
+  REVIEWBOT_ADMIN_AUTH_MODE: "disabled",
+};
+const preflightResult = preflight.runPreflight({ env: preflightEnv });
+assert.equal(preflightResult.ok, true);
+assert.equal(preflightResult.errors.length, 0);
+assert(preflightResult.warnings.some((warning) => warning.name === "worker_adapter"));
+assert.equal(preflight.runPreflight({ env: preflightEnv, strict: true }).ok, false);
+assert.equal(preflight.runPreflight({ env: {} }).errors[0].name, "webhook");
+assert.match(preflight.formatPreflightResult(preflightResult), /preflight: ok/);
+assert.deepEqual(
+  preflightCli.parseArgs(["--profile", "worker", "--json", "--strict"]),
+  { json: true, profile: "worker", strict: true }
+);
+assert(
+  preflight
+    .runPreflight({
+      env: {
+        ...preflightEnv,
+        REVIEWBOT_WORKER_ADAPTER: "local",
+      },
+    })
+    .errors.some((error) => error.name === "provider_keys")
 );
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),

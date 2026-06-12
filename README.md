@@ -96,6 +96,12 @@ Run the full release gate:
 npm run release:check
 ```
 
+Validate central runtime configuration without network calls:
+
+```bash
+npm run preflight
+```
+
 Review the pre-v1 release boundary before tagging:
 
 ```bash
@@ -282,7 +288,7 @@ dispatch audit events.
 From a configured operator environment, apply the schema explicitly with:
 
 ```bash
-npm run ledger:schema -- --apply
+npm run ledger:schema -- -- --apply
 ```
 
 ## Security Model

@@ -32,6 +32,7 @@ stabilized.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
   fanout diagnostics.
 - Dry-run-by-default ledger schema CLI for Aurora setup and repair.
+- No-network production preflight CLI for runtime configuration validation.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.
 - Production deployment runbook for GitHub App, worker, usage API, and 6529.io

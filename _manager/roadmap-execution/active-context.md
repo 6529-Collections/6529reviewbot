@@ -38,9 +38,10 @@ merged PRs.
 - Webhook replay diagnostics PR: merged as PR #22, merge commit `ea7a118`
 - Model catalog defaults PR: merged as PR #23, merge commit `8cba107`
 - Job lifecycle ledger PR: merged as PR #24, merge commit `91701f2`
-- Current branch: `codex/ledger-schema-tooling`
-- Current local changes: repeatable Aurora ledger schema module, dry-run/apply
-  CLI, smoke coverage, and operator docs
+- Ledger schema tooling PR: merged as PR #25, merge commit `0ffd197`
+- Current branch: `codex/production-preflight`
+- Current local changes: no-network runtime preflight CLI, smoke coverage, and
+  operator/release docs
 
 ## Key Decisions
 
@@ -62,6 +63,8 @@ merged PRs.
   provider usage/cost rows.
 - Ledger schema changes should go through the repeatable schema CLI and release
   docs, not only hand-written SQL snippets in prose.
+- Deployment readiness should be checkable without network calls before
+  operators start the central App or worker.
 
 ## Constraints
 
@@ -73,11 +76,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate and publish the ledger schema tooling PR.
-2. Monitor bot feedback and merge the schema tooling PR if clean.
+1. Validate and publish the production preflight PR.
+2. Monitor bot feedback and merge the preflight PR if clean.
 3. Continue dogfood target-repo PRs once required human review completes.
-4. Prepare the next release-polish or operator-readiness slice after the schema
-   tooling PR lands.
+4. Prepare the next release-polish or operator-readiness slice after the
+   preflight PR lands.
 
 ## Open Risks
 

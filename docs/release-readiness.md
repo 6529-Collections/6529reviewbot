@@ -24,6 +24,7 @@ Ready for community review:
 - repeatable Aurora ledger schema tooling;
 - 6529.io admin auth bridge contract;
 - scheduled spend alerts with stdout, webhook, and SNS delivery;
+- no-network production preflight command;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
 - production deployment runbook and central worker template that mints

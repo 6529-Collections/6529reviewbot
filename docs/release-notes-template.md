@@ -22,6 +22,7 @@ repositories.
 - Public-repo trusted-actor admission before model calls.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
 - Dry-run-by-default Aurora ledger schema tooling.
+- No-network production preflight command.
 - Public/admin usage API contracts for 6529.io surfaces.
 
 ## Tested Configuration
@@ -35,6 +36,7 @@ repositories.
 - Ledger schema status:
 - Alert delivery:
 - 6529.io dashboard/admin status:
+- Preflight result:
 
 ## Safety Requirements
 
@@ -73,6 +75,7 @@ before updating.
 ## Validation
 
 - `npm run release:check`:
+- `npm run preflight -- -- --strict`:
 - CI:
 - Dependency Review:
 - OpenSSF Scorecard:
