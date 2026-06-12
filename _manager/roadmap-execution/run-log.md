@@ -1503,3 +1503,24 @@
   - `npm run check:docs` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #119 as `8b96e77` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review threads marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27448713252`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27448713256`, completed successfully.
+- Local clean-main validation after PR #119 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-budget-status` increment:
+  - add an admin-only `GET /api/admin/budget/status` endpoint for current
+    daily, weekly, and monthly utilization per enabled central budget policy;
+  - add a grouped Aurora usage ledger reader so dashboards do not duplicate
+    budget scope logic or read Aurora directly;
+  - update OpenAPI, configuration docs, usage API docs, release readiness,
+    roadmap, changelog, and manager memory.
+- Focused local validation for `codex/admin-budget-status`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `npm run check:docs` passed;
+  - `git diff --check` passed.
+- Final local validation for `codex/admin-budget-status`:
+  - `npm run release:check` passed.

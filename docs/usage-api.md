@@ -15,6 +15,7 @@ GET /api/public/usage/summary?days=30
 GET /api/admin/usage/summary?days=30
 GET /api/admin/usage/events/recent?days=7&limit=50
 GET /api/admin/budget/policies
+GET /api/admin/budget/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 GET /api/admin/status?profile=server&strict=false
@@ -27,6 +28,7 @@ REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_USAGE_EVENTS_PATH=/api/admin/usage/events/recent
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
+REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH=/api/admin/budget/status
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
 REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
@@ -151,6 +153,56 @@ Example response:
 
 The endpoint is admin-only because it may reveal private repo names, requester
 scopes, or operational budget controls.
+
+`GET /api/admin/budget/status` returns those same enabled budget policy rows
+with current daily, weekly, and monthly spend/utilization:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "budget_status",
+  "generatedAt": "2026-06-12T12:00:00.000Z",
+  "policies": [
+    {
+      "scopeType": "repo",
+      "scopeValue": "6529-Collections/6529reviewbot",
+      "dailyBudgetUsd": 25,
+      "weeklyBudgetUsd": null,
+      "monthlyBudgetUsd": 500,
+      "enabled": true,
+      "utilization": {
+        "daily": {
+          "budgetUsd": 25,
+          "usedUsd": 18,
+          "remainingUsd": 7,
+          "percentUsed": 72,
+          "overBudget": false
+        },
+        "weekly": {
+          "budgetUsd": null,
+          "usedUsd": 42,
+          "remainingUsd": null,
+          "percentUsed": null,
+          "overBudget": false
+        },
+        "monthly": {
+          "budgetUsd": 500,
+          "usedUsd": 140,
+          "remainingUsd": 360,
+          "percentUsed": 28,
+          "overBudget": false
+        }
+      }
+    }
+  ]
+}
+```
+
+Use budget status for private admin dashboards and warning banners. It keeps
+the utilization calculation bot-side, where the same ledger scope rules used by
+budget admission are available. The browser should still receive this through
+server-side 6529.io admin auth, not by reading Aurora directly.
 
 ## Runtime Status
 

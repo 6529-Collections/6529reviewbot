@@ -6,6 +6,7 @@ const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_USAGE_EVENTS_PATH = "/api/admin/usage/events/recent";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
+const DEFAULT_ADMIN_BUDGET_STATUS_PATH = "/api/admin/budget/status";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
 const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
@@ -31,6 +32,8 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_USAGE_EVENTS_PATH || DEFAULT_ADMIN_USAGE_EVENTS_PATH,
     adminBudgetPoliciesPath:
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
+    adminBudgetStatusPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH || DEFAULT_ADMIN_BUDGET_STATUS_PATH,
     adminJobEventsPath:
       env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
     adminRunClaimsPath:
@@ -51,6 +54,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminSummaryPath,
     settings.adminUsageEventsPath,
     settings.adminBudgetPoliciesPath,
+    settings.adminBudgetStatusPath,
     settings.adminJobEventsPath,
     settings.adminRunClaimsPath,
     settings.adminStatusPath,
@@ -97,6 +101,23 @@ async function handleUsageApiRequest(request, options = {}) {
         visibility: "admin",
         kind: "budget_policies",
         policies: (result.policies || []).map(publicBudgetPolicy),
+      },
+    };
+  }
+
+  if (route.kind === "budget_status") {
+    const result = await (options.loadBudgetStatus || defaultLoadBudgetStatus)({ request, settings });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Budget status is unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "budget_status",
+        generatedAt: new Date().toISOString(),
+        policies: (result.policies || []).map(publicBudgetPolicyStatus),
       },
     };
   }
@@ -240,6 +261,9 @@ function usageApiRoute(pathname, settings) {
   }
   if (pathname === settings.adminBudgetPoliciesPath) {
     return { visibility: "admin", kind: "budget_policies" };
+  }
+  if (pathname === settings.adminBudgetStatusPath) {
+    return { visibility: "admin", kind: "budget_status" };
   }
   if (pathname === settings.adminJobEventsPath) {
     return { visibility: "admin", kind: "job_events" };
@@ -599,12 +623,46 @@ function normalizeJobMetadata(value) {
 
 function publicBudgetPolicy(policy = {}) {
   return {
-    scopeType: policy.scopeType || policy.scope_type || "",
-    scopeValue: policy.scopeValue || policy.scope_value || "",
+    scopeType: adminText(policy.scopeType || policy.scope_type || "", 80),
+    scopeValue: adminText(policy.scopeValue || policy.scope_value || ""),
     dailyBudgetUsd: nullableNumber(policy.dailyBudgetUsd ?? policy.daily_budget_usd),
     weeklyBudgetUsd: nullableNumber(policy.weeklyBudgetUsd ?? policy.weekly_budget_usd),
     monthlyBudgetUsd: nullableNumber(policy.monthlyBudgetUsd ?? policy.monthly_budget_usd),
     enabled: policy.enabled !== false,
+  };
+}
+
+function publicBudgetPolicyStatus(policy = {}) {
+  const base = publicBudgetPolicy(policy);
+  const currentSpend = policy.currentSpend || policy.current_spend || policy.spend || {};
+  return {
+    ...base,
+    utilization: {
+      daily: budgetPeriodStatus(
+        base.dailyBudgetUsd,
+        currentSpend.dailyUsd ?? currentSpend.daily_usd
+      ),
+      weekly: budgetPeriodStatus(
+        base.weeklyBudgetUsd,
+        currentSpend.weeklyUsd ?? currentSpend.weekly_usd
+      ),
+      monthly: budgetPeriodStatus(
+        base.monthlyBudgetUsd,
+        currentSpend.monthlyUsd ?? currentSpend.monthly_usd
+      ),
+    },
+  };
+}
+
+function budgetPeriodStatus(budgetUsd, usedUsd) {
+  const budget = nullableNumber(budgetUsd);
+  const used = nullableNumber(usedUsd) ?? 0;
+  return {
+    budgetUsd: budget,
+    usedUsd: roundUsd(used),
+    remainingUsd: budget === null ? null : roundUsd(budget - used),
+    percentUsed: budget && budget > 0 ? roundPercent((used / budget) * 100) : null,
+    overBudget: budget !== null && used > budget,
   };
 }
 
@@ -711,6 +769,10 @@ function roundUsd(value) {
   return Math.round(Number(value || 0) * 1000000) / 1000000;
 }
 
+function roundPercent(value) {
+  return Math.round(Number(value || 0) * 100) / 100;
+}
+
 function unavailableResponse(reason) {
   return {
     statusCode: 503,
@@ -793,6 +855,13 @@ async function defaultLoadBudgetPolicies() {
   };
 }
 
+async function defaultLoadBudgetStatus() {
+  return {
+    unavailable: true,
+    reason: "No budget status loader configured.",
+  };
+}
+
 async function defaultLoadJobEvents() {
   return {
     unavailable: true,
@@ -857,6 +926,7 @@ function positiveIntEnv(value, fallback, name) {
 }
 
 module.exports = {
+  DEFAULT_ADMIN_BUDGET_STATUS_PATH,
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
   DEFAULT_ADMIN_RUN_CLAIMS_PATH,
@@ -874,6 +944,7 @@ module.exports = {
   normalizeRunClaim,
   normalizeUsageEvent,
   publicBudgetPolicy,
+  publicBudgetPolicyStatus,
   runClaimsQueryFromRequest,
   sanitizeAdminDiagnosticPayload,
   summarizeUsageEvents,

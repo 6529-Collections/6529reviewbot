@@ -1,6 +1,9 @@
 "use strict";
 
-const { readEnabledBudgetPolicies } = require("./budget-ledger.cjs");
+const {
+  readBudgetPolicyStatus,
+  readEnabledBudgetPolicies,
+} = require("./budget-ledger.cjs");
 const {
   assertDataApiSettings,
   executeStatement,
@@ -36,6 +39,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     }),
     loadBudgetPolicies: async () => ({
       policies: readEnabledBudgetPolicies(ledgerSettings),
+    }),
+    loadBudgetStatus: async () => ({
+      policies: readBudgetPolicyStatus(ledgerSettings),
     }),
     loadJobEvents: async ({ query }) => ({
       events: readJobEvents(ledgerSettings, { query }),

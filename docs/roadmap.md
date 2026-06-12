@@ -309,6 +309,8 @@ Completed in `6529reviewbot`:
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin recent usage-events, job-events, run-claims, and runtime-status APIs
   for private 6529.io operator surfaces;
+- admin budget-status API for private budget utilization dashboards without
+  direct Aurora access from 6529.io;
 - admin runtime status is backed by no-network preflight checks;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and

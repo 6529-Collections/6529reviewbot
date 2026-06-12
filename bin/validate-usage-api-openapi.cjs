@@ -11,6 +11,7 @@ const REQUIRED_PATHS = [
   "/api/admin/usage/summary",
   "/api/admin/usage/events/recent",
   "/api/admin/budget/policies",
+  "/api/admin/budget/status",
   "/api/admin/jobs/recent",
   "/api/admin/run-claims/recent",
   "/api/admin/status",

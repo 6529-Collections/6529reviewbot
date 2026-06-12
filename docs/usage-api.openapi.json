@@ -157,6 +157,35 @@
         }
       }
     },
+    "/api/admin/budget/status": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Budget policy utilization",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget policy utilization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetStatusResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/jobs/recent": {
       "get": {
         "tags": ["Admin"],
@@ -656,6 +685,98 @@
             "type": ["number", "null"]
           },
           "enabled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BudgetStatusResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "generatedAt", "policies"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "budget_status"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BudgetPolicyStatus"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "BudgetPolicyStatus": {
+        "type": "object",
+        "required": ["scopeType", "scopeValue", "dailyBudgetUsd", "weeklyBudgetUsd", "monthlyBudgetUsd", "enabled", "utilization"],
+        "properties": {
+          "scopeType": {
+            "type": "string"
+          },
+          "scopeValue": {
+            "type": "string"
+          },
+          "dailyBudgetUsd": {
+            "type": ["number", "null"]
+          },
+          "weeklyBudgetUsd": {
+            "type": ["number", "null"]
+          },
+          "monthlyBudgetUsd": {
+            "type": ["number", "null"]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "utilization": {
+            "type": "object",
+            "required": ["daily", "weekly", "monthly"],
+            "properties": {
+              "daily": {
+                "$ref": "#/components/schemas/BudgetPeriodUtilization"
+              },
+              "weekly": {
+                "$ref": "#/components/schemas/BudgetPeriodUtilization"
+              },
+              "monthly": {
+                "$ref": "#/components/schemas/BudgetPeriodUtilization"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "BudgetPeriodUtilization": {
+        "type": "object",
+        "required": ["budgetUsd", "usedUsd", "remainingUsd", "percentUsed", "overBudget"],
+        "properties": {
+          "budgetUsd": {
+            "type": ["number", "null"]
+          },
+          "usedUsd": {
+            "type": "number"
+          },
+          "remainingUsd": {
+            "type": ["number", "null"]
+          },
+          "percentUsed": {
+            "type": ["number", "null"]
+          },
+          "overBudget": {
             "type": "boolean"
           }
         },

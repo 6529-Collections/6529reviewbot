@@ -191,11 +191,15 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin usage-events API PR: merged as PR #117, merge commit `be45716`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-evidence-checks`
-- Current local changes: starting the next production-readiness increment for
-  public-safe deployment/operator evidence checks, including a structured
-  evidence validator/renderer, example JSON, docs, release-check integration,
-  smoke coverage, and manager-memory updates.
+- Operator evidence validation PR: merged as PR #118, merge commit
+  `ed604f9`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Release candidate bundle PR: merged as PR #119, merge commit `8b96e77`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-budget-status`
+- Current local changes: adding an admin-only budget-status endpoint and
+  Aurora loader support so private 6529.io dashboards can show current daily,
+  weekly, and monthly utilization for each enabled budget policy without direct
+  browser-side database access.
 
 ## Key Decisions
 
@@ -409,6 +413,9 @@ merged PRs.
 - Private admin dashboards also need bounded recent raw usage events through
   bot-owned admin APIs; public transparency pages should stay on aggregate
   summaries with repo disclosure allowlists.
+- Private admin dashboards should use bot-owned budget-status APIs for current
+  policy utilization. Budget cap display and budget utilization warning
+  banners should not duplicate Aurora scope logic in browser code.
 - Production evidence should be structured enough to validate required
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
@@ -430,8 +437,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Continue dogfood target-repo PRs once required human review completes.
-2. Ship the release-candidate bundle/check command and docs.
+1. Ship the admin budget-status API increment and merge it if checks stay
+   green.
+2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
@@ -470,5 +478,6 @@ merged PRs.
   dispatch GitHub App, or an explicitly reviewed fallback dispatch token.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
-- Private admin UI still needs production wiring to the usage, job-events, and
-  status endpoints through the 6529.io auth bridge.
+- Private admin UI still needs production wiring to the usage, budget-status,
+  job-events, run-claims, and runtime-status endpoints through the 6529.io auth
+  bridge.
