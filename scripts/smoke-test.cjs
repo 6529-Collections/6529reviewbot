@@ -2528,6 +2528,7 @@ const runClaimsQuery = usageApiLedger.buildRunClaimsQuery("reviewbot", {
 assert.match(runClaimsQuery.sql, /ai_review_run_claims/);
 assert.match(runClaimsQuery.sql, /updated_at < cast\(:updated_before as timestamptz\)/);
 assert.match(runClaimsQuery.sql, /expires_at is null or expires_at > now\(\)/);
+assert.match(runClaimsQuery.sql, /order by updated_at desc, id desc/);
 assert.equal(runClaimsQuery.parameters[0].value.stringValue, "claimed");
 assert.equal(runClaimsQuery.parameters[3].value.longValue, 7);
 const staleRunClaimsApiQuery = usageApi.runClaimsQueryFromRequest(
@@ -2541,6 +2542,20 @@ assert.equal(staleRunClaimsApiQuery.active, true);
 assert.equal(staleRunClaimsApiQuery.staleMinutes, 120);
 assert.equal(staleRunClaimsApiQuery.updatedBefore, "2026-06-12T10:00:00.000Z");
 assert.equal(staleRunClaimsApiQuery.onlyUnexpired, true);
+const activeRunningClaimsApiQuery = usageApi.runClaimsQueryFromRequest(
+  { url: new URL("http://localhost/api/admin/run-claims/recent?active=1&status=running") },
+  usageApi.usageApiSettingsFromEnv({ REVIEWBOT_USAGE_API_MAX_ITEMS: "50" }),
+  new Date("2026-06-12T12:00:00.000Z")
+);
+assert.deepEqual(activeRunningClaimsApiQuery.statuses, ["running"]);
+assert.equal(activeRunningClaimsApiQuery.active, true);
+assert.throws(
+  () => usageApi.runClaimsQueryFromRequest(
+    { url: new URL("http://localhost/api/admin/run-claims/recent?active=1&status=completed") },
+    usageApi.usageApiSettingsFromEnv({ REVIEWBOT_USAGE_API_MAX_ITEMS: "50" })
+  ),
+  /status must be an active status/
+);
 assert.throws(() => usageApiLedger.buildJobEventsQuery("reviewbot", { limit: 0 }), /positive integer/);
 const usageApiLedgerRecord = [
   { stringValue: "2026-06-10 01:00:00+00" },

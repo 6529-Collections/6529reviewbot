@@ -1381,3 +1381,7 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #116 by making `active=true` reject
+  terminal `status` filters, documenting that rule, and ordering recent
+  run-claim ledger reads newest-first. `npm test`, `npm run check:docs`,
+  `npm run release:check`, and `git diff --check` passed again.

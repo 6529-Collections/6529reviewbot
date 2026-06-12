@@ -327,12 +327,19 @@ function runClaimsQueryFromRequest(request, settings, now = new Date()) {
 
   const explicitActive = parseQueryBool(request.url.searchParams.get("active"));
   const active = explicitActive || (!status && staleMinutes !== null);
-  const statuses = status
-    ? [status]
-    : active
-      ? ACTIVE_RUN_CLAIM_STATUSES
-      : [];
-  const onlyUnexpired = active || (status && ACTIVE_RUN_CLAIM_STATUSES.includes(status));
+  let statuses = status ? [status] : [];
+  if (active) {
+    statuses = statuses.length
+      ? statuses.filter((item) => ACTIVE_RUN_CLAIM_STATUSES.includes(item))
+      : ACTIVE_RUN_CLAIM_STATUSES;
+  }
+  if (active && status && statuses.length === 0) {
+    const error = new Error("status must be an active status when active=true.");
+    error.statusCode = 400;
+    throw error;
+  }
+  const onlyUnexpired =
+    active || (statuses.length === 1 && ACTIVE_RUN_CLAIM_STATUSES.includes(statuses[0]));
   let updatedBefore = null;
   if (staleMinutes !== null) {
     const threshold = new Date(now);

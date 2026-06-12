@@ -167,6 +167,10 @@ claims for the private 6529.io admin surface. It accepts:
 - `staleMinutes`: optional updated-before threshold. Without a `status`
   filter, setting `staleMinutes` also selects active claims.
 
+When `active=true` and `status` are both supplied, `status` must be one of the
+active claim statuses. This keeps active/stale triage from silently returning
+terminal rows such as `completed` or `failed`.
+
 The endpoint is admin-only because it can include private repository names,
 run keys, requestors, PR numbers, provider/model routing, and queue state. It
 still sanitizes loader output before responding: string fields are bounded,
