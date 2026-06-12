@@ -37,17 +37,19 @@ requests.
 
 ## Repository Status
 
-This repository is public and MIT licensed. The code is still being assembled
-for multi-repo use; the current source tree contains the standalone review
-engine, a reusable workflow scaffold, documentation, and project governance
-files. The production GitHub App trigger and centralized secret/configuration
-layer are the next pieces to finalize.
+This repository is public and MIT licensed. It is pre-v1 infrastructure: the
+core review engine, GitHub App skeleton, admission and budget policy, worker
+adapters, usage APIs, admin auth bridge, and scheduled spend alerts are present,
+but production deployment, dogfooding, and release tags are still pending.
+
+For the current release gates, see
+[docs/release-readiness.md](docs/release-readiness.md).
 
 ## Project Layout
 
 ```text
-bin/                         Thin review-mode entrypoints
-src/                         Review engine and usage-ledger code
+bin/                         Thin runtime and review-mode entrypoints
+src/                         Review engine, App, policy, ledger, and alert code
 docs/                        Architecture, configuration, operations docs
 templates/                   Caller workflow and config examples
 .github/                     Community files, issue templates, CI/security
@@ -228,6 +230,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [AWS usage ledger](docs/aws-usage-ledger.md)
 - [Operations runbook](docs/operations.md)
 - [Release process](docs/release.md)
+- [Release readiness](docs/release-readiness.md)
 
 ## Contributing
 

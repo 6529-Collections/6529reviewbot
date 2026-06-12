@@ -24,11 +24,12 @@ merged PRs.
 - Repository config PR: merged as PR #12, merge commit `6edb52d`
 - Worker execution adapters PR: merged as PR #13, merge commit `1d84b10`
 - Admin auth bridge PR: merged as PR #14, merge commit `17e6dd2`
+- Scheduled spend alerts PR: merged as PR #15, merge commit `c079b7a`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/scheduled-spend-alerts`
-- Current local changes: scheduled spend-alert evaluation, notifier adapters,
-  runner CLI, workflow template, docs, and smoke tests
+- Current branch: `codex/release-docs-sweep`
+- Current local changes: release-readiness documentation, README status,
+  changelog, roadmap, and release process updates
 
 ## Key Decisions
 
@@ -57,9 +58,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge alerting and scheduled budget-spike checks.
-2. Sweep docs for community-release readiness.
-3. Dogfood on a target repo with conservative defaults.
+1. Push and merge release-readiness documentation sweep.
+2. Dogfood on a target repo with conservative defaults.
+3. Prepare production GitHub App deployment and 6529.io wiring.
 
 ## Open Risks
 

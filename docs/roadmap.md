@@ -275,11 +275,12 @@ Completed in `6529reviewbot`:
   base-ref GitHub contents loading;
 - worker execution adapters for local workers and central GitHub Actions
   dispatch;
-- 6529.io admin auth bridge contract.
+- 6529.io admin auth bridge contract;
+- alerting and scheduled spend checks.
 
 In progress in `6529reviewbot`:
 
-- alerting and scheduled spend checks.
+- release-readiness documentation and dogfood planning.
 
 In progress outside this repository:
 
@@ -288,4 +289,5 @@ In progress outside this repository:
 
 Next implementation focus:
 
-- alerting and scheduled spend checks.
+- dogfood on a target repo with conservative limits;
+- production GitHub App deployment and 6529.io wiring.
