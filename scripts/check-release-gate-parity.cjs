@@ -15,7 +15,7 @@ function main(options = {}) {
   const requiredGateCount = requiredGateCountFromPlan(planFile);
   if (gates.gates.length !== requiredGateCount) {
     throw new Error(
-      `v0 release gate count mismatch: config has ${gates.gates.length}, docs/v0-release-plan.md has ${requiredGateCount}.`
+      `v0 release gate count mismatch: config has ${gates.gates.length}, ${planFile} has ${requiredGateCount}.`
     );
   }
   if (!options.quiet) {
@@ -29,24 +29,25 @@ function requiredGateCountFromPlan(filePath) {
   const section = between(
     text,
     "## Required Gates Before Tagging",
-    "Render the same gates as an operator checklist:"
+    "Render the same gates as an operator checklist:",
+    filePath
   );
   const gates = [...section.matchAll(/^\d+\.\s+/gm)];
   if (!gates.length) {
-    throw new Error("No numbered required gates found in docs/v0-release-plan.md.");
+    throw new Error(`No numbered required gates found in ${filePath}.`);
   }
   return gates.length;
 }
 
-function between(text, start, end) {
+function between(text, start, end, source = "input") {
   const startIndex = text.indexOf(start);
   if (startIndex === -1) {
-    throw new Error(`Missing release gate section start: ${start}`);
+    throw new Error(`Missing release gate section start in ${source}: ${start}`);
   }
   const afterStart = startIndex + start.length;
   const endIndex = text.indexOf(end, afterStart);
   if (endIndex === -1) {
-    throw new Error(`Missing release gate section end: ${end}`);
+    throw new Error(`Missing release gate section end in ${source}: ${end}`);
   }
   return text.slice(afterStart, endIndex);
 }
