@@ -49,6 +49,7 @@ The first `v0` tag can include:
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
+- reviewed GitHub App manifest template for repeatable App registration;
 - example AWS IAM/OIDC templates for central Data API and SNS access;
 - no-network production preflight command;
 - incident response runbook;
@@ -74,8 +75,9 @@ The first `v0` tag should not promise:
 
 Do not create the `v0` tag until all of these are true:
 
-1. The production GitHub App named `6529bot` exists with documented
-   permissions, events, webhook secret handling, and private-key rotation.
+1. The production GitHub App named `6529bot` exists from the reviewed manifest
+   template or equivalent manual settings, with documented permissions, events,
+   webhook secret handling, and private-key rotation.
 2. The central App server and at least one worker path are deployed or the
    release notes explicitly mark the release as local/dogfood-only.
 3. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets

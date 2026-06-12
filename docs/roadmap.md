@@ -43,6 +43,8 @@ each caller repo may need variables, secrets, OIDC trust, and workflow rules.
 ### 1. Execution Model
 
 - Create the production GitHub App `6529bot`.
+- Keep the reviewed GitHub App manifest template in sync with production
+  permissions, events, webhook URL shape, and callback/setup URLs.
 - Decide whether jobs run in GitHub Actions in this repository, an external
   worker, or both.
 - Define the event flow for PR open, synchronize, reopen, ready-for-review, and
@@ -303,6 +305,7 @@ Completed in `6529reviewbot`:
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - production deployment runbook and central worker installation-token flow.
+- reviewable GitHub App manifest template for production registration.
 - repeatable release check script and manual security review checklist.
 - machine-readable v0 release gates and checklist renderer.
 - validated model catalog for provider defaults.

@@ -27,6 +27,8 @@ Target deployment:
 ## Checklist
 
 - Webhooks require a valid `X-Hub-Signature-256` before parsing.
+- Production GitHub App settings match the reviewed manifest template or an
+  explicitly reviewed manual equivalent.
 - Public repositories require trusted actors or are disabled.
 - Comment-command requestor attribution points to the comment author.
 - Hidden bot metadata is trusted only from configured bot accounts.

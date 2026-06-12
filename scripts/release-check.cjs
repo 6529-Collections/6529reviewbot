@@ -23,7 +23,7 @@ runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.js
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
 runNode("bin/validate-repository-config.cjs", repoConfigTemplates);
-parseJsonDirectories(["infra/aws"]);
+parseJsonDirectories(["infra/aws", "templates"]);
 parseYamlDirectories(["templates", ".github/workflows"]);
 run(gitBin(), ["diff", "--check"]);
 

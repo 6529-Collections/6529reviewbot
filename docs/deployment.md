@@ -11,6 +11,12 @@ For an ordered first-install path, start with
 
 Create a GitHub App named `6529bot`.
 
+Use `templates/github-app-manifest.example.json` as the reviewed starting
+manifest. Replace `<bot-host>` with the production App server hostname before
+registration. The generated App id, client secret, webhook secret, and private
+key are live credentials and must be stored only in the bot runtime secret
+store, not committed back to the public repository.
+
 Recommended settings:
 
 ```text

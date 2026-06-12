@@ -32,6 +32,7 @@ Ready for community review:
 - admin runtime status API backed by no-network preflight checks;
 - repeatable Aurora ledger schema tooling;
 - example AWS IAM/OIDC templates for least-privilege Data API and SNS access;
+- reviewed GitHub App manifest template for production registration;
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
@@ -64,7 +65,8 @@ Not yet v1-ready:
 
 Before announcing broad community use:
 
-1. Create and configure the production GitHub App named `6529bot`.
+1. Create and configure the production GitHub App named `6529bot` from the
+   reviewed manifest template or equivalent manual settings.
 2. Deploy the central App server and worker path in controlled 6529
    infrastructure.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and

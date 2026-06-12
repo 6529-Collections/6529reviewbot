@@ -1,0 +1,28 @@
+{
+  "name": "6529bot",
+  "url": "https://github.com/6529-Collections/6529reviewbot",
+  "hook_attributes": {
+    "url": "https://<bot-host>/webhooks/github",
+    "active": true
+  },
+  "redirect_url": "https://<bot-host>/github-app/manifest-complete",
+  "callback_urls": [
+    "https://<bot-host>/github-app/callback"
+  ],
+  "setup_url": "https://<bot-host>/github-app/setup",
+  "description": "Central AI pull request review bot for 6529 repositories.",
+  "public": false,
+  "request_oauth_on_install": false,
+  "setup_on_update": false,
+  "default_permissions": {
+    "contents": "read",
+    "issues": "write",
+    "members": "read",
+    "metadata": "read",
+    "pull_requests": "read"
+  },
+  "default_events": [
+    "issue_comment",
+    "pull_request"
+  ]
+}

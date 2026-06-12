@@ -59,10 +59,11 @@ merged PRs.
 - Usage API OpenAPI contract PR: merged as PR #43, merge commit `174b275`
 - Release template hardening PR: merged as PR #44, merge commit `9678649`
 - Central budget policy tooling PR: merged as PR #45, merge commit `38a5ca9`
-- Current branch: `codex/aws-iam-templates`
-- Current local changes: example AWS IAM/OIDC trust and identity policies,
-  release-check JSON parsing for infra templates, deployment/security docs,
-  release gates, changelog, roadmap, and manager-memory updates.
+- AWS IAM policy templates PR: merged as PR #46, merge commit `461bea3`
+- Current branch: `codex/github-app-manifest`
+- Current local changes: GitHub App manifest template, release-check JSON
+  parsing for template JSON, registration docs, release gates, changelog,
+  roadmap, and manager-memory updates.
 
 ## Key Decisions
 
@@ -133,6 +134,9 @@ merged PRs.
 - AWS trust and identity policies should be reviewed as explicit operator
   artifacts. Public templates use placeholders; live account ids, secret ARNs,
   and environment identifiers stay in operator runbooks or secret stores.
+- GitHub App registration should start from a reviewable manifest artifact
+  when possible. Generated App ids, client secrets, webhook secrets, and
+  private keys stay in the bot runtime secret store.
 
 ## Constraints
 
@@ -144,7 +148,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the AWS IAM template PR if checks and
+1. Validate, publish, and merge the GitHub App manifest PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR
@@ -166,6 +170,8 @@ merged PRs.
   the target Aurora database before live dogfood spend.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
+- The GitHub App manifest still needs `<bot-host>` replacement and actual App
+  creation in GitHub before production use.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
 - Provider pricing rows still require operator verification and key/limit
