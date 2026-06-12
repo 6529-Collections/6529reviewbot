@@ -258,3 +258,26 @@ Before broad community release:
 8. Add the public comment-command parser.
 9. Dogfood on one target repo with conservative limits.
 10. Iterate docs, release process, and install flow toward a v1 tag.
+
+## Current Progress
+
+Completed in `6529reviewbot`:
+
+- central GitHub App skeleton and webhook verifier;
+- trusted-actor admission for public repositories;
+- budget admission against the AWS usage ledger;
+- review-job fanout with provider/model lanes;
+- public and admin usage API contracts;
+- read-only Aurora usage API loaders.
+
+In progress outside this repository:
+
+- Public `6529.io` usage dashboard PR:
+  [6529-Collections/6529seize-frontend#2605](https://github.com/6529-Collections/6529seize-frontend/pull/2605).
+
+Next implementation focus:
+
+- repo/org configuration loading and validation;
+- worker execution adapters;
+- 6529.io admin auth bridge;
+- alerting and scheduled spend checks.
