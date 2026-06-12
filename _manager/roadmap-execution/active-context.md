@@ -195,11 +195,13 @@ merged PRs.
   `ed604f9`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Release candidate bundle PR: merged as PR #119, merge commit `8b96e77`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-budget-status`
-- Current local changes: adding an admin-only budget-status endpoint and
-  Aurora loader support so private 6529.io dashboards can show current daily,
-  weekly, and monthly utilization for each enabled budget policy without direct
-  browser-side database access.
+- Admin budget-status API PR: merged as PR #120, merge commit `ebedc1e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-alert-status`
+- Current local changes: adding an admin-only alert-status endpoint and
+  public-safe alert posture helper so private 6529.io dashboards can show
+  alert thresholds, schedule caps, and notifier presence without exposing
+  webhook URLs, SNS topic ARNs, or alert payloads.
 
 ## Key Decisions
 
@@ -416,6 +418,9 @@ merged PRs.
 - Private admin dashboards should use bot-owned budget-status APIs for current
   policy utilization. Budget cap display and budget utilization warning
   banners should not duplicate Aurora scope logic in browser code.
+- Private admin dashboards should use bot-owned alert-status APIs for alert
+  threshold, schedule, and notifier posture. They should never receive alert
+  webhook URLs, SNS topic ARNs, provider keys, or alert payload bodies.
 - Production evidence should be structured enough to validate required
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
@@ -437,7 +442,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the admin budget-status API increment and merge it if checks stay
+1. Ship the admin alert-status API increment and merge it if checks stay
    green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
@@ -479,5 +484,5 @@ merged PRs.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
 - Private admin UI still needs production wiring to the usage, budget-status,
-  job-events, run-claims, and runtime-status endpoints through the 6529.io auth
-  bridge.
+  alert-status, job-events, run-claims, and runtime-status endpoints through
+  the 6529.io auth bridge.

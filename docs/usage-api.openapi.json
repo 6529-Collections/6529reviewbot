@@ -186,6 +186,35 @@
         }
       }
     },
+    "/api/admin/alerts/status": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Alerting posture",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alerting posture",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertStatusResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/jobs/recent": {
       "get": {
         "tags": ["Admin"],
@@ -778,6 +807,164 @@
           },
           "overBudget": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlertStatusResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "generatedAt", "status"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "alert_status"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AlertStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlertStatus": {
+        "type": "object",
+        "required": ["enabled", "spend", "jobHealth", "schedule", "notifier"],
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "spend": {
+            "$ref": "#/components/schemas/SpendAlertStatus"
+          },
+          "jobHealth": {
+            "$ref": "#/components/schemas/JobHealthAlertStatus"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/AlertScheduleStatus"
+          },
+          "notifier": {
+            "$ref": "#/components/schemas/AlertNotifierStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SpendAlertStatus": {
+        "type": "object",
+        "required": ["enabled", "budgetWarningPercent", "budgetCriticalPercent", "spikeWindowHours", "spikeBaselineDays", "spikeMultiplier", "spikeMinUsd", "spikeDimensions", "alertOnNewSpend", "maxAlerts"],
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "budgetWarningPercent": {
+            "type": "number"
+          },
+          "budgetCriticalPercent": {
+            "type": "number"
+          },
+          "spikeWindowHours": {
+            "type": "number"
+          },
+          "spikeBaselineDays": {
+            "type": "number"
+          },
+          "spikeMultiplier": {
+            "type": "number"
+          },
+          "spikeMinUsd": {
+            "type": "number"
+          },
+          "spikeDimensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "alertOnNewSpend": {
+            "type": "boolean"
+          },
+          "maxAlerts": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "JobHealthAlertStatus": {
+        "type": "object",
+        "required": ["enabled", "failureLookbackHours", "failureThreshold", "staleClaimHours", "staleClaimThreshold", "maxAlerts"],
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "failureLookbackHours": {
+            "type": "number"
+          },
+          "failureThreshold": {
+            "type": "integer"
+          },
+          "staleClaimHours": {
+            "type": "number"
+          },
+          "staleClaimThreshold": {
+            "type": "integer"
+          },
+          "maxAlerts": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlertScheduleStatus": {
+        "type": "object",
+        "required": ["lookbackDays", "maxEvents"],
+        "properties": {
+          "lookbackDays": {
+            "type": "integer"
+          },
+          "maxEvents": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlertNotifierStatus": {
+        "type": "object",
+        "required": ["mode", "failClosed", "webhookConfigured", "webhookTimeoutMs", "snsTopicConfigured", "snsRegion", "snsSubjectConfigured", "snsTimeoutMs"],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": ["none", "stdout", "webhook", "sns"]
+          },
+          "failClosed": {
+            "type": "boolean"
+          },
+          "webhookConfigured": {
+            "type": "boolean"
+          },
+          "webhookTimeoutMs": {
+            "type": "integer"
+          },
+          "snsTopicConfigured": {
+            "type": "boolean"
+          },
+          "snsRegion": {
+            "type": "string"
+          },
+          "snsSubjectConfigured": {
+            "type": "boolean"
+          },
+          "snsTimeoutMs": {
+            "type": "integer"
           }
         },
         "additionalProperties": false

@@ -311,6 +311,8 @@ Completed in `6529reviewbot`:
   for private 6529.io operator surfaces;
 - admin budget-status API for private budget utilization dashboards without
   direct Aurora access from 6529.io;
+- admin alert-status API for private alert threshold and notifier posture
+  dashboards without exposing delivery secrets;
 - admin runtime status is backed by no-network preflight checks;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and

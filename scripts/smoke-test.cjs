@@ -11,6 +11,7 @@ const path = require("path");
 const adminAuth = require("../src/admin-auth.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
+const alertStatus = require("../src/alert-status.cjs");
 const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
@@ -2067,9 +2068,12 @@ const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[
 });
 const serverEntrypointOptions = serverCli.createServerOptionsFromEnv({
   REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEWBOT_ALERTS_ENABLED: "true",
+  REVIEWBOT_ALERTS_NOTIFY_MODE: "none",
   REVIEW_USAGE_ENABLED: "false",
 });
 const serverEntrypointQueuePromise = serverEntrypointOptions.enqueueReviewJobs([reviewJobs[0]], {});
+const serverAlertStatusPromise = serverEntrypointOptions.loadAlertStatus();
 const serverRunClaimReaderOptions = serverCli.createServerOptionsFromEnv({
   REVIEWBOT_WORKER_ADAPTER: "noop",
   REVIEW_USAGE_ENABLED: "false",
@@ -2617,6 +2621,26 @@ const jobHealthPolicy = jobHealthAlerts.jobHealthAlertPolicyFromEnv({
   REVIEWBOT_ALERTS_STALE_CLAIM_HOURS: "2",
   REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD: "1",
 });
+const alertStatusSummary = alertStatus.alertStatusFromEnv({
+  REVIEWBOT_ALERTS_ENABLED: "true",
+  REVIEWBOT_ALERTS_NOTIFY_MODE: "sns",
+  REVIEWBOT_ALERTS_SNS_TOPIC_ARN: "arn:aws:sns:us-east-1:123456789012:reviewbot-alerts",
+  REVIEWBOT_ALERTS_WEBHOOK_URL:
+    "https://hooks.example.test/services/github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+  REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED: "true",
+  REVIEWBOT_ALERTS_LOOKBACK_DAYS: "40",
+  REVIEWBOT_ALERTS_MAX_EVENTS: "123",
+});
+assert.equal(alertStatusSummary.enabled, true);
+assert.equal(alertStatusSummary.spend.enabled, true);
+assert.equal(alertStatusSummary.jobHealth.enabled, true);
+assert.equal(alertStatusSummary.schedule.lookbackDays, 40);
+assert.equal(alertStatusSummary.schedule.maxEvents, 123);
+assert.equal(alertStatusSummary.notifier.mode, "sns");
+assert.equal(alertStatusSummary.notifier.snsTopicConfigured, true);
+assert.equal(alertStatusSummary.notifier.webhookConfigured, true);
+assert.equal(JSON.stringify(alertStatusSummary).includes("123456789012"), false);
+assert.equal(JSON.stringify(alertStatusSummary).includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
 const generatedJobHealthAlerts = jobHealthAlerts.evaluateJobHealthAlerts({
   now: alertNow,
   policy: jobHealthPolicy,
@@ -3269,6 +3293,9 @@ appServer.handleGitHubWebhook({
   assert.equal(serverEntrypointQueue.accepted, false);
   assert.equal(serverEntrypointQueue.adapter, "noop");
   assert.equal(serverEntrypointQueue.reason, "No worker adapter configured.");
+  const serverAlertStatus = await serverAlertStatusPromise;
+  assert.equal(serverAlertStatus.status.spend.enabled, true);
+  assert.equal(serverAlertStatus.status.notifier.mode, "none");
   const serverAppDispatchResult = await serverAppDispatchPromise;
   assert.equal(serverAppDispatchResult.accepted, true);
   assert.equal(serverAppDispatchResult.jobs[0].dispatchMode, "api");
@@ -3431,6 +3458,36 @@ appServer.handleGitHubWebhook({
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.daily.percentUsed, 85);
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.weekly.overBudget, true);
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.monthly.remainingUsd, null);
+  const adminAlertStatusRouteUrl = new URL("http://localhost/api/admin/alerts/status");
+  const adminAlertStatusRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/alerts/status",
+    headers: signedAdminHeadersFor(adminAlertStatusRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadAlertStatus: async () => ({
+      status: {
+        enabled: true,
+        notifier: {
+          mode: "webhook",
+          webhookConfigured: true,
+          unsafe: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+        },
+        "bad key": "sk-proj-should-not-pass",
+      },
+    }),
+  });
+  assert.equal(adminAlertStatusRouteResult.statusCode, 200);
+  assert.equal(adminAlertStatusRouteResult.body.kind, "alert_status");
+  assert.equal(adminAlertStatusRouteResult.body.status.notifier.mode, "webhook");
+  assert(
+    adminAlertStatusRouteResult.body.status.notifier.unsafe.includes("github_pat_[redacted]")
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(adminAlertStatusRouteResult.body.status, "bad key"),
+    false
+  );
   const manifestCompleteRouteResult = await appServer.handleHttpRequest({
     method: "GET",
     url: "/github-app/manifest-complete?code=temporary-code&state=test-state",
@@ -3619,6 +3676,29 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(missingBudgetStatus.statusCode, 503);
   assert.match(missingBudgetStatus.body.error, /budget status/i);
+  const adminAlertStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/alerts/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+    loadAlertStatus: async () => ({ status: alertStatusSummary }),
+  });
+  assert.equal(adminAlertStatus.statusCode, 200);
+  assert.equal(adminAlertStatus.body.kind, "alert_status");
+  assert.equal(adminAlertStatus.body.status.notifier.snsTopicConfigured, true);
+  assert.equal(JSON.stringify(adminAlertStatus.body).includes("123456789012"), false);
+  const missingAlertStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/alerts/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+  });
+  assert.equal(missingAlertStatus.statusCode, 503);
+  assert.match(missingAlertStatus.body.error, /alert status/i);
   const adminUsageEventsUrl = new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=2");
   const adminUsageEvents = await usageApi.handleUsageApiRequest({
     method: "GET",

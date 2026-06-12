@@ -7,6 +7,7 @@ const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_USAGE_EVENTS_PATH = "/api/admin/usage/events/recent";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
 const DEFAULT_ADMIN_BUDGET_STATUS_PATH = "/api/admin/budget/status";
+const DEFAULT_ADMIN_ALERT_STATUS_PATH = "/api/admin/alerts/status";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
 const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
@@ -34,6 +35,8 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
     adminBudgetStatusPath:
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH || DEFAULT_ADMIN_BUDGET_STATUS_PATH,
+    adminAlertStatusPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH || DEFAULT_ADMIN_ALERT_STATUS_PATH,
     adminJobEventsPath:
       env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
     adminRunClaimsPath:
@@ -55,6 +58,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminUsageEventsPath,
     settings.adminBudgetPoliciesPath,
     settings.adminBudgetStatusPath,
+    settings.adminAlertStatusPath,
     settings.adminJobEventsPath,
     settings.adminRunClaimsPath,
     settings.adminStatusPath,
@@ -118,6 +122,25 @@ async function handleUsageApiRequest(request, options = {}) {
         kind: "budget_status",
         generatedAt: new Date().toISOString(),
         policies: (result.policies || []).map(publicBudgetPolicyStatus),
+      },
+    };
+  }
+
+  if (route.kind === "alert_status") {
+    const result = await (options.loadAlertStatus || defaultLoadAlertStatus)({ request, settings });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Alert status is unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "alert_status",
+        generatedAt: new Date().toISOString(),
+        status: normalizeAdminStatusObject(
+          sanitizeAdminDiagnosticPayload(result.status || result.alertStatus || {})
+        ),
       },
     };
   }
@@ -264,6 +287,9 @@ function usageApiRoute(pathname, settings) {
   }
   if (pathname === settings.adminBudgetStatusPath) {
     return { visibility: "admin", kind: "budget_status" };
+  }
+  if (pathname === settings.adminAlertStatusPath) {
+    return { visibility: "admin", kind: "alert_status" };
   }
   if (pathname === settings.adminJobEventsPath) {
     return { visibility: "admin", kind: "job_events" };
@@ -785,9 +811,11 @@ function unavailableResponse(reason) {
 
 function normalizeAdminStatusPayload(result = {}) {
   const sanitized = sanitizeAdminDiagnosticPayload(result.preflight ?? result.status ?? null);
-  return sanitized && typeof sanitized === "object" && !Array.isArray(sanitized)
-    ? sanitized
-    : null;
+  return normalizeAdminStatusObject(sanitized);
+}
+
+function normalizeAdminStatusObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : null;
 }
 
 function sanitizeAdminDiagnosticPayload(value, depth = ADMIN_STATUS_MAX_DEPTH) {
@@ -862,6 +890,13 @@ async function defaultLoadBudgetStatus() {
   };
 }
 
+async function defaultLoadAlertStatus() {
+  return {
+    unavailable: true,
+    reason: "No alert status loader configured.",
+  };
+}
+
 async function defaultLoadJobEvents() {
   return {
     unavailable: true,
@@ -926,6 +961,7 @@ function positiveIntEnv(value, fallback, name) {
 }
 
 module.exports = {
+  DEFAULT_ADMIN_ALERT_STATUS_PATH,
   DEFAULT_ADMIN_BUDGET_STATUS_PATH,
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
