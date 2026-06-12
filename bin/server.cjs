@@ -7,6 +7,7 @@ const {
   adminAuthSettingsFromEnv,
   createUsageApiAdminAuthorizer,
 } = require("../src/admin-auth.cjs");
+const { alertStatusFromEnv } = require("../src/alert-status.cjs");
 const { budgetSubjectFromEvent } = require("../src/budget-admission.cjs");
 const { mergeBudgetPolicyRows } = require("../src/budget-policies.cjs");
 const {
@@ -55,6 +56,9 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
       strict: query.strict,
       env,
     }),
+  });
+  serverOptions.loadAlertStatus = async () => ({
+    status: alertStatusFromEnv(env),
   });
   const usageApiReadersEnabled = parseBool(env.REVIEW_USAGE_ENABLED || "false");
   if (usageApiReadersEnabled) {

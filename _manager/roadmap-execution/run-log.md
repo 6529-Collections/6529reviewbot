@@ -1524,3 +1524,25 @@
   - `git diff --check` passed.
 - Final local validation for `codex/admin-budget-status`:
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #120 as `ebedc1e` after CI and Dependency Review
+  passed; CodeRabbit remained in its processing placeholder with no review
+  threads, and the normal merge path allowed the merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27449490416`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27449490446`, completed successfully.
+- Local clean-main validation after PR #120 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-alert-status` increment:
+  - add an admin-only `GET /api/admin/alerts/status` endpoint for alert
+    thresholds, schedule caps, and notifier posture;
+  - add a public-safe alert status helper that reports notifier presence only,
+    not webhook URLs, SNS topic ARNs, AWS account ids, or alert payload bodies;
+  - update OpenAPI, configuration docs, usage API docs, release readiness,
+    roadmap, changelog, and manager memory.
+- Focused local validation for `codex/admin-alert-status`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `npm run check:docs` passed;
+  - `git diff --check` passed.
+- Final local validation for `codex/admin-alert-status`:
+  - `npm run release:check` passed.
