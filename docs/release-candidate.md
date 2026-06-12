@@ -61,6 +61,10 @@ memory after operator review. It redacts common bearer, GitHub, provider API
 key, alert webhook, AWS access-key id, private-key, AWS ARN, and AWS account id
 shapes.
 
+Preflight error and warning summaries are sanitized before inclusion, including
+embedded tokens, secrets, external file paths, and other accidental private
+diagnostic content.
+
 The bundle reports external private file paths as `[external-path-set]`. Keep
 the source operator evidence and release-gate status files in the private
 operator runbook, not in this public repository.

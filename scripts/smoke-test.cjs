@@ -950,7 +950,7 @@ const handBuiltSupportBundleMarkdown = supportBundle.formatSupportBundleMarkdown
 assert.equal(handBuiltSupportBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(handBuiltSupportBundleMarkdown, /sk-\[redacted\]/);
 assert.match(handBuiltSupportBundleMarkdown, /github_pat_\[redacted\]/);
-assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "--quiet"]), {
+assert.deepEqual(supportBundleCli.parseArgs(["--", "--json", "--include-git-status", "--quiet"]), {
   includeGitStatus: true,
   json: true,
   quiet: true,
@@ -1304,6 +1304,7 @@ assert.throws(
 );
 assert.deepEqual(
   operatorEvidenceCli.parseArgs([
+    "--",
     "--file",
     "evidence.json",
     "--json",
@@ -1370,6 +1371,7 @@ assert.throws(
 );
 assert.deepEqual(
   releaseCandidateCli.parseArgs([
+    "--",
     "--json",
     "--quiet",
     "--status-file",

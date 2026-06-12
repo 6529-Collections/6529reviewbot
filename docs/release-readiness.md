@@ -163,12 +163,14 @@ deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
 Use `npm run operator:evidence -- -- --file <private-evidence-file> --summary` to
 validate a structured private evidence file and render a redacted public
-summary. Use `--require-ready` before tagging to fail when production evidence
-sections remain pending or blocked.
+summary. `operator:evidence --require-ready` is useful for the evidence file
+itself: it fails when production evidence sections remain pending or blocked.
 Use [Release Candidate Bundle](release-candidate.md) to combine release-gate
 counts, missing status ids, operator-evidence counts, redacted operator
 sections, git metadata, and no-network preflight into one public-safe release
-note artifact:
+note artifact. The full pre-tag readiness rule is enforced by the bundle's
+`--require-ready`, because that check covers gate completeness, missing status
+ids, operator-evidence readiness, and preflight:
 
 ```bash
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight

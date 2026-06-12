@@ -1488,3 +1488,18 @@
   - `node bin\release-candidate.cjs --status-file config\v0-release-status.example.json --operator-evidence-file config\production-evidence.example.json --json --quiet` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #119:
+  - touched CLI parsers now tolerate a standalone `--`, so npm-forwarded and
+    direct `node bin\*.cjs -- --flag` examples both work;
+  - release-candidate docs now explicitly call out preflight message
+    sanitization;
+  - release-readiness and release-notes template now identify
+    `release:candidate --require-ready` as the full tag/no-tag readiness gate.
+- Local validation after the PR #119 feedback pass:
+  - `node bin\operator-evidence.cjs -- --file config\production-evidence.example.json --summary --quiet` passed;
+  - `node bin\support-bundle.cjs -- --json --quiet` passed;
+  - `node bin\release-candidate.cjs -- --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
