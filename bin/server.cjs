@@ -7,6 +7,8 @@ const {
   adminAuthSettingsFromEnv,
   createUsageApiAdminAuthorizer,
 } = require("../src/admin-auth.cjs");
+const { budgetSubjectFromEvent } = require("../src/budget-admission.cjs");
+const { readBudgetSpendSnapshot } = require("../src/budget-ledger.cjs");
 const {
   createGitHubAppIntegration,
   githubAppAuthSettingsFromEnv,
@@ -21,6 +23,7 @@ const {
   runControlLedgerSettingsFromEnv,
 } = require("../src/run-control-ledger.cjs");
 const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
+const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
 
 const port = Number.parseInt(process.env.PORT || process.env.REVIEWBOT_PORT || "8080", 10);
 if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
@@ -30,6 +33,13 @@ if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
 const serverOptions = {};
 if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
   Object.assign(serverOptions, usageApiLedgerLoadersFromEnv());
+  const budgetLedgerSettings = usageLedgerSettingsFromEnv();
+  serverOptions.resolveBudgetSnapshot = async (jobEvent, admission, job, budgetPolicy) =>
+    readBudgetSpendSnapshot(
+      budgetLedgerSettings,
+      budgetSubjectFromEvent(jobEvent, admission, jobEvent.run || job),
+      budgetPolicy
+    );
 }
 const jobLedgerSettings = jobLedgerSettingsFromEnv();
 if (jobLedgerSettings.enabled) {

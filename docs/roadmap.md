@@ -276,6 +276,7 @@ Completed in `6529reviewbot`:
 - GitHub App installation-token handling for repository config and actor
   permission resolution;
 - budget admission against the AWS usage ledger;
+- production server budget spend snapshot wiring;
 - review-job fanout with provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;

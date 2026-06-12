@@ -22,6 +22,7 @@ stabilized.
 - Short-lived GitHub App installation-token minting for central worker jobs.
 - Trusted-actor admission for public repositories.
 - Budget admission against the isolated AWS usage ledger.
+- Production server wiring for budget spend snapshots from the usage ledger.
 - Review job fanout across review kinds and provider/model lanes.
 - Run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps.

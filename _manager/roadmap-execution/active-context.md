@@ -42,9 +42,10 @@ merged PRs.
 - Production preflight PR: merged as PR #26, merge commit `9b57580`
 - Incident response runbook PR: merged as PR #27, merge commit `0c9ee6b`
 - Run control contract PR: merged as PR #28, merge commit `ac7bc12`
-- Current branch: `codex/run-control-ledger`
-- Current local changes: built-in Aurora/RDS Data API claimer for durable
-  run-control claims, plus server wiring/docs/tests
+- Run control ledger PR: merged as PR #29, merge commit `ba902fe`
+- Current branch: `codex/budget-ledger-wiring`
+- Current local changes: production server wiring for budget spend snapshots
+  from the usage ledger, plus docs/tests
 
 ## Key Decisions
 
@@ -74,6 +75,9 @@ merged PRs.
   built-in Aurora-backed claimer serializes claim attempts conservatively for
   dogfood. Dedupe keys must include provider and model so multi-model review
   lanes do not block each other.
+- Production server budget checks should use the same isolated usage ledger
+  when `REVIEW_USAGE_ENABLED=true`, and the resolver must receive merged
+  repository budget policy.
 
 ## Constraints
 
@@ -85,11 +89,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the run-control ledger PR if checks and review
-   are clean.
+1. Validate, publish, and merge the budget-ledger wiring PR if checks and
+   review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   run-control ledger PR lands.
+   budget-ledger wiring PR lands.
 
 ## Open Risks
 
