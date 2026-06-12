@@ -117,9 +117,11 @@ merged PRs.
   `54c893d`; post-merge CI and OpenSSF Scorecard completed successfully.
 - SNS alert runner hardening PR: merged as PR #82, merge commit `b856029`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/cover-dispatch-exceptions`
-- Current local changes: add smoke coverage that thrown dispatch failures mark
-  run claims and job events as `dispatch_error`.
+- Dispatch exception coverage PR: merged as PR #83, merge commit `09e27a5`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/fail-empty-provider-output`
+- Current local changes: fail closed when a live provider returns empty review
+  text so the bot cannot post a misleading generic no-finding comment.
 
 ## Key Decisions
 
@@ -304,7 +306,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the dispatch exception coverage PR.
+1. Validate, publish, and merge the empty-provider-output hardening PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

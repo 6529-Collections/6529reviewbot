@@ -68,6 +68,15 @@ assert.equal(settings.provider, "anthropic");
 assert.equal(settings.model, "claude-opus-4-8");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
+const providerTextResult = reviewBot.requireProviderReviewText(
+  { text: "\n**Verdict**: Good to merge\n", usage: { totalTokens: 12 } },
+  settings
+);
+assert.equal(providerTextResult.text, "**Verdict**: Good to merge");
+assert.throws(
+  () => reviewBot.requireProviderReviewText({ text: "   " }, settings),
+  /returned empty review output/
+);
 assert.deepEqual(docsLinkCheck.markdownLinkTargets("[Release](docs/release.md)"), ["docs/release.md"]);
 assert.equal(docsLinkCheck.normalizeLocalLinkTarget("docs/release.md#tagging"), "docs/release.md");
 assert.equal(docsLinkCheck.normalizeLocalLinkTarget("https://example.com"), "");

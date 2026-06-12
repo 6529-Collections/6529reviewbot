@@ -198,12 +198,15 @@ async function main(forcedKind) {
     return;
   }
 
-  const providerResult = settings.dryRun
-    ? {
-        text: dryRunBody(config, settings, changedFiles, changedLineCount),
-        usage: emptyUsage(),
-      }
-    : await callProvider(settings, finalPrompt);
+  const providerResult = requireProviderReviewText(
+    settings.dryRun
+      ? {
+          text: dryRunBody(config, settings, changedFiles, changedLineCount),
+          usage: emptyUsage(),
+        }
+      : await callProvider(settings, finalPrompt),
+    settings
+  );
   const commentBody = buildComment({
     kind,
     config,
@@ -891,6 +894,19 @@ async function callProvider(settings, prompt) {
   return await callOpenRouter(settings, prompt);
 }
 
+function requireProviderReviewText(providerResult, settings) {
+  const text = String(providerResult?.text || "").trim();
+  if (!text) {
+    throw new Error(
+      `Provider ${settings.provider}/${settings.model} returned empty review output; refusing to post an empty 6529bot comment.`
+    );
+  }
+  return {
+    ...providerResult,
+    text,
+  };
+}
+
 async function callAnthropic(settings, prompt) {
   const key = requiredSecret("ANTHROPIC_API_KEY", settings.provider);
   const response = await httpJson(
@@ -1391,6 +1407,7 @@ module.exports = {
   openAIModelCapabilities,
   shouldSendOpenAIOption,
   providerErrorSummary,
+  requireProviderReviewText,
   extractReviewHistory,
   countMarker,
   isTrustedMarkerAuthor,
