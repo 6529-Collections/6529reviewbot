@@ -3,13 +3,18 @@
 "use strict";
 
 const {
+  loadReleaseGateStatus,
   loadReleaseGates,
+  mergeReleaseGateStatus,
   renderReleaseGatesMarkdown,
 } = require("../src/release-gates.cjs");
 
 function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
-  const gates = loadReleaseGates(args.file);
+  let gates = loadReleaseGates(args.file);
+  if (args.statusFile) {
+    gates = mergeReleaseGateStatus(gates, loadReleaseGateStatus(args.statusFile));
+  }
   if (args.quiet) {
     return gates;
   }
@@ -21,7 +26,12 @@ function main(argv = process.argv.slice(2)) {
 }
 
 function parseArgs(argv) {
-  const result = { file: "config/v0-release-gates.json", json: false, quiet: false };
+  const result = {
+    file: "config/v0-release-gates.json",
+    json: false,
+    quiet: false,
+    statusFile: "",
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--json") {
@@ -32,12 +42,16 @@ function parseArgs(argv) {
       result.quiet = true;
       continue;
     }
-    if (arg === "--file") {
+    if (arg === "--file" || arg === "--status-file") {
       const value = argv[index + 1];
       if (!value || value.startsWith("--")) {
-        throw new Error("--file requires a value.");
+        throw new Error(`${arg} requires a value.`);
       }
-      result.file = value;
+      if (arg === "--file") {
+        result.file = value;
+      } else {
+        result.statusFile = value;
+      }
       index += 1;
       continue;
     }
@@ -55,12 +69,14 @@ function helpText() {
 
 Usage:
   npm run v0:gates
-  npm run v0:gates -- --json
+  npm run v0:gates -- -- --json
+  npm run v0:gates -- -- --status-file config/v0-release-status.example.json
 
 Options:
-  --file <path>  Release gates JSON file. Default: config/v0-release-gates.json
-  --json         Print normalized JSON instead of Markdown.
-  --quiet        Validate gates without printing them.
+  --file <path>         Release gates JSON file. Default: config/v0-release-gates.json
+  --status-file <path>  Optional release gate status/evidence JSON file.
+  --json                Print normalized JSON instead of Markdown.
+  --quiet               Validate gates without printing them.
 `;
 }
 

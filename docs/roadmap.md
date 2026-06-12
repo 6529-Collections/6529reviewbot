@@ -318,6 +318,8 @@ Completed in `6529reviewbot`:
   action-ref validation.
 - repeatable release check script and manual security review checklist.
 - machine-readable v0 release gates and checklist renderer.
+- optional v0 release gate status files for public-safe completion/defer
+  evidence.
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.

@@ -509,6 +509,11 @@ const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");
 assert(gates.gates.length >= 16);
 assert.match(releaseGates.renderReleaseGatesMarkdown(gates), /Release Gates/);
+const gateStatus = releaseGates.loadReleaseGateStatus("config/v0-release-status.example.json");
+const gatesWithStatus = releaseGates.mergeReleaseGateStatus(gates, gateStatus);
+assert.equal(gatesWithStatus.gates.find((gate) => gate.id === "ledger-schema").status, "complete");
+assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /\[x\] \*\*ledger-schema\*\*/);
+assert.match(releaseGates.renderReleaseGatesMarkdown(gatesWithStatus), /_\(deferred\)_/);
 assert.throws(
   () => releaseGates.validateReleaseGates({
     version: 1,
@@ -521,11 +526,37 @@ assert.throws(
   }),
   /duplicated/
 );
-assert.deepEqual(releaseGatesCli.parseArgs(["--file", "gates.json", "--json", "--quiet"]), {
-  file: "gates.json",
-  json: true,
-  quiet: true,
-});
+assert.throws(
+  () => releaseGates.mergeReleaseGateStatus(gates, {
+    version: 1,
+    release: "v0.1.0",
+    gates: { missing: { status: "complete", evidence: "x" } },
+  }),
+  /unknown gate/
+);
+assert.throws(
+  () => releaseGates.validateReleaseGateStatus({
+    version: 1,
+    gates: { "ledger-schema": { status: "complete" } },
+  }),
+  /evidence/
+);
+assert.deepEqual(
+  releaseGatesCli.parseArgs([
+    "--file",
+    "gates.json",
+    "--status-file",
+    "status.json",
+    "--json",
+    "--quiet",
+  ]),
+  {
+    file: "gates.json",
+    json: true,
+    quiet: true,
+    statusFile: "status.json",
+  }
+);
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
   host: "https://reviewbot.example.com/",
 });

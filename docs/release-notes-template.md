@@ -42,6 +42,7 @@ repositories.
 - 6529.io dashboard/admin status:
 - Preflight result:
 - v0 gate checklist:
+- v0 gate status file/evidence:
 
 ## Safety Requirements
 

@@ -582,3 +582,13 @@
   - add the same alert enablement guard to the template;
   - update deployment, alerting, release-readiness, v0, roadmap, changelog, and
     manager-memory docs.
+- Merged `6529reviewbot` PR #56 as `7de5779` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/release-gate-status` increment:
+  - `npm run v0:gates` accepts an optional `--status-file`;
+  - release gate status files can mark gates `pending`, `complete`,
+    `deferred`, or `blocked` with evidence/notes;
+  - release checks validate the example status file;
+  - README, release process, v0 plan, release notes template, changelog,
+    roadmap, and manager memory document the workflow.

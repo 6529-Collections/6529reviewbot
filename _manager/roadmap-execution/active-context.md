@@ -73,11 +73,11 @@ merged PRs.
   `04916c7`
 - Dogfood budget policy apply evidence PR: merged as PR #55, merge commit
   `775dc07`
-- Current branch: `codex/install-central-workflows`
-- Current local changes: installed central review-job workflow, installed
-  dormant-by-default spend-alert workflow, template guard, deployment/alerting
-  docs, release-readiness/v0/roadmap/changelog updates, and manager-memory
-  updates.
+- Central workflow installation PR: merged as PR #56, merge commit `7de5779`
+- Current branch: `codex/release-gate-status`
+- Current local changes: optional v0 release gate status/evidence file support,
+  CLI/status-file merge, example status file, release-check coverage, README
+  and release docs, changelog/roadmap, and manager-memory updates.
 
 ## Key Decisions
 
@@ -175,6 +175,9 @@ merged PRs.
 - The central repo should carry the production worker and alert workflow files
   directly; templates remain as examples, but operators should not have to
   copy-paste them before dogfood.
+- Release gate definitions should stay stable while operator-owned status
+  files record completion, deferrals, blockers, and evidence for a specific
+  release candidate.
 
 ## Constraints
 
@@ -186,8 +189,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the central workflow installation PR if checks
-   and review are clean.
+1. Validate, publish, and merge the v0 release-gate status PR if checks and
+   review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

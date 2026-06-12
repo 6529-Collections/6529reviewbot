@@ -125,6 +125,13 @@ Render the same gates as an operator checklist:
 npm run v0:gates
 ```
 
+Use a separate operator-owned status file to mark gates complete, deferred, or
+blocked without editing the canonical gate list:
+
+```bash
+npm run v0:gates -- -- --status-file config/v0-release-status.example.json
+```
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 
