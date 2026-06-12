@@ -316,6 +316,8 @@ Completed in `6529reviewbot`:
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
+- GitHub App manifest conversion CLI that writes one-time generated
+  credentials only to an explicit private output path.
 - GitHub App registration packet for operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback.
 - installed central worker and dormant-by-default alert workflows with

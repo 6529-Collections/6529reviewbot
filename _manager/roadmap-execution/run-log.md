@@ -629,3 +629,14 @@
   - link the packet from README, installation, GitHub App, deployment, release,
     release readiness, security checklist, operator evidence, v0 gates,
     roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #60 as `e67840d` after CI and Dependency Review
+  passed; CodeRabbit had no actionable review threads, and the normal merge
+  path allowed the merge.
+- Started `codex/github-app-manifest-conversion` increment:
+  - add an operator CLI for exchanging GitHub's temporary manifest code;
+  - require explicit private output for the one-time generated credential
+    response;
+  - print only redacted summaries and refuse public-repo output by default;
+  - document the conversion step in README, install, GitHub App, deployment,
+    release, release readiness, v0 plan, roadmap, changelog, and manager
+    memory.

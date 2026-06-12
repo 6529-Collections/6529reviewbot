@@ -33,6 +33,12 @@ form with `--form --owner <org> --state <unguessable-state>`. Complete the
 GitHub manifest conversion in the operator environment and move the returned
 credentials directly into the bot secret store.
 
+Use the conversion CLI from a private operator environment:
+
+```bash
+npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+```
+
 Use [github-app-registration.md](github-app-registration.md) as the complete
 registration packet for operator roles, settings verification,
 post-registration acceptance checks, credential rotation, and rollback.

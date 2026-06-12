@@ -84,7 +84,12 @@ Preferred dogfood path:
 
 3. Open the generated form only from the operator workstation.
 4. Submit the manifest to GitHub.
-5. Complete GitHub's manifest conversion in the operator environment.
+5. Complete GitHub's manifest conversion in the operator environment:
+
+   ```bash
+   npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+   ```
+
 6. Move the returned credentials directly into the bot runtime secret store.
 7. Record only redacted completion evidence.
 
@@ -98,8 +103,11 @@ Manual fallback path:
 5. Record that the manual settings match the rendered manifest.
 
 The helper intentionally does not exchange GitHub's temporary manifest code.
-It cannot receive generated credentials, so credential custody remains with
-the operator and the bot secret store.
+Use `npm run github-app:convert` only from a private operator environment to
+exchange that code and write GitHub's generated credential response to an
+explicit private path. The conversion command prints only a redacted summary
+and refuses to write inside this public repository unless
+`--allow-repo-output` is passed for isolated tests.
 
 ## Settings To Verify
 
@@ -149,6 +157,10 @@ Webhook secret
 Private key PEM
 Installation id per installed account/repository
 ```
+
+When using the manifest flow, GitHub returns the App id, client id, client
+secret, webhook secret, and private key once during conversion. The temporary
+manifest code must be exchanged within GitHub's one-hour window.
 
 Store in bot-owned infrastructure:
 

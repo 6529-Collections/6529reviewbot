@@ -82,6 +82,13 @@ The helper validates the reviewed template, replaces only the `<bot-host>`
 placeholder, and emits either JSON or a local HTML form. It does not exchange
 GitHub's temporary manifest code and never receives generated credentials.
 
+After GitHub redirects back with a manifest code, exchange it from a private
+operator environment:
+
+```bash
+npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+```
+
 Do not commit the generated App id, client secret, webhook secret, or private
 key returned by GitHub. Store those values only in the bot-owned runtime secret
 store. If operators register the App manually through the GitHub UI, match the

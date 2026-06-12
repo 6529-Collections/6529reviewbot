@@ -77,9 +77,11 @@ merged PRs.
 - Release gate status PR: merged as PR #57, merge commit `8933a01`
 - Run-control smoke evidence PR: merged as PR #58, merge commit `9fdd374`
 - Spend-alert dry-run evidence PR: merged as PR #59, merge commit `6590b79`
-- Current branch: `codex/github-app-registration-packet`
-- Current local changes: GitHub App registration packet and linked release,
-  install, deployment, security, roadmap, and evidence documentation.
+- GitHub App registration packet PR: merged as PR #60, merge commit `e67840d`
+- Current branch: `codex/github-app-manifest-conversion`
+- Current local changes: GitHub App manifest conversion CLI and docs so
+  operators can exchange GitHub's temporary manifest code without logging
+  generated credentials or writing them into the public repo.
 
 ## Key Decisions
 
@@ -159,6 +161,9 @@ merged PRs.
 - GitHub App registration should have a public-safe operator packet covering
   roles, credential custody, post-registration acceptance checks, permission
   changes, rotation, rollback, and redacted release evidence.
+- GitHub App manifest conversion returns one-time credentials and must require
+  an explicit private output path. CLI summaries should be redacted, and
+  public-repo output should be refused by default.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -205,7 +210,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App registration packet PR.
+1. Validate, publish, and merge the GitHub App manifest conversion CLI PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

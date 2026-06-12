@@ -53,6 +53,7 @@ The first `v0` tag can include:
 - reviewed GitHub App manifest template for repeatable App registration;
 - GitHub App manifest renderer for production-host validation before App
   creation;
+- GitHub App manifest conversion CLI for the one-hour manifest code exchange;
 - GitHub App registration packet for operator roles, credential custody,
   post-registration checks, rotation, and rollback;
 - installed central worker and dormant-by-default alert workflows plus a local
