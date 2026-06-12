@@ -55,6 +55,7 @@ stabilized.
   ledger with aggregate scope-count checks.
 - Installed central review-job and dormant-by-default spend-alert workflows in
   the bot repository.
+- CI now runs the full release check on pull requests and pushes to `main`.
 - v0 release gate renderer can merge an operator-owned status/evidence file.
 - Run-control ledger claim, duplicate-denial, and completion-update path
   verified against the isolated dogfood ledger.

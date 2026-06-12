@@ -37,6 +37,7 @@ After stabilization:
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App
 - `npm run check:workflow-actions`
+- GitHub CI runs `npm run release:check` on the release PR
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when
