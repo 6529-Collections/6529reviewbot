@@ -423,6 +423,27 @@ assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
 assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/example"), true);
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+let missingInstallationDispatchCalled = false;
+const missingInstallationResult = workerAdapter.dispatchReviewJobToGitHubActions(
+  { ...forkReviewJob, installationId: null },
+  {
+    policy: {
+      mode: "github_actions",
+      githubRepo: "6529-Collections/6529reviewbot",
+      githubWorkflow: "review-job.yml",
+      githubRef: "main",
+      ghBin: "gh",
+      localTimeoutMs: 1234,
+    },
+    spawnSync: () => {
+      missingInstallationDispatchCalled = true;
+      return { status: 0, stdout: "queued", stderr: "" };
+    },
+  }
+);
+assert.equal(missingInstallationResult.accepted, false);
+assert.match(missingInstallationResult.reason, /installationId is required/);
+assert.equal(missingInstallationDispatchCalled, false);
 const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[0]], {}, {
   policy: { mode: "noop" },
 });

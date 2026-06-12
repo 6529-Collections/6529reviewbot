@@ -126,6 +126,12 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
       reason: "REVIEWBOT_WORKER_GITHUB_REPO or GITHUB_REPOSITORY is required.",
     });
   }
+  if (!job?.installationId) {
+    return workerResult(job || {}, false, {
+      adapter: "github_actions",
+      reason: "Review job installationId is required for github_actions dispatch.",
+    });
+  }
 
   const runner = options.spawnSync || spawnSync;
   const fields = githubWorkflowFields(job);
@@ -189,9 +195,12 @@ function jobEnv(job) {
 
 function githubWorkflowFields(job) {
   assertReviewJob(job);
+  if (!job.installationId) {
+    throw new Error("Review job installationId is required for github_actions dispatch.");
+  }
   return {
     job_id: job.id,
-    installation_id: job.installationId ? String(job.installationId) : "",
+    installation_id: String(job.installationId),
     target_repo: job.repository.fullName,
     head_repo: headRepoFullNameForJob(job),
     pr_number: String(job.prNumber),

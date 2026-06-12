@@ -184,3 +184,5 @@
     of requiring a long-lived target repo token;
   - deployment docs cover App permissions/events, central server env, worker
     secrets, 6529.io usage/admin API wiring, verification, and rollback.
+- Addressed CodeRabbit feedback on PR #19 by failing fast before GitHub
+  Actions dispatch when a review job lacks a target installation id.
