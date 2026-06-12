@@ -205,6 +205,13 @@ function publicReviewJobSummary(job) {
           runKey: job.runControl.runKey,
         }
       : null,
+    runtimeControl: job.runtimeControl
+      ? {
+          status: job.runtimeControl.status,
+          allowed: job.runtimeControl.allowed,
+          code: job.runtimeControl.code,
+        }
+      : null,
   };
 }
 

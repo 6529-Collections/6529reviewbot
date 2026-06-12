@@ -160,6 +160,10 @@ If the spike is caused by repeated webhook deliveries or repeated comment
 commands, inspect [Run Control](run-control.md) and move production toward
 `REVIEWBOT_RUN_CONTROL_MODE=enforce` with conservative PR and repo caps.
 
+For immediate containment, set `REVIEWBOT_ENABLED=false` or pause the affected
+org, repo, provider, model, or review kind with the `REVIEWBOT_DISABLED_*`
+runtime-control settings, then restart the central App server.
+
 If alerts did not send, check:
 
 - `REVIEWBOT_ALERTS_ENABLED`;

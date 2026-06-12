@@ -130,6 +130,38 @@ REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 
 See [review-jobs.md](review-jobs.md).
 
+## Runtime Control
+
+Runtime control is a central pause layer that runs before budget checks and
+worker dispatch. Use it for emergency stops and temporary pauses without
+editing target repositories:
+
+```text
+REVIEWBOT_ENABLED=true
+REVIEWBOT_DISABLED_REASON=
+REVIEWBOT_DISABLED_ORGS=
+REVIEWBOT_DISABLED_REPOS=
+REVIEWBOT_DISABLED_PROVIDERS=
+REVIEWBOT_DISABLED_MODELS=
+REVIEWBOT_DISABLED_REVIEW_KINDS=
+```
+
+Examples:
+
+```text
+REVIEWBOT_ENABLED=false
+REVIEWBOT_DISABLED_REASON=Paused while rotating provider keys.
+REVIEWBOT_DISABLED_REPOS=6529-Collections/example
+REVIEWBOT_DISABLED_PROVIDERS=openrouter
+REVIEWBOT_DISABLED_MODELS=gpt-5.5
+REVIEWBOT_DISABLED_REVIEW_KINDS=wcag,i18n
+```
+
+Event-level org/repo/review-kind pauses happen before admission. Provider,
+model, and review-kind job pauses happen after job fanout and before budget
+admission, so disabled jobs do not reserve budget, consume run-control slots,
+or call providers.
+
 ## Run Control
 
 ```text

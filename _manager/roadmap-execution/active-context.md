@@ -52,10 +52,12 @@ merged PRs.
 - Support bundle PR: merged as PR #36, merge commit `cc6369d`
 - v0 release gates PR: merged as PR #37, merge commit `f8e86b2`
 - Admin job-events API PR: merged as PR #38, merge commit `283b9d3`
-- Current branch: `codex/admin-status-api`
-- Current local changes: admin-only runtime status endpoint backed by
-  no-network preflight checks, server wiring, smoke coverage, and
-  usage/operator docs
+- Admin runtime status API PR: merged as PR #39, merge commit `9134361`
+- Current branch: `codex/runtime-pause-controls`
+- Current local changes: central runtime pause controls for global, org, repo,
+  provider, model, and review-kind stops before budget or worker dispatch;
+  preflight/status visibility; job ledger audit events; smoke coverage; and
+  operator docs
 
 ## Key Decisions
 
@@ -112,6 +114,8 @@ merged PRs.
 - Runtime configuration warnings should be available to private operator
   dashboards through bot-owned APIs backed by preflight, never through direct
   browser access to process environment or secrets.
+- Emergency stops and temporary pauses should be central runtime controls that
+  run before budget reservation and worker dispatch.
 
 ## Constraints
 
@@ -123,11 +127,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the admin runtime status API PR if checks and
+1. Validate, publish, and merge the runtime pause-controls PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after the
-   admin status API lands.
+3. Prepare the next release-polish or operator-readiness slice after runtime
+   controls land.
 
 ## Open Risks
 

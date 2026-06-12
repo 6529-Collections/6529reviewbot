@@ -380,3 +380,17 @@
   - README, configuration, usage API, deployment, operations, release
     readiness, v0 release plan, changelog, roadmap, and manager-memory
     updates.
+- Merged `6529reviewbot` PR #39 as `9134361` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/runtime-pause-controls` increment:
+  - central runtime policy module with global, org, repo, provider, model, and
+    review-kind pause controls;
+  - App server enforcement before budget admission and worker dispatch;
+  - `runtime_disabled` job ledger audit events;
+  - preflight/admin-status visibility into runtime control state;
+  - smoke coverage for policy filtering, preflight warnings, and webhook
+    provider pauses;
+  - README, configuration, operations, security model, incident response,
+    release readiness, release notes template, v0 release plan, changelog,
+    roadmap, and manager-memory updates.

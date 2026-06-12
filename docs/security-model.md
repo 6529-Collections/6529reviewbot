@@ -94,6 +94,14 @@ Provider requests are bounded by:
 - provider timeout;
 - sanitized provider error logging.
 
+### Runtime Control Safety
+
+Runtime control can stop all review automation or pause specific
+organizations, repositories, providers, models, or review kinds before budget
+reservation and worker dispatch. Operators should use `REVIEWBOT_ENABLED=false`
+as the first emergency stop when spend, provider credentials, or model output
+looks unsafe.
+
 ### AWS Safety
 
 The usage ledger should use:

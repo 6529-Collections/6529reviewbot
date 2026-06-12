@@ -24,6 +24,7 @@ SEV3  Localized failure with a workaround, delayed alert, or non-urgent docs
 1. Stop spend if there is any chance of uncontrolled model calls:
 
    ```text
+   REVIEWBOT_ENABLED=false
    REVIEWBOT_WORKER_ADAPTER=noop
    REVIEWBOT_PUBLIC_REPO_MODE=off
    ```
@@ -61,6 +62,7 @@ SEV3  Localized failure with a workaround, delayed alert, or non-urgent docs
 Immediate actions:
 
 - set `REVIEWBOT_WORKER_ADAPTER=noop`;
+- set `REVIEWBOT_ENABLED=false` if model calls must stop globally;
 - set `REVIEWBOT_PUBLIC_REPO_MODE=off` if public repo triggers are involved;
 - verify budget policies in `reviewbot.ai_review_budget_policies`;
 - inspect recent usage:

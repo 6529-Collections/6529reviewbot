@@ -15,6 +15,7 @@ Ready for community review:
 - provider setup guide for Anthropic, OpenAI, and OpenRouter;
 - default Anthropic model configuration through environment variables;
 - trusted-actor admission for public repositories;
+- central runtime pause controls before budget or worker dispatch;
 - GitHub App installation-token handling for repo config and actor permission
   resolution;
 - budget admission against the isolated AWS usage ledger;
@@ -86,6 +87,7 @@ REVIEWBOT_PUBLIC_REPO_MODE=trusted
 REVIEWBOT_DRAFT_PR_MODE=skip
 REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
 REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8
+REVIEWBOT_ENABLED=true
 REVIEWBOT_BUDGET_MODE=enforce
 REVIEWBOT_BUDGET_GLOBAL_DAILY_USD=25
 REVIEWBOT_BUDGET_REPO_DAILY_USD=10
