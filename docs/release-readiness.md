@@ -33,6 +33,7 @@ Ready for community review:
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - worker capacity and backpressure runbook for live scaling decisions;
+- reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin runtime status API backed by no-network preflight checks;

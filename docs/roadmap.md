@@ -37,6 +37,8 @@ Advantages:
 Caller-repo workflows are easier to bootstrap, but they push more setup into
 every target repository. They also make budget controls and AWS trust harder:
 each caller repo may need variables, secrets, OIDC trust, and workflow rules.
+The reusable workflow remains a compatibility path only and must use explicit
+provider-secret mapping instead of inheriting every caller secret.
 
 ## Release Gates
 
@@ -312,6 +314,7 @@ Completed in `6529reviewbot`:
 - worker execution adapters for local workers and central GitHub Actions
   dispatch;
 - worker capacity and backpressure runbook for conservative live scaling;
+- reusable workflow compatibility docs and explicit provider-secret mapping;
 - 6529.io admin auth bridge contract;
 - alerting and scheduled spend checks.
 - dogfood runbook, conservative dogfood templates, and repository config

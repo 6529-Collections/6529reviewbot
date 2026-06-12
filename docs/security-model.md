@@ -117,6 +117,12 @@ replace placeholders and review final policies in the operator workspace before
 applying. The public repo should not contain live account ids, secret ARNs, or
 target environment identifiers beyond deliberate examples.
 
+### Reusable Workflow Safety
+
+The reusable workflow is not the preferred production path. If used, callers
+must map only the declared provider secrets and must not use `secrets: inherit`.
+See [reusable-workflow.md](reusable-workflow.md).
+
 ### Admin API Safety
 
 Private admin endpoints fail closed unless an admin authorizer is configured.

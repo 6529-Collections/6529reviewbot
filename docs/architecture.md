@@ -26,8 +26,10 @@ code.
 ## 2. Trigger And Workflow Runner
 
 The current repo contains a GitHub Actions reusable workflow scaffold for
-running the review engine. The intended production trigger is the `6529bot`
-GitHub App, so target repositories do not need to own the bot implementation.
+running the review engine. That path is a compatibility and development
+bridge; see [reusable-workflow.md](reusable-workflow.md). The intended
+production trigger is the `6529bot` GitHub App, so target repositories do not
+need to own the bot implementation.
 
 The deployment should decide whether to dispatch work to this repo's central
 workflow or run the engine in another isolated worker. That decision also

@@ -80,9 +80,11 @@ merged PRs.
 - GitHub App registration packet PR: merged as PR #60, merge commit `e67840d`
 - GitHub App manifest conversion CLI PR: merged as PR #61, merge commit
   `8ed1478`
-- Current branch: `codex/worker-capacity-runbook`
-- Current local changes: worker capacity and backpressure runbook plus release,
-  operations, deployment, security, roadmap, and evidence links.
+- Worker capacity runbook PR: merged as PR #62, merge commit `5c4583d`
+- Current branch: `codex/explicit-reusable-workflow-secrets`
+- Current local changes: reusable workflow hardening so caller repos map only
+  declared provider secrets instead of inheriting every caller secret, plus
+  compatibility docs and release/security links.
 
 ## Key Decisions
 
@@ -169,6 +171,10 @@ merged PRs.
   concurrency, command-only dogfood, one provider/model lane, durable
   run-control claims, and alerts before expanding initial automation or
   multi-model lanes.
+- The reusable workflow is a compatibility/development bridge, not the
+  preferred production path. It must not use `secrets: inherit`; callers should
+  pass only the declared provider secrets if they intentionally accept
+  caller-repo execution.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -215,7 +221,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the worker capacity runbook PR.
+1. Validate, publish, and merge the reusable workflow secret-boundary PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

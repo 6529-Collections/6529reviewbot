@@ -651,3 +651,14 @@
   - link the runbook from README, worker adapters, deployment, operations,
     release, release readiness, v0 plan, roadmap, security checklist, operator
     evidence, changelog, and manager memory.
+- Merged `6529reviewbot` PR #62 as `5c4583d` after CI and Dependency Review
+  passed; there were no actionable review threads.
+- Started `codex/explicit-reusable-workflow-secrets` increment:
+  - declare the provider secrets accepted by the reusable workflow;
+  - replace caller-template `secrets: inherit` with explicit provider-secret
+    mapping;
+  - add reusable workflow compatibility docs explaining that the central App
+    remains the preferred production path;
+  - link the secret-boundary guidance from README, architecture, security,
+    AWS ledger, release, release readiness, security checklist, roadmap,
+    changelog, and manager memory.

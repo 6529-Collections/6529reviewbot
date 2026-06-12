@@ -39,6 +39,8 @@ After stabilization:
 - docs updated
 - pull request template security, cost, and contract questions answered
 - workflow pins reviewed
+- reusable workflow caller-secret mapping reviewed when compatibility workflow
+  changes
 - security model reviewed for trust-boundary changes
 - AWS/IAM changes documented
 - AWS IAM/OIDC templates reviewed when AWS trust or permissions changed

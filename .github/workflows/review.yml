@@ -37,6 +37,16 @@ on:
         required: false
         default: main
         type: string
+    secrets:
+      ANTHROPIC_API_KEY:
+        description: Anthropic provider key for Anthropic lanes.
+        required: false
+      OPENAI_API_KEY:
+        description: OpenAI provider key for OpenAI lanes.
+        required: false
+      OPENROUTER_API_KEY:
+        description: OpenRouter provider key for OpenRouter lanes.
+        required: false
 
 permissions:
   contents: read
