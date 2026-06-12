@@ -114,8 +114,10 @@ output, but generated credentials still belong only in the private secret
 store. Support bundles also redact common token and private-key shapes from git
 branch/status output, selected safe environment values, and preflight messages
 before JSON or Markdown rendering, though file names may still disclose private
-operational context when `--include-git-status` is used. Redaction is a
-guardrail, not permission to publish verbose worker diagnostics.
+operational context when `--include-git-status` is used. Release-gate status
+notes and evidence also redact common secret shapes before JSON or Markdown
+output. Redaction is a guardrail, not permission to publish verbose worker
+diagnostics.
 
 ### Runtime Control Safety
 

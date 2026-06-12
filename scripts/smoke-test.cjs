@@ -961,6 +961,52 @@ assert.equal(gateSummary.complete, 1);
 assert.equal(gateSummary.deferred, 1);
 assert.equal(gateSummary.pending, gatesWithStatus.gates.length - 2);
 assert.match(releaseGates.renderReleaseGateSummaryMarkdown(gatesWithStatus), /Ready to tag: no/);
+const sensitiveGateStatus = releaseGates.validateReleaseGateStatus({
+  version: 1,
+  release: gates.release,
+  gates: {
+    "ledger-schema": {
+      status: "complete",
+      evidence: "Private evidence github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+    },
+    "model-prices": {
+      status: "deferred",
+      notes: "Accepted stale source with sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+    },
+  },
+});
+assert.match(sensitiveGateStatus.gates["ledger-schema"].statusEvidence, /github_pat_\[redacted\]/);
+assert.match(sensitiveGateStatus.gates["model-prices"].notes, /sk-\[redacted\]/);
+assert.equal(JSON.stringify(sensitiveGateStatus).includes("abcdefghijklmnopqrstuvwxyz"), false);
+const sensitiveGatesMarkdown = releaseGates.renderReleaseGatesMarkdown(
+  releaseGates.mergeReleaseGateStatus(gates, sensitiveGateStatus)
+);
+assert.equal(sensitiveGatesMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.match(sensitiveGatesMarkdown, /github_pat_\[redacted\]/);
+assert.match(sensitiveGatesMarkdown, /sk-\[redacted\]/);
+const longEvidenceTail = "x".repeat(1200);
+const longNotesTail = "y".repeat(1200);
+const longGateStatus = releaseGates.validateReleaseGateStatus({
+  version: 1,
+  release: gates.release,
+  gates: {
+    "ledger-schema": {
+      status: "complete",
+      evidence: `github_pat_abcdefghijklmnopqrstuvwxyz1234567890 ${longEvidenceTail}`,
+    },
+    "model-prices": {
+      status: "deferred",
+      notes: `sk-proj-abcdefghijklmnopqrstuvwxyz123456 ${longNotesTail}`,
+    },
+  },
+});
+assert.equal(longGateStatus.gates["ledger-schema"].statusEvidence.length, 1000);
+assert.equal(longGateStatus.gates["model-prices"].notes.length, 1000);
+const longGatesMarkdown = releaseGates.renderReleaseGatesMarkdown(
+  releaseGates.mergeReleaseGateStatus(gates, longGateStatus)
+);
+assert.equal(longGatesMarkdown.includes("x".repeat(1001)), false);
+assert.equal(longGatesMarkdown.includes("y".repeat(1001)), false);
 const statusSkeleton = releaseGates.createReleaseGateStatusSkeleton(gates);
 assert.equal(statusSkeleton.release, gates.release);
 assert.equal(Object.keys(statusSkeleton.gates).length, gates.gates.length);

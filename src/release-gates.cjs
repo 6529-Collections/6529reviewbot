@@ -1,8 +1,10 @@
 "use strict";
 
 const fs = require("fs");
+const { redactSensitiveText } = require("./diagnostics.cjs");
 
 const RELEASE_GATE_STATUSES = ["pending", "complete", "deferred", "blocked"];
+const RELEASE_GATE_TEXT_MAX_CHARS = 1000;
 
 function loadReleaseGates(filePath = "config/v0-release-gates.json") {
   return validateReleaseGates(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
@@ -18,7 +20,7 @@ function validateReleaseGates(document, source = "release gates") {
     throw new Error(`${source} version must be 1.`);
   }
   const release = stringField(document.release, `${source}.release`);
-  const description = stringField(document.description, `${source}.description`);
+  const description = releaseGateText(document.description, `${source}.description`);
   if (!Array.isArray(document.gates) || document.gates.length === 0) {
     throw new Error(`${source}.gates must be a non-empty array.`);
   }
@@ -32,8 +34,8 @@ function validateReleaseGates(document, source = "release gates") {
     seen.add(id);
     return {
       id,
-      title: stringField(gate.title, `${source}.gates[${index}].title`),
-      evidence: stringField(gate.evidence, `${source}.gates[${index}].evidence`),
+      title: releaseGateText(gate.title, `${source}.gates[${index}].title`),
+      evidence: releaseGateText(gate.evidence, `${source}.gates[${index}].evidence`),
       ...optionalGateStatus(gate, `${source}.gates[${index}]`, { evidenceKey: "statusEvidence" }),
     };
   });
@@ -225,8 +227,8 @@ function optionalGateStatus(value, source, options = {}) {
     return {};
   }
   const status = enumField(value.status || "pending", RELEASE_GATE_STATUSES, `${source}.status`);
-  const statusEvidence = optionalString(value[evidenceKey]);
-  const notes = optionalString(value.notes);
+  const statusEvidence = optionalReleaseGateText(value[evidenceKey]);
+  const notes = optionalReleaseGateText(value.notes);
   if (status === "complete" && !statusEvidence) {
     throw new Error(`${source}.${evidenceKey} must be set when status is complete.`);
   }
@@ -254,8 +256,17 @@ function stringField(value, source) {
   return text;
 }
 
+function releaseGateText(value, source, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
+  return redactSensitiveText(stringField(value, source)).slice(0, maxChars);
+}
+
 function optionalString(value) {
   return value === undefined || value === null ? "" : String(value).trim();
+}
+
+function optionalReleaseGateText(value, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
+  const text = optionalString(value);
+  return text ? redactSensitiveText(text).slice(0, maxChars) : "";
 }
 
 function enumField(value, allowed, source) {

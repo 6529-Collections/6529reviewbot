@@ -57,6 +57,8 @@ stabilized.
   JSON or Markdown support output is generated.
 - Support bundle selected safe environment values and preflight messages are
   defensively redacted before support output is generated.
+- Release-gate status notes and evidence redact common secret shapes before
+  JSON or Markdown output.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the
