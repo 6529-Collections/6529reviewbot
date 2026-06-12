@@ -39,6 +39,10 @@ Target deployment:
   untrusted.
 - Provider calls have bounded input, output, timeout, and changed-file limits.
 - Provider errors are sanitized before logs and comments.
+- Runtime pause controls are evaluated before budget admission, run-control
+  claims, worker dispatch, and provider calls.
+- Scoped pauses for org, repo, provider, model, and review kind cannot be
+  bypassed by repository config, comment commands, or multi-model lanes.
 - Worker dispatch fails before provider calls when installation id, target repo,
   PR number, provider, model, or review kind are missing.
 - Central worker jobs mint short-lived GitHub App installation tokens.
@@ -57,6 +61,13 @@ Target deployment:
 - Public usage summaries redact private repo names unless allowlisted.
 - Admin usage routes fail closed unless the 6529.io auth bridge authorizes the
   request.
+- Admin job-events and runtime-status routes fail closed, expose only bounded
+  operational fields, and do not return secrets, raw prompts, provider payloads,
+  or raw webhook bodies.
+- Machine-readable API contracts are updated when usage/admin response shapes
+  change, and `npm run validate:api-contract` passes.
+- Preflight, admin runtime status, and support bundles report secret presence
+  or missing configuration only, never secret values.
 - Alerting paths do not include secrets or raw prompts in messages.
 - Incident response docs cover spend spikes, secret exposure, provider
   outages, webhook abuse, ledger outages, and bad bot comments.
@@ -66,6 +77,7 @@ Target deployment:
 ## Required Evidence
 
 - `npm run release:check`
+- `npm run validate:api-contract` when public or admin API contracts changed.
 - `npm run preflight -- -- --strict` in the release candidate environment, or a
   documented acceptance of each warning.
 - CI passed on the release PR or tag.

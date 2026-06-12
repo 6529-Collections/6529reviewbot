@@ -59,6 +59,8 @@ stabilized.
 - Machine-readable v0 release gates and checklist renderer.
 - v0 release plan and release notes template for pre-v1 dogfood/community
   release discipline.
+- Pull request and security-review templates for API contract, admin/privacy,
+  runtime-control, budget, and release-validation review.
 - Documentation for architecture, configuration, operations, release readiness,
   security model, AWS usage ledger, repository config, worker adapters, and
   alerting.

@@ -158,6 +158,8 @@ Finalize the user-facing bot contract:
 - comment format, severity language, and dedupe behavior;
 - opt-in repo configuration file format;
 - model defaults with a clean update path as providers release new models.
+- routine PR review prompts that force security, cost, API contract, and
+  release-gate changes into the review conversation before merge.
 
 The built-in provider defaults now live in `config/model-catalog.json` and are
 validated by the release check. Production can still override defaults through

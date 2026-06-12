@@ -20,8 +20,11 @@ After stabilization:
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - `npm run v0:gates` rendered and completed, with deferred gates documented
 - `npm run release:check`
+- `npm run validate:api-contract` if public or admin usage API contracts
+  changed
 - `npm run preflight -- -- --strict` in the release candidate environment
 - docs updated
+- pull request template security, cost, and contract questions answered
 - workflow pins reviewed
 - security model reviewed for trust-boundary changes
 - AWS/IAM changes documented

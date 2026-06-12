@@ -426,3 +426,13 @@
     in CI;
   - README, usage API docs, changelog, release readiness, v0 plan, roadmap, and
     manager-memory updates.
+- Merged `6529reviewbot` PR #43 as `174b275` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/release-template-hardening` increment:
+  - PR template prompts for behavior/API contracts, security boundaries, cost
+    controls, release checks, API validation, and preflight;
+  - security checklist coverage for runtime pauses, scoped pause bypasses,
+    admin job/status APIs, machine-readable API contracts, and secret-redacted
+    diagnostics;
+  - release docs, changelog, roadmap, and manager-memory updates.
