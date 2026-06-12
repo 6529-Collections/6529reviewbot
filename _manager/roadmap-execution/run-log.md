@@ -186,3 +186,8 @@
     secrets, 6529.io usage/admin API wiring, verification, and rollback.
 - Addressed CodeRabbit feedback on PR #19 by failing fast before GitHub
   Actions dispatch when a review job lacks a target installation id.
+- Merged `6529reviewbot` PR #19 as `cee929b` after CI, Dependency Review,
+  CodeRabbit, and resolved review threads passed.
+- Started `codex/release-hardening-checklist` increment:
+  - repeatable `npm run release:check` gate;
+  - manual security review checklist for dogfood expansion and pre-v1 tags.

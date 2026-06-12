@@ -32,9 +32,10 @@ merged PRs.
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
 - Frontend dogfood config PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2606`
-- Current branch: `codex/production-app-deployment-wiring`
-- Current local changes: production deployment runbook and central worker
-  short-lived GitHub App installation-token flow
+- Production deployment wiring PR: merged as PR #19, merge commit `cee929b`
+- Current branch: `codex/release-hardening-checklist`
+- Current local changes: release check script and manual security review
+  checklist
 
 ## Key Decisions
 
@@ -63,9 +64,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge production deployment wiring.
+1. Push and merge release hardening checklist.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare release hardening and Scorecard/dependency/security review.
+3. Prepare v0 release notes and tag plan.
 
 ## Open Risks
 

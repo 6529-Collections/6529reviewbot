@@ -17,10 +17,7 @@ After stabilization:
 ## Release Checklist
 
 - [Release readiness](release-readiness.md) reviewed
-- `npm run check`
-- `npm test`
-- `git diff --check`
-- YAML parse for workflow and template files
+- `npm run release:check`
 - docs updated
 - workflow pins reviewed
 - security model reviewed for trust-boundary changes
@@ -29,6 +26,7 @@ After stabilization:
 - configuration changes documented
 - alerting and admin-auth changes documented
 - release-readiness checklist reviewed
+- [Security review checklist](security-review-checklist.md) completed
 - CodeRabbit or equivalent review feedback resolved
 - CI, Dependency Review, and OpenSSF Scorecard reviewed
 

@@ -28,7 +28,8 @@
     "worker:job": "node bin/run-review-job.cjs",
     "alerts:spend": "node bin/run-spend-alert-check.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
-    "validate:repo-config": "node bin/validate-repository-config.cjs"
+    "validate:repo-config": "node bin/validate-repository-config.cjs",
+    "release:check": "node scripts/release-check.cjs"
   },
   "dependencies": {
     "yaml": "^2.9.0"
