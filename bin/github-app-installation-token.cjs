@@ -3,19 +3,25 @@
 "use strict";
 
 const fs = require("fs");
-const { createGitHubAppIntegration } = require("../src/github-app-auth.cjs");
+const {
+  createGitHubAppIntegration,
+  githubAppAuthSettingsFromEnv,
+  githubAppAuthSettingsFromWorkerDispatchEnv,
+} = require("../src/github-app-auth.cjs");
+
+const PROFILES = ["main", "worker-dispatch"];
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const installationId =
-    options.installationId ||
-    process.env.REVIEWBOT_GITHUB_INSTALLATION_ID ||
-    process.env.GITHUB_APP_INSTALLATION_ID;
+    options.installationId || installationIdFromEnv(options.profile);
   if (!installationId) {
-    throw new Error("Pass --installation-id or set REVIEWBOT_GITHUB_INSTALLATION_ID.");
+    throw new Error(`Pass --installation-id or set ${installationIdEnvHelp(options.profile)}.`);
   }
 
-  const integration = createGitHubAppIntegration();
+  const integration = createGitHubAppIntegration({
+    settings: githubAppAuthSettingsForProfile(options.profile),
+  });
   const token = await integration.getInstallationToken(installationId);
   if (options.githubActionsOutput) {
     writeGitHubActionsOutput(token);
@@ -28,6 +34,7 @@ function parseArgs(args) {
   const options = {
     githubActionsOutput: false,
     installationId: "",
+    profile: "main",
   };
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -40,6 +47,16 @@ function parseArgs(args) {
       }
       options.installationId = value;
       index += 1;
+    } else if (arg === "--profile") {
+      const value = args[index + 1];
+      if (!value || value.startsWith("-")) {
+        throw new Error("--profile requires a value.");
+      }
+      if (!PROFILES.includes(value)) {
+        throw new Error(`--profile must be one of: ${PROFILES.join(", ")}.`);
+      }
+      options.profile = value;
+      index += 1;
     } else if (arg === "-h" || arg === "--help") {
       printUsage();
       process.exit(0);
@@ -48,6 +65,41 @@ function parseArgs(args) {
     }
   }
   return options;
+}
+
+function githubAppAuthSettingsForProfile(profile = "main", env = process.env) {
+  if (profile === "worker-dispatch") {
+    return githubAppAuthSettingsFromWorkerDispatchEnv(env);
+  }
+  if (profile === "main") {
+    return githubAppAuthSettingsFromEnv(env);
+  }
+  throw new Error(`Unsupported GitHub App token profile '${profile}'.`);
+}
+
+function installationIdFromEnv(profile = "main", env = process.env) {
+  if (profile === "worker-dispatch") {
+    return (
+      env.REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID ||
+      env.REVIEWBOT_WORKER_GITHUB_APP_INSTALLATION_ID ||
+      env.REVIEWBOT_GITHUB_INSTALLATION_ID ||
+      env.GITHUB_APP_INSTALLATION_ID ||
+      ""
+    );
+  }
+  if (profile === "main") {
+    return (
+      env.REVIEWBOT_GITHUB_INSTALLATION_ID || env.GITHUB_APP_INSTALLATION_ID || ""
+    );
+  }
+  throw new Error(`Unsupported GitHub App token profile '${profile}'.`);
+}
+
+function installationIdEnvHelp(profile = "main") {
+  if (profile === "worker-dispatch") {
+    return "REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID";
+  }
+  return "REVIEWBOT_GITHUB_INSTALLATION_ID";
 }
 
 function writeGitHubActionsOutput(token) {
@@ -60,7 +112,15 @@ function writeGitHubActionsOutput(token) {
 }
 
 function printUsage() {
-  console.log("Usage: node bin/github-app-installation-token.cjs --installation-id <id> [--github-actions-output]");
+  console.log(
+    [
+      "Usage: node bin/github-app-installation-token.cjs [--profile main|worker-dispatch] --installation-id <id> [--github-actions-output]",
+      "",
+      "Profiles:",
+      "  main              Use REVIEWBOT_GITHUB_APP_* credentials.",
+      "  worker-dispatch   Use REVIEWBOT_WORKER_GITHUB_APP_* credentials, falling back to main App credentials.",
+    ].join("\n")
+  );
 }
 
 if (require.main === module) {
@@ -71,5 +131,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  githubAppAuthSettingsForProfile,
+  installationIdFromEnv,
   parseArgs,
 };

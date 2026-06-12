@@ -191,6 +191,14 @@ Convert GitHub's one-hour manifest code from a private operator environment:
 npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
 ```
 
+Mint a short-lived installation token from a configured private operator
+environment:
+
+```bash
+npm run github-app:token -- --profile main --installation-id <installation-id>
+npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+```
+
 Print the Aurora ledger schema without touching AWS:
 
 ```bash

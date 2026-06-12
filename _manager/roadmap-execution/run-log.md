@@ -853,3 +853,14 @@
     `git diff --check`;
   - built `6529reviewbot:codex-dispatch-token` and verified `/healthz` returned
     `{"ok":true}` with no-op runtime settings.
+- Merged `6529reviewbot` PR #77 as `6f50666` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder/release-note summary
+  and no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27417858533`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27417858550`, completed successfully.
+- Started `codex/github-app-token-cli-profile` increment:
+  - add `--profile main|worker-dispatch` to the installation-token CLI;
+  - keep existing main-App behavior as the default;
+  - document testing the dispatch-only App token path from a private operator
+    environment.
