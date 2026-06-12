@@ -289,6 +289,7 @@ REVIEWBOT_USAGE_API_ADMIN_ENABLED=true
 REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
+REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_DEFAULT_DAYS=30
 REVIEWBOT_USAGE_API_MAX_DAYS=365
 REVIEWBOT_USAGE_API_MAX_ITEMS=50
@@ -300,6 +301,10 @@ REVIEWBOT_USAGE_API_PUBLIC_ORGS=
 Admin endpoints still fail closed unless the server injects an admin
 authorizer. Production should use the existing 6529.io auth system. See
 [usage-api.md](usage-api.md).
+
+`REVIEWBOT_USAGE_API_MAX_ITEMS` caps grouped usage summary rows and recent
+job-event rows returned by admin endpoints. Keep it low enough that the admin
+page cannot accidentally turn diagnostics into an unbounded table scan.
 
 `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and `REVIEWBOT_USAGE_API_PUBLIC_ORGS`
 control which repo names may appear on public summaries. Any repo that does not

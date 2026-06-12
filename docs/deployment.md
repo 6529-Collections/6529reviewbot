@@ -151,6 +151,7 @@ Private admin routes should call:
 ```text
 GET /api/admin/usage/summary?days=30
 GET /api/admin/budget/policies
+GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 ```
 
 Admin requests should be signed by server-side `6529.io` infrastructure using

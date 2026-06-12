@@ -3,6 +3,7 @@
 const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
+const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_DAYS = 30;
 const DEFAULT_MAX_DAYS = 365;
 const DEFAULT_MAX_ITEMS = 50;
@@ -15,6 +16,8 @@ function usageApiSettingsFromEnv(env = process.env) {
     adminSummaryPath: env.REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH || DEFAULT_ADMIN_SUMMARY_PATH,
     adminBudgetPoliciesPath:
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
+    adminJobEventsPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
     defaultDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_DEFAULT_DAYS, DEFAULT_DAYS, "REVIEWBOT_USAGE_API_DEFAULT_DAYS"),
     maxDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_DAYS, DEFAULT_MAX_DAYS, "REVIEWBOT_USAGE_API_MAX_DAYS"),
     maxItems: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_ITEMS, DEFAULT_MAX_ITEMS, "REVIEWBOT_USAGE_API_MAX_ITEMS"),
@@ -29,6 +32,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.publicSummaryPath,
     settings.adminSummaryPath,
     settings.adminBudgetPoliciesPath,
+    settings.adminJobEventsPath,
   ].includes(pathname);
 }
 
@@ -76,6 +80,29 @@ async function handleUsageApiRequest(request, options = {}) {
     };
   }
 
+  if (route.kind === "job_events") {
+    const query = jobEventsQueryFromRequest(request, settings);
+    const result = await (options.loadJobEvents || defaultLoadJobEvents)({
+      request,
+      settings,
+      query,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Job events are unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "job_events",
+        limit: query.limit,
+        status: query.status || null,
+        events: (result.events || []).map(normalizeJobEvent),
+      },
+    };
+  }
+
   const range = usageRangeFromRequest(request, settings, options.now || new Date());
   const result = await (options.loadUsageEvents || defaultLoadUsageEvents)({
     request,
@@ -113,6 +140,9 @@ function usageApiRoute(pathname, settings) {
   if (pathname === settings.adminBudgetPoliciesPath) {
     return { visibility: "admin", kind: "budget_policies" };
   }
+  if (pathname === settings.adminJobEventsPath) {
+    return { visibility: "admin", kind: "job_events" };
+  }
   return null;
 }
 
@@ -140,6 +170,31 @@ function usageRangeFromRequest(request, settings, now) {
     from: from.toISOString(),
     to: to.toISOString(),
   };
+}
+
+function jobEventsQueryFromRequest(request, settings) {
+  const requestedLimit = request.url.searchParams.get("limit");
+  let limit;
+  try {
+    limit = requestedLimit
+      ? positiveIntEnv(requestedLimit, settings.maxItems, "limit")
+      : settings.maxItems;
+  } catch (error) {
+    error.statusCode = 400;
+    throw error;
+  }
+  if (limit > settings.maxItems) {
+    const error = new Error(`limit must be <= ${settings.maxItems}.`);
+    error.statusCode = 400;
+    throw error;
+  }
+  const status = String(request.url.searchParams.get("status") || "").trim();
+  if (status && !/^[A-Za-z0-9_.:-]{1,80}$/.test(status)) {
+    const error = new Error("status contains unsupported characters.");
+    error.statusCode = 400;
+    throw error;
+  }
+  return { limit, status };
 }
 
 function summarizeUsageEvents(events, options = {}) {
@@ -177,6 +232,32 @@ function summarizeUsageEvents(events, options = {}) {
   return summary;
 }
 
+function normalizeJobEvent(event = {}) {
+  const metadata = normalizeJobMetadata(event.metadata);
+  return {
+    eventId: nullableNumber(event.eventId ?? event.id),
+    createdAt: event.createdAt || event.created_at || "",
+    jobId: event.jobId || event.job_id || "",
+    status: event.status || "",
+    stage: event.stage || "",
+    repoFullName: event.repoFullName || event.repo_full_name || "",
+    prNumber: nullableNumber(event.prNumber ?? event.pr_number),
+    prAuthor: event.prAuthor || event.pr_author || "",
+    prHeadSha: event.prHeadSha || event.pr_head_sha || "",
+    deliveryId: event.deliveryId || event.delivery_id || "",
+    requestor: event.requestor || "",
+    reviewKind: event.reviewKind || event.review_kind || "",
+    provider: event.provider || "",
+    model: event.model || "",
+    lane: event.lane || "",
+    adapter: event.adapter || "",
+    accepted: nullableBoolean(event.accepted),
+    reason: event.reason || "",
+    exitCode: nullableNumber(event.exitCode ?? event.exit_code),
+    metadata,
+  };
+}
+
 function normalizeUsageEvent(event = {}) {
   const metadata = normalizeMetadata(event.metadata);
   const actualCostUsd = nullableNumber(event.actualCostUsd ?? event.actual_cost_usd);
@@ -208,6 +289,11 @@ function normalizeUsageEvent(event = {}) {
     currency: event.currency || "USD",
     budgetSkipped: Boolean(event.budgetSkipped || event.budget_skipped),
   };
+}
+
+function normalizeJobMetadata(value) {
+  const metadata = normalizeMetadata(value);
+  return metadata && typeof metadata === "object" && !Array.isArray(metadata) ? metadata : {};
 }
 
 function publicBudgetPolicy(policy = {}) {
@@ -290,6 +376,24 @@ function nullableNumber(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function nullableBoolean(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    if (value.toLowerCase() === "true") {
+      return true;
+    }
+    if (value.toLowerCase() === "false") {
+      return false;
+    }
+  }
+  return Boolean(value);
+}
+
 function wholeNumber(value) {
   const number = Number(value || 0);
   return Number.isFinite(number) && number > 0 ? Math.round(number) : 0;
@@ -331,6 +435,13 @@ async function defaultLoadBudgetPolicies() {
   };
 }
 
+async function defaultLoadJobEvents() {
+  return {
+    unavailable: true,
+    reason: "No job event loader configured.",
+  };
+}
+
 function parseBool(value) {
   return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }
@@ -355,10 +466,13 @@ function positiveIntEnv(value, fallback, name) {
 
 module.exports = {
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
+  DEFAULT_ADMIN_JOB_EVENTS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
   handleUsageApiRequest,
   isUsageApiPath,
+  jobEventsQueryFromRequest,
+  normalizeJobEvent,
   normalizeUsageEvent,
   publicBudgetPolicy,
   summarizeUsageEvents,

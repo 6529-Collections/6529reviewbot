@@ -127,7 +127,7 @@ Recommended split:
   - budget policies;
   - alert recipients and thresholds;
   - pause/disable controls for org, repo, provider, model, and review kind;
-  - recent raw usage events and failed jobs;
+  - recent raw usage events and failed jobs through admin-only bot APIs;
   - emergency kill switch.
 
 The private admin page should run under the existing `6529.io` auth system.

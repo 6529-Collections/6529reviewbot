@@ -135,6 +135,11 @@ endpoints return aggregate usage data that is safe for 6529.io transparency
 pages. Admin endpoints require an injected authorizer and should be called only
 after the existing 6529.io auth system verifies operator permissions.
 
+The admin read side also exposes recent job lifecycle events for queue and
+worker diagnostics. Those rows are private operator data because they can name
+private repositories, requestors, exact provider/model routes, and dispatch
+failure reasons.
+
 The API does not expose Aurora credentials, provider keys, GitHub App secrets,
 or raw provider responses to browser clients.
 

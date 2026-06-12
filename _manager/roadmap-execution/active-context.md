@@ -50,9 +50,10 @@ merged PRs.
 - Run claim completion PR: merged as PR #34, merge commit `91a1e57`
 - Provider setup guide PR: merged as PR #35, merge commit `199bccc`
 - Support bundle PR: merged as PR #36, merge commit `cc6369d`
-- Current branch: `codex/v0-gates-tooling`
-- Current local changes: machine-readable v0 release gates, renderer CLI, docs
-  and release-check integration
+- v0 release gates PR: merged as PR #37, merge commit `f8e86b2`
+- Current branch: `codex/admin-job-events-api`
+- Current local changes: admin-only recent job-events endpoint, Aurora Data API
+  reader, server wiring, smoke coverage, and usage/operator docs
 
 ## Key Decisions
 
@@ -103,6 +104,9 @@ merged PRs.
   target repository data.
 - v0 release gates should exist both as prose and as a renderable checklist so
   release candidates are easy to audit.
+- Recent job lifecycle diagnostics should be available through the private
+  admin API, not through public transparency endpoints or direct browser access
+  to Aurora.
 
 ## Constraints
 
@@ -114,11 +118,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the v0 gates tooling PR if checks and review
-   are clean.
+1. Validate, publish, and merge the admin job-events API PR if checks and
+   review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   model price tooling PR lands.
+   admin diagnostics API lands.
 
 ## Open Risks
 

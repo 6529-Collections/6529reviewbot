@@ -29,6 +29,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     loadBudgetPolicies: async () => ({
       policies: readEnabledBudgetPolicies(ledgerSettings),
     }),
+    loadJobEvents: async ({ query }) => ({
+      events: readJobEvents(ledgerSettings, { query }),
+    }),
   };
 }
 
@@ -90,10 +93,82 @@ limit :limit
   };
 }
 
+function readJobEvents(settings, options = {}) {
+  assertDataApiSettings(settings, "Job events API ledger");
+  const query = buildJobEventsQuery(settings.schema, options.query || {});
+  const response = executeStatement(settings, query.sql, query.parameters, {
+    tempPrefix: "6529-job-events-api-",
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return (response.records || []).map(jobEventRecordToEvent);
+}
+
+function buildJobEventsQuery(schema, options = {}) {
+  const limit = positiveLimit(options.limit ?? 50);
+  const status = String(options.status || "").trim();
+  const where = status ? "\nwhere status = :status" : "";
+  const parameters = status ? [stringParam("status", status)] : [];
+  parameters.push(longParam("limit", limit));
+  return {
+    sql: `
+select
+  id,
+  created_at::text,
+  job_id,
+  status,
+  stage,
+  repo_full_name,
+  pr_number,
+  pr_author,
+  pr_head_sha,
+  delivery_id,
+  requestor,
+  review_kind,
+  provider,
+  model,
+  lane,
+  adapter,
+  accepted,
+  reason,
+  exit_code,
+  metadata::text
+from ${quoteIdent(schema)}.ai_review_job_events${where}
+order by created_at desc, id desc
+limit :limit
+`,
+    parameters,
+  };
+}
+
 function assertUsageRange(range) {
   if (!range.from || !range.to) {
     throw new Error("Usage API ledger reads require bounded range.from and range.to values.");
   }
+}
+
+function jobEventRecordToEvent(record) {
+  return {
+    eventId: nullableNumber(fieldValue(record[0])),
+    createdAt: fieldValue(record[1]),
+    jobId: fieldValue(record[2]),
+    status: fieldValue(record[3]),
+    stage: fieldValue(record[4]),
+    repoFullName: fieldValue(record[5]),
+    prNumber: nullableNumber(fieldValue(record[6])),
+    prAuthor: fieldValue(record[7]),
+    prHeadSha: fieldValue(record[8]),
+    deliveryId: fieldValue(record[9]),
+    requestor: fieldValue(record[10]),
+    reviewKind: fieldValue(record[11]),
+    provider: fieldValue(record[12]),
+    model: fieldValue(record[13]),
+    lane: fieldValue(record[14]),
+    adapter: fieldValue(record[15]),
+    accepted: nullableBoolean(fieldValue(record[16])),
+    reason: fieldValue(record[17]),
+    exitCode: nullableNumber(fieldValue(record[18])),
+    metadata: safeJson(fieldValue(record[19])),
+  };
 }
 
 function usageRecordToEvent(record, options = {}) {
@@ -126,6 +201,21 @@ function usageRecordToEvent(record, options = {}) {
   };
 }
 
+function positiveLimit(value) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new Error("Job event query limit must be a positive integer.");
+  }
+  return parsed;
+}
+
+function nullableBoolean(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  return Boolean(value);
+}
+
 function isPublicUsageRepo(repoFullName, apiSettings = usageApiSettingsFromEnv()) {
   const repo = String(repoFullName || "").toLowerCase();
   if (!repo.includes("/")) {
@@ -154,9 +244,12 @@ function safeJson(value) {
 }
 
 module.exports = {
+  buildJobEventsQuery,
   buildUsageEventsQuery,
   createUsageApiLedgerLoaders,
   isPublicUsageRepo,
+  jobEventRecordToEvent,
+  readJobEvents,
   readUsageEvents,
   assertUsageRange,
   usageApiLedgerLoadersFromEnv,

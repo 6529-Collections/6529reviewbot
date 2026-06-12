@@ -356,3 +356,15 @@
   - release-check integration in quiet mode;
   - smoke coverage for duplicate gate validation and CLI parsing;
   - README, release docs, changelog, roadmap, and manager-memory updates.
+- Merged `6529reviewbot` PR #37 as `f8e86b2` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/admin-job-events-api` increment:
+  - admin-only `GET /api/admin/jobs/recent` route with bounded `limit` and
+    optional exact `status` filtering;
+  - Aurora Data API reader for `ai_review_job_events`;
+  - production server wiring for usage-reader mode and job-ledger-only mode;
+  - smoke coverage for SQL rendering, ledger record mapping, direct handler
+    behavior, and App server loader forwarding;
+  - README, configuration, usage API, deployment, job-ledger, architecture,
+    changelog, roadmap, and manager-memory updates.
