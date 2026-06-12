@@ -26,12 +26,12 @@ merged PRs.
 - Admin auth bridge PR: merged as PR #14, merge commit `17e6dd2`
 - Scheduled spend alerts PR: merged as PR #15, merge commit `c079b7a`
 - Release readiness docs PR: merged as PR #16, merge commit `6bb7e93`
+- GitHub App installation auth PR: merged as PR #17, merge commit `d667ffd`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/github-app-installation-auth`
-- Current local changes: GitHub App JWT/installation-token auth, actor
-  permission resolution, repo config loading through installation tokens, docs,
-  and smoke tests
+- Current branch: `codex/dogfood-onboarding-kit`
+- Current local changes: dogfood runbook, conservative config templates, and
+  repository config validation tooling
 
 ## Key Decisions
 
@@ -60,7 +60,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge GitHub App installation-token auth.
+1. Push and merge dogfood onboarding kit.
 2. Dogfood on a target repo with conservative defaults.
 3. Prepare production GitHub App deployment and 6529.io wiring.
 

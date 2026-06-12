@@ -26,6 +26,12 @@ Run a dry spend-alert pass:
 npm run alerts:spend -- --dry-run --force
 ```
 
+Validate target repo config before rollout:
+
+```bash
+npm run validate:repo-config -- templates/dogfood-repository-config.yml
+```
+
 ## If Reviews Stop Posting
 
 Check:

@@ -279,10 +279,12 @@ Completed in `6529reviewbot`:
   dispatch;
 - 6529.io admin auth bridge contract;
 - alerting and scheduled spend checks.
+- dogfood runbook, conservative dogfood templates, and repository config
+  validation.
 
 In progress in `6529reviewbot`:
 
-- release-readiness documentation and dogfood planning.
+- dogfood onboarding and production wiring.
 
 In progress outside this repository:
 

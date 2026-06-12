@@ -26,7 +26,8 @@
     "review:i18n": "node bin/i18n-analysis.cjs",
     "review:security": "node bin/security-analysis.cjs",
     "worker:job": "node bin/run-review-job.cjs",
-    "alerts:spend": "node bin/run-spend-alert-check.cjs"
+    "alerts:spend": "node bin/run-spend-alert-check.cjs",
+    "validate:repo-config": "node bin/validate-repository-config.cjs"
   },
   "dependencies": {
     "yaml": "^2.9.0"

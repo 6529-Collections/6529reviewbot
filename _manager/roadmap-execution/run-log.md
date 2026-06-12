@@ -161,3 +161,14 @@
   - smoke tests use a generated RSA key and fake GitHub API responses.
   Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
   all workflow and template files.
+- Addressed CodeRabbit feedback on PR #17 by adding GitHub API request
+  timeouts, preserving collaborator permission when the best-effort org
+  membership lookup fails, and short-circuiting disabled repository config
+  before installation-token exchange.
+- Merged `6529reviewbot` PR #17 as `d667ffd` after CI, Dependency Review,
+  CodeRabbit, and resolved review threads passed.
+- Started `codex/dogfood-onboarding-kit` increment:
+  - dogfood runbook for phased rollout from noop to command-only to limited
+    initial reviews;
+  - conservative central env example and target repo config templates;
+  - repository config validator entrypoint.
