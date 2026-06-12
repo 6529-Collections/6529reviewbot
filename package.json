@@ -30,6 +30,7 @@
     "ledger:schema": "node bin/apply-ledger-schema.cjs",
     "model-prices": "node bin/apply-model-prices.cjs",
     "preflight": "node bin/preflight.cjs",
+    "support:bundle": "node bin/support-bundle.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",

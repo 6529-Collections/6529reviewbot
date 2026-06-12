@@ -74,6 +74,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
 - [Run Control](docs/run-control.md): dedupe and concurrency claims.
+- [Support](docs/support.md): support bundle and issue triage.
 - [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
@@ -152,6 +153,12 @@ Preview model pricing SQL without touching AWS:
 
 ```bash
 npm run model-prices -- --file config/model-prices.example.json
+```
+
+Generate a sanitized support bundle:
+
+```bash
+npm run support:bundle
 ```
 
 Replay a saved GitHub webhook payload without dispatching workers:
@@ -341,6 +348,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
 - [Run control](docs/run-control.md)
+- [Support](docs/support.md)
 - [Worker adapters](docs/worker-adapters.md)
 - [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)

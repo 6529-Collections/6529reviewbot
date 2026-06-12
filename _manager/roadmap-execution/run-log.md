@@ -338,3 +338,12 @@
   - central secret ownership, provider-side limits, rotation, and budget safety
     guidance;
   - README, release, roadmap, changelog, and manager-memory links.
+- Merged `6529reviewbot` PR #35 as `199bccc` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/support-bundle` increment:
+  - sanitized support bundle module and CLI;
+  - release gate dry-runs the JSON support bundle;
+  - smoke coverage verifies secret redaction and CLI parsing;
+  - support playbook, SUPPORT.md, issue template, README, roadmap, release, and
+    manager-memory updates.

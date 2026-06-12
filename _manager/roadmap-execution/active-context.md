@@ -48,9 +48,10 @@ merged PRs.
 - Model price tooling PR: merged as PR #32, merge commit `5a3bf47`
 - Model price estimation PR: merged as PR #33, merge commit `7aa4bd3`
 - Run claim completion PR: merged as PR #34, merge commit `91a1e57`
-- Current branch: `codex/provider-setup-guides`
-- Current local changes: provider setup guide for Anthropic, OpenAI, and
-  OpenRouter, plus documentation links
+- Provider setup guide PR: merged as PR #35, merge commit `199bccc`
+- Current branch: `codex/support-bundle`
+- Current local changes: sanitized support bundle CLI, support playbook, issue
+  template and docs updates
 
 ## Key Decisions
 
@@ -96,6 +97,9 @@ merged PRs.
   synchronously.
 - Provider-owned docs are the source of truth for key setup, availability, and
   pricing; this repo documents the operational contract and links outward.
+- Public support artifacts should collect useful diagnostics while exposing
+  secret presence only, never secret values, account IDs, private payloads, or
+  target repository data.
 
 ## Constraints
 
@@ -107,8 +111,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the provider setup guide PR if checks and
-   review are clean.
+1. Validate, publish, and merge the support bundle PR if checks and review are
+   clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
    model price tooling PR lands.
@@ -129,5 +133,7 @@ merged PRs.
   Aurora database during deployment.
 - Provider pricing rows still require operator verification and key/limit
   setup in provider-owned consoles.
+- Public support still requires maintainer moderation if a reporter
+  accidentally pastes sensitive data.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

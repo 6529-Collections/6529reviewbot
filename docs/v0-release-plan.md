@@ -45,6 +45,7 @@ The first `v0` tag can include:
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
 - no-network production preflight command;
 - incident response runbook;
+- sanitized support bundle and support playbook;
 - dogfood templates, deployment docs, release checks, and security-review
   checklists.
 

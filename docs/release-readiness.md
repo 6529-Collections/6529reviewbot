@@ -33,6 +33,7 @@ Ready for community review:
 - no-network production preflight command;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
   bad-comment incidents;
+- sanitized support bundle and support playbook;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
 - production deployment runbook and central worker template that mints
