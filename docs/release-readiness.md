@@ -56,6 +56,8 @@ Ready for community review:
   mints short-lived GitHub App installation tokens;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
+- spend-alert read/evaluation path dogfooded against the isolated ledger in
+  dry-run mode;
 - machine-readable v0 release gates with optional status/evidence rendering;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.

@@ -332,6 +332,8 @@ Completed in `6529reviewbot`:
 - budget-scope constraint refreshes for older dogfood databases.
 - conservative dogfood budget policy apply path verified against the isolated
   ledger with aggregate scope counts.
+- spend-alert read/evaluation path verified against the isolated ledger in
+  dry-run mode.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - installation and onboarding guide for conservative central App dogfood.

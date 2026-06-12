@@ -607,3 +607,14 @@
 - Started `codex/record-run-control-smoke` increment to record the public-safe
   evidence in run-control docs, release readiness, roadmap, changelog, and
   manager memory.
+- Merged `6529reviewbot` PR #58 as `9fdd374` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Ran the spend-alert checker against the isolated ledger with `--dry-run` and
+  `--force`:
+  - ledger reads completed for the default 35-day alert window;
+  - enabled central budget policies were evaluated;
+  - zero alerts were generated for the current empty-usage dogfood ledger;
+  - notification delivery stayed in dry-run mode.
+- Started `codex/record-alert-dry-run` increment to record this public-safe
+  alert evidence in docs and manager memory.
