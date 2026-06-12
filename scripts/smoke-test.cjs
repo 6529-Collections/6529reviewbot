@@ -792,6 +792,37 @@ assert.equal(supportSummary.presence.ANTHROPIC_API_KEY, "set");
 assert.equal(supportSummary.presence.GITHUB_WEBHOOK_SECRET, "unset");
 assert.equal(JSON.stringify(supportSummary).includes("secret-key"), false);
 assert.equal(JSON.stringify(supportSummary).includes("private-org/private-worker"), false);
+const supportSummaryWithMalformedSafeValues = supportBundle.environmentSummary({
+  REVIEW_MODEL: "sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+  REVIEWBOT_WORKER_GITHUB_REF: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+});
+assert.equal(supportSummaryWithMalformedSafeValues.safe.REVIEW_MODEL, "sk-[redacted]");
+assert.equal(
+  supportSummaryWithMalformedSafeValues.safe.REVIEWBOT_WORKER_GITHUB_REF,
+  "github_pat_[redacted]"
+);
+assert.equal(
+  JSON.stringify(supportSummaryWithMalformedSafeValues).includes("abcdefghijklmnopqrstuvwxyz"),
+  false
+);
+const supportPreflightSummary = supportBundle.preflightSummary({
+  ok: false,
+  errors: [
+    {
+      name: "test_error",
+      message: "provider rejected Bearer abcdefghijklmnopqrstuvwxyz123456",
+    },
+  ],
+  warnings: [
+    {
+      name: "test_warning",
+      message: "check path sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+    },
+  ],
+});
+assert.match(supportPreflightSummary.errors[0].message, /Bearer \[redacted\]/);
+assert.match(supportPreflightSummary.warnings[0].message, /sk-\[redacted\]/);
+assert.equal(JSON.stringify(supportPreflightSummary).includes("abcdefghijklmnopqrstuvwxyz"), false);
 const collectedSupportBundle = supportBundle.collectSupportBundle({
   env: {
     ...supportEnv,
@@ -840,6 +871,24 @@ assert.match(supportBundleWithGitStatus.git.status, /github_pat_\[redacted\]/);
 assert.match(supportBundleWithGitStatus.git.status, /sk-\[redacted\]/);
 assert.equal(supportBundleWithGitStatusJson.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(supportBundleWithGitStatusMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+const handBuiltSupportBundleMarkdown = supportBundle.formatSupportBundleMarkdown({
+  generatedAt: "2026-06-12T00:00:00.000Z",
+  package: { name: "@6529/6529reviewbot", version: "0.1.0" },
+  runtime: { node: "v24.0.0", platform: "linux", arch: "x64", osRelease: "test" },
+  git: {
+    branch: "feature/sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+    commit: "abc123",
+    status: "?? github_pat_abcdefghijklmnopqrstuvwxyz1234567890.txt",
+  },
+  environment: {
+    safe: { REVIEW_MODEL: "sk-proj-abcdefghijklmnopqrstuvwxyz123456" },
+    presence: { OPENAI_API_KEY: "set" },
+  },
+  preflight: supportPreflightSummary,
+});
+assert.equal(handBuiltSupportBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.match(handBuiltSupportBundleMarkdown, /sk-\[redacted\]/);
+assert.match(handBuiltSupportBundleMarkdown, /github_pat_\[redacted\]/);
 assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "--quiet"]), {
   includeGitStatus: true,
   json: true,
