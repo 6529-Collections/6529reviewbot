@@ -118,6 +118,8 @@ runbook when evidence contains live deployment details.
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
+`npm run check:docs` is included in `npm run release:check` and verifies local
+Markdown links across repository docs before release.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans public docs, configs, templates, workflows, and durable manager memory
 for live-looking credentials or cloud identifiers before release.

@@ -695,3 +695,11 @@
     fixture secrets do not hide real public-artifact leaks;
   - update release/security/support docs, roadmap, changelog, and manager
     memory.
+- Merged `6529reviewbot` PR #66 as `a8e8a61` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/docs-link-check` increment:
+  - add a local Markdown link checker for repository docs;
+  - skip fenced code blocks and external URLs while checking local targets;
+  - wire the checker into release checks;
+  - update release-readiness docs, roadmap, changelog, and manager memory.

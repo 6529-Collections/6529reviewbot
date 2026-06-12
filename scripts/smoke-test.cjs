@@ -30,6 +30,7 @@ const replayWebhook = require("../bin/replay-webhook.cjs");
 const runReviewJobCli = require("../bin/run-review-job.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
+const docsLinkCheck = require("./check-doc-links.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
@@ -65,6 +66,13 @@ assert.equal(settings.provider, "anthropic");
 assert.equal(settings.model, "claude-opus-4-8");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
+assert.deepEqual(docsLinkCheck.markdownLinkTargets("[Release](docs/release.md)"), ["docs/release.md"]);
+assert.equal(docsLinkCheck.normalizeLocalLinkTarget("docs/release.md#tagging"), "docs/release.md");
+assert.equal(docsLinkCheck.normalizeLocalLinkTarget("https://example.com"), "");
+assert.equal(
+  docsLinkCheck.checkMarkdownLinks("README.md", "[Missing](docs/nope.md)\n")[0].message,
+  "broken local link 'docs/nope.md'"
+);
 const catalog = modelCatalog.loadModelCatalog();
 assert.equal(catalog.providers.anthropic.defaultModel, "claude-opus-4-8");
 assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
