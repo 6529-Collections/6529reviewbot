@@ -34,9 +34,10 @@ merged PRs.
   `https://github.com/6529-Collections/6529seize-frontend/pull/2606`
 - Production deployment wiring PR: merged as PR #19, merge commit `cee929b`
 - Release hardening PR: merged as PR #20, merge commit `78401dc`
-- Current branch: `codex/v0-release-plan`
-- Current local changes: v0 release plan, release notes template, and docs
-  sweep
+- v0 release plan PR: merged as PR #21, merge commit `9a5b5e9`
+- Current branch: `codex/webhook-replay-tool`
+- Current local changes: dry-run webhook replay CLI, smoke coverage, and
+  operator docs
 
 ## Key Decisions
 
@@ -65,9 +66,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge v0 release plan and release notes template.
+1. Push and merge webhook replay diagnostics.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after PR #21
+3. Prepare the next release-polish or operator-readiness slice after PR #22
    lands.
 
 ## Open Risks

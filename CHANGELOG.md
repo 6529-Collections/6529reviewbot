@@ -27,6 +27,8 @@ stabilized.
 - Public/admin usage API contracts and read-only Aurora usage readers.
 - 6529.io admin auth bridge contract.
 - Scheduled spend alerts for budget utilization and unusual spend spikes.
+- Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
+  fanout diagnostics.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.
 - Production deployment runbook for GitHub App, worker, usage API, and 6529.io

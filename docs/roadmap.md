@@ -226,7 +226,8 @@ Build the operator experience:
   kind;
 - alerting for failed review jobs, ledger write failures, budget exhaustion,
   provider errors, and unusual spend spikes;
-- replay tooling for webhook events;
+- replay tooling for webhook events, starting with dry-run saved-payload
+  replay;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
 - v0 release notes and compatibility warnings;

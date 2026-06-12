@@ -21,7 +21,7 @@ npm run alerts:spend
 Use `--dry-run` to evaluate alerts without sending notifications:
 
 ```bash
-npm run alerts:spend -- --dry-run --force
+npm run alerts:spend -- -- --dry-run --force
 ```
 
 `--force` runs even when `REVIEWBOT_ALERTS_ENABLED=false`. This is useful for

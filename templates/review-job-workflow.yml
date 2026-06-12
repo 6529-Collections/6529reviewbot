@@ -138,4 +138,4 @@ jobs:
           REVIEW_USAGE_DB_SECRET_ARN: ${{ vars.REVIEW_USAGE_DB_SECRET_ARN }}
           REVIEW_USAGE_DB_NAME: ${{ vars.REVIEW_USAGE_DB_NAME }}
           REVIEW_USAGE_DB_SCHEMA: ${{ vars.REVIEW_USAGE_DB_SCHEMA }}
-        run: npm run worker:job -- --job-file job.json
+        run: npm run worker:job -- -- --job-file job.json

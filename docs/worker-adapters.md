@@ -84,7 +84,7 @@ installation token, check out `head_repo` at `head_sha` read-only, set
 provider/AWS secrets from the central bot environment, and run:
 
 ```bash
-npm run worker:job -- --job-file job.json
+npm run worker:job -- -- --job-file job.json
 ```
 
 or pipe the same job JSON to:

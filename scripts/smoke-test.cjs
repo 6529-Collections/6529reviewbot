@@ -14,6 +14,7 @@ const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
+const replayWebhook = require("../bin/replay-webhook.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -263,6 +264,28 @@ assert.deepEqual(githubWebhook.parseReviewCommand("@6529bot review all").reviewK
   "security",
 ]);
 assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
+assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
+assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");
+assert.equal(replayWebhook.normalizePayloadBody(Buffer.from(`\uFEFF${webhookBody}`))[0], 123);
+assert.deepEqual(
+  replayWebhook.parseArgs([
+    "--payload",
+    "payload.json",
+    "--actor-permission",
+    "write",
+    "--assume-empty-budget",
+    "--estimated-cost-usd",
+    "0.25",
+  ]),
+  {
+    dispatch: false,
+    assumeEmptyBudget: true,
+    orgMember: false,
+    payloadPath: "payload.json",
+    actorPermission: "write",
+    estimatedCostUsd: 0.25,
+  }
+);
 
 const parsedRepoConfig = repositoryConfig.parseRepositoryConfigText(`
 version: 1
@@ -1026,6 +1049,22 @@ appServer.handleGitHubWebhook({
   assert.equal(defaultQueueResult.body.enqueued, false);
   assert.equal(defaultQueueResult.body.jobs.length, 4);
   assert.equal(defaultQueueResult.body.queue.jobCount, 4);
+  const replayResult = await replayWebhook.replayWebhook({
+    payloadPath: "-",
+    eventName: "pull_request",
+    deliveryId: "replay-test",
+    webhookSecret,
+    actorPermission: "write",
+    repositoryConfigPath: "templates/dogfood-repository-config.yml",
+    assumeEmptyBudget: true,
+    estimatedCostUsd: 0.25,
+    readStdin: () => webhookBody,
+  });
+  assert.equal(replayResult.statusCode, 200);
+  assert.equal(replayResult.replay.dryRun, true);
+  assert.equal(replayResult.body.enqueued, false);
+  assert.equal(replayResult.body.jobs.length, 2);
+  assert.equal(replayResult.body.queue.adapter, "dry_run");
   let budgetDeniedQueued = false;
   const budgetDeniedResult = await appServer.handleGitHubWebhook({
     headers: {

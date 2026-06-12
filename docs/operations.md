@@ -23,7 +23,7 @@ aws rds-data execute-statement \
 Run a dry spend-alert pass:
 
 ```bash
-npm run alerts:spend -- --dry-run --force
+npm run alerts:spend -- -- --dry-run --force
 ```
 
 Validate target repo config before rollout:
@@ -32,12 +32,28 @@ Validate target repo config before rollout:
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Replay a saved webhook payload without dispatching workers:
+
+```bash
+npm run webhook:replay -- -- \
+  --payload payload.json \
+  --actor-permission write \
+  --repository-config templates/dogfood-repository-config.yml \
+  --assume-empty-budget
+```
+
+Use replay when investigating a GitHub delivery, config change, or admission
+decision. The command signs the local payload, runs the App pipeline, and
+prints the same public response shape the webhook handler would produce. It is
+dry-run unless `--dispatch` is passed.
+
 ## If Reviews Stop Posting
 
 Check:
 
 - target repo workflow permissions;
 - GitHub App installation;
+- replaying the saved GitHub delivery with `npm run webhook:replay`;
 - `GH_TOKEN` scope;
 - provider key availability;
 - fork/external PR skip logic;
@@ -56,11 +72,34 @@ Check:
 - IAM role policy;
 - `REVIEW_USAGE_FAIL_CLOSED`.
 
+## If A GitHub Delivery Needs Replay
+
+1. Save the delivery payload JSON from GitHub's App delivery view.
+2. Run replay without dispatch:
+
+   ```bash
+   npm run webhook:replay -- -- \
+     --payload payload.json \
+     --actor-permission write \
+     --repository-config templates/dogfood-repository-config.yml \
+     --assume-empty-budget
+   ```
+
+3. Inspect `body.event`, `body.configuration`, `body.admission`, `body.budget`,
+   `body.jobs`, and `body.queue`.
+4. Re-run with the real repository config source only after GitHub App
+   credentials are available in the operator environment.
+5. Use `--dispatch` only when the payload and budget assumptions are understood
+   and the worker adapter is intentionally configured.
+
+Do not paste provider keys, GitHub App private keys, webhook secrets, or raw
+private repository payloads into public issues, PRs, or release notes.
+
 ## If Provider Spend Spikes
 
 Check:
 
-- the latest `npm run alerts:spend -- --dry-run --force` output;
+- the latest `npm run alerts:spend -- -- --dry-run --force` output;
 - enabled rows in `reviewbot.ai_review_budget_policies`;
 - `REVIEW_BOT_INITIAL_KINDS`;
 - provider/model overrides;

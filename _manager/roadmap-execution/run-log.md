@@ -197,3 +197,10 @@
   - v0 release plan with explicit tag gates;
   - release notes template for pre-v1 GitHub Releases;
   - README, release docs, roadmap, changelog, and manager-memory sweep.
+- Merged `6529reviewbot` PR #21 as `9a5b5e9` after CI, Dependency Review,
+  CodeRabbit, and link/release checks passed.
+- Started `codex/webhook-replay-tool` increment:
+  - dry-run webhook replay CLI for saved GitHub delivery payloads;
+  - smoke coverage for argument parsing and replay pipeline behavior;
+  - README, configuration, GitHub App, deployment, operations, changelog, and
+    manager-memory updates.

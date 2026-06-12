@@ -129,6 +129,8 @@ or GitHub App private keys.
 - Invalid webhook signatures fail.
 - GitHub App `ping` is acknowledged.
 - Pull request and issue-comment events are normalized.
+- A saved pull request delivery can be replayed with `npm run webhook:replay`
+  in dry-run mode.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - `noop` mode returns jobs without dispatching workers.
