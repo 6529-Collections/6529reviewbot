@@ -20,6 +20,7 @@ After stabilization:
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - `npm run v0:gates` rendered and completed, with deferred gates documented
 - `npm run release:check`
+- `npm run github-app:manifest -- --host <production-bot-origin> --quiet`
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when

@@ -16,6 +16,8 @@ const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
+const githubAppManifest = require("../src/github-app-manifest.cjs");
+const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -510,6 +512,52 @@ assert.deepEqual(releaseGatesCli.parseArgs(["--file", "gates.json", "--json", "-
   json: true,
   quiet: true,
 });
+const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
+  host: "https://reviewbot.example.com/",
+});
+assert.equal(renderedGitHubAppManifest.name, "6529bot");
+assert.equal(
+  renderedGitHubAppManifest.hook_attributes.url,
+  "https://reviewbot.example.com/webhooks/github"
+);
+assert.equal(renderedGitHubAppManifest.default_permissions.members, "read");
+assert(renderedGitHubAppManifest.default_events.includes("pull_request"));
+assert.throws(
+  () => githubAppManifest.renderGitHubAppManifest({ host: "http://reviewbot.example.com" }),
+  /must use https/
+);
+assert.throws(
+  () => githubAppManifest.renderGitHubAppManifest({ host: "https://reviewbot.example.com/path" }),
+  /must not include a path/
+);
+const githubAppManifestForm = githubAppManifest.renderGitHubAppRegistrationForm({
+  manifest: renderedGitHubAppManifest,
+  owner: "6529-Collections",
+  state: "test-state",
+});
+assert.match(githubAppManifestForm, /organizations\/6529-Collections\/settings\/apps\/new/);
+assert.match(githubAppManifestForm, /state=test-state/);
+assert.match(githubAppManifestForm, /&quot;name&quot;:&quot;6529bot&quot;/);
+assert.deepEqual(
+  githubAppManifestCli.parseArgs([
+    "--host",
+    "https://reviewbot.example.com",
+    "--form",
+    "--owner",
+    "6529-Collections",
+    "--state",
+    "test-state",
+  ]),
+  {
+    form: true,
+    host: "https://reviewbot.example.com",
+    name: "",
+    owner: "6529-Collections",
+    quiet: false,
+    state: "test-state",
+    template: githubAppManifest.DEFAULT_GITHUB_APP_MANIFEST_TEMPLATE_PATH,
+  }
+);
 
 assert.deepEqual(reviewBot.normalizeOpenAIUsage({
   input_tokens: 10,

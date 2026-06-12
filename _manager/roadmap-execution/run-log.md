@@ -466,3 +466,12 @@
   - release-check JSON parsing for templates;
   - install, deployment, GitHub App, release gate, security checklist,
     changelog, roadmap, and manager-memory docs.
+- Merged `6529reviewbot` PR #47 as `fecf502` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/github-app-manifest-renderer` increment:
+  - host-specific GitHub App manifest renderer module and CLI;
+  - optional local registration-form output for GitHub's manifest flow;
+  - release-check rendering validation and smoke coverage;
+  - README, install, deployment, GitHub App, release, security, roadmap,
+    changelog, and manager-memory docs.

@@ -45,6 +45,9 @@ each caller repo may need variables, secrets, OIDC trust, and workflow rules.
 - Create the production GitHub App `6529bot`.
 - Keep the reviewed GitHub App manifest template in sync with production
   permissions, events, webhook URL shape, and callback/setup URLs.
+- Keep manifest rendering dry-run by default so operators can validate the
+  production host and registration settings before GitHub returns live
+  credentials.
 - Decide whether jobs run in GitHub Actions in this repository, an external
   worker, or both.
 - Define the event flow for PR open, synchronize, reopen, ready-for-review, and
@@ -306,6 +309,8 @@ Completed in `6529reviewbot`:
   validation.
 - production deployment runbook and central worker installation-token flow.
 - reviewable GitHub App manifest template for production registration.
+- GitHub App manifest renderer for host-specific validation and local
+  registration forms.
 - repeatable release check script and manual security review checklist.
 - machine-readable v0 release gates and checklist renderer.
 - validated model catalog for provider defaults.

@@ -38,6 +38,21 @@ permissions/events before registration. Keep GitHub-generated values such as
 the App id, client secret, webhook secret, and private key in the bot runtime
 secret store only.
 
+Validate the rendered manifest:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com --quiet
+```
+
+When using GitHub's manifest flow, render a local registration form:
+
+```bash
+npm run github-app:manifest -- --host https://reviewbot.example.com \
+  --form \
+  --owner 6529-Collections \
+  --state <unguessable-state>
+```
+
 Minimum recommended permissions:
 
 ```text
