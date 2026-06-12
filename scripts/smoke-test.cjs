@@ -2425,6 +2425,39 @@ const loadedRepoConfigPromise = repositoryConfig.loadRepositoryConfigFromGitHub(
     },
   }
 );
+const invalidSecretConfigText = Buffer.from(
+  "sk-proj-secretvalue1234567890: true\n"
+).toString("base64");
+const invalidRepoConfigPromise = repositoryConfig.loadRepositoryConfigFromGitHub(
+  normalizedPullRequest,
+  {
+    policy: repositoryConfig.repositoryConfigPolicyFromEnv({
+      REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
+    }),
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        type: "file",
+        encoding: "base64",
+        content: invalidSecretConfigText,
+      }),
+    }),
+  }
+);
+const publicRepoConfigSummary = repositoryConfig.publicRepositoryConfigSummary(
+  {
+    status: "invalid",
+    source: "github",
+    reason:
+      "failed with Bearer ghp_abcdefghijklmnopqrstuvwxyz1234567890\nsecond line",
+  },
+  repositoryConfig.defaultRepositoryConfig()
+);
+assert.equal(
+  publicRepoConfigSummary.reason,
+  "failed with Bearer [redacted]"
+);
 
 let enqueuedJobs = null;
 const recordedJobEvents = [];
@@ -2479,6 +2512,10 @@ appServer.handleGitHubWebhook({
   const loadedRepoConfig = await loadedRepoConfigPromise;
   assert.equal(loadedRepoConfig.status, "loaded");
   assert.equal(loadedRepoConfig.config.enabled, false);
+  const invalidRepoConfig = await invalidRepoConfigPromise;
+  assert.equal(invalidRepoConfig.status, "invalid");
+  assert.match(invalidRepoConfig.reason, /sk-\[redacted\]/);
+  assert.equal(invalidRepoConfig.reason.includes("sk-proj-secretvalue"), false);
   const noopQueue = await noopQueuePromise;
   assert.equal(noopQueue.accepted, false);
   assert.equal(noopQueue.reason, "No worker adapter configured.");

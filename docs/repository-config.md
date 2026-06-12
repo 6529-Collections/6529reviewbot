@@ -28,6 +28,12 @@ For pull requests, config is read from the base ref, not the PR head. This
 prevents a PR author from changing the bot policy inside the same PR that
 triggers model spend.
 
+Repository config belongs in the target repository and should not contain
+secrets. If a config file is invalid or unavailable, the App returns only a
+short, single-line, redacted reason in webhook and admin summaries. That keeps
+operator feedback useful without treating repository-owned text as a private
+diagnostic channel.
+
 ## What Repo Config Can Do
 
 Repository config can:

@@ -52,6 +52,8 @@ stabilized.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the
   shared redaction path, and job/run-claim metadata string fields redact common
   secret shapes before persistence.
+- Repository config load reasons are bounded and redacted before webhook or
+  admin summaries expose invalid or unavailable config diagnostics.
 - Live provider calls fail closed when the provider returns empty visible
   review text instead of posting a generic no-finding comment.
 - The production server can mint a short-lived GitHub App installation token
