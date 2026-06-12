@@ -532,7 +532,10 @@
           },
           "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "description": "Bounded scalar metadata. Common secret-shaped strings are redacted and nested objects or arrays are omitted.",
+            "additionalProperties": {
+              "type": ["string", "number", "boolean", "null"]
+            }
           }
         },
         "additionalProperties": false
@@ -566,6 +569,7 @@
           },
           "preflight": {
             "type": ["object", "null"],
+            "description": "Sanitized no-network preflight payload. Common secret-shaped strings are redacted and deeply nested or unsafe-keyed diagnostic values are omitted.",
             "additionalProperties": true
           }
         },

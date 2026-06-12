@@ -1317,3 +1317,19 @@
   shape before a repo name can match a public org allowlist; malformed repo
   names now collapse in public summaries. `npm test`, `npm run release:check`,
   and `git diff --check` passed again.
+- Merged `6529reviewbot` PR #113 as `c8adf86` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review thread marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27441492889`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27441492875`, completed successfully.
+- Started `codex/sanitize-admin-api-diagnostics` increment:
+  - sanitize admin job-event response strings and metadata at the usage API
+    boundary, even when custom loaders bypass ledger-write normalization;
+  - sanitize admin runtime-status diagnostic payloads before returning them to
+    6529.io;
+  - redact loader unavailable reasons before they become `503` JSON errors;
+  - update usage, job-ledger, security, OpenAPI, changelog, and manager docs.
+- Local validation for `codex/sanitize-admin-api-diagnostics`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

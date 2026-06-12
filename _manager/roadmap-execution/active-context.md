@@ -383,6 +383,11 @@ merged PRs.
   verified, and pings were acknowledged, but must not include App ids, client
   secrets, private keys, webhook secrets, installation ids, raw payloads, or
   live AWS identifiers.
+- Admin API responses are still an output boundary even though they require
+  6529.io admin auth. Job-event rows, runtime-status payloads, and loader
+  unavailable reasons should be bounded and redacted before they reach
+  dashboard clients, especially when custom loaders bypass ledger-write
+  normalization.
 
 ## Constraints
 
@@ -394,7 +399,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the public usage repo allowlist hardening PR.
+1. Validate, publish, and merge the admin API diagnostic sanitization PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

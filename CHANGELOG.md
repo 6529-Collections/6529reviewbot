@@ -68,6 +68,8 @@ stabilized.
 - Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the
   shared redaction path, and job/run-claim metadata string fields redact common
   secret shapes before persistence.
+- Admin usage API job-event, runtime-status, and unavailable responses now
+  sanitize custom loader diagnostics before returning JSON to 6529.io.
 - Repository config load reasons are bounded and redacted before webhook or
   admin summaries expose invalid or unavailable config diagnostics.
 - Live provider calls fail closed when the provider returns empty visible

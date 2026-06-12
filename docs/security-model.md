@@ -118,9 +118,12 @@ before JSON or Markdown rendering, though file names may still disclose private
 operational context when `--include-git-status` is used. Release-gate status
 notes and evidence also redact common secret shapes before JSON or Markdown
 output. Operator-maintained model-price and budget-policy `notes` are redacted
-and capped before dry-run SQL output or DB apply. Redaction is a guardrail, not
-permission to publish verbose worker diagnostics or store sensitive details in
-operator notes.
+and capped before dry-run SQL output or DB apply. Admin API job-event and
+runtime-status responses sanitize loader output again before returning JSON:
+diagnostic strings are bounded and redacted, job-event metadata is limited to
+safe-keyed scalar values, and unsafe custom diagnostic nesting is omitted.
+Redaction is a guardrail, not permission to publish verbose worker diagnostics
+or store sensitive details in operator notes.
 
 ### Runtime Control Safety
 

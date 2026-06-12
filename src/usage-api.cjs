@@ -1,5 +1,7 @@
 "use strict";
 
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
+
 const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
@@ -8,6 +10,12 @@ const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
 const DEFAULT_DAYS = 30;
 const DEFAULT_MAX_DAYS = 365;
 const DEFAULT_MAX_ITEMS = 50;
+const DEFAULT_ADMIN_TEXT_MAX_CHARS = 1000;
+const ADMIN_STATUS_MAX_ARRAY_ITEMS = 100;
+const ADMIN_STATUS_MAX_OBJECT_KEYS = 100;
+const ADMIN_STATUS_MAX_DEPTH = 6;
+const JOB_METADATA_KEY_PATTERN = /^[A-Za-z0-9_.-]{1,80}$/;
+const ADMIN_STATUS_KEY_PATTERN = /^[A-Za-z0-9_.:-]{1,80}$/;
 
 function usageApiSettingsFromEnv(env = process.env) {
   return {
@@ -125,7 +133,7 @@ async function handleUsageApiRequest(request, options = {}) {
         generatedAt: new Date().toISOString(),
         profile: query.profile,
         strict: query.strict,
-        preflight: result.preflight || result.status || null,
+        preflight: sanitizeAdminDiagnosticPayload(result.preflight || result.status || null),
       },
     };
   }
@@ -288,23 +296,23 @@ function normalizeJobEvent(event = {}) {
   const metadata = normalizeJobMetadata(event.metadata);
   return {
     eventId: nullableNumber(event.eventId ?? event.id),
-    createdAt: event.createdAt || event.created_at || "",
-    jobId: event.jobId || event.job_id || "",
-    status: event.status || "",
-    stage: event.stage || "",
-    repoFullName: event.repoFullName || event.repo_full_name || "",
+    createdAt: adminText(event.createdAt || event.created_at || ""),
+    jobId: adminText(event.jobId || event.job_id || ""),
+    status: adminText(event.status || ""),
+    stage: adminText(event.stage || ""),
+    repoFullName: adminText(event.repoFullName || event.repo_full_name || ""),
     prNumber: nullableNumber(event.prNumber ?? event.pr_number),
-    prAuthor: event.prAuthor || event.pr_author || "",
-    prHeadSha: event.prHeadSha || event.pr_head_sha || "",
-    deliveryId: event.deliveryId || event.delivery_id || "",
-    requestor: event.requestor || "",
-    reviewKind: event.reviewKind || event.review_kind || "",
-    provider: event.provider || "",
-    model: event.model || "",
-    lane: event.lane || "",
-    adapter: event.adapter || "",
+    prAuthor: adminText(event.prAuthor || event.pr_author || ""),
+    prHeadSha: adminText(event.prHeadSha || event.pr_head_sha || ""),
+    deliveryId: adminText(event.deliveryId || event.delivery_id || ""),
+    requestor: adminText(event.requestor || ""),
+    reviewKind: adminText(event.reviewKind || event.review_kind || ""),
+    provider: adminText(event.provider || ""),
+    model: adminText(event.model || ""),
+    lane: adminText(event.lane || ""),
+    adapter: adminText(event.adapter || ""),
     accepted: nullableBoolean(event.accepted),
-    reason: event.reason || "",
+    reason: adminText(event.reason || ""),
     exitCode: nullableNumber(event.exitCode ?? event.exit_code),
     metadata,
   };
@@ -345,7 +353,28 @@ function normalizeUsageEvent(event = {}) {
 
 function normalizeJobMetadata(value) {
   const metadata = normalizeMetadata(value);
-  return metadata && typeof metadata === "object" && !Array.isArray(metadata) ? metadata : {};
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return {};
+  }
+  const result = {};
+  for (const [key, item] of Object.entries(metadata)) {
+    if (!isSafeAdminKey(key, JOB_METADATA_KEY_PATTERN)) {
+      continue;
+    }
+    if (item === undefined) {
+      continue;
+    }
+    if (item === null) {
+      result[key] = null;
+    } else if (typeof item === "string") {
+      result[key] = adminText(item);
+    } else if (typeof item === "number") {
+      result[key] = Number.isFinite(item) ? item : null;
+    } else if (typeof item === "boolean") {
+      result[key] = item;
+    }
+  }
+  return result;
 }
 
 function publicBudgetPolicy(policy = {}) {
@@ -467,9 +496,52 @@ function unavailableResponse(reason) {
     statusCode: 503,
     body: {
       ok: false,
-      error: reason,
+      error: safeErrorLine(reason || "Unavailable."),
     },
   };
+}
+
+function sanitizeAdminDiagnosticPayload(value, depth = ADMIN_STATUS_MAX_DEPTH) {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  if (typeof value === "string") {
+    return adminText(value);
+  }
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (depth <= 0) {
+    return "[nested value omitted]";
+  }
+  if (Array.isArray(value)) {
+    return value
+      .slice(0, ADMIN_STATUS_MAX_ARRAY_ITEMS)
+      .map((item) => sanitizeAdminDiagnosticPayload(item, depth - 1));
+  }
+  if (typeof value === "object") {
+    const result = {};
+    for (const [key, item] of Object.entries(value).slice(0, ADMIN_STATUS_MAX_OBJECT_KEYS)) {
+      if (!isSafeAdminKey(key, ADMIN_STATUS_KEY_PATTERN)) {
+        continue;
+      }
+      result[key] = sanitizeAdminDiagnosticPayload(item, depth - 1);
+    }
+    return result;
+  }
+  return "";
+}
+
+function adminText(value, maxChars = DEFAULT_ADMIN_TEXT_MAX_CHARS) {
+  return redactSensitiveText(value).slice(0, maxChars);
+}
+
+function isSafeAdminKey(key, pattern) {
+  const text = String(key || "");
+  return pattern.test(text) && redactSensitiveText(text) === text;
 }
 
 async function defaultAuthorizeAdmin() {
@@ -564,6 +636,7 @@ module.exports = {
   normalizeJobEvent,
   normalizeUsageEvent,
   publicBudgetPolicy,
+  sanitizeAdminDiagnosticPayload,
   summarizeUsageEvents,
   usageApiSettingsFromEnv,
   usageRangeFromRequest,

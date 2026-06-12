@@ -2587,6 +2587,38 @@ const jobEvent = usageApiLedger.jobEventRecordToEvent(jobEventLedgerRecord);
 assert.equal(jobEvent.eventId, 99);
 assert.equal(jobEvent.accepted, false);
 assert.equal(jobEvent.metadata.workflow, "review-job");
+const unsafeAdminJobEvent = usageApi.normalizeJobEvent({
+  jobId: "job-unsafe",
+  status: "dispatch_failed",
+  stage: "dispatch",
+  repoFullName: "6529-Collections/private",
+  prNumber: 12,
+  reason:
+    "failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+  metadata: {
+    detail:
+      "failed with github_pat_abcdefghijklmnopqrstuvwxyz1234567890 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+    nested: { token: "sk-proj-should-not-pass" },
+    "bad key": "sk-proj-should-not-pass",
+    github_pat_abcdefghijklmnopqrstuvwxyz1234567890: "should-not-pass",
+    count: 2,
+    ok: true,
+  },
+});
+assert(unsafeAdminJobEvent.reason.includes("Bearer [redacted]"));
+assert(unsafeAdminJobEvent.reason.includes("sk-[redacted]"));
+assert.equal(unsafeAdminJobEvent.reason.includes("sk-proj-"), false);
+assert(unsafeAdminJobEvent.metadata.detail.includes("github_pat_[redacted]"));
+assert(unsafeAdminJobEvent.metadata.detail.includes("sk-[redacted]"));
+assert.equal(unsafeAdminJobEvent.metadata.detail.includes("sk-proj-"), false);
+assert.equal(Object.prototype.hasOwnProperty.call(unsafeAdminJobEvent.metadata, "nested"), false);
+assert.equal(Object.prototype.hasOwnProperty.call(unsafeAdminJobEvent.metadata, "bad key"), false);
+assert.equal(
+  Object.keys(unsafeAdminJobEvent.metadata).some((key) => key.startsWith("github_pat_")),
+  false
+);
+assert.equal(unsafeAdminJobEvent.metadata.count, 2);
+assert.equal(unsafeAdminJobEvent.metadata.ok, true);
 const runClaimLedgerRecord = [
   { longValue: 101 },
   { stringValue: "2026-06-12 08:00:00+00" },
@@ -2951,12 +2983,47 @@ appServer.handleGitHubWebhook({
     loadAdminStatus: async ({ query }) => {
       assert.equal(query.profile, "worker");
       assert.equal(query.strict, true);
-      return { preflight: { ok: false, warnings: [{ name: "test", message: "warning" }] } };
+      return {
+        preflight: {
+          ok: false,
+          warnings: [{
+            name: "test",
+            message:
+              "warning with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+          }],
+          unsafeNested: {
+            deeper: {
+              token: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+            },
+          },
+          "bad key": "sk-proj-should-not-pass",
+          github_pat_abcdefghijklmnopqrstuvwxyz1234567890: "should-not-pass",
+        },
+      };
     },
   });
   assert.equal(adminStatusRouteResult.statusCode, 200);
   assert.equal(adminStatusRouteResult.body.kind, "runtime_status");
   assert.equal(adminStatusRouteResult.body.preflight.ok, false);
+  assert(
+    adminStatusRouteResult.body.preflight.warnings[0].message.includes("Bearer [redacted]")
+  );
+  assert(adminStatusRouteResult.body.preflight.warnings[0].message.includes("sk-[redacted]"));
+  assert.equal(
+    adminStatusRouteResult.body.preflight.warnings[0].message.includes("sk-proj-"),
+    false
+  );
+  assert(
+    adminStatusRouteResult.body.preflight.unsafeNested.deeper.token.includes("github_pat_[redacted]")
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(adminStatusRouteResult.body.preflight, "bad key"),
+    false
+  );
+  assert.equal(
+    Object.keys(adminStatusRouteResult.body.preflight).some((key) => key.startsWith("github_pat_")),
+    false
+  );
   const adminJobsRouteUrl = new URL("http://localhost/api/admin/jobs/recent?limit=1");
   const adminJobsRouteResult = await appServer.handleHttpRequest({
     method: "GET",
@@ -3047,7 +3114,14 @@ appServer.handleGitHubWebhook({
           repoFullName: "6529-Collections/private",
           prNumber: 12,
           accepted: false,
-          metadata: { workflow: "review-job" },
+          reason:
+            "queue failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+          metadata: {
+            workflow: "review-job",
+            detail:
+              "failed with github_pat_abcdefghijklmnopqrstuvwxyz1234567890 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+            nested: { token: "sk-proj-should-not-pass" },
+          },
         }],
       };
     },
@@ -3055,7 +3129,33 @@ appServer.handleGitHubWebhook({
   assert.equal(adminJobEvents.statusCode, 200);
   assert.equal(adminJobEvents.body.kind, "job_events");
   assert.equal(adminJobEvents.body.events[0].accepted, false);
+  assert(adminJobEvents.body.events[0].reason.includes("Bearer [redacted]"));
+  assert(adminJobEvents.body.events[0].reason.includes("sk-[redacted]"));
+  assert.equal(adminJobEvents.body.events[0].reason.includes("sk-proj-"), false);
   assert.equal(adminJobEvents.body.events[0].metadata.workflow, "review-job");
+  assert(adminJobEvents.body.events[0].metadata.detail.includes("github_pat_[redacted]"));
+  assert(adminJobEvents.body.events[0].metadata.detail.includes("sk-[redacted]"));
+  assert.equal(adminJobEvents.body.events[0].metadata.detail.includes("sk-proj-"), false);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(adminJobEvents.body.events[0].metadata, "nested"),
+    false
+  );
+  const unavailableUsageApi = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/public/usage/summary"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    loadUsageEvents: async () => ({
+      unavailable: true,
+      reason:
+        "ledger failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+    }),
+  });
+  assert.equal(unavailableUsageApi.statusCode, 503);
+  assert(unavailableUsageApi.body.error.includes("Bearer [redacted]"));
+  assert(unavailableUsageApi.body.error.includes("sk-[redacted]"));
+  assert.equal(unavailableUsageApi.body.error.includes("sk-proj-"), false);
   assert.throws(
     () => usageApi.jobEventsQueryFromRequest(
       { url: new URL("http://localhost/api/admin/jobs/recent?limit=999") },
