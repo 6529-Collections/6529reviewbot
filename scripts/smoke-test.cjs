@@ -766,6 +766,7 @@ assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "
   quiet: true,
 });
 assert.equal(publicArtifactsCheck.isPublicTextArtifact("docs/release.md"), true);
+assert.equal(publicArtifactsCheck.isPublicTextArtifact(".env.example"), true);
 assert.equal(publicArtifactsCheck.isPublicTextArtifact("scripts/smoke-test.cjs"), false);
 assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "arn:aws:iam::123456789012:role/example\n").length,

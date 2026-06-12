@@ -37,7 +37,7 @@ After stabilization:
   the numbered required-gates list
 - `npm run check:docs` passes before publishing docs-heavy release notes
 - `npm run check:public-artifacts` passes before publishing release notes or
-  public operator evidence
+  public operator evidence, including the tracked root `.env.example`
 - `npm run check:preflight` passes against the synthetic central App server
   and worker fixtures
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
