@@ -144,9 +144,12 @@ merged PRs.
   completed after merge with no actionable comments.
 - Price evidence release-operations PR: merged as PR #94, merge commit
   `82627cd`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/container-image-release-gate`
-- Current local changes: add the missing machine-readable v0 container image
-  gate and smoke-test release-gate sentinel wording.
+- Container image release-gate PR: merged as PR #95, merge commit `ce616e1`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-gate-parity-check`
+- Current local changes: add release automation that checks
+  `config/v0-release-gates.json` stays in count parity with the numbered
+  required gates in `docs/v0-release-plan.md`.
 
 ## Key Decisions
 
@@ -334,7 +337,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the container-image release-gate PR.
+1. Validate, publish, and merge the release-gate parity-check PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
