@@ -1206,3 +1206,23 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #107 as `5c315ca` after CI, Dependency Review,
+  OpenSSF Scorecard, and CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27436722350`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27436722166`, completed successfully.
+- Started `codex/redact-release-gate-status` increment:
+  - redact release-gate status notes and evidence before normalized JSON or
+    Markdown output;
+  - add smoke coverage for token-shaped complete evidence, deferred notes, and
+    rendered release-gate Markdown;
+  - update release docs, operator evidence guidance, changelog, security model,
+    and manager memory.
+- Local validation for `codex/redact-release-gate-status`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
+- Addressed CodeRabbit's test-coverage nitpick on PR #108 by pinning the
+  1000-character release-gate status evidence/notes truncation contract in
+  smoke tests; `npm test`, `npm run release:check`, and `git diff --check`
+  passed again.

@@ -169,11 +169,12 @@ merged PRs.
   successfully.
 - Support bundle git-output redaction PR: merged as PR #106, merge commit
   `5ca19e8`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-support-bundle-values`
-- Current local changes: support bundle selected safe environment values and
-  preflight messages use the shared diagnostics redaction path before JSON or
-  Markdown output; smoke tests cover malformed token-shaped values and
-  hand-built bundle rendering.
+- Support bundle value/message redaction PR: merged as PR #107, merge commit
+  `5c315ca`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-release-gate-status`
+- Current local changes: v0 release-gate status notes and evidence use the
+  shared diagnostics redaction path before JSON or Markdown output; smoke tests
+  cover secret-shaped status evidence, deferred notes, and rendered Markdown.
 
 ## Key Decisions
 
@@ -383,7 +384,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the support-bundle value/message redaction PR.
+1. Validate, publish, and merge the release-gate status redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

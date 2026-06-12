@@ -173,6 +173,12 @@ npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 current canonical gate list. If a new public gate is added, regenerate the
 private status file with `--init-status` or add the new gate before tagging.
 
+Gate status notes and evidence rendered by the CLI redact common token and
+private-key shapes, including JSON output. That is a guardrail for accidental
+copy/paste, not permission to store live secrets, full account ids, private
+repository names, raw payloads, or unredacted deployment evidence in public
+status files.
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 

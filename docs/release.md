@@ -32,6 +32,9 @@ After stabilization:
   passes before tagging; every current gate must be present in the status file,
   and deferred gates remain allowed only when release notes name the risk and
   follow-up owner
+- release-gate status notes/evidence are public-safe before copying them into
+  issues, PRs, release notes, or durable manager memory; the CLI redacts common
+  token/private-key shapes, but private evidence remains operator-owned
 - `npm run release:check`
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list
