@@ -109,6 +109,11 @@ local and manual gates.
 
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
+Use `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
+for the final public-safe gate counts, and use
+`npm run v0:gates -- -- --status-file <operator-status-file> --require-ready`
+as the tag/no-tag check. The status file can stay in the private operator
+runbook when evidence contains live deployment details.
 
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private

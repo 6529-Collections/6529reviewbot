@@ -24,6 +24,11 @@ After stabilization:
   explicitly deferred in the release notes
 - `npm run v0:gates` rendered, or rendered with
   `--status-file <operator-status-file>`, with deferred gates documented
+- `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
+  reviewed for the final complete/deferred/pending/blocked counts
+- `npm run v0:gates -- -- --status-file <operator-status-file> --require-ready`
+  passes before tagging; deferred gates remain allowed only when release notes
+  name the risk and follow-up owner
 - `npm run release:check`
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`

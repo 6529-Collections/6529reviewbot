@@ -138,6 +138,18 @@ blocked without editing the canonical gate list:
 npm run v0:gates -- -- --status-file config/v0-release-status.example.json
 ```
 
+Print the concise tag/no-tag summary from an operator-owned status file:
+
+```bash
+npm run v0:gates -- -- --status-file <operator-status-file> --summary
+```
+
+Before tagging, require that the status file has no pending or blocked gates:
+
+```bash
+npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
+```
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 
@@ -151,6 +163,7 @@ git checkout main
 git pull --ff-only origin main
 git status --short
 npm run release:check
+npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 ```
 
 Then review remote checks and create an annotated tag:

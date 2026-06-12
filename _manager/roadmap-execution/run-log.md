@@ -673,3 +673,13 @@
     code value;
   - update GitHub App, install, deployment, release readiness, security
     checklist, roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #64 as `8c77d41` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/release-gate-readiness-summary` increment:
+  - add release-gate completion/deferred/pending/blocked summaries;
+  - add a `--require-ready` CLI gate that fails when status files still have
+    pending or blocked gates;
+  - keep deferrals allowed only with documented notes so pre-v1 releases can
+    be explicit about accepted risk;
+  - update release docs, roadmap, changelog, and manager memory.

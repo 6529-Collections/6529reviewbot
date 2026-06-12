@@ -16,6 +16,8 @@ Commit or tag:
 Environment:
 Public summary location:
 Private evidence location:
+Release gate status file:
+Release gate summary:
 ```
 
 ## GitHub App
