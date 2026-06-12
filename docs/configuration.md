@@ -23,7 +23,9 @@ PORT=8080
 ```
 
 `GITHUB_WEBHOOK_SECRET` and `REVIEWBOT_GITHUB_WEBHOOK_SECRET` are aliases. The
-server requires one of them before it will accept GitHub webhooks.
+server requires one of them before it will accept GitHub webhooks. Production
+secrets should be high-entropy and at least 32 characters; preflight warns when
+the configured value is shorter.
 
 ## GitHub App Installation Auth
 

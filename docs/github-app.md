@@ -55,7 +55,8 @@ REVIEWBOT_WEBHOOK_MAX_BODY_BYTES=2097152
 
 The server refuses to start without a webhook secret. Webhook payloads are
 verified with GitHub's `X-Hub-Signature-256` HMAC before JSON parsing or event
-routing.
+routing. Production webhook secrets should be high-entropy and at least 32
+characters; `npm run preflight` warns when a shorter placeholder is configured.
 
 ## Production Registration
 

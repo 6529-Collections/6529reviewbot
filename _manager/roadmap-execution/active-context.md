@@ -109,10 +109,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - GitHub App token CLI profile PR: merged as PR #78, merge commit `1ccb5e2`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/harden-admin-auth-headers`
-- Current local changes: harden private admin HMAC bridge header handling by
-  accepting standard `Headers` objects and rejecting malformed actor/role
-  values before canonical signing or authorization.
+- Admin auth header hardening PR: merged as PR #79, merge commit `3fa71dc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/harden-webhook-preflight`
+- Current local changes: make webhook header parsing accept standard `Headers`
+  objects and warn in preflight when the configured webhook secret is an
+  obvious short placeholder.
 
 ## Key Decisions
 

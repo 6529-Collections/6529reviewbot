@@ -4,6 +4,7 @@ const crypto = require("crypto");
 
 const DEFAULT_WEBHOOK_PATH = "/webhooks/github";
 const DEFAULT_MAX_BODY_BYTES = 2 * 1024 * 1024;
+const MIN_WEBHOOK_SECRET_LENGTH = 32;
 const REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security"];
 const INITIAL_REVIEW_KINDS = ["general", "wcag", "i18n", "security"];
 
@@ -33,6 +34,10 @@ function assertWebhookSettings(settings) {
   if (!settings.webhookPath.startsWith("/")) {
     throw new Error("REVIEWBOT_WEBHOOK_PATH must start with '/'.");
   }
+}
+
+function isWeakWebhookSecret(secret) {
+  return String(secret || "").length < MIN_WEBHOOK_SECRET_LENGTH;
 }
 
 function signGitHubWebhook(secret, body) {
@@ -72,9 +77,13 @@ function headerValue(headers, name) {
     return "";
   }
   const lowerName = name.toLowerCase();
+  if (typeof headers.get === "function") {
+    const value = headers.get(name);
+    return value === null || value === undefined ? "" : String(value);
+  }
   for (const [key, value] of Object.entries(headers)) {
     if (key.toLowerCase() === lowerName) {
-      return Array.isArray(value) ? value[0] || "" : value || "";
+      return Array.isArray(value) ? String(value[0] || "") : String(value || "");
     }
   }
   return "";
@@ -261,10 +270,12 @@ module.exports = {
   DEFAULT_MAX_BODY_BYTES,
   DEFAULT_WEBHOOK_PATH,
   INITIAL_REVIEW_KINDS,
+  MIN_WEBHOOK_SECRET_LENGTH,
   REVIEW_KINDS,
   assertGitHubWebhookSignature,
   assertWebhookSettings,
   headerValue,
+  isWeakWebhookSecret,
   normalizeGitHubWebhook,
   parseReviewCommand,
   parseWebhookJson,

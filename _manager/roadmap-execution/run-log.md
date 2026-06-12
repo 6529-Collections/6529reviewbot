@@ -874,3 +874,14 @@
   - accept standard `Headers` objects in the admin auth bridge;
   - reject malformed HMAC actor and role headers before signature comparison;
   - document the 6529.io signer value contract.
+- Merged `6529reviewbot` PR #79 as `3fa71dc` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27418709413`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27418709355`, completed successfully.
+- Started `codex/harden-webhook-preflight` increment:
+  - accept standard `Headers` objects for GitHub webhook header parsing;
+  - warn during preflight when the webhook secret is shorter than the
+    production minimum;
+  - document the high-entropy webhook secret expectation.

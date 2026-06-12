@@ -27,6 +27,8 @@ Target deployment:
 ## Checklist
 
 - Webhooks require a valid `X-Hub-Signature-256` before parsing.
+- Webhook secret preflight is clean, or any weak-secret warning is accepted
+  only for local/non-production testing.
 - Production GitHub App settings match the reviewed manifest template or an
   explicitly reviewed manual equivalent.
 - The production GitHub App manifest was rendered with the final HTTPS bot
