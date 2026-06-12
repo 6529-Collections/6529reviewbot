@@ -8,7 +8,7 @@
     },
     "model-prices": {
       "status": "deferred",
-      "notes": "Example only: defer applied price rows when the release keeps conservative default estimates."
+      "notes": "Example only: defer applied price rows and freshness evidence when the release keeps conservative default estimates."
     },
     "github-app": {
       "status": "pending",

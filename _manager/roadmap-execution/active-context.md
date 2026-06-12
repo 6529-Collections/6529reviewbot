@@ -135,10 +135,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Model price source timestamp PR: merged as PR #91, merge commit `cd3a987`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/price-staleness-preflight`
-- Current local changes: add stale/future-dated model price source-check
-  guards for apply and optional preflight, plus operator documentation for the
-  freshness policy and explicit override.
+- Model price freshness PR: merged as PR #92, merge commit `d8ec89e`;
+  post-merge CI and OpenSSF Scorecard completed successfully. CodeRabbit
+  completed after merge with no inline comments and only its generic docstring
+  coverage warning.
+- Current branch: `codex/operator-checks-price-evidence`
+- Current local changes: align machine-readable v0 release gates, sample gate
+  status, and roadmap progress with the model price freshness policy.
 
 ## Key Decisions
 
@@ -326,7 +329,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model price source freshness PR.
+1. Validate, publish, and merge the model price release-gate alignment PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
