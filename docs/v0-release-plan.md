@@ -49,6 +49,7 @@ The first `v0` tag can include:
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
+- example AWS IAM/OIDC templates for central Data API and SNS access;
 - no-network production preflight command;
 - incident response runbook;
 - sanitized support bundle and support playbook;
@@ -79,33 +80,35 @@ Do not create the `v0` tag until all of these are true:
    release notes explicitly mark the release as local/dogfood-only.
 3. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
    are configured only in bot-owned infrastructure.
-4. The 6529.io public usage dashboard is merged, deployed, and wired to the
+4. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
+   `infra/aws` or equivalent least-privilege documents.
+5. The 6529.io public usage dashboard is merged, deployed, and wired to the
    public usage API or explicitly deferred in the release notes.
-5. The 6529.io private admin surface is wired to the HMAC auth bridge or
+6. The 6529.io private admin surface is wired to the HMAC auth bridge or
    explicitly deferred behind operator-only APIs.
-6. Dogfood repository configuration has been merged into at least one trusted
+7. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode.
-7. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
+8. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
-8. Central budget policy rows have been reviewed and applied with
+9. Central budget policy rows have been reviewed and applied with
    `npm run budget-policies -- -- --file <file> --apply`, or release notes
    explicitly keep budget control to environment/repository caps.
-9. Model pricing rows have been reviewed against current provider docs and
+10. Model pricing rows have been reviewed against current provider docs and
    applied with `npm run model-prices -- -- --file <file> --apply`, or release
    notes explicitly keep conservative default cost estimates.
-10. Run-control claims are either enforced with conservative caps using the
+11. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.
-11. A limited initial-review dogfood run has completed with conservative budget
+12. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage.
-12. Scheduled spend alerts route to an operator-owned channel.
-13. `npm run release:check` passes from a clean `main`.
-14. `npm run preflight -- -- --strict` passes in the release candidate
+13. Scheduled spend alerts route to an operator-owned channel.
+14. `npm run release:check` passes from a clean `main`.
+15. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.
-15. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
-16. `docs/security-review-checklist.md` has been completed for the release
+16. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
+17. `docs/security-review-checklist.md` has been completed for the release
     candidate.
-17. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
+18. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
 Render the same gates as an operator checklist:

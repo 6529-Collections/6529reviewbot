@@ -26,6 +26,15 @@ aws rds-data execute-statement \
   --sql "select count(*) from reviewbot.ai_review_usage_events"
 ```
 
+Review AWS IAM/OIDC policy templates:
+
+```bash
+ls infra/aws
+```
+
+Render final policies with real account, region, repository, branch, cluster,
+secret, and SNS values only in the operator workspace.
+
 Preview the expected ledger schema:
 
 ```bash

@@ -73,6 +73,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Budget Policies](docs/budget-policies.md): operator-maintained central caps.
 - [Provider Setup](docs/provider-setup.md): Anthropic, OpenAI, and OpenRouter
   operator setup.
+- [AWS IAM Templates](infra/aws/README.md): OIDC and Data API policy examples.
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Comment Commands](docs/comment-commands.md): PR comment trigger contract.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
@@ -396,6 +397,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Review workflows](docs/review-workflows.md)
 - [Roadmap](docs/roadmap.md)
 - [AWS usage ledger](docs/aws-usage-ledger.md)
+- [AWS IAM templates](infra/aws/README.md)
 - [Operations runbook](docs/operations.md)
 - [Incident response](docs/incident-response.md)
 - [Release process](docs/release.md)

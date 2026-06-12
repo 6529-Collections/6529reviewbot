@@ -23,6 +23,7 @@ runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.js
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
 runNode("bin/validate-repository-config.cjs", repoConfigTemplates);
+parseJsonDirectories(["infra/aws"]);
 parseYamlDirectories(["templates", ".github/workflows"]);
 run(gitBin(), ["diff", "--check"]);
 
@@ -40,6 +41,21 @@ function parseYamlDirectories(directories) {
       }
       const absolutePath = path.join(absoluteDirectory, file);
       YAML.parse(fs.readFileSync(absolutePath, "utf8"));
+    }
+  }
+}
+
+function parseJsonDirectories(directories) {
+  for (const directory of directories) {
+    const absoluteDirectory = path.join(root, directory);
+    if (!fs.existsSync(absoluteDirectory)) {
+      continue;
+    }
+    for (const file of fs.readdirSync(absoluteDirectory)) {
+      if (!/\.json$/i.test(file)) {
+        continue;
+      }
+      JSON.parse(fs.readFileSync(path.join(absoluteDirectory, file), "utf8"));
     }
   }
 }

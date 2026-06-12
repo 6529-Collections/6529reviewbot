@@ -79,6 +79,11 @@ Run a no-network configuration preflight before starting the server:
 npm run preflight
 ```
 
+Use [AWS IAM Templates](../infra/aws/README.md) as the starting point for
+GitHub Actions OIDC trust and least-privilege Data API/SNS policies. Replace
+all placeholders, scope trust to the bot repository or protected environment,
+and record the reviewed policy ARNs in the operator runbook.
+
 ## Central GitHub Actions Worker
 
 Install `templates/review-job-workflow.yml` as
@@ -176,6 +181,8 @@ or GitHub App private keys.
 
 - `GET /healthz` succeeds.
 - `npm run preflight` passes, or every warning is understood.
+- AWS OIDC trust and identity policies were reviewed from
+  `infra/aws/*.example.json` or equivalent least-privilege templates.
 - Invalid webhook signatures fail.
 - GitHub App `ping` is acknowledged.
 - Pull request and issue-comment events are normalized.
