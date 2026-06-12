@@ -333,6 +333,8 @@ Completed in `6529reviewbot`:
   action-ref validation.
 - repeatable release check script and manual security review checklist.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
+- OpenSSF Scorecard workflow permissions scoped for published result
+  verification.
 - documentation link checker for the public docs surface.
 - public artifact leak scanner for docs, examples, workflows, and durable
   manager memory.

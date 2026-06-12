@@ -712,3 +712,17 @@
   - document that PR CI now covers docs links, public artifact scanning,
     workflow pins, API contracts, model catalog, and templates;
   - update release docs, roadmap, changelog, and manager memory.
+- Merged `6529reviewbot` PR #68 as `392fb07` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Investigated failing OpenSSF Scorecard on `main` after PR #67/#68:
+  - current CI passed, but Scorecard failed in the publishing step;
+  - logs reported workflow verification failure because workflow-level
+    `security-events: write` and `id-token: write` were set;
+  - official Scorecard docs require no workflow-level write permissions when
+    publishing results, with `id-token: write` only on the Scorecard job.
+- Started `codex/fix-scorecard-permissions` increment:
+  - move Scorecard `security-events: write` and `id-token: write` permissions
+    from workflow level to the `scorecard` job;
+  - keep workflow-level permissions read-only;
+  - update release docs, roadmap, changelog, and manager memory.
