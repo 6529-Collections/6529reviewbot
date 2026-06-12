@@ -372,6 +372,50 @@ assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
 assert.equal(typeof usageLedger.awsCliBin(), "string");
 assert.equal(typeof budgetLedger.awsCliBin(), "string");
+let usageWriteCall = null;
+const usageWriteResult = usageLedger.writeUsageEvent(
+  {
+    enabled: true,
+    failClosed: true,
+    region: "us-east-1",
+    resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+    secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+    database: "reviewbot",
+    schema: "reviewbot",
+  },
+  {
+    repoFullName: "6529-Collections/example",
+    prNumber: 12,
+    prAuthor: "maintainer",
+    prHeadSha: "abc123",
+    workflowRunId: "run-1",
+    workflowJob: "review",
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    lane: "anthropic:claude-opus-4-8",
+    requestId: "request-1",
+    providerResponseId: "response-1",
+    inputTokens: 10,
+    outputTokens: 5,
+    estimatedCostUsd: 0.01,
+    metadata: { requestor: "maintainer" },
+  },
+  console.warn,
+  {
+    executeStatement: (settings, sql, parameters, options) => {
+      usageWriteCall = { settings, sql, parameters, options };
+      return {};
+    },
+  }
+);
+assert.equal(usageWriteResult.skipped, false);
+assert.match(usageWriteCall.sql, /ai_review_usage_events/);
+assert.equal(usageWriteCall.options.tempPrefix, "6529-usage-ledger-");
+assert.equal(
+  usageWriteCall.parameters.find((param) => param.name === "repo_full_name").value.stringValue,
+  "6529-Collections/example"
+);
 const jobLedgerSettings = jobLedger.jobLedgerSettingsFromEnv({
   REVIEWBOT_JOB_LEDGER_ENABLED: "true",
   REVIEW_USAGE_AWS_REGION: "us-east-1",

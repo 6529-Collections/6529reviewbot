@@ -885,3 +885,13 @@
   - warn during preflight when the webhook secret is shorter than the
     production minimum;
   - document the high-entropy webhook secret expectation.
+- Merged `6529reviewbot` PR #80 as `583a044` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27419177111`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27419177107`, completed successfully.
+- Started `codex/unify-usage-data-api` increment:
+  - refactor `usage-ledger.cjs` onto the shared Data API execution helper;
+  - preserve exported `awsCliBin` and `shouldUseShellForAwsCli` compatibility;
+  - add smoke coverage for usage write SQL/parameters without touching AWS.

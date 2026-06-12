@@ -111,10 +111,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin auth header hardening PR: merged as PR #79, merge commit `3fa71dc`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/harden-webhook-preflight`
-- Current local changes: make webhook header parsing accept standard `Headers`
-  objects and warn in preflight when the configured webhook secret is an
-  obvious short placeholder.
+- Webhook preflight hardening PR: merged as PR #80, merge commit `583a044`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/unify-usage-data-api`
+- Current local changes: refactor usage ledger writes onto the shared Data API
+  execution helper so usage rows use the same temp-file and retry path as other
+  Aurora reads/writes.
 
 ## Key Decisions
 
