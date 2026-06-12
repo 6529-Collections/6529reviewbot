@@ -14,6 +14,11 @@
       "evidence": "docs/worker-capacity.md"
     },
     {
+      "id": "container-image",
+      "title": "Container image, when used, is built from a reviewed commit, scanned, and recorded by digest in private operator evidence.",
+      "evidence": "docs/container-deployment.md"
+    },
+    {
       "id": "secret-boundary",
       "title": "Provider keys, GitHub App secrets, AWS Data API access, and alert secrets are configured only in bot-owned infrastructure.",
       "evidence": "docs/provider-setup.md"
