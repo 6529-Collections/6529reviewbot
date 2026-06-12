@@ -787,3 +787,14 @@
   - add `--allow-zero-price` for provider-documented free rates;
   - update model-pricing, install, release, security, changelog, and manager
     docs.
+- Merged `6529reviewbot` PR #73 as `3c91725` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27414334834`;
+  - job `scorecard` completed successfully.
+- Started `codex/v0-status-bootstrap` increment:
+  - add `--init-status <path>` to `npm run v0:gates` for operator-owned
+    release gate status skeletons;
+  - refuse to overwrite existing status files unless `--force` is supplied;
+  - document the release-candidate evidence bootstrap flow.

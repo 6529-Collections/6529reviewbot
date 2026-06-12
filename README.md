@@ -137,6 +137,7 @@ Render the v0 release gate checklist:
 
 ```bash
 npm run v0:gates
+npm run v0:gates -- -- --init-status <operator-status-file>
 npm run v0:gates -- -- --status-file config/v0-release-status.example.json
 npm run v0:gates -- -- --status-file <operator-status-file> --summary
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready

@@ -579,6 +579,22 @@ assert.equal(gateSummary.complete, 1);
 assert.equal(gateSummary.deferred, 1);
 assert.equal(gateSummary.pending, gatesWithStatus.gates.length - 2);
 assert.match(releaseGates.renderReleaseGateSummaryMarkdown(gatesWithStatus), /Ready to tag: no/);
+const statusSkeleton = releaseGates.createReleaseGateStatusSkeleton(gates);
+assert.equal(statusSkeleton.release, gates.release);
+assert.equal(Object.keys(statusSkeleton.gates).length, gates.gates.length);
+assert.equal(statusSkeleton.gates["github-app"].status, "pending");
+const statusSkeletonDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-gates-"));
+const statusSkeletonPath = path.join(statusSkeletonDir, "status.json");
+releaseGates.writeReleaseGateStatusFile(statusSkeletonPath, statusSkeleton);
+assert.equal(
+  releaseGates.loadReleaseGateStatus(statusSkeletonPath).gates["github-app"].status,
+  "pending"
+);
+assert.throws(
+  () => releaseGates.writeReleaseGateStatusFile(statusSkeletonPath, statusSkeleton),
+  /already exists/
+);
+releaseGates.writeReleaseGateStatusFile(statusSkeletonPath, statusSkeleton, { force: true });
 assert.throws(
   () => releaseGates.assertReleaseGatesReady(gatesWithStatus),
   /release gates are not ready/
@@ -620,9 +636,14 @@ assert.deepEqual(
     "--quiet",
     "--summary",
     "--require-ready",
+    "--init-status",
+    "new-status.json",
+    "--force",
   ]),
   {
     file: "gates.json",
+    force: true,
+    initStatusFile: "new-status.json",
     json: true,
     quiet: true,
     requireReady: true,

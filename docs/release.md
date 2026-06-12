@@ -22,6 +22,8 @@ After stabilization:
   linked from the private operator runbook
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
+- `npm run v0:gates -- -- --init-status <operator-status-file>` used when
+  starting a new release-candidate evidence pass
 - `npm run v0:gates` rendered, or rendered with
   `--status-file <operator-status-file>`, with deferred gates documented
 - `npm run v0:gates -- -- --status-file <operator-status-file> --summary`

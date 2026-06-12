@@ -135,6 +135,39 @@ function summarizeReleaseGates(document) {
   };
 }
 
+function createReleaseGateStatusSkeleton(document, options = {}) {
+  const gates = validateReleaseGates(document);
+  const status = options.status || "pending";
+  if (!RELEASE_GATE_STATUSES.includes(status)) {
+    throw new Error(`release gate skeleton status must be one of: ${RELEASE_GATE_STATUSES.join(", ")}.`);
+  }
+  return {
+    version: 1,
+    release: gates.release,
+    gates: Object.fromEntries(
+      gates.gates.map((gate) => [
+        gate.id,
+        {
+          status,
+          notes: `Evidence target: ${gate.evidence}`,
+        },
+      ])
+    ),
+  };
+}
+
+function writeReleaseGateStatusFile(filePath, document, options = {}) {
+  if (!filePath) {
+    throw new Error("release gate status output path is required.");
+  }
+  if (fs.existsSync(filePath) && !options.force) {
+    throw new Error(`release gate status file already exists: ${filePath}`);
+  }
+  const status = validateReleaseGateStatus(document);
+  fs.writeFileSync(filePath, `${JSON.stringify(status, null, 2)}\n`, "utf8");
+  return status;
+}
+
 function renderReleaseGateSummaryMarkdown(document) {
   const summary = summarizeReleaseGates(document);
   const lines = [
@@ -220,6 +253,7 @@ function idField(value, source) {
 
 module.exports = {
   assertReleaseGatesReady,
+  createReleaseGateStatusSkeleton,
   loadReleaseGateStatus,
   loadReleaseGates,
   mergeReleaseGateStatus,
@@ -228,4 +262,5 @@ module.exports = {
   summarizeReleaseGates,
   validateReleaseGateStatus,
   validateReleaseGates,
+  writeReleaseGateStatusFile,
 };

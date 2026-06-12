@@ -120,6 +120,8 @@ local and manual gates.
 
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
+Use `npm run v0:gates -- -- --init-status <operator-status-file>` to create a
+private pending status skeleton for the current gate list.
 Use `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
 for the final public-safe gate counts, and use
 `npm run v0:gates -- -- --status-file <operator-status-file> --require-ready`
