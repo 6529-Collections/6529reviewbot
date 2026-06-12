@@ -145,6 +145,9 @@ npm run model-prices -- -- --file <reviewed-price-file.json> --apply
 `--apply` rejects zero-rate rows by default. Use `--allow-zero-price` only when
 the provider explicitly documents a free model or token class and the evidence
 is captured in the private operator runbook.
+It also rejects stale source-check evidence by default; re-check provider
+pricing or record an explicit release acceptance before using
+`--allow-stale-source`.
 
 See [aws-usage-ledger.md](aws-usage-ledger.md) and
 [model-pricing.md](model-pricing.md).

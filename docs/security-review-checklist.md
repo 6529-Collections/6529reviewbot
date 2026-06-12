@@ -99,6 +99,9 @@ Target deployment:
   files, and loaded into admission before worker dispatch.
 - Model pricing rows, if used, include source URLs, source-checked
   timestamps, and have been checked against current provider pricing.
+- Model pricing rows are fresh and not future-dated under the release
+  freshness policy, or the release evidence explicitly accepts
+  `--allow-stale-source`.
 - Zero-rate model pricing rows are either absent or explicitly justified with
   provider documentation before using `--allow-zero-price`.
 - Run-control claims happen before worker dispatch when enabled.

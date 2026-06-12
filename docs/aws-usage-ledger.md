@@ -35,7 +35,10 @@ model work.
 `ai_model_prices` stores operator-maintained provider/model price rows. Rows
 include the provider source URL and the timestamp when the operator checked
 that source, so cost-estimate evidence is auditable without committing current
-price rows to the public repo.
+price rows to the public repo. The model-pricing apply path rejects stale or
+future-dated source-check evidence by default, and production preflight can
+enforce the same freshness window when `REVIEWBOT_MODEL_PRICE_FILE` points at
+the operator price file.
 
 Use [Budget Policies](budget-policies.md) to dry-run and apply reviewed rows.
 In production, `bin/server.cjs` loads enabled rows for every webhook when

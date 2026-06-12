@@ -21,6 +21,8 @@ function main(argv = process.argv.slice(2)) {
   const settings = { ...usageLedgerSettingsFromEnv(), schema };
   const results = applyModelPrices(settings, document, {
     allowZeroPrice: args.allowZeroPrice,
+    allowStaleSource: args.allowStaleSource,
+    maxSourceAgeDays: args.maxSourceAgeDays,
   });
   process.stdout.write(
     `${JSON.stringify({ applied: true, statements: results.length }, null, 2)}\n`
@@ -29,7 +31,12 @@ function main(argv = process.argv.slice(2)) {
 }
 
 function parseArgs(argv) {
-  const result = { allowZeroPrice: false, apply: false, file: "config/model-prices.example.json" };
+  const result = {
+    allowStaleSource: false,
+    allowZeroPrice: false,
+    apply: false,
+    file: "config/model-prices.example.json",
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--apply") {
@@ -40,12 +47,20 @@ function parseArgs(argv) {
       result.allowZeroPrice = true;
       continue;
     }
-    if (arg === "--file" || arg === "--schema") {
+    if (arg === "--allow-stale-source") {
+      result.allowStaleSource = true;
+      continue;
+    }
+    if (arg === "--file" || arg === "--schema" || arg === "--max-source-age-days") {
       const value = argv[index + 1];
       if (!value || value.startsWith("--")) {
         throw new Error(`${arg} requires a value.`);
       }
-      result[arg.slice(2)] = value;
+      if (arg === "--max-source-age-days") {
+        result.maxSourceAgeDays = parseNonNegativeNumber(value, arg);
+      } else {
+        result[arg.slice(2)] = value;
+      }
       index += 1;
       continue;
     }
@@ -56,6 +71,14 @@ function parseArgs(argv) {
     throw new Error(`Unknown argument '${arg}'.`);
   }
   return result;
+}
+
+function parseNonNegativeNumber(value, name) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    throw new Error(`${name} must be a non-negative number.`);
+  }
+  return number;
 }
 
 function helpText() {
@@ -69,6 +92,11 @@ Options:
   --file <path>    JSON price file. Default: config/model-prices.example.json
   --schema <name>  Database schema. Default: REVIEW_USAGE_DB_SCHEMA or reviewbot
   --apply          Apply through the RDS Data API. Default is dry-run SQL.
+  --max-source-age-days <days>
+                   Maximum age for sourceCheckedAt during apply. Default: 30.
+  --allow-stale-source
+                   Apply rows with stale or future-dated sourceCheckedAt evidence
+                   after recording an explicit operator acceptance in release notes.
   --allow-zero-price
                    Permit zero-rate rows when the provider documents a free price.
 `;

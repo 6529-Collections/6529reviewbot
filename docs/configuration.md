@@ -113,6 +113,19 @@ Built-in defaults live in [Model Catalog](model-catalog.md).
 Model price rows are maintained separately through
 [Model Pricing](model-pricing.md).
 
+Optional price-source freshness settings:
+
+```text
+REVIEWBOT_MODEL_PRICE_FILE=
+REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS=30
+```
+
+When `REVIEWBOT_MODEL_PRICE_FILE` points at an operator-owned price file,
+preflight validates that every row has a current `sourceCheckedAt` timestamp.
+The default maximum age is 30 days, and future-dated checks are rejected. Keep
+real price files outside public commits when they include rollout notes or
+provider-account context.
+
 ## Review Job Lanes
 
 The central App expands admitted events into review jobs. Each job has one

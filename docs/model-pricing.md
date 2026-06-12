@@ -50,6 +50,11 @@ rows by default because a placeholder zero can silently understate spend.
 Every non-empty price file should be reviewed against current provider
 documentation before use.
 
+The apply path also rejects rows whose `sourceCheckedAt` timestamp is older
+than 30 days by default, and rejects future-dated source checks. Use a shorter
+or longer window only when the operator runbook explains why that provider's
+pricing evidence can age differently.
+
 ## Dry Run
 
 Print SQL without contacting AWS:
@@ -69,6 +74,20 @@ From a configured operator environment:
 npm run model-prices -- -- --file prices.json --apply
 ```
 
+Override the default freshness window when the release has an explicit
+operator policy for provider price evidence:
+
+```bash
+npm run model-prices -- -- --file prices.json --apply --max-source-age-days 14
+```
+
+If a release must apply a stale row, record the accepted risk and evidence in
+the operator runbook, then use the explicit override:
+
+```bash
+npm run model-prices -- -- --file prices.json --apply --allow-stale-source
+```
+
 If a provider really documents a free token class or free model, record that
 source in `sourceUrl` and `notes`, then use the explicit override:
 
@@ -82,7 +101,8 @@ The apply path:
 2. inserts a new row with `effective_from`;
 3. updates the same provider/model/effective timestamp if the file is replayed;
 4. keeps prior rows for audit/history.
-5. rejects zero-rate rows unless `--allow-zero-price` is supplied.
+5. rejects stale source-check evidence unless `--allow-stale-source` is supplied.
+6. rejects zero-rate rows unless `--allow-zero-price` is supplied.
 
 The command uses the same RDS Data API settings as the usage ledger:
 
@@ -111,7 +131,8 @@ Every pricing update should record:
 
 The CLI enforces a source URL, source-checked timestamp, and at least one price
 field. It also rejects zero-rate rows during apply unless the operator passes
-`--allow-zero-price`.
+`--allow-zero-price`, and rejects stale or future-dated source-checked
+timestamps unless the operator passes `--allow-stale-source`.
 Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default
 estimates.
