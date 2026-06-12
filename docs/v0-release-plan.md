@@ -37,6 +37,7 @@ The first `v0` tag can include:
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
 - repeatable Aurora ledger schema tooling;
+- dry-run/apply tooling for operator-maintained model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
 - no-network production preflight command;
@@ -53,7 +54,7 @@ The first `v0` tag should not promise:
   shapes, or worker payloads;
 - unmanaged automatic model calls on public repositories;
 - direct 6529.io private admin UI completion;
-- provider pricing freshness without an explicit policy update;
+- provider pricing freshness without an explicit price-file update;
 - support for repositories that cannot satisfy the trusted-actor, budget, and
   secret-boundary requirements.
 
@@ -75,19 +76,22 @@ Do not create the `v0` tag until all of these are true:
    6529 repository and tested in command-only mode.
 7. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
-8. Run-control claims are either enforced with conservative caps using the
+8. Model pricing rows have been reviewed against current provider docs and
+   applied with `npm run model-prices -- --file <file> --apply`, or release
+   notes explicitly keep conservative default cost estimates.
+9. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.
-9. A limited initial-review dogfood run has completed with conservative budget
+10. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage.
-10. Scheduled spend alerts route to an operator-owned channel.
-11. `npm run release:check` passes from a clean `main`.
-12. `npm run preflight -- -- --strict` passes in the release candidate
+11. Scheduled spend alerts route to an operator-owned channel.
+12. `npm run release:check` passes from a clean `main`.
+13. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.
-13. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
-14. `docs/security-review-checklist.md` has been completed for the release
+14. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
+15. `docs/security-review-checklist.md` has been completed for the release
     candidate.
-15. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
+16. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
 If any gate is intentionally skipped, the release notes must say so plainly and

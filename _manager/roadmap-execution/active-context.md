@@ -44,9 +44,10 @@ merged PRs.
 - Run control contract PR: merged as PR #28, merge commit `ac7bc12`
 - Run control ledger PR: merged as PR #29, merge commit `ba902fe`
 - Budget ledger wiring PR: merged as PR #30, merge commit `25bd1b9`
-- Current branch: `codex/run-claim-status`
-- Current local changes: run-control claim status updates after dispatch
-  attempts, plus docs/tests
+- Run claim status PR: merged as PR #31, merge commit `7d16d96`
+- Current branch: `codex/model-price-tooling`
+- Current local changes: dry-run/apply tooling for operator-maintained model
+  price rows, plus docs/tests
 
 ## Key Decisions
 
@@ -82,6 +83,8 @@ merged PRs.
 - Run-control claims should be marked `dispatch_failed` or `dispatch_error`
   when queueing fails so failed dispatches do not consume active concurrency
   slots until TTL.
+- Model pricing should be operator-maintained through reviewed price files and
+  source URLs instead of hardcoded stale prices in the public repo.
 
 ## Constraints
 
@@ -93,11 +96,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the run-claim status PR if checks and review
+1. Validate, publish, and merge the model price tooling PR if checks and review
    are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
-   run-claim status PR lands.
+   model price tooling PR lands.
 
 ## Open Risks
 
@@ -108,7 +111,8 @@ merged PRs.
   can differ.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
-- OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.
+- Provider pricing rows still need operator verification against current
+  provider docs before dogfood release.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
 - Frontend PR #2605 is open and verified locally; all checks are green, but

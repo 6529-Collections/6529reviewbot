@@ -202,6 +202,12 @@ create index if not exists ai_review_run_claims_provider_model_status_idx
   on ${schemaIdent}.ai_review_run_claims (provider, model, status, created_at desc)`,
     },
     {
+      name: "index_model_prices_provider_model_effective",
+      sql: `
+create unique index if not exists ai_model_prices_provider_model_effective_idx
+  on ${schemaIdent}.ai_model_prices (provider, model, effective_from)`,
+    },
+    {
       name: "view_daily_spend_by_requester",
       sql: `
 create or replace view ${schemaIdent}.daily_ai_review_spend_by_requester as

@@ -105,6 +105,8 @@ REVIEW_DEFAULT_OPENROUTER_MODEL=
 
 OpenRouter has no built-in default. Configure it explicitly.
 Built-in defaults live in [Model Catalog](model-catalog.md).
+Model price rows are maintained separately through
+[Model Pricing](model-pricing.md).
 
 ## Review Job Lanes
 

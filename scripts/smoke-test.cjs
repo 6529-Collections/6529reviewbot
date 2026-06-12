@@ -19,6 +19,8 @@ const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
+const modelPrices = require("../src/model-prices.cjs");
+const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -55,6 +57,47 @@ assert.equal(
     REVIEW_DEFAULT_ANTHROPIC_MODEL: "claude-opus-next",
   }),
   "claude-opus-next"
+);
+const modelPriceFile = modelPrices.validateModelPriceFile({
+  version: 1,
+  currency: "USD",
+  prices: [
+    {
+      provider: "anthropic",
+      model: "claude-opus-4-8",
+      inputUsdPerMillion: 1,
+      outputUsdPerMillion: 2,
+      effectiveFrom: "2026-06-12T00:00:00.000Z",
+      sourceUrl: "https://example.com/provider-pricing",
+      notes: "test price row",
+    },
+  ],
+});
+assert.equal(modelPriceFile.prices[0].provider, "anthropic");
+const modelPriceStatements = modelPrices.modelPriceStatements("reviewbot", modelPriceFile);
+assert.equal(modelPriceStatements.length, 2);
+assert.match(modelPrices.renderModelPriceSql("reviewbot", modelPriceFile), /ai_model_prices/);
+let appliedModelPriceStatements = 0;
+modelPrices.applyModelPrices({
+  enabled: true,
+  region: "us-east-1",
+  resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  database: "reviewbot",
+  schema: "reviewbot",
+}, modelPriceFile, {
+  executeStatement: (settings, sql, parameters, options) => {
+    assert.equal(settings.schema, "reviewbot");
+    assert.match(sql, /ai_model_prices/);
+    assert(parameters.some((param) => param.name === "provider"));
+    assert.equal(options.tempPrefix, "6529-model-prices-");
+    appliedModelPriceStatements += 1;
+  },
+});
+assert.equal(appliedModelPriceStatements, 2);
+assert.deepEqual(
+  modelPricesCli.parseArgs(["--file", "prices.json", "--schema", "reviewbot", "--apply"]),
+  { apply: true, file: "prices.json", schema: "reviewbot" }
 );
 
 withEnv(

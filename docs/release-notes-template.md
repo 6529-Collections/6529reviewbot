@@ -23,6 +23,7 @@ repositories.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
 - Run-control claims for duplicate delivery and concurrency protection.
 - Dry-run-by-default Aurora ledger schema tooling.
+- Dry-run-by-default model pricing update tooling.
 - No-network production preflight command.
 - Public/admin usage API contracts for 6529.io surfaces.
 
@@ -36,6 +37,7 @@ repositories.
 - Budget mode and caps:
 - Run-control mode and caps:
 - Ledger schema status:
+- Model pricing status:
 - Alert delivery:
 - 6529.io dashboard/admin status:
 - Preflight result:

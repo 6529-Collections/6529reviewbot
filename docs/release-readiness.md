@@ -24,6 +24,7 @@ Ready for community review:
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
 - repeatable Aurora ledger schema tooling;
+- dry-run/apply tooling for operator-maintained model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled spend alerts with stdout, webhook, and SNS delivery;
 - no-network production preflight command;

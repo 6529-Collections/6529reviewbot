@@ -49,6 +49,8 @@ Target deployment:
   before applying to Aurora.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
+- Model pricing rows, if used, include source URLs and have been checked
+  against current provider pricing.
 - Run-control claims happen before worker dispatch when enabled.
 - Run-control dedupe keys include provider and model so multi-model lanes do
   not block each other.

@@ -296,6 +296,7 @@ Completed in `6529reviewbot`:
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.
+- dry-run/apply model pricing tooling.
 - no-network production preflight checks.
 - incident response runbook for operator containment and recovery.
 
