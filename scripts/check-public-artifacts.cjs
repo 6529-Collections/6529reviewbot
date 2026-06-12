@@ -58,6 +58,11 @@ const staticRules = [
     name: "private_key_block",
     pattern: /-----BEGIN [A-Z ]*PRIVATE KEY-----/g,
   },
+  {
+    name: "alert_webhook_url",
+    pattern:
+      /\bhttps:\/\/(?:hooks\.slack\.com\/services\/[A-Za-z0-9/_-]{20,}|(?:discord(?:app)?\.com)\/api\/webhooks\/[0-9]{10,}\/[A-Za-z0-9._-]{20,})\b/g,
+  },
 ];
 
 function main() {

@@ -97,8 +97,8 @@ npm run check:public-artifacts
 ```
 
 The scan redacts matches in output and fails on live-looking cloud account
-ids, ARNs, provider keys, GitHub tokens, AWS access keys, and private key
-blocks in public artifacts.
+ids, ARNs, provider keys, GitHub tokens, AWS access keys, alert webhook URLs,
+and private key blocks in public artifacts.
 
 ## Escalation
 
