@@ -24,6 +24,7 @@ The first `v0` tag can include:
   and crypto/security reviews;
 - Anthropic, OpenAI, and OpenRouter provider adapters behind explicit
   configuration;
+- provider setup guide for Anthropic, OpenAI, and OpenRouter;
 - Anthropic Opus defaulting through environment/configuration rather than
   scattered code constants;
 - GitHub App webhook verification, installation-token handling, and

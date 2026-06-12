@@ -47,9 +47,10 @@ merged PRs.
 - Run claim status PR: merged as PR #31, merge commit `7d16d96`
 - Model price tooling PR: merged as PR #32, merge commit `5a3bf47`
 - Model price estimation PR: merged as PR #33, merge commit `7aa4bd3`
-- Current branch: `codex/run-claim-completion`
-- Current local changes: worker completion updates for durable run-control
-  claims, plus docs/tests/template updates
+- Run claim completion PR: merged as PR #34, merge commit `91a1e57`
+- Current branch: `codex/provider-setup-guides`
+- Current local changes: provider setup guide for Anthropic, OpenAI, and
+  OpenRouter, plus documentation links
 
 ## Key Decisions
 
@@ -93,6 +94,8 @@ merged PRs.
 - Remote workers need the job `runKey` so they can close durable run-control
   claims after execution; local workers can report terminal claim status
   synchronously.
+- Provider-owned docs are the source of truth for key setup, availability, and
+  pricing; this repo documents the operational contract and links outward.
 
 ## Constraints
 
@@ -104,7 +107,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the run-claim completion PR if checks and
+1. Validate, publish, and merge the provider setup guide PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
@@ -124,7 +127,7 @@ merged PRs.
   estimates empty.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
-- Durable run-claim completion depends on central workers receiving `runKey`
-  and run-control ledger environment variables.
+- Provider pricing rows still require operator verification and key/limit
+  setup in provider-owned consoles.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

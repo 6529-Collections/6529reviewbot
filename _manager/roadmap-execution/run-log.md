@@ -329,3 +329,12 @@
     or `failed`;
   - starter GitHub Actions workflow passes run-control ledger environment;
   - docs and smoke coverage describe worker claim completion.
+- Merged `6529reviewbot` PR #34 as `91a1e57` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/provider-setup-guides` increment:
+  - provider setup guide for Anthropic, OpenAI, and OpenRouter;
+  - links to provider-owned docs/pricing/account setup sources;
+  - central secret ownership, provider-side limits, rotation, and budget safety
+    guidance;
+  - README, release, roadmap, changelog, and manager-memory links.
