@@ -149,3 +149,15 @@
     match the current implementation state.
   Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
   all workflow and template files.
+- Merged `6529reviewbot` PR #16 as `6bb7e93` after CI, Dependency Review,
+  CodeRabbit, and resolved review threads passed.
+- Started `codex/github-app-installation-auth` increment:
+  - added `src/github-app-auth.cjs` for App JWT creation, installation-token
+    exchange, collaborator permission lookup, best-effort org membership, and
+    repository config loading through installation tokens;
+  - wired `bin/server.cjs` to inject actor context and repository config
+    loaders when GitHub App credentials are configured;
+  - updated README/configuration/GitHub App/security/architecture/release docs;
+  - smoke tests use a generated RSA key and fake GitHub API responses.
+  Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
+  all workflow and template files.

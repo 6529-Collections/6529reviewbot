@@ -7,6 +7,11 @@ const {
   adminAuthSettingsFromEnv,
   createUsageApiAdminAuthorizer,
 } = require("../src/admin-auth.cjs");
+const {
+  createGitHubAppIntegration,
+  githubAppAuthSettingsFromEnv,
+  isGitHubAppAuthConfigured,
+} = require("../src/github-app-auth.cjs");
 const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
 
 const port = Number.parseInt(process.env.PORT || process.env.REVIEWBOT_PORT || "8080", 10);
@@ -21,6 +26,12 @@ if (parseBool(process.env.REVIEW_USAGE_ENABLED || "false")) {
 const adminAuthSettings = adminAuthSettingsFromEnv();
 if (adminAuthSettings.mode !== "disabled") {
   serverOptions.authorizeUsageApiAdmin = createUsageApiAdminAuthorizer(adminAuthSettings);
+}
+const githubAppAuthSettings = githubAppAuthSettingsFromEnv();
+if (isGitHubAppAuthConfigured(githubAppAuthSettings)) {
+  const githubApp = createGitHubAppIntegration({ settings: githubAppAuthSettings });
+  serverOptions.resolveActorContext = githubApp.resolveActorContext;
+  serverOptions.loadRepositoryConfig = githubApp.loadRepositoryConfig;
 }
 
 const server = createReviewbotServer(serverOptions);

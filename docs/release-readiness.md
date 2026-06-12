@@ -14,6 +14,8 @@ Ready for community review:
 - provider abstraction for Anthropic, OpenAI, and OpenRouter;
 - default Anthropic model configuration through environment variables;
 - trusted-actor admission for public repositories;
+- GitHub App installation-token handling for repo config and actor permission
+  resolution;
 - budget admission against the isolated AWS usage ledger;
 - review job fanout across review kinds and provider/model lanes;
 - repository config loading from the target repo base ref;
@@ -25,7 +27,6 @@ Ready for community review:
 Not yet v1-ready:
 
 - production GitHub App registration and deployment;
-- production installation-token handling;
 - production worker deployment choice and scaling policy;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;

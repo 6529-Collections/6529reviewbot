@@ -9,6 +9,11 @@ should be installed only on repositories that intentionally use the bot.
 Webhook verification and initial event normalization live in
 `src/github-webhook.cjs` and `src/app-server.cjs`.
 
+When App credentials are configured, `src/github-app-auth.cjs` creates
+short-lived App JWTs, exchanges them for installation tokens, reads base-ref
+repository config, and resolves the requestor's collaborator permission for
+trusted-actor admission.
+
 Minimum repository permissions:
 
 - Contents: read
@@ -24,10 +29,9 @@ The current repo contains a GitHub Actions reusable workflow scaffold for
 running the review engine. The intended production trigger is the `6529bot`
 GitHub App, so target repositories do not need to own the bot implementation.
 
-The final app layer should decide whether to dispatch work to this repo,
-call a pinned reusable workflow, or run the engine in another isolated worker.
-That decision also determines where GitHub App credentials, provider keys, and
-AWS OIDC trust should live.
+The deployment should decide whether to dispatch work to this repo's central
+workflow or run the engine in another isolated worker. That decision also
+determines where provider keys and AWS OIDC trust should live.
 
 The runner is responsible for:
 
