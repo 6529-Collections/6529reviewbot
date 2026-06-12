@@ -52,6 +52,7 @@ Target deployment:
 - Central worker jobs mint short-lived GitHub App installation tokens.
 - Long-lived target repository bot tokens are not required for central workers.
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
+- `npm run check:workflow-actions` passes for committed workflow templates.
 - AWS access uses OIDC or Data API configuration scoped to the reviewbot ledger.
 - AWS IAM/OIDC policies are rendered from reviewed templates or equivalent
   least-privilege documents, with trust scoped to the bot repo/environment.

@@ -475,3 +475,14 @@
   - release-check rendering validation and smoke coverage;
   - README, install, deployment, GitHub App, release, security, roadmap,
     changelog, and manager-memory docs.
+- Merged `6529reviewbot` PR #48 as `d115833` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/pin-template-actions` increment:
+  - pinned central worker and spend-alert template actions by commit SHA;
+  - disabled persisted checkout credentials in central templates;
+  - added central worker timeout/concurrency defaults and AWS OIDC
+    credential configuration;
+  - added `npm run check:workflow-actions` and release-check integration;
+  - README, worker, deployment, release, security, roadmap, changelog, and
+    manager-memory docs.

@@ -50,6 +50,8 @@ stabilized.
   registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration-form output.
+- Pinned central worker and alert workflow template actions plus a
+  release-check guard for step-level action refs.
 - Production server loading of enabled central DB budget policy rows during
   admission.
 - Usage-write cost estimation from active provider/model price rows.

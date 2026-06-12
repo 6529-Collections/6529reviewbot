@@ -61,10 +61,12 @@ merged PRs.
 - Central budget policy tooling PR: merged as PR #45, merge commit `38a5ca9`
 - AWS IAM policy templates PR: merged as PR #46, merge commit `461bea3`
 - GitHub App manifest template PR: merged as PR #47, merge commit `fecf502`
-- Current branch: `codex/github-app-manifest-renderer`
-- Current local changes: GitHub App manifest renderer CLI/module,
-  release-check rendering validation, smoke coverage, registration docs,
-  release gates, changelog, roadmap, and manager-memory updates.
+- GitHub App manifest renderer PR: merged as PR #48, merge commit `d115833`
+- Current branch: `codex/pin-template-actions`
+- Current local changes: pinned central worker and alert workflow template
+  actions, workflow action-ref release-check guard, worker template AWS OIDC
+  configuration, timeout/concurrency controls, docs, changelog, roadmap, and
+  manager-memory updates.
 
 ## Key Decisions
 
@@ -141,6 +143,9 @@ merged PRs.
 - GitHub App manifest rendering should be dry-run and validation-oriented:
   render host-specific settings and optional local registration forms without
   exchanging GitHub manifest codes or receiving generated credentials.
+- Step-level third-party actions in committed workflows and templates should
+  be pinned by commit SHA and checked by release automation. Reusable workflow
+  caller examples can remain tag-based until the first release tag is cut.
 
 ## Constraints
 
@@ -152,7 +157,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App manifest renderer PR if checks and
+1. Validate, publish, and merge the workflow-template hardening PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR
@@ -182,6 +187,8 @@ merged PRs.
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
+- Central worker and alert workflow templates still need installation into the
+  actual production bot repository workflows after operator review.
 - v0 gates still require external operator evidence before tagging.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

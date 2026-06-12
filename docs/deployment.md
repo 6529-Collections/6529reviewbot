@@ -120,12 +120,17 @@ OPENROUTER_API_KEY
 Required repository variables for usage writes:
 
 ```text
+REVIEW_USAGE_AWS_ROLE_ARN
 REVIEW_USAGE_AWS_REGION
 REVIEW_USAGE_DB_RESOURCE_ARN
 REVIEW_USAGE_DB_SECRET_ARN
 REVIEW_USAGE_DB_NAME
 REVIEW_USAGE_DB_SCHEMA
 ```
+
+`REVIEW_USAGE_AWS_ROLE_ARN` is assumed through GitHub Actions OIDC by the
+central worker and alert templates. The role should be scoped to the bot
+repository or protected environment and to the reviewed Aurora/SNS resources.
 
 Required repository variables when durable run-control claims should be closed
 by the worker:
@@ -200,6 +205,8 @@ or GitHub App private keys.
 - `npm run preflight` passes, or every warning is understood.
 - AWS OIDC trust and identity policies were reviewed from
   `infra/aws/*.example.json` or equivalent least-privilege templates.
+- `npm run check:workflow-actions` passes after installing or editing central
+  worker and alert workflows.
 - Invalid webhook signatures fail.
 - GitHub App `ping` is acknowledged.
 - Pull request and issue-comment events are normalized.
