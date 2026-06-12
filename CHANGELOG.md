@@ -49,6 +49,7 @@ stabilized.
   wiring.
 - Release check script and manual security review checklist for dogfood and
   pre-v1 release gates.
+- Machine-readable v0 release gates and checklist renderer.
 - v0 release plan and release notes template for pre-v1 dogfood/community
   release discipline.
 - Documentation for architecture, configuration, operations, release readiness,

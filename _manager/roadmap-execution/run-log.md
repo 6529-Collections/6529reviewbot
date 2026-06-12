@@ -347,3 +347,12 @@
   - smoke coverage verifies secret redaction and CLI parsing;
   - support playbook, SUPPORT.md, issue template, README, roadmap, release, and
     manager-memory updates.
+- Merged `6529reviewbot` PR #36 as `cc6369d` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/v0-gates-tooling` increment:
+  - machine-readable `config/v0-release-gates.json`;
+  - `npm run v0:gates` checklist renderer/validator;
+  - release-check integration in quiet mode;
+  - smoke coverage for duplicate gate validation and CLI parsing;
+  - README, release docs, changelog, roadmap, and manager-memory updates.

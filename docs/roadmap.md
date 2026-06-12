@@ -294,6 +294,7 @@ Completed in `6529reviewbot`:
   validation.
 - production deployment runbook and central worker installation-token flow.
 - repeatable release check script and manual security review checklist.
+- machine-readable v0 release gates and checklist renderer.
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.

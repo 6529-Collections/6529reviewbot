@@ -18,6 +18,7 @@ After stabilization:
 
 - [Release readiness](release-readiness.md) reviewed
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
+- `npm run v0:gates` rendered and completed, with deferred gates documented
 - `npm run release:check`
 - `npm run preflight -- -- --strict` in the release candidate environment
 - docs updated

@@ -49,9 +49,10 @@ merged PRs.
 - Model price estimation PR: merged as PR #33, merge commit `7aa4bd3`
 - Run claim completion PR: merged as PR #34, merge commit `91a1e57`
 - Provider setup guide PR: merged as PR #35, merge commit `199bccc`
-- Current branch: `codex/support-bundle`
-- Current local changes: sanitized support bundle CLI, support playbook, issue
-  template and docs updates
+- Support bundle PR: merged as PR #36, merge commit `cc6369d`
+- Current branch: `codex/v0-gates-tooling`
+- Current local changes: machine-readable v0 release gates, renderer CLI, docs
+  and release-check integration
 
 ## Key Decisions
 
@@ -100,6 +101,8 @@ merged PRs.
 - Public support artifacts should collect useful diagnostics while exposing
   secret presence only, never secret values, account IDs, private payloads, or
   target repository data.
+- v0 release gates should exist both as prose and as a renderable checklist so
+  release candidates are easy to audit.
 
 ## Constraints
 
@@ -111,8 +114,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the support bundle PR if checks and review are
-   clean.
+1. Validate, publish, and merge the v0 gates tooling PR if checks and review
+   are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next release-polish or operator-readiness slice after the
    model price tooling PR lands.
@@ -135,5 +138,6 @@ merged PRs.
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
+- v0 gates still require external operator evidence before tagging.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
