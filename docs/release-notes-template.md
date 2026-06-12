@@ -98,6 +98,7 @@ before updating.
 - `npm run release:check`:
 - `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
+- `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:
 - CI:
 - Dependency Review:
 - OpenSSF Scorecard:

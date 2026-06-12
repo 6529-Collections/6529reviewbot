@@ -183,12 +183,20 @@ For broader deployment evidence, keep a private structured evidence file and
 render a public-safe summary with:
 
 ```bash
-npm run operator:evidence -- --file <private-evidence-file> --summary
-npm run operator:evidence -- --file <private-evidence-file> --require-ready
+npm run operator:evidence -- -- --file <private-evidence-file> --summary
+npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
 ```
 
 The example shape lives at `config/production-evidence.example.json` and is
 validated by `npm run release:check`.
+
+Create the public-safe release candidate bundle from the private status and
+operator evidence files:
+
+```bash
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
+```
 
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
@@ -204,6 +212,7 @@ git pull --ff-only origin main
 git status --short
 npm run release:check
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
 
 Then review remote checks and create an annotated tag:

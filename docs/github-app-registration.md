@@ -245,7 +245,7 @@ Private key rotation:
 4. Mint a test installation token with:
 
    ```bash
-   npm run github-app:token -- --installation-id <installation-id>
+   npm run github-app:token -- -- --installation-id <installation-id>
    ```
 
 5. Confirm repository config loading and actor permission resolution still
@@ -253,7 +253,7 @@ Private key rotation:
 6. If rotating the dispatch-only App, mint the token through the worker profile:
 
    ```bash
-   npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+   npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
    ```
 
 7. Delete the old private key from GitHub App settings and the secret store.

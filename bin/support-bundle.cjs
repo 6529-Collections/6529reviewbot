@@ -27,6 +27,9 @@ function main(argv = process.argv.slice(2), options = {}) {
 function parseArgs(argv) {
   const result = { includeGitStatus: false, json: false, quiet: false };
   for (const arg of argv) {
+    if (arg === "--") {
+      continue;
+    }
     if (arg === "--json") {
       result.json = true;
       continue;
@@ -53,8 +56,8 @@ function helpText() {
 
 Usage:
   npm run support:bundle
-  npm run support:bundle -- --json
-  npm run support:bundle -- --include-git-status
+  npm run support:bundle -- -- --json
+  npm run support:bundle -- -- --include-git-status
 
 Options:
   --json                Print JSON instead of Markdown.

@@ -40,6 +40,11 @@ stabilized.
   runtime-only secret injection guidance.
 - v0 release gate status files now fail the final `--require-ready` check when
   private evidence omits any current public release gate.
+- Release-candidate bundle CLI combines release-gate status, operator evidence,
+  git metadata, and no-network preflight into one public-safe readiness
+  summary.
+- npm script examples now use the repo-compatible
+  `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is

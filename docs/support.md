@@ -34,7 +34,7 @@ npm run support:bundle
 For automation or private maintainer triage:
 
 ```bash
-npm run support:bundle -- --json
+npm run support:bundle -- -- --json
 ```
 
 The bundle includes:
@@ -59,7 +59,7 @@ output, but file names can still reveal project names, customer names, private
 modules, or incident details:
 
 ```bash
-npm run support:bundle -- --include-git-status
+npm run support:bundle -- -- --include-git-status
 ```
 
 ## Good Bug Reports

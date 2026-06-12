@@ -413,6 +413,12 @@ merged PRs.
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
   AWS account ids, and AWS ARNs.
+- Release-candidate evidence should have one public-safe bundle that combines
+  release-gate status, structured operator evidence, no-network preflight,
+  package metadata, and git metadata for release notes or tag/no-tag review.
+- npm script examples that pass flags should use
+  `npm run <script> -- -- --flag` so flags survive npm argument forwarding
+  consistently.
 
 ## Constraints
 
@@ -425,7 +431,7 @@ merged PRs.
 ## Next Actions
 
 1. Continue dogfood target-repo PRs once required human review completes.
-2. Validate, publish, review, and merge the production evidence checker PR.
+2. Ship the release-candidate bundle/check command and docs.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

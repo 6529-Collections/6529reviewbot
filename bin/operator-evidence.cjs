@@ -39,6 +39,9 @@ function parseArgs(argv) {
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
+    if (arg === "--") {
+      continue;
+    }
     if (arg === "--json") {
       result.json = true;
       continue;
@@ -78,10 +81,10 @@ function helpText() {
 
 Usage:
   npm run operator:evidence
-  npm run operator:evidence -- --file <private-evidence-file>
-  npm run operator:evidence -- --file <private-evidence-file> --summary
-  npm run operator:evidence -- --file <private-evidence-file> --summary --json
-  npm run operator:evidence -- --file <private-evidence-file> --require-ready
+  npm run operator:evidence -- -- --file <private-evidence-file>
+  npm run operator:evidence -- -- --file <private-evidence-file> --summary
+  npm run operator:evidence -- -- --file <private-evidence-file> --summary --json
+  npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
 
 Options:
   --file <path>      Operator evidence JSON file. Default: config/production-evidence.example.json

@@ -226,7 +226,7 @@ function optionalGateStatus(value, source, options = {}) {
   if (value.status === undefined && value[evidenceKey] === undefined && value.notes === undefined) {
     return {};
   }
-  const status = enumField(value.status || "pending", RELEASE_GATE_STATUSES, `${source}.status`);
+  const status = enumField(value.status ?? "pending", RELEASE_GATE_STATUSES, `${source}.status`);
   const statusEvidence = optionalReleaseGateText(value[evidenceKey]);
   const notes = optionalReleaseGateText(value.notes);
   if (status === "complete" && !statusEvidence) {

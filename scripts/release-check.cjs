@@ -33,6 +33,7 @@ runNode("bin/operator-evidence.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", [
   "--status-file",

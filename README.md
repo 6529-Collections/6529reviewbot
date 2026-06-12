@@ -102,6 +102,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
+- [Release Candidate Bundle](docs/release-candidate.md): public-safe
+  release-readiness summary command.
 - [Operator Evidence Template](docs/operator-evidence-template.md): redacted
   release/deployment proof format.
 
@@ -159,9 +161,18 @@ Validate a structured operator evidence file and render a redacted public
 summary:
 
 ```bash
-npm run operator:evidence -- --file config/production-evidence.example.json
-npm run operator:evidence -- --file <private-evidence-file> --summary
-npm run operator:evidence -- --file <private-evidence-file> --require-ready
+npm run operator:evidence -- -- --file config/production-evidence.example.json
+npm run operator:evidence -- -- --file <private-evidence-file> --summary
+npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
+```
+
+Build a public-safe release candidate bundle from release gates, operator
+evidence, git metadata, and no-network preflight:
+
+```bash
+npm run release:candidate
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
 
 Print a prompt for a target PR without calling a model:
@@ -213,8 +224,8 @@ Mint a short-lived installation token from a configured private operator
 environment:
 
 ```bash
-npm run github-app:token -- --profile main --installation-id <installation-id>
-npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+npm run github-app:token -- -- --profile main --installation-id <installation-id>
+npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
 ```
 
 Print the Aurora ledger schema without touching AWS:
