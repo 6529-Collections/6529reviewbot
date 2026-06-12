@@ -566,20 +566,7 @@ const hmacAuthSettings = adminAuth.adminAuthSettingsFromEnv({
   REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS: "300",
 });
 const adminUsageUrl = new URL("http://localhost/api/admin/usage/summary?days=7");
-const adminExpiresAt = String(Math.floor(Date.now() / 1000) + 120);
-const adminSignature = adminAuth.signAdminAuthRequest({
-  method: "GET",
-  url: adminUsageUrl,
-  actor: "operator",
-  roles: ["reviewbot-admin"],
-  expiresAt: adminExpiresAt,
-}, hmacAuthSettings);
-const signedAdminHeaders = {
-  "x-6529-admin-user": "operator",
-  "x-6529-admin-roles": "reviewbot-admin",
-  "x-6529-admin-expires-at": adminExpiresAt,
-  "x-6529-admin-signature": `sha256=${adminSignature}`,
-};
+const signedAdminHeaders = signedAdminHeadersFor(adminUsageUrl);
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
@@ -588,7 +575,7 @@ assert.equal(adminAuth.authorizeAdminRequest({
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
-  headers: { ...signedAdminHeaders, "x-6529-admin-roles": "viewer" },
+  headers: signedAdminHeadersFor(adminUsageUrl, { roles: ["viewer"] }),
 }, hmacAuthSettings).code, "admin_auth_missing_role");
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
@@ -598,18 +585,16 @@ assert.equal(adminAuth.authorizeAdminRequest({
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
-  headers: {
-    ...signedAdminHeaders,
-    "x-6529-admin-expires-at": String(Math.floor(Date.now() / 1000) - 1),
-  },
+  headers: signedAdminHeadersFor(adminUsageUrl, {
+    expiresAt: String(Math.floor(Date.now() / 1000) - 1),
+  }),
 }, hmacAuthSettings).code, "admin_auth_expired");
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
-  headers: {
-    ...signedAdminHeaders,
-    "x-6529-admin-expires-at": String(Math.floor(Date.now() / 1000) + 9999),
-  },
+  headers: signedAdminHeadersFor(adminUsageUrl, {
+    expiresAt: String(Math.floor(Date.now() / 1000) + 9999),
+  }),
 }, hmacAuthSettings).code, "admin_auth_ttl_too_long");
 assert.equal(appServer.normalizeConfigLoadResult(null).status, "invalid");
 assert.equal(
@@ -718,7 +703,7 @@ appServer.handleGitHubWebhook({
   const adminBridgeAllowed = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: adminUsageUrl,
-    headers: signedAdminHeaders,
+    headers: signedAdminHeadersFor(adminUsageUrl),
   }, {
     settings: usageApiSettings,
     authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
@@ -800,6 +785,25 @@ appServer.handleGitHubWebhook({
   console.error(error);
   process.exitCode = 1;
 });
+
+function signedAdminHeadersFor(url, options = {}) {
+  const roles = options.roles || ["reviewbot-admin", "admin"];
+  const expiresAt =
+    options.expiresAt || String(Math.floor(Date.now() / 1000) + 120);
+  const signature = adminAuth.signAdminAuthRequest({
+    method: options.method || "GET",
+    url,
+    actor: options.actor || "operator",
+    roles,
+    expiresAt,
+  }, hmacAuthSettings);
+  return {
+    "x-6529-admin-user": options.actor || "operator",
+    "x-6529-admin-roles": roles.join(","),
+    "x-6529-admin-expires-at": expiresAt,
+    "x-6529-admin-signature": `sha256=${signature}`,
+  };
+}
 
 function withEnv(nextEnv, fn) {
   const oldEnv = process.env;

@@ -119,3 +119,6 @@
     path/query signature tampering, expired assertions, TTL limits, and usage
     API admin access.
   Validation: `npm test`, `npm run check`, `git diff --check`.
+- Addressed CodeRabbit feedback on PR #14 by documenting multi-role HMAC
+  canonicalization and regenerating signed admin headers immediately before
+  the smoke-test integration request.

@@ -68,9 +68,13 @@ Example canonical payload:
 GET
 /api/admin/usage/summary?days=30
 punk6529
-reviewbot-admin
+reviewbot-admin,admin
 1781227200
 ```
+
+The `ROLES` line is the comma-separated `x-6529-admin-roles` role list in the
+same order after trimming spaces, for example `reviewbot-admin,admin`. The
+signing service and bot must build the same role line.
 
 The bot rejects:
 
