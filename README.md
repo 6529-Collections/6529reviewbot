@@ -221,6 +221,10 @@ Applying price rows rejects zero-rate placeholders by default:
 npm run model-prices -- -- --file <reviewed-price-file.json> --apply
 ```
 
+The apply path also rejects stale or future-dated `sourceCheckedAt` evidence by
+default. Recheck provider pricing or record an explicit release acceptance
+before using `--allow-stale-source`.
+
 Preview central budget policy SQL without touching AWS:
 
 ```bash

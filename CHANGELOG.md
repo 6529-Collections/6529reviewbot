@@ -94,6 +94,9 @@ stabilized.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
 - Model pricing rows now carry a required source-checked timestamp for
   auditable operator price verification.
+- Model price apply and preflight can reject stale or future-dated
+  source-checked timestamps before cost estimates rely on bad provider pricing
+  evidence.
 - Model price apply rejects zero-rate placeholder rows unless explicitly
   allowed for documented free prices.
 - Example AWS IAM/OIDC templates for central GitHub Actions, Aurora Data API,

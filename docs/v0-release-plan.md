@@ -54,6 +54,8 @@ The first `v0` tag can include:
 - dry-run/apply tooling for operator-maintained model price rows;
 - zero-rate model price apply guard with explicit override for documented free
   rates;
+- stale or future-dated model price source-check guard with explicit
+  release-evidence override;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled operator alert checks for spend and job health with stdout,
@@ -116,11 +118,12 @@ Do not create the `v0` tag until all of these are true:
 10. Central budget policy rows have been reviewed and applied with
    `npm run budget-policies -- -- --file <file> --apply`, or release notes
    explicitly keep budget control to environment/repository caps.
-11. Model pricing rows have source URLs, source-checked timestamps, have been
-   reviewed against current provider docs, and have been applied with
+11. Model pricing rows have source URLs, fresh source-checked timestamps, have
+   been reviewed against current provider docs, and have been applied with
    `npm run model-prices -- -- --file <file> --apply`, or release notes
-   explicitly keep conservative default cost estimates. Any zero-rate rows
-   must be documented before using `--allow-zero-price`.
+   explicitly keep conservative default cost estimates. Any stale,
+   future-dated, or zero-rate rows must be documented before using
+   `--allow-stale-source` or `--allow-zero-price`.
 12. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.

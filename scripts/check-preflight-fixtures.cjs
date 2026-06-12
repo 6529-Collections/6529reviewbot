@@ -3,7 +3,40 @@
 "use strict";
 
 const assert = require("assert/strict");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const { runPreflight } = require("../src/preflight.cjs");
+
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529reviewbot-preflight-"));
+const priceFile = path.join(tempDir, "model-prices.json");
+
+process.on("exit", () => {
+  fs.rmSync(tempDir, { force: true, recursive: true });
+});
+
+fs.writeFileSync(
+  priceFile,
+  JSON.stringify(
+    {
+      version: 1,
+      currency: "USD",
+      prices: [
+        {
+          provider: "anthropic",
+          model: "claude-opus-4-8",
+          inputUsdPerMillion: 1,
+          outputUsdPerMillion: 2,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "https://example.com/provider-pricing",
+          sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+        },
+      ],
+    },
+    null,
+    2
+  )
+);
 
 const baseEnv = {
   GITHUB_WEBHOOK_SECRET: "release-preflight-secret-release-preflight-secret",
@@ -31,6 +64,8 @@ const baseEnv = {
   REVIEW_USAGE_DB_NAME: "reviewbot",
   REVIEW_USAGE_DB_SCHEMA: "reviewbot",
   REVIEWBOT_JOB_LEDGER_ENABLED: "true",
+  REVIEWBOT_MODEL_PRICE_FILE: priceFile,
+  REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS: "30",
   REVIEWBOT_USAGE_API_PUBLIC_ENABLED: "true",
   REVIEWBOT_USAGE_API_ADMIN_ENABLED: "true",
   REVIEWBOT_ADMIN_AUTH_MODE: "hmac",
@@ -45,6 +80,7 @@ const fixtures = [
     name: "central-server-github-actions",
     options: {
       profile: "server",
+      now: "2026-06-20T12:00:00.000Z",
       env: {
         ...baseEnv,
         REVIEWBOT_WORKER_ADAPTER: "github_actions",
@@ -64,6 +100,7 @@ const fixtures = [
     options: {
       profile: "worker",
       strict: true,
+      now: "2026-06-20T12:00:00.000Z",
       env: {
         ...baseEnv,
         REVIEWBOT_WORKER_ADAPTER: "local",
@@ -77,6 +114,8 @@ const fixtures = [
 for (const fixture of fixtures) {
   assertPreflightFixture(fixture);
 }
+
+assertStalePriceFilePreflight();
 
 console.log(`preflight fixtures ok (${fixtures.length} profiles checked)`);
 
@@ -96,5 +135,24 @@ function assertPreflightFixture(fixture) {
     result.ok,
     true,
     `${fixture.name} should be ok when it has no errors and no unexpected strict warnings`
+  );
+  const priceCheck = result.checks.find((check) => check.name === "model_price_sources");
+  assert.equal(priceCheck.configured, true, `${fixture.name} should validate price evidence`);
+  assert.equal(priceCheck.file, undefined, `${fixture.name} should not expose price file paths`);
+}
+
+function assertStalePriceFilePreflight() {
+  const result = runPreflight({
+    profile: "server",
+    now: "2026-07-20T12:00:00.000Z",
+    env: {
+      ...baseEnv,
+      REVIEWBOT_WORKER_ADAPTER: "noop",
+    },
+  });
+  assert.equal(result.ok, false, "stale price source evidence should fail preflight");
+  assert.match(
+    result.errors.find((error) => error.name === "model_price_sources")?.message || "",
+    /stale or invalid sourceCheckedAt evidence/
   );
 }

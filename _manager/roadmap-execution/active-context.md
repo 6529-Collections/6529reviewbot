@@ -133,10 +133,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Support bundle privacy PR: merged as PR #90, merge commit `fae8322`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-price-source-checked-at`
-- Current local changes: add required model price `sourceCheckedAt` validation
-  and ledger storage so operator-maintained price rows carry a verifiable
-  source review timestamp.
+- Model price source timestamp PR: merged as PR #91, merge commit `cd3a987`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/price-staleness-preflight`
+- Current local changes: add stale/future-dated model price source-check
+  guards for apply and optional preflight, plus operator documentation for the
+  freshness policy and explicit override.
 
 ## Key Decisions
 
@@ -176,6 +178,9 @@ merged PRs.
   source URLs instead of hardcoded stale prices in the public repo.
 - Model price apply should reject zero-rate placeholders by default; a real
   zero price requires explicit operator intent and provider documentation.
+- Model price apply should reject stale or future-dated source-check evidence
+  by default; stale evidence requires explicit operator acceptance in release
+  notes before using `--allow-stale-source`.
 - Usage writes should use active provider/model price rows for estimated cost
   only when all applicable token rates are available; missing rates should not
   create partial cost estimates.
@@ -321,7 +326,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model price source-checked timestamp PR.
+1. Validate, publish, and merge the model price source freshness PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
@@ -349,8 +354,8 @@ merged PRs.
 - Live conservative dogfood budget policies have been applied and aggregate
   scope counts verified. Exact operator files and live identifiers stay out of
   the public repo.
-- Provider pricing rows still require operator verification and key/limit
-  setup in provider-owned consoles.
+- Provider pricing rows still require operator verification, fresh source-check
+  timestamps, and key/limit setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
 - v0 gates still require external operator evidence before tagging.

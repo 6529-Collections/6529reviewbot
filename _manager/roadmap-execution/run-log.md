@@ -995,3 +995,15 @@
     checked;
   - store `source_checked_at` in the ledger so operator price evidence is
     auditable without committing current price rows to the public repo.
+- Merged `6529reviewbot` PR #91 as `cd3a987` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27426138045`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27426138066`, completed successfully.
+- Started `codex/price-staleness-preflight` increment:
+  - reject stale or future-dated `sourceCheckedAt` model price evidence during
+    apply unless an operator passes `--allow-stale-source`;
+  - add optional preflight validation for `REVIEWBOT_MODEL_PRICE_FILE` without
+    exposing the configured file path in status output;
+  - document the price-evidence freshness policy in the README, release gates,
+    security checklist, and operator runbooks.

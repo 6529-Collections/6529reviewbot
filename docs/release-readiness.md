@@ -55,6 +55,9 @@ Ready for community review:
   acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;
 - model price rows require provider source URLs and source-checked timestamps;
+- model price apply and production preflight can reject stale or future-dated
+  source-checked timestamps before cost estimates rely on bad provider pricing
+  evidence;
 - model-price apply safety that rejects zero-rate placeholder rows unless an
   operator explicitly allows a documented free price;
 - usage-write cost estimation from active provider/model price rows;

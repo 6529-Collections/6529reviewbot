@@ -1,10 +1,17 @@
 "use strict";
 
+const fs = require("fs");
 const { adminAuthSettingsFromEnv } = require("./admin-auth.cjs");
 const { admissionPolicyFromEnv } = require("./admission-policy.cjs");
 const { alertNotifierSettingsFromEnv } = require("./alert-notifier.cjs");
 const { budgetPolicyFromEnv } = require("./budget-admission.cjs");
 const { assertDataApiSettings } = require("./data-api.cjs");
+const {
+  DEFAULT_MAX_SOURCE_AGE_DAYS,
+  describeFreshnessIssue,
+  staleModelPriceSources,
+  validateModelPriceFile,
+} = require("./model-prices.cjs");
 const {
   githubAppAuthSettingsFromWorkerDispatchEnv,
   githubAppAuthSettingsFromEnv,
@@ -254,6 +261,35 @@ function runPreflight(options = {}) {
     };
   });
 
+  check(result, "model_price_sources", () => {
+    const file = stringEnv(env.REVIEWBOT_MODEL_PRICE_FILE);
+    const maxSourceAgeDays = numberEnv(
+      env.REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS,
+      DEFAULT_MAX_SOURCE_AGE_DAYS,
+      "REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS"
+    );
+    if (!file) {
+      return { configured: false, maxSourceAgeDays };
+    }
+    const document = loadModelPriceFileForPreflight(file);
+    const staleRows = staleModelPriceSources(document, {
+      maxSourceAgeDays,
+      now: options.now,
+    });
+    if (staleRows.length) {
+      throw new Error(
+        `REVIEWBOT_MODEL_PRICE_FILE has stale or invalid sourceCheckedAt evidence: ${staleRows
+          .map(describeFreshnessIssue)
+          .join(", ")}`
+      );
+    }
+    return {
+      configured: true,
+      rows: document.prices.length,
+      maxSourceAgeDays,
+    };
+  });
+
   check(result, "usage_api", () => {
     const settings = usageApiSettingsFromEnv(env);
     return {
@@ -351,6 +387,35 @@ function formatPreflightResult(result) {
 
 function safeError(error) {
   return error && error.message ? error.message : String(error);
+}
+
+function stringEnv(value) {
+  return String(value || "").trim();
+}
+
+function numberEnv(value, defaultValue, name) {
+  if (value === undefined || value === null || value === "") {
+    return defaultValue;
+  }
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    throw new Error(`${name} must be a non-negative number.`);
+  }
+  return number;
+}
+
+function loadModelPriceFileForPreflight(file) {
+  try {
+    return validateModelPriceFile(
+      JSON.parse(fs.readFileSync(file, "utf8")),
+      "REVIEWBOT_MODEL_PRICE_FILE"
+    );
+  } catch (error) {
+    if (error && (error.code || error instanceof SyntaxError)) {
+      throw new Error("REVIEWBOT_MODEL_PRICE_FILE could not be read or parsed.");
+    }
+    throw error;
+  }
 }
 
 module.exports = {

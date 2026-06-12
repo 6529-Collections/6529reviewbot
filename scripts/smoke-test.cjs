@@ -177,6 +177,37 @@ assert.throws(
     }),
   /zero inputUsdPerMillion/
 );
+assert.equal(
+  modelPrices.staleModelPriceSources(modelPriceFile, {
+    now: "2026-06-20T12:00:00.000Z",
+    maxSourceAgeDays: 30,
+  }).length,
+  0
+);
+assert.equal(
+  modelPrices.staleModelPriceSources(modelPriceFile, {
+    now: "2026-07-20T12:00:00.000Z",
+    maxSourceAgeDays: 30,
+  })[0].ageDays,
+  38
+);
+assert.throws(
+  () =>
+    modelPrices.assertFreshModelPriceSources(modelPriceFile, {
+      now: "2026-07-20T12:00:00.000Z",
+      maxSourceAgeDays: 30,
+    }),
+  /outside freshness policy/
+);
+assert.match(
+  modelPrices.describeFreshnessIssue(
+    modelPrices.staleModelPriceSources(modelPriceFile, {
+      now: "2026-06-10T12:00:00.000Z",
+      maxSourceAgeDays: 30,
+    })[0]
+  ),
+  /sourceCheckedAt is in the future/
+);
 assert.throws(
   () =>
     modelPrices.validateModelPriceFile({
@@ -276,15 +307,44 @@ modelPrices.applyModelPrices({
     assert.equal(options.tempPrefix, "6529-model-prices-");
     appliedModelPriceStatements += 1;
   },
+  now: "2026-06-20T12:00:00.000Z",
 });
 assert.equal(appliedModelPriceStatements, 2);
 assert.deepEqual(
   modelPricesCli.parseArgs(["--file", "prices.json", "--schema", "reviewbot", "--apply"]),
-  { allowZeroPrice: false, apply: true, file: "prices.json", schema: "reviewbot" }
+  {
+    allowStaleSource: false,
+    allowZeroPrice: false,
+    apply: true,
+    file: "prices.json",
+    schema: "reviewbot",
+  }
 );
 assert.deepEqual(
   modelPricesCli.parseArgs(["--file", "prices.json", "--apply", "--allow-zero-price"]),
-  { allowZeroPrice: true, apply: true, file: "prices.json" }
+  {
+    allowStaleSource: false,
+    allowZeroPrice: true,
+    apply: true,
+    file: "prices.json",
+  }
+);
+assert.deepEqual(
+  modelPricesCli.parseArgs([
+    "--file",
+    "prices.json",
+    "--apply",
+    "--allow-stale-source",
+    "--max-source-age-days",
+    "45",
+  ]),
+  {
+    allowStaleSource: true,
+    allowZeroPrice: false,
+    apply: true,
+    file: "prices.json",
+    maxSourceAgeDays: 45,
+  }
 );
 const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
   version: 1,

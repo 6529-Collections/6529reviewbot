@@ -11,6 +11,9 @@ const {
 const { quoteIdent } = require("./usage-ledger.cjs");
 const { normalizeProvider } = require("./model-catalog.cjs");
 
+const DEFAULT_MAX_SOURCE_AGE_DAYS = 30;
+const MAX_SOURCE_CHECK_CLOCK_SKEW_MS = 5 * 60 * 1000;
+
 function loadModelPriceFile(filePath) {
   return validateModelPriceFile(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
 }
@@ -256,6 +259,12 @@ function applyModelPrices(settings, document, options = {}) {
   if (!options.allowZeroPrice) {
     assertNoZeroPriceRows(priceFile);
   }
+  if (!options.allowStaleSource) {
+    assertFreshModelPriceSources(priceFile, {
+      maxSourceAgeDays: options.maxSourceAgeDays,
+      now: options.now,
+    });
+  }
   const statements = options.statements || modelPriceStatements(settings.schema, priceFile);
   const execute = options.executeStatement || executeStatement;
   const results = [];
@@ -267,6 +276,54 @@ function applyModelPrices(settings, document, options = {}) {
     results.push({ name: statement.name, applied: true });
   }
   return results;
+}
+
+function assertFreshModelPriceSources(document, options = {}) {
+  const staleRows = staleModelPriceSources(document, options);
+  if (staleRows.length) {
+    const maxDays = normalizeMaxSourceAgeDays(options.maxSourceAgeDays);
+    const rows = staleRows.map(describeFreshnessIssue).join(", ");
+    throw new Error(
+      `model price sources are outside freshness policy (max ${maxDays} days): ${rows}; re-check provider pricing or pass --allow-stale-source with release evidence.`
+    );
+  }
+  return validateModelPriceFile(document);
+}
+
+function staleModelPriceSources(document, options = {}) {
+  const priceFile = validateModelPriceFile(document);
+  const maxDays = normalizeMaxSourceAgeDays(options.maxSourceAgeDays);
+  const nowMs = timestampMs(options.now || new Date().toISOString(), "model price source freshness timestamp");
+  return priceFile.prices
+    .map((price) => {
+      const sourceCheckedMs = timestampMs(
+        price.sourceCheckedAt,
+        `model price sourceCheckedAt for ${price.provider}:${price.model}`
+      );
+      const ageDays = (nowMs - sourceCheckedMs) / 86_400_000;
+      let reason = "";
+      if (sourceCheckedMs - nowMs > MAX_SOURCE_CHECK_CLOCK_SKEW_MS) {
+        reason = "future";
+      } else if (ageDays > maxDays) {
+        reason = "stale";
+      }
+      return {
+        provider: price.provider,
+        model: price.model,
+        sourceCheckedAt: price.sourceCheckedAt,
+        ageDays: Math.floor(ageDays),
+        reason,
+        stale: Boolean(reason),
+      };
+    })
+    .filter((row) => row.stale);
+}
+
+function describeFreshnessIssue(row) {
+  if (row.reason === "future") {
+    return `${row.provider}:${row.model} sourceCheckedAt is in the future (${row.sourceCheckedAt})`;
+  }
+  return `${row.provider}:${row.model} checked ${row.ageDays} days ago`;
 }
 
 function assertNoZeroPriceRows(document, source = "model price file") {
@@ -360,6 +417,25 @@ function isoDateField(value, source) {
   return new Date(text).toISOString();
 }
 
+function timestampMs(value, source) {
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) {
+    throw new Error(`${source} must be an ISO date/time string.`);
+  }
+  return timestamp;
+}
+
+function normalizeMaxSourceAgeDays(value) {
+  if (value === undefined || value === null || value === "") {
+    return DEFAULT_MAX_SOURCE_AGE_DAYS;
+  }
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    throw new Error("model price max source age must be a non-negative number of days.");
+  }
+  return number;
+}
+
 function decimalOrNullParam(name, value) {
   if (value === null || value === undefined) {
     return nullParam(name);
@@ -402,13 +478,17 @@ function assertPlainObject(value, source) {
 
 module.exports = {
   applyModelPrices,
+  assertFreshModelPriceSources,
   assertNoZeroPriceRows,
   currentModelPriceStatement,
+  DEFAULT_MAX_SOURCE_AGE_DAYS,
+  describeFreshnessIssue,
   estimateUsageCostUsd,
   loadModelPriceFile,
   modelPriceFromRecord,
   modelPriceStatements,
   readCurrentModelPrice,
   renderModelPriceSql,
+  staleModelPriceSources,
   validateModelPriceFile,
 };
