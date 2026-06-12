@@ -519,3 +519,12 @@
     decisions;
   - README, deployment, release-readiness, release, v0 plan, security
     checklist, changelog, roadmap, and manager-memory docs.
+- Merged `6529reviewbot` PR #51 as `6c128a7` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/dogfood-budget-example` increment:
+  - concrete dogfood budget policy example with global, org, repo, requestor,
+    provider, and review-kind caps;
+  - release-check dry-run validation for the dogfood budget policy file;
+  - README, budget policy, dogfood, install, release-readiness, v0 plan,
+    changelog, roadmap, and manager-memory docs.

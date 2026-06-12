@@ -18,8 +18,18 @@ Start from:
 config/budget-policies.example.json
 ```
 
-The committed example is empty on purpose. For dogfood, create an
-operator-owned file with concrete reviewed caps:
+The committed default example is empty on purpose. For dogfood, start from the
+concrete example and review every placeholder before applying:
+
+```bash
+config/budget-policies.dogfood.example.json
+```
+
+The dogfood example includes global, org, repo, requestor, provider, model, and
+review-kind caps. Replace `replace-with-maintainer-login` and adjust caps in
+an operator-owned file before applying to production.
+
+For a custom operator file, use the same shape:
 
 ```json
 {
@@ -70,10 +80,14 @@ Print SQL without contacting AWS:
 
 ```bash
 npm run budget-policies -- -- --file budget-policies.json
+npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
 exactly what will be upserted.
+
+Use `--quiet` when a release or CI check should validate the file without
+printing SQL.
 
 ## Apply
 

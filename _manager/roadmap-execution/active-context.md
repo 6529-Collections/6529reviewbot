@@ -66,10 +66,11 @@ merged PRs.
   `5f9d53c`
 - Ledger managed-view recreation PR: merged as PR #50, merge commit
   `f7677bb`
-- Current branch: `codex/operator-ledger-evidence`
-- Current local changes: operator evidence template, release/deployment/security
-  docs, changelog, roadmap, and manager-memory updates with public-safe
-  deployment evidence language.
+- Operator evidence template PR: merged as PR #51, merge commit `6c128a7`
+- Current branch: `codex/dogfood-budget-example`
+- Current local changes: dogfood budget policy example, release-check
+  validation, budget/install/dogfood/release docs, changelog, roadmap, and
+  manager-memory updates.
 
 ## Key Decisions
 
@@ -152,6 +153,9 @@ merged PRs.
 - The ledger schema CLI should be safe to re-apply against an existing Aurora
   database. Bot-managed aggregate views can be dropped and recreated by the
   schema tool; tables and indexes remain idempotent.
+- Public budget policy examples should be safe starting points only. Real
+  operator budget files can contain rollout-sensitive requestor/repo notes and
+  should live outside public commits.
 
 ## Constraints
 
@@ -163,7 +167,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the operator evidence template PR if checks and
+1. Validate, publish, and merge the dogfood budget example PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR

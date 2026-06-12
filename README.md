@@ -184,6 +184,7 @@ Preview central budget policy SQL without touching AWS:
 
 ```bash
 npm run budget-policies -- -- --file config/budget-policies.example.json
+npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 ```
 
 Validate the dashboard/admin API contract:

@@ -21,6 +21,7 @@ Ready for community review:
 - budget admission against the isolated AWS usage ledger;
 - central DB budget policy dry-run/apply tooling and production admission
   loading;
+- conservative dogfood budget policy example validated by release checks;
 - review job fanout across review kinds and provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;

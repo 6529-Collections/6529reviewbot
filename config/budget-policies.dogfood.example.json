@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "currency": "USD",
+  "policies": [
+    {
+      "scopeType": "global",
+      "scopeValue": "*",
+      "dailyUsd": 25,
+      "weeklyUsd": 100,
+      "monthlyUsd": 500,
+      "notes": "Example dogfood global cap. Review before applying."
+    },
+    {
+      "scopeType": "org",
+      "scopeValue": "6529-Collections",
+      "dailyUsd": 25,
+      "weeklyUsd": 100,
+      "monthlyUsd": 500,
+      "notes": "Example dogfood org cap for 6529 repositories."
+    },
+    {
+      "scopeType": "repo",
+      "scopeValue": "6529-Collections/6529reviewbot",
+      "dailyUsd": 10,
+      "weeklyUsd": 50,
+      "monthlyUsd": 150,
+      "notes": "Example first target repository cap."
+    },
+    {
+      "scopeType": "requestor",
+      "scopeValue": "replace-with-maintainer-login",
+      "dailyUsd": 5,
+      "weeklyUsd": 25,
+      "monthlyUsd": 75,
+      "notes": "Replace with a trusted maintainer login before applying."
+    },
+    {
+      "scopeType": "provider",
+      "scopeValue": "anthropic",
+      "dailyUsd": 15,
+      "weeklyUsd": 75,
+      "monthlyUsd": 250,
+      "notes": "Example cap for the initial Anthropic dogfood lane."
+    },
+    {
+      "scopeType": "model",
+      "scopeValue": "claude-opus-4-8",
+      "dailyUsd": 15,
+      "weeklyUsd": 75,
+      "monthlyUsd": 250,
+      "notes": "Example cap for the default dogfood model."
+    },
+    {
+      "scopeType": "review_kind",
+      "scopeValue": "security",
+      "dailyUsd": 8,
+      "weeklyUsd": 40,
+      "monthlyUsd": 120,
+      "notes": "Example cap for crypto/security analysis jobs."
+    }
+  ]
+}
