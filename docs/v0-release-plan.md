@@ -38,6 +38,7 @@ The first `v0` tag can include:
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
 - no-network production preflight command;
+- incident response runbook;
 - dogfood templates, deployment docs, release checks, and security-review
   checklists.
 

@@ -249,3 +249,14 @@
   - README, configuration, deployment, operations, release, security checklist,
     v0 plan, release notes template, roadmap, changelog, and manager memory
     mention `npm run preflight`.
+- Merged `6529reviewbot` PR #26 as `9b57580` after CI and Dependency Review
+  passed; CodeRabbit remained queued with no review threads, and the normal
+  merge path allowed the merge.
+- Started `codex/incident-runbooks` increment:
+  - added `docs/incident-response.md` covering severity, first-five-minute
+    containment, spend spikes, secret exposure, provider outages, webhook or
+    command abuse, ledger/dashboard outages, bad bot comments, and post-incident
+    notes;
+  - linked incident response from README, operations, release readiness,
+    security checklist, release notes template, v0 plan, roadmap, changelog, and
+    manager memory.

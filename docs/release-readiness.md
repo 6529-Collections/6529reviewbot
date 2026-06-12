@@ -25,6 +25,8 @@ Ready for community review:
 - 6529.io admin auth bridge contract;
 - scheduled spend alerts with stdout, webhook, and SNS delivery;
 - no-network production preflight command;
+- incident response runbook for spend, secret, provider, webhook, ledger, and
+  bad-comment incidents;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
 - production deployment runbook and central worker template that mints
