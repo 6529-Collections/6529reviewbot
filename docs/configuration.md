@@ -395,8 +395,9 @@ REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
 
 `disabled` is the fail-closed default. `hmac` lets the existing `6529.io` auth
 system sign short-lived admin assertions for bot-owned private API endpoints.
-HMAC actor values cannot contain control characters, and role names must use
-letters, digits, underscore, dot, colon, or hyphen.
+HMAC actor values cannot contain control characters, and both configured
+required roles and incoming role names must use letters, digits, underscore,
+dot, colon, or hyphen.
 See [admin-auth-bridge.md](admin-auth-bridge.md).
 
 ## Alerting And Scheduled Operator Checks

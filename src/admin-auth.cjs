@@ -22,9 +22,7 @@ function adminAuthSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_ADMIN_AUTH_HMAC_SECRET ||
       env.REVIEWBOT_ADMIN_AUTH_SHARED_SECRET ||
       "",
-    requiredRoles: csv(env.REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES || "").length
-      ? csv(env.REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES)
-      : DEFAULT_REQUIRED_ROLES,
+    requiredRoles: requiredRolesFromEnv(env.REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES),
     maxTtlSeconds: positiveInt(
       env.REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS,
       DEFAULT_MAX_TTL_SECONDS,
@@ -142,6 +140,36 @@ function canonicalAdminAuthPayload(input) {
 function hasRequiredRole(actualRoles, requiredRoles) {
   const actual = new Set(actualRoles.map((role) => role.toLowerCase()));
   return requiredRoles.some((role) => actual.has(String(role).toLowerCase()));
+}
+
+function requiredRolesFromEnv(value) {
+  const roles = csv(value || "");
+  return normalizeRequiredRoles(
+    roles.length ? roles : DEFAULT_REQUIRED_ROLES,
+    "REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES"
+  );
+}
+
+function normalizeRequiredRoles(roles, source) {
+  const result = [];
+  const seen = new Set();
+  for (const role of roles) {
+    if (!isSafeAdminRole(role)) {
+      throw new Error(
+        `${source} must contain roles using only letters, digits, underscore, dot, colon, or hyphen, each at most ${MAX_ADMIN_ROLE_LENGTH} characters.`
+      );
+    }
+    const key = String(role).toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    result.push(role);
+  }
+  if (!result.length) {
+    throw new Error(`${source} must contain at least one role.`);
+  }
+  return result;
 }
 
 function isSafeAdminActor(value) {

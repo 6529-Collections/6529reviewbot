@@ -52,6 +52,11 @@ REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES=reviewbot-admin,admin
 REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
 ```
 
+`REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES` uses the same role format as incoming
+assertions: 1-80 characters, with only letters, digits, underscore, dot, colon,
+or hyphen. The bot validates this setting at startup/preflight time so a typo
+does not silently make every admin assertion impossible to satisfy.
+
 The signature is HMAC-SHA256 over:
 
 ```text
