@@ -47,6 +47,11 @@ Production should use the existing `6529.io` auth system and pass only a
 verified admin decision to `6529reviewbot`. This repository should not create a
 separate human-login system.
 
+`src/admin-auth.cjs` provides a service-to-service bridge for this contract.
+The preferred mode is a short-lived HMAC assertion signed by trusted `6529.io`
+server-side infrastructure. See
+[admin-auth-bridge.md](admin-auth-bridge.md).
+
 ## Budget Policies
 
 `GET /api/admin/budget/policies` returns normalized budget policy rows:

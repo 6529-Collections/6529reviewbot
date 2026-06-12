@@ -6,12 +6,14 @@ The main risks are:
 
 - leaking provider keys or GitHub tokens;
 - leaking AWS credentials or database secrets;
+- leaking bot admin signing secrets;
 - letting PR authors execute code with secrets;
 - trusting spoofed bot metadata;
 - accepting forged GitHub webhook deliveries;
 - letting PR-controlled config expand model access or budget;
 - posting misleading review comments;
 - unbounded provider spend;
+- exposing private admin usage data;
 - reading files outside the target checkout.
 
 ## Controls
@@ -91,12 +93,21 @@ The usage ledger should use:
 - a separate Aurora PostgreSQL Serverless v2 cluster;
 - no inbound database security-group rules.
 
+### Admin API Safety
+
+Private admin endpoints fail closed unless an admin authorizer is configured.
+The preferred `6529.io` bridge is a short-lived HMAC assertion signed by
+server-side 6529 infrastructure after the existing 6529 auth system has
+verified the human operator. The HMAC secret must not be exposed to browser
+JavaScript, public repo variables, or logs.
+
 ## Review Checklist For Security-Sensitive Changes
 
 - Does the change execute target repo code?
 - Can untrusted comments affect hidden metadata state?
 - Can a changed file path escape the workspace?
 - Can secrets reach provider prompts or PR comments?
+- Can bot admin assertions be forged, replayed, or extended beyond the TTL?
 - Does the workflow request broader permissions than needed?
 - Does repository config still come from the base ref and merge restrictively?
 - Does the change increase maximum spend or remove a hard cap?

@@ -3,6 +3,7 @@
 "use strict";
 
 const assert = require("assert");
+const adminAuth = require("../src/admin-auth.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
@@ -542,6 +543,59 @@ const privateByDefaultLedgerEvent = usageApiLedger.usageRecordToEvent(usageApiLe
   apiSettings: usageApi.usageApiSettingsFromEnv({}),
 });
 assert.equal(privateByDefaultLedgerEvent.repoPrivate, true);
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: new URL("http://localhost/api/admin/usage/summary"),
+  headers: {},
+}).code, "admin_auth_disabled");
+const sharedSecretAuth = adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: new URL("http://localhost/api/admin/usage/summary"),
+  headers: {
+    "x-6529-reviewbot-admin-secret": "secret",
+  },
+}, adminAuth.adminAuthSettingsFromEnv({
+  REVIEWBOT_ADMIN_AUTH_MODE: "shared_secret",
+  REVIEWBOT_ADMIN_AUTH_SHARED_SECRET: "secret",
+}));
+assert.equal(sharedSecretAuth.allowed, true);
+const hmacAuthSettings = adminAuth.adminAuthSettingsFromEnv({
+  REVIEWBOT_ADMIN_AUTH_MODE: "hmac",
+  REVIEWBOT_ADMIN_AUTH_HMAC_SECRET: "hmac-secret",
+  REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES: "reviewbot-admin",
+  REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS: "300",
+});
+const adminUsageUrl = new URL("http://localhost/api/admin/usage/summary?days=7");
+const signedAdminHeaders = signedAdminHeadersFor(adminUsageUrl);
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: signedAdminHeaders,
+}, hmacAuthSettings).allowed, true);
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: signedAdminHeadersFor(adminUsageUrl, { roles: ["viewer"] }),
+}, hmacAuthSettings).code, "admin_auth_missing_role");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: new URL("http://localhost/api/admin/budget/policies"),
+  headers: signedAdminHeaders,
+}, hmacAuthSettings).code, "admin_auth_invalid_signature");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: signedAdminHeadersFor(adminUsageUrl, {
+    expiresAt: String(Math.floor(Date.now() / 1000) - 1),
+  }),
+}, hmacAuthSettings).code, "admin_auth_expired");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: signedAdminHeadersFor(adminUsageUrl, {
+    expiresAt: String(Math.floor(Date.now() / 1000) + 9999),
+  }),
+}, hmacAuthSettings).code, "admin_auth_ttl_too_long");
 assert.equal(appServer.normalizeConfigLoadResult(null).status, "invalid");
 assert.equal(
   repositoryConfig.repositoryConfigBlocksWork(
@@ -646,6 +700,17 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminAllowed.statusCode, 200);
   assert.equal(adminAllowed.body.policies[0].scopeType, "global");
+  const adminBridgeAllowed = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminUsageUrl,
+    headers: signedAdminHeadersFor(adminUsageUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadUsageEvents: async () => ({ events: usageEvents }),
+  });
+  assert.equal(adminBridgeAllowed.statusCode, 200);
+  assert.equal(adminBridgeAllowed.body.visibility, "admin");
   try {
     usageApi.usageRangeFromRequest(
       { url: new URL("http://localhost/api/public/usage/summary?days=bad") },
@@ -720,6 +785,25 @@ appServer.handleGitHubWebhook({
   console.error(error);
   process.exitCode = 1;
 });
+
+function signedAdminHeadersFor(url, options = {}) {
+  const roles = options.roles || ["reviewbot-admin", "admin"];
+  const expiresAt =
+    options.expiresAt || String(Math.floor(Date.now() / 1000) + 120);
+  const signature = adminAuth.signAdminAuthRequest({
+    method: options.method || "GET",
+    url,
+    actor: options.actor || "operator",
+    roles,
+    expiresAt,
+  }, hmacAuthSettings);
+  return {
+    "x-6529-admin-user": options.actor || "operator",
+    "x-6529-admin-roles": roles.join(","),
+    "x-6529-admin-expires-at": expiresAt,
+    "x-6529-admin-signature": `sha256=${signature}`,
+  };
+}
 
 function withEnv(nextEnv, fn) {
   const oldEnv = process.env;

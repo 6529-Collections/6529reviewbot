@@ -22,11 +22,12 @@ merged PRs.
 - Aurora usage loader PR: merged as PR #10, merge commit `edaadc6`
 - Dashboard progress docs PR: merged as PR #11, merge commit `f635a2d`
 - Repository config PR: merged as PR #12, merge commit `6edb52d`
+- Worker execution adapters PR: merged as PR #13, merge commit `1d84b10`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/worker-execution-adapters`
-- Current local changes: worker adapter PR review fixes for fork checkout,
-  bounded GitHub Actions dispatch, docs, and smoke tests
+- Current branch: `codex/admin-auth-bridge`
+- Current local changes: server-side admin auth bridge for 6529.io private
+  usage/admin endpoints, docs, and smoke tests
 
 ## Key Decisions
 
@@ -55,10 +56,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge worker execution adapters after review-fix checks pass.
-2. Add admin auth bridge contract for 6529.io private controls.
-3. Add alerting and scheduled budget-spike checks.
-4. Sweep docs for community-release readiness.
+1. Push and merge the admin auth bridge contract for 6529.io private controls.
+2. Add alerting and scheduled budget-spike checks.
+3. Sweep docs for community-release readiness.
 
 ## Open Risks
 

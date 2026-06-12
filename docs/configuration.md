@@ -189,6 +189,20 @@ authorizer. Production should use the existing 6529.io auth system. See
 control which repo names may appear on public summaries. Any repo that does not
 match those allowlists is collapsed into the public `private` bucket.
 
+## Admin Auth Bridge
+
+```text
+REVIEWBOT_ADMIN_AUTH_MODE=disabled|shared_secret|hmac
+REVIEWBOT_ADMIN_AUTH_SHARED_SECRET=
+REVIEWBOT_ADMIN_AUTH_HMAC_SECRET=
+REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES=reviewbot-admin,admin
+REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
+```
+
+`disabled` is the fail-closed default. `hmac` lets the existing `6529.io` auth
+system sign short-lived admin assertions for bot-owned private API endpoints.
+See [admin-auth-bridge.md](admin-auth-bridge.md).
+
 ## Cost And Context Controls
 
 ```text

@@ -105,6 +105,10 @@ after the existing 6529.io auth system verifies operator permissions.
 The API does not expose Aurora credentials, provider keys, GitHub App secrets,
 or raw provider responses to browser clients.
 
+`src/admin-auth.cjs` provides the server-side bridge for private 6529.io admin
+requests. The preferred mode is a short-lived HMAC assertion signed by trusted
+6529.io infrastructure, not a separate bot login system.
+
 ## Trust Boundaries
 
 The bot treats target PR content as hostile:
