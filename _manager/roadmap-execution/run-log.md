@@ -528,3 +528,17 @@
   - release-check dry-run validation for the dogfood budget policy file;
   - README, budget policy, dogfood, install, release-readiness, v0 plan,
     changelog, roadmap, and manager-memory docs.
+- Merged `6529reviewbot` PR #52 as `a62dbe5` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Tried applying conservative operator budget caps to the live ledger:
+  - skipped the public placeholder requestor row;
+  - discovered the older budget policy table lacked the managed `notes`
+    column;
+  - inspected managed table column sets and found the model-prices table also
+    had an older shape.
+- Started `codex/ledger-additive-migrations` increment:
+  - additive schema migrations for missing model-price `id`, `created_at`, and
+    `source_url` columns;
+  - additive schema migration for missing budget-policy `notes`;
+  - smoke coverage and AWS ledger/release/security/roadmap docs.

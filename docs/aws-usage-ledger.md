@@ -72,8 +72,9 @@ The apply mode uses the RDS Data API settings below. It is intentionally
 explicit; the default command is a dry run.
 
 The schema command is safe to re-run. It uses `create table if not exists`,
-`create index if not exists`, and recreates only the bot-managed daily
-aggregate views so view column changes do not block deployment.
+additive `alter table ... add column if not exists` migrations, `create index
+if not exists`, and recreates only the bot-managed daily aggregate views so
+column and view changes do not block deployment.
 
 Use a non-default schema name only when the deployment intentionally separates
 bot data:

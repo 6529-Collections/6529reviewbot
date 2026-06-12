@@ -113,6 +113,24 @@ create table if not exists ${schemaIdent}.ai_model_prices (
 )`,
     },
     {
+      name: "alter_model_prices_add_id",
+      sql: `
+alter table ${schemaIdent}.ai_model_prices
+  add column if not exists id bigserial`,
+    },
+    {
+      name: "alter_model_prices_add_created_at",
+      sql: `
+alter table ${schemaIdent}.ai_model_prices
+  add column if not exists created_at timestamptz not null default now()`,
+    },
+    {
+      name: "alter_model_prices_add_source_url",
+      sql: `
+alter table ${schemaIdent}.ai_model_prices
+  add column if not exists source_url text`,
+    },
+    {
       name: "create_budget_policies",
       sql: `
 create table if not exists ${schemaIdent}.ai_review_budget_policies (
@@ -128,6 +146,12 @@ create table if not exists ${schemaIdent}.ai_review_budget_policies (
   notes text,
   unique (scope_type, scope_value)
 )`,
+    },
+    {
+      name: "alter_budget_policies_add_notes",
+      sql: `
+alter table ${schemaIdent}.ai_review_budget_policies
+  add column if not exists notes text`,
     },
     {
       name: "index_usage_repo_pr_created",
