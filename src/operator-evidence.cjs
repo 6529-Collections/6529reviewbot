@@ -5,6 +5,7 @@ const { redactSensitiveText } = require("./diagnostics.cjs");
 
 const OPERATOR_EVIDENCE_STATUSES = ["pending", "complete", "deferred", "blocked"];
 const OPERATOR_EVIDENCE_TEXT_MAX_CHARS = 1000;
+const VALIDATED_OPERATOR_EVIDENCE = Symbol("validatedOperatorEvidence");
 const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "github-app", title: "GitHub App" },
   { id: "aws-ledger", title: "AWS Ledger" },
@@ -47,12 +48,16 @@ function validateOperatorEvidence(document, source = "operator evidence") {
     }
     return validateSection(definition, section, `${source}.sections.${definition.id}`);
   });
-  return {
+  const evidence = {
     version: 1,
     release,
     summary,
     sections,
   };
+  Object.defineProperty(evidence, VALIDATED_OPERATOR_EVIDENCE, {
+    value: true,
+  });
+  return evidence;
 }
 
 function validateSummary(value, source) {
@@ -72,7 +77,7 @@ function validateSummary(value, source) {
 
 function validateSection(definition, value, source) {
   assertObject(value, source);
-  const status = enumField(value.status || "pending", OPERATOR_EVIDENCE_STATUSES, `${source}.status`);
+  const status = enumField(value.status ?? "pending", OPERATOR_EVIDENCE_STATUSES, `${source}.status`);
   const evidence = normalizeEvidenceList(value.evidence, `${source}.evidence`);
   const notes = optionalEvidenceText(value.notes);
   if (status === "complete" && evidence.length === 0) {
@@ -191,13 +196,7 @@ function publicEvidenceText(value) {
 }
 
 function isValidatedOperatorEvidence(value) {
-  return Boolean(
-    value &&
-      value.version === 1 &&
-      typeof value.release === "string" &&
-      value.summary &&
-      Array.isArray(value.sections)
-  );
+  return Boolean(value && value[VALIDATED_OPERATOR_EVIDENCE] === true);
 }
 
 function normalizeEvidenceList(value, source) {

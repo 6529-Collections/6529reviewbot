@@ -1246,6 +1246,45 @@ assert.throws(
         environment: "prod",
         privateEvidenceLocation: "private runbook",
       },
+      sections: Object.fromEntries(
+        operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.map((section) => [
+          section.id,
+          {
+            status: section.id === "github-app" ? "" : "pending",
+          },
+        ])
+      ),
+    }),
+  /operator evidence\.sections\.github-app\.status must be a non-empty string/
+);
+assert.throws(
+  () =>
+    operatorEvidence.assertOperatorEvidenceReady({
+      version: 1,
+      release: "v0.1.0",
+      summary: {
+        date: "2026-06-12",
+        operator: "maintainer",
+        commit: "abc123",
+        environment: "prod",
+        privateEvidenceLocation: "private runbook",
+      },
+      sections: [],
+    }),
+  /operator evidence\.sections must be an object/
+);
+assert.throws(
+  () =>
+    operatorEvidence.validateOperatorEvidence({
+      version: 1,
+      release: "v0.1.0",
+      summary: {
+        date: "2026-06-12",
+        operator: "maintainer",
+        commit: "abc123",
+        environment: "prod",
+        privateEvidenceLocation: "private runbook",
+      },
       sections: {
         "github-app": {
           status: "complete",

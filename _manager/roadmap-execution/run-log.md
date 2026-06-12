@@ -1454,3 +1454,15 @@
   - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --json` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #118:
+  - explicit empty operator-evidence statuses now fail validation instead of
+    defaulting to `pending`;
+  - only evidence objects validated by `src/operator-evidence.cjs` can skip
+    the full schema path in downstream summary/readiness helpers;
+  - smoke coverage now asserts both regressions.
+- Local validation after the PR #118 hardening pass:
+  - `npm test` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --summary` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --json` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
