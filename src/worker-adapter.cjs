@@ -182,6 +182,7 @@ function jobEnv(job) {
     REVIEWBOT_JOB_ID: job.id,
     REVIEWBOT_JOB_LANE: job.lane || "",
     REVIEWBOT_DELIVERY_ID: job.deliveryId || "",
+    REVIEWBOT_GITHUB_INSTALLATION_ID: job.installationId ? String(job.installationId) : "",
     REVIEWBOT_REQUESTOR: job.requestor || "",
   };
 }
@@ -190,6 +191,7 @@ function githubWorkflowFields(job) {
   assertReviewJob(job);
   return {
     job_id: job.id,
+    installation_id: job.installationId ? String(job.installationId) : "",
     target_repo: job.repository.fullName,
     head_repo: headRepoFullNameForJob(job),
     pr_number: String(job.prNumber),

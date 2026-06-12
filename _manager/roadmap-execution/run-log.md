@@ -172,3 +172,15 @@
     initial reviews;
   - conservative central env example and target repo config templates;
   - repository config validator entrypoint.
+- Merged `6529reviewbot` PR #18 as `b5f458d` after CI, Dependency Review, and
+  CodeRabbit passed with no review threads.
+- Opened frontend dogfood config PR #2606:
+  `https://github.com/6529-Collections/6529seize-frontend/pull/2606`.
+  It adds only `.github/6529bot.yml` in command-only mode. All automated
+  checks are green; merge is blocked by required human review.
+- Started `codex/production-app-deployment-wiring` increment:
+  - central worker jobs carry `installation_id`;
+  - worker workflow mints a short-lived GitHub App installation token instead
+    of requiring a long-lived target repo token;
+  - deployment docs cover App permissions/events, central server env, worker
+    secrets, 6529.io usage/admin API wiring, verification, and rollback.

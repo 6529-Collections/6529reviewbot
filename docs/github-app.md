@@ -47,6 +47,32 @@ The server refuses to start without a webhook secret. Webhook payloads are
 verified with GitHub's `X-Hub-Signature-256` HMAC before JSON parsing or event
 routing.
 
+## Production Registration
+
+Recommended repository permissions:
+
+```text
+Contents: read
+Issues: write
+Metadata: read
+Pull requests: read
+```
+
+Recommended organization permissions:
+
+```text
+Members: read
+```
+
+Subscribe to:
+
+```text
+Issue comment
+Pull request
+```
+
+See [deployment.md](deployment.md) for the full production deployment runbook.
+
 ## Installation Tokens
 
 Production deployments should configure GitHub App credentials:
@@ -65,6 +91,10 @@ for installation tokens, and uses those tokens to:
 - read repository config from the target repo base ref;
 - resolve the requestor's repository collaborator permission;
 - best-effort check organization membership.
+
+The central GitHub Actions worker template also mints a short-lived installation
+token for the target repository. It uses the `installation_id` dispatched with
+each review job, so target repositories do not need a long-lived bot token.
 
 This keeps target repositories from owning bot GitHub tokens while still
 allowing the central App to enforce trusted-actor admission.

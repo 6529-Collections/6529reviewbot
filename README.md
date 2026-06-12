@@ -231,6 +231,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
+- [Production deployment](docs/deployment.md)
 - [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
 - [Repository config](docs/repository-config.md)

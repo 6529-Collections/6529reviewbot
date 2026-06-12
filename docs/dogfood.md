@@ -70,6 +70,9 @@ Required secret families:
 - alert delivery credentials when not using stdout;
 - 6529.io admin-auth HMAC secret when private admin routes are enabled.
 
+Use the base64 private-key form for GitHub Actions and other environments that
+handle multiline secrets poorly.
+
 Start with:
 
 ```text

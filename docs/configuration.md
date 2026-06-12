@@ -155,6 +155,10 @@ The default source is `none`, which means the App uses central policy only.
 Production GitHub App deployments should set `REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github`
 after an installation-token path is wired in. When the source is `none`, the App
 does not mint an installation token for repository config loading.
+`REVIEWBOT_GITHUB_TOKEN` and `GITHUB_TOKEN` are fallback token sources for
+development and non-App integrations. Production central App deployments should
+prefer installation tokens minted from `REVIEWBOT_GITHUB_APP_ID` and the App
+private key.
 
 Repository config is intentionally not a second source of unlimited authority.
 It can disable the bot, narrow review kinds, select from centrally allowed

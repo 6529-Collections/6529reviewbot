@@ -18,6 +18,7 @@ stabilized.
 - GitHub App installation-token handling for repository config reads and actor
   permission resolution.
 - Timeout handling and fail-closed hardening for GitHub App API calls.
+- Short-lived GitHub App installation-token minting for central worker jobs.
 - Trusted-actor admission for public repositories.
 - Budget admission against the isolated AWS usage ledger.
 - Review job fanout across review kinds and provider/model lanes.
@@ -28,6 +29,8 @@ stabilized.
 - Scheduled spend alerts for budget utilization and unusual spend spikes.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.
+- Production deployment runbook for GitHub App, worker, usage API, and 6529.io
+  wiring.
 - Documentation for architecture, configuration, operations, release readiness,
   security model, AWS usage ledger, repository config, worker adapters, and
   alerting.
