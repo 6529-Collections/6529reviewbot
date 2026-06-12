@@ -115,9 +115,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Usage Data API helper refactor PR: merged as PR #81, merge commit
   `54c893d`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/harden-alert-sns-runner`
-- Current local changes: make SNS alert delivery avoid shell mode when an
-  operator provides an explicit AWS CLI binary in notifier settings.
+- SNS alert runner hardening PR: merged as PR #82, merge commit `b856029`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/cover-dispatch-exceptions`
+- Current local changes: add smoke coverage that thrown dispatch failures mark
+  run claims and job events as `dispatch_error`.
 
 ## Key Decisions
 
@@ -302,7 +304,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App dispatch-token PR.
+1. Validate, publish, and merge the dispatch exception coverage PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

@@ -2721,6 +2721,60 @@ appServer.handleGitHubWebhook({
   assert.equal(dispatchStatusUpdates.length, 4);
   assert.equal(dispatchStatusUpdates[0].status, "dispatch_failed");
   assert.equal(dispatchStatusUpdates[0].options.metadata.queueReason, "queue closed");
+  const dispatchExceptionStatusUpdates = [];
+  const dispatchExceptionEvents = [];
+  await assert.rejects(
+    () =>
+      appServer.handleGitHubWebhook({
+        headers: {
+          "x-hub-signature-256": webhookSignature,
+          "x-github-event": "pull_request",
+          "x-github-delivery": "delivery-1",
+        },
+        rawBody: webhookBody,
+        settings: {
+          webhookSecret,
+          webhookPath: "/webhooks/github",
+          maxBodyBytes: 2048,
+        },
+        resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+        runControlPolicy,
+        claimReviewJob: async (job, context) =>
+          runControl.evaluateRunControl({
+            job,
+            policy: context.policy,
+            snapshot: { unavailable: false, active: {} },
+          }),
+        enqueueReviewJobs: async () => {
+          throw new Error("dispatch token mint failed");
+        },
+        updateRunClaimStatus: async (job, status, options) => {
+          dispatchExceptionStatusUpdates.push({ job, status, options });
+        },
+        recordJobEvent: async (event) => {
+          dispatchExceptionEvents.push(event);
+        },
+      }),
+    /dispatch token mint failed/
+  );
+  assert.equal(dispatchExceptionStatusUpdates.length, 4);
+  assert(dispatchExceptionStatusUpdates.every((entry) => entry.status === "dispatch_error"));
+  assert(
+    dispatchExceptionStatusUpdates.every((entry) =>
+      /dispatch token mint failed/.test(entry.options.metadata.queueReason)
+    )
+  );
+  const dispatchExceptionDispatchEvents = dispatchExceptionEvents.filter(
+    (event) => event.status === "dispatch_error"
+  );
+  assert.equal(dispatchExceptionDispatchEvents.length, 4);
+  assert(dispatchExceptionDispatchEvents.every((event) => event.stage === "dispatch"));
+  assert(dispatchExceptionDispatchEvents.every((event) => event.accepted === false));
+  assert(
+    dispatchExceptionDispatchEvents.every((event) =>
+      /dispatch token mint failed/.test(event.reason)
+    )
+  );
   const completedDispatchStatusUpdates = [];
   const completedDispatchResult = await appServer.handleGitHubWebhook({
     headers: {
