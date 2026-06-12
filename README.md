@@ -28,6 +28,8 @@ requests.
   selection, admission tightening, and budget caps.
 - Dispatches admitted jobs through explicit worker adapters for local workers
   or central GitHub Actions workflows.
+- Records review-job budget and dispatch lifecycle events in a separate
+  operator job ledger when enabled.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
 - Verifies private admin API calls through a server-side `6529.io` auth bridge
@@ -66,6 +68,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
+- [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
@@ -231,6 +234,13 @@ REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
 REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
 ```
 
+Job lifecycle audit:
+
+```text
+REVIEWBOT_JOB_LEDGER_ENABLED=false
+REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
+```
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -260,6 +270,8 @@ REVIEW_USAGE_AWS_ROLE_ARN=arn:aws:iam::...:role/...
 ```
 
 See [docs/aws-usage-ledger.md](docs/aws-usage-ledger.md).
+Use [docs/job-ledger.md](docs/job-ledger.md) when enabling durable budget and
+dispatch audit events.
 
 ## Security Model
 
@@ -286,6 +298,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
 - [Worker adapters](docs/worker-adapters.md)
+- [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)
 - [Admin auth bridge](docs/admin-auth-bridge.md)
 - [Alerting and scheduled spend checks](docs/alerting.md)

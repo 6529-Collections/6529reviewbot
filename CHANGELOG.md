@@ -23,6 +23,7 @@ stabilized.
 - Trusted-actor admission for public repositories.
 - Budget admission against the isolated AWS usage ledger.
 - Review job fanout across review kinds and provider/model lanes.
+- Durable job lifecycle ledger for budget and dispatch audit events.
 - Base-ref repository config loading and restrictive policy merge.
 - Local and central GitHub Actions worker adapters.
 - Public/admin usage API contracts and read-only Aurora usage readers.

@@ -127,8 +127,9 @@ bot backend or worker environment. Target repositories do not receive them.
 
 Adapters return a structured result for every job. A dispatch failure does not
 call a provider; it is visible in the queue result returned by the App. The
-next production step is to persist those job state transitions so retries,
-alerts, and dashboards can reason about failed dispatches.
+App can also persist budget and dispatch lifecycle rows to the job ledger so
+retries, alerts, and dashboards can reason about failed dispatches after the
+webhook response is gone. See [job-ledger.md](job-ledger.md).
 
 Worker stdout and stderr are not included in adapter results by default. This
 keeps webhook responses and queue logs from accidentally carrying prompt text,

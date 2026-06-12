@@ -1,6 +1,6 @@
 # Architecture
 
-`6529reviewbot` has six layers.
+`6529reviewbot` has eight layers.
 
 ## 1. GitHub App Identity
 
@@ -99,7 +99,23 @@ The ledger records one row per review run with:
 - cost fields when available;
 - metadata needed for audit/debugging.
 
-## 6. Usage API
+## 6. Job Ledger
+
+The job ledger records append-only lifecycle events for each review job. It is
+separate from the usage ledger because budget-denied jobs and dispatch failures
+may never call a provider and therefore have no token or cost row.
+
+The job ledger records:
+
+- budget admission, warning, or denial;
+- dispatch acceptance, failure, or error;
+- repo, PR, requestor, review kind, provider, model, and adapter;
+- bounded operational metadata for queue debugging.
+
+It must not record prompts, diffs, provider output, worker stdout/stderr, raw
+webhook payloads, or credentials.
+
+## 7. Usage API
 
 The usage API is the read-side contract for dashboards and admin tools. Public
 endpoints return aggregate usage data that is safe for 6529.io transparency
@@ -113,7 +129,7 @@ or raw provider responses to browser clients.
 requests. The preferred mode is a short-lived HMAC assertion signed by trusted
 6529.io infrastructure, not a separate bot login system.
 
-## 7. Scheduled Alerts
+## 8. Scheduled Alerts
 
 `src/scheduled-spend-check.cjs` reads the same Aurora usage ledger and budget
 policy table as the usage API. It evaluates spend alerts without calling model

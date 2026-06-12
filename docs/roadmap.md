@@ -289,10 +289,13 @@ Completed in `6529reviewbot`:
   validation.
 - production deployment runbook and central worker installation-token flow.
 - repeatable release check script and manual security review checklist.
+- validated model catalog for provider defaults.
+- durable job lifecycle ledger for budget and dispatch audit events.
 
 In progress in `6529reviewbot`:
 
-- production deployment execution support and release hardening.
+- production deployment execution support, dogfood operations, and dashboard
+  wiring.
 
 In progress outside this repository:
 

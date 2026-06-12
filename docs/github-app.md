@@ -149,6 +149,10 @@ loads config from the target repository's base ref before admission and job
 fanout. Without a real queue, valid admitted review jobs are acknowledged but
 reported as not enqueued.
 
+When the job ledger is enabled, the App records budget and dispatch lifecycle
+events around the queue call. These rows are for operator diagnostics and do
+not include prompt text, diffs, provider output, or worker stdout/stderr.
+
 Actor context is resolved from GitHub App installation credentials when the
 server is configured with `REVIEWBOT_GITHUB_APP_ID` and a private key. Until a
 resolver supplies collaborator or org membership context, public repo events
@@ -169,6 +173,7 @@ auth is configured. Custom deployments can still inject:
 - `resolveBudgetSnapshot(jobEvent, admission, job)` to read current spend;
 - `estimateBudgetCost(jobEvent, admission, job)` to provide job-specific cost
   estimates when available;
+- `recordJobEvent(event)` to persist best-effort job lifecycle audit rows;
 - `enqueueReviewJobs(jobs, controls)` to dispatch admitted jobs to the worker.
 
 `src/worker-adapter.cjs` provides local and GitHub Actions enqueuer helpers for

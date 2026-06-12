@@ -42,6 +42,10 @@ const {
   readRequestBody,
   webhookSettingsFromEnv,
 } = require("./github-webhook.cjs");
+const {
+  dispatchJobEventsFromQueueResult,
+  jobEventFromReviewJob,
+} = require("./job-ledger.cjs");
 
 function createReviewbotServer(options = {}) {
   const settings = options.settings || webhookSettingsFromEnv();
@@ -59,6 +63,7 @@ function createReviewbotServer(options = {}) {
     options.loadRepositoryConfig ||
     ((event) => loadRepositoryConfigForEvent(event, { policy: repositoryConfigPolicy }));
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
+  const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -75,6 +80,7 @@ function createReviewbotServer(options = {}) {
         repositoryConfigPolicy,
         loadRepositoryConfig,
         usageApiSettings,
+        recordJobEvent,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
@@ -139,6 +145,7 @@ async function handleHttpRequest(request, options) {
     jobPolicy: options.jobPolicy,
     repositoryConfigPolicy: options.repositoryConfigPolicy,
     loadRepositoryConfig: options.loadRepositoryConfig,
+    recordJobEvent: options.recordJobEvent,
   });
 }
 
@@ -260,6 +267,7 @@ async function handleGitHubWebhook(input) {
       deniedJobs.push(budgetedJob);
     }
   }
+  await recordBudgetJobEvents(input.recordJobEvent, budgetedJobs);
 
   const budget = budgetSummaryForJobs(budgetedJobs);
   if (admittedJobs.length === 0) {
@@ -279,15 +287,25 @@ async function handleGitHubWebhook(input) {
   }
 
   const enqueueReviewJobs = input.enqueueReviewJobs || input.enqueueReview || defaultEnqueueReviewJobs;
-  const enqueueResult = await enqueueReviewJobs(admittedJobs, {
-    event: configuredEvent,
-    admission,
-    budget,
-    configuration,
-    deniedJobs,
-    allJobs: budgetedJobs,
-  });
+  let enqueueResult;
+  try {
+    enqueueResult = await enqueueReviewJobs(admittedJobs, {
+      event: configuredEvent,
+      admission,
+      budget,
+      configuration,
+      deniedJobs,
+      allJobs: budgetedJobs,
+    });
+  } catch (error) {
+    await recordDispatchExceptionEvents(input.recordJobEvent, admittedJobs, error);
+    throw error;
+  }
   const accepted = enqueueResult?.accepted !== false;
+  await recordJobEvents(
+    input.recordJobEvent,
+    dispatchJobEventsFromQueueResult(admittedJobs, enqueueResult || {})
+  );
   return {
     statusCode: accepted ? 202 : 200,
     body: {
@@ -330,6 +348,49 @@ async function defaultEnqueueReviewJobs(jobs) {
   };
 }
 
+async function defaultRecordJobEvent() {
+  return { skipped: true };
+}
+
+async function recordBudgetJobEvents(recordJobEvent, jobs) {
+  await recordJobEvents(
+    recordJobEvent,
+    (jobs || []).map((job) =>
+      jobEventFromReviewJob(job, budgetJobLedgerStatus(job), {
+        stage: "budget",
+        accepted: Boolean(job.budget?.allowed),
+      })
+    )
+  );
+}
+
+async function recordDispatchExceptionEvents(recordJobEvent, jobs, error) {
+  await recordJobEvents(
+    recordJobEvent,
+    (jobs || []).map((job) =>
+      jobEventFromReviewJob(job, "dispatch_error", {
+        stage: "dispatch",
+        accepted: false,
+        reason: safeError(error),
+      })
+    )
+  );
+}
+
+async function recordJobEvents(recordJobEvent, events) {
+  const recorder = recordJobEvent || defaultRecordJobEvent;
+  for (const event of events || []) {
+    await recorder(event);
+  }
+}
+
+function budgetJobLedgerStatus(job) {
+  if (!job.budget?.allowed) {
+    return "budget_denied";
+  }
+  return job.budget.status === "warning" ? "budget_warning" : "budget_admitted";
+}
+
 function normalizeConfigLoadResult(result) {
   if (!result || typeof result !== "object") {
     return {
@@ -369,6 +430,7 @@ module.exports = {
   createReviewbotServer,
   defaultEstimateBudgetCost,
   defaultEnqueueReviewJobs,
+  defaultRecordJobEvent,
   defaultResolveActorContext,
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,

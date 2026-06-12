@@ -170,6 +170,24 @@ caps. It cannot add a model lane that is not already allowed by central
 
 See [repository-config.md](repository-config.md).
 
+## Job Ledger
+
+```text
+REVIEWBOT_JOB_LEDGER_AWS_REGION=
+REVIEWBOT_JOB_LEDGER_DB_NAME=
+REVIEWBOT_JOB_LEDGER_DB_RESOURCE_ARN=
+REVIEWBOT_JOB_LEDGER_DB_SCHEMA=
+REVIEWBOT_JOB_LEDGER_DB_SECRET_ARN=
+REVIEWBOT_JOB_LEDGER_ENABLED=false
+REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
+```
+
+The job ledger records budget and dispatch lifecycle events for review jobs.
+It is operational telemetry, not spend accounting. By default it reuses the
+usage-ledger Aurora Data API settings. Keep it best-effort during dogfood so a
+temporary audit-write failure does not block PR review. See
+[job-ledger.md](job-ledger.md).
+
 ## Worker Adapters
 
 ```text

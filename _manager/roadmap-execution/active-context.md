@@ -36,9 +36,10 @@ merged PRs.
 - Release hardening PR: merged as PR #20, merge commit `78401dc`
 - v0 release plan PR: merged as PR #21, merge commit `9a5b5e9`
 - Webhook replay diagnostics PR: merged as PR #22, merge commit `ea7a118`
-- Current branch: `codex/model-catalog-defaults`
-- Current local changes: validated model catalog, runtime default wiring, and
-  model update docs
+- Model catalog defaults PR: merged as PR #23, merge commit `8cba107`
+- Current branch: `codex/job-state-ledger`
+- Current local changes: durable job lifecycle ledger, App recording hook,
+  smoke coverage, and operator docs
 
 ## Key Decisions
 
@@ -56,6 +57,8 @@ merged PRs.
   system.
 - `6529reviewbot` owns operational bot secrets.
 - `6529.io` owns user/session auth secrets.
+- Job lifecycle telemetry is operational audit data and remains separate from
+  provider usage/cost rows.
 
 ## Constraints
 
@@ -67,10 +70,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge model catalog default wiring.
-2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after PR #23
-   lands.
+1. Validate and publish the job lifecycle ledger PR.
+2. Monitor bot feedback and merge the job ledger PR if clean.
+3. Continue dogfood target-repo PRs once required human review completes.
+4. Prepare the next release-polish or operator-readiness slice after the job
+   ledger PR lands.
 
 ## Open Risks
 
@@ -82,5 +86,7 @@ merged PRs.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
 - OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.
+- Job ledger table creation still needs to be applied in the target Aurora
+  database during deployment.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

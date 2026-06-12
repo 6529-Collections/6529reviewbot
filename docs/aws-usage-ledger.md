@@ -15,6 +15,7 @@ Auth from GitHub Actions: AWS OIDC
 
 ```text
 reviewbot.ai_review_usage_events
+reviewbot.ai_review_job_events
 reviewbot.ai_model_prices
 reviewbot.ai_review_budget_policies
 ```
@@ -38,6 +39,10 @@ production.
 The scheduled spend-alert checker reads the same tables. It should run from
 the central bot environment with read-only ledger access and notification
 permissions for the chosen delivery mode.
+
+`ai_review_job_events` stores append-only review-job lifecycle events such as
+budget admission and worker dispatch results. These rows are operational audit
+data, not cost accounting. See [job-ledger.md](job-ledger.md).
 
 ## Views
 
@@ -95,6 +100,17 @@ Daily spend by PR:
 select *
 from reviewbot.daily_ai_review_spend_by_pr
 order by day desc, cost_usd desc;
+```
+
+Recent failed job dispatches:
+
+```sql
+select created_at, job_id, repo_full_name, pr_number, review_kind, provider,
+       model, adapter, reason
+from reviewbot.ai_review_job_events
+where status in ('dispatch_failed', 'dispatch_error')
+order by created_at desc
+limit 50;
 ```
 
 ## Operational Notes

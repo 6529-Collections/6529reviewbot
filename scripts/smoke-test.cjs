@@ -14,6 +14,7 @@ const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
+const jobLedger = require("../src/job-ledger.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -95,6 +96,58 @@ assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
 assert.equal(typeof usageLedger.awsCliBin(), "string");
 assert.equal(typeof budgetLedger.awsCliBin(), "string");
+const jobLedgerSettings = jobLedger.jobLedgerSettingsFromEnv({
+  REVIEWBOT_JOB_LEDGER_ENABLED: "true",
+  REVIEW_USAGE_AWS_REGION: "us-east-1",
+  REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  REVIEW_USAGE_DB_SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  REVIEW_USAGE_DB_NAME: "reviewbot",
+  REVIEW_USAGE_DB_SCHEMA: "reviewbot",
+});
+assert.equal(jobLedgerSettings.enabled, true);
+const jobInsert = jobLedger.buildJobEventInsert("reviewbot", {
+  jobId: "rj_test",
+  status: "budget_admitted",
+  stage: "budget",
+  repoFullName: "6529-Collections/example",
+  prNumber: 12,
+  reviewKind: "general",
+  provider: "anthropic",
+  model: "claude-opus-4-8",
+  metadata: { budgetCode: "within_budget" },
+});
+assert.match(jobInsert.sql, /ai_review_job_events/);
+assert.equal(
+  jobInsert.parameters.find((param) => param.name === "job_id").value.stringValue,
+  "rj_test"
+);
+assert.throws(
+  () => jobLedger.buildJobEventInsert("reviewbot", { status: "dispatch_failed" }),
+  /missing required fields/
+);
+let capturedJobLedgerWrite = null;
+const jobWriteResult = jobLedger.writeJobEvent(
+  jobLedgerSettings,
+  {
+    jobId: "rj_test",
+    status: "dispatch_accepted",
+    stage: "dispatch",
+    repoFullName: "6529-Collections/example",
+    prNumber: 12,
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    accepted: true,
+  },
+  {
+    executeStatement: (settings, sql, parameters, options) => {
+      capturedJobLedgerWrite = { settings, sql, parameters, options };
+      return {};
+    },
+  }
+);
+assert.equal(jobWriteResult.skipped, false);
+assert.equal(capturedJobLedgerWrite.options.tempPrefix, "6529-job-ledger-");
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
   true
@@ -872,6 +925,7 @@ const loadedRepoConfigPromise = repositoryConfig.loadRepositoryConfigFromGitHub(
 );
 
 let enqueuedJobs = null;
+const recordedJobEvents = [];
 appServer.handleGitHubWebhook({
   headers: {
     "x-hub-signature-256": webhookSignature,
@@ -887,6 +941,9 @@ appServer.handleGitHubWebhook({
   enqueueReviewJobs: async (jobs) => {
     enqueuedJobs = jobs;
     return { accepted: true, jobId: "job-1" };
+  },
+  recordJobEvent: async (event) => {
+    recordedJobEvents.push(event);
   },
   resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
   loadRepositoryConfig: async () => ({
@@ -1043,6 +1100,9 @@ appServer.handleGitHubWebhook({
   assert.equal(webhookResult.statusCode, 202);
   assert.equal(webhookResult.body.enqueued, true);
   assert.equal(enqueuedJobs.length, 4);
+  assert.equal(recordedJobEvents.filter((event) => event.status === "budget_admitted").length, 4);
+  assert.equal(recordedJobEvents.filter((event) => event.status === "dispatch_accepted").length, 4);
+  assert.equal(recordedJobEvents[0].metadata.budgetCode, "within_budget");
   assert.equal(enqueuedJobs[0].prNumber, 12);
   assert.equal(webhookResult.body.jobs.length, 4);
   assert.deepEqual(
