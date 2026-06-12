@@ -2,6 +2,7 @@
 
 const { execFileSync } = require("child_process");
 const os = require("os");
+const path = require("path");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
@@ -14,7 +15,6 @@ const SAFE_ENV_KEYS = [
   "REVIEW_DEFAULT_OPENROUTER_MODEL",
   "REVIEWBOT_MODEL_CATALOG_PATH",
   "REVIEWBOT_WORKER_ADAPTER",
-  "REVIEWBOT_WORKER_GITHUB_REPO",
   "REVIEWBOT_WORKER_GITHUB_WORKFLOW",
   "REVIEWBOT_WORKER_GITHUB_REF",
   "REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE",
@@ -42,6 +42,7 @@ const PRESENCE_ONLY_ENV_KEYS = [
   "GH_TOKEN",
   "GITHUB_TOKEN",
   "REVIEWBOT_WORKER_GITHUB_TOKEN",
+  "REVIEWBOT_WORKER_GITHUB_REPO",
   "REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID",
   "REVIEWBOT_WORKER_GITHUB_APP_INSTALLATION_ID",
   "REVIEWBOT_WORKER_GITHUB_APP_ID",
@@ -100,7 +101,7 @@ function environmentSummary(env = {}) {
   const safe = {};
   for (const key of SAFE_ENV_KEYS) {
     if (env[key] !== undefined && env[key] !== "") {
-      safe[key] = String(env[key]);
+      safe[key] = safeEnvValue(key, env[key]);
     }
   }
   const presence = {};
@@ -108,6 +109,15 @@ function environmentSummary(env = {}) {
     presence[key] = env[key] === undefined || env[key] === "" ? "unset" : "set";
   }
   return { safe, presence };
+}
+
+function safeEnvValue(key, value) {
+  const text = String(value);
+  const isAbsolutePath = path.posix.isAbsolute(text) || path.win32.isAbsolute(text);
+  if (key.endsWith("_PATH") && isAbsolutePath) {
+    return "[absolute-path-set]";
+  }
+  return text;
 }
 
 function preflightSummary(result) {
@@ -190,4 +200,5 @@ module.exports = {
   environmentSummary,
   formatSupportBundleMarkdown,
   preflightSummary,
+  safeEnvValue,
 };
