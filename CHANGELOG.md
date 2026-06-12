@@ -31,6 +31,8 @@ stabilized.
   validation tooling.
 - Production deployment runbook for GitHub App, worker, usage API, and 6529.io
   wiring.
+- Release check script and manual security review checklist for dogfood and
+  pre-v1 release gates.
 - Documentation for architecture, configuration, operations, release readiness,
   security model, AWS usage ledger, repository config, worker adapters, and
   alerting.

@@ -57,6 +57,10 @@ Before announcing broad community use:
 9. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 10. Update README, changelog, release notes, install docs, and example configs.
 
+Use `npm run release:check` and
+[Security Review Checklist](security-review-checklist.md) as the repeatable
+local and manual gates.
+
 ## Conservative Dogfood Defaults
 
 Use central settings like:

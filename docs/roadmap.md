@@ -282,6 +282,7 @@ Completed in `6529reviewbot`:
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - production deployment runbook and central worker installation-token flow.
+- repeatable release check script and manual security review checklist.
 
 In progress in `6529reviewbot`:
 

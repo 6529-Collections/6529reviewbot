@@ -71,6 +71,12 @@ npm run check
 npm test
 ```
 
+Run the full release gate:
+
+```bash
+npm run release:check
+```
+
 Print a prompt for a target PR without calling a model:
 
 ```bash
@@ -248,6 +254,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Operations runbook](docs/operations.md)
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
+- [Security review checklist](docs/security-review-checklist.md)
 
 ## Contributing
 
