@@ -53,8 +53,13 @@ function validateModelCatalog(catalog, catalogPath = "model catalog") {
     };
   }
 
-  for (const provider of Object.keys(catalog.providers)) {
-    normalizeProvider(provider);
+  const extraProviders = Object.keys(catalog.providers).filter(
+    (provider) => !PROVIDERS.includes(provider)
+  );
+  if (extraProviders.length > 0) {
+    throw new Error(
+      `${catalogPath} contains unsupported providers: ${extraProviders.join(", ")}.`
+    );
   }
 
   return {

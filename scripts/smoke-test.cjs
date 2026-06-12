@@ -374,6 +374,8 @@ const twoLanePolicy = reviewJob.reviewJobPolicyFromEnv({
   REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5,anthropic:claude-opus-4-8",
   REVIEWBOT_MAX_JOBS_PER_DELIVERY: "20",
 });
+// Explicit REVIEWBOT_REVIEW_LANES entries should not need a valid
+// REVIEWBOT_MODEL_CATALOG_PATH because the provider/model pair is complete.
 assert.deepEqual(
   reviewJob.reviewJobPolicyFromEnv({
     REVIEWBOT_REVIEW_LANES: "openrouter:anthropic/claude-sonnet-4",
