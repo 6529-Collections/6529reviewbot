@@ -130,6 +130,9 @@ REVIEWBOT_RUN_KEY=<job.runKey>
 
 Workers must still enforce engine-level context, token, timeout, and source
 path limits. Job admission is not a substitute for provider-call guardrails.
+If a live provider call returns no visible review text, the worker fails the
+job instead of posting a generic no-finding comment. Empty model output should
+be investigated as a provider, prompt, or adapter failure.
 
 Workers can also pass the full job JSON to:
 

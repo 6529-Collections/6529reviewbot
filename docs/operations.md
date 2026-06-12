@@ -120,6 +120,8 @@ Check:
   scale-up rules;
 - `GH_TOKEN` scope;
 - provider key availability;
+- empty provider output, which fails closed instead of posting a generic
+  no-finding comment;
 - fork/external PR skip logic;
 - PR draft state;
 - changed-file and changed-line budgets.

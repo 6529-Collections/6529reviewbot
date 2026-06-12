@@ -915,3 +915,14 @@
     dispatch-token mint failures, update run claims as `dispatch_error`;
   - verify the job-event ledger also receives `dispatch_error` entries for
     the dispatch stage.
+- Merged `6529reviewbot` PR #83 as `09e27a5` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's test-hardening comment before
+  merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27420806013`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27420805994`, completed successfully.
+- Started `codex/fail-empty-provider-output` increment:
+  - fail closed when provider calls return empty visible review text;
+  - keep dry-run behavior intact while avoiding misleading live no-finding
+    comments;
+  - document the operator-facing failure mode.
