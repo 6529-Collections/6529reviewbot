@@ -150,9 +150,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release status completeness PR: merged as PR #97, merge commit `a081839`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/scan-root-env-example`
-- Current local changes: include the tracked root `.env.example` in public
-  artifact leak scanning and release/support documentation.
+- Root `.env.example` scanner PR: merged as PR #98, merge commit `78b9a03`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-app-dispatch-errors`
+- Current local changes: redact App server dispatch exception diagnostics
+  before writing run-claim metadata or job-event reasons.
 
 ## Key Decisions
 
@@ -279,6 +281,9 @@ merged PRs.
 - Public release artifact scanning should include the root `.env.example`
   because it is a tracked setup file where live-looking secrets can
   accidentally be pasted during operator work.
+- App server dispatch exceptions should be redacted before being copied into
+  run-claim metadata or job-event reasons; worker-output redaction alone is not
+  enough for custom queue/dispatch adapters.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -346,7 +351,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the root `.env.example` scanner PR.
+1. Validate, publish, and merge the App dispatch-error redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

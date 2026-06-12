@@ -2,6 +2,10 @@
 
 const { spawnSync } = require("child_process");
 const path = require("path");
+const {
+  diagnosticTail,
+  redactSensitiveText,
+} = require("./diagnostics.cjs");
 
 const ROOT = path.resolve(__dirname, "..");
 const WORKER_MODES = ["noop", "local", "github_actions"];
@@ -9,17 +13,6 @@ const GITHUB_DISPATCH_MODES = ["auto", "api", "gh"];
 const DEFAULT_LOCAL_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_GITHUB_FETCH_TIMEOUT_MS = 10000;
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
-const DIAGNOSTIC_MAX_CHARS = 4000;
-const SENSITIVE_TEXT_PATTERNS = [
-  [/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [redacted]"],
-  [/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "github_pat_[redacted]"],
-  [/\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{20,}\b/g, "[redacted-github-token]"],
-  [/\bsk-[A-Za-z0-9._-]{8,}\b/g, "sk-[redacted]"],
-  [
-    /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
-    "[redacted-private-key]",
-  ],
-];
 const REVIEW_KIND_BINS = {
   general: "general-pr-review.cjs",
   followup: "followup-commit-review.cjs",
@@ -424,23 +417,6 @@ function outputSummary(result, includeOutput) {
     stdout: diagnosticTail(stdout),
     stderr: diagnosticTail(stderr),
   };
-}
-
-function tail(value, maxChars = 4000) {
-  const text = String(value || "");
-  return text.length <= maxChars ? text : text.slice(text.length - maxChars);
-}
-
-function diagnosticTail(value, maxChars = DIAGNOSTIC_MAX_CHARS) {
-  return tail(redactSensitiveText(value), maxChars);
-}
-
-function redactSensitiveText(value) {
-  let text = String(value || "");
-  for (const [pattern, replacement] of SENSITIVE_TEXT_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text;
 }
 
 function shouldUseGitHubApiDispatch(policy) {

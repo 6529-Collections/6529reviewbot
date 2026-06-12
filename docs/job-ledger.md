@@ -238,6 +238,7 @@ them to private operator channels.
 ## Privacy
 
 The job ledger can contain private repo names, PR numbers, requestors, provider
-and model choices, and failure reasons. Treat it as admin-only data. Public
-6529.io pages can summarize counts from it later, but should not disclose raw
-rows or private repository identifiers.
+and model choices, and failure reasons. App server dispatch exception reasons
+are redacted before ledger writes, but this is only a backstop. Treat job
+events as admin-only data. Public 6529.io pages can summarize counts from them
+later, but should not disclose raw rows or private repository identifiers.

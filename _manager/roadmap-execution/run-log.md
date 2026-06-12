@@ -1070,3 +1070,14 @@
   - include the tracked root `.env.example` in the public artifact scanner;
   - add smoke coverage for `.env.example` scanner scope;
   - document that release/support leak scans cover `.env.example`.
+- Merged `6529reviewbot` PR #98 as `78b9a03` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27430631422`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27430631489`, completed successfully.
+- Started `codex/redact-app-dispatch-errors` increment:
+  - redact App server dispatch exception messages before they enter run-claim
+    status metadata or job-event reasons;
+  - add smoke coverage with bearer/provider-key shaped failure text;
+  - document the App server diagnostic boundary in security and job-ledger
+    docs.

@@ -58,6 +58,10 @@ const {
   dispatchJobEventsFromQueueResult,
   jobEventFromReviewJob,
 } = require("./job-ledger.cjs");
+const {
+  redactSensitiveText,
+  safeErrorLine,
+} = require("./diagnostics.cjs");
 
 function createReviewbotServer(options = {}) {
   const settings = options.settings || webhookSettingsFromEnv();
@@ -721,7 +725,7 @@ function sendJson(response, statusCode, body) {
 }
 
 function safeError(error) {
-  return error && error.stack ? error.stack.split("\n")[0] : String(error);
+  return safeErrorLine(error);
 }
 
 module.exports = {
@@ -740,4 +744,5 @@ module.exports = {
   isGitHubAppOperatorPath,
   normalizeConfigLoadResult,
   publicEventSummary,
+  redactSensitiveText,
 };
