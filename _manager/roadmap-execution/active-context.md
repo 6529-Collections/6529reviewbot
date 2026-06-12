@@ -75,10 +75,11 @@ merged PRs.
   `775dc07`
 - Central workflow installation PR: merged as PR #56, merge commit `7de5779`
 - Release gate status PR: merged as PR #57, merge commit `8933a01`
-- Current branch: `codex/record-run-control-smoke`
-- Current local changes: public-safe record of live run-control ledger smoke
-  test, including first claim allowed, duplicate denied, completion update
-  succeeded, and aggregate status verification only.
+- Run-control smoke evidence PR: merged as PR #58, merge commit `9fdd374`
+- Current branch: `codex/record-alert-dry-run`
+- Current local changes: public-safe record of live spend-alert dry-run against
+  the isolated ledger, including successful read/evaluation path, zero alerts,
+  and no notification delivery.
 
 ## Key Decisions
 
@@ -183,6 +184,9 @@ merged PRs.
   ledger with a synthetic job. Public docs can record aggregate outcomes, while
   exact run keys and live resource identifiers stay in private operator
   evidence.
+- The spend-alert read/evaluation path has been dogfooded against the isolated
+  ledger in dry-run mode. Real scheduled delivery still needs an
+  operator-owned notification channel before broad release.
 
 ## Constraints
 
@@ -194,8 +198,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the public-safe run-control smoke evidence PR
-   if checks and review are clean.
+1. Validate, publish, and merge the public-safe alert dry-run evidence PR if
+   checks and review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

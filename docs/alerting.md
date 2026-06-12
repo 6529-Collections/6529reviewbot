@@ -107,6 +107,20 @@ Do not copy this workflow into target repositories unless there is a deliberate
 dogfood reason. In production, scheduled checks should run from the central
 bot environment so AWS credentials and alert routing stay out of caller repos.
 
+## Dogfood Verification
+
+The spend-alert runner has been dry-run against the isolated dogfood ledger
+with `--force` and notification delivery disabled:
+
+- ledger reads completed for the default 35-day alert window;
+- enabled central budget policy rows were evaluated;
+- no alerts were generated for the current empty-usage dogfood ledger;
+- notification delivery stayed in `dry_run` mode.
+
+This verifies the read/evaluation path. Before broad release, route scheduled
+alerts to an operator-owned SNS topic, webhook, or equivalent private channel
+and record that delivery evidence in the private operator runbook.
+
 ## Alert Payload
 
 Each alert has:
