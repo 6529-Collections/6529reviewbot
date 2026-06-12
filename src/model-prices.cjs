@@ -8,11 +8,13 @@ const {
   nullableNumber,
   stringParam,
 } = require("./data-api.cjs");
+const { redactSensitiveText } = require("./diagnostics.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
 const { normalizeProvider } = require("./model-catalog.cjs");
 
 const DEFAULT_MAX_SOURCE_AGE_DAYS = 30;
 const MAX_SOURCE_CHECK_CLOCK_SKEW_MS = 5 * 60 * 1000;
+const MODEL_PRICE_NOTE_MAX_CHARS = 1000;
 
 function loadModelPriceFile(filePath) {
   return validateModelPriceFile(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
@@ -62,7 +64,7 @@ function normalizeModelPrice(price, source) {
     effectiveFrom,
     sourceUrl: urlField(price.sourceUrl, `${source}.sourceUrl`),
     sourceCheckedAt,
-    notes: optionalString(price.notes),
+    notes: optionalRedactedString(price.notes),
   };
   if (
     normalized.inputUsdPerMillion === null &&
@@ -393,6 +395,11 @@ function stringField(value, source) {
 
 function optionalString(value) {
   return value === undefined || value === null ? "" : String(value).trim();
+}
+
+function optionalRedactedString(value, maxChars = MODEL_PRICE_NOTE_MAX_CHARS) {
+  const text = optionalString(value);
+  return text ? redactSensitiveText(text).slice(0, maxChars) : "";
 }
 
 function urlField(value, source) {

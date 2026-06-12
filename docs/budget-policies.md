@@ -95,7 +95,9 @@ npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
-exactly what will be upserted.
+exactly what will be upserted. `notes` values are redacted for common token and
+private-key shapes and capped at 1000 characters before they are rendered or
+applied.
 
 Use `--quiet` when a release or CI check should validate the file without
 printing SQL.
@@ -147,4 +149,5 @@ Every policy update should record:
 - the operator or release issue that approved the change.
 
 Do not put secrets, private PR payloads, provider diagnostics, or AWS account
-details in `notes`.
+details in `notes`; the redaction guardrail is there for accidental
+token-shaped text, not as a reason to store sensitive data in budget rows.
