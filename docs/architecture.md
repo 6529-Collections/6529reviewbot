@@ -1,6 +1,6 @@
 # Architecture
 
-`6529reviewbot` has eight layers.
+`6529reviewbot` has nine layers.
 
 ## 1. GitHub App Identity
 
@@ -41,6 +41,7 @@ The runner is responsible for:
 - evaluating admission policy before queueing model work;
 - expanding admitted events into explicit review jobs;
 - evaluating budget policy per review job before queueing model work;
+- claiming run-control slots before worker dispatch;
 - checking whether the PR should be skipped;
 - checking out target source into an isolated workspace;
 - configuring provider and AWS credentials;
@@ -55,7 +56,18 @@ disable work, narrow review kinds, choose from centrally allowed lanes, and add
 tighter budget/admission rules. It cannot expand model/provider access beyond
 central App policy.
 
-## 3. Worker Adapters
+## 3. Run Control
+
+Run control claims budget-admitted jobs before worker dispatch. It protects the
+system from replayed deliveries, duplicate comment-command processing, and
+too many parallel jobs by org, repo, PR, requestor, provider, model, or review
+kind.
+
+The claim key includes provider and model, so the same review kind can run
+through multiple lanes intentionally. Claim state lives in
+`reviewbot.ai_review_run_claims` once the durable claim store is wired.
+
+## 4. Worker Adapters
 
 Worker adapters bridge admitted jobs to execution. The current adapters are:
 
@@ -63,11 +75,11 @@ Worker adapters bridge admitted jobs to execution. The current adapters are:
 - `local`, which runs the review CLI in the current bot checkout;
 - `github_actions`, which dispatches a central bot workflow with job inputs.
 
-Adapters run only after webhook authenticity, admission, job fanout, and budget
-checks. They do not make target repositories owners of provider keys, AWS
-credentials, or bot implementation code.
+Adapters run only after webhook authenticity, admission, job fanout, budget
+checks, and run-control claims. They do not make target repositories owners of
+provider keys, AWS credentials, or bot implementation code.
 
-## 4. Review Engine
+## 5. Review Engine
 
 The review engine lives in `src/review-bot.cjs`.
 
@@ -82,7 +94,7 @@ It gathers bounded context:
 
 It then builds a prompt for one review kind and calls the selected provider.
 
-## 5. Usage Ledger
+## 6. Usage Ledger
 
 The usage ledger lives in AWS Aurora PostgreSQL Serverless v2 and is written
 through the RDS Data API. GitHub Actions should assume an AWS IAM role through
@@ -99,7 +111,7 @@ The ledger records one row per review run with:
 - cost fields when available;
 - metadata needed for audit/debugging.
 
-## 6. Job Ledger
+## 7. Job Ledger
 
 The job ledger records append-only lifecycle events for each review job. It is
 separate from the usage ledger because budget-denied jobs and dispatch failures
@@ -108,6 +120,7 @@ may never call a provider and therefore have no token or cost row.
 The job ledger records:
 
 - budget admission, warning, or denial;
+- run-control admission, warning, duplicate, or denial;
 - dispatch acceptance, failure, or error;
 - repo, PR, requestor, review kind, provider, model, and adapter;
 - bounded operational metadata for queue debugging.
@@ -115,7 +128,7 @@ The job ledger records:
 It must not record prompts, diffs, provider output, worker stdout/stderr, raw
 webhook payloads, or credentials.
 
-## 7. Usage API
+## 8. Usage API
 
 The usage API is the read-side contract for dashboards and admin tools. Public
 endpoints return aggregate usage data that is safe for 6529.io transparency
@@ -129,7 +142,7 @@ or raw provider responses to browser clients.
 requests. The preferred mode is a short-lived HMAC assertion signed by trusted
 6529.io infrastructure, not a separate bot login system.
 
-## 8. Scheduled Alerts
+## 9. Scheduled Alerts
 
 `src/scheduled-spend-check.cjs` reads the same Aurora usage ledger and budget
 policy table as the usage API. It evaluates spend alerts without calling model

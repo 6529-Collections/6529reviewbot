@@ -139,6 +139,7 @@ function normalizeJobLedgerEvent(event = {}) {
 
 function jobEventFromReviewJob(job, status, extra = {}) {
   const budget = job.budget || {};
+  const runControl = job.runControl || {};
   return normalizeJobLedgerEvent({
     jobId: job.id,
     status,
@@ -160,6 +161,10 @@ function jobEventFromReviewJob(job, status, extra = {}) {
     metadata: {
       budgetCode: budget.code || "",
       budgetStatus: budget.status || "",
+      runControlCode: runControl.code || "",
+      runControlStatus: runControl.status || "",
+      runControlRunKey: runControl.runKey || job.runKey || "",
+      runControlDuplicateOf: runControl.duplicate?.jobId || "",
       eventName: job.eventName || "",
       eventAction: job.eventAction || "",
       eventKind: job.eventKind || "",

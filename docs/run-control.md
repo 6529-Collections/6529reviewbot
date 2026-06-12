@@ -1,0 +1,144 @@
+# Run Control
+
+Run control is the pre-dispatch guardrail for duplicate review work and
+parallelism. It runs after trusted-actor admission and budget admission, but
+before a worker is queued or a provider can be called.
+
+Budget admission answers whether a job is allowed to spend money. Run control
+answers whether this exact job should start now.
+
+## Modes
+
+```text
+REVIEWBOT_RUN_CONTROL_MODE=off
+```
+
+Supported modes:
+
+```text
+off       Skip run-control checks.
+warn      Return warnings but still allow dispatch.
+enforce   Deny duplicate or over-concurrency jobs.
+```
+
+Default mode is `off` so development and early dogfood deployments do not need
+a durable claim store on day one. Production should use `enforce` after the
+claim table has been applied and wired into the App server.
+
+If mode is `enforce` and no claim store is configured, the default claim hook
+fails closed before worker dispatch. This prevents operators from believing
+dedupe exists when the runtime cannot actually claim jobs.
+
+## Dedupe Key
+
+Every review job has two identifiers:
+
+- `id`: delivery-specific audit id for job events;
+- `runKey`: delivery-independent claim key for dedupe.
+
+The run key includes:
+
+- target repository;
+- PR number;
+- head SHA;
+- trigger type;
+- comment id and command name, when the trigger is a comment command;
+- review kind;
+- provider;
+- model.
+
+Provider and model are part of the key on purpose. The same review kind may run
+through more than one model lane, and those jobs must not dedupe each other.
+
+Duplicate GitHub deliveries for the same PR head and command share a run key.
+A new maintainer comment command gets its own comment id and can intentionally
+request another run.
+
+## Concurrency Scopes
+
+Run-control caps are configured independently from spend caps:
+
+```text
+REVIEWBOT_RUN_CONTROL_GLOBAL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_ORG_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT=
+```
+
+A blank value means no cap for that scope. A value of `0` pauses that scope.
+For example, `REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=0` can stop all
+provider jobs when combined with a claim implementation that reports active
+provider counts.
+
+Recommended dogfood starting point after the claim store is wired:
+
+```text
+REVIEWBOT_RUN_CONTROL_MODE=enforce
+REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=2
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=1
+REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=3
+```
+
+## Claim Store Contract
+
+`src/app-server.cjs` accepts an injectable `claimReviewJob(job, context)` hook.
+The hook receives a budget-admitted job and should return the normalized
+decision from `src/run-control.cjs`.
+
+Production claim implementations must be atomic:
+
+1. Look up or insert the job's `runKey`.
+2. Reject duplicates that are still active or inside the dedupe window.
+3. Count active claims for configured scopes.
+4. Reject claims that would exceed a max-concurrent cap.
+5. Insert or update the claim before dispatching the worker.
+
+The schema CLI includes `reviewbot.ai_review_run_claims` for this purpose.
+Implementations should update claim rows when dispatch starts, completes,
+fails, or expires. Expiration is important because worker crashes should not
+block a PR forever.
+
+## Durable Table
+
+Print the canonical schema:
+
+```bash
+npm run ledger:schema
+```
+
+Apply it from a configured operator environment:
+
+```bash
+npm run ledger:schema -- -- --apply
+```
+
+The run-claim table stores operational routing data only. It must not store
+prompts, diffs, provider responses, raw webhook payloads, worker output, or
+credentials.
+
+## Webhook Response
+
+Webhook responses include a `runControl` summary when jobs reach this stage.
+Denied jobs appear in `deniedJobs` with their run-control code, while
+dispatchable jobs appear in `jobs`.
+
+Common codes:
+
+```text
+run_control_off
+run_control_claimed
+duplicate_run
+concurrency_limit_exceeded
+run_control_snapshot_unavailable
+```
+
+## Preflight
+
+`npm run preflight` validates run-control mode, dedupe TTL, and concurrency
+cap values without calling the database. It warns when run control is disabled.
+Use `npm run preflight -- -- --strict` before production changes when warnings
+should block release.

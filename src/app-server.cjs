@@ -19,6 +19,12 @@ const {
   reviewJobPolicyFromEnv,
 } = require("./review-job.cjs");
 const {
+  attachRunControlToReviewJob,
+  evaluateRunControl,
+  runControlPolicyFromEnv,
+  runControlSummaryForJobs,
+} = require("./run-control.cjs");
+const {
   applyRepositoryConfigToEvent,
   defaultRepositoryConfig,
   loadRepositoryConfigForEvent,
@@ -56,6 +62,8 @@ function createReviewbotServer(options = {}) {
   const budgetPolicy = options.budgetPolicy || budgetPolicyFromEnv();
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
+  const runControlPolicy = options.runControlPolicy || runControlPolicyFromEnv();
+  const claimReviewJob = options.claimReviewJob || defaultClaimReviewJob;
   const jobPolicy = options.jobPolicy || reviewJobPolicyFromEnv();
   const repositoryConfigPolicy =
     options.repositoryConfigPolicy || repositoryConfigPolicyFromEnv();
@@ -76,6 +84,8 @@ function createReviewbotServer(options = {}) {
         budgetPolicy,
         resolveBudgetSnapshot,
         estimateBudgetCost,
+        runControlPolicy,
+        claimReviewJob,
         jobPolicy,
         repositoryConfigPolicy,
         loadRepositoryConfig,
@@ -142,6 +152,8 @@ async function handleHttpRequest(request, options) {
     budgetPolicy: options.budgetPolicy,
     resolveBudgetSnapshot: options.resolveBudgetSnapshot,
     estimateBudgetCost: options.estimateBudgetCost,
+    runControlPolicy: options.runControlPolicy,
+    claimReviewJob: options.claimReviewJob,
     jobPolicy: options.jobPolicy,
     repositoryConfigPolicy: options.repositoryConfigPolicy,
     loadRepositoryConfig: options.loadRepositoryConfig,
@@ -286,25 +298,71 @@ async function handleGitHubWebhook(input) {
     };
   }
 
-  const enqueueReviewJobs = input.enqueueReviewJobs || input.enqueueReview || defaultEnqueueReviewJobs;
-  let enqueueResult;
-  try {
-    enqueueResult = await enqueueReviewJobs(admittedJobs, {
+  const runControlledJobs = [];
+  const runControlDeniedJobs = [];
+  const dispatchableJobs = [];
+  const claimReviewJob = input.claimReviewJob || defaultClaimReviewJob;
+  const runControlPolicy = input.runControlPolicy || runControlPolicyFromEnv();
+  for (const job of admittedJobs) {
+    const runControl = await claimReviewJob(job, {
       event: configuredEvent,
       admission,
       budget,
       configuration,
-      deniedJobs,
+      policy: runControlPolicy,
       allJobs: budgetedJobs,
+      deniedJobs,
+    });
+    const controlledJob = attachRunControlToReviewJob(job, runControl);
+    runControlledJobs.push(controlledJob);
+    if (runControl?.allowed) {
+      dispatchableJobs.push(controlledJob);
+    } else {
+      runControlDeniedJobs.push(controlledJob);
+    }
+  }
+  await recordRunControlJobEvents(input.recordJobEvent, runControlledJobs);
+
+  const runControl = runControlSummaryForJobs(runControlledJobs);
+  const allDeniedJobs = [...deniedJobs, ...runControlDeniedJobs];
+  const allKnownJobs = [...deniedJobs, ...runControlledJobs];
+  if (dispatchableJobs.length === 0) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(configuredEvent),
+        configuration,
+        admission,
+        budget,
+        runControl,
+        jobs: [],
+        deniedJobs: allDeniedJobs.map(publicReviewJobSummary),
+      },
+    };
+  }
+
+  const enqueueReviewJobs = input.enqueueReviewJobs || input.enqueueReview || defaultEnqueueReviewJobs;
+  let enqueueResult;
+  try {
+    enqueueResult = await enqueueReviewJobs(dispatchableJobs, {
+      event: configuredEvent,
+      admission,
+      budget,
+      runControl,
+      configuration,
+      deniedJobs: allDeniedJobs,
+      allJobs: allKnownJobs,
     });
   } catch (error) {
-    await recordDispatchExceptionEvents(input.recordJobEvent, admittedJobs, error);
+    await recordDispatchExceptionEvents(input.recordJobEvent, dispatchableJobs, error);
     throw error;
   }
   const accepted = enqueueResult?.accepted !== false;
   await recordJobEvents(
     input.recordJobEvent,
-    dispatchJobEventsFromQueueResult(admittedJobs, enqueueResult || {})
+    dispatchJobEventsFromQueueResult(dispatchableJobs, enqueueResult || {})
   );
   return {
     statusCode: accepted ? 202 : 200,
@@ -315,8 +373,9 @@ async function handleGitHubWebhook(input) {
       configuration,
       admission,
       budget,
-      jobs: admittedJobs.map(publicReviewJobSummary),
-      deniedJobs: deniedJobs.map(publicReviewJobSummary),
+      runControl,
+      jobs: dispatchableJobs.map(publicReviewJobSummary),
+      deniedJobs: allDeniedJobs.map(publicReviewJobSummary),
       queue: enqueueResult || null,
     },
   };
@@ -338,6 +397,17 @@ async function defaultResolveBudgetSnapshot() {
 
 async function defaultEstimateBudgetCost() {
   return {};
+}
+
+async function defaultClaimReviewJob(job, context = {}) {
+  return evaluateRunControl({
+    job,
+    policy: context.policy || runControlPolicyFromEnv(),
+    snapshot: {
+      unavailable: true,
+      reason: "No run-control claim store configured.",
+    },
+  });
 }
 
 async function defaultEnqueueReviewJobs(jobs) {
@@ -362,6 +432,24 @@ async function recordBudgetJobEvents(recordJobEvent, jobs) {
       })
     )
   );
+}
+
+async function recordRunControlJobEvents(recordJobEvent, jobs) {
+  const events = [];
+  for (const job of jobs || []) {
+    const status = runControlJobLedgerStatus(job);
+    if (!status) {
+      continue;
+    }
+    events.push(
+      jobEventFromReviewJob(job, status, {
+        stage: "run_control",
+        accepted: Boolean(job.runControl?.allowed),
+        reason: job.runControl?.reason || "",
+      })
+    );
+  }
+  await recordJobEvents(recordJobEvent, events);
 }
 
 async function recordDispatchExceptionEvents(recordJobEvent, jobs, error) {
@@ -389,6 +477,20 @@ function budgetJobLedgerStatus(job) {
     return "budget_denied";
   }
   return job.budget.status === "warning" ? "budget_warning" : "budget_admitted";
+}
+
+function runControlJobLedgerStatus(job) {
+  if (!job.runControl || job.runControl.status === "skipped") {
+    return null;
+  }
+  if (!job.runControl.allowed) {
+    return job.runControl.code === "duplicate_run"
+      ? "run_control_duplicate"
+      : "run_control_denied";
+  }
+  return job.runControl.status === "warning"
+    ? "run_control_warning"
+    : "run_control_admitted";
 }
 
 function normalizeConfigLoadResult(result) {
@@ -430,6 +532,7 @@ module.exports = {
   createReviewbotServer,
   defaultEstimateBudgetCost,
   defaultEnqueueReviewJobs,
+  defaultClaimReviewJob,
   defaultRecordJobEvent,
   defaultResolveActorContext,
   defaultResolveBudgetSnapshot,

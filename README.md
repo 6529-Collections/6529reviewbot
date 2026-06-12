@@ -30,6 +30,8 @@ requests.
   or central GitHub Actions workflows.
 - Records review-job budget and dispatch lifecycle events in a separate
   operator job ledger when enabled.
+- Adds a run-control hook for duplicate-job claims and concurrency caps before
+  worker dispatch.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
 - Verifies private admin API calls through a server-side `6529.io` auth bridge
@@ -68,6 +70,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
+- [Run Control](docs/run-control.md): dedupe and concurrency claims.
 - [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
@@ -195,6 +198,15 @@ REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
 ```
 
+Run control:
+
+```text
+REVIEWBOT_RUN_CONTROL_MODE=off|warn|enforce
+REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=
+```
+
 Webhook replay diagnostics:
 
 ```bash
@@ -316,6 +328,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [GitHub App](docs/github-app.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
+- [Run control](docs/run-control.md)
 - [Worker adapters](docs/worker-adapters.md)
 - [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)

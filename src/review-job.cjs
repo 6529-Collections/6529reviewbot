@@ -143,6 +143,7 @@ function createReviewJob(event, reviewKind, lane, controls = {}) {
     provider: normalizedLane.provider,
     model: normalizedLane.model,
     lane: normalizedLane.lane,
+    runKey: stableReviewJobRunKey(event, reviewKind, normalizedLane),
     createdAt: controls.createdAt || new Date().toISOString(),
   };
   return controls.admission ? { ...job, admission: controls.admission } : job;
@@ -185,6 +186,7 @@ function publicReviewJobSummary(job) {
     provider: job.provider,
     model: job.model,
     lane: job.lane,
+    runKey: job.runKey,
     requestor: job.requestor,
     trigger: job.trigger,
     budget: job.budget
@@ -193,6 +195,14 @@ function publicReviewJobSummary(job) {
           allowed: job.budget.allowed,
           code: job.budget.code,
           estimatedCostUsd: job.budget.estimatedCostUsd,
+        }
+      : null,
+    runControl: job.runControl
+      ? {
+          status: job.runControl.status,
+          allowed: job.runControl.allowed,
+          code: job.runControl.code,
+          runKey: job.runControl.runKey,
         }
       : null,
   };
@@ -262,6 +272,22 @@ function stableReviewJobId(event, reviewKind, lane) {
   return `rj_${hash}`;
 }
 
+function stableReviewJobRunKey(event, reviewKind, lane) {
+  const parts = [
+    event.repository?.fullName || "",
+    event.prNumber || "",
+    event.headSha || "",
+    event.trigger || "",
+    event.commentId || "",
+    event.command?.name || "",
+    reviewKind,
+    lane.provider,
+    lane.model,
+  ];
+  const hash = crypto.createHash("sha256").update(parts.join("\0")).digest("hex").slice(0, 24);
+  return `rk_${hash}`;
+}
+
 function positiveIntEnv(value, fallback, name) {
   if (value === undefined || value === "") {
     return fallback;
@@ -308,4 +334,5 @@ module.exports = {
   publicReviewJobSummary,
   reviewJobPolicyFromEnv,
   stableReviewJobId,
+  stableReviewJobRunKey,
 };

@@ -2,7 +2,10 @@
 
 Budget admission decides whether an admitted review request may be queued for
 model work. It runs after trusted-actor admission, after review-job expansion,
-and before any provider call.
+and before run-control claims or any provider call.
+
+Budget admission is about spend. Duplicate delivery handling and max-parallel
+controls live in [run-control.md](run-control.md).
 
 ## Modes
 

@@ -260,3 +260,15 @@
   - linked incident response from README, operations, release readiness,
     security checklist, release notes template, v0 plan, roadmap, changelog, and
     manager memory.
+- Merged `6529reviewbot` PR #27 as `0c9ee6b` after CI and Dependency Review
+  passed; CodeRabbit stayed pending with no review threads, and the normal
+  merge path allowed the merge.
+- Started `codex/run-control` increment:
+  - `src/run-control.cjs` defines duplicate-run and concurrency decisions;
+  - review jobs now carry a delivery-independent `runKey` that still includes
+    provider and model;
+  - App server supports an injectable `claimReviewJob` hook between budget
+    admission and worker dispatch;
+  - ledger schema includes `ai_review_run_claims`;
+  - preflight validates run-control settings;
+  - docs, changelog, release gates, and manager memory describe the contract.

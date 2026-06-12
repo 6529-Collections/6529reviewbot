@@ -20,6 +20,7 @@ const { ledgerSchemaStatements } = require("./ledger-schema.cjs");
 const { loadModelCatalog } = require("./model-catalog.cjs");
 const { repositoryConfigPolicyFromEnv } = require("./repository-config.cjs");
 const { reviewJobPolicyFromEnv } = require("./review-job.cjs");
+const { runControlPolicyFromEnv } = require("./run-control.cjs");
 const { spendAlertPolicyFromEnv } = require("./spend-alerts.cjs");
 const { usageApiSettingsFromEnv } = require("./usage-api.cjs");
 const {
@@ -95,6 +96,19 @@ function runPreflight(options = {}) {
     return {
       mode: policy.mode,
       defaultEstimatedCostUsd: policy.defaultEstimatedCostUsd,
+    };
+  });
+
+  check(result, "run_control", () => {
+    const policy = runControlPolicyFromEnv(env);
+    if (policy.mode === "off") {
+      addWarning(result, "run_control", "Run control is disabled; duplicate and concurrency claims will not be enforced.");
+    }
+    return {
+      mode: policy.mode,
+      dedupeEnabled: policy.dedupeEnabled,
+      dedupeTtlSeconds: policy.dedupeTtlSeconds,
+      maxConcurrent: policy.maxConcurrent,
     };
   });
 

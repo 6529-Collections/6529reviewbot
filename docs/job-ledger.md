@@ -17,6 +17,10 @@ Common statuses:
 budget_admitted
 budget_warning
 budget_denied
+run_control_admitted
+run_control_warning
+run_control_denied
+run_control_duplicate
 dispatch_accepted
 dispatch_failed
 dispatch_error
@@ -26,6 +30,7 @@ Stages are intentionally coarse:
 
 ```text
 budget
+run_control
 dispatch
 ```
 
@@ -110,6 +115,39 @@ create index ai_review_job_events_requestor_created_idx
   on reviewbot.ai_review_job_events (requestor, created_at desc);
 ```
 
+The canonical schema also includes `reviewbot.ai_review_run_claims`, which is
+the durable table intended for run-control dedupe and concurrency claims. Keep
+claims separate from append-only lifecycle events: claims represent current
+work ownership, while job events preserve audit history.
+
+Minimal claim table shape:
+
+```sql
+create table reviewbot.ai_review_run_claims (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  completed_at timestamptz,
+  expires_at timestamptz,
+  run_key text not null unique,
+  job_id text not null,
+  status text not null,
+  repo_full_name text not null,
+  org text,
+  pr_number bigint,
+  requestor text,
+  pr_head_sha text,
+  review_kind text not null,
+  provider text not null,
+  model text not null,
+  lane text,
+  delivery_id text,
+  comment_id text,
+  command_name text,
+  metadata jsonb not null default '{}'::jsonb
+);
+```
+
 ## Operational Queries
 
 Recent failed dispatches:
@@ -142,6 +180,17 @@ where status = 'budget_denied'
   and created_at >= now() - interval '7 days'
 group by requestor
 order by denied_jobs desc;
+```
+
+Active run claims by repo:
+
+```sql
+select repo_full_name, count(*) as active_claims
+from reviewbot.ai_review_run_claims
+where status in ('claimed', 'dispatching', 'running')
+  and (expires_at is null or expires_at > now())
+group by repo_full_name
+order by active_claims desc;
 ```
 
 ## Privacy

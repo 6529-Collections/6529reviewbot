@@ -128,6 +128,28 @@ REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 
 See [review-jobs.md](review-jobs.md).
 
+## Run Control
+
+```text
+REVIEWBOT_RUN_CONTROL_MODE=off|warn|enforce
+REVIEWBOT_RUN_CONTROL_DEDUPE_ENABLED=true
+REVIEWBOT_RUN_CONTROL_DEDUPE_TTL_SECONDS=86400
+REVIEWBOT_RUN_CONTROL_GLOBAL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_ORG_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT=
+```
+
+Run control claims jobs after budget admission and before worker dispatch. Use
+it to dedupe replayed deliveries and cap parallel runs by org, repo, PR,
+requestor, provider, model, or review kind. Default mode is `off`; production
+should move to `enforce` only after a durable claim store is wired in. See
+[run-control.md](run-control.md).
+
 ## Repository Configuration
 
 Repository configuration is optional. When enabled, the App reads the first
@@ -247,8 +269,8 @@ npm run preflight -- -- --strict
 The preflight command validates runtime configuration without calling GitHub,
 AWS, model providers, or alert endpoints. It reuses the actual settings parsers
 for webhook, GitHub App auth, model catalog, review lanes, admission, budget,
-repository config, worker adapter, usage/job ledgers, usage API, admin auth,
-and alerts.
+run control, repository config, worker adapter, usage/job ledgers, usage API,
+admin auth, and alerts.
 
 Warnings describe intentionally disabled or external pieces, such as `noop`
 workers or `github_actions` provider secrets that live in the central worker

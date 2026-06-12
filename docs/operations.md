@@ -77,6 +77,8 @@ Check:
 - replaying the saved GitHub delivery with `npm run webhook:replay`;
 - recent `reviewbot.ai_review_job_events` rows for `dispatch_failed` or
   `dispatch_error`;
+- recent `reviewbot.ai_review_run_claims` rows for active duplicate or
+  over-concurrency claims;
 - `GH_TOKEN` scope;
 - provider key availability;
 - fork/external PR skip logic;
@@ -143,6 +145,10 @@ Check:
 - `REVIEW_MAX_CONTEXT_CHARS`;
 - `REVIEW_MAX_PRIOR_COMMENTS_CHARS`;
 - oversize behavior.
+
+If the spike is caused by repeated webhook deliveries or repeated comment
+commands, inspect [Run Control](run-control.md) and move production toward
+`REVIEWBOT_RUN_CONTROL_MODE=enforce` with conservative PR and repo caps.
 
 If alerts did not send, check:
 

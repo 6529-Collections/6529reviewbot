@@ -2,7 +2,7 @@
 
 `6529reviewbot` is designed to run as a central GitHub App named `6529bot`.
 The current app skeleton provides the webhook verification and event routing
-surface that policy, budget, queue, and worker layers build on.
+surface that policy, budget, run-control, queue, and worker layers build on.
 
 ## Runtime Endpoints
 
@@ -143,15 +143,16 @@ Comment command routing:
 ```
 
 The app normalizes events, evaluates admission policy, expands admitted events
-into review jobs, evaluates budget admission per job, and passes admitted jobs
-to an injectable queue function. When repository config loading is enabled, it
-loads config from the target repository's base ref before admission and job
-fanout. Without a real queue, valid admitted review jobs are acknowledged but
-reported as not enqueued.
+into review jobs, evaluates budget admission per job, claims run-control slots,
+and passes admitted jobs to an injectable queue function. When repository
+config loading is enabled, it loads config from the target repository's base
+ref before admission and job fanout. Without a real queue, valid admitted
+review jobs are acknowledged but reported as not enqueued.
 
 When the job ledger is enabled, the App records budget and dispatch lifecycle
-events around the queue call. These rows are for operator diagnostics and do
-not include prompt text, diffs, provider output, or worker stdout/stderr.
+events around the queue call. When run control is enabled, it can also record
+run-control claim decisions. These rows are for operator diagnostics and do not
+include prompt text, diffs, provider output, or worker stdout/stderr.
 
 Actor context is resolved from GitHub App installation credentials when the
 server is configured with `REVIEWBOT_GITHUB_APP_ID` and a private key. Until a
@@ -161,6 +162,10 @@ fail closed as untrusted.
 If budget caps are configured and the app cannot resolve current spend, budget
 admission fails closed in `enforce` mode. If every job is denied by budget
 admission, the queue function is not called.
+
+If run control is set to `enforce` and no claim store is wired, run control
+fails closed before dispatch. This avoids silently accepting duplicate or
+over-parallel work when operators intended claims to be active.
 
 ## Queue Contract
 
@@ -173,6 +178,8 @@ auth is configured. Custom deployments can still inject:
 - `resolveBudgetSnapshot(jobEvent, admission, job)` to read current spend;
 - `estimateBudgetCost(jobEvent, admission, job)` to provide job-specific cost
   estimates when available;
+- `claimReviewJob(job, controls)` to atomically claim dedupe/concurrency slots
+  before dispatch;
 - `recordJobEvent(event)` to persist best-effort job lifecycle audit rows;
 - `enqueueReviewJobs(jobs, controls)` to dispatch admitted jobs to the worker.
 
@@ -180,7 +187,7 @@ auth is configured. Custom deployments can still inject:
 this contract. See [worker-adapters.md](worker-adapters.md).
 
 Each queued job has one review kind and one provider/model lane. See
-[review-jobs.md](review-jobs.md).
+[review-jobs.md](review-jobs.md) and [run-control.md](run-control.md).
 
 ## Local Smoke Test
 
