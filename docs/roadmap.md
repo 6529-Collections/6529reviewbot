@@ -274,6 +274,8 @@ Completed in `6529reviewbot`:
 
 - central GitHub App skeleton and webhook verifier;
 - trusted-actor admission for public repositories;
+- central runtime pause controls for org, repo, provider, model, review kind,
+  and emergency global stops;
 - GitHub App installation-token handling for repository config and actor
   permission resolution;
 - budget admission against the AWS usage ledger;

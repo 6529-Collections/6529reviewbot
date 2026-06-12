@@ -30,6 +30,7 @@ The first `v0` tag can include:
 - GitHub App webhook verification, installation-token handling, and
   collaborator permission lookup;
 - trusted-actor admission for public repositories;
+- central runtime pause controls before budget or worker dispatch;
 - budget admission against the isolated AWS usage ledger;
 - review job fanout by review kind and provider/model lane;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims

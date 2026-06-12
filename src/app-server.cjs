@@ -25,6 +25,12 @@ const {
   runControlSummaryForJobs,
 } = require("./run-control.cjs");
 const {
+  applyRuntimeControlToEvent,
+  filterRuntimeControlJobs,
+  publicRuntimeControlDecision,
+  runtimeControlPolicyFromEnv,
+} = require("./runtime-control.cjs");
+const {
   applyRepositoryConfigToEvent,
   defaultRepositoryConfig,
   loadRepositoryConfigForEvent,
@@ -63,6 +69,7 @@ function createReviewbotServer(options = {}) {
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
   const runControlPolicy = options.runControlPolicy || runControlPolicyFromEnv();
+  const runtimeControlPolicy = options.runtimeControlPolicy || runtimeControlPolicyFromEnv();
   const claimReviewJob = options.claimReviewJob || defaultClaimReviewJob;
   const jobPolicy = options.jobPolicy || reviewJobPolicyFromEnv();
   const repositoryConfigPolicy =
@@ -83,6 +90,7 @@ function createReviewbotServer(options = {}) {
         admissionPolicy,
         resolveActorContext,
         budgetPolicy,
+        runtimeControlPolicy,
         resolveBudgetSnapshot,
         estimateBudgetCost,
         runControlPolicy,
@@ -156,6 +164,7 @@ async function handleHttpRequest(request, options) {
     admissionPolicy: options.admissionPolicy,
     resolveActorContext: options.resolveActorContext,
     budgetPolicy: options.budgetPolicy,
+    runtimeControlPolicy: options.runtimeControlPolicy,
     resolveBudgetSnapshot: options.resolveBudgetSnapshot,
     estimateBudgetCost: options.estimateBudgetCost,
     runControlPolicy: options.runControlPolicy,
@@ -218,21 +227,42 @@ async function handleGitHubWebhook(input) {
     };
   }
 
+  const runtimeControlPolicy = input.runtimeControlPolicy || runtimeControlPolicyFromEnv();
+  const runtimeControlled = applyRuntimeControlToEvent(configuredEvent, runtimeControlPolicy);
+  const controlledEvent = runtimeControlled.event;
+  const runtimeControl = {
+    event: publicRuntimeControlDecision(runtimeControlled.control),
+    jobs: null,
+  };
+  if (!controlledEvent.shouldEnqueue) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(controlledEvent),
+        configuration,
+        runtimeControl,
+      },
+    };
+  }
+
   const resolveActorContext = input.resolveActorContext || defaultResolveActorContext;
-  const actorContext = await resolveActorContext(configuredEvent);
+  const actorContext = await resolveActorContext(controlledEvent);
   const admissionPolicy = mergeRepositoryAdmissionPolicy(
     input.admissionPolicy || admissionPolicyFromEnv(),
     repositoryConfig
   );
-  const admission = evaluateAdmission(configuredEvent, actorContext, admissionPolicy);
+  const admission = evaluateAdmission(controlledEvent, actorContext, admissionPolicy);
   if (!admission.allowed) {
     return {
       statusCode: 200,
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(configuredEvent),
+        event: publicEventSummary(controlledEvent),
         configuration,
+        runtimeControl,
         admission,
       },
     };
@@ -242,17 +272,38 @@ async function handleGitHubWebhook(input) {
     input.jobPolicy || reviewJobPolicyFromEnv(),
     repositoryConfig
   );
-  const candidateJobs = createReviewJobs(configuredEvent, { admission }, jobPolicy);
+  const candidateJobs = createReviewJobs(controlledEvent, { admission }, jobPolicy);
   if (candidateJobs.length === 0) {
     return {
       statusCode: 200,
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(configuredEvent),
+        event: publicEventSummary(controlledEvent),
         configuration,
+        runtimeControl,
         admission,
         jobs: [],
+      },
+    };
+  }
+
+  const runtimeControlledJobs = filterRuntimeControlJobs(candidateJobs, runtimeControlPolicy);
+  runtimeControl.jobs = publicRuntimeControlDecision(runtimeControlledJobs.control);
+  const runtimeDeniedJobs = runtimeControlledJobs.deniedJobs;
+  await recordRuntimeControlDeniedJobEvents(input.recordJobEvent, runtimeDeniedJobs);
+  if (runtimeControlledJobs.jobs.length === 0) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(controlledEvent),
+        configuration,
+        runtimeControl,
+        admission,
+        jobs: [],
+        deniedJobs: runtimeDeniedJobs.map(publicReviewJobSummary),
       },
     };
   }
@@ -266,8 +317,8 @@ async function handleGitHubWebhook(input) {
     input.budgetPolicy || budgetPolicyFromEnv(),
     repositoryConfig
   );
-  for (const job of candidateJobs) {
-    const jobEvent = eventForReviewJob(configuredEvent, job);
+  for (const job of runtimeControlledJobs.jobs) {
+    const jobEvent = eventForReviewJob(controlledEvent, job);
     const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job, budgetPolicy);
     const estimate = await estimateBudgetCost(jobEvent, admission, job);
     const budget = evaluateBudgetAdmission({
@@ -295,12 +346,13 @@ async function handleGitHubWebhook(input) {
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(configuredEvent),
+        event: publicEventSummary(controlledEvent),
         configuration,
+        runtimeControl,
         admission,
         budget,
         jobs: [],
-        deniedJobs: deniedJobs.map(publicReviewJobSummary),
+        deniedJobs: [...runtimeDeniedJobs, ...deniedJobs].map(publicReviewJobSummary),
       },
     };
   }
@@ -312,13 +364,13 @@ async function handleGitHubWebhook(input) {
   const runControlPolicy = input.runControlPolicy || runControlPolicyFromEnv();
   for (const job of admittedJobs) {
     const runControl = await claimReviewJob(job, {
-      event: configuredEvent,
+      event: controlledEvent,
       admission,
       budget,
       configuration,
       policy: runControlPolicy,
       allJobs: budgetedJobs,
-      deniedJobs,
+      deniedJobs: [...runtimeDeniedJobs, ...deniedJobs],
     });
     const controlledJob = attachRunControlToReviewJob(job, runControl);
     runControlledJobs.push(controlledJob);
@@ -331,16 +383,17 @@ async function handleGitHubWebhook(input) {
   await recordRunControlJobEvents(input.recordJobEvent, runControlledJobs);
 
   const runControl = runControlSummaryForJobs(runControlledJobs);
-  const allDeniedJobs = [...deniedJobs, ...runControlDeniedJobs];
-  const allKnownJobs = [...deniedJobs, ...runControlledJobs];
+  const allDeniedJobs = [...runtimeDeniedJobs, ...deniedJobs, ...runControlDeniedJobs];
+  const allKnownJobs = [...runtimeDeniedJobs, ...deniedJobs, ...runControlledJobs];
   if (dispatchableJobs.length === 0) {
     return {
       statusCode: 200,
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(configuredEvent),
+        event: publicEventSummary(controlledEvent),
         configuration,
+        runtimeControl,
         admission,
         budget,
         runControl,
@@ -354,11 +407,12 @@ async function handleGitHubWebhook(input) {
   let enqueueResult;
   try {
     enqueueResult = await enqueueReviewJobs(dispatchableJobs, {
-      event: configuredEvent,
+      event: controlledEvent,
       admission,
       budget,
       runControl,
       configuration,
+      runtimeControl,
       deniedJobs: allDeniedJobs,
       allJobs: allKnownJobs,
     });
@@ -386,8 +440,9 @@ async function handleGitHubWebhook(input) {
     body: {
       ok: true,
       enqueued: accepted,
-      event: publicEventSummary(configuredEvent),
+      event: publicEventSummary(controlledEvent),
       configuration,
+      runtimeControl,
       admission,
       budget,
       runControl,
@@ -441,6 +496,19 @@ async function defaultRecordJobEvent() {
 
 async function defaultUpdateRunClaimStatus() {
   return { skipped: true };
+}
+
+async function recordRuntimeControlDeniedJobEvents(recordJobEvent, jobs) {
+  await recordJobEvents(
+    recordJobEvent,
+    (jobs || []).map((job) =>
+      jobEventFromReviewJob(job, "runtime_disabled", {
+        stage: "runtime_control",
+        accepted: false,
+        reason: job.runtimeControl?.reason || "",
+      })
+    )
+  );
 }
 
 async function recordBudgetJobEvents(recordJobEvent, jobs) {

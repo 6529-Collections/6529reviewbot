@@ -17,6 +17,7 @@ Common statuses:
 budget_admitted
 budget_warning
 budget_denied
+runtime_disabled
 run_control_admitted
 run_control_warning
 run_control_denied
@@ -30,6 +31,7 @@ Stages are intentionally coarse:
 
 ```text
 budget
+runtime_control
 run_control
 dispatch
 ```

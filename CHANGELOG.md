@@ -24,6 +24,8 @@ stabilized.
 - Budget admission against the isolated AWS usage ledger.
 - Production server wiring for budget spend snapshots from the usage ledger.
 - Review job fanout across review kinds and provider/model lanes.
+- Central runtime pause controls for global, org, repo, provider, model, and
+  review-kind stops before budget or worker dispatch.
 - Run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps.
 - Run-control claim status updates after dispatch attempts and worker

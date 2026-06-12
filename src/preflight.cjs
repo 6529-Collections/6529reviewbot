@@ -23,6 +23,10 @@ const { repositoryConfigPolicyFromEnv } = require("./repository-config.cjs");
 const { reviewJobPolicyFromEnv } = require("./review-job.cjs");
 const { runControlLedgerSettingsFromEnv } = require("./run-control-ledger.cjs");
 const { runControlPolicyFromEnv } = require("./run-control.cjs");
+const {
+  runtimeControlPolicyFromEnv,
+  runtimeControlPolicySummary,
+} = require("./runtime-control.cjs");
 const { spendAlertPolicyFromEnv } = require("./spend-alerts.cjs");
 const { usageApiSettingsFromEnv } = require("./usage-api.cjs");
 const {
@@ -99,6 +103,14 @@ function runPreflight(options = {}) {
       mode: policy.mode,
       defaultEstimatedCostUsd: policy.defaultEstimatedCostUsd,
     };
+  });
+
+  check(result, "runtime_control", () => {
+    const policy = runtimeControlPolicyFromEnv(env);
+    if (!policy.enabled) {
+      addWarning(result, "runtime_control", "Review automation is disabled by REVIEWBOT_ENABLED=false.");
+    }
+    return runtimeControlPolicySummary(policy);
   });
 
   check(result, "run_control", () => {

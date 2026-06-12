@@ -31,6 +31,7 @@ const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const runControl = require("../src/run-control.cjs");
 const runControlLedger = require("../src/run-control-ledger.cjs");
+const runtimeControl = require("../src/runtime-control.cjs");
 const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
 const spendAlerts = require("../src/spend-alerts.cjs");
 const supportBundle = require("../src/support-bundle.cjs");
@@ -344,6 +345,11 @@ assert.equal(preflightResult.ok, true);
 assert.equal(preflightResult.errors.length, 0);
 assert(preflightResult.warnings.some((warning) => warning.name === "worker_adapter"));
 assert.equal(preflight.runPreflight({ env: preflightEnv, strict: true }).ok, false);
+assert(
+  preflight
+    .runPreflight({ env: { ...preflightEnv, REVIEWBOT_ENABLED: "false" } })
+    .warnings.some((warning) => warning.name === "runtime_control")
+);
 assert.equal(preflight.runPreflight({ env: {} }).errors[0].name, "webhook");
 assert(
   preflight
@@ -732,6 +738,35 @@ assert.equal(reviewJobs.filter((job) => job.reviewKind === "general").length, 2)
 assert.equal(reviewJobs[0].requestor, "maintainer");
 assert.equal(reviewJobs[0].provider, "anthropic");
 assert.equal(reviewJobs[1].provider, "openai");
+const globallyDisabledRuntime = runtimeControl.applyRuntimeControlToEvent(
+  normalizedPullRequest,
+  runtimeControl.runtimeControlPolicyFromEnv({
+    REVIEWBOT_ENABLED: "false",
+    REVIEWBOT_DISABLED_REASON: "paused for incident",
+  })
+);
+assert.equal(globallyDisabledRuntime.event.shouldEnqueue, false);
+assert.equal(globallyDisabledRuntime.control.code, "runtime_disabled");
+const filteredRuntimeEvent = runtimeControl.applyRuntimeControlToEvent(
+  normalizedPullRequest,
+  runtimeControl.runtimeControlPolicyFromEnv({
+    REVIEWBOT_DISABLED_REVIEW_KINDS: "wcag,i18n",
+  })
+);
+assert.equal(filteredRuntimeEvent.event.shouldEnqueue, true);
+assert.deepEqual(filteredRuntimeEvent.event.reviewKinds, ["general", "security"]);
+assert.equal(filteredRuntimeEvent.control.status, "filtered");
+const runtimeFilteredJobs = runtimeControl.filterRuntimeControlJobs(
+  reviewJobs,
+  runtimeControl.runtimeControlPolicyFromEnv({
+    REVIEWBOT_DISABLED_PROVIDERS: "openai",
+    REVIEWBOT_DISABLED_MODELS: "claude-opus-4-8",
+  })
+);
+assert.equal(runtimeFilteredJobs.jobs.length, 0);
+assert.equal(runtimeFilteredJobs.deniedJobs.length, reviewJobs.length);
+assert.equal(runtimeFilteredJobs.deniedJobs[0].status, "runtime_disabled");
+assert.equal(runtimeFilteredJobs.control.status, "denied");
 const repoJobPolicy = repositoryConfig.mergeRepositoryJobPolicy(twoLanePolicy, parsedRepoConfig);
 assert.equal(repoJobPolicy.maxJobsPerDelivery, 4);
 assert.deepEqual(
@@ -1773,6 +1808,39 @@ appServer.handleGitHubWebhook({
   assert.equal(defaultQueueResult.body.enqueued, false);
   assert.equal(defaultQueueResult.body.jobs.length, 4);
   assert.equal(defaultQueueResult.body.queue.jobCount, 4);
+  let runtimePausedQueued = false;
+  const runtimePausedEvents = [];
+  const runtimePausedResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    jobPolicy: twoLanePolicy,
+    runtimeControlPolicy: runtimeControl.runtimeControlPolicyFromEnv({
+      REVIEWBOT_DISABLED_PROVIDERS: "anthropic,openai",
+    }),
+    recordJobEvent: async (event) => {
+      runtimePausedEvents.push(event);
+    },
+    enqueueReviewJobs: async () => {
+      runtimePausedQueued = true;
+      return { accepted: true };
+    },
+  });
+  assert.equal(runtimePausedResult.body.enqueued, false);
+  assert.equal(runtimePausedResult.body.runtimeControl.jobs.status, "denied");
+  assert.equal(runtimePausedResult.body.deniedJobs.length, 8);
+  assert.equal(runtimePausedResult.body.deniedJobs[0].runtimeControl.code, "provider_disabled");
+  assert.equal(runtimePausedEvents.filter((event) => event.status === "runtime_disabled").length, 8);
+  assert.equal(runtimePausedQueued, false);
   const replayResult = await replayWebhook.replayWebhook({
     payloadPath: "-",
     eventName: "pull_request",

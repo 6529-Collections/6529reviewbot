@@ -77,7 +77,7 @@ before updating.
 
 - Disable the GitHub App installation or repository config.
 - Set `REVIEWBOT_WORKER_ADAPTER=noop` or disable central dispatch.
-- Set `REVIEWBOT_BUDGET_MODE=enforce` with zero caps for emergency pause.
+- Set `REVIEWBOT_ENABLED=false` for emergency pause.
 - Revert target repository `.github/6529bot.yml` changes if needed.
 
 ## Validation

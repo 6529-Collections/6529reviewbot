@@ -151,7 +151,14 @@ or raw provider responses to browser clients.
 requests. The preferred mode is a short-lived HMAC assertion signed by trusted
 6529.io infrastructure, not a separate bot login system.
 
-## 9. Scheduled Alerts
+## 9. Runtime Control
+
+`src/runtime-control.cjs` is the central pause layer. It can stop all review
+automation or disable specific orgs, repos, providers, models, and review kinds
+before budget admission and worker dispatch. Runtime-denied jobs are recorded
+as `runtime_disabled` lifecycle events when the job ledger is enabled.
+
+## 10. Scheduled Alerts
 
 `src/scheduled-spend-check.cjs` reads the same Aurora usage ledger and budget
 policy table as the usage API. It evaluates spend alerts without calling model
