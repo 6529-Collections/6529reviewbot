@@ -3024,6 +3024,17 @@ appServer.handleGitHubWebhook({
     Object.keys(adminStatusRouteResult.body.preflight).some((key) => key.startsWith("github_pat_")),
     false
   );
+  const scalarAdminStatusRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/status?profile=worker",
+    headers: signedAdminHeadersFor(new URL("http://localhost/api/admin/status?profile=worker")),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadAdminStatus: async () => ({ preflight: "sk-proj-should-not-pass" }),
+  });
+  assert.equal(scalarAdminStatusRouteResult.statusCode, 200);
+  assert.equal(scalarAdminStatusRouteResult.body.preflight, null);
   const adminJobsRouteUrl = new URL("http://localhost/api/admin/jobs/recent?limit=1");
   const adminJobsRouteResult = await appServer.handleHttpRequest({
     method: "GET",

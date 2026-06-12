@@ -1333,3 +1333,7 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #114 by coercing sanitized admin
+  runtime-status `preflight` output to `object | null` so strict clients keep
+  the OpenAPI contract even when custom loaders return scalar diagnostics.
+  `npm test`, `npm run release:check`, and `git diff --check` passed again.

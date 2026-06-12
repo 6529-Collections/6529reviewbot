@@ -133,7 +133,7 @@ async function handleUsageApiRequest(request, options = {}) {
         generatedAt: new Date().toISOString(),
         profile: query.profile,
         strict: query.strict,
-        preflight: sanitizeAdminDiagnosticPayload(result.preflight || result.status || null),
+        preflight: normalizeAdminStatusPayload(result),
       },
     };
   }
@@ -499,6 +499,13 @@ function unavailableResponse(reason) {
       error: safeErrorLine(reason || "Unavailable."),
     },
   };
+}
+
+function normalizeAdminStatusPayload(result = {}) {
+  const sanitized = sanitizeAdminDiagnosticPayload(result.preflight ?? result.status ?? null);
+  return sanitized && typeof sanitized === "object" && !Array.isArray(sanitized)
+    ? sanitized
+    : null;
 }
 
 function sanitizeAdminDiagnosticPayload(value, depth = ADMIN_STATUS_MAX_DEPTH) {
