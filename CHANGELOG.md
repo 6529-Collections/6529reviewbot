@@ -44,9 +44,9 @@ stabilized.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.
-- Worker diagnostics redact common bearer, GitHub, provider API key, and
-  private-key shapes before optional output tails or GitHub API dispatch
-  failures are returned.
+- Worker diagnostics redact common bearer, GitHub, provider API key, alert
+  webhook URL, AWS access-key id, and private-key shapes before optional output
+  tails or GitHub API dispatch failures are returned.
 - Review runner provider error summaries and fatal CLI output use the shared
   diagnostic redaction path.
 - Utility CLI fatal errors now use the shared diagnostic redaction path, and

@@ -30,9 +30,9 @@ requests.
   or central GitHub Actions workflows.
 - Fails closed instead of posting a generic review when a live provider returns
   empty visible output.
-- Redacts common token and private-key shapes from worker, dispatch, ledger,
-  alert, preflight, and repository-config diagnostics before they enter public
-  or operator summaries.
+- Redacts common token, alert-webhook, AWS access-key id, and private-key
+  shapes from worker, dispatch, ledger, alert, preflight, and repository-config
+  diagnostics before they enter public or operator summaries.
 - Records review-job budget and dispatch lifecycle events in a separate
   operator job ledger when enabled.
 - Adds run-control claims for duplicate-job and concurrency protection before
@@ -439,7 +439,8 @@ input. In particular:
 - provider errors are sanitized before logging;
 - empty provider responses fail closed instead of becoming no-finding comments;
 - worker, dispatch, ledger, alert, preflight, and repository-config diagnostics
-  redact common token and private-key shapes before they are returned;
+  redact common token, alert-webhook, AWS access-key id, and private-key shapes
+  before they are returned;
 - provider requests have explicit timeout and token/context caps;
 - AWS access uses OIDC and least-privilege Data API permissions.
 

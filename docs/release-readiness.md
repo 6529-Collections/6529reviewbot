@@ -36,8 +36,9 @@ Ready for community review:
   installation tokens and `gh` fallback for compatibility environments;
 - fail-closed provider output guard so empty live model responses do not become
   generic no-finding comments;
-- worker diagnostic redaction for common token and private-key shapes in local
-  output tails and GitHub API dispatch failure bodies;
+- worker diagnostic redaction for common token, alert-webhook, AWS access-key
+  id, and private-key shapes in local output tails and GitHub API dispatch
+  failure bodies;
 - worker capacity and backpressure runbook for live scaling decisions;
 - reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;

@@ -99,10 +99,11 @@ Provider requests are bounded by:
 
 Worker stdout and stderr are omitted from adapter results by default. When an
 operator explicitly opts into diagnostic tails, the adapter redacts common
-token and private-key shapes before returning them. GitHub API dispatch failure
-bodies are redacted the same way before they can enter queue results or
-run-control metadata. App server dispatch exceptions are also reduced to a
-short redacted line before they are copied into run-claim or job-event
+token, alert-webhook, AWS access-key id, and private-key shapes before
+returning them. GitHub API dispatch failure bodies are redacted the same way
+before they can enter queue results or run-control metadata. App server
+dispatch exceptions are also reduced to a short redacted line before they are
+copied into run-claim or job-event
 diagnostics. Job-event reasons, job-event metadata strings, run-claim metadata
 strings, preflight errors, alert delivery errors, and worker lifecycle warnings
 use the same redaction path. Repository config load reasons are also shortened
@@ -111,7 +112,7 @@ fatal errors and validator path prefixes use the same common-secret redaction
 path before printing operator diagnostics. GitHub App manifest conversion
 response-error bodies and summary strings are redacted before operator-facing
 output, but generated credentials still belong only in the private secret
-store. Support bundles also redact common token and private-key shapes from git
+store. Support bundles also redact common secret-shaped values from git
 branch/status output, selected safe environment values, and preflight messages
 before JSON or Markdown rendering, though file names may still disclose private
 operational context when `--include-git-status` is used. Release-gate status

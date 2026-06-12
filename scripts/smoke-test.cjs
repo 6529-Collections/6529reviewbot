@@ -1641,6 +1641,16 @@ assert.equal(
   workerAdapter.redactSensitiveText("Bearer ghp_abcdefghijklmnopqrstuvwxyz1234567890"),
   "Bearer [redacted]"
 );
+assert.equal(
+  workerAdapter.redactSensitiveText("AWS key AKIAABCDEFGHIJKLMNOP in output"),
+  "AWS key [redacted-aws-access-key-id] in output"
+);
+assert.equal(
+  workerAdapter.redactSensitiveText(
+    "notify https://hooks.slack.com/services/T12345678/B12345678/abcdefghijklmnopqrstuvwxyz"
+  ),
+  "notify [redacted-alert-webhook-url]"
+);
 const redactedLocalWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
     REVIEWBOT_WORKER_ADAPTER: "local",
@@ -3226,6 +3236,14 @@ appServer.handleGitHubWebhook({
   assert.equal(
     appServer.redactSensitiveText("Bearer abcdefghijklmnopqrstuvwxyz123456"),
     "Bearer [redacted]"
+  );
+  assert.equal(
+    diagnostics.safeErrorLine(
+      new Error(
+        "discord https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyzABCDE"
+      )
+    ),
+    "Error: discord [redacted-alert-webhook-url]"
   );
   assert.doesNotThrow(() =>
     diagnostics.safeErrorLine({ stack: { not: "a string" } })

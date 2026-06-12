@@ -175,10 +175,12 @@ merged PRs.
   `03e4c0f`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Policy/price note redaction PR: merged as PR #109, merge commit `92c1636`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/scan-local-private-paths`
-- Current local changes: public artifact scanning flags common local private
-  filesystem paths, GitHub App conversion docs use placeholders, and smoke
-  tests cover Windows/private and Unix-home path findings.
+- Local private path scanner PR: merged as PR #110, merge commit `360a7e9`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-alert-aws-diagnostics`
+- Current local changes: shared runtime diagnostic redaction now covers alert
+  webhook URLs and AWS access-key ids; smoke tests cover worker output and
+  safe error-line redaction.
 
 ## Key Decisions
 
@@ -388,7 +390,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the local private path scanner PR.
+1. Validate, publish, and merge the alert/AWS diagnostic redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
