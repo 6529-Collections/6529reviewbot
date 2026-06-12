@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   collectSupportBundle,
   formatSupportBundleMarkdown,
@@ -66,7 +67,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error.message);
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   }
 }

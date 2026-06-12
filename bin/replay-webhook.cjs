@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   createGitHubAppIntegration,
   githubAppAuthSettingsFromEnv,
@@ -302,7 +303,7 @@ Without --dispatch, replay is a dry run and will not call providers or workers.`
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   });
 }

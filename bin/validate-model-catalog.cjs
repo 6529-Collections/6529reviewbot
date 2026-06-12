@@ -4,6 +4,10 @@
 
 const path = require("path");
 const {
+  redactSensitiveText,
+  safeErrorLine,
+} = require("../src/diagnostics.cjs");
+const {
   DEFAULT_MODEL_CATALOG_PATH,
   loadModelCatalog,
 } = require("../src/model-catalog.cjs");
@@ -23,7 +27,7 @@ for (const catalogPath of catalogPaths) {
     validateFile(catalogPath);
   } catch (error) {
     failed = true;
-    console.error(`${catalogPath}: invalid: ${error.message}`);
+    console.error(`${safePath(catalogPath)}: invalid: ${safeErrorLine(error)}`);
   }
 }
 
@@ -34,13 +38,17 @@ if (failed) {
 function validateFile(catalogPath) {
   const absolutePath = path.resolve(process.cwd(), catalogPath);
   const catalog = loadModelCatalog({ path: absolutePath });
-  console.log(`${catalogPath}: ok`);
+  console.log(`${safePath(catalogPath)}: ok`);
   console.log(`  defaultProvider: ${catalog.defaultProvider}`);
   for (const [provider, config] of Object.entries(catalog.providers)) {
     console.log(
       `  ${provider}: ${config.defaultModel || "explicit required"}`
     );
   }
+}
+
+function safePath(filePath) {
+  return redactSensitiveText(filePath).slice(0, 500);
 }
 
 function printUsage() {

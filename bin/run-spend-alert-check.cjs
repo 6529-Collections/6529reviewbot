@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const { runScheduledSpendCheck } = require("../src/scheduled-spend-check.cjs");
 
 async function main() {
@@ -51,6 +52,6 @@ function notificationSummary(notification) {
 }
 
 main().catch((error) => {
-  console.error(error && error.stack ? error.stack : String(error));
+  console.error(safeErrorLine(error));
   process.exitCode = 1;
 });

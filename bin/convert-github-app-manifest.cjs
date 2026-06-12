@@ -2,6 +2,7 @@
 
 "use strict";
 
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   convertGitHubAppManifest,
   formatManifestConversionSummary,
@@ -149,7 +150,7 @@ Options:
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   });
 }

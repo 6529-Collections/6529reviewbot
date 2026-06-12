@@ -160,10 +160,12 @@ merged PRs.
   `e61d08f`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin auth required-role validation PR: merged as PR #102, merge commit
   `f3792a3`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-review-runner-errors`
-- Current local changes: provider error summaries and review-runner fatal CLI
-  output now use the shared diagnostic redaction path; review mode entrypoints
-  print a bounded redacted error line instead of a raw stack.
+- Review-runner diagnostic redaction PR: merged as PR #103, merge commit
+  `b02b32e`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-utility-cli-errors`
+- Current local changes: utility CLI fatal handlers now print bounded redacted
+  one-line diagnostics through `safeErrorLine`; validator path prefixes redact
+  common secret shapes; smoke tests cover both paths.
 
 ## Key Decisions
 
@@ -302,9 +304,9 @@ merged PRs.
 - Admin auth config and incoming assertions should share the same role format
   contract. Misconfigured required roles should fail during startup/preflight,
   not after operators discover that every admin request is denied.
-- Review-runner provider failures can land in worker logs. They should use the
-  same shared redaction helper as app server, ledger, alert, and preflight
-  diagnostics.
+- Review-runner provider failures and utility CLI fatal errors can land in
+  worker or operator logs. They should use the same shared redaction helper as
+  app server, ledger, alert, and preflight diagnostics.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -372,7 +374,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the review-runner diagnostic redaction PR.
+1. Validate, publish, and merge the utility CLI diagnostic redaction PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

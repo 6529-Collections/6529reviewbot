@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { safeErrorLine } = require("../src/diagnostics.cjs");
 
 const REQUIRED_PATHS = [
   "/api/public/usage/summary",
@@ -59,7 +60,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    console.error(error && error.stack ? error.stack : String(error));
+    console.error(safeErrorLine(error));
     process.exitCode = 1;
   }
 }
