@@ -7,6 +7,11 @@ current.
 Use the model-prices CLI to review and apply price rows to
 `reviewbot.ai_model_prices`.
 
+The review runner uses these rows for usage telemetry when a provider does not
+return direct dollar cost. It records `estimated_cost_usd` only when the active
+provider/model price row covers every applicable token class reported by the
+provider.
+
 ## Price File
 
 Start from:
@@ -94,3 +99,26 @@ The CLI enforces a source URL and rejects rows without at least one price field.
 Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default
 estimates.
+
+## Estimation Behavior
+
+At usage-write time the runner selects the active row where:
+
+```text
+provider/model match the review lane
+effective_from <= now
+effective_to is null or in the future
+```
+
+The estimator handles cached input tokens conservatively:
+
+- if cached tokens look like a subset of input tokens, it prices the non-cached
+  remainder at the input rate and cached tokens at the cached-input rate;
+- if cached tokens are reported separately from input tokens, it prices input
+  tokens and cached tokens separately;
+- if no cached-input rate is configured, cached tokens use the input rate only
+  when that does not double-count a subset.
+
+Reasoning tokens use `reasoningUsdPerMillion` when provided, otherwise they use
+the output rate. If any token class has usage but no applicable rate, the bot
+does not write an estimated cost for that run.

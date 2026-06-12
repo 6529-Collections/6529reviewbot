@@ -38,6 +38,7 @@ The first `v0` tag can include:
 - public and admin usage API contracts with read-only Aurora loaders;
 - repeatable Aurora ledger schema tooling;
 - dry-run/apply tooling for operator-maintained model price rows;
+- usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
 - no-network production preflight command;

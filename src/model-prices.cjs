@@ -1,7 +1,13 @@
 "use strict";
 
 const fs = require("fs");
-const { assertDataApiSettings, executeStatement, stringParam } = require("./data-api.cjs");
+const {
+  assertDataApiSettings,
+  executeStatement,
+  fieldValue,
+  nullableNumber,
+  stringParam,
+} = require("./data-api.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
 const { normalizeProvider } = require("./model-catalog.cjs");
 
@@ -129,6 +135,113 @@ insert into ${schemaIdent}.ai_model_prices (
   return statements;
 }
 
+function currentModelPriceStatement(schema, input) {
+  const provider = normalizeProvider(input.provider);
+  const model = stringField(input.model, "model price lookup model");
+  const at = isoDateField(input.at || new Date().toISOString(), "model price lookup timestamp");
+  return {
+    sql: `
+select
+  provider,
+  model,
+  input_usd_per_million::text,
+  cached_input_usd_per_million::text,
+  output_usd_per_million::text,
+  reasoning_usd_per_million::text,
+  currency,
+  effective_from::text,
+  effective_to::text,
+  source_url,
+  notes
+from ${quoteIdent(schema)}.ai_model_prices
+where provider = :provider
+  and model = :model
+  and effective_from <= cast(:at_ts as timestamptz)
+  and (effective_to is null or effective_to > cast(:at_ts as timestamptz))
+order by effective_from desc, id desc
+limit 1`,
+    parameters: [
+      stringParam("provider", provider),
+      stringParam("model", model),
+      stringParam("at_ts", at),
+    ],
+  };
+}
+
+function readCurrentModelPrice(settings, input, options = {}) {
+  assertDataApiSettings(settings, "Model price lookup");
+  const statement = currentModelPriceStatement(settings.schema, input);
+  const execute = options.executeStatement || executeStatement;
+  const response = execute(settings, statement.sql, statement.parameters, {
+    tempPrefix: "6529-model-price-read-",
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return modelPriceFromRecord(response.records?.[0]);
+}
+
+function modelPriceFromRecord(record) {
+  if (!record) {
+    return null;
+  }
+  return {
+    provider: fieldValue(record[0]) || "",
+    model: fieldValue(record[1]) || "",
+    inputUsdPerMillion: nullableNumber(fieldValue(record[2])),
+    cachedInputUsdPerMillion: nullableNumber(fieldValue(record[3])),
+    outputUsdPerMillion: nullableNumber(fieldValue(record[4])),
+    reasoningUsdPerMillion: nullableNumber(fieldValue(record[5])),
+    currency: fieldValue(record[6]) || "USD",
+    effectiveFrom: fieldValue(record[7]) || "",
+    effectiveTo: fieldValue(record[8]) || "",
+    sourceUrl: fieldValue(record[9]) || "",
+    notes: fieldValue(record[10]) || "",
+  };
+}
+
+function estimateUsageCostUsd(usage = {}, price = {}) {
+  if (!price || String(price.currency || "USD").toUpperCase() !== "USD") {
+    return null;
+  }
+  const inputTokens = wholeTokens(usage.inputTokens);
+  const cachedInputTokens = wholeTokens(usage.cachedInputTokens);
+  const outputTokens = wholeTokens(usage.outputTokens);
+  const reasoningTokens = wholeTokens(usage.reasoningTokens);
+  const inputRate = nullableNumber(price.inputUsdPerMillion);
+  const cachedInputRate = nullableNumber(price.cachedInputUsdPerMillion);
+  const outputRate = nullableNumber(price.outputUsdPerMillion);
+  const reasoningRate = nullableNumber(price.reasoningUsdPerMillion);
+  const effectiveReasoningRate = reasoningRate ?? outputRate;
+  if (inputTokens > 0 && inputRate === null) {
+    return null;
+  }
+  if (cachedInputTokens > 0 && cachedInputRate === null && inputRate === null) {
+    return null;
+  }
+  if (outputTokens > 0 && outputRate === null) {
+    return null;
+  }
+  if (reasoningTokens > 0 && effectiveReasoningRate === null) {
+    return null;
+  }
+  const cachedLooksLikeSubset = cachedInputTokens > 0 && cachedInputTokens <= inputTokens;
+  const nonCachedInputTokens =
+    cachedLooksLikeSubset && cachedInputRate !== null
+      ? inputTokens - cachedInputTokens
+      : inputTokens;
+  let total = 0;
+  total += tokenCost(nonCachedInputTokens, inputRate);
+  if (cachedInputTokens > 0) {
+    if (cachedInputRate !== null) {
+      total += tokenCost(cachedInputTokens, cachedInputRate);
+    } else if (!cachedLooksLikeSubset) {
+      total += tokenCost(cachedInputTokens, inputRate);
+    }
+  }
+  total += tokenCost(outputTokens, outputRate);
+  total += tokenCost(reasoningTokens, effectiveReasoningRate);
+  return roundUsd(total);
+}
+
 function applyModelPrices(settings, document, options = {}) {
   assertDataApiSettings(settings, "Model price ledger");
   const statements = options.statements || modelPriceStatements(settings.schema, document);
@@ -230,6 +343,22 @@ function nullParam(name) {
   return { name, value: { isNull: true } };
 }
 
+function tokenCost(tokens, usdPerMillion) {
+  if (!tokens || usdPerMillion === null || usdPerMillion === undefined) {
+    return 0;
+  }
+  return (tokens * Number(usdPerMillion)) / 1_000_000;
+}
+
+function wholeTokens(value) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
+}
+
+function roundUsd(value) {
+  return Math.round((Number(value) || 0) * 100_000_000) / 100_000_000;
+}
+
 function assertPlainObject(value, source) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${source} must be an object.`);
@@ -238,8 +367,12 @@ function assertPlainObject(value, source) {
 
 module.exports = {
   applyModelPrices,
+  currentModelPriceStatement,
+  estimateUsageCostUsd,
   loadModelPriceFile,
+  modelPriceFromRecord,
   modelPriceStatements,
+  readCurrentModelPrice,
   renderModelPriceSql,
   validateModelPriceFile,
 };

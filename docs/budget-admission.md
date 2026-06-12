@@ -33,6 +33,12 @@ The default estimate is used when provider-specific cost estimation is not yet
 available. The GitHub App evaluates one review kind and one provider/model lane
 at a time, so the default estimate applies to one job.
 
+After a worker completes, actual usage telemetry may be more precise than the
+pre-call budget estimate. OpenRouter can return direct dollar cost. Other
+providers use the active `ai_model_prices` row to write `estimated_cost_usd`
+when complete rates are available. Future admission improvements can reuse the
+same pricing table for provider/model-specific pre-call estimates.
+
 ## Caps
 
 Budget caps are configured by scope and period:

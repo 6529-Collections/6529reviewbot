@@ -12,6 +12,10 @@ const {
 const {
   defaultModelForProvider,
 } = require("./model-catalog.cjs");
+const {
+  estimateUsageCostUsd,
+  readCurrentModelPrice,
+} = require("./model-prices.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
@@ -1257,6 +1261,10 @@ function postComment(settings, body) {
 
 function recordUsage(settings, input) {
   const usage = input.usage || emptyUsage();
+  const estimatedCostUsd =
+    input.estimatedCostUsd === undefined
+      ? estimateUsageCostForRecord(settings, usage, input)
+      : input.estimatedCostUsd;
   writeUsageEvent(
     settings.usageLedger,
     {
@@ -1277,12 +1285,47 @@ function recordUsage(settings, input) {
       outputTokens: usage.outputTokens,
       reasoningTokens: usage.reasoningTokens,
       totalTokens: usage.totalTokens,
+      estimatedCostUsd,
       actualCostUsd: input.actualCostUsd,
       currency: "USD",
       budgetSkipped: Boolean(input.budgetSkipped),
       metadata: input.metadata || {},
     },
     warn
+  );
+}
+
+function estimateUsageCostForRecord(settings, usage, input = {}, options = {}) {
+  if (
+    !settings.usageLedger?.enabled ||
+    (input.actualCostUsd !== undefined && input.actualCostUsd !== null) ||
+    input.budgetSkipped ||
+    !usageHasTokens(usage)
+  ) {
+    return null;
+  }
+  try {
+    const readPrice = options.readCurrentModelPrice || readCurrentModelPrice;
+    const price = readPrice(settings.usageLedger, {
+      provider: settings.provider,
+      model: settings.model,
+    });
+    return price ? estimateUsageCostUsd(usage, price) : null;
+  } catch (error) {
+    if (settings.usageLedger.failClosed) {
+      throw error;
+    }
+    warn(`model price lookup failed: ${safeOneLineError(error)}`);
+    return null;
+  }
+}
+
+function usageHasTokens(usage = {}) {
+  return (
+    Number(usage.inputTokens || 0) > 0 ||
+    Number(usage.cachedInputTokens || 0) > 0 ||
+    Number(usage.outputTokens || 0) > 0 ||
+    Number(usage.reasoningTokens || 0) > 0
   );
 }
 
@@ -1315,6 +1358,12 @@ function escapeRegExp(value) {
 function numberOrNull(value) {
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
+}
+
+function safeOneLineError(error) {
+  return String(error?.message || error || "unknown error")
+    .split(/\r?\n/)[0]
+    .slice(0, 500);
 }
 
 function log(message) {
@@ -1354,4 +1403,5 @@ module.exports = {
   normalizeAnthropicUsage,
   normalizeOpenAIUsage,
   normalizeOpenRouterUsage,
+  estimateUsageCostForRecord,
 };
