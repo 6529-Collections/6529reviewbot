@@ -48,6 +48,8 @@ stabilized.
   databases.
 - Ledger schema re-apply refreshes the managed budget-scope check constraint
   for older dogfood databases.
+- Conservative dogfood budget policy apply path verified against the isolated
+  ledger with aggregate scope-count checks.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.

@@ -22,6 +22,8 @@ Ready for community review:
 - central DB budget policy dry-run/apply tooling and production admission
   loading;
 - conservative dogfood budget policy example validated by release checks;
+- conservative central budget policy apply path dogfooded against the isolated
+  ledger with aggregate scope-count verification;
 - review job fanout across review kinds and provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
