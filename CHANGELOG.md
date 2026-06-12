@@ -26,6 +26,8 @@ stabilized.
 - Public/admin usage API contracts and read-only Aurora usage readers.
 - 6529.io admin auth bridge contract.
 - Scheduled spend alerts for budget utilization and unusual spend spikes.
+- Dogfood runbook, conservative dogfood templates, and repository config
+  validation tooling.
 - Documentation for architecture, configuration, operations, release readiness,
   security model, AWS usage ledger, repository config, worker adapters, and
   alerting.

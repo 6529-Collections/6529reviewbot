@@ -23,6 +23,8 @@ Ready for community review:
 - public/admin usage API contracts and Aurora readers;
 - 6529.io admin auth bridge contract;
 - scheduled spend alerts with stdout, webhook, and SNS delivery.
+- dogfood runbook, conservative config templates, and repository config
+  validation tooling.
 
 Not yet v1-ready:
 
@@ -47,6 +49,8 @@ Before announcing broad community use:
 5. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
 6. Enable scheduled spend alerts through private operator channels.
 7. Dogfood on a small set of trusted repositories with conservative budgets.
+   Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
+   command-only repository config template.
 8. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
 9. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 10. Update README, changelog, release notes, install docs, and example configs.

@@ -92,6 +92,12 @@ node bin/security-analysis.cjs
 
 The bot expects `gh` and `git` to be available when gathering PR context.
 
+Validate a target repository config before opening its PR:
+
+```bash
+npm run validate:repo-config -- templates/dogfood-repository-config.yml
+```
+
 ## Runtime Configuration
 
 Minimum required environment:
@@ -225,6 +231,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
+- [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)

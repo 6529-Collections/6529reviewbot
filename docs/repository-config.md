@@ -20,6 +20,9 @@ The App checks these paths, in order, on the target repository's base ref:
 ```
 
 Use `.github/6529bot.yml` unless there is a repository-specific reason not to.
+For first dogfood rollouts, start from
+`templates/dogfood-command-only-config.yml` or
+`templates/dogfood-repository-config.yml`.
 
 For pull requests, config is read from the base ref, not the PR head. This
 prevents a PR author from changing the bot policy inside the same PR that
