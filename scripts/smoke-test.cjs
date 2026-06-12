@@ -2465,6 +2465,23 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(snsNotification.delivered, true);
   assert.equal(snsPublishOptions.timeout, 1234);
+  let customSnsShell = null;
+  const customSnsNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      AWS_CLI_BIN: "aws-custom",
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "sns",
+      REVIEWBOT_ALERTS_SNS_TOPIC_ARN: "arn:aws:sns:us-east-1:123456789012:reviewbot-alerts",
+    }),
+    now: alertNow,
+    execFileSync: (bin, args, options) => {
+      assert.equal(bin, "aws-custom");
+      assert.equal(args.includes("publish"), true);
+      customSnsShell = options.shell;
+      return "{}";
+    },
+  });
+  assert.equal(customSnsNotification.delivered, true);
+  assert.equal(customSnsShell, false);
   const bestEffortNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
     settings: alertNotifier.alertNotifierSettingsFromEnv({
       REVIEWBOT_ALERTS_NOTIFY_MODE: "webhook",

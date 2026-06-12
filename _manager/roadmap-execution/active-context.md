@@ -113,10 +113,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Webhook preflight hardening PR: merged as PR #80, merge commit `583a044`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/unify-usage-data-api`
-- Current local changes: refactor usage ledger writes onto the shared Data API
-  execution helper so usage rows use the same temp-file and retry path as other
-  Aurora reads/writes.
+- Usage Data API helper refactor PR: merged as PR #81, merge commit
+  `54c893d`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/harden-alert-sns-runner`
+- Current local changes: make SNS alert delivery avoid shell mode when an
+  operator provides an explicit AWS CLI binary in notifier settings.
 
 ## Key Decisions
 

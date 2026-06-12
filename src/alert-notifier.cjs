@@ -141,7 +141,7 @@ function sendSnsAlert(payload, settings, options = {}) {
         encoding: "utf8",
         maxBuffer: 4 * 1024 * 1024,
         stdio: ["ignore", "pipe", "pipe"],
-        shell: shouldUseShellForAwsCli(),
+        shell: shouldShellForAwsCliBin(settings.awsCliBin),
         timeout: settings.snsTimeoutMs,
       }
     );
@@ -152,6 +152,10 @@ function sendSnsAlert(payload, settings, options = {}) {
 
 function highestSeverity(alerts) {
   return alerts.some((alert) => alert.severity === "critical") ? "critical" : "warning";
+}
+
+function shouldShellForAwsCliBin(configuredBin) {
+  return String(configuredBin || "") === awsCliBin() && shouldUseShellForAwsCli();
 }
 
 function truncate(value, maxLength) {
@@ -190,4 +194,5 @@ module.exports = {
   alertNotifierSettingsFromEnv,
   alertPayload,
   sendAlerts,
+  shouldShellForAwsCliBin,
 };
