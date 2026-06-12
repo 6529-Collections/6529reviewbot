@@ -162,10 +162,13 @@ merged PRs.
   `f3792a3`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Review-runner diagnostic redaction PR: merged as PR #103, merge commit
   `b02b32e`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-utility-cli-errors`
-- Current local changes: utility CLI fatal handlers now print bounded redacted
-  one-line diagnostics through `safeErrorLine`; validator path prefixes redact
-  common secret shapes; smoke tests cover both paths.
+- Utility CLI diagnostic redaction PR: merged as PR #104, merge commit
+  `3337d1a`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/redact-manifest-conversion-errors`
+- Current local changes: GitHub App manifest conversion error response bodies
+  and summary strings redact common secret shapes before operator-facing
+  output; smoke tests cover failed conversion response redaction and summary
+  path/string redaction.
 
 ## Key Decisions
 
@@ -304,9 +307,10 @@ merged PRs.
 - Admin auth config and incoming assertions should share the same role format
   contract. Misconfigured required roles should fail during startup/preflight,
   not after operators discover that every admin request is denied.
-- Review-runner provider failures and utility CLI fatal errors can land in
-  worker or operator logs. They should use the same shared redaction helper as
-  app server, ledger, alert, and preflight diagnostics.
+- Review-runner provider failures, utility CLI fatal errors, and manifest
+  conversion diagnostics can land in worker or operator logs. They should use
+  the same shared redaction helper as app server, ledger, alert, and preflight
+  diagnostics.
 - Documentation quality should be enforced with local link checks, not only
   manual sweeps, because the repo's public docs surface is now large enough
   for stale internal links to become a release risk.
@@ -374,7 +378,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the utility CLI diagnostic redaction PR.
+1. Validate, publish, and merge the manifest-conversion diagnostic redaction
+   PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

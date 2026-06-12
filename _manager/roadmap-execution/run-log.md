@@ -1160,3 +1160,18 @@
   - `git diff --check` passed;
   - targeted scan found no remaining raw stack/error-message fatal printing in
     `bin/`.
+- Merged `6529reviewbot` PR #104 as `3337d1a` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27435143416`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27435143456`, completed successfully.
+- Started `codex/redact-manifest-conversion-errors` increment:
+  - redact GitHub App manifest conversion HTTP error response bodies;
+  - redact common secret shapes in manifest conversion summaries, including
+    output paths and GitHub-owned strings;
+  - add smoke coverage for failed conversion response redaction and summary
+    redaction.
+- Local validation for `codex/redact-manifest-conversion-errors`:
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

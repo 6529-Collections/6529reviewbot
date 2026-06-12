@@ -3263,6 +3263,48 @@ async function runManifestConversionSmoke() {
   assert.equal(formatted.includes("client-secret"), false);
   assert.equal(formatted.includes("webhook-secret"), false);
   assert.equal(formatted.includes("PRIVATE KEY"), false);
+  const unsafeOutputPath = path.join(
+    outputDir,
+    "github_pat_abcdefghijklmnopqrstuvwxyz1234567890.json"
+  );
+  const unsafeSummary = githubAppManifestConversion.manifestConversionSummary(
+    {
+      id: 456,
+      slug: "sk-proj-abcdefghijklmnopqrstuvwx123456",
+      name: "6529bot",
+      owner: { login: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890" },
+      html_url: "https://github.com/apps/sk-ant-api03-secretvalue1234567890",
+      external_url: "https://github.com/6529-Collections/6529reviewbot",
+      client_id: "client-id",
+      client_secret: "client-secret",
+      webhook_secret: "webhook-secret",
+      pem: "-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----\n",
+    },
+    { outputPath: unsafeOutputPath }
+  );
+  assert.equal(unsafeSummary.slug.includes("sk-proj-"), false);
+  assert.equal(unsafeSummary.owner.includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
+  assert.equal(unsafeSummary.outputPath.includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
+  await assert.rejects(
+    () =>
+      githubAppManifestConversion.createGitHubAppFromManifest({
+        allowNoAuth: true,
+        code: "abc123",
+        fetchImpl: async () => ({
+          ok: false,
+          status: 400,
+          text: async () =>
+            "bad github_pat_abcdefghijklmnopqrstuvwxyz1234567890 sk-ant-api03-secretvalue1234567890",
+        }),
+      }),
+    (error) => {
+      assert(error.message.includes("github_pat_[redacted]"));
+      assert(error.message.includes("sk-[redacted]"));
+      assert.equal(error.message.includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
+      assert.equal(error.message.includes("sk-ant-api03-secretvalue"), false);
+      return true;
+    }
+  );
   return summary;
 }
 
