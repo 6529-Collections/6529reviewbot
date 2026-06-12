@@ -291,6 +291,7 @@ Completed in `6529reviewbot`:
 - repeatable release check script and manual security review checklist.
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
+- repeatable Aurora ledger schema tooling.
 
 In progress in `6529reviewbot`:
 

@@ -13,8 +13,10 @@ const budgetLedger = require("../src/budget-ledger.cjs");
 const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
+const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
+const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -148,6 +150,28 @@ const jobWriteResult = jobLedger.writeJobEvent(
 );
 assert.equal(jobWriteResult.skipped, false);
 assert.equal(capturedJobLedgerWrite.options.tempPrefix, "6529-job-ledger-");
+const renderedLedgerSchema = ledgerSchema.renderLedgerSchema("reviewbot");
+assert.match(renderedLedgerSchema, /ai_review_usage_events/);
+assert.match(renderedLedgerSchema, /ai_review_job_events/);
+assert.match(renderedLedgerSchema, /daily_ai_review_spend_by_requester/);
+assert.throws(() => ledgerSchema.ledgerSchemaStatements("reviewbot;drop"), /Invalid SQL identifier/);
+let appliedSchemaStatements = 0;
+ledgerSchema.applyLedgerSchema(jobLedgerSettings, {
+  schema: "reviewbot",
+  executeStatement: (settings, sql, parameters, options) => {
+    assert.equal(settings.schema, "reviewbot");
+    assert.equal(parameters.length, 0);
+    assert.equal(options.tempPrefix, "6529-ledger-schema-");
+    assert.match(sql, /reviewbot/);
+    appliedSchemaStatements += 1;
+    return {};
+  },
+});
+assert.equal(appliedSchemaStatements, ledgerSchema.ledgerSchemaStatements("reviewbot").length);
+assert.deepEqual(
+  applyLedgerSchemaCli.parseArgs(["--schema", "reviewbot", "--apply"]),
+  { apply: true, schema: "reviewbot" }
+);
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
   true

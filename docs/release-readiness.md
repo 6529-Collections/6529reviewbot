@@ -21,6 +21,7 @@ Ready for community review:
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
+- repeatable Aurora ledger schema tooling;
 - 6529.io admin auth bridge contract;
 - scheduled spend alerts with stdout, webhook, and SNS delivery;
 - dogfood runbook, conservative config templates, and repository config

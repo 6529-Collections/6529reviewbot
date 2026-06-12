@@ -91,6 +91,13 @@ REVIEW_USAGE_DB_NAME
 REVIEW_USAGE_DB_SCHEMA
 ```
 
+Before enabling live writes, apply the ledger schema from a configured
+operator environment:
+
+```bash
+npm run ledger:schema -- --apply
+```
+
 The App server dispatches each admitted job with the target installation id.
 The worker mints a short-lived GitHub App installation token inside the central
 workflow and uses it for target checkout, PR reads, and comment writes. Target
@@ -133,6 +140,8 @@ or GitHub App private keys.
 - Pull request and issue-comment events are normalized.
 - A saved pull request delivery can be replayed with `npm run webhook:replay`
   in dry-run mode.
+- `npm run ledger:schema` prints the expected ledger schema, and
+  `npm run ledger:schema -- --apply` has been run in the target database.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - `noop` mode returns jobs without dispatching workers.

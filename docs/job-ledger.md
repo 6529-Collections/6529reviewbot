@@ -68,6 +68,9 @@ only if losing job audit rows is worse than rejecting webhook work.
 
 ## Table
 
+`npm run ledger:schema` prints the canonical schema for the job ledger and the
+related usage/budget tables. The table below is included here for quick review.
+
 Recommended table:
 
 ```sql

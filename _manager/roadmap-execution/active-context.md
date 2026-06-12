@@ -37,9 +37,10 @@ merged PRs.
 - v0 release plan PR: merged as PR #21, merge commit `9a5b5e9`
 - Webhook replay diagnostics PR: merged as PR #22, merge commit `ea7a118`
 - Model catalog defaults PR: merged as PR #23, merge commit `8cba107`
-- Current branch: `codex/job-state-ledger`
-- Current local changes: durable job lifecycle ledger, App recording hook,
-  smoke coverage, and operator docs
+- Job lifecycle ledger PR: merged as PR #24, merge commit `91701f2`
+- Current branch: `codex/ledger-schema-tooling`
+- Current local changes: repeatable Aurora ledger schema module, dry-run/apply
+  CLI, smoke coverage, and operator docs
 
 ## Key Decisions
 
@@ -59,6 +60,8 @@ merged PRs.
 - `6529.io` owns user/session auth secrets.
 - Job lifecycle telemetry is operational audit data and remains separate from
   provider usage/cost rows.
+- Ledger schema changes should go through the repeatable schema CLI and release
+  docs, not only hand-written SQL snippets in prose.
 
 ## Constraints
 
@@ -70,11 +73,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate and publish the job lifecycle ledger PR.
-2. Monitor bot feedback and merge the job ledger PR if clean.
+1. Validate and publish the ledger schema tooling PR.
+2. Monitor bot feedback and merge the schema tooling PR if clean.
 3. Continue dogfood target-repo PRs once required human review completes.
-4. Prepare the next release-polish or operator-readiness slice after the job
-   ledger PR lands.
+4. Prepare the next release-polish or operator-readiness slice after the schema
+   tooling PR lands.
 
 ## Open Risks
 
@@ -86,7 +89,7 @@ merged PRs.
 - Public usage summaries require explicit repo/org allowlists before repo names
   are disclosed; otherwise repo detail collapses to `private`.
 - OpenRouter/OpenAI/Anthropic model pricing needs a maintained update process.
-- Job ledger table creation still needs to be applied in the target Aurora
-  database during deployment.
+- Ledger schema still needs to be applied in the target Aurora database during
+  deployment.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.

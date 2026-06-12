@@ -45,6 +45,8 @@ Target deployment:
 - Long-lived target repository bot tokens are not required for central workers.
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
 - AWS access uses OIDC or Data API configuration scoped to the reviewbot ledger.
+- Ledger schema changes are reflected in `npm run ledger:schema` and reviewed
+  before applying to Aurora.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
 - Public usage summaries redact private repo names unless allowlisted.
