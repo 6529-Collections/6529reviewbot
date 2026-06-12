@@ -31,6 +31,7 @@ repositories.
 
 - Worker path:
 - GitHub Actions dispatch mode:
+- GitHub Actions dispatch token source:
 - App server runtime:
 - Container image digest, if used:
 - GitHub App permissions/events:

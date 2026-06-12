@@ -6,6 +6,7 @@ const { alertNotifierSettingsFromEnv } = require("./alert-notifier.cjs");
 const { budgetPolicyFromEnv } = require("./budget-admission.cjs");
 const { assertDataApiSettings } = require("./data-api.cjs");
 const {
+  githubAppAuthSettingsFromWorkerDispatchEnv,
   githubAppAuthSettingsFromEnv,
   isGitHubAppAuthConfigured,
 } = require("./github-app-auth.cjs");
@@ -150,16 +151,34 @@ function runPreflight(options = {}) {
   check(result, "worker_adapter", () => {
     const policy = workerAdapterPolicyFromEnv(env);
     state.workerPolicy = policy;
+    const workerDispatchGitHubAppSettings =
+      githubAppAuthSettingsFromWorkerDispatchEnv(env);
+    const githubAppConfigured =
+      isGitHubAppAuthConfigured(workerDispatchGitHubAppSettings) ||
+      isGitHubAppAuthConfigured(state.githubAppSettings || {});
+    const hasApiDispatchTokenSource =
+      Boolean(policy.githubToken) ||
+      Boolean(policy.githubInstallationId && githubAppConfigured);
     if (policy.mode === "noop") {
       addWarning(result, "worker_adapter", "Worker adapter is noop; admitted jobs will not execute.");
     }
     if (policy.mode === "github_actions" && !policy.githubRepo) {
       throw new Error("REVIEWBOT_WORKER_GITHUB_REPO or GITHUB_REPOSITORY is required for github_actions.");
     }
-    if (policy.mode === "github_actions" && policy.githubDispatchMode === "api" && !policy.githubToken) {
-      throw new Error("REVIEWBOT_WORKER_GITHUB_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required for github_actions API dispatch.");
+    if (
+      policy.mode === "github_actions" &&
+      policy.githubDispatchMode === "api" &&
+      !hasApiDispatchTokenSource
+    ) {
+      throw new Error(
+        "REVIEWBOT_WORKER_GITHUB_TOKEN, GH_TOKEN, GITHUB_TOKEN, or REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID with GitHub App auth is required for github_actions API dispatch."
+      );
     }
-    if (policy.mode === "github_actions" && policy.githubDispatchMode === "auto" && !policy.githubToken) {
+    if (
+      policy.mode === "github_actions" &&
+      policy.githubDispatchMode === "auto" &&
+      !hasApiDispatchTokenSource
+    ) {
       addWarning(result, "worker_adapter", "GitHub Actions dispatch has no API token; the server will fall back to the gh CLI.");
     }
     return {
@@ -170,6 +189,7 @@ function runPreflight(options = {}) {
       githubDispatchMode: policy.githubDispatchMode,
       githubApiUrl: policy.githubApiUrl,
       githubTokenConfigured: Boolean(policy.githubToken),
+      githubInstallationIdConfigured: Boolean(policy.githubInstallationId),
     };
   });
 

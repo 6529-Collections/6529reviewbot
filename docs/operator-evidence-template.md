@@ -75,6 +75,9 @@ Image contains no committed .env or private evidence files:
 Health check /healthz result:
 Worker adapter:
 GitHub Actions dispatch mode:
+Dispatch App installation id configured:
+Dispatch App limited to central bot repository:
+Target-repository App has no Actions write permission:
 Dispatch token stored only in bot secret store:
 ```
 

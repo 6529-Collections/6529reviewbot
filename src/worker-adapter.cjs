@@ -41,6 +41,10 @@ function workerAdapterPolicyFromEnv(env = process.env) {
     ),
     githubToken:
       env.REVIEWBOT_WORKER_GITHUB_TOKEN || env.GH_TOKEN || env.GITHUB_TOKEN || "",
+    githubInstallationId:
+      env.REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID ||
+      env.REVIEWBOT_WORKER_GITHUB_APP_INSTALLATION_ID ||
+      "",
     githubApiUrl: trimTrailingSlash(
       env.REVIEWBOT_WORKER_GITHUB_API_URL ||
         env.GITHUB_API_URL ||

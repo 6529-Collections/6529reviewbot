@@ -168,6 +168,14 @@ The central GitHub Actions worker template also mints a short-lived installation
 token for the target repository. It uses the `installation_id` dispatched with
 each review job, so target repositories do not need a long-lived bot token.
 
+Workflow dispatch is a separate credential boundary. Production server
+deployments should prefer a dispatch-only GitHub App configured with
+`REVIEWBOT_WORKER_GITHUB_APP_*`, installed only on the central bot repository
+with `Actions: write`. The target-repository App manifest intentionally does
+not request `Actions: write`. Reusing the main App for dispatch is supported
+only after operators explicitly accept that broader permission on every
+repository where the App is installed.
+
 This keeps target repositories from owning bot GitHub tokens while still
 allowing the central App to enforce trusted-actor admission.
 
