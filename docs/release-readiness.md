@@ -66,6 +66,8 @@ Ready for community review:
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
 - OpenSSF Scorecard keeps workflow-level permissions read-only and scopes
   `security-events: write` plus `id-token: write` to the Scorecard job;
+- GitHub Action pins use commit SHAs that belong to the action repository;
+  annotated release tags are peeled before pinning;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
   dry-run mode;
 - machine-readable v0 release gates with optional status/evidence rendering;

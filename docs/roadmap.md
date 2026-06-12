@@ -335,6 +335,8 @@ Completed in `6529reviewbot`:
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
   verification.
+- GitHub Action checkout pins use the peeled commit SHA for annotated release
+  tags.
 - documentation link checker for the public docs surface.
 - public artifact leak scanner for docs, examples, workflows, and durable
   manager memory.
