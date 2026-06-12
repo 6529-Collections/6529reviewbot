@@ -163,4 +163,7 @@ Each alert has:
 The payload is safe for operators, but it can include private repo names,
 requestors, providers, model names, job ids, and failure reasons. Route it
 through private notification channels unless the configured deployment
-explicitly treats this data as public.
+explicitly treats this data as public. Before dry-run output or notification
+delivery, the notifier redacts common bearer, GitHub, provider-key,
+alert-webhook, AWS access-key id, and private-key shapes from alert strings,
+bounds nested payload size, and omits unsafe or secret-shaped custom keys.

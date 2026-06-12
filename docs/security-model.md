@@ -122,6 +122,9 @@ and capped before dry-run SQL output or DB apply. Admin API job-event and
 runtime-status responses sanitize loader output again before returning JSON:
 diagnostic strings are bounded and redacted, job-event metadata is limited to
 safe-keyed scalar values, and unsafe custom diagnostic nesting is omitted.
+Scheduled alert payloads are sanitized at the notifier boundary before dry-run
+summaries, stdout, webhook, or SNS delivery so secret-shaped scope values,
+titles, messages, job ids, or custom keys do not leave the bot unchanged.
 Redaction is a guardrail, not permission to publish verbose worker diagnostics
 or store sensitive details in operator notes.
 

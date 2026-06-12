@@ -5,9 +5,14 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { awsCliBin, shouldUseShellForAwsCli } = require("./data-api.cjs");
-const { safeErrorLine } = require("./diagnostics.cjs");
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 
 const NOTIFY_MODES = ["none", "stdout", "webhook", "sns"];
+const ALERT_TEXT_MAX_CHARS = 1000;
+const ALERT_ARRAY_MAX_ITEMS = 100;
+const ALERT_OBJECT_MAX_KEYS = 100;
+const ALERT_MAX_DEPTH = 6;
+const ALERT_KEY_PATTERN = /^[A-Za-z0-9_.:-]{1,80}$/;
 
 function alertNotifierSettingsFromEnv(env = process.env) {
   return {
@@ -36,7 +41,7 @@ function alertNotifierSettingsFromEnv(env = process.env) {
 }
 
 async function sendAlerts(alerts, options = {}) {
-  const normalizedAlerts = Array.isArray(alerts) ? alerts : [];
+  const normalizedAlerts = sanitizeAlerts(alerts);
   const settings = options.settings || alertNotifierSettingsFromEnv(options.env);
   if (normalizedAlerts.length === 0) {
     return {
@@ -83,14 +88,64 @@ async function sendAlerts(alerts, options = {}) {
 }
 
 function alertPayload(alerts, options = {}) {
+  const safeAlerts = sanitizeAlerts(alerts);
   return {
     ok: true,
     generatedAt: (options.now ? new Date(options.now) : new Date()).toISOString(),
     source: "6529reviewbot",
-    alertCount: alerts.length,
-    highestSeverity: highestSeverity(alerts),
-    alerts,
+    alertCount: safeAlerts.length,
+    highestSeverity: highestSeverity(safeAlerts),
+    alerts: safeAlerts,
   };
+}
+
+function sanitizeAlerts(alerts) {
+  return (Array.isArray(alerts) ? alerts : [])
+    .map((alert) => sanitizeAlertValue(alert))
+    .filter((alert) => alert && typeof alert === "object" && !Array.isArray(alert));
+}
+
+function sanitizeAlertValue(value, depth = ALERT_MAX_DEPTH) {
+  if (value === undefined || value === null) {
+    return null;
+  }
+  if (typeof value === "string") {
+    return safeAlertText(value);
+  }
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (depth <= 0) {
+    return "[nested value omitted]";
+  }
+  if (Array.isArray(value)) {
+    return value
+      .slice(0, ALERT_ARRAY_MAX_ITEMS)
+      .map((item) => sanitizeAlertValue(item, depth - 1));
+  }
+  if (typeof value === "object") {
+    const result = {};
+    for (const [key, item] of Object.entries(value).slice(0, ALERT_OBJECT_MAX_KEYS)) {
+      if (!isSafeAlertKey(key)) {
+        continue;
+      }
+      result[key] = sanitizeAlertValue(item, depth - 1);
+    }
+    return result;
+  }
+  return "";
+}
+
+function safeAlertText(value, maxChars = ALERT_TEXT_MAX_CHARS) {
+  return redactSensitiveText(value).slice(0, maxChars);
+}
+
+function isSafeAlertKey(key) {
+  const text = String(key || "");
+  return ALERT_KEY_PATTERN.test(text) && redactSensitiveText(text) === text;
 }
 
 async function sendWebhookAlert(payload, settings, options = {}) {
@@ -194,6 +249,8 @@ module.exports = {
   NOTIFY_MODES,
   alertNotifierSettingsFromEnv,
   alertPayload,
+  sanitizeAlerts,
+  sanitizeAlertValue,
   sendAlerts,
   shouldShellForAwsCliBin,
 };

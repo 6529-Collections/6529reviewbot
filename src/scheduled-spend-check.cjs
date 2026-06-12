@@ -1,7 +1,7 @@
 "use strict";
 
 const { readEnabledBudgetPolicies } = require("./budget-ledger.cjs");
-const { alertNotifierSettingsFromEnv, sendAlerts } = require("./alert-notifier.cjs");
+const { alertNotifierSettingsFromEnv, sanitizeAlerts, sendAlerts } = require("./alert-notifier.cjs");
 const {
   ACTIVE_CLAIM_STATUSES,
   FAILURE_STATUSES,
@@ -62,7 +62,7 @@ async function runScheduledSpendCheck(options = {}) {
       apiSettings: settings.apiSettings,
     });
   const budgetPolicies = options.budgetPolicies || readEnabledBudgetPolicies(settings.ledgerSettings);
-  const alerts = [
+  const alerts = sanitizeAlerts([
     ...evaluateSpendAlerts({
       events,
       budgetPolicies,
@@ -70,7 +70,7 @@ async function runScheduledSpendCheck(options = {}) {
       policy: settings.alertPolicy,
     }),
     ...readAndEvaluateJobHealthAlerts(settings, options, now),
-  ];
+  ]);
   const notification = options.dryRun
     ? { ok: true, delivered: false, mode: "dry_run", alertCount: alerts.length }
     : await sendAlerts(alerts, {

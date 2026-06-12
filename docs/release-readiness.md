@@ -67,6 +67,8 @@ Ready for community review:
 - 6529.io admin auth bridge contract;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, and SNS delivery;
+- scheduled alert payloads redact common secret-shaped strings and unsafe
+  custom keys before dry-run, stdout, webhook, or SNS output;
 - no-network production preflight command;
 - release-time preflight fixtures for central App server and worker
   configuration postures;
