@@ -1,7 +1,10 @@
 "use strict";
 
 const { assertDataApiSettings, executeStatement } = require("./data-api.cjs");
+const { BUDGET_SCOPES } = require("./budget-admission.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
+
+const BUDGET_SCOPE_VALUES_SQL = BUDGET_SCOPES.map(sqlString).join(", ");
 
 function ledgerSchemaStatements(schema = "reviewbot") {
   const schemaIdent = quoteIdent(schema);
@@ -144,6 +147,8 @@ create table if not exists ${schemaIdent}.ai_review_budget_policies (
   monthly_budget_usd numeric(18, 8),
   enabled boolean not null default true,
   notes text,
+  constraint ai_review_budget_policies_scope_type_check
+    check (scope_type in (${BUDGET_SCOPE_VALUES_SQL})),
   unique (scope_type, scope_value)
 )`,
     },
@@ -152,6 +157,26 @@ create table if not exists ${schemaIdent}.ai_review_budget_policies (
       sql: `
 alter table ${schemaIdent}.ai_review_budget_policies
   add column if not exists notes text`,
+    },
+    {
+      name: "normalize_budget_policies_requester_scope",
+      sql: `
+update ${schemaIdent}.ai_review_budget_policies
+set scope_type = 'requestor'
+where scope_type = 'requester'`,
+    },
+    {
+      name: "drop_budget_policies_scope_type_check",
+      sql: `
+alter table ${schemaIdent}.ai_review_budget_policies
+  drop constraint if exists ai_review_budget_policies_scope_type_check`,
+    },
+    {
+      name: "add_budget_policies_scope_type_check",
+      sql: `
+alter table ${schemaIdent}.ai_review_budget_policies
+  add constraint ai_review_budget_policies_scope_type_check
+  check (scope_type in (${BUDGET_SCOPE_VALUES_SQL}))`,
     },
     {
       name: "index_usage_repo_pr_created",
@@ -312,6 +337,10 @@ function renderLedgerSchema(schema = "reviewbot") {
   return ledgerSchemaStatements(schema)
     .map((statement) => `-- ${statement.name}\n${statement.sql.trim()};`)
     .join("\n\n");
+}
+
+function sqlString(value) {
+  return `'${String(value).replace(/'/g, "''")}'`;
 }
 
 module.exports = {

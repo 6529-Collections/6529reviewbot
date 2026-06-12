@@ -393,6 +393,12 @@ assert.match(renderedLedgerSchema, /ai_review_run_claims/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_model_prices/);
 assert.match(renderedLedgerSchema, /add column if not exists source_url text/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_review_budget_policies/);
+assert.match(renderedLedgerSchema, /set scope_type = 'requestor'\s+where scope_type = 'requester'/);
+assert.match(renderedLedgerSchema, /drop constraint if exists ai_review_budget_policies_scope_type_check/);
+assert.match(
+  renderedLedgerSchema,
+  /scope_type in \('global', 'org', 'repo', 'requestor', 'pr', 'provider', 'model', 'review_kind'\)/
+);
 assert.match(renderedLedgerSchema, /drop view if exists "reviewbot"\.daily_ai_review_spend_by_requester/);
 assert.match(renderedLedgerSchema, /daily_ai_review_spend_by_requester/);
 assert.throws(() => ledgerSchema.ledgerSchemaStatements("reviewbot;drop"), /Invalid SQL identifier/);

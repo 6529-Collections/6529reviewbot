@@ -71,6 +71,17 @@ Supported scopes:
 - `model`, with an exact configured model id;
 - `review_kind`, with `general`, `followup`, `wcag`, `i18n`, or `security`.
 
+Older dogfood ledgers may still have a database check constraint from before
+`org`, `requestor`, and `pr` were finalized. Before applying budget policies
+there, run the ledger schema apply command from the operator environment:
+
+```bash
+npm run ledger:schema -- -- --apply
+```
+
+It refreshes the managed constraint and normalizes the legacy `requester`
+spelling to `requestor`.
+
 Enabled policies must include at least one of `dailyUsd`, `weeklyUsd`, or
 `monthlyUsd`. Use `"enabled": false` to intentionally disable an existing row.
 

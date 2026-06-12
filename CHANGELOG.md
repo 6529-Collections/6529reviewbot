@@ -46,6 +46,8 @@ stabilized.
   view definition updates.
 - Ledger schema re-apply adds missing managed columns for older dogfood
   databases.
+- Ledger schema re-apply refreshes the managed budget-scope check constraint
+  for older dogfood databases.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.

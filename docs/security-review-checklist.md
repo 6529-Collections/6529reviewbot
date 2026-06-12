@@ -62,6 +62,8 @@ Target deployment:
   view definitions in production.
 - Additive table migrations preserve existing ledger data and do not require
   operators to hand-edit Aurora columns.
+- Managed budget-scope constraints match the canonical app scopes, including
+  `org`, `requestor`, and `pr`.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
 - Central DB budget policy rows are reviewed, applied from operator-owned

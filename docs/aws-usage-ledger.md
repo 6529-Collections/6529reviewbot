@@ -72,9 +72,15 @@ The apply mode uses the RDS Data API settings below. It is intentionally
 explicit; the default command is a dry run.
 
 The schema command is safe to re-run. It uses `create table if not exists`,
-additive `alter table ... add column if not exists` migrations, `create index
-if not exists`, and recreates only the bot-managed daily aggregate views so
-column and view changes do not block deployment.
+additive `alter table ... add column if not exists` migrations, managed
+constraint refreshes, `create index if not exists`, and recreates only the
+bot-managed daily aggregate views so column, constraint, and view changes do
+not block deployment.
+
+The budget policy table uses the app's canonical budget scope vocabulary:
+`global`, `org`, `repo`, `requestor`, `pr`, `provider`, `model`, and
+`review_kind`. Re-applying the schema also normalizes the older `requester`
+spelling to `requestor` before refreshing the managed check constraint.
 
 Use a non-default schema name only when the deployment intentionally separates
 bot data:
