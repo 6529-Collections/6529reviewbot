@@ -24,6 +24,8 @@ requests.
   Serverless v2 database.
 - Expands each admitted trigger into explicit review jobs so the same review
   kind can run through multiple provider/model lanes when configured.
+- Supports base-ref repository configuration for per-repo review kinds, lane
+  selection, admission tightening, and budget caps.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
@@ -127,6 +129,17 @@ REVIEWBOT_USAGE_API_MAX_DAYS=365
 REVIEWBOT_USAGE_API_PUBLIC_ORGS=6529-Collections
 ```
 
+Repository config:
+
+```text
+REVIEWBOT_REPOSITORY_CONFIG_SOURCE=none|github
+REVIEWBOT_REPOSITORY_CONFIG_REQUIRED=false
+```
+
+When enabled, the App reads `.github/6529bot.yml` or another supported config
+file from the target repository's base ref. Repo config can narrow central
+policy, but it cannot add unapproved model lanes or raise central budget caps.
+
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
@@ -173,6 +186,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [GitHub App](docs/github-app.md)
+- [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
 - [Usage API](docs/usage-api.md)
 - [Admission policy](docs/admission-policy.md)

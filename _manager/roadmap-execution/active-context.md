@@ -20,10 +20,12 @@ merged PRs.
 - Review job interface PR: merged as PR #8, merge commit `43dfbea`
 - Usage API contract PR: merged as PR #9, merge commit `f5af840`
 - Aurora usage loader PR: merged as PR #10, merge commit `edaadc6`
+- Dashboard progress docs PR: merged as PR #11, merge commit `f635a2d`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `main`
-- Current local changes: none
+- Current branch: `codex/repo-org-config-policy`
+- Current local changes: repo configuration loading, validation, docs, and
+  smoke tests in progress
 
 ## Key Decisions
 
@@ -33,6 +35,9 @@ merged PRs.
   implementation code.
 - Public repos need trusted-actor admission before model calls to prevent
   budget abuse.
+- Repository config is read from the target repo base ref, not the PR head.
+- Repository config can narrow central policy but cannot expand model lanes or
+  raise central budget caps.
 - Usage/cost aggregates may be public on 6529.io.
 - Private admin controls should live on 6529.io behind the existing 6529 auth
   system.
@@ -49,12 +54,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Add repo/org configuration loading and validation.
-2. Add public comment-command parser/config docs refinements.
-3. Add worker execution adapters beyond the current job interface.
-4. Add admin auth bridge contract for 6529.io private controls.
-5. Add alerting and scheduled budget-spike checks.
-6. Sweep docs for community-release readiness.
+1. Finish, PR, and merge repo/org configuration loading and validation.
+2. Add worker execution adapters beyond the current job interface.
+3. Add admin auth bridge contract for 6529.io private controls.
+4. Add alerting and scheduled budget-spike checks.
+5. Sweep docs for community-release readiness.
 
 ## Open Risks
 

@@ -25,5 +25,8 @@
     "review:wcag": "node bin/wcag-aa-analysis.cjs",
     "review:i18n": "node bin/i18n-analysis.cjs",
     "review:security": "node bin/security-analysis.cjs"
+  },
+  "dependencies": {
+    "yaml": "^2.9.0"
   }
 }

@@ -33,6 +33,7 @@ The runner is responsible for:
 
 - resolving the target PR;
 - verifying GitHub webhook signatures before routing events;
+- loading base-ref repository configuration when enabled;
 - evaluating admission policy before queueing model work;
 - expanding admitted events into explicit review jobs;
 - evaluating budget policy per review job before queueing model work;
@@ -44,6 +45,11 @@ The runner is responsible for:
 Review jobs are the contract between the App and workers. One job represents
 one repository, PR, head SHA, review kind, provider, and model. This allows the
 same review kind to run through multiple model lanes without collisions.
+
+Repository configuration is read from the target repository's base ref. It can
+disable work, narrow review kinds, choose from centrally allowed lanes, and add
+tighter budget/admission rules. It cannot expand model/provider access beyond
+central App policy.
 
 ## 3. Review Engine
 
@@ -93,6 +99,7 @@ The bot treats target PR content as hostile:
 
 - It never executes target repo code.
 - It reads changed files only as text.
+- It reads repo config from the base ref, not the PR head.
 - It rejects unsafe paths and symlinks.
 - It trusts hidden metadata only from configured bot authors.
 - It strips hidden bot metadata before comments are placed in prompts.

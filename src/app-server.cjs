@@ -19,6 +19,17 @@ const {
   reviewJobPolicyFromEnv,
 } = require("./review-job.cjs");
 const {
+  applyRepositoryConfigToEvent,
+  defaultRepositoryConfig,
+  loadRepositoryConfigForEvent,
+  mergeRepositoryAdmissionPolicy,
+  mergeRepositoryBudgetPolicy,
+  mergeRepositoryJobPolicy,
+  publicRepositoryConfigSummary,
+  repositoryConfigBlocksWork,
+  repositoryConfigPolicyFromEnv,
+} = require("./repository-config.cjs");
+const {
   handleUsageApiRequest,
   isUsageApiPath,
   usageApiSettingsFromEnv,
@@ -42,6 +53,11 @@ function createReviewbotServer(options = {}) {
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = options.estimateBudgetCost || defaultEstimateBudgetCost;
   const jobPolicy = options.jobPolicy || reviewJobPolicyFromEnv();
+  const repositoryConfigPolicy =
+    options.repositoryConfigPolicy || repositoryConfigPolicyFromEnv();
+  const loadRepositoryConfig =
+    options.loadRepositoryConfig ||
+    ((event) => loadRepositoryConfigForEvent(event, { policy: repositoryConfigPolicy }));
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
   const logger = options.logger || console;
 
@@ -56,6 +72,8 @@ function createReviewbotServer(options = {}) {
         resolveBudgetSnapshot,
         estimateBudgetCost,
         jobPolicy,
+        repositoryConfigPolicy,
+        loadRepositoryConfig,
         usageApiSettings,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
@@ -119,6 +137,8 @@ async function handleHttpRequest(request, options) {
     resolveBudgetSnapshot: options.resolveBudgetSnapshot,
     estimateBudgetCost: options.estimateBudgetCost,
     jobPolicy: options.jobPolicy,
+    repositoryConfigPolicy: options.repositoryConfigPolicy,
+    loadRepositoryConfig: options.loadRepositoryConfig,
   });
 }
 
@@ -139,29 +159,72 @@ async function handleGitHubWebhook(input) {
     };
   }
 
+  const repositoryConfigPolicy =
+    input.repositoryConfigPolicy || repositoryConfigPolicyFromEnv();
+  const loadRepositoryConfig =
+    input.loadRepositoryConfig ||
+    ((nextEvent) => loadRepositoryConfigForEvent(nextEvent, { policy: repositoryConfigPolicy }));
+  const configLoad = normalizeConfigLoadResult(await loadRepositoryConfig(event));
+  const repositoryConfig = configLoad.config || defaultRepositoryConfig();
+  const configuration = publicRepositoryConfigSummary(configLoad, repositoryConfig);
+  if (repositoryConfigBlocksWork(configLoad, repositoryConfigPolicy)) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(event),
+        configuration,
+      },
+    };
+  }
+
+  const configuredEvent = applyRepositoryConfigToEvent(event, repositoryConfig);
+  if (!configuredEvent.shouldEnqueue) {
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        enqueued: false,
+        event: publicEventSummary(configuredEvent),
+        configuration,
+      },
+    };
+  }
+
   const resolveActorContext = input.resolveActorContext || defaultResolveActorContext;
-  const actorContext = await resolveActorContext(event);
-  const admission = evaluateAdmission(event, actorContext, input.admissionPolicy || admissionPolicyFromEnv());
+  const actorContext = await resolveActorContext(configuredEvent);
+  const admissionPolicy = mergeRepositoryAdmissionPolicy(
+    input.admissionPolicy || admissionPolicyFromEnv(),
+    repositoryConfig
+  );
+  const admission = evaluateAdmission(configuredEvent, actorContext, admissionPolicy);
   if (!admission.allowed) {
     return {
       statusCode: 200,
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(event),
+        event: publicEventSummary(configuredEvent),
+        configuration,
         admission,
       },
     };
   }
 
-  const candidateJobs = createReviewJobs(event, { admission }, input.jobPolicy || reviewJobPolicyFromEnv());
+  const jobPolicy = mergeRepositoryJobPolicy(
+    input.jobPolicy || reviewJobPolicyFromEnv(),
+    repositoryConfig
+  );
+  const candidateJobs = createReviewJobs(configuredEvent, { admission }, jobPolicy);
   if (candidateJobs.length === 0) {
     return {
       statusCode: 200,
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(event),
+        event: publicEventSummary(configuredEvent),
+        configuration,
         admission,
         jobs: [],
       },
@@ -173,9 +236,12 @@ async function handleGitHubWebhook(input) {
   const deniedJobs = [];
   const resolveBudgetSnapshot = input.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
   const estimateBudgetCost = input.estimateBudgetCost || defaultEstimateBudgetCost;
-  const budgetPolicy = input.budgetPolicy || budgetPolicyFromEnv();
+  const budgetPolicy = mergeRepositoryBudgetPolicy(
+    input.budgetPolicy || budgetPolicyFromEnv(),
+    repositoryConfig
+  );
   for (const job of candidateJobs) {
-    const jobEvent = eventForReviewJob(event, job);
+    const jobEvent = eventForReviewJob(configuredEvent, job);
     const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job);
     const estimate = await estimateBudgetCost(jobEvent, admission, job);
     const budget = evaluateBudgetAdmission({
@@ -202,7 +268,8 @@ async function handleGitHubWebhook(input) {
       body: {
         ok: true,
         enqueued: false,
-        event: publicEventSummary(event),
+        event: publicEventSummary(configuredEvent),
+        configuration,
         admission,
         budget,
         jobs: [],
@@ -213,9 +280,10 @@ async function handleGitHubWebhook(input) {
 
   const enqueueReviewJobs = input.enqueueReviewJobs || input.enqueueReview || defaultEnqueueReviewJobs;
   const enqueueResult = await enqueueReviewJobs(admittedJobs, {
-    event,
+    event: configuredEvent,
     admission,
     budget,
+    configuration,
     deniedJobs,
     allJobs: budgetedJobs,
   });
@@ -225,7 +293,8 @@ async function handleGitHubWebhook(input) {
     body: {
       ok: true,
       enqueued: accepted,
-      event: publicEventSummary(event),
+      event: publicEventSummary(configuredEvent),
+      configuration,
       admission,
       budget,
       jobs: admittedJobs.map(publicReviewJobSummary),
@@ -261,6 +330,17 @@ async function defaultEnqueueReviewJobs(jobs) {
   };
 }
 
+function normalizeConfigLoadResult(result) {
+  if (!result || typeof result !== "object") {
+    return {
+      status: "invalid",
+      reason: "Repository config loader returned an invalid result.",
+      config: defaultRepositoryConfig(),
+    };
+  }
+  return result;
+}
+
 function publicEventSummary(event) {
   return {
     kind: event.kind,
@@ -293,5 +373,6 @@ module.exports = {
   defaultResolveBudgetSnapshot,
   handleGitHubWebhook,
   handleHttpRequest,
+  normalizeConfigLoadResult,
   publicEventSummary,
 };

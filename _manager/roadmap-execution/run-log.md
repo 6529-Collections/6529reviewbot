@@ -64,3 +64,20 @@
     `http://localhost:3101/open-data/6529bot` with a local mock usage API.
 - PR #2605 is not merged yet because GitHub reports required review and
   pending CodeQL/Snyk/CodeRabbit checks.
+
+## 2026-06-12
+
+- Frontend PR #2605 initially reported one SonarCloud security hotspot caused
+  by an `ftp://` negative-path test fixture. Removed that fixture, tightened
+  the server-side usage API URL builder to require HTTPS except localhost, and
+  constrained the configurable summary path to same-origin paths. Pushed commit
+  `a24fdaaae` to the frontend PR.
+- Merged `6529reviewbot` PR #11 after CI, Dependency Review, and CodeRabbit
+  passed. Local `main` was fast-forwarded to `f635a2d`.
+- Started `codex/repo-org-config-policy` increment for target repository
+  configuration:
+  - strict YAML/JSON config parsing;
+  - GitHub contents loading from the base ref;
+  - restrictive merge with central admission, job lane, and budget policy;
+  - webhook integration before admission and budget checks;
+  - docs and a template config file.

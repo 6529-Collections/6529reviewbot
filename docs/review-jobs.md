@@ -69,6 +69,10 @@ OpenRouter lanes should name an explicit model:
 REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 ```
 
+Repository config may specify `lanes`, but those lanes are intersected with
+central `REVIEWBOT_REVIEW_LANES`. A target repo can opt into fewer allowed
+lanes; it cannot introduce a new provider or model by editing repo config.
+
 ## Fanout Limit
 
 Use this variable to cap accidental or malicious fanout:

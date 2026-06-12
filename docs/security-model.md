@@ -9,6 +9,7 @@ The main risks are:
 - letting PR authors execute code with secrets;
 - trusting spoofed bot metadata;
 - accepting forged GitHub webhook deliveries;
+- letting PR-controlled config expand model access or budget;
 - posting misleading review comments;
 - unbounded provider spend;
 - reading files outside the target checkout.
@@ -31,6 +32,15 @@ JSON parsing or event routing. Webhook bodies are capped by
 Public repositories require trusted actors by default. Admission policy runs
 before queueing review work, budget checks, or provider calls. If the app has
 not resolved actor trust, public repo events fail closed as untrusted.
+
+### Base-Ref Repository Config
+
+Repository config is read from the base ref, not the PR head. A PR author
+therefore cannot change `.github/6529bot.yml` in the same PR to unlock more
+model lanes, loosen admission, or raise budget. Repo config is also merged
+restrictively with central App policy: it can narrow review kinds, select from
+allowed lanes, and add tighter caps, but it cannot expand central provider or
+budget authority.
 
 ### Budget Before Providers
 
@@ -88,5 +98,6 @@ The usage ledger should use:
 - Can a changed file path escape the workspace?
 - Can secrets reach provider prompts or PR comments?
 - Does the workflow request broader permissions than needed?
+- Does repository config still come from the base ref and merge restrictively?
 - Does the change increase maximum spend or remove a hard cap?
 - Does AWS access remain scoped to the usage-ledger resources?
