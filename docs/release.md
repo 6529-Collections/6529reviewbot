@@ -26,6 +26,8 @@ After stabilization:
   `--status-file <operator-status-file>`, with deferred gates documented
 - `npm run release:check`
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
+- `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
+  when using GitHub's manifest flow for the release App
 - `npm run check:workflow-actions`
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed

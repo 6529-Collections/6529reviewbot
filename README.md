@@ -171,6 +171,12 @@ Render a production-hosted manifest without generating any secrets:
 npm run github-app:manifest -- -- --host https://reviewbot.example.com
 ```
 
+Convert GitHub's one-hour manifest code from a private operator environment:
+
+```bash
+npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+```
+
 Print the Aurora ledger schema without touching AWS:
 
 ```bash

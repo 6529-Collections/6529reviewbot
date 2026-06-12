@@ -4,6 +4,9 @@
 
 const assert = require("assert");
 const crypto = require("crypto");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const adminAuth = require("../src/admin-auth.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
@@ -17,6 +20,8 @@ const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
 const githubAppManifest = require("../src/github-app-manifest.cjs");
+const githubAppManifestConversion = require("../src/github-app-manifest-conversion.cjs");
+const githubAppManifestConversionCli = require("../bin/convert-github-app-manifest.cjs");
 const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
@@ -602,6 +607,50 @@ assert.deepEqual(
     state: "test-state",
     template: githubAppManifest.DEFAULT_GITHUB_APP_MANIFEST_TEMPLATE_PATH,
   }
+);
+assert.equal(
+  githubAppManifestConversion.normalizeManifestCode(
+    "https://reviewbot.example.com/github-app/manifest-complete?state=test&code=abc_123-XYZ"
+  ),
+  "abc_123-XYZ"
+);
+assert.throws(
+  () => githubAppManifestConversion.resolvePrivateOutputPath("private-app.json", {
+    cwd: path.resolve(__dirname, ".."),
+    repoRoot: path.resolve(__dirname, ".."),
+  }),
+  /Refusing to write/
+);
+assert.deepEqual(
+  githubAppManifestConversionCli.parseArgs([
+    "--code",
+    "abc123",
+    "--output",
+    "C:\\private\\6529bot-app.json",
+    "--token-env",
+    "GH_TOKEN",
+    "--json",
+    "--overwrite",
+  ]),
+  {
+    allowRepoOutput: false,
+    apiUrl: "",
+    code: "abc123",
+    json: true,
+    noAuth: false,
+    outputPath: "C:\\private\\6529bot-app.json",
+    overwrite: true,
+    timeoutMs: 0,
+    tokenEnv: "GH_TOKEN",
+  }
+);
+assert.equal(
+  githubAppManifestConversionCli.resolveToken(
+    { noAuth: false, tokenEnv: "CUSTOM_TOKEN" },
+    { token: "settings-token" },
+    { CUSTOM_TOKEN: "custom-token" }
+  ),
+  "custom-token"
 );
 
 assert.deepEqual(reviewBot.normalizeOpenAIUsage({
@@ -1703,6 +1752,8 @@ appServer.handleGitHubWebhook({
   },
   jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
+  const manifestConversionSummary = await runManifestConversionSmoke();
+  assert.equal(manifestConversionSummary.credentials.webhookSecret, "set");
   const githubActorContext = await githubActorContextPromise;
   assert.equal(githubActorContext.login, "maintainer");
   assert.equal(githubActorContext.permission, "write");
@@ -2203,6 +2254,53 @@ appServer.handleGitHubWebhook({
   console.error(error);
   process.exitCode = 1;
 });
+
+async function runManifestConversionSmoke() {
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-manifest-"));
+  const outputPath = path.join(outputDir, "app.json");
+  let capturedRequest = null;
+  const summary = await githubAppManifestConversion.convertGitHubAppManifest({
+    code: "abc123",
+    outputPath,
+    repoRoot: path.resolve(__dirname, ".."),
+    token: "operator-token",
+    fetchImpl: async (url, options = {}) => {
+      capturedRequest = { url: String(url), options };
+      return {
+        ok: true,
+        status: 201,
+        json: async () => ({
+          id: 123,
+          slug: "6529bot",
+          name: "6529bot",
+          owner: { login: "6529-Collections" },
+          html_url: "https://github.com/apps/6529bot",
+          external_url: "https://github.com/6529-Collections/6529reviewbot",
+          client_id: "client-id",
+          client_secret: "client-secret",
+          webhook_secret: "webhook-secret",
+          pem: "-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----\n",
+          permissions: { contents: "read", issues: "write" },
+          events: ["issue_comment", "pull_request"],
+        }),
+      };
+    },
+  });
+  assert.match(capturedRequest.url, /\/app-manifests\/abc123\/conversions$/);
+  assert.equal(capturedRequest.options.method, "POST");
+  assert.equal(capturedRequest.options.headers.authorization, "Bearer operator-token");
+  assert.equal(summary.id, 123);
+  assert.equal(summary.credentials.clientSecret, "set");
+  assert.equal(summary.credentials.pem, "set");
+  const written = JSON.parse(fs.readFileSync(outputPath, "utf8"));
+  assert.equal(written.webhook_secret, "webhook-secret");
+  const formatted = githubAppManifestConversion.formatManifestConversionSummary(summary);
+  assert.match(formatted, /GitHub App manifest conversion complete/);
+  assert.equal(formatted.includes("client-secret"), false);
+  assert.equal(formatted.includes("webhook-secret"), false);
+  assert.equal(formatted.includes("PRIVATE KEY"), false);
+  return summary;
+}
 
 function signedAdminHeadersFor(url, options = {}) {
   const roles = options.roles || ["reviewbot-admin", "admin"];

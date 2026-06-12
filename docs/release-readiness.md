@@ -40,6 +40,8 @@ Ready for community review:
 - reviewed GitHub App manifest template for production registration;
 - GitHub App manifest renderer for host-specific validation and local
   registration-form generation;
+- GitHub App manifest conversion CLI that writes one-time generated
+  credentials only to an explicit private output path;
 - GitHub App registration packet covering operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;

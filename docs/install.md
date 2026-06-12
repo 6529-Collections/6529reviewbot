@@ -53,6 +53,13 @@ npm run github-app:manifest -- -- --host https://reviewbot.example.com \
   --state <unguessable-state>
 ```
 
+After GitHub redirects back with the one-hour manifest code, exchange it from a
+private operator environment:
+
+```bash
+npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+```
+
 Minimum recommended permissions:
 
 ```text

@@ -69,6 +69,8 @@ stabilized.
   registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration-form output.
+- GitHub App manifest conversion CLI for one-time generated credentials with
+  explicit private output and redacted summaries.
 - GitHub App registration packet for operator roles, credential custody,
   post-registration checks, permission changes, rotation, and rollback.
 - Pinned central worker and alert workflow template actions plus a

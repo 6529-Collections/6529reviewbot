@@ -35,6 +35,7 @@
     "v0:gates": "node bin/v0-gates.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:manifest": "node bin/render-github-app-manifest.cjs",
+    "github-app:convert": "node bin/convert-github-app-manifest.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "check:workflow-actions": "node scripts/check-workflow-actions.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
