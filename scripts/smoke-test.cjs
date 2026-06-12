@@ -3,6 +3,7 @@
 "use strict";
 
 const assert = require("assert");
+const crypto = require("crypto");
 const adminAuth = require("../src/admin-auth.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
@@ -11,6 +12,7 @@ const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
 const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
+const githubAppAuth = require("../src/github-app-auth.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -147,6 +149,57 @@ assert.equal(
   repositoryConfig.repositoryConfigRefForEvent(normalizedPullRequest),
   "def456"
 );
+const githubAppKey = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey;
+const githubAppPrivateKey = githubAppKey.export({ type: "pkcs1", format: "pem" });
+const githubAppSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
+  REVIEWBOT_GITHUB_APP_ID: "12345",
+  REVIEWBOT_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
+});
+assert.equal(githubAppAuth.isGitHubAppAuthConfigured(githubAppSettings), true);
+assert.equal(githubAppAuth.createGitHubAppJwt(githubAppSettings).split(".").length, 3);
+const githubAppConfigText = Buffer.from("enabled: false\n").toString("base64");
+const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
+  settings: githubAppSettings,
+  fetchImpl: async (url, options = {}) => {
+    const urlText = String(url);
+    if (urlText.endsWith("/app/installations/99/access_tokens")) {
+      assert.match(options.headers.authorization, /^Bearer /);
+      return {
+        ok: true,
+        status: 201,
+        json: async () => ({
+          token: "installation-token",
+          expires_at: "2026-06-12T03:00:00.000Z",
+        }),
+      };
+    }
+    assert.equal(options.headers.authorization, "Bearer installation-token");
+    if (urlText.includes("/collaborators/maintainer/permission")) {
+      return { ok: true, status: 200, json: async () => ({ permission: "write" }) };
+    }
+    if (urlText.includes("/orgs/6529-Collections/members/maintainer")) {
+      return { ok: true, status: 204, json: async () => ({}) };
+    }
+    if (urlText.includes("/contents/")) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: "file",
+          encoding: "base64",
+          content: githubAppConfigText,
+        }),
+      };
+    }
+    return { ok: false, status: 404, json: async () => ({}) };
+  },
+});
+const githubActorContextPromise = githubAppIntegration.resolveActorContext(normalizedPullRequest);
+const githubRepoConfigPromise = githubAppIntegration.loadRepositoryConfig(normalizedPullRequest, {
+  policy: repositoryConfig.repositoryConfigPolicyFromEnv({
+    REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
+  }),
+});
 
 assert.deepEqual(githubWebhook.parseReviewCommand("/6529bot review security wcag").reviewKinds, [
   "security",
@@ -727,6 +780,13 @@ appServer.handleGitHubWebhook({
   resolveBudgetSnapshot: async () => ({ unavailable: false, totals: {} }),
   jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
+  const githubActorContext = await githubActorContextPromise;
+  assert.equal(githubActorContext.login, "maintainer");
+  assert.equal(githubActorContext.permission, "write");
+  assert.equal(githubActorContext.isOrgMember, true);
+  const githubRepoConfig = await githubRepoConfigPromise;
+  assert.equal(githubRepoConfig.status, "loaded");
+  assert.equal(githubRepoConfig.config.enabled, false);
   const loadedRepoConfig = await loadedRepoConfigPromise;
   assert.equal(loadedRepoConfig.status, "loaded");
   assert.equal(loadedRepoConfig.config.enabled, false);

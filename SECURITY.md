@@ -37,8 +37,8 @@ files as text to provide model context after path and symlink checks.
 
 ## Secrets
 
-Provider keys, GitHub tokens, AWS credentials, Secrets Manager values, and raw
-provider diagnostics must not be written to:
+Provider keys, GitHub App private keys, GitHub tokens, AWS credentials, Secrets
+Manager values, and raw provider diagnostics must not be written to:
 
 - PR comments;
 - logs;

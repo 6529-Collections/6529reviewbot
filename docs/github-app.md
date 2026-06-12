@@ -47,6 +47,31 @@ The server refuses to start without a webhook secret. Webhook payloads are
 verified with GitHub's `X-Hub-Signature-256` HMAC before JSON parsing or event
 routing.
 
+## Installation Tokens
+
+Production deployments should configure GitHub App credentials:
+
+```text
+REVIEWBOT_GITHUB_APP_ID=
+REVIEWBOT_GITHUB_APP_PRIVATE_KEY=
+REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64=
+REVIEWBOT_GITHUB_APP_API_URL=https://api.github.com
+```
+
+When configured, the server creates short-lived GitHub App JWTs, exchanges them
+for installation tokens, and uses those tokens to:
+
+- read repository config from the target repo base ref;
+- resolve the requestor's repository collaborator permission;
+- best-effort check organization membership.
+
+This keeps target repositories from owning bot GitHub tokens while still
+allowing the central App to enforce trusted-actor admission.
+
+Repository collaborator permission is the primary trusted-actor signal. Org
+membership is best-effort and depends on the App installation having enough
+organization visibility.
+
 ## Supported Events
 
 The skeleton normalizes these GitHub events:
@@ -92,9 +117,10 @@ loads config from the target repository's base ref before admission and job
 fanout. Without a real queue, valid admitted review jobs are acknowledged but
 reported as not enqueued.
 
-Actor context must be resolved from GitHub App credentials before production
-use. Until a resolver supplies collaborator or org membership context, public
-repo events fail closed as untrusted.
+Actor context is resolved from GitHub App installation credentials when the
+server is configured with `REVIEWBOT_GITHUB_APP_ID` and a private key. Until a
+resolver supplies collaborator or org membership context, public repo events
+fail closed as untrusted.
 
 If budget caps are configured and the app cannot resolve current spend, budget
 admission fails closed in `enforce` mode. If every job is denied by budget
@@ -102,7 +128,8 @@ admission, the queue function is not called.
 
 ## Queue Contract
 
-Production code should inject:
+`bin/server.cjs` injects the first two functions automatically when GitHub App
+auth is configured. Custom deployments can still inject:
 
 - `loadRepositoryConfig(event)` to read `.github/6529bot.yml` or another
   supported config file with GitHub App installation credentials;

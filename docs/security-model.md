@@ -5,6 +5,7 @@
 The main risks are:
 
 - leaking provider keys or GitHub tokens;
+- leaking the GitHub App private key;
 - leaking AWS credentials or database secrets;
 - leaking bot admin signing secrets;
 - leaking alert routing secrets or private spend details;

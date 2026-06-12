@@ -25,6 +25,22 @@ PORT=8080
 `GITHUB_WEBHOOK_SECRET` and `REVIEWBOT_GITHUB_WEBHOOK_SECRET` are aliases. The
 server requires one of them before it will accept GitHub webhooks.
 
+## GitHub App Installation Auth
+
+```text
+REVIEWBOT_GITHUB_APP_ID=
+REVIEWBOT_GITHUB_APP_PRIVATE_KEY=
+REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64=
+REVIEWBOT_GITHUB_APP_API_URL=https://api.github.com
+REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS=540
+REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS=60
+```
+
+When the App id and private key are configured, `bin/server.cjs` resolves actor
+repository permissions and repository config through GitHub App installation
+tokens. The private key may be supplied as a PEM string with escaped newlines or
+as base64.
+
 ## Admission Policy
 
 ```text

@@ -25,11 +25,13 @@ merged PRs.
 - Worker execution adapters PR: merged as PR #13, merge commit `1d84b10`
 - Admin auth bridge PR: merged as PR #14, merge commit `17e6dd2`
 - Scheduled spend alerts PR: merged as PR #15, merge commit `c079b7a`
+- Release readiness docs PR: merged as PR #16, merge commit `6bb7e93`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/release-docs-sweep`
-- Current local changes: release-readiness documentation, README status,
-  changelog, roadmap, and release process updates
+- Current branch: `codex/github-app-installation-auth`
+- Current local changes: GitHub App JWT/installation-token auth, actor
+  permission resolution, repo config loading through installation tokens, docs,
+  and smoke tests
 
 ## Key Decisions
 
@@ -58,7 +60,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge release-readiness documentation sweep.
+1. Push and merge GitHub App installation-token auth.
 2. Dogfood on a target repo with conservative defaults.
 3. Prepare production GitHub App deployment and 6529.io wiring.
 

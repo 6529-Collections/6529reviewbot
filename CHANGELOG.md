@@ -15,6 +15,8 @@ stabilized.
 - Provider configuration for Anthropic, OpenAI, and OpenRouter.
 - GitHub App webhook skeleton with signature verification and normalized PR
   and comment-command events.
+- GitHub App installation-token handling for repository config reads and actor
+  permission resolution.
 - Trusted-actor admission for public repositories.
 - Budget admission against the isolated AWS usage ledger.
 - Review job fanout across review kinds and provider/model lanes.
