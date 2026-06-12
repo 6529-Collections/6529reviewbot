@@ -18,6 +18,7 @@ runNode("scripts/check.cjs");
 runNode("scripts/smoke-test.cjs");
 runNode("bin/validate-usage-api-openapi.cjs", ["docs/usage-api.openapi.json"]);
 runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);
+runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.example.json"]);
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);

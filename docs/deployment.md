@@ -127,6 +127,15 @@ operator environment:
 npm run ledger:schema -- -- --apply
 ```
 
+Before enabling live provider work, apply reviewed central budget policies or
+document that the release is temporarily relying on environment/repository
+caps:
+
+```bash
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
+```
+
 The App server dispatches each admitted job with the target installation id.
 The worker mints a short-lived GitHub App installation token inside the central
 workflow and uses it for target checkout, PR reads, and comment writes. Target
@@ -174,10 +183,15 @@ or GitHub App private keys.
   in dry-run mode.
 - `npm run ledger:schema` prints the expected ledger schema, and
   `npm run ledger:schema -- -- --apply` has been run in the target database.
+- `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` prints
+  the expected budget policy SQL, and reviewed rows are applied or explicitly
+  deferred.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
 - `REVIEW_USAGE_ENABLED=true` is configured before budget caps are enforced
   against ledger spend.
+- Enabled `reviewbot.ai_review_budget_policies` rows deny over-budget jobs
+  before worker dispatch.
 - Run-control claims dedupe replayed deliveries before queue work.
 - `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.

@@ -42,7 +42,10 @@ stabilized.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
   fanout diagnostics.
 - Dry-run-by-default ledger schema CLI for Aurora setup and repair.
+- Dry-run-by-default budget policy CLI for reviewed central spend caps.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
+- Production server loading of enabled central DB budget policy rows during
+  admission.
 - Usage-write cost estimation from active provider/model price rows.
 - Provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - Sanitized support bundle CLI and support playbook.

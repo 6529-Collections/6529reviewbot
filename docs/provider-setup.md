@@ -25,7 +25,7 @@ For every enabled provider:
    one;
 4. configure 6529bot budget caps before allowing public repository spend;
 5. add or verify the model in `config/model-catalog.json`;
-6. apply reviewed price rows with `npm run model-prices -- --file <file>
+6. apply reviewed price rows with `npm run model-prices -- -- --file <file>
    --apply`;
 7. run `npm run preflight -- -- --strict` from the release candidate
    environment.

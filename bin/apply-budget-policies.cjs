@@ -3,23 +3,23 @@
 "use strict";
 
 const {
-  applyModelPrices,
-  loadModelPriceFile,
-  renderModelPriceSql,
-} = require("../src/model-prices.cjs");
+  applyBudgetPolicies,
+  loadBudgetPolicyFile,
+  renderBudgetPolicySql,
+} = require("../src/budget-policies.cjs");
 const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
 
 function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
-  const document = loadModelPriceFile(args.file);
+  const document = loadBudgetPolicyFile(args.file);
   const schema = args.schema || process.env.REVIEW_USAGE_DB_SCHEMA || "reviewbot";
   if (!args.apply) {
-    const sql = renderModelPriceSql(schema, document);
-    process.stdout.write(`${sql || "-- no model price rows"}\n`);
-    return { applied: false, count: document.prices.length };
+    const sql = renderBudgetPolicySql(schema, document);
+    process.stdout.write(`${sql || "-- no budget policy rows"}\n`);
+    return { applied: false, count: document.policies.length };
   }
   const settings = { ...usageLedgerSettingsFromEnv(), schema };
-  const results = applyModelPrices(settings, document);
+  const results = applyBudgetPolicies(settings, document);
   process.stdout.write(
     `${JSON.stringify({ applied: true, statements: results.length }, null, 2)}\n`
   );
@@ -27,7 +27,7 @@ function main(argv = process.argv.slice(2)) {
 }
 
 function parseArgs(argv) {
-  const result = { apply: false, file: "config/model-prices.example.json" };
+  const result = { apply: false, file: "config/budget-policies.example.json" };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--apply") {
@@ -53,14 +53,14 @@ function parseArgs(argv) {
 }
 
 function helpText() {
-  return `Apply model pricing rows to the reviewbot ledger.
+  return `Apply central budget policy rows to the reviewbot ledger.
 
 Usage:
-  npm run model-prices -- -- --file config/model-prices.example.json
-  npm run model-prices -- -- --file prices.json --apply
+  npm run budget-policies -- -- --file config/budget-policies.example.json
+  npm run budget-policies -- -- --file budget-policies.json --apply
 
 Options:
-  --file <path>    JSON price file. Default: config/model-prices.example.json
+  --file <path>    JSON budget policy file. Default: config/budget-policies.example.json
   --schema <name>  Database schema. Default: REVIEW_USAGE_DB_SCHEMA or reviewbot
   --apply          Apply through the RDS Data API. Default is dry-run SQL.
 `;

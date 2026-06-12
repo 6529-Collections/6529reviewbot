@@ -10,6 +10,8 @@ const alertNotifier = require("../src/alert-notifier.cjs");
 const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
+const budgetPolicies = require("../src/budget-policies.cjs");
+const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
 const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
@@ -208,6 +210,77 @@ assert.equal(appliedModelPriceStatements, 2);
 assert.deepEqual(
   modelPricesCli.parseArgs(["--file", "prices.json", "--schema", "reviewbot", "--apply"]),
   { apply: true, file: "prices.json", schema: "reviewbot" }
+);
+const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
+  version: 1,
+  currency: "USD",
+  policies: [
+    {
+      scopeType: "global",
+      scopeValue: "*",
+      dailyUsd: 25,
+      monthlyUsd: 500,
+      notes: "dogfood global cap",
+    },
+    {
+      scopeType: "provider",
+      scopeValue: "Anthropic",
+      dailyBudgetUsd: 10,
+      enabled: true,
+    },
+  ],
+});
+assert.equal(budgetPolicyFile.policies[1].scopeValue, "anthropic");
+assert.throws(
+  () => budgetPolicies.validateBudgetPolicyFile({
+    version: 1,
+    policies: [{ scopeType: "repo", scopeValue: "bad", dailyUsd: 1 }],
+  }),
+  /repository full name/
+);
+assert.throws(
+  () => budgetPolicies.validateBudgetPolicyFile({
+    version: 1,
+    policies: [{ scopeType: "global", scopeValue: "*", enabled: true }],
+  }),
+  /at least one budget cap/
+);
+assert.throws(
+  () => budgetPolicies.validateBudgetPolicyFile({
+    version: 1,
+    policies: [{ scopeType: "global", scopeValue: "*", dailyUSD: 1 }],
+  }),
+  /unsupported key/
+);
+const budgetPolicyStatements = budgetPolicies.budgetPolicyStatements("reviewbot", budgetPolicyFile);
+assert.equal(budgetPolicyStatements.length, 2);
+assert.match(budgetPolicies.renderBudgetPolicySql("reviewbot", budgetPolicyFile), /ai_review_budget_policies/);
+assert.equal(
+  budgetPolicies.mergeBudgetPolicyRows({ mode: "enforce", explicitPolicies: [] }, budgetPolicyFile.policies)
+    .explicitPolicies.length,
+  2
+);
+let appliedBudgetPolicyStatements = 0;
+budgetPolicies.applyBudgetPolicies({
+  enabled: true,
+  region: "us-east-1",
+  resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  database: "reviewbot",
+  schema: "reviewbot",
+}, budgetPolicyFile, {
+  executeStatement: (settings, sql, parameters, options) => {
+    assert.equal(settings.schema, "reviewbot");
+    assert.match(sql, /ai_review_budget_policies/);
+    assert(parameters.some((param) => param.name === "scope_type"));
+    assert.equal(options.tempPrefix, "6529-budget-policies-");
+    appliedBudgetPolicyStatements += 1;
+  },
+});
+assert.equal(appliedBudgetPolicyStatements, 2);
+assert.deepEqual(
+  budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--schema", "reviewbot", "--apply"]),
+  { apply: true, file: "budgets.json", schema: "reviewbot" }
 );
 
 withEnv(
@@ -1888,6 +1961,43 @@ appServer.handleGitHubWebhook({
   assert.equal(budgetDeniedResult.body.enqueued, false);
   assert.equal(budgetDeniedResult.body.deniedJobs.length, 4);
   assert.equal(budgetDeniedQueued, false);
+  let ledgerBudgetPolicyQueued = false;
+  const ledgerBudgetPolicyResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadBudgetPolicy: async (basePolicy) =>
+      budgetPolicies.mergeBudgetPolicyRows(basePolicy, [{
+        scopeType: "global",
+        scopeValue: "*",
+        dailyBudgetUsd: 0,
+        enabled: true,
+      }]),
+    resolveBudgetSnapshot: async () => ({
+      unavailable: false,
+      totals: {
+        "global:*": { dailyUsd: 0, weeklyUsd: 0, monthlyUsd: 0 },
+      },
+    }),
+    estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
+    enqueueReviewJobs: async () => {
+      ledgerBudgetPolicyQueued = true;
+      return { accepted: true };
+    },
+  });
+  assert.equal(ledgerBudgetPolicyResult.body.budget.code, "budget_exceeded");
+  assert.equal(ledgerBudgetPolicyResult.body.enqueued, false);
+  assert.equal(ledgerBudgetPolicyResult.body.deniedJobs.length, 4);
+  assert.equal(ledgerBudgetPolicyQueued, false);
   const dispatchStatusUpdates = [];
   const dispatchFailedResult = await appServer.handleGitHubWebhook({
     headers: {

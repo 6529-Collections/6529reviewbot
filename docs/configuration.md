@@ -77,7 +77,10 @@ REVIEWBOT_BUDGET_REVIEW_KIND_DAILY_USD=
 ```
 
 Every budget scope supports `_DAILY_USD`, `_WEEKLY_USD`, and `_MONTHLY_USD`.
-See [budget-admission.md](budget-admission.md).
+Central DB policy rows can also be applied with `npm run budget-policies` and
+are loaded into admission when `REVIEW_USAGE_ENABLED=true`. See
+[budget-admission.md](budget-admission.md) and
+[budget-policies.md](budget-policies.md).
 
 ## Providers
 

@@ -75,6 +75,17 @@ Required secret families:
 Use the base64 private-key form for GitHub Actions and other environments that
 handle multiline secrets poorly.
 
+Apply central budget policy rows before live workers:
+
+```bash
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>
+npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
+```
+
+Start with global, target-repo, requestor, provider, model, and review-kind
+caps. Central DB rows are loaded before budget admission when
+`REVIEW_USAGE_ENABLED=true`.
+
 Start with:
 
 ```text
@@ -131,6 +142,7 @@ Fast rollback options, from narrowest to broadest:
 
 - set `enabled: false` in `.github/6529bot.yml`;
 - set repo-level budget caps to `0`;
+- apply a central repo or global budget policy cap of `0`;
 - set central `REVIEWBOT_DISABLED_REPOS=<owner/repo>`;
 - set central `REVIEWBOT_ENABLED=false`;
 - set central `REVIEWBOT_WORKER_ADAPTER=noop`;
@@ -145,6 +157,8 @@ Fast rollback options, from narrowest to broadest:
 - Public repo untrusted actors cannot trigger spend.
 - Maintainer comment commands attribute spend to the maintainer.
 - Budget denial happens before queueing.
+- Central DB budget policy rows are applied and visible through
+  `GET /api/admin/budget/policies`.
 - Usage rows are written for live reviews.
 - Public usage summary redacts private repo detail unless allowlisted.
 - Admin usage summary requires 6529.io-authenticated HMAC assertions.

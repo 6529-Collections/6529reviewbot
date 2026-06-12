@@ -8,7 +8,11 @@ const {
   createUsageApiAdminAuthorizer,
 } = require("../src/admin-auth.cjs");
 const { budgetSubjectFromEvent } = require("../src/budget-admission.cjs");
-const { readBudgetSpendSnapshot } = require("../src/budget-ledger.cjs");
+const { mergeBudgetPolicyRows } = require("../src/budget-policies.cjs");
+const {
+  readBudgetSpendSnapshot,
+  readEnabledBudgetPolicies,
+} = require("../src/budget-ledger.cjs");
 const {
   createGitHubAppIntegration,
   githubAppAuthSettingsFromEnv,
@@ -46,6 +50,8 @@ const usageApiReadersEnabled = parseBool(process.env.REVIEW_USAGE_ENABLED || "fa
 if (usageApiReadersEnabled) {
   Object.assign(serverOptions, usageApiLedgerLoadersFromEnv());
   const budgetLedgerSettings = usageLedgerSettingsFromEnv();
+  serverOptions.loadBudgetPolicy = async (basePolicy) =>
+    mergeBudgetPolicyRows(basePolicy, readEnabledBudgetPolicies(budgetLedgerSettings));
   serverOptions.resolveBudgetSnapshot = async (jobEvent, admission, job, budgetPolicy) =>
     readBudgetSpendSnapshot(
       budgetLedgerSettings,

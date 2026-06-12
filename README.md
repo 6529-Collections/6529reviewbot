@@ -70,6 +70,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
 - [Model Catalog](docs/model-catalog.md): provider defaults and update path.
 - [Model Pricing](docs/model-pricing.md): operator-maintained price rows.
+- [Budget Policies](docs/budget-policies.md): operator-maintained central caps.
 - [Provider Setup](docs/provider-setup.md): Anthropic, OpenAI, and OpenRouter
   operator setup.
 - [Repository Config](docs/repository-config.md): target repo policy file.
@@ -160,7 +161,13 @@ npm run ledger:schema
 Preview model pricing SQL without touching AWS:
 
 ```bash
-npm run model-prices -- --file config/model-prices.example.json
+npm run model-prices -- -- --file config/model-prices.example.json
+```
+
+Preview central budget policy SQL without touching AWS:
+
+```bash
+npm run budget-policies -- -- --file config/budget-policies.example.json
 ```
 
 Validate the dashboard/admin API contract:
@@ -341,6 +348,8 @@ REVIEW_USAGE_AWS_ROLE_ARN=arn:aws:iam::...:role/...
 See [docs/aws-usage-ledger.md](docs/aws-usage-ledger.md).
 Use [docs/job-ledger.md](docs/job-ledger.md) when enabling durable budget and
 dispatch audit events.
+Use [docs/budget-policies.md](docs/budget-policies.md) to dry-run and apply
+central budget caps that are enforced before worker dispatch or provider calls.
 
 From a configured operator environment, apply the schema explicitly with:
 
@@ -371,6 +380,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
 - [Model pricing](docs/model-pricing.md)
+- [Budget policies](docs/budget-policies.md)
 - [Provider setup](docs/provider-setup.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)

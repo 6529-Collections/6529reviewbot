@@ -19,6 +19,8 @@ Ready for community review:
 - GitHub App installation-token handling for repo config and actor permission
   resolution;
 - budget admission against the isolated AWS usage ledger;
+- central DB budget policy dry-run/apply tooling and production admission
+  loading;
 - review job fanout across review kinds and provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
@@ -66,15 +68,17 @@ Before announcing broad community use:
    infrastructure.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and
    alerting secrets only in the bot environment.
-4. Merge and deploy the 6529.io public transparency dashboard.
-5. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
-6. Enable scheduled spend alerts through private operator channels.
-7. Dogfood on a small set of trusted repositories with conservative budgets.
+4. Apply reviewed central budget policies or explicitly keep budget control to
+   environment/repository caps for the release.
+5. Merge and deploy the 6529.io public transparency dashboard.
+6. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
+7. Enable scheduled spend alerts through private operator channels.
+8. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
-8. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
-9. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
-10. Update README, changelog, release notes, install docs, and example configs.
+9. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
+10. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
+11. Update README, changelog, release notes, install docs, and example configs.
 
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable

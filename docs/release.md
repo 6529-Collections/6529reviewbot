@@ -22,6 +22,8 @@ After stabilization:
 - `npm run release:check`
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed
+- `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when
+  central budget rows changed, plus `--apply` from the operator environment
 - `npm run preflight -- -- --strict` in the release candidate environment
 - docs updated
 - pull request template security, cost, and contract questions answered
@@ -44,6 +46,7 @@ Treat these as breaking:
 - changing hidden metadata format;
 - changing required provider config;
 - changing AWS ledger schema without updating the schema CLI and migration docs;
+- changing central budget policy file shape or DB admission loading;
 - changing workflow permissions;
 - changing default review fan-out;
 - changing skip behavior;

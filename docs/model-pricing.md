@@ -51,7 +51,7 @@ reviewed against current provider documentation before use.
 Print SQL without contacting AWS:
 
 ```bash
-npm run model-prices -- --file prices.json
+npm run model-prices -- -- --file prices.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
@@ -62,7 +62,7 @@ exactly what will be inserted.
 From a configured operator environment:
 
 ```bash
-npm run model-prices -- --file prices.json --apply
+npm run model-prices -- -- --file prices.json --apply
 ```
 
 The apply path:

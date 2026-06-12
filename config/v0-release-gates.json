@@ -39,6 +39,11 @@
       "evidence": "npm run ledger:schema -- -- --apply"
     },
     {
+      "id": "budget-policies",
+      "title": "Central budget policy rows have been reviewed and applied, or release notes explicitly keep budget control to environment/repository caps.",
+      "evidence": "docs/budget-policies.md"
+    },
+    {
       "id": "model-prices",
       "title": "Model pricing rows have been reviewed against current provider docs and applied, or release notes keep conservative default estimates.",
       "evidence": "docs/model-pricing.md"
