@@ -28,6 +28,10 @@ requests.
   selection, admission tightening, and budget caps.
 - Dispatches admitted jobs through explicit worker adapters for local workers
   or central GitHub Actions workflows.
+- Fails closed instead of posting a generic review when a live provider returns
+  empty visible output.
+- Redacts common token and private-key shapes from worker diagnostics before
+  they enter queue results or run-control metadata.
 - Records review-job budget and dispatch lifecycle events in a separate
   operator job ledger when enabled.
 - Adds run-control claims for duplicate-job and concurrency protection before
@@ -424,6 +428,9 @@ input. In particular:
 - source context refuses absolute paths, parent traversal, `.git` paths, and
   symlinks;
 - provider errors are sanitized before logging;
+- empty provider responses fail closed instead of becoming no-finding comments;
+- worker diagnostics redact common token and private-key shapes before they are
+  returned;
 - provider requests have explicit timeout and token/context caps;
 - AWS access uses OIDC and least-privilege Data API permissions.
 
