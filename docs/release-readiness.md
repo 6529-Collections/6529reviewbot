@@ -12,6 +12,7 @@ Ready for community review:
 - standalone review engine for general, follow-up, WCAG 2.2 AA, i18n, and
   crypto/security review modes;
 - provider abstraction for Anthropic, OpenAI, and OpenRouter;
+- provider setup guide for Anthropic, OpenAI, and OpenRouter;
 - default Anthropic model configuration through environment variables;
 - trusted-actor admission for public repositories;
 - GitHub App installation-token handling for repo config and actor permission

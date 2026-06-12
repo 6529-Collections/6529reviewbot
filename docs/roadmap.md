@@ -299,6 +299,7 @@ Completed in `6529reviewbot`:
 - repeatable Aurora ledger schema tooling.
 - dry-run/apply model pricing tooling.
 - usage-write cost estimation from maintained model price rows.
+- provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - no-network production preflight checks.
 - incident response runbook for operator containment and recovery.
 
