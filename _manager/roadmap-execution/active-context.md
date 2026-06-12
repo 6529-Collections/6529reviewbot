@@ -53,11 +53,11 @@ merged PRs.
 - v0 release gates PR: merged as PR #37, merge commit `f8e86b2`
 - Admin job-events API PR: merged as PR #38, merge commit `283b9d3`
 - Admin runtime status API PR: merged as PR #39, merge commit `9134361`
-- Current branch: `codex/runtime-pause-controls`
-- Current local changes: central runtime pause controls for global, org, repo,
-  provider, model, and review-kind stops before budget or worker dispatch;
-  preflight/status visibility; job ledger audit events; smoke coverage; and
-  operator docs
+- Runtime pause controls PR: merged as PR #40, merge commit `137c949`
+- Current branch: `codex/comment-command-docs`
+- Current local changes: dedicated maintainer comment-command contract docs,
+  README and operator-doc links, changelog, release readiness, roadmap, v0
+  plan, and manager-memory updates
 
 ## Key Decisions
 
@@ -116,6 +116,8 @@ merged PRs.
   browser access to process environment or secrets.
 - Emergency stops and temporary pauses should be central runtime controls that
   run before budget reservation and worker dispatch.
+- Maintainer comment commands are part of the public product contract and
+  should be documented separately from webhook implementation details.
 
 ## Constraints
 
@@ -127,11 +129,11 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the runtime pause-controls PR if checks and
+1. Validate, publish, and merge the comment-command docs PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after runtime
-   controls land.
+3. Prepare the next release-polish or operator-readiness slice after the
+   command contract docs land.
 
 ## Open Risks
 

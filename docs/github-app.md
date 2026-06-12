@@ -145,6 +145,9 @@ Comment command routing:
 @6529bot review all
 ```
 
+See [comment-commands.md](comment-commands.md) for requestor attribution,
+policy gates, dedupe behavior, and examples.
+
 The app normalizes events, evaluates admission policy, expands admitted events
 into review jobs, evaluates budget admission per job, claims run-control slots,
 and passes admitted jobs to an injectable queue function. When repository

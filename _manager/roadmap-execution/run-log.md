@@ -394,3 +394,12 @@
   - README, configuration, operations, security model, incident response,
     release readiness, release notes template, v0 release plan, changelog,
     roadmap, and manager-memory updates.
+- Merged `6529reviewbot` PR #40 as `137c949` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/comment-command-docs` increment:
+  - dedicated `docs/comment-commands.md` covering `/6529bot` and `@6529bot`
+    syntax, review-kind aliases, requestor attribution, policy gates, dedupe,
+    and examples;
+  - README, GitHub App, review workflows, dogfood, release readiness, v0 plan,
+    changelog, roadmap, and manager-memory links/updates.

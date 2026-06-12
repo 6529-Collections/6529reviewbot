@@ -38,6 +38,7 @@ Ready for community review:
 - sanitized support bundle and support playbook;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
+- documented maintainer comment-command contract;
 - production deployment runbook and central worker template that mints
   short-lived GitHub App installation tokens.
 - machine-readable v0 release gates and checklist renderer.
