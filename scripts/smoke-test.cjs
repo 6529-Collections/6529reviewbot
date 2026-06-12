@@ -1163,6 +1163,7 @@ const loadedRepoConfigPromise = repositoryConfig.loadRepositoryConfigFromGitHub(
 
 let enqueuedJobs = null;
 const recordedJobEvents = [];
+let capturedBudgetSnapshotPolicy = null;
 appServer.handleGitHubWebhook({
   headers: {
     "x-hub-signature-256": webhookSignature,
@@ -1188,7 +1189,10 @@ appServer.handleGitHubWebhook({
     source: "test",
     config: parsedRepoConfig,
   }),
-  resolveBudgetSnapshot: async () => ({ unavailable: false, totals: {} }),
+  resolveBudgetSnapshot: async (jobEvent, admission, job, policy) => {
+    capturedBudgetSnapshotPolicy = policy;
+    return { unavailable: false, totals: {} };
+  },
   jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
   const githubActorContext = await githubActorContextPromise;
@@ -1346,6 +1350,7 @@ appServer.handleGitHubWebhook({
   assert.equal(recordedJobEvents.filter((event) => event.status === "budget_admitted").length, 4);
   assert.equal(recordedJobEvents.filter((event) => event.status === "dispatch_accepted").length, 4);
   assert.equal(recordedJobEvents[0].metadata.budgetCode, "within_budget");
+  assert.equal(capturedBudgetSnapshotPolicy.caps.repo.dailyBudgetUsd, 5);
   assert.equal(enqueuedJobs[0].prNumber, 12);
   assert.equal(webhookResult.body.jobs.length, 4);
   assert.deepEqual(

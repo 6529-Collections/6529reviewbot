@@ -261,7 +261,7 @@ async function handleGitHubWebhook(input) {
   );
   for (const job of candidateJobs) {
     const jobEvent = eventForReviewJob(configuredEvent, job);
-    const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job);
+    const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job, budgetPolicy);
     const estimate = await estimateBudgetCost(jobEvent, admission, job);
     const budget = evaluateBudgetAdmission({
       event: jobEvent,

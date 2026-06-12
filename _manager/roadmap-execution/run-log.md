@@ -282,3 +282,12 @@
   - smoke coverage for claimed, duplicate, concurrency-denied, and disabled
     ledger decisions;
   - docs and memory update from contract-only to built-in claimer.
+- Merged `6529reviewbot` PR #29 as `ba902fe` after CI and Dependency Review
+  passed; CodeRabbit remained in progress with no review threads, and the
+  normal merge path allowed the merge.
+- Started `codex/budget-ledger-wiring` increment:
+  - `bin/server.cjs` injects `readBudgetSpendSnapshot` when
+    `REVIEW_USAGE_ENABLED=true`;
+  - App server passes merged budget policy to the snapshot resolver;
+  - smoke coverage confirms repository config budget caps reach the resolver;
+  - docs and memory describe production budget ledger wiring.

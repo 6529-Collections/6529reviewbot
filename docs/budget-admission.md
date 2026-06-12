@@ -112,11 +112,16 @@ for an external contributor PR, the maintainer is the budget requestor.
 - Pure decision logic: `src/budget-admission.cjs`
 - Data API snapshot helper: `src/budget-ledger.cjs`
 - App-server enforcement: `src/app-server.cjs`
+- Production server wiring: `bin/server.cjs` injects the Data API snapshot
+  resolver when `REVIEW_USAGE_ENABLED=true`
 
 `AWS_CLI_BIN` can be set when the runtime needs a specific AWS CLI binary path.
 On Windows, the ledger helpers invoke the AWS CLI through a shell when no
 explicit path is configured.
 
-The GitHub App server passes provider/model context into each budget decision.
-A queue adapter or worker can provide a provider-specific estimated cost through
-`estimateBudgetCost(jobEvent, admission, job)`.
+The GitHub App server passes provider/model context into each budget decision
+and passes the merged budget policy to the spend snapshot resolver. That lets
+the Data API reader include repository config caps and explicit policies when
+choosing which scopes to read. A queue adapter or worker can provide a
+provider-specific estimated cost through `estimateBudgetCost(jobEvent,
+admission, job)`.

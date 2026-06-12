@@ -156,6 +156,8 @@ or GitHub App private keys.
   `npm run ledger:schema -- -- --apply` has been run in the target database.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
+- `REVIEW_USAGE_ENABLED=true` is configured before budget caps are enforced
+  against ledger spend.
 - Run-control claims dedupe replayed deliveries before queue work.
 - `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
