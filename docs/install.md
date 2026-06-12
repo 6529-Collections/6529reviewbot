@@ -27,6 +27,17 @@ Read:
 
 Create a GitHub App named `6529bot`.
 
+Start from:
+
+```text
+templates/github-app-manifest.example.json
+```
+
+Replace `<bot-host>` with the production App server hostname and review the
+permissions/events before registration. Keep GitHub-generated values such as
+the App id, client secret, webhook secret, and private key in the bot runtime
+secret store only.
+
 Minimum recommended permissions:
 
 ```text

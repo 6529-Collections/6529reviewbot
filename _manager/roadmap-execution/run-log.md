@@ -458,3 +458,11 @@
   - release-check JSON parsing for `infra/aws`;
   - README, AWS ledger, deployment, operations, security, release, roadmap, and
     manager-memory updates.
+- Merged `6529reviewbot` PR #46 as `461bea3` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/github-app-manifest` increment:
+  - placeholder-only GitHub App manifest template for `6529bot` registration;
+  - release-check JSON parsing for templates;
+  - install, deployment, GitHub App, release gate, security checklist,
+    changelog, roadmap, and manager-memory docs.

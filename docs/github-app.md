@@ -52,6 +52,27 @@ routing.
 
 ## Production Registration
 
+Start from the reviewed manifest template:
+
+```text
+templates/github-app-manifest.example.json
+```
+
+Replace `<bot-host>` with the production App server hostname before using the
+manifest. The committed template uses GitHub's manifest fields for default
+permissions, events, webhook URL, setup URL, and callback URLs so the
+registration settings are reviewable before any live App credentials exist.
+
+Do not commit the generated App id, client secret, webhook secret, or private
+key returned by GitHub. Store those values only in the bot-owned runtime secret
+store. If operators register the App manually through the GitHub UI, match the
+manifest's permissions and events exactly.
+
+GitHub documents the manifest flow in
+[Registering a GitHub App from a manifest](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).
+The permission names in the template follow GitHub's documented GitHub App
+permission contract.
+
 Recommended repository permissions:
 
 ```text

@@ -46,6 +46,8 @@ stabilized.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
 - Example AWS IAM/OIDC templates for central GitHub Actions, Aurora Data API,
   Secrets Manager, and SNS access.
+- Reviewable GitHub App manifest template for production `6529bot`
+  registration.
 - Production server loading of enabled central DB budget policy rows during
   admission.
 - Usage-write cost estimation from active provider/model price rows.

@@ -153,6 +153,12 @@ Validate a target repository config before opening its PR:
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Validate the GitHub App manifest template:
+
+```bash
+node -e "JSON.parse(require('fs').readFileSync('templates/github-app-manifest.example.json','utf8'))"
+```
+
 Print the Aurora ledger schema without touching AWS:
 
 ```bash
