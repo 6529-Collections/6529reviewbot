@@ -30,6 +30,7 @@ After stabilization:
 - workflow pins reviewed
 - security model reviewed for trust-boundary changes
 - AWS/IAM changes documented
+- AWS IAM/OIDC templates reviewed when AWS trust or permissions changed
 - ledger schema changes captured in `npm run ledger:schema`
 - comment contract changes documented
 - configuration changes documented

@@ -112,6 +112,11 @@ The usage ledger should use:
 - a separate Aurora PostgreSQL Serverless v2 cluster;
 - no inbound database security-group rules.
 
+Start from the example templates in [infra/aws](../infra/aws/README.md), then
+replace placeholders and review final policies in the operator workspace before
+applying. The public repo should not contain live account ids, secret ARNs, or
+target environment identifiers beyond deliberate examples.
+
 ### Admin API Safety
 
 Private admin endpoints fail closed unless an admin authorizer is configured.

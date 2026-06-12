@@ -31,6 +31,7 @@ Ready for community review:
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin runtime status API backed by no-network preflight checks;
 - repeatable Aurora ledger schema tooling;
+- example AWS IAM/OIDC templates for least-privilege Data API and SNS access;
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
@@ -68,17 +69,18 @@ Before announcing broad community use:
    infrastructure.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and
    alerting secrets only in the bot environment.
-4. Apply reviewed central budget policies or explicitly keep budget control to
+4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.
+5. Apply reviewed central budget policies or explicitly keep budget control to
    environment/repository caps for the release.
-5. Merge and deploy the 6529.io public transparency dashboard.
-6. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
-7. Enable scheduled spend alerts through private operator channels.
-8. Dogfood on a small set of trusted repositories with conservative budgets.
+6. Merge and deploy the 6529.io public transparency dashboard.
+7. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
+8. Enable scheduled spend alerts through private operator channels.
+9. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
-9. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
-10. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
-11. Update README, changelog, release notes, install docs, and example configs.
+10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
+11. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
+12. Update README, changelog, release notes, install docs, and example configs.
 
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable

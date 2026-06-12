@@ -58,10 +58,11 @@ merged PRs.
 - Installation/onboarding guide PR: merged as PR #42, merge commit `b945e57`
 - Usage API OpenAPI contract PR: merged as PR #43, merge commit `174b275`
 - Release template hardening PR: merged as PR #44, merge commit `9678649`
-- Current branch: `codex/budget-policy-tooling`
-- Current local changes: central budget policy JSON validator, dry-run/apply
-  CLI, release-check integration, production server DB policy loading for
-  admission, tests, docs, release gates, and manager-memory updates.
+- Central budget policy tooling PR: merged as PR #45, merge commit `38a5ca9`
+- Current branch: `codex/aws-iam-templates`
+- Current local changes: example AWS IAM/OIDC trust and identity policies,
+  release-check JSON parsing for infra templates, deployment/security docs,
+  release gates, changelog, roadmap, and manager-memory updates.
 
 ## Key Decisions
 
@@ -129,6 +130,9 @@ merged PRs.
 - Central DB budget policy rows should be treated as active spend controls.
   Production loads enabled rows before budget admission whenever
   `REVIEW_USAGE_ENABLED=true`; repository config may only add stricter caps.
+- AWS trust and identity policies should be reviewed as explicit operator
+  artifacts. Public templates use placeholders; live account ids, secret ARNs,
+  and environment identifiers stay in operator runbooks or secret stores.
 
 ## Constraints
 
@@ -140,7 +144,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the budget-policy tooling PR if checks and
+1. Validate, publish, and merge the AWS IAM template PR if checks and
    review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness or release-polish slice after this PR
@@ -160,6 +164,8 @@ merged PRs.
   estimates empty.
 - Central budget policy rows still need operator-reviewed real caps applied in
   the target Aurora database before live dogfood spend.
+- AWS IAM/OIDC templates still need operator replacement with real account,
+  region, repo, branch/environment, cluster, secret, and SNS values before use.
 - Ledger schema, including run claims, still needs to be applied in the target
   Aurora database during deployment.
 - Provider pricing rows still require operator verification and key/limit

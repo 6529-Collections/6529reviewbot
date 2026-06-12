@@ -448,3 +448,13 @@
     parsing, and DB-loaded budget denial before queueing;
   - README, budget, ledger, install, dogfood, operations, deployment, release,
     roadmap, and manager-memory docs.
+- Merged `6529reviewbot` PR #45 as `38a5ca9` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/aws-iam-templates` increment:
+  - placeholder-based GitHub Actions OIDC trust policy example;
+  - Aurora Data API and Secrets Manager identity policy example;
+  - scheduled spend alert Data API plus SNS identity policy example;
+  - release-check JSON parsing for `infra/aws`;
+  - README, AWS ledger, deployment, operations, security, release, roadmap, and
+    manager-memory updates.

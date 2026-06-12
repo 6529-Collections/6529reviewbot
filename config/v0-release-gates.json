@@ -19,6 +19,11 @@
       "evidence": "docs/provider-setup.md"
     },
     {
+      "id": "aws-iam",
+      "title": "AWS IAM/OIDC trust and identity policies are reviewed from infra/aws templates or equivalent least-privilege documents.",
+      "evidence": "infra/aws/README.md"
+    },
+    {
       "id": "public-dashboard",
       "title": "6529.io public usage dashboard is merged, deployed, and wired to the public usage API, or explicitly deferred.",
       "evidence": "docs/usage-api.md"

@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "UseReviewbotAuroraDataApi",
+      "Effect": "Allow",
+      "Action": [
+        "rds-data:ExecuteStatement"
+      ],
+      "Resource": "arn:aws:rds:<aws-region>:<aws-account-id>:cluster:<cluster-name>"
+    },
+    {
+      "Sid": "ReadReviewbotDatabaseSecret",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": "arn:aws:secretsmanager:<aws-region>:<aws-account-id>:secret:<secret-name>"
+    }
+  ]
+}

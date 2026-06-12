@@ -309,6 +309,7 @@ Completed in `6529reviewbot`:
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.
 - dry-run/apply model pricing tooling.
+- example AWS IAM/OIDC templates for central Data API and SNS access.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - installation and onboarding guide for conservative central App dogfood.

@@ -111,6 +111,11 @@ assumes the role. For centralized execution, trust
 `6529-Collections/6529reviewbot`. For direct caller-repo execution, trust only
 the specific caller repositories that should be allowed to write usage events.
 
+Start from [AWS IAM Templates](../infra/aws/README.md) when creating OIDC
+trust policies and Data API identity policies. The templates are examples, not
+live infrastructure, and must be reviewed with the final account, region,
+repository, branch, cluster, secret, and SNS topic values before applying.
+
 ## Example Queries
 
 Daily spend by requester:
