@@ -1,6 +1,7 @@
 "use strict";
 
 const { executeStatement, stringParam, longParam } = require("./data-api.cjs");
+const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function jobLedgerSettingsFromEnv(env = process.env) {
@@ -131,7 +132,7 @@ function normalizeJobLedgerEvent(event = {}) {
     lane: stringValue(event.lane),
     adapter: stringValue(event.adapter),
     accepted: nullableBool(event.accepted),
-    reason: truncateText(event.reason, 1000),
+    reason: truncateText(redactSensitiveText(event.reason), 1000),
     exitCode: nullableInteger(event.exitCode),
     metadata: normalizeMetadata(event.metadata),
   };
@@ -284,7 +285,8 @@ function normalizeMetadata(value) {
       continue;
     }
     if (item === null || ["string", "number", "boolean"].includes(typeof item)) {
-      result[key] = typeof item === "string" ? truncateText(item, 1000) : item;
+      result[key] =
+        typeof item === "string" ? truncateText(redactSensitiveText(item), 1000) : item;
     }
   }
   return result;
@@ -318,8 +320,7 @@ function nullParam(name) {
 }
 
 function safeError(error) {
-  const message = error && error.message ? error.message : String(error);
-  return message.split(/\r?\n/)[0].slice(0, 500);
+  return safeErrorLine(error);
 }
 
 module.exports = {

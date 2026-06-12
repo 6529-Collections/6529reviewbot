@@ -1081,3 +1081,15 @@
   - add smoke coverage with bearer/provider-key shaped failure text;
   - document the App server diagnostic boundary in security and job-ledger
     docs.
+- Merged `6529reviewbot` PR #99 as `705799a` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's non-string stack guard before
+  merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27431657762`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27431657742`, completed successfully.
+- Started `codex/redact-ledger-diagnostics` increment:
+  - apply shared diagnostic redaction to alert, preflight, job-ledger,
+    run-control-ledger, usage-ledger, and worker lifecycle error summaries;
+  - redact job-event reasons, job-event metadata strings, and run-claim
+    metadata strings before persistence;
+  - add smoke coverage for job-event and run-claim metadata redaction.

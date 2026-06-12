@@ -5,6 +5,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { awsCliBin, shouldUseShellForAwsCli } = require("./data-api.cjs");
+const { safeErrorLine } = require("./diagnostics.cjs");
 
 const NOTIFY_MODES = ["none", "stdout", "webhook", "sns"];
 
@@ -186,7 +187,7 @@ function parseBool(value) {
 }
 
 function safeError(error) {
-  return error && error.message ? error.message : String(error);
+  return safeErrorLine(error);
 }
 
 module.exports = {

@@ -537,6 +537,25 @@ assert.equal(
   jobInsert.parameters.find((param) => param.name === "job_id").value.stringValue,
   "rj_test"
 );
+const redactedJobEvent = jobLedger.normalizeJobLedgerEvent({
+  jobId: "rj_redacted",
+  status: "dispatch_error",
+  stage: "dispatch",
+  repoFullName: "6529-Collections/example",
+  reviewKind: "general",
+  provider: "anthropic",
+  model: "claude-opus-4-8",
+  reason:
+    "failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+  metadata: {
+    detail:
+      "failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+  },
+});
+assert(redactedJobEvent.reason.includes("Bearer [redacted]"));
+assert(redactedJobEvent.reason.includes("sk-[redacted]"));
+assert.equal(redactedJobEvent.reason.includes("sk-proj-"), false);
+assert.equal(redactedJobEvent.metadata.detail.includes("sk-proj-"), false);
 assert.throws(
   () => jobLedger.buildJobEventInsert("reviewbot", { status: "dispatch_failed" }),
   /missing required fields/
@@ -1771,6 +1790,30 @@ assert.match(
   runClaimUpdateQuery.parameters.find((param) => param.name === "metadata").value.stringValue,
   /queueReason/
 );
+const runClaimUpdateMetadata = JSON.parse(
+  runClaimUpdateQuery.parameters.find((param) => param.name === "metadata").value
+    .stringValue
+);
+assert.equal(runClaimUpdateMetadata.queueReason, "closed");
+assert.equal(Object.prototype.hasOwnProperty.call(runClaimUpdateMetadata, "ignored"), false);
+const redactedRunClaimUpdateQuery = runControlLedger.buildRunClaimStatusUpdate(
+  "reviewbot",
+  reviewJobs[0],
+  "dispatch_error",
+  {
+    metadata: {
+      queueReason:
+        "failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+    },
+  }
+);
+const redactedRunClaimMetadata = JSON.parse(
+  redactedRunClaimUpdateQuery.parameters.find((param) => param.name === "metadata").value
+    .stringValue
+);
+assert(redactedRunClaimMetadata.queueReason.includes("Bearer [redacted]"));
+assert(redactedRunClaimMetadata.queueReason.includes("sk-[redacted]"));
+assert.equal(redactedRunClaimMetadata.queueReason.includes("sk-proj-"), false);
 assert.equal(
   runControlLedger
     .buildRunClaimStatusUpdate("reviewbot", reviewJobs[0], "failed")

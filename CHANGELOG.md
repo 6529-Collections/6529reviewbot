@@ -49,6 +49,9 @@ stabilized.
   failures are returned.
 - App server dispatch exception diagnostics are redacted before they are
   written to run-claim metadata or job-event reasons.
+- Ledger, preflight, alert, and worker lifecycle diagnostic helpers use the
+  shared redaction path, and job/run-claim metadata string fields redact common
+  secret shapes before persistence.
 - Live provider calls fail closed when the provider returns empty visible
   review text instead of posting a generic no-finding comment.
 - The production server can mint a short-lived GitHub App installation token
