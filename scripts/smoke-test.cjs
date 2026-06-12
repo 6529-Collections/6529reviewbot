@@ -2045,6 +2045,11 @@ assert.equal(adminAuth.authorizeAdminRequest({
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
+  headers: new Headers(signedAdminHeaders),
+}, hmacAuthSettings).allowed, true);
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
   headers: signedAdminHeadersFor(adminUsageUrl, { roles: ["viewer"] }),
 }, hmacAuthSettings).code, "admin_auth_missing_role");
 assert.equal(adminAuth.authorizeAdminRequest({
@@ -2066,6 +2071,32 @@ assert.equal(adminAuth.authorizeAdminRequest({
     expiresAt: String(Math.floor(Date.now() / 1000) + 9999),
   }),
 }, hmacAuthSettings).code, "admin_auth_ttl_too_long");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: {
+    ...signedAdminHeaders,
+    "x-6529-admin-user": "operator\nnext",
+  },
+}, hmacAuthSettings).code, "admin_auth_invalid_actor");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: {
+    ...signedAdminHeaders,
+    "x-6529-admin-roles": "reviewbot-admin,bad role",
+  },
+}, hmacAuthSettings).code, "admin_auth_invalid_roles");
+assert.throws(
+  () => adminAuth.signAdminAuthRequest({
+    method: "GET",
+    url: adminUsageUrl,
+    actor: "operator",
+    roles: ["reviewbot-admin\nbad"],
+    expiresAt: String(Math.floor(Date.now() / 1000) + 120),
+  }, hmacAuthSettings),
+  /roles are invalid/
+);
 assert.equal(appServer.normalizeConfigLoadResult(null).status, "invalid");
 assert.equal(
   repositoryConfig.repositoryConfigBlocksWork(

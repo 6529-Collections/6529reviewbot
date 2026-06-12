@@ -76,9 +76,15 @@ The `ROLES` line is the comma-separated `x-6529-admin-roles` role list in the
 same order after trimming spaces, for example `reviewbot-admin,admin`. The
 signing service and bot must build the same role line.
 
+The bot accepts `x-6529-admin-user` values up to 200 characters with no control
+characters. Each role must be 1-80 characters and use only letters, digits,
+underscore, dot, colon, or hyphen. The signing service should reject anything
+outside that contract before creating an assertion.
+
 The bot rejects:
 
 - missing headers;
+- malformed actor or role headers;
 - expired assertions;
 - assertions whose expiry is too far in the future;
 - users without a required role;

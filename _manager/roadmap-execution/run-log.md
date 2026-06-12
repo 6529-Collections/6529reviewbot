@@ -864,3 +864,13 @@
   - keep existing main-App behavior as the default;
   - document testing the dispatch-only App token path from a private operator
     environment.
+- Merged `6529reviewbot` PR #78 as `1ccb5e2` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27418288556`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27418288537`, completed successfully.
+- Started `codex/harden-admin-auth-headers` increment:
+  - accept standard `Headers` objects in the admin auth bridge;
+  - reject malformed HMAC actor and role headers before signature comparison;
+  - document the 6529.io signer value contract.

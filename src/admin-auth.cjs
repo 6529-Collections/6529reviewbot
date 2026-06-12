@@ -5,6 +5,10 @@ const crypto = require("crypto");
 const AUTH_MODES = ["disabled", "shared_secret", "hmac"];
 const DEFAULT_REQUIRED_ROLES = ["reviewbot-admin", "admin"];
 const DEFAULT_MAX_TTL_SECONDS = 300;
+const MAX_ADMIN_ACTOR_LENGTH = 200;
+const MAX_ADMIN_ROLE_LENGTH = 80;
+const CONTROL_CHAR_PATTERN = /[\u0000-\u001f\u007f]/;
+const ROLE_PATTERN = /^[A-Za-z0-9_.:-]+$/;
 
 function adminAuthSettingsFromEnv(env = process.env) {
   return {
@@ -59,13 +63,20 @@ function authorizeHmac(request, settings, now = new Date()) {
     return denied("admin_auth_not_configured", "Admin HMAC secret is not configured.");
   }
 
-  const actor = headerValue(request.headers, "x-6529-admin-user");
+  const actor = headerValue(request.headers, "x-6529-admin-user").trim();
   const roles = csv(headerValue(request.headers, "x-6529-admin-roles"));
   const expiresAt = headerValue(request.headers, "x-6529-admin-expires-at");
   const signature = headerValue(request.headers, "x-6529-admin-signature");
 
   if (!actor || roles.length === 0 || !expiresAt || !signature) {
     return denied("admin_auth_missing_headers", "Admin authorization headers are incomplete.");
+  }
+
+  if (!isSafeAdminActor(actor)) {
+    return denied("admin_auth_invalid_actor", "Admin actor is invalid.");
+  }
+  if (!roles.every(isSafeAdminRole)) {
+    return denied("admin_auth_invalid_roles", "Admin roles are invalid.");
   }
 
   const expiry = Number.parseInt(expiresAt, 10);
@@ -103,9 +114,17 @@ function signAdminAuthRequest(input, settings = adminAuthSettingsFromEnv()) {
   if (!secret) {
     throw new Error("Admin auth HMAC secret is required.");
   }
+  const actor = String(input.actor || "").trim();
+  const roles = csv(input.roles || []);
+  if (!isSafeAdminActor(actor)) {
+    throw new Error("Admin auth actor is invalid.");
+  }
+  if (!roles.every(isSafeAdminRole)) {
+    throw new Error("Admin auth roles are invalid.");
+  }
   return crypto
     .createHmac("sha256", secret)
-    .update(canonicalAdminAuthPayload(input))
+    .update(canonicalAdminAuthPayload({ ...input, actor, roles }))
     .digest("hex");
 }
 
@@ -125,8 +144,30 @@ function hasRequiredRole(actualRoles, requiredRoles) {
   return requiredRoles.some((role) => actual.has(String(role).toLowerCase()));
 }
 
+function isSafeAdminActor(value) {
+  const text = String(value || "");
+  return (
+    text.length > 0 &&
+    text.length <= MAX_ADMIN_ACTOR_LENGTH &&
+    !CONTROL_CHAR_PATTERN.test(text)
+  );
+}
+
+function isSafeAdminRole(value) {
+  const text = String(value || "");
+  return (
+    text.length > 0 &&
+    text.length <= MAX_ADMIN_ROLE_LENGTH &&
+    ROLE_PATTERN.test(text)
+  );
+}
+
 function headerValue(headers, name) {
   const lowerName = name.toLowerCase();
+  if (headers && typeof headers.get === "function") {
+    const value = headers.get(name);
+    return value === null || value === undefined ? "" : String(value);
+  }
   for (const [key, value] of Object.entries(headers || {})) {
     if (key.toLowerCase() === lowerName) {
       return Array.isArray(value) ? String(value[0] || "") : String(value || "");
@@ -204,5 +245,7 @@ module.exports = {
   authorizeAdminRequest,
   canonicalAdminAuthPayload,
   createUsageApiAdminAuthorizer,
+  isSafeAdminActor,
+  isSafeAdminRole,
   signAdminAuthRequest,
 };
