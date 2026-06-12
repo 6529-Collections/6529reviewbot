@@ -3186,6 +3186,52 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(stdoutNotification.delivered, true);
   assert.match(alertOutput, /6529reviewbot/);
+  const slackWebhookFixture = [
+    "https://hooks.slack.com/services",
+    "T00000000",
+    "B00000000",
+    "XXXXXXXXXXXXXXXXXXXXXXXX",
+  ].join("/");
+  const unsafeAlert = {
+    kind: "spend_spike",
+    severity: "warning",
+    title:
+      "Bearer abcdefghijklmnopqrstuvwxyz123456 and github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+    message: `failed with sk-proj-abcdefghijklmnopqrstuvwx123456 and ${slackWebhookFixture}`,
+    scopeType: "requestor",
+    scopeValue: "sk-proj-abcdefghijklmnopqrstuvwx123456",
+    nested: {
+      token: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+    },
+    github_pat_abcdefghijklmnopqrstuvwxyz1234567890: "should-not-pass",
+  };
+  const safeAlertPayload = alertNotifier.alertPayload([unsafeAlert], { now: alertNow });
+  assert.equal(safeAlertPayload.alertCount, 1);
+  assert(safeAlertPayload.alerts[0].title.includes("Bearer [redacted]"));
+  assert(safeAlertPayload.alerts[0].title.includes("github_pat_[redacted]"));
+  assert(safeAlertPayload.alerts[0].message.includes("sk-[redacted]"));
+  assert(safeAlertPayload.alerts[0].message.includes("[redacted-alert-webhook-url]"));
+  assert(safeAlertPayload.alerts[0].scopeValue.includes("sk-[redacted]"));
+  assert(safeAlertPayload.alerts[0].nested.token.includes("github_pat_[redacted]"));
+  assert.equal(JSON.stringify(safeAlertPayload).includes("sk-proj-abcdefghijkl"), false);
+  assert.equal(JSON.stringify(safeAlertPayload).includes("hooks.slack.com/services"), false);
+  assert.equal(
+    Object.keys(safeAlertPayload.alerts[0]).some((key) => key.startsWith("github_pat_")),
+    false
+  );
+  let unsafeAlertOutput = "";
+  const unsafeStdoutNotification = await alertNotifier.sendAlerts([unsafeAlert], {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "stdout",
+    }),
+    now: alertNow,
+    write: (text) => {
+      unsafeAlertOutput += text;
+    },
+  });
+  assert.equal(unsafeStdoutNotification.alertCount, 1);
+  assert(unsafeAlertOutput.includes("sk-[redacted]"));
+  assert.equal(unsafeAlertOutput.includes("sk-proj-abcdefghijkl"), false);
   let snsPublishOptions = null;
   const snsNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
     settings: alertNotifier.alertNotifierSettingsFromEnv({
@@ -3270,6 +3316,48 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(scheduledAlertResult.alertCount, generatedAlerts.length + generatedJobHealthAlerts.length);
   assert.equal(scheduledAlertResult.notification.mode, "dry_run");
+  const unsafeScheduledAlertResult = await scheduledSpendCheck.runScheduledSpendCheck({
+    settings: {
+      alertPolicy: spendAlerts.spendAlertPolicyFromEnv({
+        REVIEWBOT_ALERTS_ENABLED: "true",
+        REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND: "false",
+      }),
+      jobHealthPolicy: jobHealthAlerts.jobHealthAlertPolicyFromEnv({
+        REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED: "false",
+      }),
+      notifierSettings: alertNotifier.alertNotifierSettingsFromEnv({
+        REVIEWBOT_ALERTS_NOTIFY_MODE: "none",
+      }),
+      ledgerSettings: {},
+      apiSettings: usageApiSettings,
+      lookbackDays: 35,
+    },
+    events: [{
+      createdAt: "2026-06-12T11:00:00.000Z",
+      repoFullName: "6529-Collections/sk-proj-abcdefghijklmnopqrstuvwx123456",
+      prNumber: 12,
+      requestor: "github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+      reviewKind: "general",
+      provider: "anthropic",
+      model: "claude-opus-4-8",
+      actualCostUsd: 9,
+    }],
+    budgetPolicies: [{
+      scopeType: "repo",
+      scopeValue: "6529-Collections/sk-proj-abcdefghijklmnopqrstuvwx123456",
+      dailyBudgetUsd: 1,
+      enabled: true,
+    }],
+    now: alertNow,
+    dryRun: true,
+    force: true,
+  });
+  assert.equal(unsafeScheduledAlertResult.alertCount, 1);
+  assert(JSON.stringify(unsafeScheduledAlertResult.alerts).includes("sk-[redacted]"));
+  assert.equal(
+    JSON.stringify(unsafeScheduledAlertResult.alerts).includes("sk-proj-abcdefghijkl"),
+    false
+  );
   try {
     usageApi.usageRangeFromRequest(
       { url: new URL("http://localhost/api/public/usage/summary?days=bad") },

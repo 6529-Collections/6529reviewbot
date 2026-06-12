@@ -388,6 +388,10 @@ merged PRs.
   unavailable reasons should be bounded and redacted before they reach
   dashboard clients, especially when custom loaders bypass ledger-write
   normalization.
+- Scheduled alert notifications are output boundaries too. Alerts may include
+  private operator context, but common secret-shaped strings and unsafe custom
+  keys should be redacted or omitted before dry-run JSON, stdout, webhook, or
+  SNS delivery.
 
 ## Constraints
 
@@ -399,8 +403,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the admin API diagnostic sanitization PR.
-2. Continue dogfood target-repo PRs once required human review completes.
+1. Continue dogfood target-repo PRs once required human review completes.
+2. Validate, publish, and merge the scheduled alert payload sanitization PR.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
    most useful next.

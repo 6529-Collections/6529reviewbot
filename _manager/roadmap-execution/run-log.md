@@ -1337,3 +1337,22 @@
   runtime-status `preflight` output to `object | null` so strict clients keep
   the OpenAPI contract even when custom loaders return scalar diagnostics.
   `npm test`, `npm run release:check`, and `git diff --check` passed again.
+- Merged `6529reviewbot` PR #114 as `cbb9388` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review thread marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27442589521`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27442589528`, completed successfully.
+- Started `codex/sanitize-alert-payloads` increment:
+  - sanitize scheduled alert payloads at the notifier boundary before dry-run,
+    stdout, webhook, or SNS delivery;
+  - sanitize scheduled-check returned alerts so operator dry-run summaries and
+    delivery payloads share the same output shape;
+  - add smoke coverage for secret-shaped alert titles, messages, scope values,
+    nested values, webhook URLs, and custom keys;
+  - update alerting, security, release-readiness, changelog, and manager docs.
+- Local validation for `codex/sanitize-alert-payloads`:
+  - `npm run check:public-artifacts` passed after replacing a complete
+    Slack-webhook-shaped test literal with a runtime-assembled fixture;
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
