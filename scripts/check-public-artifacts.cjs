@@ -38,9 +38,10 @@ const textExtensions = new Set([
 ]);
 const allowedAwsAccountIds = new Set(["123456789012"]);
 const localPathStopChars = '\\s"\'<>`';
+const windowsPathSeparator = String.raw`(?:\\+|/)`;
 const localPrivateWindowsRoots = [
-  `Users\\\\[^\\\\${localPathStopChars}]+`,
-  `Documents and Settings\\\\[^\\\\${localPathStopChars}]+`,
+  `Users${windowsPathSeparator}[^\\\\/${localPathStopChars}]+`,
+  `Documents and Settings${windowsPathSeparator}[^\\\\/${localPathStopChars}]+`,
   "private",
   "secrets?",
   "temp",
@@ -48,7 +49,7 @@ const localPrivateWindowsRoots = [
 ].join("|");
 const localPrivatePathPattern = new RegExp(
   [
-    `\\b[A-Za-z]:\\\\(?:${localPrivateWindowsRoots})(?:\\\\[^${localPathStopChars}]*)?`,
+    `\\b[A-Za-z]:${windowsPathSeparator}(?:${localPrivateWindowsRoots})(?:${windowsPathSeparator}[^${localPathStopChars}]*)?`,
     `\\B/(?:home|Users)/[A-Za-z0-9._-]+(?:/[^${localPathStopChars}]*)?`,
     `~/[^${localPathStopChars}]+`,
   ].join("|"),

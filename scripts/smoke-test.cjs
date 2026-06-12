@@ -949,6 +949,20 @@ assert.equal(
   "local_private_path"
 );
 assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    String.raw`{"output":"C:\\private\\6529bot-app.json"}`
+  )[0].rule,
+  "local_private_path"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "output C:/Users/operator/6529bot-app.json\n"
+  )[0].rule,
+  "local_private_path"
+);
+assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "output /home/operator/6529bot-app.json\n")[0]
     .rule,
   "local_private_path"

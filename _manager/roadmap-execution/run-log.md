@@ -1259,3 +1259,6 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #110 by extending the Windows private
+  path scanner to detect JSON-escaped backslashes and slash-style drive paths;
+  targeted `npm run check:public-artifacts` and `npm test` passed.
