@@ -1356,3 +1356,7 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #115 by naming dry-run summaries in the
+  security model and adding mocked webhook-delivery coverage for unsafe alert
+  payload sanitization. `npm run check:public-artifacts`, `npm test`,
+  `npm run release:check`, and `git diff --check` passed again.

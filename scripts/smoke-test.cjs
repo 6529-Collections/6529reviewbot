@@ -3232,6 +3232,22 @@ appServer.handleGitHubWebhook({
   assert.equal(unsafeStdoutNotification.alertCount, 1);
   assert(unsafeAlertOutput.includes("sk-[redacted]"));
   assert.equal(unsafeAlertOutput.includes("sk-proj-abcdefghijkl"), false);
+  let unsafeWebhookRequest = null;
+  const unsafeWebhookNotification = await alertNotifier.sendAlerts([unsafeAlert], {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "webhook",
+      REVIEWBOT_ALERTS_WEBHOOK_URL: "https://alerts.example.test/reviewbot",
+    }),
+    now: alertNow,
+    fetchImpl: async (url, options) => {
+      unsafeWebhookRequest = { url, options };
+      return { ok: true, status: 204 };
+    },
+  });
+  assert.equal(unsafeWebhookNotification.alertCount, 1);
+  assert.equal(unsafeWebhookRequest.url, "https://alerts.example.test/reviewbot");
+  assert(unsafeWebhookRequest.options.body.includes("sk-[redacted]"));
+  assert.equal(unsafeWebhookRequest.options.body.includes("sk-proj-abcdefghijkl"), false);
   let snsPublishOptions = null;
   const snsNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
     settings: alertNotifier.alertNotifierSettingsFromEnv({
