@@ -34,6 +34,7 @@ The first `v0` tag can include:
 - local and central GitHub Actions worker adapters;
 - base-ref repository configuration with restrictive central-policy merge;
 - public and admin usage API contracts with read-only Aurora loaders;
+- repeatable Aurora ledger schema tooling;
 - 6529.io admin auth bridge contract;
 - scheduled spend alert checks with stdout, webhook, and SNS delivery modes;
 - dogfood templates, deployment docs, release checks, and security-review
@@ -68,14 +69,16 @@ Do not create the `v0` tag until all of these are true:
    explicitly deferred behind operator-only APIs.
 6. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode.
-7. A limited initial-review dogfood run has completed with conservative budget
+7. `npm run ledger:schema -- --apply` has been run in the target Aurora
+   database, or release notes explicitly mark ledger setup as manual.
+8. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage.
-8. Scheduled spend alerts route to an operator-owned channel.
-9. `npm run release:check` passes from a clean `main`.
-10. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
-11. `docs/security-review-checklist.md` has been completed for the release
+9. Scheduled spend alerts route to an operator-owned channel.
+10. `npm run release:check` passes from a clean `main`.
+11. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
+12. `docs/security-review-checklist.md` has been completed for the release
     candidate.
-12. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
+13. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
 If any gate is intentionally skipped, the release notes must say so plainly and

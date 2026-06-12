@@ -20,6 +20,18 @@ aws rds-data execute-statement \
   --sql "select count(*) from reviewbot.ai_review_usage_events"
 ```
 
+Preview the expected ledger schema:
+
+```bash
+npm run ledger:schema
+```
+
+Apply or repair missing tables from a configured operator environment:
+
+```bash
+npm run ledger:schema -- --apply
+```
+
 Run a dry spend-alert pass:
 
 ```bash

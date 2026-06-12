@@ -129,6 +129,12 @@ Validate a target repository config before opening its PR:
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Print the Aurora ledger schema without touching AWS:
+
+```bash
+npm run ledger:schema
+```
+
 Replay a saved GitHub webhook payload without dispatching workers:
 
 ```bash
@@ -272,6 +278,12 @@ REVIEW_USAGE_AWS_ROLE_ARN=arn:aws:iam::...:role/...
 See [docs/aws-usage-ledger.md](docs/aws-usage-ledger.md).
 Use [docs/job-ledger.md](docs/job-ledger.md) when enabling durable budget and
 dispatch audit events.
+
+From a configured operator environment, apply the schema explicitly with:
+
+```bash
+npm run ledger:schema -- --apply
+```
 
 ## Security Model
 

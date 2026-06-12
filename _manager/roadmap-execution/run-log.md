@@ -226,3 +226,15 @@
   - README, architecture, configuration, GitHub App, deployment, operations,
     usage API, AWS ledger, worker adapter, roadmap, changelog, and
     manager-memory updates.
+- Merged `6529reviewbot` PR #24 as `91701f2` after CI and Dependency Review
+  passed; CodeRabbit again remained on an in-progress status with no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/ledger-schema-tooling` increment:
+  - `src/ledger-schema.cjs` defines idempotent Aurora schema statements for
+    usage events, job events, model prices, budget policies, indexes, and
+    daily spend views;
+  - `bin/apply-ledger-schema.cjs` prints SQL by default and requires
+    `--apply` for RDS Data API execution;
+  - smoke coverage validates SQL rendering, invalid schema rejection, mocked
+    apply execution, and CLI argument parsing;
+  - docs and release gates now reference `npm run ledger:schema`.

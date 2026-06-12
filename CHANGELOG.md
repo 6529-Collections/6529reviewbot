@@ -31,6 +31,7 @@ stabilized.
 - Scheduled spend alerts for budget utilization and unusual spend spikes.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
   fanout diagnostics.
+- Dry-run-by-default ledger schema CLI for Aurora setup and repair.
 - Dogfood runbook, conservative dogfood templates, and repository config
   validation tooling.
 - Production deployment runbook for GitHub App, worker, usage API, and 6529.io

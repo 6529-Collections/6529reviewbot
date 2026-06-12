@@ -23,6 +23,7 @@ After stabilization:
 - workflow pins reviewed
 - security model reviewed for trust-boundary changes
 - AWS/IAM changes documented
+- ledger schema changes captured in `npm run ledger:schema`
 - comment contract changes documented
 - configuration changes documented
 - alerting and admin-auth changes documented
@@ -37,7 +38,7 @@ Treat these as breaking:
 
 - changing hidden metadata format;
 - changing required provider config;
-- changing AWS ledger schema without migration docs;
+- changing AWS ledger schema without updating the schema CLI and migration docs;
 - changing workflow permissions;
 - changing default review fan-out;
 - changing skip behavior;

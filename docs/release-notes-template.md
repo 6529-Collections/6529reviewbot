@@ -21,6 +21,7 @@ repositories.
 - Provider lanes: Anthropic, OpenAI, and OpenRouter through explicit config.
 - Public-repo trusted-actor admission before model calls.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
+- Dry-run-by-default Aurora ledger schema tooling.
 - Public/admin usage API contracts for 6529.io surfaces.
 
 ## Tested Configuration
@@ -31,6 +32,7 @@ repositories.
 - Default Anthropic model:
 - Repository config template:
 - Budget mode and caps:
+- Ledger schema status:
 - Alert delivery:
 - 6529.io dashboard/admin status:
 

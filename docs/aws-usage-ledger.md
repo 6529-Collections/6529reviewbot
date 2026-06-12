@@ -44,6 +44,31 @@ permissions for the chosen delivery mode.
 budget admission and worker dispatch results. These rows are operational audit
 data, not cost accounting. See [job-ledger.md](job-ledger.md).
 
+## Schema Tooling
+
+Print the full schema SQL without contacting AWS:
+
+```bash
+npm run ledger:schema
+```
+
+Apply the schema from a configured operator environment:
+
+```bash
+npm run ledger:schema -- --apply
+```
+
+The apply mode uses the RDS Data API settings below. It is intentionally
+explicit; the default command is a dry run.
+
+Use a non-default schema name only when the deployment intentionally separates
+bot data:
+
+```bash
+npm run ledger:schema -- --schema reviewbot
+npm run ledger:schema -- --schema reviewbot --apply
+```
+
 ## Views
 
 ```text

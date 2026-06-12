@@ -1,0 +1,225 @@
+"use strict";
+
+const { assertDataApiSettings, executeStatement } = require("./data-api.cjs");
+const { quoteIdent } = require("./usage-ledger.cjs");
+
+function ledgerSchemaStatements(schema = "reviewbot") {
+  const schemaIdent = quoteIdent(schema);
+  return [
+    {
+      name: "create_schema",
+      sql: `create schema if not exists ${schemaIdent}`,
+    },
+    {
+      name: "create_usage_events",
+      sql: `
+create table if not exists ${schemaIdent}.ai_review_usage_events (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  repo_full_name text not null,
+  pr_number bigint,
+  pr_author text,
+  pr_head_sha text,
+  workflow_run_id text,
+  workflow_job text,
+  review_kind text not null,
+  provider text not null,
+  model text not null,
+  lane text,
+  request_id text,
+  provider_response_id text,
+  input_tokens bigint not null default 0,
+  cached_input_tokens bigint not null default 0,
+  output_tokens bigint not null default 0,
+  reasoning_tokens bigint not null default 0,
+  total_tokens bigint not null default 0,
+  estimated_cost_usd numeric(18, 8),
+  actual_cost_usd numeric(18, 8),
+  currency text not null default 'USD',
+  budget_skipped boolean not null default false,
+  metadata jsonb not null default '{}'::jsonb
+)`,
+    },
+    {
+      name: "create_job_events",
+      sql: `
+create table if not exists ${schemaIdent}.ai_review_job_events (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  job_id text not null,
+  status text not null,
+  stage text not null,
+  repo_full_name text not null,
+  pr_number bigint,
+  pr_author text,
+  pr_head_sha text,
+  delivery_id text,
+  requestor text,
+  review_kind text not null,
+  provider text not null,
+  model text not null,
+  lane text,
+  adapter text,
+  accepted boolean,
+  reason text,
+  exit_code integer,
+  metadata jsonb not null default '{}'::jsonb
+)`,
+    },
+    {
+      name: "create_model_prices",
+      sql: `
+create table if not exists ${schemaIdent}.ai_model_prices (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  provider text not null,
+  model text not null,
+  input_usd_per_million numeric(18, 8),
+  cached_input_usd_per_million numeric(18, 8),
+  output_usd_per_million numeric(18, 8),
+  reasoning_usd_per_million numeric(18, 8),
+  currency text not null default 'USD',
+  effective_from timestamptz not null default now(),
+  effective_to timestamptz,
+  source_url text,
+  notes text
+)`,
+    },
+    {
+      name: "create_budget_policies",
+      sql: `
+create table if not exists ${schemaIdent}.ai_review_budget_policies (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  scope_type text not null,
+  scope_value text not null,
+  daily_budget_usd numeric(18, 8),
+  weekly_budget_usd numeric(18, 8),
+  monthly_budget_usd numeric(18, 8),
+  enabled boolean not null default true,
+  notes text,
+  unique (scope_type, scope_value)
+)`,
+    },
+    {
+      name: "index_usage_repo_pr_created",
+      sql: `
+create index if not exists ai_review_usage_events_repo_pr_created_idx
+  on ${schemaIdent}.ai_review_usage_events (repo_full_name, pr_number, created_at desc)`,
+    },
+    {
+      name: "index_usage_requestor_created",
+      sql: `
+create index if not exists ai_review_usage_events_requestor_created_idx
+  on ${schemaIdent}.ai_review_usage_events ((coalesce(metadata->>'requestor', pr_author)), created_at desc)`,
+    },
+    {
+      name: "index_usage_provider_model_created",
+      sql: `
+create index if not exists ai_review_usage_events_provider_model_created_idx
+  on ${schemaIdent}.ai_review_usage_events (provider, model, created_at desc)`,
+    },
+    {
+      name: "index_usage_review_kind_created",
+      sql: `
+create index if not exists ai_review_usage_events_review_kind_created_idx
+  on ${schemaIdent}.ai_review_usage_events (review_kind, created_at desc)`,
+    },
+    {
+      name: "index_job_events_job_created",
+      sql: `
+create index if not exists ai_review_job_events_job_created_idx
+  on ${schemaIdent}.ai_review_job_events (job_id, created_at desc)`,
+    },
+    {
+      name: "index_job_events_repo_pr_created",
+      sql: `
+create index if not exists ai_review_job_events_repo_pr_created_idx
+  on ${schemaIdent}.ai_review_job_events (repo_full_name, pr_number, created_at desc)`,
+    },
+    {
+      name: "index_job_events_status_created",
+      sql: `
+create index if not exists ai_review_job_events_status_created_idx
+  on ${schemaIdent}.ai_review_job_events (status, created_at desc)`,
+    },
+    {
+      name: "index_job_events_requestor_created",
+      sql: `
+create index if not exists ai_review_job_events_requestor_created_idx
+  on ${schemaIdent}.ai_review_job_events (requestor, created_at desc)`,
+    },
+    {
+      name: "view_daily_spend_by_requester",
+      sql: `
+create or replace view ${schemaIdent}.daily_ai_review_spend_by_requester as
+select
+  date_trunc('day', created_at)::date as day,
+  coalesce(metadata->>'requestor', pr_author, 'unknown') as requestor,
+  count(*) as review_runs,
+  coalesce(sum(total_tokens), 0) as total_tokens,
+  coalesce(sum(coalesce(actual_cost_usd, estimated_cost_usd, 0)), 0) as cost_usd
+from ${schemaIdent}.ai_review_usage_events
+group by 1, 2`,
+    },
+    {
+      name: "view_daily_spend_by_model",
+      sql: `
+create or replace view ${schemaIdent}.daily_ai_review_spend_by_model as
+select
+  date_trunc('day', created_at)::date as day,
+  provider,
+  model,
+  count(*) as review_runs,
+  coalesce(sum(total_tokens), 0) as total_tokens,
+  coalesce(sum(coalesce(actual_cost_usd, estimated_cost_usd, 0)), 0) as cost_usd
+from ${schemaIdent}.ai_review_usage_events
+group by 1, 2, 3`,
+    },
+    {
+      name: "view_daily_spend_by_pr",
+      sql: `
+create or replace view ${schemaIdent}.daily_ai_review_spend_by_pr as
+select
+  date_trunc('day', created_at)::date as day,
+  repo_full_name,
+  pr_number,
+  count(*) as review_runs,
+  coalesce(sum(total_tokens), 0) as total_tokens,
+  coalesce(sum(coalesce(actual_cost_usd, estimated_cost_usd, 0)), 0) as cost_usd
+from ${schemaIdent}.ai_review_usage_events
+group by 1, 2, 3`,
+    },
+  ];
+}
+
+function applyLedgerSchema(settings, options = {}) {
+  const schema = options.schema || settings.schema || "reviewbot";
+  const statements = options.statements || ledgerSchemaStatements(schema);
+  assertDataApiSettings({ ...settings, schema }, "Ledger schema");
+  const execute = options.executeStatement || executeStatement;
+  const results = [];
+  for (const statement of statements) {
+    execute(
+      { ...settings, schema },
+      statement.sql,
+      [],
+      { tempPrefix: "6529-ledger-schema-", maxBuffer: 16 * 1024 * 1024 }
+    );
+    results.push({ name: statement.name, applied: true });
+  }
+  return results;
+}
+
+function renderLedgerSchema(schema = "reviewbot") {
+  return ledgerSchemaStatements(schema)
+    .map((statement) => `-- ${statement.name}\n${statement.sql.trim()};`)
+    .join("\n\n");
+}
+
+module.exports = {
+  applyLedgerSchema,
+  ledgerSchemaStatements,
+  renderLedgerSchema,
+};
