@@ -59,6 +59,7 @@ The first `v0` tag can include:
 - incident response runbook;
 - sanitized support bundle and support playbook;
 - install and onboarding guide;
+- operator evidence template for redacted deployment proof;
 - dogfood templates, deployment docs, release checks, and security-review
   checklists.
 

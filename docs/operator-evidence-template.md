@@ -1,0 +1,115 @@
+# Operator Evidence Template
+
+Use this template for release candidates, dogfood expansion, and production
+changes that depend on resources outside the public repository.
+
+Keep live secrets, full account ids, private repository names, webhook payloads,
+provider responses, prompt text, and raw AWS ARNs out of public issues and PRs.
+Store unredacted evidence in the operator runbook or secret-management system.
+
+## Header
+
+```text
+Date:
+Operator:
+Commit or tag:
+Environment:
+Public summary location:
+Private evidence location:
+```
+
+## GitHub App
+
+```text
+App name:
+Manifest rendered with npm run github-app:manifest:
+Permissions match docs/github-app.md:
+Webhook URL set:
+Webhook secret stored in bot secret store:
+Private key stored in bot secret store:
+Installed repositories:
+```
+
+## AWS Ledger
+
+```text
+Region:
+Aurora PostgreSQL Serverless v2 cluster created:
+Data API enabled:
+Storage encrypted:
+Deletion protection:
+Public accessibility disabled:
+Schema applied with npm run ledger:schema -- -- --apply:
+Expected base tables present:
+Expected daily aggregate views present:
+Usage row count:
+Job-event row count:
+Run-claim row count:
+Model-price row count:
+Budget-policy row count:
+```
+
+## IAM And Secrets
+
+```text
+OIDC trust reviewed from infra/aws templates:
+Data API identity policy reviewed:
+SNS/alert policy reviewed:
+Provider keys stored only in bot-owned secret store:
+GitHub App credentials stored only in bot-owned secret store:
+6529.io admin HMAC secret stored only in server-side 6529 infrastructure:
+```
+
+## Budget And Pricing
+
+```text
+Central budget policies reviewed:
+Central budget policies applied:
+Model price sources reviewed:
+Model prices applied:
+Fail-open/fail-closed behavior accepted:
+```
+
+## Worker And Alerts
+
+```text
+Worker path:
+npm run check:workflow-actions passed after installing workflows:
+npm run preflight -- --strict result:
+Run-control mode:
+Run-control ledger enabled:
+Spend alert destination:
+Spend alert dry-run completed:
+```
+
+## 6529.io Surfaces
+
+```text
+Public dashboard route:
+Public dashboard API target:
+Private admin route:
+Admin HMAC bridge wired server-side:
+Browser has no bot admin secret/provider key/AWS credential access:
+```
+
+## Dogfood Evidence
+
+```text
+Target repository:
+Repository config validated:
+Command-only review tested:
+Initial review tested:
+Usage ledger row written:
+Job ledger row written:
+Run-control claim written:
+Bot comment reviewed:
+Rollback tested:
+```
+
+## Release Decision
+
+```text
+Decision: approve / approve with follow-up / block
+Accepted deferrals:
+Follow-up issues:
+```

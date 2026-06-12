@@ -490,8 +490,7 @@
   passed; CodeRabbit had only its in-progress placeholder and no review
   threads, and the normal merge path allowed the merge.
 - Inspected AWS `us-east-1` with the configured operator credentials:
-  - found existing Aurora PostgreSQL Serverless v2 cluster
-    `seize-6529bot-usage`;
+  - found an existing operator Aurora PostgreSQL Serverless v2 usage cluster;
   - database `reviewbot`, Data API enabled, encrypted storage, private
     instance, deletion protection on, min ACU 0/max ACU 1;
   - initial schema apply reached the managed views and failed because an
@@ -503,3 +502,20 @@
   - smoke coverage asserts the managed-view drop statement;
   - AWS usage ledger, deployment, release, security checklist, changelog,
     roadmap, and manager-memory docs.
+- Merged `6529reviewbot` PR #50 as `f7677bb` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Re-ran the live Aurora ledger schema apply from `main` after PR #50:
+  - apply succeeded through the RDS Data API;
+  - read-only verification found the expected five base tables and three daily
+    aggregate views;
+  - aggregate counts showed zero usage/job/run/model-price rows and one budget
+    policy row;
+  - no raw payloads, prompts, provider responses, secrets, or private row data
+    were read into the public work log.
+- Started `codex/operator-ledger-evidence` increment:
+  - public-safe operator evidence template for GitHub App, AWS ledger, IAM,
+    budget/pricing, worker/alerts, 6529.io surfaces, dogfood, and release
+    decisions;
+  - README, deployment, release-readiness, release, v0 plan, security
+    checklist, changelog, roadmap, and manager-memory docs.

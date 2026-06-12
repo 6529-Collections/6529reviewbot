@@ -91,6 +91,8 @@ Target deployment:
 - `npm run validate:api-contract` when public or admin API contracts changed.
 - `npm run preflight -- -- --strict` in the release candidate environment, or a
   documented acceptance of each warning.
+- Completed [Operator Evidence Template](operator-evidence-template.md) with
+  public-safe redactions.
 - CI passed on the release PR or tag.
 - Dependency Review passed.
 - OpenSSF Scorecard completed and findings were reviewed.

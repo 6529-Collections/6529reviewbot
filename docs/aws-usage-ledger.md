@@ -99,9 +99,9 @@ repository, not on target application repositories:
 ```text
 REVIEW_USAGE_ENABLED=true
 REVIEW_USAGE_AWS_REGION=us-east-1
-REVIEW_USAGE_AWS_ROLE_ARN=arn:aws:iam::987989283142:role/seize-6529bot-usage-writer
-REVIEW_USAGE_DB_RESOURCE_ARN=arn:aws:rds:us-east-1:987989283142:cluster:seize-6529bot-usage
-REVIEW_USAGE_DB_SECRET_ARN=arn:aws:secretsmanager:us-east-1:987989283142:secret:...
+REVIEW_USAGE_AWS_ROLE_ARN=arn:aws:iam::<account-id>:role/<reviewbot-usage-writer-role>
+REVIEW_USAGE_DB_RESOURCE_ARN=arn:aws:rds:<region>:<account-id>:cluster/<reviewbot-usage-cluster>
+REVIEW_USAGE_DB_SECRET_ARN=arn:aws:secretsmanager:<region>:<account-id>:secret:<reviewbot-db-secret>
 REVIEW_USAGE_DB_NAME=reviewbot
 REVIEW_USAGE_DB_SCHEMA=reviewbot
 ```

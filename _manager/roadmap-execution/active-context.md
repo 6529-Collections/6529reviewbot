@@ -64,10 +64,12 @@ merged PRs.
 - GitHub App manifest renderer PR: merged as PR #48, merge commit `d115833`
 - Workflow template action pinning PR: merged as PR #49, merge commit
   `5f9d53c`
-- Current branch: `codex/ledger-view-recreate`
-- Current local changes: ledger schema managed-view drop/recreate support,
-  smoke coverage, AWS ledger docs, deployment/release/security docs, changelog,
-  roadmap, and manager-memory updates.
+- Ledger managed-view recreation PR: merged as PR #50, merge commit
+  `f7677bb`
+- Current branch: `codex/operator-ledger-evidence`
+- Current local changes: operator evidence template, release/deployment/security
+  docs, changelog, roadmap, and manager-memory updates with public-safe
+  deployment evidence language.
 
 ## Key Decisions
 
@@ -161,12 +163,10 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the ledger managed-view recreation PR if checks and
+1. Validate, publish, and merge the operator evidence template PR if checks and
    review are clean.
-2. Re-run `npm run ledger:schema -- -- --apply` against the existing
-   `seize-6529bot-usage` Aurora cluster after the fix lands.
-3. Continue dogfood target-repo PRs once required human review completes.
-4. Prepare the next operator-readiness or release-polish slice after this PR
+2. Continue dogfood target-repo PRs once required human review completes.
+3. Prepare the next operator-readiness or release-polish slice after this PR
    lands.
 
 ## Open Risks
@@ -187,9 +187,9 @@ merged PRs.
   region, repo, branch/environment, cluster, secret, and SNS values before use.
 - The GitHub App manifest still needs production-host rendering and actual App
   creation in GitHub before production use.
-- Ledger schema apply against the existing `seize-6529bot-usage` cluster
-  currently fails on stale managed view definitions. The in-progress fix drops
-  and recreates bot-managed views before re-applying view definitions.
+- Live operator Aurora ledger schema has been applied and read-only verified
+  with expected base tables and daily aggregate views. Keep unredacted resource
+  identifiers in the private operator runbook, not in this public repo.
 - Provider pricing rows still require operator verification and key/limit
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter
