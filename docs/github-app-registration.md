@@ -90,7 +90,7 @@ Preferred dogfood path:
 6. Complete GitHub's manifest conversion in the operator environment:
 
    ```bash
-   npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+   npm run github-app:convert -- -- --code <code> --output <private-json-path>
    ```
 
 7. Move the returned credentials directly into the bot runtime secret store.

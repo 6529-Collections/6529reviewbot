@@ -38,7 +38,7 @@ credentials directly into the bot secret store.
 Use the conversion CLI from a private operator environment:
 
 ```bash
-npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+npm run github-app:convert -- -- --code <code> --output <private-json-path>
 ```
 
 The production server should return safe operator guidance at:

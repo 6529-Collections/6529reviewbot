@@ -105,7 +105,9 @@ The scan covers root public docs and `.env.example` plus public docs, config,
 templates, workflows, infra examples, and durable manager memory. It redacts
 matches in output and fails on live-looking cloud account ids, ARNs, provider
 keys, GitHub tokens, AWS access keys, alert webhook URLs, and private key
-blocks in public artifacts.
+blocks in public artifacts. It also flags common local private paths, such as
+Windows private folders and Unix/macOS home directories, so public examples use
+placeholders instead of operator-specific filesystem locations.
 
 ## Escalation
 

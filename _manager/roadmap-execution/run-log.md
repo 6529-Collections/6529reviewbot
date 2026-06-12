@@ -1243,3 +1243,19 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #109 as `92c1636` after CI, Dependency Review,
+  OpenSSF Scorecard, and CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27438312984`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27438312999`, completed successfully.
+- Started `codex/scan-local-private-paths` increment:
+  - flag common local private filesystem paths in public artifacts;
+  - replace concrete GitHub App conversion output paths with placeholders;
+  - add smoke coverage for Windows private paths, Unix home paths, and allowed
+    repository checkout breadcrumbs;
+  - update support/security docs, changelog, and manager memory.
+- Local validation for `codex/scan-local-private-paths`:
+  - `npm run check:public-artifacts` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

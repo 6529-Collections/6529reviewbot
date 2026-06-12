@@ -94,7 +94,7 @@ After GitHub redirects back with a manifest code, exchange it from a private
 operator environment:
 
 ```bash
-npm run github-app:convert -- -- --code <code> --output C:\private\6529bot-app.json
+npm run github-app:convert -- -- --code <code> --output <private-json-path>
 ```
 
 The server exposes safe guidance responses for the manifest redirect, setup,

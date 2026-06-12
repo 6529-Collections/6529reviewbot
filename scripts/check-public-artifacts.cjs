@@ -37,6 +37,23 @@ const textExtensions = new Set([
   ".yml",
 ]);
 const allowedAwsAccountIds = new Set(["123456789012"]);
+const localPathStopChars = '\\s"\'<>`';
+const localPrivateWindowsRoots = [
+  `Users\\\\[^\\\\${localPathStopChars}]+`,
+  `Documents and Settings\\\\[^\\\\${localPathStopChars}]+`,
+  "private",
+  "secrets?",
+  "temp",
+  "tmp",
+].join("|");
+const localPrivatePathPattern = new RegExp(
+  [
+    `\\b[A-Za-z]:\\\\(?:${localPrivateWindowsRoots})(?:\\\\[^${localPathStopChars}]*)?`,
+    `\\B/(?:home|Users)/[A-Za-z0-9._-]+(?:/[^${localPathStopChars}]*)?`,
+    `~/[^${localPathStopChars}]+`,
+  ].join("|"),
+  "g"
+);
 
 const staticRules = [
   {
@@ -63,6 +80,10 @@ const staticRules = [
     name: "alert_webhook_url",
     pattern:
       /\bhttps:\/\/(?:hooks\.slack\.com\/services\/[A-Za-z0-9/_-]{20,}|(?:discord(?:app)?\.com)\/api\/webhooks\/[0-9]{10,}\/[A-Za-z0-9._-]{20,})\b/g,
+  },
+  {
+    name: "local_private_path",
+    pattern: localPrivatePathPattern,
   },
 ];
 
