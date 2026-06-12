@@ -571,3 +571,14 @@
     provider data were committed to the public repo.
 - Started `codex/record-budget-apply` increment to record this public-safe
   evidence in docs and manager memory.
+- Merged `6529reviewbot` PR #55 as `775dc07` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Started `codex/install-central-workflows` increment:
+  - install `.github/workflows/review-job.yml` from the central worker
+    template;
+  - install `.github/workflows/spend-alerts.yml` with an hourly schedule that
+    remains dormant unless `REVIEWBOT_ALERTS_ENABLED=true`;
+  - add the same alert enablement guard to the template;
+  - update deployment, alerting, release-readiness, v0, roadmap, changelog, and
+    manager-memory docs.

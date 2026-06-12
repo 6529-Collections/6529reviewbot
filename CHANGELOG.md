@@ -50,6 +50,8 @@ stabilized.
   for older dogfood databases.
 - Conservative dogfood budget policy apply path verified against the isolated
   ledger with aggregate scope-count checks.
+- Installed central review-job and dormant-by-default spend-alert workflows in
+  the bot repository.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.

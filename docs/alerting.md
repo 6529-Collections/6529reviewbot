@@ -94,10 +94,14 @@ Lambda routing.
 
 ## Scheduled Workflow
 
-`templates/spend-alert-workflow.yml` is a starter central workflow for this
-repository. It runs hourly, assumes the configured AWS role through OIDC, reads
-the isolated usage ledger, and sends alerts through SNS or the configured
-webhook.
+This repository includes `.github/workflows/spend-alerts.yml` for central
+scheduled alerts. It is scheduled hourly but the job is dormant unless
+`REVIEWBOT_ALERTS_ENABLED=true` is set in repository variables. When enabled,
+it assumes the configured AWS role through OIDC, reads the isolated usage
+ledger, and sends alerts through SNS or the configured webhook.
+
+Keep `templates/spend-alert-workflow.yml` aligned with the installed workflow
+when changing alert behavior.
 
 Do not copy this workflow into target repositories unless there is a deliberate
 dogfood reason. In production, scheduled checks should run from the central

@@ -71,10 +71,13 @@ merged PRs.
 - Ledger additive migrations PR: merged as PR #53, merge commit `6811de2`
 - Budget-scope constraint migration PR: merged as PR #54, merge commit
   `04916c7`
-- Current branch: `codex/record-budget-apply`
-- Current local changes: public-safe record that live ledger schema re-apply
-  and conservative dogfood budget policy apply succeeded, with aggregate scope
-  verification only.
+- Dogfood budget policy apply evidence PR: merged as PR #55, merge commit
+  `775dc07`
+- Current branch: `codex/install-central-workflows`
+- Current local changes: installed central review-job workflow, installed
+  dormant-by-default spend-alert workflow, template guard, deployment/alerting
+  docs, release-readiness/v0/roadmap/changelog updates, and manager-memory
+  updates.
 
 ## Key Decisions
 
@@ -169,6 +172,9 @@ merged PRs.
 - Conservative dogfood budget policies have been applied to the live isolated
   ledger and aggregate scope counts were verified. Keep live resource
   identifiers and operator-owned policy files outside the public repo.
+- The central repo should carry the production worker and alert workflow files
+  directly; templates remain as examples, but operators should not have to
+  copy-paste them before dogfood.
 
 ## Constraints
 
@@ -180,7 +186,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Publish and merge the public-safe live budget-apply evidence update.
+1. Validate, publish, and merge the central workflow installation PR if checks
+   and review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

@@ -108,9 +108,9 @@ and record the reviewed policy ARNs in the operator runbook.
 
 ## Central GitHub Actions Worker
 
-Install `templates/review-job-workflow.yml` as
-`.github/workflows/review-job.yml` in this repository when using the
-`github_actions` worker adapter.
+This repository includes `.github/workflows/review-job.yml` for the
+`github_actions` worker adapter. Keep `templates/review-job-workflow.yml`
+aligned with the installed workflow when changing worker behavior.
 
 Required repository secrets for the worker:
 
@@ -210,8 +210,8 @@ or GitHub App private keys.
 - `npm run preflight` passes, or every warning is understood.
 - AWS OIDC trust and identity policies were reviewed from
   `infra/aws/*.example.json` or equivalent least-privilege templates.
-- `npm run check:workflow-actions` passes after installing or editing central
-  worker and alert workflows.
+- `npm run check:workflow-actions` passes after editing central worker or alert
+  workflows.
 - Invalid webhook signatures fail.
 - GitHub App `ping` is acknowledged.
 - Pull request and issue-comment events are normalized.
