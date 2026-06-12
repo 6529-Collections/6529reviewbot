@@ -168,6 +168,21 @@ The run-claim table stores operational routing data only. It must not store
 prompts, diffs, provider responses, raw webhook payloads, worker output, or
 credentials.
 
+## Dogfood Verification
+
+The built-in Aurora-backed claimer has been smoke-tested against the isolated
+dogfood ledger with a synthetic operator job:
+
+- first claim returned `run_control_claimed`;
+- duplicate claim for the same `runKey` returned `duplicate_run`;
+- worker-style status update marked the claim `completed`;
+- aggregate status verification showed one completed synthetic claim and no
+  active stuck claims.
+
+Keep live resource identifiers, exact run keys, and operator environment files
+out of public release notes. Store them in the private operator evidence
+record.
+
 ## Webhook Response
 
 Webhook responses include a `runControl` summary when jobs reach this stage.

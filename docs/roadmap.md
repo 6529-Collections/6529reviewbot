@@ -323,6 +323,8 @@ Completed in `6529reviewbot`:
 - validated model catalog for provider defaults.
 - durable job lifecycle ledger for budget and dispatch audit events.
 - repeatable Aurora ledger schema tooling.
+- live run-control ledger claim, duplicate-denial, and completion-update path
+  verified with a synthetic dogfood claim.
 - dry-run/apply model pricing tooling.
 - example AWS IAM/OIDC templates for central Data API and SNS access.
 - ledger schema re-apply support for managed daily aggregate views.

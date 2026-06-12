@@ -53,6 +53,8 @@ stabilized.
 - Installed central review-job and dormant-by-default spend-alert workflows in
   the bot repository.
 - v0 release gate renderer can merge an operator-owned status/evidence file.
+- Run-control ledger claim, duplicate-denial, and completion-update path
+  verified against the isolated dogfood ledger.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.

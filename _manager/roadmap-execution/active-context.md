@@ -74,10 +74,11 @@ merged PRs.
 - Dogfood budget policy apply evidence PR: merged as PR #55, merge commit
   `775dc07`
 - Central workflow installation PR: merged as PR #56, merge commit `7de5779`
-- Current branch: `codex/release-gate-status`
-- Current local changes: optional v0 release gate status/evidence file support,
-  CLI/status-file merge, example status file, release-check coverage, README
-  and release docs, changelog/roadmap, and manager-memory updates.
+- Release gate status PR: merged as PR #57, merge commit `8933a01`
+- Current branch: `codex/record-run-control-smoke`
+- Current local changes: public-safe record of live run-control ledger smoke
+  test, including first claim allowed, duplicate denied, completion update
+  succeeded, and aggregate status verification only.
 
 ## Key Decisions
 
@@ -178,6 +179,10 @@ merged PRs.
 - Release gate definitions should stay stable while operator-owned status
   files record completion, deferrals, blockers, and evidence for a specific
   release candidate.
+- The built-in run-control ledger path has been dogfooded against the isolated
+  ledger with a synthetic job. Public docs can record aggregate outcomes, while
+  exact run keys and live resource identifiers stay in private operator
+  evidence.
 
 ## Constraints
 
@@ -189,8 +194,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the v0 release-gate status PR if checks and
-   review are clean.
+1. Validate, publish, and merge the public-safe run-control smoke evidence PR
+   if checks and review are clean.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
