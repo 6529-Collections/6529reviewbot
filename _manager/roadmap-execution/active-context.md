@@ -35,9 +35,10 @@ merged PRs.
 - Production deployment wiring PR: merged as PR #19, merge commit `cee929b`
 - Release hardening PR: merged as PR #20, merge commit `78401dc`
 - v0 release plan PR: merged as PR #21, merge commit `9a5b5e9`
-- Current branch: `codex/webhook-replay-tool`
-- Current local changes: dry-run webhook replay CLI, smoke coverage, and
-  operator docs
+- Webhook replay diagnostics PR: merged as PR #22, merge commit `ea7a118`
+- Current branch: `codex/model-catalog-defaults`
+- Current local changes: validated model catalog, runtime default wiring, and
+  model update docs
 
 ## Key Decisions
 
@@ -66,9 +67,9 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge webhook replay diagnostics.
+1. Push and merge model catalog default wiring.
 2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next release-polish or operator-readiness slice after PR #22
+3. Prepare the next release-polish or operator-readiness slice after PR #23
    lands.
 
 ## Open Risks

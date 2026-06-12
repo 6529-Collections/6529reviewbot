@@ -63,6 +63,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Architecture](docs/architecture.md): system boundaries and trust model.
 - [Configuration](docs/configuration.md): central runtime settings.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
+- [Model Catalog](docs/model-catalog.md): provider defaults and update path.
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
@@ -157,6 +158,7 @@ OPENROUTER_API_KEY
 Provider defaults:
 
 ```text
+REVIEWBOT_MODEL_CATALOG_PATH=config/model-catalog.json
 REVIEW_DEFAULT_ANTHROPIC_MODEL=claude-opus-4-8
 REVIEW_DEFAULT_OPENAI_MODEL=gpt-5.5
 REVIEW_DEFAULT_OPENROUTER_MODEL=
@@ -232,6 +234,10 @@ REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
 OpenRouter intentionally has no built-in default model. Set
 `REVIEW_MODEL` or `REVIEW_DEFAULT_OPENROUTER_MODEL` explicitly so routing and
 cost are predictable.
+
+Built-in defaults are defined in
+[config/model-catalog.json](config/model-catalog.json). See
+[docs/model-catalog.md](docs/model-catalog.md) for the update process.
 
 ## Usage Ledger
 

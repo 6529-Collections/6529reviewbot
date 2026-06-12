@@ -15,6 +15,7 @@ const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
+const modelCatalog = require("../src/model-catalog.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -39,6 +40,15 @@ assert.equal(settings.provider, "anthropic");
 assert.equal(settings.model, "claude-opus-4-8");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
+const catalog = modelCatalog.loadModelCatalog();
+assert.equal(catalog.providers.anthropic.defaultModel, "claude-opus-4-8");
+assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
+assert.equal(
+  modelCatalog.defaultModelForProvider("anthropic", {
+    REVIEW_DEFAULT_ANTHROPIC_MODEL: "claude-opus-next",
+  }),
+  "claude-opus-next"
+);
 
 withEnv(
   {
@@ -364,6 +374,13 @@ const twoLanePolicy = reviewJob.reviewJobPolicyFromEnv({
   REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5,anthropic:claude-opus-4-8",
   REVIEWBOT_MAX_JOBS_PER_DELIVERY: "20",
 });
+assert.deepEqual(
+  reviewJob.reviewJobPolicyFromEnv({
+    REVIEWBOT_REVIEW_LANES: "openrouter:anthropic/claude-sonnet-4",
+    REVIEWBOT_MODEL_CATALOG_PATH: "missing-model-catalog.json",
+  }).lanes.map((lane) => `${lane.provider}:${lane.model}`),
+  ["openrouter:anthropic/claude-sonnet-4"]
+);
 assert.deepEqual(
   twoLanePolicy.lanes.map((lane) => `${lane.provider}:${lane.model}`),
   ["anthropic:claude-opus-4-8", "openai:gpt-5.5"]

@@ -204,3 +204,11 @@
   - smoke coverage for argument parsing and replay pipeline behavior;
   - README, configuration, GitHub App, deployment, operations, changelog, and
     manager-memory updates.
+- Merged `6529reviewbot` PR #22 as `ea7a118` after CI, Dependency Review,
+  CodeRabbit, direct replay smoke, and release checks passed.
+- Started `codex/model-catalog-defaults` increment:
+  - model catalog for Anthropic, OpenAI, and OpenRouter defaults;
+  - runtime wiring for review jobs and standalone review scripts;
+  - catalog validator in the release gate;
+  - README, configuration, review-jobs, roadmap, changelog, and manager-memory
+    updates.

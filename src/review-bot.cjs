@@ -9,14 +9,12 @@ const {
   usageLedgerSettingsFromEnv,
   writeUsageEvent,
 } = require("./usage-ledger.cjs");
+const {
+  defaultModelForProvider,
+} = require("./model-catalog.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
-const DEFAULTS = {
-  anthropic: "claude-opus-4-8",
-  openai: "gpt-5.5",
-  openrouter: "",
-};
 const HARD_LIMITS = {
   maxChangedFiles: 500,
   maxChangedLines: 20000,
@@ -331,7 +329,7 @@ function readSettings(args, kind) {
 }
 
 function defaultModel(provider) {
-  return env(`REVIEW_DEFAULT_${provider.toUpperCase()}_MODEL`, DEFAULTS[provider]);
+  return defaultModelForProvider(provider);
 }
 
 function normalizeKind(kind) {
