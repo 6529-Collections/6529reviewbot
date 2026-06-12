@@ -2522,6 +2522,23 @@ assert.equal(
   false
 );
 assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
+const budgetPolicyStatus = usageApi.publicBudgetPolicyStatus({
+  scopeType: "repo",
+  scopeValue: "6529-Collections/private",
+  dailyBudgetUsd: 25,
+  weeklyBudgetUsd: null,
+  monthlyBudgetUsd: 100,
+  currentSpend: {
+    dailyUsd: "18",
+    weeklyUsd: "42.25",
+    monthlyUsd: "125",
+  },
+});
+assert.equal(budgetPolicyStatus.utilization.daily.percentUsed, 72);
+assert.equal(budgetPolicyStatus.utilization.daily.remainingUsd, 7);
+assert.equal(budgetPolicyStatus.utilization.weekly.percentUsed, null);
+assert.equal(budgetPolicyStatus.utilization.monthly.overBudget, true);
+assert.equal(budgetPolicyStatus.utilization.monthly.remainingUsd, -25);
 const alertNow = new Date("2026-06-12T12:00:00.000Z");
 const alertEvents = [
   {
@@ -2749,6 +2766,25 @@ assert.equal(budgetAdmission.evaluateBudgetAdmission({
 const spendQuery = budgetLedger.buildScopeSpendQuery("reviewbot", "requestor", "maintainer");
 assert.match(spendQuery.sql, /metadata->>'requestor'/);
 assert.equal(spendQuery.parameters[0].value.stringValue, "maintainer");
+const budgetStatusQuery = budgetLedger.buildBudgetPolicyStatusQuery("reviewbot");
+assert.match(budgetStatusQuery.sql, /ai_review_budget_policies/);
+assert.match(budgetStatusQuery.sql, /ai_review_usage_events/);
+assert.match(budgetStatusQuery.sql, /coalesce\(u\.metadata->>'requestor', u\.pr_author\)/);
+assert.match(budgetStatusQuery.sql, /group by/);
+assert.deepEqual(budgetStatusQuery.parameters, []);
+const budgetStatusRecord = budgetLedger.budgetPolicyStatusRecordToPolicy([
+  { stringValue: "repo" },
+  { stringValue: "6529-Collections/example" },
+  { stringValue: "10" },
+  { isNull: true },
+  { stringValue: "100" },
+  { booleanValue: true },
+  { stringValue: "7.5" },
+  { stringValue: "12" },
+  { stringValue: "25" },
+]);
+assert.equal(budgetStatusRecord.currentSpend.dailyUsd, 7.5);
+assert.equal(budgetStatusRecord.weeklyBudgetUsd, null);
 const usageEventsQuery = usageApiLedger.buildUsageEventsQuery("reviewbot", {
   from: "2026-06-01T00:00:00.000Z",
   to: "2026-06-11T00:00:00.000Z",
@@ -3366,6 +3402,35 @@ appServer.handleGitHubWebhook({
     Object.prototype.hasOwnProperty.call(adminUsageEventsRouteResult.body.events[0].metadata, "nested"),
     false
   );
+  const adminBudgetStatusRouteUrl = new URL("http://localhost/api/admin/budget/status");
+  const adminBudgetStatusRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/budget/status",
+    headers: signedAdminHeadersFor(adminBudgetStatusRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadBudgetStatus: async () => ({
+      policies: [{
+        scopeType: "repo",
+        scopeValue: "6529-Collections/private",
+        dailyBudgetUsd: 10,
+        weeklyBudgetUsd: 100,
+        monthlyBudgetUsd: null,
+        enabled: true,
+        currentSpend: {
+          dailyUsd: "8.5",
+          weeklyUsd: "110",
+          monthlyUsd: "110",
+        },
+      }],
+    }),
+  });
+  assert.equal(adminBudgetStatusRouteResult.statusCode, 200);
+  assert.equal(adminBudgetStatusRouteResult.body.kind, "budget_status");
+  assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.daily.percentUsed, 85);
+  assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.weekly.overBudget, true);
+  assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.monthly.remainingUsd, null);
   const manifestCompleteRouteResult = await appServer.handleHttpRequest({
     method: "GET",
     url: "/github-app/manifest-complete?code=temporary-code&state=test-state",
@@ -3516,6 +3581,44 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminAllowed.statusCode, 200);
   assert.equal(adminAllowed.body.policies[0].scopeType, "global");
+  const adminBudgetStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/budget/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+    loadBudgetStatus: async () => ({
+      policies: [{
+        scopeType: "model",
+        scopeValue: "gpt-5.5",
+        dailyBudgetUsd: 20,
+        weeklyBudgetUsd: 80,
+        monthlyBudgetUsd: 250,
+        enabled: true,
+        currentSpend: {
+          dailyUsd: 5,
+          weeklyUsd: 82,
+          monthlyUsd: 125,
+        },
+      }],
+    }),
+  });
+  assert.equal(adminBudgetStatus.statusCode, 200);
+  assert.equal(adminBudgetStatus.body.kind, "budget_status");
+  assert.match(adminBudgetStatus.body.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.equal(adminBudgetStatus.body.policies[0].utilization.daily.percentUsed, 25);
+  assert.equal(adminBudgetStatus.body.policies[0].utilization.weekly.overBudget, true);
+  const missingBudgetStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/budget/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+  });
+  assert.equal(missingBudgetStatus.statusCode, 503);
+  assert.match(missingBudgetStatus.body.error, /budget status/i);
   const adminUsageEventsUrl = new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=2");
   const adminUsageEvents = await usageApi.handleUsageApiRequest({
     method: "GET",

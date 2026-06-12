@@ -45,6 +45,8 @@ Ready for community review:
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - admin recent usage-events API for private raw usage triage without direct
   Aurora browser access;
+- admin budget-status API for current daily, weekly, and monthly policy
+  utilization without direct Aurora browser access;
 - admin run-claims API for stale active claim triage without direct Aurora
   browser access;
 - admin runtime status API backed by no-network preflight checks;

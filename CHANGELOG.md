@@ -95,6 +95,8 @@ stabilized.
   names, even when custom loaders provide non-private public repo events.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
 - Admin-only recent usage-events API for private raw usage diagnostics.
+- Admin-only budget-status API for current daily, weekly, and monthly budget
+  utilization diagnostics.
 - Structured operator evidence validation and redacted public-summary rendering
   for production readiness proof.
 - Admin-only recent job-events API for queue and worker diagnostics.
