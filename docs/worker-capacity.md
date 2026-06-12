@@ -134,7 +134,12 @@ If reviews stop while webhooks are admitted:
    GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
    ```
 
-2. Check active run-control claims in the private operator database.
+2. Check stale active run-control claims:
+
+   ```text
+   GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+   ```
+
 3. Confirm the worker workflow is enabled and has available runner capacity.
 4. Confirm provider keys and AWS OIDC variables are present in the central
    worker environment.

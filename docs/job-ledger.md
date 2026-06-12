@@ -204,15 +204,16 @@ The private 6529.io admin surface can read recent lifecycle rows through:
 
 ```text
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 ```
 
-The endpoint is backed by `reviewbot.ai_review_job_events`, uses the same
-admin-auth bridge as the usage API, and caps `limit` with
-`REVIEWBOT_USAGE_API_MAX_ITEMS`. Keep raw rows private; public pages should use
-aggregates instead of exposing repository names, requestors, or failure text.
-The API normalizes rows again before returning them: job-event strings are
-bounded and redacted for common secret shapes, and metadata is limited to
-safe-keyed scalar values.
+The first endpoint is backed by `reviewbot.ai_review_job_events`; the second
+is backed by `reviewbot.ai_review_run_claims`. Both use the same admin-auth
+bridge as the usage API and cap `limit` with `REVIEWBOT_USAGE_API_MAX_ITEMS`.
+Keep raw rows private; public pages should use aggregates instead of exposing
+repository names, requestors, run keys, or failure text. The API normalizes
+rows again before returning them: string fields are bounded and redacted for
+common secret shapes, and metadata is limited to safe-keyed scalar values.
 
 ## Job-Health Alerts
 

@@ -1845,6 +1845,12 @@ const serverEntrypointOptions = serverCli.createServerOptionsFromEnv({
   REVIEW_USAGE_ENABLED: "false",
 });
 const serverEntrypointQueuePromise = serverEntrypointOptions.enqueueReviewJobs([reviewJobs[0]], {});
+const serverRunClaimReaderOptions = serverCli.createServerOptionsFromEnv({
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "false",
+  REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED: "true",
+});
+assert.equal(typeof serverRunClaimReaderOptions.loadRunClaims, "function");
 let serverDispatchRequest = null;
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
@@ -2524,6 +2530,17 @@ assert.match(runClaimsQuery.sql, /updated_at < cast\(:updated_before as timestam
 assert.match(runClaimsQuery.sql, /expires_at is null or expires_at > now\(\)/);
 assert.equal(runClaimsQuery.parameters[0].value.stringValue, "claimed");
 assert.equal(runClaimsQuery.parameters[3].value.longValue, 7);
+const staleRunClaimsApiQuery = usageApi.runClaimsQueryFromRequest(
+  { url: new URL("http://localhost/api/admin/run-claims/recent?active=1&staleMinutes=120&limit=3") },
+  usageApi.usageApiSettingsFromEnv({ REVIEWBOT_USAGE_API_MAX_ITEMS: "50" }),
+  new Date("2026-06-12T12:00:00.000Z")
+);
+assert.deepEqual(staleRunClaimsApiQuery.statuses, ["claimed", "dispatching", "running"]);
+assert.equal(staleRunClaimsApiQuery.limit, 3);
+assert.equal(staleRunClaimsApiQuery.active, true);
+assert.equal(staleRunClaimsApiQuery.staleMinutes, 120);
+assert.equal(staleRunClaimsApiQuery.updatedBefore, "2026-06-12T10:00:00.000Z");
+assert.equal(staleRunClaimsApiQuery.onlyUnexpired, true);
 assert.throws(() => usageApiLedger.buildJobEventsQuery("reviewbot", { limit: 0 }), /positive integer/);
 const usageApiLedgerRecord = [
   { stringValue: "2026-06-10 01:00:00+00" },
@@ -2645,6 +2662,27 @@ const runClaim = usageApiLedger.runClaimRecordToClaim(runClaimLedgerRecord);
 assert.equal(runClaim.claimId, 101);
 assert.equal(runClaim.status, "running");
 assert.equal(runClaim.metadata.worker, "review-job");
+const unsafeAdminRunClaim = usageApi.normalizeRunClaim({
+  claimId: 102,
+  runKey: "run-sk-proj-abcdefghijklmnopqrstuvwx123456",
+  jobId: "job-claim",
+  status: "running",
+  repoFullName: "6529-Collections/private",
+  prNumber: 12,
+  metadata: {
+    detail:
+      "worker has Bearer abcdefghijklmnopqrstuvwxyz123456 and github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+    nested: { token: "sk-proj-should-not-pass" },
+    "bad key": "sk-proj-should-not-pass",
+  },
+});
+assert(unsafeAdminRunClaim.runKey.includes("sk-[redacted]"));
+assert(unsafeAdminRunClaim.metadata.detail.includes("Bearer [redacted]"));
+assert(unsafeAdminRunClaim.metadata.detail.includes("github_pat_[redacted]"));
+assert.equal(
+  Object.prototype.hasOwnProperty.call(unsafeAdminRunClaim.metadata, "nested"),
+  false
+);
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: new URL("http://localhost/api/admin/usage/summary"),
@@ -3050,6 +3088,46 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminJobsRouteResult.statusCode, 200);
   assert.equal(adminJobsRouteResult.body.events[0].jobId, "job-route");
+  const adminRunClaimsRouteUrl = new URL(
+    "http://localhost/api/admin/run-claims/recent?active=1&staleMinutes=120&limit=1"
+  );
+  const adminRunClaimsRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/run-claims/recent?active=1&staleMinutes=120&limit=1",
+    headers: signedAdminHeadersFor(adminRunClaimsRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadRunClaims: async ({ query }) => {
+      assert.equal(query.limit, 1);
+      assert.deepEqual(query.statuses, ["claimed", "dispatching", "running"]);
+      assert.equal(query.updatedBefore.length, 24);
+      return {
+        claims: [{
+          claimId: 1,
+          runKey: "run-sk-proj-abcdefghijklmnopqrstuvwx123456",
+          jobId: "job-claim",
+          status: "running",
+          repoFullName: "6529-Collections/private",
+          metadata: {
+            detail:
+              "failed with github_pat_abcdefghijklmnopqrstuvwxyz1234567890 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+            nested: { token: "sk-proj-should-not-pass" },
+          },
+        }],
+      };
+    },
+  });
+  assert.equal(adminRunClaimsRouteResult.statusCode, 200);
+  assert.equal(adminRunClaimsRouteResult.body.kind, "run_claims");
+  assert.equal(adminRunClaimsRouteResult.body.active, true);
+  assert.equal(adminRunClaimsRouteResult.body.staleMinutes, 120);
+  assert(adminRunClaimsRouteResult.body.claims[0].runKey.includes("sk-[redacted]"));
+  assert(adminRunClaimsRouteResult.body.claims[0].metadata.detail.includes("github_pat_[redacted]"));
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(adminRunClaimsRouteResult.body.claims[0].metadata, "nested"),
+    false
+  );
   const adminDenied = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/admin/usage/summary"),
@@ -3151,6 +3229,33 @@ appServer.handleGitHubWebhook({
     Object.prototype.hasOwnProperty.call(adminJobEvents.body.events[0].metadata, "nested"),
     false
   );
+  const adminRunClaimsUrl = new URL("http://localhost/api/admin/run-claims/recent?status=running&limit=2");
+  const adminRunClaims = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminRunClaimsUrl,
+    headers: signedAdminHeadersFor(adminRunClaimsUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadRunClaims: async ({ query }) => {
+      assert.deepEqual(query.statuses, ["running"]);
+      assert.equal(query.onlyUnexpired, true);
+      assert.equal(query.limit, 2);
+      return {
+        claims: [{
+          claimId: 2,
+          runKey: "run-key",
+          jobId: "job-claim-2",
+          status: "running",
+          repoFullName: "6529-Collections/private",
+          metadata: { worker: "review-job" },
+        }],
+      };
+    },
+  });
+  assert.equal(adminRunClaims.statusCode, 200);
+  assert.equal(adminRunClaims.body.status, "running");
+  assert.equal(adminRunClaims.body.claims[0].metadata.worker, "review-job");
   const unavailableUsageApi = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/public/usage/summary"),
@@ -3173,6 +3278,20 @@ appServer.handleGitHubWebhook({
       usageApiSettings
     ),
     /limit must be <= 50/
+  );
+  assert.throws(
+    () => usageApi.runClaimsQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/run-claims/recent?limit=999") },
+      usageApiSettings
+    ),
+    /limit must be <= 50/
+  );
+  assert.throws(
+    () => usageApi.runClaimsQueryFromRequest(
+      { url: new URL("http://localhost/api/admin/run-claims/recent?staleMinutes=100000") },
+      usageApiSettings
+    ),
+    /staleMinutes must be <=/
   );
   let alertOutput = "";
   const stdoutNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {

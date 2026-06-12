@@ -90,6 +90,7 @@ stabilized.
   names, even when custom loaders provide non-private public repo events.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
 - Admin-only recent job-events API for queue and worker diagnostics.
+- Admin-only recent run-claims API for stale active claim triage.
 - Admin-only runtime status API backed by no-network preflight checks.
 - 6529.io admin auth bridge contract.
 - Admin auth bridge required-role configuration is validated before the bridge

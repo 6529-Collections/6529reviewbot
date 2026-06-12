@@ -162,6 +162,74 @@
         }
       }
     },
+    "/api/admin/run-claims/recent": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Recent run-control claims",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 50
+            },
+            "description": "Maximum rows to return, capped by REVIEWBOT_USAGE_API_MAX_ITEMS."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional exact claim status filter, for example running."
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "When true, returns active claimed, dispatching, and running claims only."
+          },
+          {
+            "name": "staleMinutes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10080
+            },
+            "description": "Optional stale threshold. Without a status filter, this also selects active claims."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recent run claims",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunClaimsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/status": {
       "get": {
         "tags": ["Admin"],
@@ -529,6 +597,118 @@
           },
           "exitCode": {
             "type": ["number", "null"]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Bounded scalar metadata. Common secret-shaped strings are redacted and nested objects or arrays are omitted.",
+            "additionalProperties": {
+              "type": ["string", "number", "boolean", "null"]
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RunClaimsResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "limit", "status", "active", "staleMinutes", "updatedBefore", "claims"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "run_claims"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "status": {
+            "type": ["string", "null"]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "staleMinutes": {
+            "type": ["integer", "null"]
+          },
+          "updatedBefore": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunClaim"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RunClaim": {
+        "type": "object",
+        "required": ["claimId", "createdAt", "updatedAt", "runKey", "jobId", "status", "repoFullName", "reviewKind", "provider", "model", "metadata"],
+        "properties": {
+          "claimId": {
+            "type": ["number", "null"]
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "runKey": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "repoFullName": {
+            "type": "string"
+          },
+          "org": {
+            "type": "string"
+          },
+          "prNumber": {
+            "type": ["number", "null"]
+          },
+          "requestor": {
+            "type": "string"
+          },
+          "prHeadSha": {
+            "type": "string"
+          },
+          "reviewKind": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "lane": {
+            "type": "string"
+          },
+          "deliveryId": {
+            "type": "string"
+          },
+          "commandName": {
+            "type": "string"
           },
           "metadata": {
             "type": "object",

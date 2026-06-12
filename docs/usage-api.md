@@ -15,6 +15,7 @@ GET /api/public/usage/summary?days=30
 GET /api/admin/usage/summary?days=30
 GET /api/admin/budget/policies
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 GET /api/admin/status?profile=server&strict=false
 ```
 
@@ -25,6 +26,7 @@ REVIEWBOT_USAGE_API_PUBLIC_SUMMARY_PATH=/api/public/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
+REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
 REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
 ```
 
@@ -149,6 +151,75 @@ Example response:
 }
 ```
 
+## Run Claims
+
+Run-control claim rows live in `reviewbot.ai_review_run_claims` when durable
+run control is enabled. They show current or recently completed work ownership
+for duplicate-run and concurrency protection. They are operational data, not
+public transparency data.
+
+`GET /api/admin/run-claims/recent` returns recent normalized run-control
+claims for the private 6529.io admin surface. It accepts:
+
+- `limit`: positive integer up to `REVIEWBOT_USAGE_API_MAX_ITEMS`;
+- `status`: optional exact status filter, for example `running`;
+- `active`: when true, returns `claimed`, `dispatching`, and `running` claims;
+- `staleMinutes`: optional updated-before threshold. Without a `status`
+  filter, setting `staleMinutes` also selects active claims.
+
+The endpoint is admin-only because it can include private repository names,
+run keys, requestors, PR numbers, provider/model routing, and queue state. It
+still sanitizes loader output before responding: string fields are bounded,
+common secret-shaped values are redacted, and `metadata` is reduced to
+safe-keyed scalar values. Loader `503` reasons are redacted through the same
+diagnostic path before they become JSON errors.
+
+Example stale-active query:
+
+```text
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+```
+
+Example response:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "run_claims",
+  "limit": 50,
+  "status": null,
+  "active": true,
+  "staleMinutes": 120,
+  "updatedBefore": "2026-06-12T10:00:00.000Z",
+  "claims": [
+    {
+      "claimId": 101,
+      "createdAt": "2026-06-12 08:00:00+00",
+      "updatedAt": "2026-06-12 08:30:00+00",
+      "completedAt": "",
+      "expiresAt": "2026-06-12 13:00:00+00",
+      "runKey": "6529-Collections/private-repo#12:security:openai:gpt-5.2",
+      "jobId": "job-claim",
+      "status": "running",
+      "repoFullName": "6529-Collections/private-repo",
+      "org": "6529-Collections",
+      "prNumber": 12,
+      "requestor": "maintainer",
+      "reviewKind": "security",
+      "provider": "openai",
+      "model": "gpt-5.2",
+      "lane": "openai:gpt-5.2",
+      "deliveryId": "delivery-1",
+      "commandName": "review",
+      "metadata": {
+        "worker": "review-job"
+      }
+    }
+  ]
+}
+```
+
 ## Loader Contract
 
 The HTTP server accepts injectable loaders:
@@ -157,6 +228,7 @@ The HTTP server accepts injectable loaders:
 loadUsageEvents({ request, settings, range, visibility })
 loadBudgetPolicies({ request, settings })
 loadJobEvents({ request, settings, query })
+loadRunClaims({ request, settings, query })
 loadAdminStatus({ request, settings, query })
 authorizeUsageApiAdmin(request)
 ```

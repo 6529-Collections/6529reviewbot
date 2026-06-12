@@ -35,6 +35,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     loadJobEvents: async ({ query }) => ({
       events: readJobEvents(ledgerSettings, { query }),
     }),
+    loadRunClaims: async ({ query }) => ({
+      claims: readRunClaims(ledgerSettings, { query }),
+    }),
   };
 }
 

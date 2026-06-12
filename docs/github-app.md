@@ -13,6 +13,7 @@ GET  /api/public/usage/summary
 GET  /api/admin/usage/summary
 GET  /api/admin/budget/policies
 GET  /api/admin/jobs/recent
+GET  /api/admin/run-claims/recent
 GET  /api/admin/status
 GET  /github-app/manifest-complete
 GET  /github-app/setup
@@ -25,8 +26,8 @@ GET  /github-app/callback
 changed with `REVIEWBOT_WEBHOOK_PATH`.
 
 The usage API paths are configurable and are intended for 6529.io dashboards.
-Admin usage routes, job diagnostics, and runtime status require an injected
-authorizer before they return data.
+Admin usage routes, job diagnostics, run-claim diagnostics, and runtime status
+require an injected authorizer before they return data.
 
 The GitHub App browser handoff routes return public-safe operator guidance for
 manifest conversion, setup, and callback redirects. They do not echo temporary

@@ -6,11 +6,14 @@ const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
+const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
 const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
 const DEFAULT_DAYS = 30;
 const DEFAULT_MAX_DAYS = 365;
 const DEFAULT_MAX_ITEMS = 50;
 const DEFAULT_ADMIN_TEXT_MAX_CHARS = 1000;
+const MAX_STALE_MINUTES = 7 * 24 * 60;
+const ACTIVE_RUN_CLAIM_STATUSES = ["claimed", "dispatching", "running"];
 const ADMIN_STATUS_MAX_ARRAY_ITEMS = 100;
 const ADMIN_STATUS_MAX_OBJECT_KEYS = 100;
 const ADMIN_STATUS_MAX_DEPTH = 6;
@@ -27,6 +30,8 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
     adminJobEventsPath:
       env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
+    adminRunClaimsPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH || DEFAULT_ADMIN_RUN_CLAIMS_PATH,
     adminStatusPath: env.REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH || DEFAULT_ADMIN_STATUS_PATH,
     defaultDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_DEFAULT_DAYS, DEFAULT_DAYS, "REVIEWBOT_USAGE_API_DEFAULT_DAYS"),
     maxDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_DAYS, DEFAULT_MAX_DAYS, "REVIEWBOT_USAGE_API_MAX_DAYS"),
@@ -43,6 +48,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminSummaryPath,
     settings.adminBudgetPoliciesPath,
     settings.adminJobEventsPath,
+    settings.adminRunClaimsPath,
     settings.adminStatusPath,
   ].includes(pathname);
 }
@@ -114,6 +120,32 @@ async function handleUsageApiRequest(request, options = {}) {
     };
   }
 
+  if (route.kind === "run_claims") {
+    const query = runClaimsQueryFromRequest(request, settings, options.now || new Date());
+    const result = await (options.loadRunClaims || defaultLoadRunClaims)({
+      request,
+      settings,
+      query,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Run claims are unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "run_claims",
+        limit: query.limit,
+        status: query.status || null,
+        active: query.active,
+        staleMinutes: query.staleMinutes,
+        updatedBefore: query.updatedBefore || null,
+        claims: (result.claims || []).map(normalizeRunClaim),
+      },
+    };
+  }
+
   if (route.kind === "runtime_status") {
     const query = adminStatusQueryFromRequest(request);
     const result = await (options.loadAdminStatus || defaultLoadAdminStatus)({
@@ -179,6 +211,9 @@ function usageApiRoute(pathname, settings) {
   }
   if (pathname === settings.adminJobEventsPath) {
     return { visibility: "admin", kind: "job_events" };
+  }
+  if (pathname === settings.adminRunClaimsPath) {
+    return { visibility: "admin", kind: "run_claims" };
   }
   if (pathname === settings.adminStatusPath) {
     return { visibility: "admin", kind: "runtime_status" };
@@ -250,6 +285,72 @@ function jobEventsQueryFromRequest(request, settings) {
   return { limit, status };
 }
 
+function runClaimsQueryFromRequest(request, settings, now = new Date()) {
+  const requestedLimit = request.url.searchParams.get("limit");
+  let limit;
+  try {
+    limit = requestedLimit
+      ? positiveIntEnv(requestedLimit, settings.maxItems, "limit")
+      : settings.maxItems;
+  } catch (error) {
+    error.statusCode = 400;
+    throw error;
+  }
+  if (limit > settings.maxItems) {
+    const error = new Error(`limit must be <= ${settings.maxItems}.`);
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const status = String(request.url.searchParams.get("status") || "").trim();
+  if (status && !/^[A-Za-z0-9_.:-]{1,80}$/.test(status)) {
+    const error = new Error("status contains unsupported characters.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const staleMinutesParam = request.url.searchParams.get("staleMinutes");
+  let staleMinutes = null;
+  if (staleMinutesParam !== null && staleMinutesParam !== "") {
+    try {
+      staleMinutes = positiveIntEnv(staleMinutesParam, null, "staleMinutes");
+    } catch (error) {
+      error.statusCode = 400;
+      throw error;
+    }
+    if (staleMinutes > MAX_STALE_MINUTES) {
+      const error = new Error(`staleMinutes must be <= ${MAX_STALE_MINUTES}.`);
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  const explicitActive = parseQueryBool(request.url.searchParams.get("active"));
+  const active = explicitActive || (!status && staleMinutes !== null);
+  const statuses = status
+    ? [status]
+    : active
+      ? ACTIVE_RUN_CLAIM_STATUSES
+      : [];
+  const onlyUnexpired = active || (status && ACTIVE_RUN_CLAIM_STATUSES.includes(status));
+  let updatedBefore = null;
+  if (staleMinutes !== null) {
+    const threshold = new Date(now);
+    threshold.setUTCMinutes(threshold.getUTCMinutes() - staleMinutes);
+    updatedBefore = threshold.toISOString();
+  }
+
+  return {
+    limit,
+    status,
+    statuses,
+    active,
+    staleMinutes,
+    updatedBefore,
+    onlyUnexpired,
+  };
+}
+
 function parseQueryBool(value) {
   if (value === null || value === undefined || value === "") {
     return false;
@@ -315,6 +416,31 @@ function normalizeJobEvent(event = {}) {
     reason: adminText(event.reason || ""),
     exitCode: nullableNumber(event.exitCode ?? event.exit_code),
     metadata,
+  };
+}
+
+function normalizeRunClaim(claim = {}) {
+  return {
+    claimId: nullableNumber(claim.claimId ?? claim.id),
+    createdAt: adminText(claim.createdAt || claim.created_at || ""),
+    updatedAt: adminText(claim.updatedAt || claim.updated_at || ""),
+    completedAt: adminText(claim.completedAt || claim.completed_at || ""),
+    expiresAt: adminText(claim.expiresAt || claim.expires_at || ""),
+    runKey: adminText(claim.runKey || claim.run_key || ""),
+    jobId: adminText(claim.jobId || claim.job_id || ""),
+    status: adminText(claim.status || ""),
+    repoFullName: adminText(claim.repoFullName || claim.repo_full_name || ""),
+    org: adminText(claim.org || ""),
+    prNumber: nullableNumber(claim.prNumber ?? claim.pr_number),
+    requestor: adminText(claim.requestor || ""),
+    prHeadSha: adminText(claim.prHeadSha || claim.pr_head_sha || ""),
+    reviewKind: adminText(claim.reviewKind || claim.review_kind || ""),
+    provider: adminText(claim.provider || ""),
+    model: adminText(claim.model || ""),
+    lane: adminText(claim.lane || ""),
+    deliveryId: adminText(claim.deliveryId || claim.delivery_id || ""),
+    commandName: adminText(claim.commandName || claim.command_name || ""),
+    metadata: normalizeJobMetadata(claim.metadata),
   };
 }
 
@@ -580,6 +706,13 @@ async function defaultLoadJobEvents() {
   };
 }
 
+async function defaultLoadRunClaims() {
+  return {
+    unavailable: true,
+    reason: "No run claims loader configured.",
+  };
+}
+
 async function defaultLoadAdminStatus() {
   return {
     unavailable: true,
@@ -632,6 +765,7 @@ function positiveIntEnv(value, fallback, name) {
 module.exports = {
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
+  DEFAULT_ADMIN_RUN_CLAIMS_PATH,
   DEFAULT_ADMIN_STATUS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
@@ -641,8 +775,10 @@ module.exports = {
   isUsageApiPath,
   jobEventsQueryFromRequest,
   normalizeJobEvent,
+  normalizeRunClaim,
   normalizeUsageEvent,
   publicBudgetPolicy,
+  runClaimsQueryFromRequest,
   sanitizeAdminDiagnosticPayload,
   summarizeUsageEvents,
   usageApiSettingsFromEnv,
