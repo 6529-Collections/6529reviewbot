@@ -1050,3 +1050,14 @@
   - add a release-check script that compares `config/v0-release-gates.json`
     count with the numbered required-gates list in `docs/v0-release-plan.md`;
   - wire the parity script into `npm run release:check` and release docs.
+- Merged `6529reviewbot` PR #96 as `8cc28de` after CI, Dependency Review, and
+  CodeRabbit passed; addressed CodeRabbit's path-specific diagnostic comment
+  before merge.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27429492824`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27429492819`, completed successfully.
+- Started `codex/release-status-completeness` increment:
+  - make the final `npm run v0:gates -- -- --status-file <file>
+    --require-ready` check fail when a status file omits any current gate;
+  - add smoke coverage for missing status ids and complete status files;
+  - document the need to refresh private evidence when public gates change.

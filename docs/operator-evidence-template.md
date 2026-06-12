@@ -18,6 +18,7 @@ Public summary location:
 Private evidence location:
 Release gate status file:
 Release gate summary:
+Release gate ready check:
 ```
 
 ## GitHub App

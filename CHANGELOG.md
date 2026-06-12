@@ -38,6 +38,8 @@ stabilized.
 - Container packaging for the central App server with a non-root runtime,
   `/healthz` health check, native GitHub Actions API dispatch support, and
   runtime-only secret injection guidance.
+- v0 release gate status files now fail the final `--require-ready` check when
+  private evidence omits any current public release gate.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.

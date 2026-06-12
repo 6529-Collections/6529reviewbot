@@ -29,8 +29,9 @@ After stabilization:
 - `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
   reviewed for the final complete/deferred/pending/blocked counts
 - `npm run v0:gates -- -- --status-file <operator-status-file> --require-ready`
-  passes before tagging; deferred gates remain allowed only when release notes
-  name the risk and follow-up owner
+  passes before tagging; every current gate must be present in the status file,
+  and deferred gates remain allowed only when release notes name the risk and
+  follow-up owner
 - `npm run release:check`
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list

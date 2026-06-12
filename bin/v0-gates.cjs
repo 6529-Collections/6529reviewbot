@@ -33,7 +33,9 @@ function main(argv = process.argv.slice(2)) {
     return { gates, status, summary };
   }
   if (args.statusFile) {
-    gates = mergeReleaseGateStatus(gates, loadReleaseGateStatus(args.statusFile));
+    gates = mergeReleaseGateStatus(gates, loadReleaseGateStatus(args.statusFile), {
+      requireComplete: args.requireReady,
+    });
   }
   const summary = summarizeReleaseGates(gates);
   if (args.requireReady) {
@@ -126,7 +128,7 @@ Options:
   --force               Allow --init-status to overwrite an existing file.
   --json                Print normalized JSON instead of Markdown.
   --summary             Print only the release readiness summary.
-  --require-ready       Fail unless there are zero pending or blocked gates.
+  --require-ready       Fail unless every gate is listed and none are pending or blocked.
   --quiet               Validate gates without printing them.
 `;
 }

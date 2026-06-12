@@ -150,6 +150,10 @@ npm run v0:gates -- -- --status-file <operator-status-file> --summary
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 ```
 
+The final `--require-ready` check also verifies that the status file lists
+every current gate, so stale private evidence files fail loudly after the
+canonical gate list changes.
+
 Print a prompt for a target PR without calling a model:
 
 ```bash
