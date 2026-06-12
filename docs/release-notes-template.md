@@ -45,7 +45,8 @@ repositories.
 - Ledger schema status:
 - Model pricing status:
 - Alert delivery:
-- Empty provider output / diagnostic redaction evidence:
+- Empty provider output fail-closed evidence:
+- Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
 - Preflight result:
 - v0 gate checklist:
