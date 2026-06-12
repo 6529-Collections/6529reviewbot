@@ -16,6 +16,7 @@ const {
 const {
   githubAppAuthSettingsFromWorkerDispatchEnv,
   githubAppAuthSettingsFromEnv,
+  hasWorkerDispatchGitHubAppCredentialOverride,
   isGitHubAppAuthConfigured,
 } = require("./github-app-auth.cjs");
 const {
@@ -174,6 +175,10 @@ function runPreflight(options = {}) {
     state.workerPolicy = policy;
     const workerDispatchGitHubAppSettings =
       githubAppAuthSettingsFromWorkerDispatchEnv(env);
+    const workerDispatchCredentialOverride =
+      hasWorkerDispatchGitHubAppCredentialOverride(env);
+    const workerDispatchAppCredentialSource =
+      workerDispatchCredentialOverride ? "worker-dispatch" : "main";
     const githubAppConfigured =
       isGitHubAppAuthConfigured(workerDispatchGitHubAppSettings) ||
       isGitHubAppAuthConfigured(state.githubAppSettings || {});
@@ -185,6 +190,15 @@ function runPreflight(options = {}) {
     }
     if (policy.mode === "github_actions" && !policy.githubRepo) {
       throw new Error("REVIEWBOT_WORKER_GITHUB_REPO or GITHUB_REPOSITORY is required for github_actions.");
+    }
+    if (
+      policy.mode === "github_actions" &&
+      workerDispatchCredentialOverride &&
+      !isGitHubAppAuthConfigured(workerDispatchGitHubAppSettings)
+    ) {
+      throw new Error(
+        "Worker dispatch GitHub App override must include REVIEWBOT_WORKER_GITHUB_APP_ID and REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY or REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64."
+      );
     }
     if (
       policy.mode === "github_actions" &&
@@ -202,6 +216,18 @@ function runPreflight(options = {}) {
     ) {
       addWarning(result, "worker_adapter", "GitHub Actions dispatch has no API token; the server will fall back to the gh CLI.");
     }
+    if (
+      policy.mode === "github_actions" &&
+      policy.githubInstallationId &&
+      !workerDispatchCredentialOverride &&
+      isGitHubAppAuthConfigured(state.githubAppSettings || {})
+    ) {
+      addWarning(
+        result,
+        "worker_adapter",
+        "Worker dispatch will reuse the main GitHub App credentials; prefer REVIEWBOT_WORKER_GITHUB_APP_* for a dispatch-only App installed only on the central bot repository."
+      );
+    }
     return {
       mode: policy.mode,
       githubRepo: policy.githubRepo,
@@ -211,6 +237,10 @@ function runPreflight(options = {}) {
       githubApiUrl: policy.githubApiUrl,
       githubTokenConfigured: Boolean(policy.githubToken),
       githubInstallationIdConfigured: Boolean(policy.githubInstallationId),
+      githubDispatchAppCredentialSource:
+        policy.githubInstallationId && githubAppConfigured
+          ? workerDispatchAppCredentialSource
+          : "none",
     };
   });
 

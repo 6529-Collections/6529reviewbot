@@ -763,6 +763,16 @@ assert.equal(
     .githubInstallationIdConfigured,
   true
 );
+assert.equal(
+  appDispatchPreflight.checks.find((check) => check.name === "worker_adapter")
+    .githubDispatchAppCredentialSource,
+  "main"
+);
+assert(
+  appDispatchPreflight.warnings.some((warning) =>
+    warning.message.includes("reuse the main GitHub App credentials")
+  )
+);
 const splitDispatchAppPreflight = preflight.runPreflight({
   env: {
     ...preflightEnv,
@@ -777,6 +787,41 @@ const splitDispatchAppPreflight = preflight.runPreflight({
 assert.equal(
   splitDispatchAppPreflight.errors.some((error) => error.name === "worker_adapter"),
   false
+);
+assert.equal(
+  splitDispatchAppPreflight.checks.find((check) => check.name === "worker_adapter")
+    .githubDispatchAppCredentialSource,
+  "worker-dispatch"
+);
+assert.equal(
+  splitDispatchAppPreflight.warnings.some((warning) =>
+    warning.message.includes("reuse the main GitHub App credentials")
+  ),
+  false
+);
+assert(
+  preflight
+    .runPreflight({
+      env: {
+        ...preflightEnv,
+        REVIEWBOT_GITHUB_APP_ID: "main-app",
+        REVIEWBOT_GITHUB_APP_PRIVATE_KEY: "main-key",
+        REVIEWBOT_WORKER_GITHUB_APP_ID: "dispatch-app",
+        REVIEWBOT_WORKER_ADAPTER: "github_actions",
+        REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+        REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+        REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+      },
+    })
+    .errors.some((error) => error.message.includes("Worker dispatch GitHub App override"))
+);
+assert.equal(
+  githubAppAuth.githubAppAuthSettingsFromWorkerDispatchEnv({
+    REVIEWBOT_GITHUB_APP_ID: "main-app",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: "main-key",
+    REVIEWBOT_WORKER_GITHUB_APP_ID: "dispatch-app",
+  }).privateKey,
+  ""
 );
 assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),

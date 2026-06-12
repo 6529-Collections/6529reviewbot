@@ -227,6 +227,9 @@ blank, the server reuses the main App credentials and operators must accept
 dispatch credentials scoped to this repository and separate from target
 repository access. The `gh` CLI dispatch mode remains a compatibility fallback
 for operator environments that intentionally manage GitHub CLI authentication.
+Preflight rejects partial worker App credential overrides and warns when the
+main App is reused for dispatch; treat a strict-preflight failure or warning as
+release evidence to resolve or explicitly accept before production traffic.
 
 ## 6529.io Wiring
 

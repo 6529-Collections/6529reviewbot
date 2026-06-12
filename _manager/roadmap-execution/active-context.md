@@ -177,10 +177,10 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Local private path scanner PR: merged as PR #110, merge commit `360a7e9`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/redact-alert-aws-diagnostics`
-- Current local changes: shared runtime diagnostic redaction now covers alert
-  webhook URLs and AWS access-key ids; smoke tests cover worker output and
-  safe error-line redaction.
+- Current branch: `codex/worker-dispatch-app-preflight`
+- Current local changes: worker-dispatch preflight now rejects partial
+  `REVIEWBOT_WORKER_GITHUB_APP_*` credential overrides and warns when the
+  central dispatcher reuses the main GitHub App instead of a dispatch-only App.
 
 ## Key Decisions
 
@@ -390,7 +390,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the alert/AWS diagnostic redaction PR.
+1. Validate, publish, and merge the worker-dispatch App preflight hardening PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

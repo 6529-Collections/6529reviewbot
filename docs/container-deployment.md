@@ -112,6 +112,12 @@ explicit bot-owned fallback when operators cannot use an App installation id.
 Keep any dispatch credential separate from the GitHub App installation tokens
 used for target repository checkout and comments.
 
+Preflight fails partial `REVIEWBOT_WORKER_GITHUB_APP_*` credential overrides
+and warns when dispatch reuses the main App credentials. Keep
+`npm run preflight -- --strict` in the deployment gate, then either configure
+the dispatch-only App or record the accepted main-App permission boundary in
+private operator evidence.
+
 The `gh` dispatch mode remains available for compatibility outside this image,
 but the runtime image does not include GitHub CLI state. Use the API path for
 production.

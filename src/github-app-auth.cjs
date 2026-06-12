@@ -45,19 +45,20 @@ function githubAppAuthSettingsFromEnv(env = process.env) {
 }
 
 function githubAppAuthSettingsFromWorkerDispatchEnv(env = process.env) {
+  const workerCredentialOverride = hasWorkerDispatchGitHubAppCredentialOverride(env);
   return githubAppAuthSettingsFromEnv({
     REVIEWBOT_GITHUB_APP_ID:
-      env.REVIEWBOT_WORKER_GITHUB_APP_ID ||
-      env.REVIEWBOT_GITHUB_APP_ID ||
-      env.GITHUB_APP_ID,
+      workerCredentialOverride
+        ? env.REVIEWBOT_WORKER_GITHUB_APP_ID
+        : env.REVIEWBOT_GITHUB_APP_ID || env.GITHUB_APP_ID,
     REVIEWBOT_GITHUB_APP_PRIVATE_KEY:
-      env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY ||
-      env.REVIEWBOT_GITHUB_APP_PRIVATE_KEY ||
-      env.GITHUB_APP_PRIVATE_KEY,
+      workerCredentialOverride
+        ? env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY
+        : env.REVIEWBOT_GITHUB_APP_PRIVATE_KEY || env.GITHUB_APP_PRIVATE_KEY,
     REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64:
-      env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64 ||
-      env.REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64 ||
-      env.GITHUB_APP_PRIVATE_KEY_BASE64,
+      workerCredentialOverride
+        ? env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64
+        : env.REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64 || env.GITHUB_APP_PRIVATE_KEY_BASE64,
     REVIEWBOT_GITHUB_APP_API_URL:
       env.REVIEWBOT_WORKER_GITHUB_APP_API_URL ||
       env.REVIEWBOT_GITHUB_APP_API_URL ||
@@ -73,6 +74,14 @@ function githubAppAuthSettingsFromWorkerDispatchEnv(env = process.env) {
       env.REVIEWBOT_WORKER_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS ||
       env.REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS,
   });
+}
+
+function hasWorkerDispatchGitHubAppCredentialOverride(env = process.env) {
+  return Boolean(
+    env.REVIEWBOT_WORKER_GITHUB_APP_ID ||
+      env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY ||
+      env.REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64
+  );
 }
 
 function isGitHubAppAuthConfigured(settings = githubAppAuthSettingsFromEnv()) {
@@ -331,6 +340,7 @@ module.exports = {
   createGitHubAppJwt,
   githubAppAuthSettingsFromEnv,
   githubAppAuthSettingsFromWorkerDispatchEnv,
+  hasWorkerDispatchGitHubAppCredentialOverride,
   isGitHubAppAuthConfigured,
   normalizePrivateKey,
   readCollaboratorPermission,
