@@ -35,6 +35,10 @@ The usage API reader also reads `ai_review_usage_events` and
 from the application perspective and should use least-privilege SQL access in
 production.
 
+The scheduled spend-alert checker reads the same tables. It should run from
+the central bot environment with read-only ledger access and notification
+permissions for the chosen delivery mode.
+
 ## Views
 
 ```text

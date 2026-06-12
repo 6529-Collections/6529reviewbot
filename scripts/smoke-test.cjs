@@ -5,6 +5,7 @@
 const assert = require("assert");
 const adminAuth = require("../src/admin-auth.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
+const alertNotifier = require("../src/alert-notifier.cjs");
 const appServer = require("../src/app-server.cjs");
 const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
@@ -13,6 +14,8 @@ const githubWebhook = require("../src/github-webhook.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
+const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
+const spendAlerts = require("../src/spend-alerts.cjs");
 const usageApi = require("../src/usage-api.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
@@ -380,6 +383,77 @@ const adminUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
 });
 assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
 assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
+const alertNow = new Date("2026-06-12T12:00:00.000Z");
+const alertEvents = [
+  {
+    createdAt: "2026-06-12T11:00:00.000Z",
+    repoFullName: "6529-Collections/example",
+    prNumber: 12,
+    requestor: "maintainer",
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    actualCostUsd: 9,
+  },
+  {
+    createdAt: "2026-06-11T11:00:00.000Z",
+    repoFullName: "6529-Collections/example",
+    prNumber: 11,
+    requestor: "maintainer",
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    actualCostUsd: 1,
+  },
+  {
+    createdAt: "2026-06-10T11:00:00.000Z",
+    repoFullName: "6529-Collections/example",
+    prNumber: 10,
+    requestor: "maintainer",
+    reviewKind: "general",
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    actualCostUsd: 1,
+  },
+];
+const alertPolicy = spendAlerts.spendAlertPolicyFromEnv({
+  REVIEWBOT_ALERTS_ENABLED: "true",
+  REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT: "80",
+  REVIEWBOT_ALERTS_BUDGET_CRITICAL_PERCENT: "100",
+  REVIEWBOT_ALERTS_SPIKE_WINDOW_HOURS: "24",
+  REVIEWBOT_ALERTS_SPIKE_BASELINE_DAYS: "2",
+  REVIEWBOT_ALERTS_SPIKE_MULTIPLIER: "3",
+  REVIEWBOT_ALERTS_SPIKE_MIN_USD: "5",
+  REVIEWBOT_ALERTS_MAX_ALERTS: "10",
+});
+assert.throws(
+  () =>
+    spendAlerts.spendAlertPolicyFromEnv({
+      REVIEWBOT_ALERTS_SPIKE_DIMENSIONS: "global,bad_dimension",
+    }),
+  /unsupported values/
+);
+const generatedAlerts = spendAlerts.evaluateSpendAlerts({
+  events: alertEvents,
+  budgetPolicies: [
+    {
+      scopeType: "repo",
+      scopeValue: "6529-Collections/example",
+      dailyBudgetUsd: 10,
+      enabled: true,
+    },
+  ],
+  now: alertNow,
+  policy: alertPolicy,
+});
+assert.equal(
+  generatedAlerts.some((alert) => alert.kind === "budget_utilization" && alert.severity === "warning"),
+  true
+);
+assert.equal(
+  generatedAlerts.some((alert) => alert.kind === "spend_spike" && alert.scopeType === "repo"),
+  true
+);
 
 const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
 const mergedAdmissionPolicy = repositoryConfig.mergeRepositoryAdmissionPolicy(
@@ -711,6 +785,67 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminBridgeAllowed.statusCode, 200);
   assert.equal(adminBridgeAllowed.body.visibility, "admin");
+  let alertOutput = "";
+  const stdoutNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "stdout",
+    }),
+    now: alertNow,
+    write: (text) => {
+      alertOutput += text;
+    },
+  });
+  assert.equal(stdoutNotification.delivered, true);
+  assert.match(alertOutput, /6529reviewbot/);
+  let snsPublishOptions = null;
+  const snsNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "sns",
+      REVIEWBOT_ALERTS_SNS_TOPIC_ARN: "arn:aws:sns:us-east-1:123456789012:reviewbot-alerts",
+      REVIEWBOT_ALERTS_SNS_TIMEOUT_MS: "1234",
+    }),
+    now: alertNow,
+    execFileSync: (bin, args, options) => {
+      assert.equal(bin, "aws");
+      assert.equal(args.includes("publish"), true);
+      snsPublishOptions = options;
+      return "{}";
+    },
+  });
+  assert.equal(snsNotification.delivered, true);
+  assert.equal(snsPublishOptions.timeout, 1234);
+  const bestEffortNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "webhook",
+      REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED: "false",
+    }),
+  });
+  assert.equal(bestEffortNotification.ok, true);
+  assert.equal(bestEffortNotification.delivered, false);
+  const scheduledAlertResult = await scheduledSpendCheck.runScheduledSpendCheck({
+    dryRun: true,
+    now: alertNow,
+    events: alertEvents,
+    budgetPolicies: [
+      {
+        scopeType: "repo",
+        scopeValue: "6529-Collections/example",
+        dailyBudgetUsd: 10,
+        enabled: true,
+      },
+    ],
+    settings: {
+      alertPolicy,
+      notifierSettings: alertNotifier.alertNotifierSettingsFromEnv({
+        REVIEWBOT_ALERTS_NOTIFY_MODE: "none",
+      }),
+      ledgerSettings: {},
+      apiSettings: usageApiSettings,
+      lookbackDays: 35,
+    },
+  });
+  assert.equal(scheduledAlertResult.alertCount, generatedAlerts.length);
+  assert.equal(scheduledAlertResult.notification.mode, "dry_run");
   try {
     usageApi.usageRangeFromRequest(
       { url: new URL("http://localhost/api/public/usage/summary?days=bad") },

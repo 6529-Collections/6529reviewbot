@@ -272,12 +272,14 @@ Completed in `6529reviewbot`:
 - public and admin usage API contracts;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
-  base-ref GitHub contents loading.
+  base-ref GitHub contents loading;
+- worker execution adapters for local workers and central GitHub Actions
+  dispatch;
+- 6529.io admin auth bridge contract.
 
 In progress in `6529reviewbot`:
 
-- worker execution adapters for local workers and central GitHub Actions
-  dispatch.
+- alerting and scheduled spend checks.
 
 In progress outside this repository:
 
@@ -286,5 +288,4 @@ In progress outside this repository:
 
 Next implementation focus:
 
-- 6529.io admin auth bridge;
 - alerting and scheduled spend checks.

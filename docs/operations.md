@@ -20,6 +20,12 @@ aws rds-data execute-statement \
   --sql "select count(*) from reviewbot.ai_review_usage_events"
 ```
 
+Run a dry spend-alert pass:
+
+```bash
+npm run alerts:spend -- --dry-run --force
+```
+
 ## If Reviews Stop Posting
 
 Check:
@@ -48,6 +54,8 @@ Check:
 
 Check:
 
+- the latest `npm run alerts:spend -- --dry-run --force` output;
+- enabled rows in `reviewbot.ai_review_budget_policies`;
 - `REVIEW_BOT_INITIAL_KINDS`;
 - provider/model overrides;
 - `REVIEW_MAX_OUTPUT_TOKENS`;
@@ -55,6 +63,14 @@ Check:
 - `REVIEW_MAX_CONTEXT_CHARS`;
 - `REVIEW_MAX_PRIOR_COMMENTS_CHARS`;
 - oversize behavior.
+
+If alerts did not send, check:
+
+- `REVIEWBOT_ALERTS_ENABLED`;
+- `REVIEWBOT_ALERTS_NOTIFY_MODE`;
+- `REVIEWBOT_ALERTS_WEBHOOK_URL` or `REVIEWBOT_ALERTS_SNS_TOPIC_ARN`;
+- AWS OIDC credentials for SNS mode;
+- whether `REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED` should fail the scheduled job.
 
 ## If Usage Dashboards Stop Updating
 

@@ -7,6 +7,7 @@ The main risks are:
 - leaking provider keys or GitHub tokens;
 - leaking AWS credentials or database secrets;
 - leaking bot admin signing secrets;
+- leaking alert routing secrets or private spend details;
 - letting PR authors execute code with secrets;
 - trusting spoofed bot metadata;
 - accepting forged GitHub webhook deliveries;
@@ -101,6 +102,14 @@ server-side 6529 infrastructure after the existing 6529 auth system has
 verified the human operator. The HMAC secret must not be exposed to browser
 JavaScript, public repo variables, or logs.
 
+### Alerting Safety
+
+Scheduled spend alerts can include private repo names, requestors, providers,
+models, and current spend. Route webhook and SNS notifications through private
+operator channels unless the deployment explicitly treats the data as public.
+Alert delivery secrets belong to the central bot environment, not target
+repositories.
+
 ## Review Checklist For Security-Sensitive Changes
 
 - Does the change execute target repo code?
@@ -108,6 +117,7 @@ JavaScript, public repo variables, or logs.
 - Can a changed file path escape the workspace?
 - Can secrets reach provider prompts or PR comments?
 - Can bot admin assertions be forged, replayed, or extended beyond the TTL?
+- Can alert payloads or notification credentials leak private usage data?
 - Does the workflow request broader permissions than needed?
 - Does repository config still come from the base ref and merge restrictively?
 - Does the change increase maximum spend or remove a hard cap?

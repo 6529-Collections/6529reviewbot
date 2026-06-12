@@ -23,11 +23,12 @@ merged PRs.
 - Dashboard progress docs PR: merged as PR #11, merge commit `f635a2d`
 - Repository config PR: merged as PR #12, merge commit `6edb52d`
 - Worker execution adapters PR: merged as PR #13, merge commit `1d84b10`
+- Admin auth bridge PR: merged as PR #14, merge commit `17e6dd2`
 - Frontend public dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
-- Current branch: `codex/admin-auth-bridge`
-- Current local changes: server-side admin auth bridge for 6529.io private
-  usage/admin endpoints, docs, and smoke tests
+- Current branch: `codex/scheduled-spend-alerts`
+- Current local changes: scheduled spend-alert evaluation, notifier adapters,
+  runner CLI, workflow template, docs, and smoke tests
 
 ## Key Decisions
 
@@ -56,14 +57,15 @@ merged PRs.
 
 ## Next Actions
 
-1. Push and merge the admin auth bridge contract for 6529.io private controls.
-2. Add alerting and scheduled budget-spike checks.
-3. Sweep docs for community-release readiness.
+1. Push and merge alerting and scheduled budget-spike checks.
+2. Sweep docs for community-release readiness.
+3. Dogfood on a target repo with conservative defaults.
 
 ## Open Risks
 
 - GitHub App credentials and deployment target are not created yet.
-- 6529.io auth integration contract is not defined yet.
+- 6529.io auth integration contract is defined but not yet wired into
+  6529.io production.
 - Budget admission now runs per job so provider, model, and review-kind caps
   can differ.
 - Public usage summaries require explicit repo/org allowlists before repo names
