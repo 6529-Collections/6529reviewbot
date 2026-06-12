@@ -139,8 +139,13 @@ Use a separate operator-owned status file to mark gates complete, deferred, or
 blocked without editing the canonical gate list:
 
 ```bash
+npm run v0:gates -- -- --init-status <operator-status-file>
 npm run v0:gates -- -- --status-file config/v0-release-status.example.json
 ```
+
+`--init-status` writes every current gate as `pending` with the evidence target
+in notes. It refuses to overwrite an existing file unless `--force` is passed,
+so operators can safely keep the real status file in a private runbook.
 
 Print the concise tag/no-tag summary from an operator-owned status file:
 

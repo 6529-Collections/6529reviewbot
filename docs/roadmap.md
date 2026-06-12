@@ -345,6 +345,7 @@ Completed in `6529reviewbot`:
 - machine-readable v0 release gates and checklist renderer.
 - v0 release gate readiness summaries and tag/no-tag enforcement for
   operator-owned status files.
+- v0 release gate status bootstrap for private operator evidence files.
 - optional v0 release gate status files for public-safe completion/defer
   evidence.
 - validated model catalog for provider defaults.

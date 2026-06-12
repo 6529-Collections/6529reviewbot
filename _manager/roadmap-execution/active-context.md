@@ -97,10 +97,12 @@ merged PRs.
   `6dfa0d2`; the post-merge OpenSSF Scorecard run completed successfully.
 - Job-health operator alerts PR: merged as PR #72, merge commit `a78f874`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-price-zero-guard`
-- Current local changes: make model-price apply reject zero-rate rows by
-  default, add an explicit `--allow-zero-price` override for documented free
-  prices, update smoke coverage and pricing/release docs.
+- Model price zero guard PR: merged as PR #73, merge commit `3c91725`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/v0-status-bootstrap`
+- Current local changes: add `npm run v0:gates -- -- --init-status` for
+  operator-owned release gate status skeletons, with overwrite protection,
+  smoke coverage, and release docs.
 
 ## Key Decisions
 
@@ -199,6 +201,9 @@ merged PRs.
 - Release gate status files should be operator-owned when evidence contains
   private deployment detail. The public CLI can summarize completion/defer
   counts and fail tagging when gates are still pending or blocked.
+- Release gate status files can be bootstrapped from the canonical gate list,
+  so operators start with a complete private pending checklist instead of
+  hand-authoring gate ids.
 - Public release artifacts need a repeatable leak scan. The scanner should
   cover docs, examples, workflows, config, and manager memory while allowing
   obvious placeholders and avoiding source test fixtures that intentionally
@@ -267,7 +272,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the model-price zero guard PR.
+1. Validate, publish, and merge the v0 status bootstrap PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
