@@ -87,6 +87,7 @@ Dispatch token stored only in bot secret store:
 Central budget policies reviewed:
 Central budget policies applied:
 Model price sources reviewed:
+Model price source-checked timestamps recorded:
 Model prices applied:
 Fail-open/fail-closed behavior accepted:
 ```
