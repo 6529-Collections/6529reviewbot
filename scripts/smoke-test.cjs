@@ -580,6 +580,19 @@ assert(
     })
     .errors.some((error) => error.name === "worker_adapter")
 );
+const configuredUsageLedgerPreflight = preflight.runPreflight({
+  env: {
+    ...preflightEnv,
+    REVIEW_USAGE_ENABLED: "true",
+    REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+    REVIEW_USAGE_DB_SECRET_ARN:
+      "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot-db",
+  },
+});
+assert.equal(
+  configuredUsageLedgerPreflight.errors.some((error) => error.name === "usage_ledger"),
+  false
+);
 const appDispatchPreflight = preflight.runPreflight({
   env: {
     ...preflightEnv,

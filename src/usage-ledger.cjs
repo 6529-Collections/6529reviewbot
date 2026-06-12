@@ -173,6 +173,7 @@ function safeError(error) {
 }
 
 module.exports = {
+  assertUsageLedgerConfigured,
   usageLedgerSettingsFromEnv,
   writeUsageEvent,
   quoteIdent,

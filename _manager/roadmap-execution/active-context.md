@@ -127,9 +127,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Runtime hardening release checks PR: merged as PR #87, merge commit
   `958b2ae`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/scan-alert-webhook-urls`
-- Current local changes: expand public artifact scanning to catch common alert
-  webhook URL leaks in public docs, configs, templates, and manager memory.
+- Alert webhook scanner PR: merged as PR #88, merge commit `36ecf97`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-preflight-fixtures`
+- Current local changes: fix enabled usage-ledger preflight validation and add
+  release-time synthetic preflight fixtures for central App server and worker
+  postures.
 
 ## Key Decisions
 
@@ -314,7 +317,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the alert-webhook public artifact scanner PR.
+1. Validate, publish, and merge the release preflight fixture PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

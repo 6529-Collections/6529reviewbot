@@ -61,6 +61,8 @@ Ready for community review:
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, and SNS delivery;
 - no-network production preflight command;
+- release-time preflight fixtures for central App server and worker
+  configuration postures;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
   bad-comment incidents;
 - sanitized support bundle and support playbook;

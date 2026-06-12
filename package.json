@@ -40,6 +40,7 @@
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "check:docs": "node scripts/check-doc-links.cjs",
     "check:public-artifacts": "node scripts/check-public-artifacts.cjs",
+    "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:workflow-actions": "node scripts/check-workflow-actions.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",
