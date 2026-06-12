@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "summary": {
+    "date": "2026-06-12",
+    "operator": "example-operator",
+    "commit": "example-commit-or-tag",
+    "environment": "example-dogfood",
+    "publicSummaryLocation": "public release issue or PR URL",
+    "privateEvidenceLocation": "private operator runbook entry",
+    "releaseGateStatusFile": "private v0 release gate status JSON",
+    "releaseGateSummary": "0/19 complete, example file only",
+    "releaseGateReadyCheck": "not run for example evidence"
+  },
+  "sections": {
+    "github-app": {
+      "status": "pending",
+      "notes": "Create the production 6529bot GitHub App before broad release."
+    },
+    "aws-ledger": {
+      "status": "pending",
+      "notes": "Apply and verify the ledger schema in the operator AWS account."
+    },
+    "iam-and-secrets": {
+      "status": "pending",
+      "notes": "Review least-privilege IAM policies and secret custody before enabling production."
+    },
+    "app-server-runtime": {
+      "status": "pending",
+      "notes": "Deploy the central App server or explicitly mark the release local/dogfood-only."
+    },
+    "budget-and-pricing": {
+      "status": "deferred",
+      "notes": "Example only: defer applied price rows when release notes keep conservative default estimates."
+    },
+    "worker-and-alerts": {
+      "status": "pending",
+      "notes": "Enable one worker path and scheduled operator alert delivery."
+    },
+    "6529-io-surfaces": {
+      "status": "pending",
+      "notes": "Wire public and private 6529.io surfaces or explicitly defer them."
+    },
+    "dogfood-evidence": {
+      "status": "pending",
+      "notes": "Dogfood on at least one trusted 6529 repository with conservative limits."
+    },
+    "release-decision": {
+      "status": "pending",
+      "notes": "Operator release decision is not made in the public example."
+    }
+  }
+}

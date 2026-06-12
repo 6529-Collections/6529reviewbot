@@ -189,10 +189,13 @@ merged PRs.
   `aba63a5`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin run-claims API PR: merged as PR #116, merge commit `076a02f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-usage-events-api`
-- Current local changes: adding an admin-only recent usage-events API route for
-  private raw usage triage, including bounded loader limits, response
-  sanitization, OpenAPI/docs, smoke coverage, and manager-memory updates.
+- Admin usage-events API PR: merged as PR #117, merge commit `be45716`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/production-evidence-checks`
+- Current local changes: starting the next production-readiness increment for
+  public-safe deployment/operator evidence checks, including a structured
+  evidence validator/renderer, example JSON, docs, release-check integration,
+  smoke coverage, and manager-memory updates.
 
 ## Key Decisions
 
@@ -406,6 +409,10 @@ merged PRs.
 - Private admin dashboards also need bounded recent raw usage events through
   bot-owned admin APIs; public transparency pages should stay on aggregate
   summaries with repo disclosure allowlists.
+- Production evidence should be structured enough to validate required
+  operator sections while keeping the real evidence file private; any rendered
+  summary or JSON intended for public notes must redact token-shaped values,
+  AWS account ids, and AWS ARNs.
 
 ## Constraints
 
@@ -418,7 +425,7 @@ merged PRs.
 ## Next Actions
 
 1. Continue dogfood target-repo PRs once required human review completes.
-2. Validate, publish, review, and merge the admin usage-events API PR.
+2. Validate, publish, review, and merge the production evidence checker PR.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

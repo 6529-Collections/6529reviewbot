@@ -34,6 +34,8 @@ const runReviewJobCli = require("../bin/run-review-job.cjs");
 const serverCli = require("../bin/server.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
+const operatorEvidence = require("../src/operator-evidence.cjs");
+const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPrices = require("../src/model-prices.cjs");
@@ -1179,6 +1181,133 @@ assert.deepEqual(
     requireReady: true,
     summary: true,
     statusFile: "status.json",
+  }
+);
+const productionEvidenceExample = operatorEvidence.loadOperatorEvidence(
+  "config/production-evidence.example.json"
+);
+assert.equal(productionEvidenceExample.release, "v0.1.0");
+assert.equal(productionEvidenceExample.sections.length, operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length);
+const productionEvidenceSummary = operatorEvidence.summarizeOperatorEvidence(productionEvidenceExample);
+assert.equal(productionEvidenceSummary.ready, false);
+assert.equal(productionEvidenceSummary.pending, 8);
+assert.equal(productionEvidenceSummary.deferred, 1);
+const sensitiveOperatorEvidence = operatorEvidence.validateOperatorEvidence({
+  version: 1,
+  release: "v0.1.0",
+  summary: {
+    date: "2026-06-12",
+    operator: "maintainer",
+    commit: "abc123",
+    environment: "prod arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+    privateEvidenceLocation: "private runbook 123456789012",
+  },
+  sections: Object.fromEntries(
+    operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.map((section) => [
+      section.id,
+      {
+        status: "complete",
+        evidence: [
+          `Evidence for ${section.id} with github_pat_abcdefghijklmnopqrstuvwxyz1234567890`,
+          "cluster arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+        ],
+      },
+    ])
+  ),
+});
+const sensitiveOperatorEvidenceMarkdown =
+  operatorEvidence.renderOperatorEvidenceSummaryMarkdown(sensitiveOperatorEvidence);
+const sensitiveOperatorEvidenceJson = JSON.stringify(
+  operatorEvidence.publicOperatorEvidenceDocument(sensitiveOperatorEvidence)
+);
+assert.equal(sensitiveOperatorEvidenceMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.equal(sensitiveOperatorEvidenceMarkdown.includes("123456789012"), false);
+assert.equal(sensitiveOperatorEvidenceMarkdown.includes("arn:aws:rds"), false);
+assert.equal(sensitiveOperatorEvidenceJson.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.equal(sensitiveOperatorEvidenceJson.includes("123456789012"), false);
+assert.equal(sensitiveOperatorEvidenceJson.includes("arn:aws:rds"), false);
+assert.match(sensitiveOperatorEvidenceMarkdown, /github_pat_\[redacted\]/);
+assert.match(sensitiveOperatorEvidenceMarkdown, /arn:aws:\[redacted\]/);
+assert.match(sensitiveOperatorEvidenceMarkdown, /\[redacted-aws-account-id\]/);
+assert.equal(operatorEvidence.assertOperatorEvidenceReady(sensitiveOperatorEvidence).ready, true);
+assert.throws(
+  () => operatorEvidence.assertOperatorEvidenceReady(productionEvidenceExample),
+  /operator evidence is not ready/
+);
+assert.throws(
+  () =>
+    operatorEvidence.validateOperatorEvidence({
+      version: 1,
+      release: "v0.1.0",
+      summary: {
+        date: "2026-06-12",
+        operator: "maintainer",
+        commit: "abc123",
+        environment: "prod",
+        privateEvidenceLocation: "private runbook",
+      },
+      sections: Object.fromEntries(
+        operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.map((section) => [
+          section.id,
+          {
+            status: section.id === "github-app" ? "" : "pending",
+          },
+        ])
+      ),
+    }),
+  /operator evidence\.sections\.github-app\.status must be a non-empty string/
+);
+assert.throws(
+  () =>
+    operatorEvidence.assertOperatorEvidenceReady({
+      version: 1,
+      release: "v0.1.0",
+      summary: {
+        date: "2026-06-12",
+        operator: "maintainer",
+        commit: "abc123",
+        environment: "prod",
+        privateEvidenceLocation: "private runbook",
+      },
+      sections: [],
+    }),
+  /operator evidence\.sections must be an object/
+);
+assert.throws(
+  () =>
+    operatorEvidence.validateOperatorEvidence({
+      version: 1,
+      release: "v0.1.0",
+      summary: {
+        date: "2026-06-12",
+        operator: "maintainer",
+        commit: "abc123",
+        environment: "prod",
+        privateEvidenceLocation: "private runbook",
+      },
+      sections: {
+        "github-app": {
+          status: "complete",
+        },
+      },
+    }),
+  /evidence/
+);
+assert.deepEqual(
+  operatorEvidenceCli.parseArgs([
+    "--file",
+    "evidence.json",
+    "--json",
+    "--quiet",
+    "--summary",
+    "--require-ready",
+  ]),
+  {
+    file: "evidence.json",
+    json: true,
+    quiet: true,
+    requireReady: true,
+    summary: true,
   }
 );
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({

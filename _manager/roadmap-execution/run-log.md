@@ -1426,3 +1426,43 @@
   small default page-size knob when lower. Updated docs, OpenAPI, and smoke
   coverage. `npm test`, `npm run validate:api-contract`,
   `npm run release:check`, and `git diff --check` passed again.
+- Merged `6529reviewbot` PR #117 as `be45716` after CI, Dependency Review, and
+  CodeRabbit passed with the prior review threads marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27446316101`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27446316103`, completed successfully.
+- Local clean-main validation after PR #117 merge:
+  - `npm run release:check` passed.
+- Started `codex/production-evidence-checks` increment:
+  - inspect existing release/evidence tooling for gaps;
+  - add public-safe production evidence validation or rendering support where
+    it can reduce operator ambiguity without storing secrets or live resource
+    identifiers in the public repo;
+  - update release/readiness docs and manager memory.
+- Implemented local production evidence checker:
+  - added `src/operator-evidence.cjs` and `bin/operator-evidence.cjs`;
+  - added `config/production-evidence.example.json`;
+  - added `npm run operator:evidence` and release-check validation of the
+    example evidence file;
+  - rendered Markdown and JSON outputs redact common token shapes, AWS account
+    ids, and AWS ARNs before public copy/paste;
+  - updated README, release, v0, release-readiness, operator-evidence, and
+    changelog docs.
+- Local validation for `codex/production-evidence-checks`:
+  - `npm test` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --summary` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --json` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #118:
+  - explicit empty operator-evidence statuses now fail validation instead of
+    defaulting to `pending`;
+  - only evidence objects validated by `src/operator-evidence.cjs` can skip
+    the full schema path in downstream summary/readiness helpers;
+  - smoke coverage now asserts both regressions.
+- Local validation after the PR #118 hardening pass:
+  - `npm test` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --summary` passed;
+  - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --json` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

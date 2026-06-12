@@ -102,6 +102,8 @@ Ready for community review:
   dry-run mode, with job-health alert evaluation available once job and
   run-control ledgers are enabled in the scheduled job;
 - machine-readable v0 release gates with optional status/evidence rendering;
+- structured operator evidence validation and redacted public-summary rendering
+  for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.
 
@@ -159,6 +161,10 @@ when evidence contains live deployment details.
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
+Use `npm run operator:evidence -- --file <private-evidence-file> --summary` to
+validate a structured private evidence file and render a redacted public
+summary. Use `--require-ready` before tagging to fail when production evidence
+sections remain pending or blocked.
 `npm run check:docs` is included in `npm run release:check` and verifies local
 Markdown links across repository docs before release.
 `npm run check:public-artifacts` is included in `npm run release:check` and
