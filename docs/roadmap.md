@@ -270,9 +270,14 @@ Completed in `6529reviewbot`:
 - budget admission against the AWS usage ledger;
 - review-job fanout with provider/model lanes;
 - public and admin usage API contracts;
-- read-only Aurora usage API loaders.
+- read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading.
+
+In progress in `6529reviewbot`:
+
+- worker execution adapters for local workers and central GitHub Actions
+  dispatch.
 
 In progress outside this repository:
 
@@ -281,6 +286,5 @@ In progress outside this repository:
 
 Next implementation focus:
 
-- worker execution adapters;
 - 6529.io admin auth bridge;
 - alerting and scheduled spend checks.

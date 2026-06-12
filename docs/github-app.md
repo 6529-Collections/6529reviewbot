@@ -112,6 +112,9 @@ Production code should inject:
   estimates when available;
 - `enqueueReviewJobs(jobs, controls)` to dispatch admitted jobs to the worker.
 
+`src/worker-adapter.cjs` provides local and GitHub Actions enqueuer helpers for
+this contract. See [worker-adapters.md](worker-adapters.md).
+
 Each queued job has one review kind and one provider/model lane. See
 [review-jobs.md](review-jobs.md).
 

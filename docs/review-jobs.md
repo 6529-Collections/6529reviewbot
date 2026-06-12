@@ -117,3 +117,11 @@ REVIEW_MODEL=<job.model>
 
 Workers must still enforce engine-level context, token, timeout, and source
 path limits. Job admission is not a substitute for provider-call guardrails.
+
+Workers can also pass the full job JSON to:
+
+```bash
+node bin/run-review-job.cjs --job-file job.json
+```
+
+See [worker-adapters.md](worker-adapters.md).

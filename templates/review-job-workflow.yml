@@ -1,0 +1,121 @@
+name: 6529bot Review Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        required: true
+        type: string
+      target_repo:
+        required: true
+        type: string
+      pr_number:
+        required: true
+        type: string
+      head_sha:
+        required: true
+        type: string
+      review_kind:
+        required: true
+        type: choice
+        options:
+          - general
+          - followup
+          - wcag
+          - i18n
+          - security
+      provider:
+        required: true
+        type: choice
+        options:
+          - anthropic
+          - openai
+          - openrouter
+      model:
+        required: true
+        type: string
+      lane:
+        required: true
+        type: string
+      requestor:
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+  pull-requests: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout bot
+        uses: actions/checkout@v4
+
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.target_repo }}
+          ref: ${{ inputs.head_sha }}
+          path: target
+          token: ${{ secrets.REVIEWBOT_GITHUB_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install bot dependencies
+        run: npm ci
+
+      - name: Write job payload
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          TARGET_REPO: ${{ inputs.target_repo }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          REVIEW_KIND: ${{ inputs.review_kind }}
+          PROVIDER: ${{ inputs.provider }}
+          MODEL: ${{ inputs.model }}
+          LANE: ${{ inputs.lane }}
+          REQUESTOR: ${{ inputs.requestor }}
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          fs.writeFileSync(
+            "job.json",
+            `${JSON.stringify(
+              {
+                id: process.env.JOB_ID,
+                repository: { fullName: process.env.TARGET_REPO },
+                prNumber: process.env.PR_NUMBER,
+                headSha: process.env.HEAD_SHA,
+                reviewKind: process.env.REVIEW_KIND,
+                provider: process.env.PROVIDER,
+                model: process.env.MODEL,
+                lane: process.env.LANE,
+                requestor: process.env.REQUESTOR || "",
+              },
+              null,
+              2
+            )}\n`
+          );
+          NODE
+
+      - name: Run 6529bot review job
+        env:
+          GH_TOKEN: ${{ secrets.REVIEWBOT_GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          REVIEW_WORKSPACE: ${{ github.workspace }}/target
+          REVIEW_USAGE_ENABLED: true
+          REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION }}
+          REVIEW_USAGE_DB_RESOURCE_ARN: ${{ vars.REVIEW_USAGE_DB_RESOURCE_ARN }}
+          REVIEW_USAGE_DB_SECRET_ARN: ${{ vars.REVIEW_USAGE_DB_SECRET_ARN }}
+          REVIEW_USAGE_DB_NAME: ${{ vars.REVIEW_USAGE_DB_NAME }}
+          REVIEW_USAGE_DB_SCHEMA: ${{ vars.REVIEW_USAGE_DB_SCHEMA }}
+        run: npm run worker:job -- --job-file job.json

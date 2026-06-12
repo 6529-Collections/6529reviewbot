@@ -26,6 +26,8 @@ requests.
   kind can run through multiple provider/model lanes when configured.
 - Supports base-ref repository configuration for per-repo review kinds, lane
   selection, admission tightening, and budget caps.
+- Dispatches admitted jobs through explicit worker adapters for local workers
+  or central GitHub Actions workflows.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
 - Uses GitHub Actions OIDC for AWS access, not long-lived AWS credentials.
@@ -119,6 +121,14 @@ REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
 REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
 ```
 
+Worker adapter:
+
+```text
+REVIEWBOT_WORKER_ADAPTER=noop|local|github_actions
+REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
+REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+```
+
 Usage API:
 
 ```text
@@ -188,6 +198,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [GitHub App](docs/github-app.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
+- [Worker adapters](docs/worker-adapters.md)
 - [Usage API](docs/usage-api.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)

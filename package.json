@@ -24,7 +24,8 @@
     "review:followup": "node bin/followup-commit-review.cjs",
     "review:wcag": "node bin/wcag-aa-analysis.cjs",
     "review:i18n": "node bin/i18n-analysis.cjs",
-    "review:security": "node bin/security-analysis.cjs"
+    "review:security": "node bin/security-analysis.cjs",
+    "worker:job": "node bin/run-review-job.cjs"
   },
   "dependencies": {
     "yaml": "^2.9.0"

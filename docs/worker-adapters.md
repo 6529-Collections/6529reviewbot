@@ -1,0 +1,119 @@
+# Worker Adapters
+
+Worker adapters bridge admitted review jobs to executable work.
+
+The App still owns webhook verification, admission, budget checks, and job
+fanout. A worker adapter starts only after a job has passed those gates.
+
+## Modes
+
+```text
+REVIEWBOT_WORKER_ADAPTER=noop|local|github_actions
+```
+
+`noop` is the default. It acknowledges that no worker is configured and does
+not execute anything.
+
+`local` runs the existing review CLI entrypoint in the current bot checkout.
+This is useful for development, controlled workers, and one-shot job replay.
+
+`github_actions` dispatches a workflow in the central bot repository with the
+job fields as workflow inputs. This is a bridge toward central execution while
+keeping provider keys and AWS credentials out of target repositories.
+
+## Local Worker
+
+```text
+REVIEWBOT_WORKER_ADAPTER=local
+REVIEWBOT_WORKER_NODE_BIN=
+REVIEWBOT_WORKER_CWD=
+REVIEWBOT_WORKER_LOCAL_TIMEOUT_MS=900000
+```
+
+The local adapter invokes the correct script under `bin/` for the job's review
+kind:
+
+```text
+general  -> bin/general-pr-review.cjs
+followup -> bin/followup-commit-review.cjs
+wcag     -> bin/wcag-aa-analysis.cjs
+i18n     -> bin/i18n-analysis.cjs
+security -> bin/security-analysis.cjs
+```
+
+Workers must provide a safe `REVIEW_WORKSPACE` containing the target checkout.
+The review engine reads files as text and still enforces its own context and
+path limits.
+
+## GitHub Actions Worker
+
+```text
+REVIEWBOT_WORKER_ADAPTER=github_actions
+REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
+REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+REVIEWBOT_WORKER_GITHUB_REF=main
+REVIEWBOT_WORKER_GH_BIN=gh
+```
+
+The dispatch fields are:
+
+```text
+job_id
+target_repo
+pr_number
+head_sha
+review_kind
+provider
+model
+lane
+requestor
+```
+
+The receiving workflow should validate the inputs, check out the target repo
+read-only, set provider/AWS secrets from the central bot environment, and run:
+
+```bash
+npm run worker:job -- --job-file job.json
+```
+
+or pipe the same job JSON to:
+
+```bash
+node bin/run-review-job.cjs
+```
+
+See `templates/review-job-workflow.yml` for a starter workflow.
+
+## Worker Environment
+
+Every local worker receives:
+
+```text
+GH_REPO
+GITHUB_REPOSITORY
+PR_NUMBER
+GITHUB_PR_NUMBER
+PR_HEAD_SHA
+REVIEW_KIND
+REVIEW_PROVIDER
+REVIEW_MODEL
+REVIEWBOT_JOB_ID
+REVIEWBOT_JOB_LANE
+REVIEWBOT_DELIVERY_ID
+REVIEWBOT_REQUESTOR
+```
+
+Provider keys, GitHub App credentials, and AWS credentials remain owned by the
+bot backend or worker environment. Target repositories do not receive them.
+
+## Failure Behavior
+
+Adapters return a structured result for every job. A dispatch failure does not
+call a provider; it is visible in the queue result returned by the App. The
+next production step is to persist those job state transitions so retries,
+alerts, and dashboards can reason about failed dispatches.
+
+Worker stdout and stderr are not included in adapter results by default. This
+keeps webhook responses and queue logs from accidentally carrying prompt text,
+provider output, or credentials. Local debugging callers may opt into output
+tails explicitly.

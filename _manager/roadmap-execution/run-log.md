@@ -81,3 +81,18 @@
   - restrictive merge with central admission, job lane, and budget policy;
   - webhook integration before admission and budget checks;
   - docs and a template config file.
+- Frontend PR #2605 also received follow-up fixes for SonarCloud and
+  CodeRabbit:
+  - removed full insecure URL literals from tests;
+  - normalized IPv6 localhost hosts before local HTTP allowlist checks;
+  - preserved usage API base-path prefixes when joining summary paths.
+  All frontend checks are now green; the PR still needs required human review.
+- Merged `6529reviewbot` PR #12 as `6edb52d` after CI, Dependency Review, and
+  CodeRabbit passed.
+- Started `codex/worker-execution-adapters` increment:
+  - local worker adapter maps review jobs to the existing review CLI;
+  - GitHub Actions adapter dispatches central workflow inputs;
+  - `bin/run-review-job.cjs` runs a job JSON payload;
+  - `templates/review-job-workflow.yml` provides a central workflow scaffold;
+  - worker stdout/stderr are excluded from adapter results unless explicitly
+    requested for local debugging.

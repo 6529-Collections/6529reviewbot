@@ -145,6 +145,20 @@ caps. It cannot add a model lane that is not already allowed by central
 
 See [repository-config.md](repository-config.md).
 
+## Worker Adapters
+
+```text
+REVIEWBOT_WORKER_ADAPTER=noop|local|github_actions
+REVIEWBOT_WORKER_LOCAL_TIMEOUT_MS=900000
+REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
+REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+REVIEWBOT_WORKER_GITHUB_REF=main
+```
+
+`noop` is the safe default. Use `local` for controlled local workers and
+`github_actions` to dispatch admitted jobs to a central workflow in this repo.
+See [worker-adapters.md](worker-adapters.md).
+
 ## Usage API
 
 ```text
