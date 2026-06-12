@@ -191,3 +191,9 @@
 - Started `codex/release-hardening-checklist` increment:
   - repeatable `npm run release:check` gate;
   - manual security review checklist for dogfood expansion and pre-v1 tags.
+- Merged `6529reviewbot` PR #20 as `78401dc` after CI, Dependency Review,
+  CodeRabbit, and release checks passed.
+- Started `codex/v0-release-plan` increment:
+  - v0 release plan with explicit tag gates;
+  - release notes template for pre-v1 GitHub Releases;
+  - README, release docs, roadmap, changelog, and manager-memory sweep.

@@ -229,6 +229,7 @@ Build the operator experience:
 - replay tooling for webhook events;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
+- v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
 - support process for adopters.

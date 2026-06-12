@@ -17,6 +17,7 @@ After stabilization:
 ## Release Checklist
 
 - [Release readiness](release-readiness.md) reviewed
+- [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - `npm run release:check`
 - docs updated
 - workflow pins reviewed
@@ -39,7 +40,7 @@ Treat these as breaking:
 - changing AWS ledger schema without migration docs;
 - changing workflow permissions;
 - changing default review fan-out;
-- changing skip behavior.
+- changing skip behavior;
 - changing admin auth canonical signing payloads;
 - changing alert payload shape or delivery guarantees.
 
@@ -52,3 +53,6 @@ Every pre-v1 release should say:
 - which providers and model defaults were tested;
 - which budget and admission defaults are recommended;
 - which known production gaps remain.
+
+Use [Release Notes Template](release-notes-template.md) as the starting point
+for GitHub Releases.

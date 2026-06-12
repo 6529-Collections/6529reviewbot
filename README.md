@@ -44,6 +44,8 @@ but production deployment, dogfooding, and release tags are still pending.
 
 For the current release gates, see
 [docs/release-readiness.md](docs/release-readiness.md).
+For the first pre-v1 tag boundary, see
+[docs/v0-release-plan.md](docs/v0-release-plan.md).
 
 ## Project Layout
 
@@ -55,6 +57,19 @@ templates/                   Caller workflow and config examples
 .github/                     Community files, issue templates, CI/security
 AGENTS.md                    Instructions for coding agents working here
 ```
+
+## Documentation Map
+
+- [Architecture](docs/architecture.md): system boundaries and trust model.
+- [Configuration](docs/configuration.md): central runtime settings.
+- [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
+- [Repository Config](docs/repository-config.md): target repo policy file.
+- [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
+- [Usage API](docs/usage-api.md): public and admin reporting contracts.
+- [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
+- [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
+- [Release Readiness](docs/release-readiness.md): current gates and gaps.
+- [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 
 ## Quick Start
 
@@ -75,6 +90,12 @@ Run the full release gate:
 
 ```bash
 npm run release:check
+```
+
+Review the pre-v1 release boundary before tagging:
+
+```bash
+cat docs/v0-release-plan.md
 ```
 
 Print a prompt for a target PR without calling a model:
