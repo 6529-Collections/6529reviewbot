@@ -95,6 +95,10 @@ local and manual gates.
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
 
+Use [Operator Evidence Template](operator-evidence-template.md) to capture
+deployment evidence without leaking live account ids, ARNs, secrets, private
+repository names, webhook payloads, prompts, or provider responses.
+
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a
 replacement for the release checklist, but it should catch review-sensitive

@@ -7,6 +7,11 @@ another 6529-owned runtime.
 For an ordered first-install path, start with
 [install.md](install.md), then return here for production details.
 
+For release or dogfood evidence, use
+[operator-evidence-template.md](operator-evidence-template.md). Keep
+unredacted account ids, ARNs, secrets, private repository names, webhook
+payloads, and provider responses in the private operator runbook.
+
 ## GitHub App Registration
 
 Create a GitHub App named `6529bot`.

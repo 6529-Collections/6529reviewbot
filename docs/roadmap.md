@@ -246,6 +246,8 @@ Build the operator experience:
 - rollback instructions;
 - incident runbooks;
 - support process for adopters.
+- public-safe operator evidence templates for release, dogfood, and production
+  deployment proof.
 
 ### 9. Community Release
 
@@ -326,6 +328,7 @@ Completed in `6529reviewbot`:
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - incident response runbook for operator containment and recovery.
+- operator evidence template for public-safe deployment proof.
 
 In progress in `6529reviewbot`:
 

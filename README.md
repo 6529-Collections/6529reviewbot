@@ -86,6 +86,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
+- [Operator Evidence Template](docs/operator-evidence-template.md): redacted
+  release/deployment proof format.
 
 ## Quick Start
 
@@ -415,6 +417,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Incident response](docs/incident-response.md)
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
+- [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
 
 ## Contributing
