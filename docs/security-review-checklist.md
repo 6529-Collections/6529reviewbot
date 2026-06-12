@@ -58,6 +58,8 @@ Target deployment:
   least-privilege documents, with trust scoped to the bot repo/environment.
 - Ledger schema changes are reflected in `npm run ledger:schema` and reviewed
   before applying to Aurora.
+- Managed daily aggregate views can be re-applied without hand-dropping stale
+  view definitions in production.
 - Usage ledger failures have an explicit fail-open or fail-closed mode.
 - Budget admission happens before queueing model jobs.
 - Central DB budget policy rows are reviewed, applied from operator-owned

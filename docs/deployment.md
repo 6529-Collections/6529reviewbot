@@ -214,6 +214,8 @@ or GitHub App private keys.
   in dry-run mode.
 - `npm run ledger:schema` prints the expected ledger schema, and
   `npm run ledger:schema -- -- --apply` has been run in the target database.
+  Re-applying the schema should succeed even when managed daily aggregate view
+  definitions changed between releases.
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` prints
   the expected budget policy SQL, and reviewed rows are applied or explicitly
   deferred.

@@ -62,11 +62,12 @@ merged PRs.
 - AWS IAM policy templates PR: merged as PR #46, merge commit `461bea3`
 - GitHub App manifest template PR: merged as PR #47, merge commit `fecf502`
 - GitHub App manifest renderer PR: merged as PR #48, merge commit `d115833`
-- Current branch: `codex/pin-template-actions`
-- Current local changes: pinned central worker and alert workflow template
-  actions, workflow action-ref release-check guard, worker template AWS OIDC
-  configuration, timeout/concurrency controls, docs, changelog, roadmap, and
-  manager-memory updates.
+- Workflow template action pinning PR: merged as PR #49, merge commit
+  `5f9d53c`
+- Current branch: `codex/ledger-view-recreate`
+- Current local changes: ledger schema managed-view drop/recreate support,
+  smoke coverage, AWS ledger docs, deployment/release/security docs, changelog,
+  roadmap, and manager-memory updates.
 
 ## Key Decisions
 
@@ -146,6 +147,9 @@ merged PRs.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
+- The ledger schema CLI should be safe to re-apply against an existing Aurora
+  database. Bot-managed aggregate views can be dropped and recreated by the
+  schema tool; tables and indexes remain idempotent.
 
 ## Constraints
 
@@ -157,10 +161,12 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the workflow-template hardening PR if checks and
+1. Validate, publish, and merge the ledger managed-view recreation PR if checks and
    review are clean.
-2. Continue dogfood target-repo PRs once required human review completes.
-3. Prepare the next operator-readiness or release-polish slice after this PR
+2. Re-run `npm run ledger:schema -- -- --apply` against the existing
+   `seize-6529bot-usage` Aurora cluster after the fix lands.
+3. Continue dogfood target-repo PRs once required human review completes.
+4. Prepare the next operator-readiness or release-polish slice after this PR
    lands.
 
 ## Open Risks
@@ -181,8 +187,9 @@ merged PRs.
   region, repo, branch/environment, cluster, secret, and SNS values before use.
 - The GitHub App manifest still needs production-host rendering and actual App
   creation in GitHub before production use.
-- Ledger schema, including run claims, still needs to be applied in the target
-  Aurora database during deployment.
+- Ledger schema apply against the existing `seize-6529bot-usage` cluster
+  currently fails on stale managed view definitions. The in-progress fix drops
+  and recreates bot-managed views before re-applying view definitions.
 - Provider pricing rows still require operator verification and key/limit
   setup in provider-owned consoles.
 - Public support still requires maintainer moderation if a reporter

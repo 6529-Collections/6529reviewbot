@@ -319,6 +319,7 @@ Completed in `6529reviewbot`:
 - repeatable Aurora ledger schema tooling.
 - dry-run/apply model pricing tooling.
 - example AWS IAM/OIDC templates for central Data API and SNS access.
+- ledger schema re-apply support for managed daily aggregate views.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
 - installation and onboarding guide for conservative central App dogfood.

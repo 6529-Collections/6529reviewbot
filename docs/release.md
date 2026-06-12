@@ -33,7 +33,8 @@ After stabilization:
 - security model reviewed for trust-boundary changes
 - AWS/IAM changes documented
 - AWS IAM/OIDC templates reviewed when AWS trust or permissions changed
-- ledger schema changes captured in `npm run ledger:schema`
+- ledger schema changes captured in `npm run ledger:schema`, including managed
+  view recreation behavior when aggregate view columns change
 - comment contract changes documented
 - configuration changes documented
 - alerting and admin-auth changes documented

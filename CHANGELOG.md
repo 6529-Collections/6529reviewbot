@@ -42,6 +42,8 @@ stabilized.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
   fanout diagnostics.
 - Dry-run-by-default ledger schema CLI for Aurora setup and repair.
+- Ledger schema re-apply recreates bot-managed daily aggregate views before
+  view definition updates.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
 - Example AWS IAM/OIDC templates for central GitHub Actions, Aurora Data API,

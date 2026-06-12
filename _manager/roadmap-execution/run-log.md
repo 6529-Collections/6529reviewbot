@@ -486,3 +486,20 @@
   - added `npm run check:workflow-actions` and release-check integration;
   - README, worker, deployment, release, security, roadmap, changelog, and
     manager-memory docs.
+- Merged `6529reviewbot` PR #49 as `5f9d53c` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Inspected AWS `us-east-1` with the configured operator credentials:
+  - found existing Aurora PostgreSQL Serverless v2 cluster
+    `seize-6529bot-usage`;
+  - database `reviewbot`, Data API enabled, encrypted storage, private
+    instance, deletion protection on, min ACU 0/max ACU 1;
+  - initial schema apply reached the managed views and failed because an
+    existing view definition could not drop columns through
+    `create or replace view`.
+- Started `codex/ledger-view-recreate` increment:
+  - ledger schema drops bot-managed daily aggregate views before recreating
+    them;
+  - smoke coverage asserts the managed-view drop statement;
+  - AWS usage ledger, deployment, release, security checklist, changelog,
+    roadmap, and manager-memory docs.

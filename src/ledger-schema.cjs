@@ -208,6 +208,21 @@ create unique index if not exists ai_model_prices_provider_model_effective_idx
   on ${schemaIdent}.ai_model_prices (provider, model, effective_from)`,
     },
     {
+      name: "drop_view_daily_spend_by_requester",
+      sql: `
+drop view if exists ${schemaIdent}.daily_ai_review_spend_by_requester`,
+    },
+    {
+      name: "drop_view_daily_spend_by_model",
+      sql: `
+drop view if exists ${schemaIdent}.daily_ai_review_spend_by_model`,
+    },
+    {
+      name: "drop_view_daily_spend_by_pr",
+      sql: `
+drop view if exists ${schemaIdent}.daily_ai_review_spend_by_pr`,
+    },
+    {
       name: "view_daily_spend_by_requester",
       sql: `
 create or replace view ${schemaIdent}.daily_ai_review_spend_by_requester as
