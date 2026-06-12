@@ -107,11 +107,12 @@ merged PRs.
   `e145528`; post-merge CI and OpenSSF Scorecard completed successfully.
 - GitHub App dispatch-token PR: merged as PR #77, merge commit `6f50666`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/github-app-token-cli-profile`
-- Current local changes: make `npm run github-app:token` profile-aware so
-  operators can mint test installation tokens for either the main
-  target-repository App or the dispatch-only worker App without reshaping env
-  vars by hand.
+- GitHub App token CLI profile PR: merged as PR #78, merge commit `1ccb5e2`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/harden-admin-auth-headers`
+- Current local changes: harden private admin HMAC bridge header handling by
+  accepting standard `Headers` objects and rejecting malformed actor/role
+  values before canonical signing or authorization.
 
 ## Key Decisions
 

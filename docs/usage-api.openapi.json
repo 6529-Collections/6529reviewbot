@@ -217,7 +217,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "x-6529-admin-signature",
-        "description": "Short-lived 6529.io admin HMAC assertion. Requests also include x-6529-admin-user, x-6529-admin-roles, and x-6529-admin-expires-at."
+        "description": "Short-lived 6529.io admin HMAC assertion. Requests also include x-6529-admin-user, x-6529-admin-roles, and x-6529-admin-expires-at. Actor values cannot contain control characters, and roles must use letters, digits, underscore, dot, colon, or hyphen."
       }
     },
     "parameters": {
