@@ -276,6 +276,7 @@ Completed in `6529reviewbot`:
 - trusted-actor admission for public repositories;
 - central runtime pause controls for org, repo, provider, model, review kind,
   and emergency global stops;
+- documented comment-command contract for maintainer-triggered reviews;
 - GitHub App installation-token handling for repository config and actor
   permission resolution;
 - budget admission against the AWS usage ledger;

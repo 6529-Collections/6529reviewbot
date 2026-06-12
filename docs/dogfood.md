@@ -104,6 +104,7 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 - Confirm one usage row is written with requestor, repo, PR, provider, model,
   review kind, token counts, and cost fields.
 - Confirm budget summaries include the requestor and repo dimensions.
+- See [comment-commands.md](comment-commands.md) for the full command contract.
 
 ### Phase 2: Limited Initial Reviews
 

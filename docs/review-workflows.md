@@ -6,6 +6,9 @@ In the central GitHub App, a trigger becomes one or more review jobs. Each job
 has one review mode and one provider/model lane. See
 [review-jobs.md](review-jobs.md).
 
+Maintainer comment triggers are documented in
+[comment-commands.md](comment-commands.md).
+
 ## General PR Review
 
 Entrypoint:

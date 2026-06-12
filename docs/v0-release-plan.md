@@ -22,6 +22,7 @@ The first `v0` tag can include:
 
 - review prompts and comment format for general, follow-up, WCAG 2.2 AA, i18n,
   and crypto/security reviews;
+- maintainer comment-command contract for manual review triggers;
 - Anthropic, OpenAI, and OpenRouter provider adapters behind explicit
   configuration;
 - provider setup guide for Anthropic, OpenAI, and OpenRouter;

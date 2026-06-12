@@ -72,6 +72,7 @@ AGENTS.md                    Instructions for coding agents working here
 - [Provider Setup](docs/provider-setup.md): Anthropic, OpenAI, and OpenRouter
   operator setup.
 - [Repository Config](docs/repository-config.md): target repo policy file.
+- [Comment Commands](docs/comment-commands.md): PR comment trigger contract.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
 - [Run Control](docs/run-control.md): dedupe and concurrency claims.
 - [Support](docs/support.md): support bundle and issue triage.
