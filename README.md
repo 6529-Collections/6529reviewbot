@@ -61,6 +61,7 @@ src/                         Review engine, App, policy, ledger, and alert code
 docs/                        Architecture, configuration, operations docs
 templates/                   Caller workflow and config examples
 .github/                     Community files, issue templates, CI/security
+Dockerfile                   Central App server runtime image
 AGENTS.md                    Instructions for coding agents working here
 ```
 
@@ -88,6 +89,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
+- [Container Deployment](docs/container-deployment.md): runtime image,
+  secret injection, and container verification.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
   worker evidence.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
@@ -423,6 +426,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [Production deployment](docs/deployment.md)
+- [Container deployment](docs/container-deployment.md)
 - [Dogfood runbook](docs/dogfood.md)
 - [GitHub App](docs/github-app.md)
 - [GitHub App registration](docs/github-app-registration.md)

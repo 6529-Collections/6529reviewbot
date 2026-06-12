@@ -320,6 +320,9 @@ Completed in `6529reviewbot`:
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - production deployment runbook and central worker installation-token flow.
+- production server entrypoint wiring for the configured worker adapter.
+- repository-owned container packaging for the central App server with
+  runtime-only secret injection guidance.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -386,4 +389,5 @@ In progress outside this repository:
 Next implementation focus:
 
 - dogfood on a target repo with conservative limits;
-- production GitHub App deployment and 6529.io wiring.
+- production GitHub App deployment, reviewed container/runtime evidence, and
+  6529.io wiring.

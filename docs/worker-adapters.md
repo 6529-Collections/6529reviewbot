@@ -4,6 +4,8 @@ Worker adapters bridge admitted review jobs to executable work.
 
 The App still owns webhook verification, admission, budget checks, and job
 fanout. A worker adapter starts only after a job has passed those gates.
+`bin/server.cjs` wires the configured adapter into the production App server
+entrypoint.
 
 ## Modes
 

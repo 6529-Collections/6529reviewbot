@@ -174,6 +174,17 @@ Start the server in the chosen hosting environment:
 npm start
 ```
 
+For containerized hosting, build the reviewed image and inject runtime secrets
+from the hosting platform instead of the repository:
+
+```bash
+docker build -t 6529reviewbot:local .
+docker run --rm --env-file .env.production -p 8080:8080 6529reviewbot:local
+```
+
+See [container-deployment.md](container-deployment.md) for image contents,
+worker-dispatch notes, and production verification.
+
 Verify:
 
 ```text

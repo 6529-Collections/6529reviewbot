@@ -30,6 +30,8 @@ repositories.
 ## Tested Configuration
 
 - Worker path:
+- App server runtime:
+- Container image digest, if used:
 - GitHub App permissions/events:
 - Providers/models:
 - Default Anthropic model:

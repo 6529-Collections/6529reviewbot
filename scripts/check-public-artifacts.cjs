@@ -12,6 +12,8 @@ const rootFiles = new Set([
   "CHANGELOG.md",
   "CODE_OF_CONDUCT.md",
   "CONTRIBUTING.md",
+  ".dockerignore",
+  "Dockerfile",
   "GOVERNANCE.md",
   "README.md",
   "SECURITY.md",

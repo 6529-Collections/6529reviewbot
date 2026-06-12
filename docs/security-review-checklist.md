@@ -31,6 +31,9 @@ Target deployment:
   explicitly reviewed manual equivalent.
 - The production GitHub App manifest was rendered with the final HTTPS bot
   origin and contains no `<bot-host>` placeholders.
+- Container images, when used, are built from reviewed commits and do not bake
+  GitHub App, provider, AWS, alert, admin-auth, webhook, or private evidence
+  values into layers, labels, files, or build logs.
 - The [GitHub App Registration Packet](github-app-registration.md) acceptance
   and credential-custody checks are complete or explicitly deferred.
 - GitHub App browser handoff routes do not echo manifest codes, generated

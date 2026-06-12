@@ -29,6 +29,7 @@ const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const runReviewJobCli = require("../bin/run-review-job.cjs");
+const serverCli = require("../bin/server.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
@@ -1198,6 +1199,13 @@ assert.equal(missingInstallationDispatchCalled, false);
 const noopQueuePromise = workerAdapter.enqueueReviewJobsWithAdapter([reviewJobs[0]], {}, {
   policy: { mode: "noop" },
 });
+const serverEntrypointOptions = serverCli.createServerOptionsFromEnv({
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "false",
+});
+const serverEntrypointQueuePromise = serverEntrypointOptions.enqueueReviewJobs([reviewJobs[0]], {});
+assert.equal(serverCli.serverPortFromEnv({ REVIEWBOT_PORT: "8181" }), 8181);
+assert.throws(() => serverCli.serverPortFromEnv({ PORT: "8080abc" }), /valid TCP port/);
 assert.equal(
   reviewJob.publicReviewJobSummary({
     ...reviewJobs[0],
@@ -1947,6 +1955,10 @@ appServer.handleGitHubWebhook({
   const noopQueue = await noopQueuePromise;
   assert.equal(noopQueue.accepted, false);
   assert.equal(noopQueue.reason, "No worker adapter configured.");
+  const serverEntrypointQueue = await serverEntrypointQueuePromise;
+  assert.equal(serverEntrypointQueue.accepted, false);
+  assert.equal(serverEntrypointQueue.adapter, "noop");
+  assert.equal(serverEntrypointQueue.reason, "No worker adapter configured.");
   const claimedDecision = await claimedDecisionPromise;
   assert.equal(claimedDecision.code, "run_control_claimed");
   assert.equal(claimedDecision.allowed, true);
