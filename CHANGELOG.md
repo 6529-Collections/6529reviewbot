@@ -40,6 +40,7 @@ stabilized.
 - Dry-run-by-default model pricing CLI for reviewed price-row updates.
 - Usage-write cost estimation from active provider/model price rows.
 - Provider setup guide for Anthropic, OpenAI, and OpenRouter.
+- Sanitized support bundle CLI and support playbook.
 - No-network production preflight CLI for runtime configuration validation.
 - Incident response runbook for operator containment and recovery.
 - Dogfood runbook, conservative dogfood templates, and repository config

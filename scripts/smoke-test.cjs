@@ -31,6 +31,8 @@ const runControl = require("../src/run-control.cjs");
 const runControlLedger = require("../src/run-control-ledger.cjs");
 const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
 const spendAlerts = require("../src/spend-alerts.cjs");
+const supportBundle = require("../src/support-bundle.cjs");
+const supportBundleCli = require("../bin/support-bundle.cjs");
 const usageApi = require("../src/usage-api.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
@@ -370,6 +372,42 @@ assert.equal(
   dataApi.isRetriableDataApiError({ stderr: "DatabaseResumingException: please retry" }),
   true
 );
+const supportEnv = {
+  REVIEW_PROVIDER: "anthropic",
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  ANTHROPIC_API_KEY: "secret-key",
+  REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:secret",
+  GITHUB_WEBHOOK_SECRET: "",
+};
+const supportSummary = supportBundle.environmentSummary(supportEnv);
+assert.equal(supportSummary.safe.REVIEW_PROVIDER, "anthropic");
+assert.equal(supportSummary.presence.ANTHROPIC_API_KEY, "set");
+assert.equal(supportSummary.presence.GITHUB_WEBHOOK_SECRET, "unset");
+assert.equal(JSON.stringify(supportSummary).includes("secret-key"), false);
+const collectedSupportBundle = supportBundle.collectSupportBundle({
+  env: {
+    ...supportEnv,
+    GITHUB_WEBHOOK_SECRET: "configured",
+  },
+  now: new Date("2026-06-12T00:00:00.000Z"),
+  execFileSync: (bin, args) => {
+    if (args[0] === "rev-parse") {
+      return "abc123\n";
+    }
+    if (args[0] === "branch") {
+      return "main\n";
+    }
+    return "";
+  },
+});
+assert.equal(collectedSupportBundle.git.commit, "abc123");
+assert.equal(collectedSupportBundle.environment.presence.GITHUB_WEBHOOK_SECRET, "set");
+assert.match(supportBundle.formatSupportBundleMarkdown(collectedSupportBundle), /Support Bundle/);
+assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "--quiet"]), {
+  includeGitStatus: true,
+  json: true,
+  quiet: true,
+});
 
 assert.deepEqual(reviewBot.normalizeOpenAIUsage({
   input_tokens: 10,

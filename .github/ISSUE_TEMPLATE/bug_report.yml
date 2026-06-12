@@ -23,9 +23,14 @@ body:
     id: reproduce
     attributes:
       label: Reproduction steps
-      description: Include sanitized commands, settings, and logs if useful.
+      description: Include sanitized commands, settings, logs, and `npm run support:bundle` output if useful.
     validations:
       required: true
+  - type: textarea
+    id: support-bundle
+    attributes:
+      label: Sanitized support bundle
+      description: Paste `npm run support:bundle` output. Do not paste secrets or private payloads.
   - type: dropdown
     id: area
     attributes:

@@ -300,6 +300,7 @@ Completed in `6529reviewbot`:
 - dry-run/apply model pricing tooling.
 - usage-write cost estimation from maintained model price rows.
 - provider setup guide for Anthropic, OpenAI, and OpenRouter.
+- sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - incident response runbook for operator containment and recovery.
 
