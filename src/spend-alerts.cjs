@@ -16,6 +16,15 @@ const BUDGET_PERIODS = [
 ];
 
 function spendAlertPolicyFromEnv(env = process.env) {
+  const spikeDimensions = csv(env.REVIEWBOT_ALERTS_SPIKE_DIMENSIONS || DEFAULT_SPIKE_DIMENSIONS.join(","));
+  const invalidSpikeDimensions = spikeDimensions.filter(
+    (dimension) => !DEFAULT_SPIKE_DIMENSIONS.includes(dimension)
+  );
+  if (invalidSpikeDimensions.length > 0) {
+    throw new Error(
+      `REVIEWBOT_ALERTS_SPIKE_DIMENSIONS contains unsupported values: ${invalidSpikeDimensions.join(", ")}.`
+    );
+  }
   const budgetWarningPercent = positiveNumber(
     env.REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT,
     DEFAULT_BUDGET_WARNING_PERCENT,
@@ -53,7 +62,7 @@ function spendAlertPolicyFromEnv(env = process.env) {
       DEFAULT_SPIKE_MIN_USD,
       "REVIEWBOT_ALERTS_SPIKE_MIN_USD"
     ),
-    spikeDimensions: csv(env.REVIEWBOT_ALERTS_SPIKE_DIMENSIONS || DEFAULT_SPIKE_DIMENSIONS.join(",")),
+    spikeDimensions,
     alertOnNewSpend: parseBool(env.REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND || "true"),
     maxAlerts: positiveInt(env.REVIEWBOT_ALERTS_MAX_ALERTS, DEFAULT_MAX_ALERTS, "REVIEWBOT_ALERTS_MAX_ALERTS"),
   };

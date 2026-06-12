@@ -137,3 +137,6 @@
     AWS ledger integration.
   Validation: `npm test`, `npm run check`, `git diff --check`, YAML parse for
   all files under `templates/`.
+- Addressed CodeRabbit feedback on PR #15 by redacting CLI alert output,
+  adding SNS publish timeouts, validating spike dimensions, and quoting and
+  ordering the alert environment examples.

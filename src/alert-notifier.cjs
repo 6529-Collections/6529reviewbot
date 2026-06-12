@@ -24,6 +24,11 @@ function alertNotifierSettingsFromEnv(env = process.env) {
     snsTopicArn: env.REVIEWBOT_ALERTS_SNS_TOPIC_ARN || "",
     snsRegion: env.REVIEWBOT_ALERTS_SNS_REGION || env.REVIEW_USAGE_AWS_REGION || process.env.AWS_REGION || "us-east-1",
     snsSubject: env.REVIEWBOT_ALERTS_SNS_SUBJECT || "6529bot spend alert",
+    snsTimeoutMs: positiveInt(
+      env.REVIEWBOT_ALERTS_SNS_TIMEOUT_MS,
+      10000,
+      "REVIEWBOT_ALERTS_SNS_TIMEOUT_MS"
+    ),
     awsCliBin: env.AWS_CLI_BIN || awsCliBin(),
     failClosed: parseBool(env.REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED || "false"),
   };
@@ -65,7 +70,7 @@ async function sendAlerts(alerts, options = {}) {
       throw error;
     }
     return {
-      ok: false,
+      ok: true,
       delivered: false,
       mode: settings.mode,
       alertCount: normalizedAlerts.length,
@@ -137,6 +142,7 @@ function sendSnsAlert(payload, settings, options = {}) {
         maxBuffer: 4 * 1024 * 1024,
         stdio: ["ignore", "pipe", "pipe"],
         shell: shouldUseShellForAwsCli(),
+        timeout: settings.snsTimeoutMs,
       }
     );
   } finally {

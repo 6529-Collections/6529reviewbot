@@ -22,8 +22,27 @@ function publicResult(result) {
     enabled: result.enabled,
     alertCount: result.alertCount,
     range: result.range,
-    notification: result.notification,
-    alerts: result.alerts,
+    notification: notificationSummary(result.notification),
+    alerts: (result.alerts || []).map((alert, index) => ({
+      index,
+      kind: alert.kind,
+      severity: alert.severity,
+      period: alert.period,
+      windowHours: alert.windowHours,
+    })),
+  };
+}
+
+function notificationSummary(notification) {
+  if (!notification) {
+    return null;
+  }
+  return {
+    ok: notification.ok,
+    delivered: notification.delivered,
+    mode: notification.mode,
+    alertCount: notification.alertCount,
+    reason: notification.reason,
   };
 }
 

@@ -426,6 +426,13 @@ const alertPolicy = spendAlerts.spendAlertPolicyFromEnv({
   REVIEWBOT_ALERTS_SPIKE_MIN_USD: "5",
   REVIEWBOT_ALERTS_MAX_ALERTS: "10",
 });
+assert.throws(
+  () =>
+    spendAlerts.spendAlertPolicyFromEnv({
+      REVIEWBOT_ALERTS_SPIKE_DIMENSIONS: "global,bad_dimension",
+    }),
+  /unsupported values/
+);
 const generatedAlerts = spendAlerts.evaluateSpendAlerts({
   events: alertEvents,
   budgetPolicies: [
@@ -790,6 +797,31 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(stdoutNotification.delivered, true);
   assert.match(alertOutput, /6529reviewbot/);
+  let snsPublishOptions = null;
+  const snsNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "sns",
+      REVIEWBOT_ALERTS_SNS_TOPIC_ARN: "arn:aws:sns:us-east-1:123456789012:reviewbot-alerts",
+      REVIEWBOT_ALERTS_SNS_TIMEOUT_MS: "1234",
+    }),
+    now: alertNow,
+    execFileSync: (bin, args, options) => {
+      assert.equal(bin, "aws");
+      assert.equal(args.includes("publish"), true);
+      snsPublishOptions = options;
+      return "{}";
+    },
+  });
+  assert.equal(snsNotification.delivered, true);
+  assert.equal(snsPublishOptions.timeout, 1234);
+  const bestEffortNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "webhook",
+      REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED: "false",
+    }),
+  });
+  assert.equal(bestEffortNotification.ok, true);
+  assert.equal(bestEffortNotification.delivered, false);
   const scheduledAlertResult = await scheduledSpendCheck.runScheduledSpendCheck({
     dryRun: true,
     now: alertNow,
