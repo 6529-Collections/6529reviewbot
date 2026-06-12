@@ -3,6 +3,7 @@
 const { execFileSync } = require("child_process");
 const os = require("os");
 const path = require("path");
+const { redactSensitiveText } = require("./diagnostics.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
@@ -185,9 +186,10 @@ function markdownMessages(messages) {
 
 function safeGit(run, args) {
   try {
-    return String(run("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }))
-      .trim()
-      .slice(0, 4000);
+    const output = String(
+      run("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })
+    ).trim();
+    return redactSensitiveText(output).slice(0, 4000);
   } catch {
     return "";
   }

@@ -811,6 +811,35 @@ const collectedSupportBundle = supportBundle.collectSupportBundle({
 assert.equal(collectedSupportBundle.git.commit, "abc123");
 assert.equal(collectedSupportBundle.environment.presence.GITHUB_WEBHOOK_SECRET, "set");
 assert.match(supportBundle.formatSupportBundleMarkdown(collectedSupportBundle), /Support Bundle/);
+const supportBundleWithGitStatus = supportBundle.collectSupportBundle({
+  env: supportEnv,
+  includeGitStatus: true,
+  now: new Date("2026-06-12T00:00:00.000Z"),
+  execFileSync: (bin, args) => {
+    if (args[0] === "rev-parse") {
+      return "abc123\n";
+    }
+    if (args[0] === "branch") {
+      return "feature/sk-proj-abcdefghijklmnopqrstuvwxyz\n";
+    }
+    if (args[0] === "status") {
+      return [
+        " M github_pat_abcdefghijklmnopqrstuvwxyz1234567890.txt",
+        "?? docs/sk-proj-abcdefghijklmnopqrstuvwxyz.md",
+      ].join("\n");
+    }
+    return "";
+  },
+});
+const supportBundleWithGitStatusJson = JSON.stringify(supportBundleWithGitStatus);
+const supportBundleWithGitStatusMarkdown = supportBundle.formatSupportBundleMarkdown(
+  supportBundleWithGitStatus
+);
+assert.match(supportBundleWithGitStatus.git.branch, /sk-\[redacted\]/);
+assert.match(supportBundleWithGitStatus.git.status, /github_pat_\[redacted\]/);
+assert.match(supportBundleWithGitStatus.git.status, /sk-\[redacted\]/);
+assert.equal(supportBundleWithGitStatusJson.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.equal(supportBundleWithGitStatusMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.deepEqual(supportBundleCli.parseArgs(["--json", "--include-git-status", "--quiet"]), {
   includeGitStatus: true,
   json: true,
