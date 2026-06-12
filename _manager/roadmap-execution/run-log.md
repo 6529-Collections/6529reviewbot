@@ -905,3 +905,13 @@
   - keep default Windows AWS CLI shell compatibility;
   - avoid shell mode when notifier settings carry an explicit AWS CLI binary;
   - add smoke coverage for the custom runner path.
+- Merged `6529reviewbot` PR #82 as `b856029` after CI and Dependency Review
+  passed; CodeRabbit completed without actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27419966713`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27419966666`, completed successfully.
+- Started `codex/cover-dispatch-exceptions` increment:
+  - add smoke coverage that thrown dispatch failures, including
+    dispatch-token mint failures, update run claims as `dispatch_error`;
+  - verify the job-event ledger also receives `dispatch_error` entries for
+    the dispatch stage.
