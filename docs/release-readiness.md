@@ -43,6 +43,8 @@ Ready for community review:
 - reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
+- admin run-claims API for stale active claim triage without direct Aurora
+  browser access;
 - admin runtime status API backed by no-network preflight checks;
 - admin API diagnostic responses redact and bound custom loader output before
   job-event, runtime-status, or unavailable JSON reaches 6529.io;

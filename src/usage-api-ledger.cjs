@@ -35,6 +35,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     loadJobEvents: async ({ query }) => ({
       events: readJobEvents(ledgerSettings, { query }),
     }),
+    loadRunClaims: async ({ query }) => ({
+      claims: readRunClaims(ledgerSettings, { query }),
+    }),
   };
 }
 
@@ -223,7 +226,7 @@ select
   command_name,
   metadata::text
 from ${quoteIdent(schema)}.ai_review_run_claims${where}
-order by updated_at asc, id asc
+order by updated_at desc, id desc
 limit :limit
 `,
     parameters,

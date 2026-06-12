@@ -150,6 +150,16 @@ worker and then writes `completed` or `failed` when the worker returns. The
 GitHub Actions worker therefore needs the job `runKey` plus run-control ledger
 environment variables when durable claims are enabled.
 
+Private 6529.io admin surfaces can read recent or stale claim rows through:
+
+```text
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+```
+
+The route uses the same admin-auth bridge as other usage/admin endpoints and
+sanitizes claim strings and metadata again before returning JSON. Dashboards
+should use this endpoint instead of reading Aurora directly.
+
 ## Durable Table
 
 Print the canonical schema:

@@ -181,10 +181,16 @@ merged PRs.
   `ba7f63c`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Worker-dispatch preflight hardening PR: merged as PR #112, merge commit
   `e0a62cc`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/public-usage-repo-allowlist`
-- Current local changes: public usage summaries now enforce repo/org allowlists
-  before showing repo names, even when a custom loader provides public repo
-  events with `repoPrivate: false`.
+- Public usage repo allowlist PR: merged as PR #113, merge commit `c8adf86`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Admin API diagnostic sanitization PR: merged as PR #114, merge commit
+  `cbb9388`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Scheduled alert payload sanitization PR: merged as PR #115, merge commit
+  `aba63a5`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-run-claims-api`
+- Current local changes: adding an admin-only run-claims API route for stale
+  active run-control claim triage, including ledger wiring, OpenAPI/docs,
+  smoke coverage, and manager-memory updates.
 
 ## Key Decisions
 
@@ -392,6 +398,9 @@ merged PRs.
   private operator context, but common secret-shaped strings and unsafe custom
   keys should be redacted or omitted before dry-run JSON, stdout, webhook, or
   SNS delivery.
+- Private admin dashboards should be able to inspect stale active run-control
+  claims through bot-owned admin APIs, not through browser-side Aurora access
+  or ad hoc SQL consoles.
 
 ## Constraints
 
@@ -404,10 +413,11 @@ merged PRs.
 ## Next Actions
 
 1. Continue dogfood target-repo PRs once required human review completes.
-2. Validate, publish, and merge the scheduled alert payload sanitization PR.
-3. Prepare the next operator-readiness slice: provider price rows, production
-   App/deployment evidence, or worker/alert installation depending on what is
-   most useful next.
+2. Validate, publish, review, and merge the admin run-claims API PR.
+3. Prepare the next operator-readiness slice from the remaining v0 risks:
+   provider price evidence, production App/deployment evidence, admin UI
+   wiring, worker/alert installation, or another output-boundary hardening
+   sweep.
 
 ## Open Risks
 

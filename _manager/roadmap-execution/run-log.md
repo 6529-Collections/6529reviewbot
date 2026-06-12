@@ -1360,3 +1360,28 @@
   security model and adding mocked webhook-delivery coverage for unsafe alert
   payload sanitization. `npm run check:public-artifacts`, `npm test`,
   `npm run release:check`, and `git diff --check` passed again.
+- Merged `6529reviewbot` PR #115 as `aba63a5` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review threads addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27443472827`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27443472823`, completed successfully.
+- Started `codex/admin-run-claims-api` increment:
+  - add admin-only `GET /api/admin/run-claims/recent` for recent, active, and
+    stale run-control claim triage;
+  - wire the route through the existing usage API settings, admin auth, App
+    server, and Aurora usage/run-control ledger loaders;
+  - sanitize run-claim strings and scalar metadata at the response boundary;
+  - update OpenAPI, usage, job-ledger, run-control, install, deployment,
+    operations, worker-capacity, security-review, release-readiness, README,
+    changelog, and manager memory.
+- Local focused validation for `codex/admin-run-claims-api`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #116 by making `active=true` reject
+  terminal `status` filters, documenting that rule, and ordering recent
+  run-claim ledger reads newest-first. `npm test`, `npm run check:docs`,
+  `npm run release:check`, and `git diff --check` passed again.

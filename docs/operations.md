@@ -116,10 +116,11 @@ Private operator dashboards can call:
 
 ```text
 GET /api/admin/status?profile=server
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 ```
 
-to show the same no-network preflight checks without exposing runtime secrets
-to the browser.
+to show the same no-network preflight checks and stale run-control claims
+without exposing runtime secrets or direct database access to the browser.
 
 ## If Reviews Stop Posting
 
@@ -230,8 +231,7 @@ Check:
 - recent `job_failure` and `stale_run_claim` alerts from
   `npm run alerts:operator -- -- --dry-run --force`;
 - `GET /api/admin/jobs/recent?status=dispatch_failed&limit=50`;
-- active rows in `reviewbot.ai_review_run_claims` with `claimed`,
-  `dispatching`, or `running` status;
+- `GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50`;
 - worker workflow status, runner capacity, and provider keys.
 
 If job-health alerts fire, preserve private run keys and workflow URLs in the

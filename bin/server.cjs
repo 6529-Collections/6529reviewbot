@@ -84,6 +84,11 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
       claimReviewJobWithLedger(runControlLedgerSettings, job, context);
     serverOptions.updateRunClaimStatus = async (job, status, options) =>
       updateRunClaimStatus(runControlLedgerSettings, job, status, options);
+    if (!serverOptions.loadRunClaims) {
+      serverOptions.loadRunClaims = createUsageApiLedgerLoaders({
+        ledgerSettings: runControlLedgerSettings,
+      }).loadRunClaims;
+    }
   }
   const adminAuthSettings = adminAuthSettingsFromEnv(env);
   if (adminAuthSettings.mode !== "disabled") {
