@@ -302,6 +302,14 @@ API URL, timeout, and `gh` binary overrides are advanced options with sensible
 defaults; set them only for non-standard worker environments.
 See [worker-adapters.md](worker-adapters.md).
 
+Partial worker App credential overrides fail preflight. Set both
+`REVIEWBOT_WORKER_GITHUB_APP_ID` and either
+`REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY` or
+`REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64`, or leave all worker App
+credential overrides blank to reuse the main App deliberately. Reusing the
+main App now produces a preflight warning so the permission expansion is
+visible in release evidence.
+
 ## Webhook Replay Diagnostics
 
 ```bash

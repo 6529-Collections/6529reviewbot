@@ -71,6 +71,8 @@ Target deployment:
 - The preferred dispatch App is installed only on the central bot repository;
   the target-repository App does not request `Actions: write` unless a separate
   security review accepts that broader permission.
+- Preflight fails partial worker dispatch App credential overrides and warns
+  when the main App is reused for central workflow dispatch.
 - Workflow permissions are minimal and third-party actions are pinned by SHA.
 - Annotated GitHub Action tags are pinned to their peeled commit SHA, not the
   tag-object SHA.

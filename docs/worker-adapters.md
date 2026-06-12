@@ -77,6 +77,14 @@ where that App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN`, `GH_TOKEN`, or
 Without either token source, `auto` falls back to the `gh` CLI for
 compatibility with older operator environments.
 
+If any `REVIEWBOT_WORKER_GITHUB_APP_*` credential override is set, configure
+both the worker App id and private key. Preflight fails partial overrides
+instead of combining a dispatch App id with the main App private key. When no
+worker-specific App credentials are set and the main App is reused for
+dispatch, preflight emits a warning; production `--strict` checks should
+accept that warning only after the broader `Actions: write` boundary is
+reviewed.
+
 Use `api` in production container deployments so preflight fails closed if the
 App installation id or dispatch token is missing. Use `gh` only for local
 compatibility or operator workstations that intentionally manage GitHub CLI

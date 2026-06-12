@@ -75,6 +75,9 @@ stabilized.
 - The production server can mint a short-lived GitHub App installation token
   for central workflow dispatch when `REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID`
   is configured.
+- Worker-dispatch preflight now fails partial `REVIEWBOT_WORKER_GITHUB_APP_*`
+  credential overrides and warns when dispatch reuses the main GitHub App
+  credentials instead of a dispatch-only App.
 - Worker capacity and backpressure runbook for conservative live scaling.
 - Reusable workflow secret contract now maps only explicit provider secrets
   instead of inheriting all caller secrets.

@@ -89,6 +89,8 @@ const fixtures = [
         REVIEWBOT_WORKER_GITHUB_REF: "main",
         REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
         REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "98765",
+        REVIEWBOT_WORKER_GITHUB_APP_ID: "dispatch-app-12345",
+        REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: "configured-for-dispatch-preflight",
       },
     },
     expectedWarnings: [

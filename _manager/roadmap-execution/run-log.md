@@ -1279,3 +1279,19 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #111 as `ba7f63c` after CI, Dependency Review,
+  OpenSSF Scorecard, and CodeRabbit passed with no actionable comments.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27439789624`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27439789639`, completed successfully.
+- Started `codex/worker-dispatch-app-preflight` increment:
+  - prevent partial `REVIEWBOT_WORKER_GITHUB_APP_*` credential overrides from
+    silently mixing worker App ids with main App private keys;
+  - add a preflight warning when central workflow dispatch reuses the main
+    GitHub App credentials instead of a dispatch-only App;
+  - update worker/deployment/security docs, changelog, and manager memory.
+- Local validation for `codex/worker-dispatch-app-preflight`:
+  - `npm run check:preflight` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
