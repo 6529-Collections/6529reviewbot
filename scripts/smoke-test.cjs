@@ -386,6 +386,7 @@ const renderedLedgerSchema = ledgerSchema.renderLedgerSchema("reviewbot");
 assert.match(renderedLedgerSchema, /ai_review_usage_events/);
 assert.match(renderedLedgerSchema, /ai_review_job_events/);
 assert.match(renderedLedgerSchema, /ai_review_run_claims/);
+assert.match(renderedLedgerSchema, /drop view if exists "reviewbot"\.daily_ai_review_spend_by_requester/);
 assert.match(renderedLedgerSchema, /daily_ai_review_spend_by_requester/);
 assert.throws(() => ledgerSchema.ledgerSchemaStatements("reviewbot;drop"), /Invalid SQL identifier/);
 let appliedSchemaStatements = 0;
