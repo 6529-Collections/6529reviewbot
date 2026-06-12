@@ -5,8 +5,8 @@
   "gates": [
     {
       "id": "github-app",
-      "title": "Production GitHub App named 6529bot exists with documented permissions, events, webhook secret handling, and private-key rotation.",
-      "evidence": "docs/github-app.md"
+      "title": "Production GitHub App named 6529bot exists with documented permissions, events, registration packet evidence, webhook secret handling, and private-key rotation.",
+      "evidence": "docs/github-app-registration.md"
     },
     {
       "id": "server-worker",

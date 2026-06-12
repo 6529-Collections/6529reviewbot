@@ -66,13 +66,13 @@ registration settings are reviewable before any live App credentials exist.
 Render the template for a concrete HTTPS host with:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com
+npm run github-app:manifest -- -- --host https://reviewbot.example.com
 ```
 
 To generate an operator-owned registration form for an organization install:
 
 ```bash
-npm run github-app:manifest -- --host https://reviewbot.example.com \
+npm run github-app:manifest -- -- --host https://reviewbot.example.com \
   --form \
   --owner 6529-Collections \
   --state <unguessable-state>
@@ -86,6 +86,10 @@ Do not commit the generated App id, client secret, webhook secret, or private
 key returned by GitHub. Store those values only in the bot-owned runtime secret
 store. If operators register the App manually through the GitHub UI, match the
 manifest's permissions and events exactly.
+
+Use [github-app-registration.md](github-app-registration.md) as the operator
+packet for first registration, credential custody, post-registration checks,
+permission changes, rotation, and rollback.
 
 GitHub documents the manifest flow in
 [Registering a GitHub App from a manifest](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).

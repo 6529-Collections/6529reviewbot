@@ -48,6 +48,8 @@ each caller repo may need variables, secrets, OIDC trust, and workflow rules.
 - Keep manifest rendering dry-run by default so operators can validate the
   production host and registration settings before GitHub returns live
   credentials.
+- Keep a public-safe registration packet for operator roles, credential
+  custody, acceptance checks, permission changes, rotation, and rollback.
 - Decide whether jobs run in GitHub Actions in this repository, an external
   worker, or both.
 - Define the event flow for PR open, synchronize, reopen, ready-for-review, and
@@ -314,6 +316,8 @@ Completed in `6529reviewbot`:
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
+- GitHub App registration packet for operator roles, credential custody,
+  acceptance checks, permission changes, rotation, and rollback.
 - installed central worker and dormant-by-default alert workflows with
   action-ref validation.
 - repeatable release check script and manual security review checklist.
