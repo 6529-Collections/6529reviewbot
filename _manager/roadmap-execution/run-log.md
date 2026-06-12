@@ -592,3 +592,18 @@
   - release checks validate the example status file;
   - README, release process, v0 plan, release notes template, changelog,
     roadmap, and manager memory document the workflow.
+- Merged `6529reviewbot` PR #57 as `8933a01` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no review
+  threads, and the normal merge path allowed the merge.
+- Ran a live run-control smoke against the isolated ledger with a synthetic
+  operator job:
+  - first claim returned `run_control_claimed`;
+  - second claim with the same run key returned `duplicate_run`;
+  - status update to `completed` succeeded;
+  - aggregate status verification showed one completed synthetic claim and no
+    active stuck claims;
+  - no exact run key, live resource identifier, prompt, payload, provider data,
+    or secret was committed to the public repo.
+- Started `codex/record-run-control-smoke` increment to record the public-safe
+  evidence in run-control docs, release readiness, roadmap, changelog, and
+  manager memory.

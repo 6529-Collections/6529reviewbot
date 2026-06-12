@@ -28,6 +28,8 @@ Ready for community review:
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
 - run-control worker completion updates for durable claims;
+- run-control ledger claim, duplicate-denial, and completion-update path
+  dogfooded against the isolated ledger with aggregate status verification;
 - repository config loading from the target repo base ref;
 - local and central GitHub Actions worker adapters;
 - public/admin usage API contracts and Aurora readers;
