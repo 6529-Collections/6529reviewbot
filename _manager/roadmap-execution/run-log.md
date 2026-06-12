@@ -46,3 +46,21 @@
   auto-wiring when usage ledger is enabled.
 - Live read-only Aurora smoke for the usage API loader passed with zero events
   returned for the last 30 days.
+- Merged PR #10 as `edaadc69c3536d064c814937d782738f78a2cc33`.
+- Created clean frontend worktree
+  `D:\repos\6529seize-frontend-reviewbot` on
+  `codex/reviewbot-usage-dashboard`.
+- Opened frontend PR #2605:
+  `https://github.com/6529-Collections/6529seize-frontend/pull/2605`.
+  It adds `/open-data/6529bot`, server-only usage API env handling, the Open
+  Data hub card, focused tests, docs, and a Bootstrap Sass import hardening
+  discovered during browser verification.
+- Frontend validation for PR #2605:
+  - `pnpm run test:no-coverage -- __tests__/services/reviewbot-usage-api.test.ts --runInBand --detectOpenHandles --silent=false`
+  - `node scripts/typecheck-changed.cjs`
+  - focused `pnpm exec eslint --no-warn-ignored --max-warnings=0 ...`
+  - `git diff --check`
+  - Playwright desktop and mobile render checks against
+    `http://localhost:3101/open-data/6529bot` with a local mock usage API.
+- PR #2605 is not merged yet because GitHub reports required review and
+  pending CodeQL/Snyk/CodeRabbit checks.
