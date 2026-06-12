@@ -52,6 +52,10 @@ Target deployment:
   untrusted.
 - Provider calls have bounded input, output, timeout, and changed-file limits.
 - Provider errors are sanitized before logs and comments.
+- Empty provider output fails closed before comment posting.
+- Worker diagnostic tails and GitHub API dispatch failure bodies redact common
+  token and private-key shapes before they can enter queue results,
+  run-control metadata, or logs.
 - Runtime pause controls are evaluated before budget admission, run-control
   claims, worker dispatch, and provider calls.
 - Scoped pauses for org, repo, provider, model, and review kind cannot be

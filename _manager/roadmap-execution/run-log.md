@@ -944,3 +944,12 @@
   - align README, changelog, release readiness, and security model with
     empty-provider-output fail-closed behavior;
   - document worker diagnostic redaction in the top-level public narrative.
+- Merged `6529reviewbot` PR #86 as `dfe24ca` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27422585207`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27422585170`, completed successfully.
+- Started `codex/docs-security-checklist-hardening` increment:
+  - add manual security checklist items for empty provider output fail-closed
+    behavior and worker diagnostic redaction;
+  - prompt release notes to describe evidence for those controls.
