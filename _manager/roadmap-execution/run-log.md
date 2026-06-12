@@ -640,3 +640,14 @@
   - document the conversion step in README, install, GitHub App, deployment,
     release, release readiness, v0 plan, roadmap, changelog, and manager
     memory.
+- Merged `6529reviewbot` PR #61 as `8ed1478` after CI and Dependency Review
+  passed; CodeRabbit had no actionable review threads, and the normal merge
+  path allowed the merge.
+- Started `codex/worker-capacity-runbook` increment:
+  - add a worker capacity and backpressure runbook for conservative live
+    scaling;
+  - document starting caps, scale-up order, stuck-job checks, provider limits,
+    alert prerequisites, backpressure controls, and public/private evidence;
+  - link the runbook from README, worker adapters, deployment, operations,
+    release, release readiness, v0 plan, roadmap, security checklist, operator
+    evidence, changelog, and manager memory.

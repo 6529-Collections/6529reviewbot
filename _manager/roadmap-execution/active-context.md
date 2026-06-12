@@ -78,10 +78,11 @@ merged PRs.
 - Run-control smoke evidence PR: merged as PR #58, merge commit `9fdd374`
 - Spend-alert dry-run evidence PR: merged as PR #59, merge commit `6590b79`
 - GitHub App registration packet PR: merged as PR #60, merge commit `e67840d`
-- Current branch: `codex/github-app-manifest-conversion`
-- Current local changes: GitHub App manifest conversion CLI and docs so
-  operators can exchange GitHub's temporary manifest code without logging
-  generated credentials or writing them into the public repo.
+- GitHub App manifest conversion CLI PR: merged as PR #61, merge commit
+  `8ed1478`
+- Current branch: `codex/worker-capacity-runbook`
+- Current local changes: worker capacity and backpressure runbook plus release,
+  operations, deployment, security, roadmap, and evidence links.
 
 ## Key Decisions
 
@@ -164,6 +165,10 @@ merged PRs.
 - GitHub App manifest conversion returns one-time credentials and must require
   an explicit private output path. CLI summaries should be redacted, and
   public-repo output should be refused by default.
+- Worker scale-up should be explicit and evidence-driven. Start with low
+  concurrency, command-only dogfood, one provider/model lane, durable
+  run-control claims, and alerts before expanding initial automation or
+  multi-model lanes.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -210,7 +215,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the GitHub App manifest conversion CLI PR.
+1. Validate, publish, and merge the worker capacity runbook PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is

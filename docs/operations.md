@@ -89,6 +89,9 @@ dry-run unless `--dispatch` is passed.
 For active spend, secret, webhook, provider, ledger, or bad-comment incidents,
 use [Incident Response](incident-response.md).
 
+For worker queue pressure, provider rate limits, stuck jobs, or scale-up
+decisions, use [Worker Capacity And Backpressure](worker-capacity.md).
+
 Private operator dashboards can call:
 
 ```text
@@ -109,6 +112,8 @@ Check:
   `dispatch_error`;
 - recent `reviewbot.ai_review_run_claims` rows for active duplicate or
   over-concurrency claims;
+- [Worker Capacity And Backpressure](worker-capacity.md) for current caps and
+  scale-up rules;
 - `GH_TOKEN` scope;
 - provider key availability;
 - fork/external PR skip logic;
