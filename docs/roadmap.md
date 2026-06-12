@@ -255,9 +255,11 @@ Before broad community release:
 5. Add bot API endpoints for public aggregates and authenticated admin data.
 6. Add the `6529.io` public transparency page and private admin page.
 7. Add repo/org configuration loading and validation.
-8. Add the public comment-command parser.
-9. Dogfood on one target repo with conservative limits.
-10. Iterate docs, release process, and install flow toward a v1 tag.
+8. Add worker execution adapters.
+9. Add the 6529.io admin auth bridge contract.
+10. Add alerting and scheduled spend checks.
+11. Dogfood on one target repo with conservative limits.
+12. Iterate docs, release process, and install flow toward a v1 tag.
 
 ## Current Progress
 
@@ -269,6 +271,8 @@ Completed in `6529reviewbot`:
 - review-job fanout with provider/model lanes;
 - public and admin usage API contracts;
 - read-only Aurora usage API loaders.
+- repository configuration loading, validation, restrictive policy merge, and
+  base-ref GitHub contents loading.
 
 In progress outside this repository:
 
@@ -277,7 +281,6 @@ In progress outside this repository:
 
 Next implementation focus:
 
-- repo/org configuration loading and validation;
 - worker execution adapters;
 - 6529.io admin auth bridge;
 - alerting and scheduled spend checks.

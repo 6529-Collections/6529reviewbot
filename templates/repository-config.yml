@@ -1,0 +1,40 @@
+version: 1
+enabled: true
+
+reviewKinds:
+  allowed: [general, followup, wcag, i18n, security]
+  initial: [general, wcag, i18n, security]
+  followup: [followup]
+
+commands:
+  enabled: true
+
+# Repo config can select only from centrally allowed REVIEWBOT_REVIEW_LANES.
+lanes:
+  - provider: anthropic
+    model: claude-opus-4-8
+
+limits:
+  maxJobsPerDelivery: 8
+
+admission:
+  publicRepoMode: trusted
+  privateRepoMode: open
+  draftPrMode: skip
+  trustedPermission: write
+  trustedUsers: []
+  trustedTeams: []
+  trustedOrganizations: []
+  denyUsers: []
+
+budget:
+  mode: enforce
+  defaultEstimatedCostUsd: 1
+  caps:
+    repo:
+      dailyUsd: 25
+      monthlyUsd: 500
+    requestor:
+      dailyUsd: 10
+    pr:
+      dailyUsd: 5

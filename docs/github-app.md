@@ -87,8 +87,10 @@ Comment command routing:
 
 The app normalizes events, evaluates admission policy, expands admitted events
 into review jobs, evaluates budget admission per job, and passes admitted jobs
-to an injectable queue function. Without a real queue, valid admitted review
-jobs are acknowledged but reported as not enqueued.
+to an injectable queue function. When repository config loading is enabled, it
+loads config from the target repository's base ref before admission and job
+fanout. Without a real queue, valid admitted review jobs are acknowledged but
+reported as not enqueued.
 
 Actor context must be resolved from GitHub App credentials before production
 use. Until a resolver supplies collaborator or org membership context, public
@@ -102,6 +104,8 @@ admission, the queue function is not called.
 
 Production code should inject:
 
+- `loadRepositoryConfig(event)` to read `.github/6529bot.yml` or another
+  supported config file with GitHub App installation credentials;
 - `resolveActorContext(event)` to resolve GitHub App permissions;
 - `resolveBudgetSnapshot(jobEvent, admission, job)` to read current spend;
 - `estimateBudgetCost(jobEvent, admission, job)` to provide job-specific cost

@@ -9,6 +9,7 @@ const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
 const dataApi = require("../src/data-api.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
+const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const usageApi = require("../src/usage-api.cjs");
@@ -137,6 +138,10 @@ const normalizedPullRequest = githubWebhook.normalizeGitHubWebhook(
 assert.equal(normalizedPullRequest.kind, "pull_request");
 assert.equal(normalizedPullRequest.shouldEnqueue, true);
 assert.deepEqual(normalizedPullRequest.reviewKinds, ["general", "wcag", "i18n", "security"]);
+assert.equal(
+  repositoryConfig.repositoryConfigRefForEvent(normalizedPullRequest),
+  "def456"
+);
 
 assert.deepEqual(githubWebhook.parseReviewCommand("/6529bot review security wcag").reviewKinds, [
   "security",
@@ -149,6 +154,58 @@ assert.deepEqual(githubWebhook.parseReviewCommand("@6529bot review all").reviewK
   "security",
 ]);
 assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
+
+const parsedRepoConfig = repositoryConfig.parseRepositoryConfigText(`
+version: 1
+enabled: true
+reviewKinds:
+  allowed: [general, security, followup]
+  initial: [general, security]
+  followup: [followup]
+commands:
+  enabled: true
+lanes:
+  - provider: anthropic
+    model: claude-opus-4-8
+  - openai:gpt-5.5
+limits:
+  maxJobsPerDelivery: 4
+admission:
+  publicRepoMode: trusted
+  trustedUsers: [trusted-maintainer]
+  denyUsers: [blocked-user]
+budget:
+  mode: enforce
+  defaultEstimatedCostUsd: 2
+  caps:
+    repo:
+      dailyUsd: 5
+`, ".github/6529bot.yml");
+assert.deepEqual(parsedRepoConfig.reviewKinds.initial, ["general", "security"]);
+assert.equal(parsedRepoConfig.lanes.length, 2);
+assert.equal(parsedRepoConfig.limits.maxJobsPerDelivery, 4);
+assert.equal(parsedRepoConfig.budget.caps.repo.dailyBudgetUsd, 5);
+assert.throws(
+  () => repositoryConfig.parseRepositoryConfigText("unknownKey: true", ".github/6529bot.yml"),
+  /unsupported key/
+);
+assert.throws(
+  () =>
+    repositoryConfig.repositoryConfigPolicyFromEnv({
+      REVIEWBOT_REPOSITORY_CONFIG_PATHS: "../bad.yml",
+    }),
+  /Invalid repository config path/
+);
+const configuredPullRequest = repositoryConfig.applyRepositoryConfigToEvent(
+  normalizedPullRequest,
+  parsedRepoConfig
+);
+assert.deepEqual(configuredPullRequest.reviewKinds, ["general", "security"]);
+const disabledPullRequest = repositoryConfig.applyRepositoryConfigToEvent(
+  normalizedPullRequest,
+  { ...parsedRepoConfig, enabled: false }
+);
+assert.equal(disabledPullRequest.shouldEnqueue, false);
 
 const commentEvent = githubWebhook.normalizeGitHubWebhook(
   { "x-github-event": "issue_comment" },
@@ -192,6 +249,17 @@ assert.equal(reviewJobs.filter((job) => job.reviewKind === "general").length, 2)
 assert.equal(reviewJobs[0].requestor, "maintainer");
 assert.equal(reviewJobs[0].provider, "anthropic");
 assert.equal(reviewJobs[1].provider, "openai");
+const repoJobPolicy = repositoryConfig.mergeRepositoryJobPolicy(twoLanePolicy, parsedRepoConfig);
+assert.equal(repoJobPolicy.maxJobsPerDelivery, 4);
+assert.deepEqual(
+  repoJobPolicy.lanes.map((lane) => `${lane.provider}:${lane.model}`),
+  ["anthropic:claude-opus-4-8", "openai:gpt-5.5"]
+);
+const filteredJobPolicy = repositoryConfig.mergeRepositoryJobPolicy(twoLanePolicy, {
+  ...parsedRepoConfig,
+  lanes: reviewJob.parseReviewLanes("openrouter:anthropic/claude-sonnet-4"),
+});
+assert.equal(filteredJobPolicy.lanes.length, 0);
 const replayedReviewJobs = reviewJob.createReviewJobs(normalizedPullRequest, {
   admission: { requestor: "maintainer" },
   createdAt: "2027-01-01T00:00:00.000Z",
@@ -267,6 +335,17 @@ assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"),
 assert.equal(usageApi.publicBudgetPolicy({ scope_type: "repo", scope_value: "x", daily_budget_usd: "2" }).dailyBudgetUsd, 2);
 
 const publicPolicy = admissionPolicy.admissionPolicyFromEnv({});
+const mergedAdmissionPolicy = repositoryConfig.mergeRepositoryAdmissionPolicy(
+  admissionPolicy.admissionPolicyFromEnv({
+    REVIEWBOT_PUBLIC_REPO_MODE: "open",
+    REVIEWBOT_TRUSTED_PERMISSION: "read",
+  }),
+  parsedRepoConfig
+);
+assert.equal(mergedAdmissionPolicy.publicRepoMode, "trusted");
+assert.equal(mergedAdmissionPolicy.trustedPermission, "read");
+assert.equal(mergedAdmissionPolicy.trustedUsers.has("trusted-maintainer"), true);
+assert.equal(mergedAdmissionPolicy.denyUsers.has("blocked-user"), true);
 assert.equal(
   admissionPolicy.evaluateAdmission(normalizedPullRequest, { login: "author", permission: "read" }, publicPolicy).status,
   "denied"
@@ -323,6 +402,11 @@ assert.equal(budgetAdmission.evaluateBudgetAdmission({
 const cappedPolicy = budgetAdmission.budgetPolicyFromEnv({
   REVIEWBOT_BUDGET_GLOBAL_DAILY_USD: "2",
 });
+const mergedBudgetPolicy = repositoryConfig.mergeRepositoryBudgetPolicy(cappedPolicy, parsedRepoConfig);
+assert.equal(mergedBudgetPolicy.mode, "enforce");
+assert.equal(mergedBudgetPolicy.defaultEstimatedCostUsd, 2);
+assert.equal(mergedBudgetPolicy.caps.global.dailyBudgetUsd, 2);
+assert.equal(mergedBudgetPolicy.caps.repo.dailyBudgetUsd, 5);
 const reviewKindPolicy = budgetAdmission.budgetPolicyFromEnv({
   REVIEWBOT_BUDGET_REVIEW_KIND_DAILY_USD: "1",
 });
@@ -412,6 +496,36 @@ const privateByDefaultLedgerEvent = usageApiLedger.usageRecordToEvent(usageApiLe
   apiSettings: usageApi.usageApiSettingsFromEnv({}),
 });
 assert.equal(privateByDefaultLedgerEvent.repoPrivate, true);
+assert.equal(appServer.normalizeConfigLoadResult(null).status, "invalid");
+assert.equal(
+  repositoryConfig.repositoryConfigBlocksWork(
+    { status: "not_configured" },
+    { required: true }
+  ),
+  true
+);
+
+const fakeConfigText = Buffer.from("enabled: false\n").toString("base64");
+const loadedRepoConfigPromise = repositoryConfig.loadRepositoryConfigFromGitHub(
+  normalizedPullRequest,
+  {
+    policy: repositoryConfig.repositoryConfigPolicyFromEnv({
+      REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
+    }),
+    fetchImpl: async (url) => {
+      assert.match(String(url), /ref=def456/);
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: "file",
+          encoding: "base64",
+          content: fakeConfigText,
+        }),
+      };
+    },
+  }
+);
 
 let enqueuedJobs = null;
 appServer.handleGitHubWebhook({
@@ -431,7 +545,18 @@ appServer.handleGitHubWebhook({
     return { accepted: true, jobId: "job-1" };
   },
   resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+  loadRepositoryConfig: async () => ({
+    status: "loaded",
+    source: "test",
+    config: parsedRepoConfig,
+  }),
+  resolveBudgetSnapshot: async () => ({ unavailable: false, totals: {} }),
+  jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
+  const loadedRepoConfig = await loadedRepoConfigPromise;
+  assert.equal(loadedRepoConfig.status, "loaded");
+  assert.equal(loadedRepoConfig.config.enabled, false);
+
   const usageApiSettings = usageApi.usageApiSettingsFromEnv({
     REVIEWBOT_USAGE_API_DEFAULT_DAYS: "7",
     REVIEWBOT_USAGE_API_MAX_DAYS: "30",
@@ -487,6 +612,11 @@ appServer.handleGitHubWebhook({
   assert.equal(enqueuedJobs.length, 4);
   assert.equal(enqueuedJobs[0].prNumber, 12);
   assert.equal(webhookResult.body.jobs.length, 4);
+  assert.deepEqual(
+    webhookResult.body.jobs.map((job) => `${job.reviewKind}:${job.provider}`),
+    ["general:anthropic", "general:openai", "security:anthropic", "security:openai"]
+  );
+  assert.equal(webhookResult.body.configuration.status, "loaded");
   const defaultQueueResult = await appServer.handleGitHubWebhook({
     headers: {
       "x-hub-signature-256": webhookSignature,

@@ -108,6 +108,43 @@ REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 
 See [review-jobs.md](review-jobs.md).
 
+## Repository Configuration
+
+Repository configuration is optional. When enabled, the App reads the first
+matching file from the target repository's base ref:
+
+```text
+.github/6529bot.yml
+.github/6529bot.yaml
+.github/6529bot.json
+.6529reviewbot.yml
+.6529reviewbot.yaml
+.6529reviewbot.json
+```
+
+Runtime controls:
+
+```text
+REVIEWBOT_REPOSITORY_CONFIG_SOURCE=none|github
+REVIEWBOT_REPOSITORY_CONFIG_PATHS=.github/6529bot.yml,.github/6529bot.yaml,.github/6529bot.json,.6529reviewbot.yml,.6529reviewbot.yaml,.6529reviewbot.json
+REVIEWBOT_REPOSITORY_CONFIG_REQUIRED=false
+REVIEWBOT_REPOSITORY_CONFIG_MAX_BYTES=65536
+REVIEWBOT_GITHUB_TOKEN=
+GITHUB_TOKEN=
+```
+
+The default source is `none`, which means the App uses central policy only.
+Production GitHub App deployments should set `REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github`
+after an installation-token path is wired in.
+
+Repository config is intentionally not a second source of unlimited authority.
+It can disable the bot, narrow review kinds, select from centrally allowed
+lanes, lower job fanout, add stricter admission rules, and add tighter budget
+caps. It cannot add a model lane that is not already allowed by central
+`REVIEWBOT_REVIEW_LANES`, and it cannot raise central budget caps.
+
+See [repository-config.md](repository-config.md).
+
 ## Usage API
 
 ```text
