@@ -178,6 +178,8 @@ REVIEWBOT_USAGE_API_PUBLIC_ORGS=6529-Collections
 
 If a repo does not match either allowlist, public summaries still include its
 cost and review counts but collapse the repo name to `private`.
+Repository names must have exact `owner/repo` shape before org allowlists can
+match; malformed names collapse instead of being partially matched.
 The HTTP summarizer enforces this disclosure rule even when a custom loader
 supplies `repoPrivate: false`; loaders should still mark unallowlisted repos as
 private early, but the API boundary is the final guard before public output.

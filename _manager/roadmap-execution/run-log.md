@@ -1313,3 +1313,7 @@
   - `npm test` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Addressed CodeRabbit feedback on PR #113 by requiring exact `owner/repo`
+  shape before a repo name can match a public org allowlist; malformed repo
+  names now collapse in public summaries. `npm test`, `npm run release:check`,
+  and `git diff --check` passed again.

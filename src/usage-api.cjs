@@ -520,17 +520,19 @@ function csvList(value) {
 }
 
 function isPublicUsageRepo(repoFullName, settings = usageApiSettingsFromEnv()) {
-  const repo = String(repoFullName || "").toLowerCase();
-  if (!repo.includes("/")) {
+  const normalized = String(repoFullName || "").trim().toLowerCase();
+  const parts = normalized.split("/");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
     return false;
   }
+  const [org, repoName] = parts;
+  const repo = `${org}/${repoName}`;
   const publicRepos = new Set(
     (settings.publicRepos || []).map((item) => String(item || "").toLowerCase())
   );
   if (publicRepos.has(repo)) {
     return true;
   }
-  const org = repo.split("/")[0];
   const publicOrganizations = new Set(
     (settings.publicOrganizations || []).map((item) => String(item || "").toLowerCase())
   );

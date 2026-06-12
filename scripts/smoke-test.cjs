@@ -2238,6 +2238,18 @@ assert.equal(
   }),
   true
 );
+assert.equal(
+  usageApi.isPublicUsageRepo("6529-Collections/public-repo/extra", {
+    publicOrganizations: ["6529-Collections"],
+  }),
+  false
+);
+assert.equal(
+  usageApi.isPublicUsageRepo("6529-Collections/", {
+    publicOrganizations: ["6529-Collections"],
+  }),
+  false
+);
 const adminUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
   visibility: "admin",
   range: { days: 7 },
