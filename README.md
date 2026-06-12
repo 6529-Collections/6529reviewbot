@@ -107,6 +107,7 @@ Run local checks:
 
 ```bash
 npm run check
+npm run check:docs
 npm run check:public-artifacts
 npm test
 npm run check:workflow-actions

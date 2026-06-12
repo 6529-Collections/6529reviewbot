@@ -87,9 +87,10 @@ merged PRs.
   `8c77d41`
 - Release gate readiness summary PR: merged as PR #65, merge commit
   `cf01360`
-- Current branch: `codex/public-artifact-secret-scan`
-- Current local changes: public artifact leak scanner for docs, examples,
-  workflows, and durable manager memory plus release-check wiring.
+- Public artifact leak scanner PR: merged as PR #66, merge commit `a8e8a61`
+- Current branch: `codex/docs-link-check`
+- Current local changes: Markdown local-link checker for repository docs,
+  smoke coverage, release-check wiring, and documentation updates.
 
 ## Key Decisions
 
@@ -190,6 +191,9 @@ merged PRs.
   cover docs, examples, workflows, config, and manager memory while allowing
   obvious placeholders and avoiding source test fixtures that intentionally
   contain fake secret shapes.
+- Documentation quality should be enforced with local link checks, not only
+  manual sweeps, because the repo's public docs surface is now large enough
+  for stale internal links to become a release risk.
 - Step-level third-party actions in committed workflows and templates should
   be pinned by commit SHA and checked by release automation. Reusable workflow
   caller examples can remain tag-based until the first release tag is cut.
@@ -236,7 +240,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the public artifact leak scanner PR.
+1. Validate, publish, and merge the docs link checker PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
