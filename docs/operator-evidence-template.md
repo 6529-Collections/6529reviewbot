@@ -10,6 +10,22 @@ The release-gate CLI redacts common secret-shaped values when rendering status
 notes/evidence, but this template should still use public-safe summaries when
 it is copied outside the private operator workspace.
 
+For repeatable production evidence, prefer a structured JSON file in the
+operator workspace. Start from `config/production-evidence.example.json`, keep
+the real file private, and validate or render a redacted public summary with:
+
+```bash
+npm run operator:evidence -- --file <private-evidence-file> --summary
+npm run operator:evidence -- --file <private-evidence-file> --require-ready
+```
+
+The command validates that every required production section is present and
+that complete sections include evidence. Deferred or blocked sections must
+explain the risk in `notes`. The summary renderer redacts common token shapes,
+AWS account ids, and AWS ARNs, but operators should still write public-safe
+summaries before copying output into issues, PRs, release notes, or durable
+manager memory.
+
 ## Header
 
 ```text

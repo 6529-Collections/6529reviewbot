@@ -33,6 +33,7 @@
     "model-prices": "node bin/apply-model-prices.cjs",
     "preflight": "node bin/preflight.cjs",
     "support:bundle": "node bin/support-bundle.cjs",
+    "operator:evidence": "node bin/operator-evidence.cjs",
     "v0:gates": "node bin/v0-gates.cjs",
     "webhook:replay": "node bin/replay-webhook.cjs",
     "github-app:manifest": "node bin/render-github-app-manifest.cjs",

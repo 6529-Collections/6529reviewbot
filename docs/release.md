@@ -20,6 +20,11 @@ After stabilization:
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook
+- `npm run operator:evidence -- --file <private-evidence-file> --summary`
+  reviewed before copying deployment evidence into public release notes
+- `npm run operator:evidence -- --file <private-evidence-file> --require-ready`
+  passes before tagging unless release notes intentionally mark the release as
+  dogfood-only or local-only
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when
@@ -35,6 +40,8 @@ After stabilization:
 - release-gate status notes/evidence are public-safe before copying them into
   issues, PRs, release notes, or durable manager memory; the CLI redacts common
   secret-shaped values, but private evidence remains operator-owned
+- structured operator evidence summaries are public-safe before copying them
+  into issues, PRs, release notes, or durable manager memory
 - `npm run release:check`
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list

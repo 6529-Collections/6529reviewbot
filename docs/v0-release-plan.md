@@ -179,6 +179,17 @@ copy/paste, not permission to store live secrets, full account ids, private
 repository names, raw payloads, or unredacted deployment evidence in public
 status files.
 
+For broader deployment evidence, keep a private structured evidence file and
+render a public-safe summary with:
+
+```bash
+npm run operator:evidence -- --file <private-evidence-file> --summary
+npm run operator:evidence -- --file <private-evidence-file> --require-ready
+```
+
+The example shape lives at `config/production-evidence.example.json` and is
+validated by `npm run release:check`.
+
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 
