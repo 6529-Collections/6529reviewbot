@@ -50,7 +50,8 @@ Ready for community review:
 - dry-run/apply tooling for operator-maintained model price rows;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
-- scheduled spend alerts with stdout, webhook, and SNS delivery;
+- scheduled operator alerts for spend, failed jobs, and stale claims with
+  stdout, webhook, and SNS delivery;
 - no-network production preflight command;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
   bad-comment incidents;
@@ -71,7 +72,8 @@ Ready for community review:
 - GitHub Action pins use commit SHAs that belong to the action repository;
   annotated release tags are peeled before pinning;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
-  dry-run mode;
+  dry-run mode, with job-health alert evaluation available once job and
+  run-control ledgers are enabled in the scheduled job;
 - machine-readable v0 release gates with optional status/evidence rendering;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.
@@ -102,7 +104,7 @@ Before announcing broad community use:
    environment/repository caps for the release.
 6. Merge and deploy the 6529.io public transparency dashboard.
 7. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
-8. Enable scheduled spend alerts through private operator channels.
+8. Enable scheduled operator alerts through private operator channels.
 9. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
@@ -154,6 +156,7 @@ REVIEWBOT_RUN_CONTROL_MODE=off
 REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
 REVIEWBOT_ALERTS_ENABLED=true
 REVIEWBOT_ALERTS_NOTIFY_MODE=sns
+REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=true
 ```
 
 After the durable run-control claim table is applied, move to:

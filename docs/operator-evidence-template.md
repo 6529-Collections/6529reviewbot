@@ -82,8 +82,10 @@ npm run check:workflow-actions passed after installing workflows:
 npm run preflight -- --strict result:
 Run-control mode:
 Run-control ledger enabled:
-Spend alert destination:
+Operator alert destination:
 Spend alert dry-run completed:
+Job-health alert dry-run completed:
+Stale-claim alert threshold reviewed:
 ```
 
 ## 6529.io Surfaces

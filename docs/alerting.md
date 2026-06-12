@@ -1,18 +1,27 @@
-# Alerting And Scheduled Spend Checks
+# Alerting And Scheduled Operator Checks
 
-`6529bot` alerting is a scheduled read-side check over the usage ledger. It
-does not call model providers and does not depend on someone opening a
-dashboard.
+`6529bot` alerting is a scheduled read-side check over the usage and job
+ledgers. It does not call model providers and does not depend on someone
+opening a dashboard.
 
-The first alerting surface focuses on spend:
+The alerting surface covers:
 
 - budget utilization against enabled budget policies;
 - unusual spend spikes by global, repo, requestor, provider, model, and review
-  kind dimensions.
+  kind dimensions;
+- failed or errored review jobs from the job ledger;
+- stale active run-control claims that can indicate worker crashes, queue
+  pressure, or claim-status update failures.
 
 ## Runner
 
 Run locally or from a central workflow:
+
+```bash
+npm run alerts:operator
+```
+
+The older `alerts:spend` script name remains as a compatibility alias:
 
 ```bash
 npm run alerts:spend
@@ -21,7 +30,7 @@ npm run alerts:spend
 Use `--dry-run` to evaluate alerts without sending notifications:
 
 ```bash
-npm run alerts:spend -- -- --dry-run --force
+npm run alerts:operator -- -- --dry-run --force
 ```
 
 `--force` runs even when `REVIEWBOT_ALERTS_ENABLED=false`. This is useful for
@@ -58,6 +67,22 @@ REVIEWBOT_ALERTS_SPIKE_MIN_USD=25
 REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo,requestor,provider,model,review_kind
 REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND=true
 ```
+
+Job-health thresholds:
+
+```text
+REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=false
+REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS=6
+REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD=1
+REVIEWBOT_ALERTS_STALE_CLAIM_HOURS=2
+REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD=1
+REVIEWBOT_ALERTS_JOB_MAX_ALERTS=25
+```
+
+If `REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED` is unset, job-health alerts default
+to the value of `REVIEWBOT_JOB_LEDGER_ENABLED`. In the installed GitHub
+Actions workflow the variable is set explicitly so operators opt in before the
+scheduled job reads job and claim tables.
 
 Ledger read bounds:
 
@@ -97,8 +122,9 @@ Lambda routing.
 This repository includes `.github/workflows/spend-alerts.yml` for central
 scheduled alerts. It is scheduled hourly but the job is dormant unless
 `REVIEWBOT_ALERTS_ENABLED=true` is set in repository variables. When enabled,
-it assumes the configured AWS role through OIDC, reads the isolated usage
-ledger, and sends alerts through SNS or the configured webhook.
+it assumes the configured AWS role through OIDC, reads the isolated usage,
+job-event, and run-claim tables as configured, and sends alerts through SNS or
+the configured webhook.
 
 Keep `templates/spend-alert-workflow.yml` aligned with the installed workflow
 when changing alert behavior.
@@ -109,8 +135,8 @@ bot environment so AWS credentials and alert routing stay out of caller repos.
 
 ## Dogfood Verification
 
-The spend-alert runner has been dry-run against the isolated dogfood ledger
-with `--force` and notification delivery disabled:
+The spend-alert runner has been dry-run against the isolated dogfood usage
+ledger with `--force` and notification delivery disabled:
 
 - ledger reads completed for the default 35-day alert window;
 - enabled central budget policy rows were evaluated;
@@ -118,20 +144,23 @@ with `--force` and notification delivery disabled:
 - notification delivery stayed in `dry_run` mode.
 
 This verifies the read/evaluation path. Before broad release, route scheduled
-alerts to an operator-owned SNS topic, webhook, or equivalent private channel
-and record that delivery evidence in the private operator runbook.
+operator alerts to an operator-owned SNS topic, webhook, or equivalent private
+channel, enable job-health alerts after the job ledger is live, and record that
+delivery evidence in the private operator runbook.
 
 ## Alert Payload
 
 Each alert has:
 
-- `kind`: `budget_utilization` or `spend_spike`;
+- `kind`: `budget_utilization`, `spend_spike`, `job_failure`, or
+  `stale_run_claim`;
 - `severity`: `warning` or `critical`;
 - `scopeType` and `scopeValue`;
 - current spend and the relevant threshold;
+- job status and sample job ids for job-health alerts;
 - a human-readable `title` and `message`.
 
 The payload is safe for operators, but it can include private repo names,
-requestors, providers, and model names. Route it through private notification
-channels unless the configured deployment explicitly treats this data as
-public.
+requestors, providers, model names, job ids, and failure reasons. Route it
+through private notification channels unless the configured deployment
+explicitly treats this data as public.

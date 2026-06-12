@@ -360,7 +360,7 @@ REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
 system sign short-lived admin assertions for bot-owned private API endpoints.
 See [admin-auth-bridge.md](admin-auth-bridge.md).
 
-## Alerting And Scheduled Spend Checks
+## Alerting And Scheduled Operator Checks
 
 ```text
 REVIEWBOT_ALERTS_ENABLED=false
@@ -380,12 +380,19 @@ REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
 REVIEWBOT_ALERTS_SPIKE_MIN_USD=25
 REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo,requestor,provider,model,review_kind
 REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND=true
+REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=false
+REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS=6
+REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD=1
+REVIEWBOT_ALERTS_STALE_CLAIM_HOURS=2
+REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD=1
+REVIEWBOT_ALERTS_JOB_MAX_ALERTS=25
 REVIEWBOT_ALERTS_LOOKBACK_DAYS=35
 REVIEWBOT_ALERTS_MAX_EVENTS=5000
 ```
 
-Scheduled spend checks read the usage ledger, evaluate budget utilization and
-spend spikes, and send alerts through stdout, a webhook, or SNS. See
+Scheduled operator checks read the usage/job ledgers, evaluate budget
+utilization, spend spikes, failed jobs, and stale run-control claims, and send
+alerts through stdout, a webhook, or SNS. See
 [alerting.md](alerting.md).
 
 ## Cost And Context Controls

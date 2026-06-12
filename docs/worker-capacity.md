@@ -167,7 +167,9 @@ Worker capacity is not healthy until alerts are healthy.
 
 Before moving beyond command-only dogfood:
 
-- run `npm run alerts:spend -- -- --dry-run --force`;
+- run `npm run alerts:operator -- -- --dry-run --force`;
+- enable `REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=true` once the job ledger and
+  run-control ledger are live;
 - route scheduled alerts to an operator-owned SNS topic, webhook, or
   equivalent private channel;
 - record delivery evidence in the operator runbook;

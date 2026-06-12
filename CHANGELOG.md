@@ -41,7 +41,8 @@ stabilized.
 - Admin-only recent job-events API for queue and worker diagnostics.
 - Admin-only runtime status API backed by no-network preflight checks.
 - 6529.io admin auth bridge contract.
-- Scheduled spend alerts for budget utilization and unusual spend spikes.
+- Scheduled operator alerts for budget utilization, unusual spend spikes,
+  failed jobs, and stale run-control claims.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
   fanout diagnostics.
 - Dry-run-by-default ledger schema CLI for Aurora setup and repair.
@@ -53,8 +54,8 @@ stabilized.
   for older dogfood databases.
 - Conservative dogfood budget policy apply path verified against the isolated
   ledger with aggregate scope-count checks.
-- Installed central review-job and dormant-by-default spend-alert workflows in
-  the bot repository.
+- Installed central review-job and dormant-by-default operator-alert workflows
+  in the bot repository.
 - CI now runs the full release check on pull requests and pushes to `main`.
 - OpenSSF Scorecard write permissions are scoped to the Scorecard job instead
   of the workflow level.
@@ -67,6 +68,8 @@ stabilized.
   verified against the isolated dogfood ledger.
 - Spend-alert read/evaluation path verified against the isolated dogfood
   ledger in dry-run mode.
+- Job-health alert evaluation for failed jobs and stale active run-control
+  claims.
 - Operator evidence template for redacted release, dogfood, and production
   deployment proof.
 - Dry-run-by-default budget policy CLI for reviewed central spend caps.

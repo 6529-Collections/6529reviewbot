@@ -106,8 +106,27 @@ function readJobEvents(settings, options = {}) {
 function buildJobEventsQuery(schema, options = {}) {
   const limit = positiveLimit(options.limit ?? 50);
   const status = String(options.status || "").trim();
-  const where = status ? "\nwhere status = :status" : "";
-  const parameters = status ? [stringParam("status", status)] : [];
+  const statuses = status ? [status] : normalizeStringList(options.statuses);
+  const whereParts = [];
+  const parameters = [];
+  if (statuses.length === 1) {
+    whereParts.push("status = :status");
+    parameters.push(stringParam("status", statuses[0]));
+  } else if (statuses.length > 1) {
+    whereParts.push(
+      `status in (${statuses.map((_, index) => `:status_${index}`).join(", ")})`
+    );
+    parameters.push(...statuses.map((item, index) => stringParam(`status_${index}`, item)));
+  }
+  if (options.createdAfter) {
+    whereParts.push("created_at >= cast(:created_after as timestamptz)");
+    parameters.push(stringParam("created_after", options.createdAfter));
+  }
+  if (options.createdBefore) {
+    whereParts.push("created_at < cast(:created_before as timestamptz)");
+    parameters.push(stringParam("created_before", options.createdBefore));
+  }
+  const where = whereParts.length ? `\nwhere ${whereParts.join("\n  and ")}` : "";
   parameters.push(longParam("limit", limit));
   return {
     sql: `
@@ -134,6 +153,74 @@ select
   metadata::text
 from ${quoteIdent(schema)}.ai_review_job_events${where}
 order by created_at desc, id desc
+limit :limit
+`,
+    parameters,
+  };
+}
+
+function readRunClaims(settings, options = {}) {
+  assertDataApiSettings(settings, "Run claims API ledger");
+  const query = buildRunClaimsQuery(settings.schema, options.query || {});
+  const response = executeStatement(settings, query.sql, query.parameters, {
+    tempPrefix: "6529-run-claims-api-",
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return (response.records || []).map(runClaimRecordToClaim);
+}
+
+function buildRunClaimsQuery(schema, options = {}) {
+  const limit = positiveLimit(options.limit ?? 50);
+  const statuses = normalizeStringList(options.statuses);
+  const whereParts = [];
+  const parameters = [];
+  if (statuses.length === 1) {
+    whereParts.push("status = :status");
+    parameters.push(stringParam("status", statuses[0]));
+  } else if (statuses.length > 1) {
+    whereParts.push(
+      `status in (${statuses.map((_, index) => `:status_${index}`).join(", ")})`
+    );
+    parameters.push(...statuses.map((item, index) => stringParam(`status_${index}`, item)));
+  }
+  if (options.updatedBefore) {
+    whereParts.push("updated_at < cast(:updated_before as timestamptz)");
+    parameters.push(stringParam("updated_before", options.updatedBefore));
+  }
+  if (options.createdAfter) {
+    whereParts.push("created_at >= cast(:created_after as timestamptz)");
+    parameters.push(stringParam("created_after", options.createdAfter));
+  }
+  if (options.onlyUnexpired) {
+    whereParts.push("(expires_at is null or expires_at > now())");
+  }
+  const where = whereParts.length ? `\nwhere ${whereParts.join("\n  and ")}` : "";
+  parameters.push(longParam("limit", limit));
+  return {
+    sql: `
+select
+  id,
+  created_at::text,
+  updated_at::text,
+  completed_at::text,
+  expires_at::text,
+  run_key,
+  job_id,
+  status,
+  repo_full_name,
+  org,
+  pr_number,
+  requestor,
+  pr_head_sha,
+  review_kind,
+  provider,
+  model,
+  lane,
+  delivery_id,
+  command_name,
+  metadata::text
+from ${quoteIdent(schema)}.ai_review_run_claims${where}
+order by updated_at asc, id asc
 limit :limit
 `,
     parameters,
@@ -167,6 +254,31 @@ function jobEventRecordToEvent(record) {
     accepted: nullableBoolean(fieldValue(record[16])),
     reason: fieldValue(record[17]),
     exitCode: nullableNumber(fieldValue(record[18])),
+    metadata: safeJson(fieldValue(record[19])),
+  };
+}
+
+function runClaimRecordToClaim(record) {
+  return {
+    claimId: nullableNumber(fieldValue(record[0])),
+    createdAt: fieldValue(record[1]),
+    updatedAt: fieldValue(record[2]),
+    completedAt: fieldValue(record[3]),
+    expiresAt: fieldValue(record[4]),
+    runKey: fieldValue(record[5]),
+    jobId: fieldValue(record[6]),
+    status: fieldValue(record[7]),
+    repoFullName: fieldValue(record[8]),
+    org: fieldValue(record[9]),
+    prNumber: nullableNumber(fieldValue(record[10])),
+    requestor: fieldValue(record[11]),
+    prHeadSha: fieldValue(record[12]),
+    reviewKind: fieldValue(record[13]),
+    provider: fieldValue(record[14]),
+    model: fieldValue(record[15]),
+    lane: fieldValue(record[16]),
+    deliveryId: fieldValue(record[17]),
+    commandName: fieldValue(record[18]),
     metadata: safeJson(fieldValue(record[19])),
   };
 }
@@ -209,6 +321,13 @@ function positiveLimit(value) {
   return parsed;
 }
 
+function normalizeStringList(value) {
+  const list = Array.isArray(value) ? value : [];
+  return list
+    .map((item) => String(item || "").trim())
+    .filter(Boolean);
+}
+
 function nullableBoolean(value) {
   if (value === null || value === undefined) {
     return null;
@@ -245,12 +364,15 @@ function safeJson(value) {
 
 module.exports = {
   buildJobEventsQuery,
+  buildRunClaimsQuery,
   buildUsageEventsQuery,
   createUsageApiLedgerLoaders,
   isPublicUsageRepo,
   jobEventRecordToEvent,
   readJobEvents,
+  readRunClaims,
   readUsageEvents,
+  runClaimRecordToClaim,
   assertUsageRange,
   usageApiLedgerLoadersFromEnv,
   usageRecordToEvent,

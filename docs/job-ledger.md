@@ -211,6 +211,30 @@ admin-auth bridge as the usage API, and caps `limit` with
 `REVIEWBOT_USAGE_API_MAX_ITEMS`. Keep raw rows private; public pages should use
 aggregates instead of exposing repository names, requestors, or failure text.
 
+## Job-Health Alerts
+
+Scheduled operator alerts can read bounded recent job events and active
+run-control claims when `REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=true`.
+
+The alert runner emits:
+
+- `job_failure` when `dispatch_failed`, `dispatch_error`, or `failed` job
+  events cross the configured threshold within the lookback window;
+- `stale_run_claim` when active `claimed`, `dispatching`, or `running` claims
+  have not been updated for the configured stale-claim window.
+
+Configure the thresholds with:
+
+```text
+REVIEWBOT_ALERTS_JOB_FAILURE_LOOKBACK_HOURS=6
+REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD=1
+REVIEWBOT_ALERTS_STALE_CLAIM_HOURS=2
+REVIEWBOT_ALERTS_STALE_CLAIM_THRESHOLD=1
+```
+
+Alerts include repo names, job ids, statuses, and timing summaries, so route
+them to private operator channels.
+
 ## Privacy
 
 The job ledger can contain private repo names, PR numbers, requestors, provider
