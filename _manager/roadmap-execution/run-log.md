@@ -926,3 +926,12 @@
   - keep dry-run behavior intact while avoiding misleading live no-finding
     comments;
   - document the operator-facing failure mode.
+- Merged `6529reviewbot` PR #84 as `d4df15e` after CI, Dependency Review, and
+  CodeRabbit passed with no actionable review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27421392624`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27421392627`, completed successfully.
+- Started `codex/redact-worker-diagnostics` increment:
+  - sanitize worker adapter diagnostics before returning queue results;
+  - cover local stdout/stderr summaries and GitHub API dispatch error bodies;
+  - document redacted diagnostics as helpful but not public-log-safe.
