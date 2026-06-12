@@ -114,7 +114,7 @@ used for target repository checkout and comments.
 
 Preflight fails partial `REVIEWBOT_WORKER_GITHUB_APP_*` credential overrides
 and warns when dispatch reuses the main App credentials. Keep
-`npm run preflight -- --strict` in the deployment gate, then either configure
+`npm run preflight -- -- --strict` in the deployment gate, then either configure
 the dispatch-only App or record the accepted main-App permission boundary in
 private operator evidence.
 
@@ -149,7 +149,7 @@ runbooks rather than public release notes.
 Before allowing GitHub webhook traffic:
 
 ```bash
-npm run preflight -- --strict
+npm run preflight -- -- --strict
 ```
 
 From outside the container:

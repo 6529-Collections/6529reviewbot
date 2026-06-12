@@ -15,8 +15,8 @@ operator workspace. Start from `config/production-evidence.example.json`, keep
 the real file private, and validate or render a redacted public summary with:
 
 ```bash
-npm run operator:evidence -- --file <private-evidence-file> --summary
-npm run operator:evidence -- --file <private-evidence-file> --require-ready
+npm run operator:evidence -- -- --file <private-evidence-file> --summary
+npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
 ```
 
 The command validates that every required production section is present and
@@ -119,7 +119,7 @@ Fail-open/fail-closed behavior accepted:
 Worker path:
 Worker capacity policy reviewed:
 npm run check:workflow-actions passed after installing workflows:
-npm run preflight -- --strict result:
+npm run preflight -- -- --strict result:
 Run-control mode:
 Run-control ledger enabled:
 Operator alert destination:

@@ -78,10 +78,10 @@ function helpText() {
 
 Usage:
   npm run operator:evidence
-  npm run operator:evidence -- --file <private-evidence-file>
-  npm run operator:evidence -- --file <private-evidence-file> --summary
-  npm run operator:evidence -- --file <private-evidence-file> --summary --json
-  npm run operator:evidence -- --file <private-evidence-file> --require-ready
+  npm run operator:evidence -- -- --file <private-evidence-file>
+  npm run operator:evidence -- -- --file <private-evidence-file> --summary
+  npm run operator:evidence -- -- --file <private-evidence-file> --summary --json
+  npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
 
 Options:
   --file <path>      Operator evidence JSON file. Default: config/production-evidence.example.json

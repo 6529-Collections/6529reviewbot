@@ -191,8 +191,8 @@ successfully resolved collaborator permission.
 Operators can test either credential profile from a private environment:
 
 ```bash
-npm run github-app:token -- --profile main --installation-id <target-installation-id>
-npm run github-app:token -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+npm run github-app:token -- -- --profile main --installation-id <target-installation-id>
+npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
 ```
 
 ## Supported Events

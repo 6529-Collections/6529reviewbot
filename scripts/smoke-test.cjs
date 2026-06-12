@@ -32,6 +32,8 @@ const ledgerSchema = require("../src/ledger-schema.cjs");
 const replayWebhook = require("../bin/replay-webhook.cjs");
 const runReviewJobCli = require("../bin/run-review-job.cjs");
 const serverCli = require("../bin/server.cjs");
+const releaseCandidate = require("../src/release-candidate.cjs");
+const releaseCandidateCli = require("../bin/release-candidate.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
@@ -1158,6 +1160,13 @@ assert.throws(
   }),
   /evidence/
 );
+assert.throws(
+  () => releaseGates.validateReleaseGateStatus({
+    version: 1,
+    gates: { "ledger-schema": { status: "" } },
+  }),
+  /release gate status\.gates\.ledger-schema\.status must be a non-empty string/
+);
 assert.deepEqual(
   releaseGatesCli.parseArgs([
     "--file",
@@ -1309,6 +1318,91 @@ assert.deepEqual(
     requireReady: true,
     summary: true,
   }
+);
+const candidateBundle = releaseCandidate.collectReleaseCandidateBundle({
+  env: preflightEnv,
+  execFileSync: (_command, args) => {
+    if (args[0] === "rev-parse") {
+      return "abc123def456\n";
+    }
+    if (args[0] === "branch") {
+      return "codex/sk-proj-abcdefghijklmnopqrstuvwxyz123456\n";
+    }
+    if (args[0] === "status") {
+      return " M github_pat_abcdefghijklmnopqrstuvwxyz1234567890\n";
+    }
+    return "";
+  },
+  gateStatusFile: "config/v0-release-status.example.json",
+  includeGitStatus: true,
+  now: new Date("2026-06-12T00:00:00.000Z"),
+});
+assert.equal(candidateBundle.release, "v0.1.0");
+assert.equal(candidateBundle.ready, false);
+assert.equal(candidateBundle.readiness.releaseGates.complete, 1);
+assert.equal(candidateBundle.readiness.releaseGates.deferred, 1);
+assert(candidateBundle.readiness.releaseGates.missingStatusIds.includes("container-image"));
+assert.equal(candidateBundle.readiness.operatorEvidence.pending, 8);
+assert.equal(candidateBundle.readiness.preflight.ok, true);
+assert.match(candidateBundle.git.branch, /sk-\[redacted\]/);
+assert.match(candidateBundle.git.status, /github_pat_\[redacted\]/);
+const candidateBundleMarkdown = releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundle);
+assert.match(candidateBundleMarkdown, /Release Candidate Bundle/);
+assert.match(candidateBundleMarkdown, /missing gate status ids/);
+assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.match(
+  releaseCandidate.publicText("arn:aws:rds:us-east-1:123456789012:cluster:reviewbot"),
+  /arn:aws:\[redacted\]/
+);
+assert.match(
+  releaseCandidate.publicText("account 123456789012"),
+  /\[redacted-aws-account-id\]/
+);
+assert.throws(
+  () =>
+    releaseCandidate.collectReleaseCandidateBundle({
+      env: preflightEnv,
+      gateStatusFile: "config/v0-release-status.example.json",
+      requireReady: true,
+    }),
+  /release candidate gate status is missing/
+);
+assert.deepEqual(
+  releaseCandidateCli.parseArgs([
+    "--json",
+    "--quiet",
+    "--status-file",
+    "status.json",
+    "--operator-evidence-file",
+    "evidence.json",
+    "--strict-preflight",
+    "--require-ready",
+    "--profile",
+    "worker",
+    "--out",
+    "bundle.json",
+    "--include-git-status",
+  ]),
+  {
+    gateStatusFile: "status.json",
+    gatesFile: "config/v0-release-gates.json",
+    includeGitStatus: true,
+    json: true,
+    operatorEvidenceFile: "evidence.json",
+    out: "bundle.json",
+    preflightProfile: "worker",
+    quiet: true,
+    requireReady: true,
+    strictPreflight: true,
+  }
+);
+assert.equal(
+  releaseCandidateCli.main(["--json", "--quiet"], {
+    env: preflightEnv,
+    now: new Date("2026-06-12T00:00:00.000Z"),
+  }).release,
+  "v0.1.0"
 );
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
   host: "https://reviewbot.example.com/",

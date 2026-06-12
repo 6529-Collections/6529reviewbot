@@ -1466,3 +1466,25 @@
   - `node bin\operator-evidence.cjs --file config\production-evidence.example.json --json` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #118 as `ed604f9` after CI, Dependency Review,
+  and CodeRabbit passed with the prior review threads marked addressed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27447351646`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27447351620`, completed successfully.
+- Local clean-main validation after PR #118 merge:
+  - `npm run release:check` passed.
+- Started `codex/release-candidate-bundle` increment:
+  - add one public-safe release candidate bundle command around release gates,
+    operator evidence, git/package metadata, and no-network preflight;
+  - harden release-gate status validation so explicit empty statuses no longer
+    default to `pending`;
+  - normalize npm script option examples to the repo-compatible
+    `npm run <script> -- -- --flag` form;
+  - update release docs and manager memory.
+- Local validation for `codex/release-candidate-bundle`:
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `node bin\release-candidate.cjs --json --quiet` passed;
+  - `node bin\release-candidate.cjs --status-file config\v0-release-status.example.json --operator-evidence-file config\production-evidence.example.json --json --quiet` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

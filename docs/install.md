@@ -169,7 +169,7 @@ repo, or rollout notes. See [budget-policies.md](budget-policies.md).
 Run a no-network preflight first:
 
 ```bash
-npm run preflight -- --strict
+npm run preflight -- -- --strict
 ```
 
 Start the server in the chosen hosting environment:
@@ -199,7 +199,7 @@ Then confirm GitHub App `ping` deliveries are acknowledged. For local saved
 payload debugging, use:
 
 ```bash
-npm run webhook:replay -- --payload payload.json --assume-empty-budget
+npm run webhook:replay -- -- --payload payload.json --assume-empty-budget
 ```
 
 Replay is dry-run unless `--dispatch` is passed.
