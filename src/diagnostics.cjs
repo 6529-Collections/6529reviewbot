@@ -13,7 +13,9 @@ const SENSITIVE_TEXT_PATTERNS = [
 ];
 
 function safeErrorLine(error, maxChars = 500) {
-  const message = error && error.stack ? error.stack.split("\n")[0] : String(error);
+  const stackText =
+    error && typeof error.stack === "string" ? error.stack : String(error);
+  const message = stackText.split("\n")[0];
   return redactSensitiveText(message).slice(0, maxChars);
 }
 
