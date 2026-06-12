@@ -129,6 +129,18 @@ Implementations should update claim rows when dispatch starts, completes,
 fails, or expires. The built-in claimer sets `expires_at` on every claim so
 worker crashes do not block a PR forever.
 
+When the built-in ledger is enabled, `bin/server.cjs` also updates claim rows
+after dispatch attempts:
+
+```text
+dispatching       Queue accepted the job.
+dispatch_failed   Queue rejected the job.
+dispatch_error    Queue threw before returning a result.
+```
+
+`dispatch_failed` and `dispatch_error` are terminal for concurrency purposes,
+so failed queue attempts do not consume active slots until the TTL.
+
 ## Durable Table
 
 Print the canonical schema:

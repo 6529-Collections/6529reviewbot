@@ -291,3 +291,14 @@
   - App server passes merged budget policy to the snapshot resolver;
   - smoke coverage confirms repository config budget caps reach the resolver;
   - docs and memory describe production budget ledger wiring.
+- Merged `6529reviewbot` PR #30 as `25bd1b9` after CI and Dependency Review
+  passed; CodeRabbit remained in progress with no review threads, and the
+  normal merge path allowed the merge.
+- Started `codex/run-claim-status` increment:
+  - run-control ledger can update claim status after dispatch attempts;
+  - App server calls an optional `updateRunClaimStatus` hook after queue
+    success/failure and dispatch exceptions;
+  - `bin/server.cjs` wires the built-in updater when the run-control ledger is
+    enabled;
+  - smoke coverage validates SQL update construction and dispatch-failed
+    status propagation.

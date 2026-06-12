@@ -280,6 +280,7 @@ Completed in `6529reviewbot`:
 - review-job fanout with provider/model lanes;
 - run-control contract and Aurora-backed claimer for duplicate delivery claims
   and concurrency caps;
+- run-control claim status updates after dispatch attempts;
 - public and admin usage API contracts;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and

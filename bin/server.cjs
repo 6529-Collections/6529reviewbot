@@ -21,6 +21,7 @@ const {
 const {
   claimReviewJobWithLedger,
   runControlLedgerSettingsFromEnv,
+  updateRunClaimStatus,
 } = require("../src/run-control-ledger.cjs");
 const { usageApiLedgerLoadersFromEnv } = require("../src/usage-api-ledger.cjs");
 const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
@@ -49,6 +50,8 @@ const runControlLedgerSettings = runControlLedgerSettingsFromEnv();
 if (runControlLedgerSettings.enabled) {
   serverOptions.claimReviewJob = async (job, context) =>
     claimReviewJobWithLedger(runControlLedgerSettings, job, context);
+  serverOptions.updateRunClaimStatus = async (job, status, options) =>
+    updateRunClaimStatus(runControlLedgerSettings, job, status, options);
 }
 const adminAuthSettings = adminAuthSettingsFromEnv();
 if (adminAuthSettings.mode !== "disabled") {
