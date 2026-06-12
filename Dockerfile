@@ -11,12 +11,11 @@ RUN npm ci --omit=dev --ignore-scripts \
 
 FROM ${NODE_IMAGE} AS runtime
 ENV NODE_ENV=production \
-  PORT=8080 \
-  REVIEWBOT_WORKER_GH_BIN=gh
+  PORT=8080
 WORKDIR /app
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates git gh \
+  && apt-get install -y --no-install-recommends ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules

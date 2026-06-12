@@ -5,7 +5,10 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const WORKER_MODES = ["noop", "local", "github_actions"];
+const GITHUB_DISPATCH_MODES = ["auto", "api", "gh"];
 const DEFAULT_LOCAL_TIMEOUT_MS = 15 * 60 * 1000;
+const DEFAULT_GITHUB_FETCH_TIMEOUT_MS = 10000;
+const DEFAULT_GITHUB_API_URL = "https://api.github.com";
 const REVIEW_KIND_BINS = {
   general: "general-pr-review.cjs",
   followup: "followup-commit-review.cjs",
@@ -31,6 +34,23 @@ function workerAdapterPolicyFromEnv(env = process.env) {
     githubRepo: env.REVIEWBOT_WORKER_GITHUB_REPO || env.GITHUB_REPOSITORY || "",
     githubWorkflow: env.REVIEWBOT_WORKER_GITHUB_WORKFLOW || "review-job.yml",
     githubRef: env.REVIEWBOT_WORKER_GITHUB_REF || "main",
+    githubDispatchMode: enumValue(
+      env.REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE || "auto",
+      GITHUB_DISPATCH_MODES,
+      "REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE"
+    ),
+    githubToken:
+      env.REVIEWBOT_WORKER_GITHUB_TOKEN || env.GH_TOKEN || env.GITHUB_TOKEN || "",
+    githubApiUrl: trimTrailingSlash(
+      env.REVIEWBOT_WORKER_GITHUB_API_URL ||
+        env.GITHUB_API_URL ||
+        DEFAULT_GITHUB_API_URL
+    ),
+    githubFetchTimeoutMs: positiveInt(
+      env.REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS,
+      DEFAULT_GITHUB_FETCH_TIMEOUT_MS,
+      "REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS"
+    ),
     ghBin: env.REVIEWBOT_WORKER_GH_BIN || env.GH_BIN || "gh",
   };
 }
@@ -135,6 +155,14 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
     });
   }
 
+  if (shouldUseGitHubApiDispatch(policy)) {
+    return dispatchReviewJobToGitHubActionsApi(job, { ...options, policy });
+  }
+  return dispatchReviewJobToGitHubActionsCli(job, { ...options, policy });
+}
+
+function dispatchReviewJobToGitHubActionsCli(job, options = {}) {
+  const policy = options.policy || workerAdapterPolicyFromEnv(options.env);
   const runner = options.spawnSync || spawnSync;
   const fields = githubWorkflowFields(job);
   const args = [
@@ -161,6 +189,7 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
   if (result.error) {
     return workerResult(job, false, {
       adapter: "github_actions",
+      dispatchMode: "gh",
       reason: safeError(result.error),
       ...outputSummary(result, options.includeOutput),
     });
@@ -168,12 +197,86 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
 
   return workerResult(job, result.status === 0, {
     adapter: "github_actions",
+    dispatchMode: "gh",
     exitCode: result.status,
     ...outputSummary(result, options.includeOutput),
     workflow: policy.githubWorkflow,
     workflowRepo: policy.githubRepo,
     workflowRef: policy.githubRef,
   });
+}
+
+async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
+  const policy = options.policy || workerAdapterPolicyFromEnv(options.env);
+  const fetchImpl = options.fetchImpl || globalThis.fetch;
+  if (typeof fetchImpl !== "function") {
+    return workerResult(job, false, {
+      adapter: "github_actions",
+      dispatchMode: "api",
+      reason: "A fetch implementation is required for GitHub Actions API dispatch.",
+    });
+  }
+  if (!policy.githubToken) {
+    return workerResult(job, false, {
+      adapter: "github_actions",
+      dispatchMode: "api",
+      reason: "REVIEWBOT_WORKER_GITHUB_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required for API dispatch.",
+    });
+  }
+
+  const repoPath = githubRepoApiPath(policy.githubRepo);
+  if (!repoPath) {
+    return workerResult(job, false, {
+      adapter: "github_actions",
+      dispatchMode: "api",
+      reason: "REVIEWBOT_WORKER_GITHUB_REPO must be in owner/repo form.",
+    });
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), policy.githubFetchTimeoutMs);
+  const fields = githubWorkflowFields(job);
+  const url =
+    `${policy.githubApiUrl}/repos/${repoPath}/actions/workflows/` +
+    `${encodeURIComponent(policy.githubWorkflow)}/dispatches`;
+  try {
+    const response = await fetchImpl(url, {
+      method: "POST",
+      headers: {
+        accept: "application/vnd.github+json",
+        authorization: `Bearer ${policy.githubToken}`,
+        "content-type": "application/json",
+        "user-agent": "6529reviewbot",
+        "x-github-api-version": "2022-11-28",
+      },
+      body: JSON.stringify({
+        ref: policy.githubRef,
+        inputs: fields,
+      }),
+      signal: controller.signal,
+    });
+    const bodyText = await safeResponseText(response);
+    return workerResult(job, response.status === 204, {
+      adapter: "github_actions",
+      dispatchMode: "api",
+      statusCode: response.status,
+      reason: response.status === 204 ? "" : `GitHub API dispatch failed: ${response.status} ${tail(bodyText, 500)}`.trim(),
+      workflow: policy.githubWorkflow,
+      workflowRepo: policy.githubRepo,
+      workflowRef: policy.githubRef,
+    });
+  } catch (error) {
+    return workerResult(job, false, {
+      adapter: "github_actions",
+      dispatchMode: "api",
+      reason: safeError(error),
+      workflow: policy.githubWorkflow,
+      workflowRepo: policy.githubRepo,
+      workflowRef: policy.githubRef,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function jobEnv(job) {
@@ -310,18 +413,55 @@ function tail(value, maxChars = 4000) {
   return text.length <= maxChars ? text : text.slice(text.length - maxChars);
 }
 
+function shouldUseGitHubApiDispatch(policy) {
+  if (policy.githubDispatchMode === "gh") {
+    return false;
+  }
+  if (policy.githubDispatchMode === "api") {
+    return true;
+  }
+  return Boolean(policy.githubToken);
+}
+
+function githubRepoApiPath(repo) {
+  const parts = String(repo || "").split("/");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    return "";
+  }
+  return parts.map((part) => encodeURIComponent(part)).join("/");
+}
+
+async function safeResponseText(response) {
+  try {
+    return typeof response.text === "function" ? await response.text() : "";
+  } catch {
+    return "";
+  }
+}
+
+function trimTrailingSlash(value) {
+  return String(value || "").replace(/\/+$/, "");
+}
+
 module.exports = {
   DEFAULT_LOCAL_TIMEOUT_MS,
+  DEFAULT_GITHUB_API_URL,
+  DEFAULT_GITHUB_FETCH_TIMEOUT_MS,
+  GITHUB_DISPATCH_MODES,
   REVIEW_KIND_BINS,
   WORKER_MODES,
   createReviewJobEnqueuer,
   dispatchReviewJobToGitHubActions,
+  dispatchReviewJobToGitHubActionsApi,
+  dispatchReviewJobToGitHubActionsCli,
   enqueueReviewJobsWithAdapter,
+  githubRepoApiPath,
   githubWorkflowFields,
   headRepoFullNameForJob,
   jobEnv,
   outputSummary,
   reviewCommandArgs,
   runReviewJobLocally,
+  shouldUseGitHubApiDispatch,
   workerAdapterPolicyFromEnv,
 };

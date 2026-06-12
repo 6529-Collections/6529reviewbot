@@ -74,6 +74,8 @@ Runtime secrets injected by hosting platform:
 Image contains no committed .env or private evidence files:
 Health check /healthz result:
 Worker adapter:
+GitHub Actions dispatch mode:
+Dispatch token stored only in bot secret store:
 ```
 
 ## Budget And Pricing

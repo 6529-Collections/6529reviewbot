@@ -812,3 +812,18 @@
     rollback;
   - extend env examples for job-health alert controls;
   - update release, security, roadmap, changelog, and manager-memory docs.
+- Merged `6529reviewbot` PR #75 as `31f0f6f` after CI and Dependency Review
+  passed; CodeRabbit had only its in-progress placeholder and no actionable
+  review threads.
+- Rechecked the post-merge OpenSSF Scorecard run:
+  - workflow `OpenSSF Scorecard`, run `27415706144`;
+  - job `scorecard` completed successfully.
+- Started `codex/native-github-actions-dispatch` increment:
+  - add native GitHub REST API dispatch for central `github_actions` worker
+    jobs when a bot-owned dispatch token is configured;
+  - keep the `gh` CLI path as compatibility fallback;
+  - make preflight fail closed for API dispatch without a token;
+  - slim the central App server container image so it no longer needs bundled
+    GitHub CLI state for production dispatch;
+  - update configuration, worker, container, security, release, and support
+    docs.

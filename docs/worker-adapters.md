@@ -54,8 +54,26 @@ REVIEWBOT_WORKER_ADAPTER=github_actions
 REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
+REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
+REVIEWBOT_WORKER_GITHUB_TOKEN=
+REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
+REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_WORKER_GH_BIN=gh
 ```
+
+Dispatch mode defaults to `auto`. When `REVIEWBOT_WORKER_GITHUB_TOKEN`,
+`GH_TOKEN`, or `GITHUB_TOKEN` is present, `auto` dispatches the central worker
+through GitHub's REST API. Without a token, `auto` falls back to the `gh` CLI
+for compatibility with older operator environments.
+
+Use `api` in production container deployments so preflight fails closed if the
+dispatch token is missing. Use `gh` only for local compatibility or operator
+workstations that intentionally manage GitHub CLI authentication.
+
+The API dispatch token must be bot-owned and scoped only to dispatch workflows
+in the central bot repository. It is separate from the short-lived GitHub App
+installation tokens that the worker mints for target repository checkout and
+comments.
 
 The dispatch fields are:
 

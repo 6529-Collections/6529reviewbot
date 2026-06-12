@@ -110,6 +110,8 @@ REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
 REVIEWBOT_JOB_LEDGER_ENABLED=true
 REVIEWBOT_JOB_LEDGER_FAIL_CLOSED=false
 REVIEWBOT_WORKER_ADAPTER=noop
+REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api
+REVIEWBOT_WORKER_GITHUB_TOKEN=
 ```
 
 Start with `noop` worker mode for the first webhook pass. Switch to
@@ -211,8 +213,12 @@ without a token. This supports public forks and fails closed for private forks
 unless an operator adds an explicitly approved fork access path.
 
 The server-side dispatcher still needs a credential that can dispatch workflows
-in `6529-Collections/6529reviewbot`. Keep that credential scoped to this
-repository and separate from target repository access.
+in `6529-Collections/6529reviewbot`. Prefer
+`REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api` with
+`REVIEWBOT_WORKER_GITHUB_TOKEN` stored in the bot secret store. Keep that
+credential scoped to this repository and separate from target repository
+access. The `gh` CLI dispatch mode remains a compatibility fallback for
+operator environments that intentionally manage GitHub CLI authentication.
 
 ## 6529.io Wiring
 

@@ -101,10 +101,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - v0 status bootstrap PR: merged as PR #74, merge commit `7de7a4d`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/container-deployment-packaging`
-- Current local changes: wire `bin/server.cjs` to the configured worker
-  adapter, add central App server container packaging, extend env templates for
-  job-health alerts, and sweep deployment/release docs.
+- Container deployment packaging PR: merged as PR #75, merge commit
+  `31f0f6f`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/native-github-actions-dispatch`
+- Current local changes: add native GitHub Actions workflow-dispatch API
+  support for the `github_actions` worker adapter, keep `gh` CLI fallback for
+  compatibility, slim the container image, and update operator docs.
 
 ## Key Decisions
 
@@ -213,6 +215,9 @@ merged PRs.
   reviewed commit, inject GitHub App/provider/AWS/admin/alert secrets at
   runtime, run as a non-root user, and keep image digests and scan evidence in
   private operator records.
+- Production GitHub Actions worker dispatch should prefer the GitHub REST API
+  with a bot-owned token scoped to the central bot repository. The `gh` CLI
+  path remains a compatibility fallback, not the preferred container path.
 - Public release artifacts need a repeatable leak scan. The scanner should
   cover docs, examples, workflows, config, and manager memory while allowing
   obvious placeholders and avoiding source test fixtures that intentionally
@@ -281,7 +286,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Validate, publish, and merge the container deployment packaging PR.
+1. Validate, publish, and merge the native GitHub Actions dispatch PR.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Prepare the next operator-readiness slice: provider price rows, production
    App/deployment evidence, or worker/alert installation depending on what is
@@ -317,6 +322,8 @@ merged PRs.
 - The central App server container image exists locally in source but still
   needs an operator-owned registry publish, image vulnerability scan, and
   production deployment evidence before broad release.
+- Native workflow dispatch still needs a production bot-owned token with the
+  minimum GitHub permissions required to dispatch the central worker workflow.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
 - Private admin UI still needs production wiring to the usage, job-events, and
