@@ -38,6 +38,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "install-guide-contract",
+          "script": "check:install-guide",
+          "purpose": "Verify the installation guide keeps the conservative central App dogfood path, GitHub App validation commands, runtime defaults, command-only target posture, and rollback controls synchronized.",
+          "doc": "docs/install.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "dependabot-config",
           "script": "check:dependabot",
           "purpose": "Verify weekly Dependabot coverage for npm and GitHub Actions dependencies.",

@@ -21,6 +21,7 @@ runNode("scripts/check.cjs");
 runNode("scripts/check-doc-links.cjs");
 runNode("scripts/check-doc-index.cjs");
 runNode("scripts/check-public-governance.cjs");
+runNode("scripts/check-install-guide-contract.cjs");
 runNode("scripts/check-dependabot-config.cjs");
 runNode("scripts/check-container-image.cjs");
 runNode("scripts/check-comment-commands.cjs");

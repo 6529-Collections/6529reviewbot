@@ -124,6 +124,9 @@ After stabilization:
   validation fields
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
+- `npm run check:install-guide` confirms the installation guide contract keeps
+  the conservative dogfood path, GitHub App validation commands, runtime
+  defaults, command-only target posture, and rollback controls synchronized
 - `npm run check:dependabot` confirms weekly npm and GitHub Actions dependency
   update coverage is still configured
 - `npm run check:container-image` confirms the central App server Dockerfile

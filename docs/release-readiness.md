@@ -166,6 +166,10 @@ Ready for community review:
 - alert notifier mode checker that keeps scheduled alert delivery modes
   synchronized across notifier constants, env parsing, docs, and env examples;
 - installation and onboarding guide for conservative central App dogfood;
+- `npm run check:install-guide` keeps [Installation And Onboarding](install.md)
+  synchronized with the conservative dogfood path, GitHub App validation
+  commands, runtime defaults, command-only target posture, and rollback
+  controls;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
 - repository-owned container packaging for the central App server with

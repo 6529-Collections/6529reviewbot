@@ -370,11 +370,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - GitHub App auth contract PR: merged as PR #204, merge commit `5ed8bef`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/github-app-routes-contract`.
-- Current local changes: adding a GitHub App browser handoff route contract
-  check that keeps manifest-complete, setup, and callback routes GET-only,
-  public-safe, non-work-triggering, source invariants, release checks, smoke
-  tests, and docs
+- GitHub App route contract PR: merged as PR #205, merge commit `7f6f10b`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/install-guide-contract`.
+- Current local changes: adding an installation guide contract check that keeps
+  the conservative central App dogfood path, GitHub App validation commands,
+  runtime defaults, command-only target posture, rollback controls, release
+  checks, smoke tests, and docs
   synchronized.
 
 ## Key Decisions
@@ -853,6 +855,10 @@ merged PRs.
   auth, conversion, webhook, or review-work endpoints. Keep them GET-only, keep
   code/state as presence booleans, and never echo manifest codes, generated
   credentials, private repo details, or cloud identifiers.
+- The installation guide is a community-release path, not just narrative docs.
+  Keep its order conservative: release checks, GitHub App validation, noop
+  server, worker path, 6529.io surfaces, command-only target repo, gradual live
+  coverage, and rollback.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -876,7 +882,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the GitHub App route contract check.
+2. Publish and merge the installation guide contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

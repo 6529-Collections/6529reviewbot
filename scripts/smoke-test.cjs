@@ -54,6 +54,7 @@ const githubAppManifestContractCheck = require("./check-github-app-manifest-cont
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs");
 const githubAppRoutesContractCheck = require("./check-github-app-routes-contract.cjs");
+const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5181,6 +5182,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /GitHub App route contract check found/
+  );
+  const installGuideContractResult =
+    installGuideContractCheck.checkInstallGuideContract();
+  assert.equal(installGuideContractResult.guideCases, 6);
+  await assert.throws(
+    () =>
+      installGuideContractCheck.checkInstallGuideContract({
+        quiet: true,
+        docTexts: {
+          "docs/install.md": "# Installation\n",
+        },
+      }),
+    /install guide contract check found/
   );
   await assert.rejects(
     () =>
