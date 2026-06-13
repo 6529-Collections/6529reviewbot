@@ -440,6 +440,9 @@ Completed in `6529reviewbot`:
   public env templates synchronized.
 - usage-api route checks that keep usage/admin API paths, server defaults,
   OpenAPI paths, 6529.io client methods, env templates, and docs synchronized.
+- admin-snapshot checks that keep private operator snapshot names, default
+  policy, warning posture, redaction behavior, CLI flags, and docs
+  synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

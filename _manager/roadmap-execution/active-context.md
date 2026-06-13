@@ -326,10 +326,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin auth contract PR: merged as PR #182, merge commit `447cc8f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/usage-api-route-contract`.
-- Current local changes: adding a usage-api route contract check that keeps
-  usage/admin API paths, server defaults, OpenAPI paths, 6529.io client
-  methods, env templates, and docs synchronized.
+- Usage API route contract PR: merged as PR #183, merge commit `d4f8cb6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-snapshot-contract`.
+- Current local changes: adding an admin-snapshot contract check that keeps
+  private operator snapshot names, default policy, warning posture, redaction
+  behavior, CLI flags, and docs synchronized.
 
 ## Key Decisions
 
@@ -737,6 +739,10 @@ merged PRs.
   route defaults, OpenAPI, the 6529.io server-side client, env templates, and
   deployment docs should move together so dashboard routes do not silently
   lose an endpoint or bypass admin signing.
+- Admin snapshots are private operator evidence. The command should reduce
+  endpoint posture into bounded counts and warnings, preserve redacted
+  placeholders, and keep raw usage rows, repo names, budget scope details,
+  prompts, diffs, provider responses, and credentials out of public artifacts.
 
 ## Constraints
 
@@ -750,7 +756,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the usage-api route contract check.
+2. Publish and merge the admin-snapshot contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

@@ -116,6 +116,9 @@ stabilized.
 - Added a usage-api route contract release check that validates usage/admin API
   paths, server defaults, OpenAPI paths, 6529.io client methods, env templates,
   and docs.
+- Added an admin-snapshot contract release check that validates private
+  operator snapshot names, default policy, warning posture, redaction behavior,
+  CLI flags, and docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

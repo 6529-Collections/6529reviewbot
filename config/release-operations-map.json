@@ -115,6 +115,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "admin-snapshot-contract",
+          "script": "check:admin-snapshot",
+          "purpose": "Verify admin snapshot check names, default policy, warning posture, redaction behavior, CLI flags, and docs stay synchronized.",
+          "doc": "docs/6529-io-admin-integration.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",
