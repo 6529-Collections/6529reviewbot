@@ -199,6 +199,9 @@ After stabilization:
 - `npm run check:budget-scopes` confirms canonical budget scopes stay
   synchronized with central policy validation, ledger schema constraints,
   public docs, and dogfood examples
+- `npm run check:budget-policies-runbook` confirms budget policies guidance
+  keeps policy-file shape, dry-run/apply behavior, central DB caps, admission
+  precedence, fail-closed policy reads, and review requirements synchronized
 - `npm run check:run-control-scopes` confirms run-control concurrency scopes
   stay synchronized with budget scopes, env parsing, claim SQL, docs, and env
   examples

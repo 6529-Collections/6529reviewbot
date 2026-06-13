@@ -168,6 +168,7 @@ npm run check:admin-snapshot
 npm run check:support-bundle
 npm run check:support-runbooks
 npm run check:diagnostics-redaction
+npm run check:budget-policies-runbook
 npm run check:model-defaults
 npm run check:model-pricing-runbook
 npm run check:providers

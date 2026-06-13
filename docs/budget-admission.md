@@ -73,6 +73,9 @@ The database-backed `reviewbot.ai_review_budget_policies` table can also hold
 enabled scope policies with daily, weekly, and monthly caps. Use
 [Budget Policies](budget-policies.md) to dry-run and apply those rows from a
 reviewed JSON file.
+Run `npm run check:budget-policies-runbook` after changing budget policy
+operator guidance so the central cap review path stays aligned with admission
+behavior.
 
 When `REVIEW_USAGE_ENABLED=true`, the production server loads enabled DB
 policies for each webhook and merges them into the base budget policy before

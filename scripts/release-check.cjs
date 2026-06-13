@@ -57,6 +57,7 @@ runNode("scripts/check-support-bundle-contract.cjs");
 runNode("scripts/check-support-runbooks-contract.cjs");
 runNode("scripts/check-diagnostics-redaction.cjs");
 runNode("scripts/check-budget-scopes.cjs");
+runNode("scripts/check-budget-policies-runbook-contract.cjs");
 runNode("scripts/check-run-control-scopes.cjs");
 runNode("scripts/check-alert-dimensions.cjs");
 runNode("scripts/check-alert-notifier-modes.cjs");

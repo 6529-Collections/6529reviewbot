@@ -21,6 +21,9 @@ Ready for community review:
 - budget admission against the isolated AWS usage ledger;
 - central DB budget policy dry-run/apply tooling and production admission
   loading;
+- budget policy runbook checks that keep central DB caps, dry-run/apply
+  behavior, admission precedence, fail-closed policy reads, and review
+  requirements synchronized;
 - conservative dogfood budget policy example validated by release checks;
 - conservative central budget policy apply path dogfooded against the isolated
   ledger with aggregate scope-count verification;
@@ -162,6 +165,9 @@ Ready for community review:
   synchronized;
 - budget-scope checker that keeps central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized;
+- budget policies runbook checker that keeps central DB caps, dry-run/apply
+  behavior, admission precedence, fail-closed policy reads, and review
+  requirements synchronized;
 - run-control scope checker that keeps concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples;
 - `npm run check:worker-capacity` keeps [Worker Capacity](worker-capacity.md)
@@ -510,6 +516,10 @@ event visibility, schema omissions, and docs stay aligned.
 `npm run check:budget-scopes` is included in `npm run release:check` and
 verifies canonical budget scopes, central policy validation, ledger schema
 constraints, public docs, and dogfood examples stay aligned.
+`npm run check:budget-policies-runbook` is included in
+`npm run release:check` and verifies budget policy guidance for policy-file
+shape, dry-run/apply behavior, central DB caps, admission precedence,
+fail-closed policy reads, and review requirements.
 `npm run check:run-control-scopes` is included in `npm run release:check` and
 verifies run-control concurrency scopes, env parsing, claim SQL, docs, and env
 examples stay aligned with the budget scope vocabulary.

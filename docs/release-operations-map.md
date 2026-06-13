@@ -87,6 +87,9 @@ metadata normalization, usage API event visibility, schema omissions, and docs
 aligned.
 `npm run check:budget-scopes` keeps central budget scope validation, ledger
 schema constraints, public docs, and dogfood examples aligned.
+`npm run check:budget-policies-runbook` keeps budget policies guidance aligned
+across policy-file shape, dry-run/apply behavior, central DB caps, admission
+precedence, fail-closed policy reads, and review requirements.
 `npm run check:run-control-scopes` keeps run-control concurrency scopes, env
 parsing, claim SQL, docs, and env examples aligned.
 `npm run check:alert-dimensions` keeps scheduled spend-spike alert dimensions,
@@ -176,6 +179,7 @@ The local quality gate command inventory is:
 - `npm run check:provider-adapters`
 - `npm run check:ledger-privacy`
 - `npm run check:budget-scopes`
+- `npm run check:budget-policies-runbook`
 - `npm run check:run-control-scopes`
 - `npm run check:alert-dimensions`
 - `npm run check:alert-notifier-modes`

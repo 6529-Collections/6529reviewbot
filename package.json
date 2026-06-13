@@ -89,6 +89,7 @@
     "check:support-runbooks": "node scripts/check-support-runbooks-contract.cjs",
     "check:diagnostics-redaction": "node scripts/check-diagnostics-redaction.cjs",
     "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
+    "check:budget-policies-runbook": "node scripts/check-budget-policies-runbook-contract.cjs",
     "check:run-control-scopes": "node scripts/check-run-control-scopes.cjs",
     "check:alert-dimensions": "node scripts/check-alert-dimensions.cjs",
     "check:alert-notifier-modes": "node scripts/check-alert-notifier-modes.cjs",

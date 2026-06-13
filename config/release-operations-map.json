@@ -220,6 +220,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "budget-policies-runbook-contract",
+          "script": "check:budget-policies-runbook",
+          "purpose": "Verify budget policy guidance keeps policy-file shape, scope semantics, dry-run/apply behavior, admission precedence, fail-closed posture, and review requirements synchronized.",
+          "doc": "docs/budget-policies.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "run-control-scope-contract",
           "script": "check:run-control-scopes",
           "purpose": "Verify run-control concurrency scopes stay synchronized with budget scopes, env parsing, claim SQL, docs, and env examples.",

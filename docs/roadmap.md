@@ -494,6 +494,9 @@ Completed in `6529reviewbot`:
   synchronized.
 - budget-scope checks that keep central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized.
+- budget policies runbook contract that keeps central DB caps, dry-run/apply
+  behavior, admission precedence, fail-closed policy reads, and review
+  requirements synchronized.
 - run-control scope checks that keep concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples.
 - alert-dimension checks that keep scheduled spend-spike dimensions
@@ -561,6 +564,8 @@ Completed in `6529reviewbot`:
 - ledger schema re-apply support for managed daily aggregate views.
 - additive ledger table migrations for older dogfood databases.
 - budget-scope constraint refreshes for older dogfood databases.
+- budget policies runbook contract covering central DB caps and the reviewed
+  dry-run/apply path.
 - conservative dogfood budget policy apply path verified against the isolated
   ledger with aggregate scope counts.
 - spend-alert read/evaluation path verified against the isolated ledger in
