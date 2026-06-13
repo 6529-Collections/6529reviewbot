@@ -1915,3 +1915,25 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #139 as `b215432` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/dogfood-readiness-workspace` increment:
+  - add `--operator-workspace` to `npm run dogfood:readiness`;
+  - include a redacted private operator workspace parse check in dogfood
+    readiness reports;
+  - keep normal pre-traffic readiness separate from evidence-complete
+    expansion gates through `--require-operator-workspace-ready`;
+  - update release operations map, dogfood docs, install/release docs, README,
+    roadmap, changelog, smoke tests, release checks, and manager memory.
+- Local validation for `codex/dogfood-readiness-workspace`:
+  - `npm run operator:workspace -- -- --dir <temp-dir> --quiet` passed;
+  - `npm run dogfood:readiness -- -- --operator-workspace <temp-dir> --json --quiet`
+    passed;
+  - `npm run dogfood:readiness -- -- --operator-workspace <temp-dir> --require-operator-workspace-ready --require-ready --quiet`
+    failed as expected on pending release gates;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:release-operations` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed.

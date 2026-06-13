@@ -150,10 +150,11 @@
         {
           "id": "dogfood-readiness",
           "script": "dogfood:readiness",
-          "args": "-- -- --strict-preflight --require-ready",
-          "purpose": "Check dogfood input files, model catalog, budget policy, repository config, and optional preflight before first traffic.",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "purpose": "Check dogfood input files, model catalog, budget policy, repository config, private workspace parsing, and optional preflight before first traffic.",
           "doc": "docs/dogfood-readiness.md",
-          "publicOutput": "Safe after reviewing preflight diagnostics."
+          "privateInputs": "Reads operator-owned private workspace files when --operator-workspace is supplied.",
+          "publicOutput": "Safe after reviewing preflight diagnostics and redacted workspace counts."
         },
         {
           "id": "dogfood-status-init",

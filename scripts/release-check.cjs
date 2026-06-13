@@ -4,6 +4,7 @@
 
 const { execFileSync } = require("child_process");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const YAML = require("yaml");
 
@@ -13,6 +14,7 @@ const repoConfigTemplates = [
   "templates/dogfood-repository-config.yml",
   "templates/repository-config.yml",
 ];
+const operatorWorkspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-release-check-workspace-"));
 
 runNode("scripts/check.cjs");
 runNode("scripts/check-doc-links.cjs");
@@ -29,7 +31,14 @@ runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.example.json", "--quiet"]);
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.dogfood.example.json", "--quiet"]);
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
+runNode("bin/operator-workspace.cjs", ["--dir", operatorWorkspaceDir, "--quiet"]);
 runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet"]);
+runNode("bin/dogfood-readiness.cjs", [
+  "--operator-workspace",
+  operatorWorkspaceDir,
+  "--json",
+  "--quiet",
+]);
 runNode("bin/dogfood-status.cjs", ["--json", "--quiet"]);
 runNode("bin/dogfood-status.cjs", [
   "--status-file",

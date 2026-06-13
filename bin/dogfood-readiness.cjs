@@ -42,8 +42,10 @@ function parseArgs(argv = []) {
     includePreflight: false,
     json: false,
     modelCatalogFile: undefined,
+    operatorWorkspaceDir: undefined,
     preflightProfile: "server",
     quiet: false,
+    requireOperatorWorkspaceReady: false,
     repositoryConfigFiles: [],
     requireReady: false,
     strictPreflight: false,
@@ -60,6 +62,10 @@ function parseArgs(argv = []) {
       options.budgetPolicyFile = requireValue(args, (index += 1), arg);
     } else if (arg === "--model-catalog-file") {
       options.modelCatalogFile = requireValue(args, (index += 1), arg);
+    } else if (arg === "--operator-workspace" || arg === "--operator-workspace-dir") {
+      options.operatorWorkspaceDir = requireValue(args, (index += 1), arg);
+    } else if (arg === "--require-operator-workspace-ready") {
+      options.requireOperatorWorkspaceReady = true;
     } else if (arg === "--preflight") {
       options.includePreflight = true;
     } else if (arg === "--preflight-profile") {
@@ -81,6 +87,9 @@ function parseArgs(argv = []) {
   if (!options.repositoryConfigFiles.length) {
     delete options.repositoryConfigFiles;
   }
+  if (options.requireOperatorWorkspaceReady && !options.operatorWorkspaceDir) {
+    throw new Error("--require-operator-workspace-ready requires --operator-workspace.");
+  }
   return options;
 }
 
@@ -99,6 +108,9 @@ Options:
   --repository-config <file>   Repository config file to validate. Repeatable.
   --budget-policy-file <file>  Dogfood budget policy file.
   --model-catalog-file <file>  Model catalog file.
+  --operator-workspace <dir>   Include a private operator workspace parse check.
+  --require-operator-workspace-ready
+                               Require every private workspace checklist to be ready.
   --preflight                  Include no-network runtime preflight summary.
   --strict-preflight           Treat preflight warnings as not ready.
   --preflight-profile <name>   Preflight profile, usually server or worker.

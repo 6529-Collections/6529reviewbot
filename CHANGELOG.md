@@ -68,6 +68,9 @@ stabilized.
   workspace as a set.
 - Release-candidate bundles can read standard private operator workspace files
   with one `--operator-workspace` flag.
+- Dogfood readiness can include a redacted private operator workspace parse
+  check before first live traffic, with an optional stricter evidence-ready
+  mode for expansion gates.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.
