@@ -63,6 +63,9 @@ OpenAPI paths, 6529.io client methods, env templates, and docs aligned.
 policy, warning posture, redaction behavior, CLI flags, and docs aligned.
 `npm run check:support-bundle` keeps sanitized support-bundle safe env keys,
 presence-only secret keys, local path redaction, CLI flags, and docs aligned.
+`npm run check:support-runbooks` keeps the support and incident playbooks'
+public/private reporting boundaries, maintainer triage, containment, recovery,
+and public follow-up guidance aligned.
 `npm run check:diagnostics-redaction` keeps shared diagnostic redaction for
 tokens, alert webhooks, AWS access-key ids, private keys, error lines, and
 diagnostic tails aligned.

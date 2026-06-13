@@ -178,6 +178,10 @@ Ready for community review:
 - `npm run check:operations-runbook` keeps [Operations Runbook](operations.md)
   synchronized with routine checks and triage paths for replay, spend, ledgers,
   workers, dashboards, and bot comments;
+- `npm run check:support-runbooks` keeps [Support Playbook](support.md) and
+  [Incident Response](incident-response.md) synchronized with public/private
+  reporting boundaries, maintainer triage, containment, recovery, and public
+  follow-up guidance;
 - repository-owned container packaging for the central App server with
   non-root runtime, health check, and runtime-only secret injection guidance;
 - container-image contract checker for the Dockerfile and `.dockerignore`

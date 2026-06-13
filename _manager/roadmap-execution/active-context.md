@@ -376,11 +376,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Deployment runbook contract PR: merged as PR #207, merge commit `ed65603`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operations-runbook-contract`.
-- Current local changes: adding an operations runbook contract check that keeps
-  routine checks and triage paths for replay, spend, ledgers, workers,
-  dashboards, bot comments, release checks, smoke tests, and docs
-  synchronized.
+- Operations runbook contract PR: merged as PR #208, merge commit `9fd46fc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/support-runbooks-contract`.
+- Current local changes: adding a support runbooks contract check that keeps
+  public support guidance, maintainer triage, private escalation, incident
+  containment, recovery, sanitized public follow-up, release checks, smoke
+  tests, and docs synchronized.
 
 ## Key Decisions
 
@@ -869,6 +871,10 @@ merged PRs.
 - The operations runbook is the day-two companion to deployment. Keep routine
   checks and incident triage paths release-checked so operators have one
   public-safe index before diving into private evidence.
+- Support and incident playbooks are public trust surfaces. Keep public/private
+  reporting boundaries, support bundle guidance, maintainer triage, escalation,
+  containment, recovery, and sanitized public follow-up release-checked so
+  community support does not drift into unsafe evidence handling.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -892,7 +898,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the operations runbook contract check.
+2. Publish and merge the support runbooks contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

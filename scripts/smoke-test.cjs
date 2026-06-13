@@ -57,6 +57,7 @@ const githubAppRoutesContractCheck = require("./check-github-app-routes-contract
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
+const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5273,6 +5274,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /support bundle contract check found/
+  );
+  const supportRunbooksContractResult =
+    supportRunbooksContractCheck.checkSupportRunbooksContract();
+  assert.equal(supportRunbooksContractResult.supportCases, 4);
+  assert.equal(supportRunbooksContractResult.incidentCases, 3);
+  assert.throws(
+    () =>
+      supportRunbooksContractCheck.checkSupportRunbooksContract({
+        quiet: true,
+        docTexts: {
+          "docs/support.md": "# Support\n",
+        },
+      }),
+    /support runbooks contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

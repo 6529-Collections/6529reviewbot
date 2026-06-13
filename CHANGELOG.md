@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a support runbooks contract release check for public support,
+  maintainer triage, incident containment, recovery, and sanitized public
+  follow-up guidance.
 - Initial public MIT repository structure, governance, security, support, and
   contribution docs.
 - Standalone review engine for general, follow-up, WCAG 2.2 AA, i18n, and

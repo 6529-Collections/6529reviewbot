@@ -157,6 +157,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "support-runbooks-contract",
+          "script": "check:support-runbooks",
+          "purpose": "Verify public support and incident playbooks keep reporting boundaries, maintainer triage, containment, recovery, and public follow-up guidance synchronized.",
+          "doc": "docs/support.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "diagnostics-redaction-contract",
           "script": "check:diagnostics-redaction",
           "purpose": "Verify shared diagnostic redaction for bearer tokens, GitHub tokens, provider keys, alert webhooks, AWS access-key ids, private keys, error lines, and diagnostic tails.",
