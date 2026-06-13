@@ -175,8 +175,8 @@ Before moving beyond command-only dogfood:
 - run `npm run alerts:operator -- -- --dry-run --force`;
 - enable `REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=true` once the job ledger and
   run-control ledger are live;
-- route scheduled alerts to an operator-owned SNS topic, webhook, or
-  equivalent private channel;
+- route scheduled alerts to an operator-owned SNS topic, SES sender/recipient
+  list, webhook, or equivalent private channel;
 - record delivery evidence in the operator runbook;
 - set alert thresholds below the hard budget caps so operators have time to
   react.

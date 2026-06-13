@@ -58,7 +58,8 @@ Ready for community review:
 - admin API diagnostic responses redact and bound custom loader output before
   job-event, runtime-status, or unavailable JSON reaches 6529.io;
 - repeatable Aurora ledger schema tooling;
-- example AWS IAM/OIDC templates for least-privilege Data API and SNS access;
+- example AWS IAM/OIDC templates for least-privilege Data API, SNS, and SES
+  access;
 - reviewed GitHub App manifest template for production registration;
 - GitHub App manifest renderer for host-specific validation and local
   registration-form generation;
@@ -81,9 +82,9 @@ Ready for community review:
 - production cutover checklist and validator for go/no-go tracking before live
   dogfood traffic;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
-  stdout, webhook, and SNS delivery;
+  stdout, webhook, SNS, and SES email delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe
-  custom keys before dry-run, stdout, webhook, or SNS output;
+  custom keys before dry-run, stdout, webhook, SNS, or SES output;
 - no-network production preflight command;
 - release-time preflight fixtures for central App server and worker
   configuration postures;
@@ -124,7 +125,7 @@ Not yet v1-ready:
 - production worker deployment execution;
 - 6529.io public dashboard merge and production routing;
 - 6529.io private admin UI and HMAC bridge wiring;
-- production SNS/webhook alert routing;
+- production SNS, SES, or webhook alert routing;
 - dogfood on one or two target repositories;
 - release tags and compatibility guarantees.
 

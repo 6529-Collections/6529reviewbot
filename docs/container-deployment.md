@@ -77,7 +77,7 @@ image, or log:
 - GitHub webhook secrets;
 - provider API keys;
 - AWS role, Data API, database, or secret values;
-- alert webhooks or SNS destination details;
+- alert webhooks, SNS destination details, or SES sender/recipient details;
 - admin-auth shared or HMAC secrets.
 
 Use `REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64` rather than a raw multiline key
@@ -141,8 +141,8 @@ Use a hosting platform that can provide:
 - IAM roles or OIDC for AWS access.
 
 For AWS, ECS Fargate or App Runner are both reasonable starting points. Keep
-Aurora, Secrets Manager, SNS, and registry identifiers in private operator
-runbooks rather than public release notes.
+Aurora, Secrets Manager, SNS, SES, and registry identifiers in private
+operator runbooks rather than public release notes.
 
 ## Verification
 

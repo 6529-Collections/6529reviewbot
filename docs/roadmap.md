@@ -344,7 +344,8 @@ Completed in `6529reviewbot`:
 - worker capacity and backpressure runbook for conservative live scaling;
 - reusable workflow compatibility docs and explicit provider-secret mapping;
 - 6529.io admin auth bridge contract;
-- alerting and scheduled operator checks for spend and job health.
+- alerting and scheduled operator checks for spend and job health, with
+  stdout, webhook, SNS, and SES email delivery.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - production deployment runbook and central worker installation-token flow.
@@ -385,7 +386,7 @@ Completed in `6529reviewbot`:
 - live run-control ledger claim, duplicate-denial, and completion-update path
   verified with a synthetic dogfood claim.
 - dry-run/apply model pricing tooling.
-- example AWS IAM/OIDC templates for central Data API and SNS access.
+- example AWS IAM/OIDC templates for central Data API, SNS, and SES access.
 - ledger schema re-apply support for managed daily aggregate views.
 - additive ledger table migrations for older dogfood databases.
 - budget-scope constraint refreshes for older dogfood databases.

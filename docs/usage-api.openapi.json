@@ -1121,11 +1121,11 @@
       },
       "AlertNotifierStatus": {
         "type": "object",
-        "required": ["mode", "failClosed", "webhookConfigured", "webhookTimeoutMs", "snsTopicConfigured", "snsRegion", "snsSubjectConfigured", "snsTimeoutMs"],
+        "required": ["mode", "failClosed", "webhookConfigured", "webhookTimeoutMs", "snsTopicConfigured", "snsRegion", "snsSubjectConfigured", "snsTimeoutMs", "sesFromConfigured", "sesRecipientCount", "sesRegion", "sesSubjectConfigured", "sesTimeoutMs"],
         "properties": {
           "mode": {
             "type": "string",
-            "enum": ["none", "stdout", "webhook", "sns"]
+            "enum": ["none", "stdout", "webhook", "sns", "ses"]
           },
           "failClosed": {
             "type": "boolean"
@@ -1146,6 +1146,21 @@
             "type": "boolean"
           },
           "snsTimeoutMs": {
+            "type": "integer"
+          },
+          "sesFromConfigured": {
+            "type": "boolean"
+          },
+          "sesRecipientCount": {
+            "type": "integer"
+          },
+          "sesRegion": {
+            "type": "string"
+          },
+          "sesSubjectConfigured": {
+            "type": "boolean"
+          },
+          "sesTimeoutMs": {
             "type": "integer"
           }
         },

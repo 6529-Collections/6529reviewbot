@@ -432,7 +432,7 @@ See [admin-auth-bridge.md](admin-auth-bridge.md).
 
 ```text
 REVIEWBOT_ALERTS_ENABLED=false
-REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
+REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns|ses
 REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED=false
 REVIEWBOT_ALERTS_WEBHOOK_URL=
 REVIEWBOT_ALERTS_WEBHOOK_TIMEOUT_MS=10000
@@ -440,6 +440,11 @@ REVIEWBOT_ALERTS_SNS_TOPIC_ARN=
 REVIEWBOT_ALERTS_SNS_REGION=
 REVIEWBOT_ALERTS_SNS_SUBJECT="6529bot spend alert"
 REVIEWBOT_ALERTS_SNS_TIMEOUT_MS=10000
+REVIEWBOT_ALERTS_SES_FROM=
+REVIEWBOT_ALERTS_SES_TO=
+REVIEWBOT_ALERTS_SES_REGION=
+REVIEWBOT_ALERTS_SES_SUBJECT="6529bot operator alert"
+REVIEWBOT_ALERTS_SES_TIMEOUT_MS=10000
 REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
 REVIEWBOT_ALERTS_BUDGET_CRITICAL_PERCENT=100
 REVIEWBOT_ALERTS_SPIKE_WINDOW_HOURS=24
@@ -460,7 +465,7 @@ REVIEWBOT_ALERTS_MAX_EVENTS=5000
 
 Scheduled operator checks read the usage/job ledgers, evaluate budget
 utilization, spend spikes, failed jobs, and stale run-control claims, and send
-alerts through stdout, a webhook, or SNS. See
+alerts through stdout, a webhook, SNS, or SES email. See
 [alerting.md](alerting.md).
 
 ## Cost And Context Controls

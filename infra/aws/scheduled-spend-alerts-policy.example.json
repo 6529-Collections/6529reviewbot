@@ -24,6 +24,15 @@
         "sns:Publish"
       ],
       "Resource": "arn:aws:sns:<aws-region>:<aws-account-id>:<sns-topic-name>"
+    },
+    {
+      "Sid": "SendReviewbotSpendAlertEmails",
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "arn:aws:ses:<aws-region>:<aws-account-id>:identity/<ses-identity-name>"
     }
   ]
 }

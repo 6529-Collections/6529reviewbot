@@ -7,7 +7,7 @@ const path = require("path");
 const { awsCliBin, shouldUseShellForAwsCli } = require("./data-api.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 
-const NOTIFY_MODES = ["none", "stdout", "webhook", "sns"];
+const NOTIFY_MODES = ["none", "stdout", "webhook", "sns", "ses"];
 const ALERT_TEXT_MAX_CHARS = 1000;
 const ALERT_ARRAY_MAX_ITEMS = 100;
 const ALERT_OBJECT_MAX_KEYS = 100;
@@ -34,6 +34,15 @@ function alertNotifierSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_ALERTS_SNS_TIMEOUT_MS,
       10000,
       "REVIEWBOT_ALERTS_SNS_TIMEOUT_MS"
+    ),
+    sesRegion: env.REVIEWBOT_ALERTS_SES_REGION || env.REVIEW_USAGE_AWS_REGION || process.env.AWS_REGION || "us-east-1",
+    sesFrom: env.REVIEWBOT_ALERTS_SES_FROM || "",
+    sesTo: addressList(env.REVIEWBOT_ALERTS_SES_TO),
+    sesSubject: env.REVIEWBOT_ALERTS_SES_SUBJECT || "6529bot operator alert",
+    sesTimeoutMs: positiveInt(
+      env.REVIEWBOT_ALERTS_SES_TIMEOUT_MS,
+      10000,
+      "REVIEWBOT_ALERTS_SES_TIMEOUT_MS"
     ),
     awsCliBin: env.AWS_CLI_BIN || awsCliBin(),
     failClosed: parseBool(env.REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED || "false"),
@@ -69,6 +78,10 @@ async function sendAlerts(alerts, options = {}) {
     }
     if (settings.mode === "sns") {
       sendSnsAlert(payload, settings, options);
+      return { ok: true, delivered: true, mode: settings.mode, alertCount: normalizedAlerts.length };
+    }
+    if (settings.mode === "ses") {
+      sendSesAlert(payload, settings, options);
       return { ok: true, delivered: true, mode: settings.mode, alertCount: normalizedAlerts.length };
     }
   } catch (error) {
@@ -206,6 +219,68 @@ function sendSnsAlert(payload, settings, options = {}) {
   }
 }
 
+function sendSesAlert(payload, settings, options = {}) {
+  if (!settings.sesFrom) {
+    throw new Error("REVIEWBOT_ALERTS_SES_FROM is required for SES alerts.");
+  }
+  if (!settings.sesTo.length) {
+    throw new Error("REVIEWBOT_ALERTS_SES_TO is required for SES alerts.");
+  }
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-alerts-ses-"));
+  const destinationPath = path.join(tmpDir, "destination.json");
+  const contentPath = path.join(tmpDir, "content.json");
+  try {
+    fs.writeFileSync(
+      destinationPath,
+      JSON.stringify({ ToAddresses: settings.sesTo }, null, 2),
+      "utf8"
+    );
+    fs.writeFileSync(
+      contentPath,
+      JSON.stringify({
+        Simple: {
+          Subject: {
+            Data: truncate(settings.sesSubject, 100),
+            Charset: "UTF-8",
+          },
+          Body: {
+            Text: {
+              Data: JSON.stringify(payload, null, 2),
+              Charset: "UTF-8",
+            },
+          },
+        },
+      }, null, 2),
+      "utf8"
+    );
+    const runner = options.execFileSync || execFileSync;
+    runner(
+      settings.awsCliBin,
+      [
+        "sesv2",
+        "send-email",
+        "--region",
+        settings.sesRegion,
+        "--from-email-address",
+        settings.sesFrom,
+        "--destination",
+        `file://${destinationPath}`,
+        "--content",
+        `file://${contentPath}`,
+      ],
+      {
+        encoding: "utf8",
+        maxBuffer: 4 * 1024 * 1024,
+        stdio: ["ignore", "pipe", "pipe"],
+        shell: shouldShellForAwsCliBin(settings.awsCliBin),
+        timeout: settings.sesTimeoutMs,
+      }
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+}
+
 function highestSeverity(alerts) {
   return alerts.some((alert) => alert.severity === "critical") ? "critical" : "warning";
 }
@@ -237,6 +312,13 @@ function positiveInt(value, fallback, name) {
   return parsed;
 }
 
+function addressList(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function parseBool(value) {
   return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }
@@ -252,5 +334,6 @@ module.exports = {
   sanitizeAlerts,
   sanitizeAlertValue,
   sendAlerts,
+  sendSesAlert,
   shouldShellForAwsCliBin,
 };

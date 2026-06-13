@@ -136,7 +136,8 @@ the specific caller repositories that should be allowed to write usage events.
 Start from [AWS IAM Templates](../infra/aws/README.md) when creating OIDC
 trust policies and Data API identity policies. The templates are examples, not
 live infrastructure, and must be reviewed with the final account, region,
-repository, branch, cluster, secret, and SNS topic values before applying.
+repository, branch, cluster, secret, SNS topic, and SES identity values before
+applying.
 
 ## Example Queries
 

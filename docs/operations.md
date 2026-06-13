@@ -33,7 +33,7 @@ ls infra/aws
 ```
 
 Render final policies with real account, region, repository, branch, cluster,
-secret, and SNS values only in the operator workspace.
+secret, SNS, and SES values only in the operator workspace.
 
 Preview the expected ledger schema:
 
@@ -218,8 +218,9 @@ If alerts did not send, check:
 
 - `REVIEWBOT_ALERTS_ENABLED`;
 - `REVIEWBOT_ALERTS_NOTIFY_MODE`;
-- `REVIEWBOT_ALERTS_WEBHOOK_URL` or `REVIEWBOT_ALERTS_SNS_TOPIC_ARN`;
-- AWS OIDC credentials for SNS mode;
+- `REVIEWBOT_ALERTS_WEBHOOK_URL`, `REVIEWBOT_ALERTS_SNS_TOPIC_ARN`, or
+  SES sender/recipient settings for `ses` mode;
+- AWS OIDC credentials for SNS or SES mode;
 - whether `REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED` should fail the scheduled job.
 
 ## If Workers Fail Or Claims Look Stuck

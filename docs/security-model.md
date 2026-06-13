@@ -123,7 +123,7 @@ runtime-status responses sanitize loader output again before returning JSON:
 diagnostic strings are bounded and redacted, job-event metadata is limited to
 safe-keyed scalar values, and unsafe custom diagnostic nesting is omitted.
 Scheduled alert payloads are sanitized at the notifier boundary before dry-run
-summaries, stdout, webhook, or SNS delivery so secret-shaped scope values,
+summaries, stdout, webhook, SNS, or SES delivery so secret-shaped scope values,
 titles, messages, job ids, or custom keys do not leave the bot unchanged.
 Redaction is a guardrail, not permission to publish verbose worker diagnostics
 or store sensitive details in operator notes.
@@ -181,7 +181,7 @@ it from browser bundles or any runtime where the HMAC secret would be exposed.
 
 Scheduled operator alerts can include private repo names, requestors,
 providers, models, current spend, job ids, and failure or stale-claim timing
-summaries. Route webhook and SNS notifications through private operator
+summaries. Route webhook, SNS, and SES notifications through private operator
 channels unless the deployment explicitly treats the data as public. Alert
 delivery secrets belong to the central bot environment, not target
 repositories.
