@@ -123,6 +123,8 @@ Ready for community review:
 - review-workflow kind checker that keeps review-kind constants, worker bins,
   workflow dispatch choices, reusable workflow defaults, and workflow routing
   synchronized;
+- model-default checker that keeps the model catalog, reusable workflow
+  fallbacks, provider-default docs, and conservative starter lanes synchronized;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -344,6 +346,9 @@ least-privilege.
 `npm run check:review-workflows` is included in `npm run release:check` and
 verifies review-kind constants, worker bins, central workflow dispatch
 options, reusable workflow defaults, and workflow routing stay aligned.
+`npm run check:model-defaults` is included in `npm run release:check` and
+verifies model-catalog defaults, reusable workflow fallbacks,
+provider-default docs, and conservative starter lanes stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

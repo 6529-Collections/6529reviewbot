@@ -125,6 +125,9 @@ After stabilization:
 - `npm run check:review-workflows` confirms review-kind constants stay
   synchronized with worker bins, workflow dispatch choices, reusable workflow
   defaults, and workflow routing
+- `npm run check:model-defaults` confirms model-catalog defaults stay
+  synchronized with reusable workflow fallbacks, provider-default docs, and
+  conservative starter lanes
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
