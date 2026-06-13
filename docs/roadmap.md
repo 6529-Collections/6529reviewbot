@@ -369,6 +369,8 @@ Completed in `6529reviewbot`:
   workspace parsing before first traffic.
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
+- command-only `.github/6529bot.yml` config in this repository for eventual
+  self-dogfood once the production App is installed.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

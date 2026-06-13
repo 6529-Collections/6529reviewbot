@@ -82,6 +82,8 @@ stabilized.
   capturing public evidence from commands that include private workspace paths.
 - Dogfood target packet CLI validates target-repo config PR posture before
   command-only or limited-initial dogfood rollout.
+- Added a command-only `.github/6529bot.yml` config so this repository can be
+  used as a first trusted-maintainer dogfood target after App installation.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.

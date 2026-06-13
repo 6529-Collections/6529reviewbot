@@ -249,11 +249,12 @@ merged PRs.
   merge.
 - Dogfood readiness silent-capture PR: merged as PR #144, merge commit
   `a64c022`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/dogfood-target-packet`.
-- Current local changes: adding `npm run dogfood:target`, a public-safe
-  target-repository config PR packet/checker for command-only and
-  limited-initial dogfood rollout, with docs, release-map coverage, release
-  checks, and smoke tests.
+- Dogfood target packet PR: merged as PR #145, merge commit `d0ad359`; CI and
+  Dependency Review completed successfully before merge.
+- Current branch: `codex/self-dogfood-config`.
+- Current local changes: adding a command-only `.github/6529bot.yml` for this
+  repository, plus docs and release checks that validate the self-dogfood
+  config before the production App is installed.
 
 ## Key Decisions
 
@@ -558,6 +559,10 @@ merged PRs.
 - Target-repository dogfood should have a public-safe packet before the target
   config PR opens. The packet should validate the config posture and provide a
   PR checklist without reading target repo code or private operator evidence.
+- The bot repo itself can safely carry a command-only target config. It should
+  enable trusted maintainer comment commands only, leaving automatic initial
+  and follow-up reviews disabled until production App, worker, budget, ledger,
+  run-control, alert, and private dogfood status evidence is ready.
 
 ## Constraints
 
@@ -571,7 +576,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the `dogfood:target` packet/checker.
+2. Validate, publish, and merge the self-dogfood command-only config.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

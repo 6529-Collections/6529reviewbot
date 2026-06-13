@@ -99,6 +99,8 @@ Ready for community review:
   validation tooling;
 - dogfood target packet command for validating the target-repo config PR
   posture before opening or updating a target repository PR;
+- command-only `.github/6529bot.yml` config in this repository for eventual
+  self-dogfood with trusted maintainer comment commands only;
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;

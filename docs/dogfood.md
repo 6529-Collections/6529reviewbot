@@ -36,6 +36,10 @@ this repository into the target repository as `.github/6529bot.yml`:
 cp /path/to/6529reviewbot/templates/dogfood-command-only-config.yml .github/6529bot.yml
 ```
 
+This repository also carries its own command-only `.github/6529bot.yml` so it
+can become a first target when the production App is installed. It does not
+enable automatic initial or follow-up reviews.
+
 Move to limited initial PR reviews after webhook delivery, admission, budget,
 usage, and alerts are verified:
 
@@ -47,6 +51,7 @@ Validate the file from this repository before opening the target-repo PR:
 
 ```bash
 npm run dogfood:target
+npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready
 npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run validate:repo-config -- templates/dogfood-command-only-config.yml
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
