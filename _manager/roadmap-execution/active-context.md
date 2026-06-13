@@ -615,6 +615,10 @@ merged PRs.
 - The generated private operator workspace README should include the final
   promotion and go-live packet commands so operators do not have to reconstruct
   the sequence from separate docs.
+- Public operator docs and PR review prompts should keep `dogfood:go-live` in
+  the same evidence chain as release-candidate bundles, dogfood promotion, and
+  production cutover so future release changes do not drift from the final
+  traffic gate.
 
 ## Constraints
 
@@ -628,9 +632,9 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge operator workspace go-live guidance.
-3. Keep release docs, runbooks, and manager memory aligned after each merged
-   slice.
+2. Validate, publish, and merge the go-live documentation sweep.
+3. Continue hardening release and dogfood runbooks, checks, and operator
+   guardrails in focused PRs.
 
 ## Open Risks
 

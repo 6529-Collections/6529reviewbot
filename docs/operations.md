@@ -105,13 +105,15 @@ npm run dogfood:readiness
 npm run dogfood:promotion
 npm run dogfood:readiness -- -- --preflight
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Use `npm --silent run` when copying public evidence from commands containing
-private workspace paths. The promotion and readiness reports are redacted, but
-normal npm output can echo the full command line before the script runs.
+private workspace paths. The promotion, go-live, and readiness reports are
+redacted, but normal npm output can echo the full command line before the
+script runs.
 
 Replay a saved webhook payload without dispatching workers:
 

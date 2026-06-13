@@ -597,6 +597,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Dogfood runbook](docs/dogfood.md)
 - [Dogfood readiness](docs/dogfood-readiness.md)
 - [Dogfood promotion packet](docs/dogfood-promotion.md)
+- [Dogfood go-live packet](docs/dogfood-go-live.md)
 - [Dogfood status](docs/dogfood-status.md)
 - [GitHub App](docs/github-app.md)
 - [GitHub App registration](docs/github-app-registration.md)

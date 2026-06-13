@@ -324,6 +324,10 @@ npm --silent run dogfood:promotion -- -- \
   --operator-workspace <private-workspace-dir> \
   --strict-preflight \
   --require-ready
+npm --silent run dogfood:go-live -- -- \
+  --operator-workspace <private-workspace-dir> \
+  --strict-preflight \
+  --require-ready
 ```
 
 After the config merges, trigger a trusted maintainer command:

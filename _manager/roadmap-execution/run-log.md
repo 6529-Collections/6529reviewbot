@@ -2277,3 +2277,18 @@
   - `npm run check:public-artifacts` passed with 106 files checked;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #157 as `39b849e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/go-live-doc-sweep` increment:
+  - add `dogfood:go-live` to operator runbook command sequences that already
+    require dogfood promotion and readiness before live traffic;
+  - keep the v0 release plan, deployment checklist, install flow, README links,
+    PR template, roadmap, changelog, and manager memory aligned with the final
+    go-live packet evidence chain.
+- Local validation for `codex/go-live-doc-sweep`:
+  - `npm run check:docs` passed with 63 files checked;
+  - `npm run check:public-artifacts` passed with 106 files checked;
+  - `git diff --check` passed;
+  - `npm run release:check` passed and kept 20 v0 release gates plus the
+    release operations map valid;
+  - `npm run check` passed with 95 CommonJS files.

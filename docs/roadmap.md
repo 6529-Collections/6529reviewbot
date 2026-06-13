@@ -269,6 +269,9 @@ Build the operator experience:
   the release decision also covers live dogfood or production traffic.
 - dogfood promotion packet required by both v0 release gates and production
   cutover before first live dogfood traffic.
+- dogfood go-live packet included in operator docs and PR review prompts so
+  release-candidate, promotion, cutover, and workspace evidence stay aligned
+  before live dogfood traffic.
 
 ### 9. Community Release
 
