@@ -73,6 +73,9 @@ stabilized.
 - Operator workspace bootstrap creates private release status and evidence
   skeletons in one operator-owned directory, with check mode for validating the
   workspace as a set and generated guidance for promotion/go-live packets.
+- Operator evidence contract checker verifies section readiness semantics,
+  complete-section evidence requirements, deferred/blocked notes, public
+  summary redaction, source invariants, and docs.
 - Release-candidate bundles can read standard private operator workspace files
   with one `--operator-workspace` flag.
 - Release-candidate bundles redact private operator workspace paths in JSON and

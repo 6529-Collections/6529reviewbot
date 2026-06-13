@@ -68,6 +68,7 @@ const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const securityReviewStatusContractCheck = require("./check-security-review-status-contract.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
+const operatorEvidenceContractCheck = require("./check-operator-evidence-contract.cjs");
 const operatorWorkspace = require("../src/operator-workspace.cjs");
 const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
 const operatorWorkspaceContractCheck = require("./check-operator-workspace-contract.cjs");
@@ -5066,6 +5067,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /operator workspace contract check found/
+  );
+  const operatorEvidenceContractResult =
+    operatorEvidenceContractCheck.checkOperatorEvidenceContract();
+  assert.equal(operatorEvidenceContractResult.cliCases, 3);
+  assert.equal(operatorEvidenceContractResult.evidenceCases, 6);
+  assert.throws(
+    () =>
+      operatorEvidenceContractCheck.checkOperatorEvidenceContract({
+        quiet: true,
+        docTexts: {
+          "docs/operator-evidence-template.md": "# Operator Evidence\n",
+        },
+      }),
+    /operator evidence contract check found/
   );
   const productionCutoverContractResult =
     productionCutoverContractCheck.checkProductionCutoverContract();

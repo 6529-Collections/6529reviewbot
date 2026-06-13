@@ -22,6 +22,9 @@ release decision depends on a private manual security review status file.
 Run the security review status checker after changing manual review readiness
 behavior, deferral semantics, or public security-review Markdown because
 release-candidate bundles can include those counts and deferrals.
+Run the operator evidence checker after changing evidence readiness behavior,
+section semantics, or public evidence Markdown because release-candidate
+bundles always include operator-evidence counts and redacted sections.
 
 ## Command
 

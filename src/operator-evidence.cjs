@@ -279,7 +279,9 @@ function publicEvidenceText(value) {
   for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
     text = text.replace(pattern, replacement);
   }
-  return text.slice(0, OPERATOR_EVIDENCE_TEXT_MAX_CHARS);
+  return text
+    .slice(0, OPERATOR_EVIDENCE_TEXT_MAX_CHARS)
+    .replace(/\r?\n/g, " ");
 }
 
 function isValidatedOperatorEvidence(value) {

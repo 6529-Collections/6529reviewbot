@@ -3192,3 +3192,26 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dogfood status validation and
     75 mapped release-operation tools.
+- Merged `6529reviewbot` PR #200 as `b6bf6d6`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-evidence-contract` increment:
+  - add `scripts/check-operator-evidence-contract.cjs` and
+    `npm run check:operator-evidence`;
+  - harden operator evidence public summaries so redacted text also flattens
+    embedded newlines before Markdown/JSON publication;
+  - validate CLI parsing, pending skeletons, complete readiness, deferral
+    semantics, required evidence rules, unknown sections, Markdown/JSON
+    redaction, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/operator-evidence-contract`:
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked.
+  - `npm run check:release-operations` passed with 76 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 134 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator evidence validation
+    and 76 mapped release-operation tools.

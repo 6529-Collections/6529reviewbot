@@ -307,6 +307,10 @@ Use `npm run operator:evidence -- -- --file <private-evidence-file> --summary` t
 validate a structured private evidence file and render a redacted public
 summary. `operator:evidence --require-ready` is useful for the evidence file
 itself: it fails when production evidence sections remain pending or blocked.
+Run `npm run check:operator-evidence` after changing the evidence schema,
+renderer, or release docs. The operator evidence contract keeps section
+readiness, required evidence, deferred/blocked notes, public-summary
+redaction, and docs synchronized.
 Use [Release Candidate Bundle](release-candidate.md) to combine release-gate
 counts, missing status ids, operator-evidence counts, redacted operator
 sections, git metadata, and no-network preflight into one public-safe release
@@ -481,6 +485,9 @@ examples stay aligned.
 verifies operator workspace creation, check-mode readiness failures, private
 path redaction, Markdown sanitization, source invariants, and docs stay
 aligned.
+`npm run check:operator-evidence` is included in `npm run release:check` and
+verifies operator evidence sections, readiness semantics, public-summary
+redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, deferral semantics,
 Markdown redaction, source invariants, and docs stay aligned.
