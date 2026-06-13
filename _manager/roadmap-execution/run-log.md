@@ -2717,3 +2717,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including admission policy validation and
     53 mapped release-operation tools.
+- Merged `6529reviewbot` PR #179 as `be83540`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/repository-config-boundary-contract` increment:
+  - add `scripts/check-repository-config-boundary.cjs` and
+    `npm run check:repository-config-boundary`;
+  - validate default repository config paths, optional-by-default loading,
+    unsafe path rejection, and base-ref-over-head loading;
+  - validate that repository config intersects central provider/model lanes,
+    cannot raise max jobs, cannot loosen admission, cannot raise budget caps,
+    cannot lower default estimated cost, and can still tighten policy;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/repository-config-boundary-contract`:
+  - `npm run check:repository-config-boundary` passed with 6 paths, 5 boundary
+    checks, and 2 docs checked;
+  - `npm run check:release-operations` passed with 54 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 112 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including repository config boundary
+    validation and 54 mapped release-operation tools.

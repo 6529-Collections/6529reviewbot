@@ -133,6 +133,9 @@ After stabilization:
 - `npm run check:admission-policy` confirms trusted-actor admission defaults,
   repo visibility modes, draft handling, trusted permission levels, public
   examples, and admission docs stay synchronized
+- `npm run check:repository-config-boundary` confirms repository config remains
+  a narrowing layer for lanes, max jobs, admission, budget caps, default cost,
+  and base-ref loading
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

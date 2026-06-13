@@ -87,6 +87,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "repository-config-boundary-contract",
+          "script": "check:repository-config-boundary",
+          "purpose": "Verify repository config remains a narrowing layer for lanes, max jobs, admission, budget caps, default cost, and base-ref loading.",
+          "doc": "docs/repository-config.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",
