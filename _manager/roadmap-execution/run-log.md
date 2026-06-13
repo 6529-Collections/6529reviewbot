@@ -3405,3 +3405,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including support runbooks validation
     and 85 mapped release-operation tools.
+- Merged `6529reviewbot` PR #209 as `c8bfea4`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/worker-capacity-contract` increment:
+  - add `scripts/check-worker-capacity-contract.cjs` and
+    `npm run check:worker-capacity`;
+  - validate worker-capacity section order, starting caps, scale-up rules,
+    backpressure controls, stuck-job triage, provider limits, alerting,
+    public/private evidence, release blockers, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/worker-capacity-contract` so far:
+  - `npm run check:worker-capacity` passed with 7 capacity cases and 8 docs
+    checked;
+  - `npm run check:release-operations` passed with 86 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check` passed with 143 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including worker capacity validation and
+    86 mapped release-operation tools.

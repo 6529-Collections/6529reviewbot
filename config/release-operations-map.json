@@ -129,6 +129,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "worker-capacity-contract",
+          "script": "check:worker-capacity",
+          "purpose": "Verify worker capacity and backpressure guidance keeps starting caps, scale-up rules, stuck-job triage, provider limits, alert evidence, and release blockers synchronized.",
+          "doc": "docs/worker-capacity.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "admin-auth-contract",
           "script": "check:admin-auth",
           "purpose": "Verify private admin auth modes, shared-secret behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public env templates stay synchronized.",

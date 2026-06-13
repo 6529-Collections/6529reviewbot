@@ -43,6 +43,7 @@ const dogfoodStatus = require("../src/dogfood-status.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
 const dogfoodStatusContractCheck = require("./check-dogfood-status-contract.cjs");
 const diagnosticsRedactionCheck = require("./check-diagnostics-redaction.cjs");
+const workerCapacityContractCheck = require("./check-worker-capacity-contract.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -5286,8 +5287,21 @@ appServer.handleGitHubWebhook({
         docTexts: {
           "docs/support.md": "# Support\n",
         },
-      }),
+    }),
     /support runbooks contract check found/
+  );
+  const workerCapacityContractResult =
+    workerCapacityContractCheck.checkWorkerCapacityContract();
+  assert.equal(workerCapacityContractResult.capacityCases, 7);
+  assert.throws(
+    () =>
+      workerCapacityContractCheck.checkWorkerCapacityContract({
+        quiet: true,
+        docTexts: {
+          "docs/worker-capacity.md": "# Worker Capacity\n",
+        },
+      }),
+    /worker capacity contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

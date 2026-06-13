@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a worker capacity contract release check for starting caps, scale-up
+  rules, backpressure controls, stuck-job triage, provider limits, alert
+  evidence, and release blockers.
 - Added a support runbooks contract release check for public support,
   maintainer triage, incident containment, recovery, and sanitized public
   follow-up guidance.

@@ -7,6 +7,11 @@ The safe default is low throughput, explicit human triggers, and fast rollback.
 Scale only after comments, usage rows, run-control claims, and alerts are
 healthy at the previous level.
 
+Run `npm run check:worker-capacity` after edits. The worker capacity contract
+keeps starting caps, scale-up rules, backpressure controls, stuck-job triage,
+provider limits, alerting, evidence, and release-decision blockers
+synchronized with release checks.
+
 ## Capacity Layers
 
 Capacity is controlled at several layers. Treat them as cumulative, not
