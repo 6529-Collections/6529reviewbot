@@ -68,6 +68,7 @@
     "check:dogfood-promotion": "node scripts/check-dogfood-promotion-contract.cjs",
     "check:dogfood-go-live": "node scripts/check-dogfood-go-live-contract.cjs",
     "check:operator-workspace": "node scripts/check-operator-workspace-contract.cjs",
+    "check:production-cutover": "node scripts/check-production-cutover-contract.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
     "check:review-comment-format": "node scripts/check-review-comment-format.cjs",
     "check:admission-policy": "node scripts/check-admission-policy.cjs",

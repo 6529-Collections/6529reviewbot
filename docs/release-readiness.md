@@ -327,7 +327,12 @@ real status file stays in the private operator workspace:
 npm run production:cutover -- -- --init-status <operator-cutover-status-file>
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
+npm run check:production-cutover
 ```
+
+The production cutover contract keeps checklist/status readiness, complete
+evidence requirements, deferred item semantics, public Markdown redaction, and
+docs synchronized.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:
@@ -466,6 +471,9 @@ examples stay aligned.
 verifies operator workspace creation, check-mode readiness failures, private
 path redaction, Markdown sanitization, source invariants, and docs stay
 aligned.
+`npm run check:production-cutover` is included in `npm run release:check` and
+verifies production cutover checklist/status readiness, deferral semantics,
+Markdown redaction, source invariants, and docs stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

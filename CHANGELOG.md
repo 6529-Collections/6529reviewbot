@@ -148,6 +148,9 @@ stabilized.
 - Added an operator-workspace contract release check that validates workspace
   creation, check-mode readiness failures, private path markers, Markdown
   redaction, source invariants, and docs.
+- Added a production-cutover contract release check that validates checklist
+  and status readiness, deferral semantics, Markdown redaction, source
+  invariants, and docs.
 - Added a release-candidate contract release check that validates public bundle
   redaction, private workspace path markers, CLI defaults, source invariants,
   and docs.
