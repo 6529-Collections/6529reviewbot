@@ -124,6 +124,10 @@ parsing, docs, and env examples aligned.
 `npm run check:alerting-runbook` keeps the scheduled alert runner's
 no-provider behavior, private delivery routing, dogfood evidence, payload
 privacy, and central-workflow posture aligned.
+`npm run check:alert-delivery-plan` keeps the dry-run production alert
+delivery handoff aligned across reviewed webhook/SNS/SES mode, private channel
+label, dry-run alert evaluation, admin status verification, cutover evidence,
+and release-note commands.
 `npm run check:github-app-manifest` keeps the target GitHub App
 permissions/events, no-Actions-write boundary, private manifest conversion,
 redacted summaries, and docs aligned.
@@ -282,6 +286,10 @@ The local quality gate command inventory is:
 - `dashboard:deployment-plan` belongs to operator input preparation because
   6529.io origins, auth-check endpoints, wallet-config context, and private
   workspace paths can remain private until a reviewed release artifact
+  publishes a summary.
+- `alerts:delivery-plan` belongs to operator input preparation because alert
+  delivery modes, operator channel labels, webhook/SNS/SES destinations, and
+  admin status endpoints can remain private until a reviewed release artifact
   publishes a summary.
 - Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
   public-safe rehearsal before the production and dashboard deployment plans

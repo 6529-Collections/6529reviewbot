@@ -70,6 +70,7 @@ runNode("scripts/check-run-control-scopes.cjs");
 runNode("scripts/check-alert-dimensions.cjs");
 runNode("scripts/check-alert-notifier-modes.cjs");
 runNode("scripts/check-alerting-runbook-contract.cjs");
+runNode("scripts/check-alert-delivery-plan-contract.cjs");
 runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");
@@ -154,6 +155,7 @@ runNode("bin/production-cutover.cjs", [
   "--quiet",
 ]);
 runNode("bin/dashboard-deployment-plan.cjs", ["--json", "--quiet"]);
+runNode("bin/alert-delivery-plan.cjs", ["--json", "--quiet"]);
 runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
 runNode("bin/release-candidate.cjs", [
   "--dogfood-status-file",

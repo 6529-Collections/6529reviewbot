@@ -4024,3 +4024,31 @@
   - `npm test` passed;
   - `npm run release:check` passed, including v0 gate and production cutover
     contract validation for dashboard deployment-plan evidence drift.
+- Merged `6529reviewbot` PR #234 as `e85f434`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/alert-delivery-plan` increment:
+  - add `npm run alerts:delivery-plan` and `npm run check:alert-delivery-plan`
+    as a dry-run operator handoff before production webhook, SNS, or SES alert
+    routing is enabled;
+  - add release-operations map entries, public docs, release-readiness guidance,
+    smoke coverage, changelog, and durable manager memory so alert routing
+    evidence has the same reviewed plan shape as production/dashboard handoffs;
+  - keep live delivery destinations, AWS identifiers, raw alert payloads, and
+    private channel details in the private operator workspace.
+- Local validation for `codex/alert-delivery-plan` so far:
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 7 docs
+    checked;
+  - `npm run check:release-operations` passed with 7 phases and 109 tools;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #234,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `node bin/alert-delivery-plan.cjs --json --quiet` passed;
+  - `node bin/alert-delivery-plan.cjs --bot-origin https://reviewbot.example.com --operator-workspace operator-workspace --notify-mode ses --alert-channel operator-email --release 0.2.0 --require-ready --json --quiet`
+    passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including alert delivery plan contract
+    validation for 5 plan cases and 7 docs checked.

@@ -18,6 +18,17 @@ keeps runner behavior, configuration, delivery modes, scheduled workflow
 posture, dogfood verification, payload privacy, and public docs synchronized
 with release checks.
 
+Before enabling production webhook, SNS, or SES delivery, build the
+[alert delivery plan](alert-delivery-plan.md). It is a dry-run operator handoff
+that records the reviewed delivery mode, private channel label, dry-run alert
+evaluation, admin alert status check, cutover evidence, and release-note
+follow-up without sending alerts or reading live ledgers:
+
+```bash
+npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+npm run check:alert-delivery-plan
+```
+
 ## Runner
 
 Run locally or from a central workflow:

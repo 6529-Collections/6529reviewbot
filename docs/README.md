@@ -60,6 +60,8 @@ be linked here before they are considered release-ready.
 - [6529.io Admin Integration](6529-io-admin-integration.md): private dashboard
   wiring.
 - [Alerting](alerting.md): scheduled spend and job health notifications.
+- [Alert Delivery Plan](alert-delivery-plan.md): dry-run production alert
+  routing handoff for webhook, SNS, or SES delivery.
 
 ## Release And Dogfood
 

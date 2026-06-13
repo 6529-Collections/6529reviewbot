@@ -548,6 +548,9 @@ Completed in `6529reviewbot`:
 - dashboard deployment plan command for dry-run 6529.io dashboard handoff
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.
+- alert delivery plan command for dry-run production alert routing handoff
+  across reviewed webhook/SNS/SES mode, private channel label, dry-run alert
+  evaluation, admin status verification, cutover evidence, and release notes.
 - production cutover now includes an explicit dashboard deployment-plan
   evidence item before public/private dashboard route exposure.
 - generated operator workspace guidance now includes the production deployment
@@ -664,7 +667,8 @@ Completed in `6529reviewbot`:
 In progress in `6529reviewbot`:
 
 - production deployment execution support, dogfood operations, release
-  evidence collection, and dashboard production configuration.
+  evidence collection, dashboard production configuration, and production
+  alert routing evidence.
 
 Completed outside this repository:
 

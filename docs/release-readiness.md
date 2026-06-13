@@ -198,6 +198,10 @@ Ready for community review:
 - `npm run check:alerting-runbook` keeps [Alerting](alerting.md)
   synchronized with runner behavior, private delivery routing, dogfood
   evidence, payload privacy, and central scheduled workflow posture;
+- `npm run check:alert-delivery-plan` keeps the
+  [Alert Delivery Plan](alert-delivery-plan.md) synchronized with dry-run
+  production alert routing, reviewed delivery mode, private channel label,
+  admin status verification, cutover evidence, and release notes;
 - installation and onboarding guide for conservative central App dogfood;
 - `npm run check:install-guide` keeps [Installation And Onboarding](install.md)
   synchronized with the conservative dogfood path, GitHub App validation
@@ -632,6 +636,11 @@ examples stay aligned.
 `npm run check:alerting-runbook` is included in `npm run release:check` and
 verifies the scheduled alert runner, private notification routing, dogfood
 evidence, payload privacy, and central workflow posture stay aligned.
+`npm run check:alert-delivery-plan` is included in `npm run release:check` and
+verifies the alert delivery plan remains dry-run, requires explicit production
+bot origin, private operator workspace, webhook/SNS/SES delivery mode, and
+operator channel inputs in ready mode, and renders alert evaluation, admin
+status, cutover evidence, and release-note commands without sending alerts.
 `npm run check:operator-workspace` is included in `npm run release:check` and
 verifies operator workspace creation, check-mode readiness failures, private
 path redaction, generated README deployment handoff guidance, Markdown

@@ -17,6 +17,7 @@ const admissionPolicyCheck = require("./check-admission-policy.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
 const alertingRunbookContractCheck = require("./check-alerting-runbook-contract.cjs");
+const alertDeliveryPlanContractCheck = require("./check-alert-delivery-plan-contract.cjs");
 const alertNotifierModesCheck = require("./check-alert-notifier-modes.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
 const alertStatus = require("../src/alert-status.cjs");
@@ -96,6 +97,8 @@ const productionCutoverCli = require("../bin/production-cutover.cjs");
 const productionCutoverContractCheck = require("./check-production-cutover-contract.cjs");
 const productionDeploymentPlanContractCheck = require("./check-production-deployment-plan-contract.cjs");
 const dashboardDeploymentPlanContractCheck = require("./check-dashboard-deployment-plan-contract.cjs");
+const alertDeliveryPlan = require("../src/alert-delivery-plan.cjs");
+const alertDeliveryPlanCli = require("../bin/alert-delivery-plan.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
@@ -5174,6 +5177,46 @@ appServer.handleGitHubWebhook({
         },
       }),
     /dashboard deployment plan contract check found/
+  );
+  const alertDeliveryPlanContractResult =
+    alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract();
+  assert.equal(alertDeliveryPlanContractResult.planCases, 5);
+  assert.equal(alertDeliveryPlanContractResult.docs, 7);
+  assert.throws(
+    () =>
+      alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract({
+        quiet: true,
+        docTexts: {
+          "docs/alert-delivery-plan.md": "# Alert Delivery Plan\n",
+        },
+      }),
+    /alert delivery plan contract check found/
+  );
+  const readyAlertDeliveryPlan = alertDeliveryPlanCli.main([
+    "--bot-origin",
+    "https://reviewbot.example.com",
+    "--operator-workspace",
+    "operator-workspace",
+    "--notify-mode",
+    "webhook",
+    "--alert-channel",
+    "operator-webhook",
+    "--release",
+    "v0.2.0",
+    "--require-ready",
+    "--quiet",
+  ], {
+    noExitCode: true,
+    now: new Date("2026-06-13T00:00:00.000Z"),
+  });
+  assert.equal(readyAlertDeliveryPlan.ready, true);
+  assert.match(
+    alertDeliveryPlan.formatAlertDeliveryPlanMarkdown(readyAlertDeliveryPlan),
+    /Alert Delivery Plan/
+  );
+  assert.throws(
+    () => alertDeliveryPlan.normalizeNotifyMode("pager"),
+    /must be one of/
   );
   const securityReviewStatusContractResult =
     securityReviewStatusContractCheck.checkSecurityReviewStatusContract();

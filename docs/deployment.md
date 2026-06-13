@@ -23,6 +23,14 @@ merged, use the [dashboard deployment plan](dashboard-deployment-plan.md):
 npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
 ```
 
+For production alert routing, use the
+[alert delivery plan](alert-delivery-plan.md) before enabling webhook, SNS, or
+SES notifications from the operator environment:
+
+```bash
+npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+```
+
 Run `npm run check:deployment-runbook` after changing this document. The
 deployment runbook contract keeps GitHub App registration, central runtime,
 worker dispatch, 6529.io wiring, verification, and rollback guidance aligned
