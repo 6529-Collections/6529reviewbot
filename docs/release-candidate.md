@@ -126,6 +126,19 @@ The bundle reports external private file paths as `[external-path-set]`. Keep
 the source operator evidence and release-gate status files in the private
 operator runbook, not in this public repository.
 
+Run the release-candidate contract check after changing bundle formatting,
+operator workspace mapping, preflight summaries, or release docs:
+
+```bash
+npm run check:release-candidate
+```
+
+The release-candidate contract check verifies redaction of common secret,
+provider-key, alert-webhook, AWS ARN, and AWS account-id shapes. It also keeps
+private workspace paths rendered as `[operator-workspace]`, external private
+paths rendered as `[external-path-set]`, CLI workspace defaults, source
+invariants, and the public docs synchronized.
+
 ## What It Includes
 
 - package name and version;

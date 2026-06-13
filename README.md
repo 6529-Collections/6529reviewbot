@@ -176,6 +176,7 @@ npm run check:container-image
 npm run check:public-artifacts
 npm run check:preflight
 npm run check:preflight-contract
+npm run check:release-candidate
 npm run check:release-notes
 npm run check:self-dogfood-replay
 npm test

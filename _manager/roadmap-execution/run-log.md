@@ -2984,3 +2984,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including webhook-replay validation and
     66 mapped release-operation tools.
+- Merged `6529reviewbot` PR #191 as `ed12d82`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-candidate-contract` increment:
+  - add `scripts/check-release-candidate-contract.cjs` and
+    `npm run check:release-candidate`;
+  - validate public text redaction, private operator workspace path markers,
+    external private path markers, preflight summary redaction, Markdown
+    bundle redaction, CLI workspace defaults, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/release-candidate-contract`:
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-operations` passed with 67 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 125 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including release-candidate validation and
+    67 mapped release-operation tools.
