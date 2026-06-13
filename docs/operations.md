@@ -14,6 +14,7 @@ security-review, cutover, or release-gate evidence:
 
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
+npm run operator:workspace -- -- --dir <private-workspace-dir> --check
 ```
 
 Validate the configured runtime without network calls:

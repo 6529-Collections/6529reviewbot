@@ -195,6 +195,7 @@ status and evidence skeletons in one operator-owned directory:
 
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
+npm run operator:workspace -- -- --dir <private-workspace-dir> --check
 ```
 
 Use [Security Review Status](security-review-status.md) to track manual

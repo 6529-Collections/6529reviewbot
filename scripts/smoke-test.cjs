@@ -1568,6 +1568,7 @@ const workspace = operatorWorkspace.createOperatorWorkspace({
 assert.equal(workspace.files.length, 6);
 assert.equal(workspace.summaries.releaseGates.pending, 19);
 assert.equal(workspace.summaries.operatorEvidence.pending, 9);
+assert.equal(workspace.ready, false);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "operator-evidence.json")), true);
 assert.match(
@@ -1577,6 +1578,13 @@ assert.match(
 assert.equal(
   operatorWorkspace.publicOperatorWorkspaceSummary(workspace).directory,
   "[operator-workspace]"
+);
+const checkedWorkspace = operatorWorkspace.checkOperatorWorkspace({ directory: operatorWorkspaceDir });
+assert.equal(checkedWorkspace.ready, false);
+assert.equal(checkedWorkspace.summaries.securityReview.pending, 33);
+assert.throws(
+  () => operatorWorkspace.checkOperatorWorkspace({ directory: operatorWorkspaceDir, requireReady: true }),
+  /release gates are not ready/
 );
 assert.throws(
   () =>
@@ -1612,6 +1620,7 @@ assert.deepEqual(
   ]),
   {
     allowRepoDir: false,
+    check: false,
     commit: "abc123",
     date: "2026-06-12",
     directory: "private",
@@ -1623,8 +1632,17 @@ assert.deepEqual(
     publicSummaryLocation: "release PR",
     quiet: true,
     release: "v0.1.0",
+    requireReady: false,
     showPaths: true,
   }
+);
+assert.equal(
+  operatorWorkspaceCli.main(["--dir", operatorWorkspaceDir, "--check", "--json", "--quiet"]).ready,
+  false
+);
+assert.throws(
+  () => operatorWorkspaceCli.main(["--dir", operatorWorkspaceDir, "--require-ready", "--quiet"]),
+  /requires --check/
 );
 const productionCutoverChecklist = productionCutover.loadProductionCutoverChecklist(
   "config/production-cutover-checklist.json"

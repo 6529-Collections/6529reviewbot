@@ -129,6 +129,15 @@
           "doc": "docs/operator-workspace.md",
           "privateInputs": "Writes operator-owned private status and evidence files.",
           "publicOutput": "Share only the public-safe summary, CLI counts, or release-candidate bundle output."
+        },
+        {
+          "id": "operator-workspace-check",
+          "script": "operator:workspace",
+          "args": "-- -- --dir <private-workspace-dir> --check --require-ready",
+          "purpose": "Validate all current private workspace overlays together before final tag or traffic expansion decisions.",
+          "doc": "docs/operator-workspace.md",
+          "privateInputs": "Reads operator-owned private status and evidence files.",
+          "publicOutput": "Share only readiness counts or the release-candidate bundle output."
         }
       ]
     },

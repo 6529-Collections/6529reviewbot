@@ -4,25 +4,33 @@ const fs = require("fs");
 const path = require("path");
 const {
   createDogfoodStatusSkeleton,
+  assertDogfoodReady,
   loadDogfoodChecklist,
+  loadDogfoodStatus,
   mergeDogfoodStatus,
   summarizeDogfood,
   writeDogfoodStatusFile,
 } = require("./dogfood-status.cjs");
 const {
   createOperatorEvidenceSkeleton,
+  assertOperatorEvidenceReady,
+  loadOperatorEvidence,
   summarizeOperatorEvidence,
   writeOperatorEvidenceFile,
 } = require("./operator-evidence.cjs");
 const {
   createProductionCutoverStatusSkeleton,
+  assertProductionCutoverReady,
   loadProductionCutoverChecklist,
+  loadProductionCutoverStatus,
   mergeProductionCutoverStatus,
   summarizeProductionCutover,
   writeProductionCutoverStatusFile,
 } = require("./production-cutover.cjs");
 const {
   createReleaseGateStatusSkeleton,
+  assertReleaseGatesReady,
+  loadReleaseGateStatus,
   loadReleaseGates,
   mergeReleaseGateStatus,
   summarizeReleaseGates,
@@ -30,7 +38,9 @@ const {
 } = require("./release-gates.cjs");
 const {
   createSecurityReviewStatusSkeleton,
+  assertSecurityReviewReady,
   loadSecurityReviewChecklist,
+  loadSecurityReviewStatus,
   mergeSecurityReviewStatus,
   summarizeSecurityReview,
   writeSecurityReviewStatusFile,
@@ -121,7 +131,7 @@ function createOperatorWorkspace(options = {}) {
   });
   files.push(fileSummary("readme", readmePath, "Private workspace command guide."));
 
-  return {
+  const workspace = {
     directory,
     release: releaseGates.release,
     files,
@@ -137,11 +147,14 @@ function createOperatorWorkspace(options = {}) {
       ),
     },
   };
+  workspace.ready = operatorWorkspaceReady(workspace);
+  return workspace;
 }
 
 function publicOperatorWorkspaceSummary(workspace, options = {}) {
   return {
     release: workspace.release,
+    ready: workspace.ready,
     directory: options.showPaths ? workspace.directory : "[operator-workspace]",
     files: workspace.files.map((file) => ({
       id: file.id,
@@ -152,11 +165,98 @@ function publicOperatorWorkspaceSummary(workspace, options = {}) {
   };
 }
 
+function checkOperatorWorkspace(options = {}) {
+  if (!options.directory) {
+    throw new Error("operator workspace --dir is required.");
+  }
+  const directory = path.resolve(options.directory);
+  const filePaths = operatorWorkspaceFilePaths(directory);
+  assertExistingWorkspaceFiles(Object.values(filePaths));
+
+  const releaseGates = loadReleaseGates(options.releaseGatesFile);
+  const releaseGateStatus = loadReleaseGateStatus(filePaths.releaseGateStatus);
+  const releaseGatesWithStatus = mergeReleaseGateStatus(releaseGates, releaseGateStatus, {
+    requireComplete: options.requireReady,
+  });
+
+  const dogfoodChecklist = loadDogfoodChecklist(options.dogfoodChecklistFile);
+  const dogfoodStatus = loadDogfoodStatus(filePaths.dogfoodStatus);
+  const dogfoodWithStatus = mergeDogfoodStatus(dogfoodChecklist, dogfoodStatus, {
+    requireComplete: options.requireReady,
+  });
+
+  const securityReviewChecklist = loadSecurityReviewChecklist(options.securityReviewChecklistFile);
+  const securityReviewStatus = loadSecurityReviewStatus(filePaths.securityReviewStatus);
+  const securityReviewWithStatus = mergeSecurityReviewStatus(securityReviewChecklist, securityReviewStatus, {
+    requireComplete: options.requireReady,
+  });
+
+  const productionCutoverChecklist = loadProductionCutoverChecklist(options.productionCutoverChecklistFile);
+  const productionCutoverStatus = loadProductionCutoverStatus(filePaths.productionCutoverStatus);
+  const productionCutoverWithStatus = mergeProductionCutoverStatus(
+    productionCutoverChecklist,
+    productionCutoverStatus,
+    { requireComplete: options.requireReady }
+  );
+
+  const operatorEvidence = loadOperatorEvidence(filePaths.operatorEvidence);
+  const workspace = {
+    directory,
+    release: releaseGates.release,
+    files: workspaceFiles(directory),
+    summaries: {
+      dogfood: summarizeDogfood(dogfoodWithStatus),
+      operatorEvidence: summarizeOperatorEvidence(operatorEvidence),
+      productionCutover: summarizeProductionCutover(productionCutoverWithStatus),
+      releaseGates: summarizeReleaseGates(releaseGatesWithStatus),
+      securityReview: summarizeSecurityReview(securityReviewWithStatus),
+    },
+  };
+  workspace.ready = operatorWorkspaceReady(workspace);
+  if (options.requireReady) {
+    assertOperatorWorkspaceReady(workspace, {
+      dogfood: dogfoodWithStatus,
+      operatorEvidence,
+      productionCutover: productionCutoverWithStatus,
+      releaseGates: releaseGatesWithStatus,
+      securityReview: securityReviewWithStatus,
+    });
+  }
+  return workspace;
+}
+
+function assertOperatorWorkspaceReady(workspace, documents = {}) {
+  if (documents.releaseGates) {
+    assertReleaseGatesReady(documents.releaseGates);
+  }
+  if (documents.dogfood) {
+    assertDogfoodReady(documents.dogfood);
+  }
+  if (documents.securityReview) {
+    assertSecurityReviewReady(documents.securityReview);
+  }
+  if (documents.productionCutover) {
+    assertProductionCutoverReady(documents.productionCutover);
+  }
+  if (documents.operatorEvidence) {
+    assertOperatorEvidenceReady(documents.operatorEvidence);
+  }
+  if (!operatorWorkspaceReady(workspace)) {
+    const notReady = Object.entries(workspace.summaries)
+      .filter(([_key, summary]) => !summary.ready)
+      .map(([key, summary]) => `${key}: ${summary.pending} pending, ${summary.blocked} blocked`)
+      .join("; ");
+    throw new Error(`operator workspace is not ready: ${notReady}.`);
+  }
+  return workspace;
+}
+
 function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   const summary = publicOperatorWorkspaceSummary(workspace, options);
   const lines = [
     `# ${summary.release} Operator Workspace`,
     "",
+    `Ready: ${summary.ready ? "yes" : "no"}`,
     `Directory: ${summary.directory}`,
     "",
     "Created private release-operator evidence skeletons. Keep this directory",
@@ -179,6 +279,10 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   return `${lines.join("\n")}\n`;
 }
 
+function operatorWorkspaceReady(workspace) {
+  return Object.values(workspace.summaries).every((summary) => summary.ready);
+}
+
 function writeWorkspaceReadme(filePath, options = {}) {
   if (fs.existsSync(filePath) && !options.force) {
     throw new Error(`operator workspace README already exists: ${filePath}`);
@@ -193,6 +297,14 @@ function assertWritableWorkspaceFiles(filePaths, options = {}) {
   for (const filePath of filePaths) {
     if (fs.existsSync(filePath)) {
       throw new Error(`operator workspace file already exists: ${filePath}`);
+    }
+  }
+}
+
+function assertExistingWorkspaceFiles(filePaths) {
+  for (const filePath of filePaths) {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`operator workspace file is missing: ${filePath}`);
     }
   }
 }
@@ -247,6 +359,27 @@ function workspacePath(directory, fileName) {
   return path.join(directory, fileName);
 }
 
+function operatorWorkspaceFilePaths(directory) {
+  return Object.fromEntries(
+    Object.entries(DEFAULT_OPERATOR_WORKSPACE_FILES).map(([id, fileName]) => [
+      id,
+      workspacePath(directory, fileName),
+    ])
+  );
+}
+
+function workspaceFiles(directory) {
+  const paths = operatorWorkspaceFilePaths(directory);
+  return [
+    fileSummary("release-gate-status", paths.releaseGateStatus, "Private v0 release gate status overlay."),
+    fileSummary("dogfood-status", paths.dogfoodStatus, "Private dogfood execution status overlay."),
+    fileSummary("security-review-status", paths.securityReviewStatus, "Private manual security-review status overlay."),
+    fileSummary("production-cutover-status", paths.productionCutoverStatus, "Private production cutover status overlay."),
+    fileSummary("operator-evidence", paths.operatorEvidence, "Private structured operator evidence file."),
+    fileSummary("readme", paths.readme, "Private workspace command guide."),
+  ];
+}
+
 function isInside(parent, child) {
   const relative = path.relative(parent, child);
   return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
@@ -254,7 +387,10 @@ function isInside(parent, child) {
 
 module.exports = {
   DEFAULT_OPERATOR_WORKSPACE_FILES,
+  assertOperatorWorkspaceReady,
+  checkOperatorWorkspace,
   createOperatorWorkspace,
+  operatorWorkspaceReady,
   privateWorkspaceReadme,
   publicOperatorWorkspaceSummary,
   renderOperatorWorkspaceSummaryMarkdown,

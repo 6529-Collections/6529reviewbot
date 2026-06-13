@@ -26,6 +26,8 @@ After stabilization:
 - [Operator workspace](operator-workspace.md) created or an equivalent private
   runbook location exists for release-gate, dogfood, security-review, cutover,
   and operator-evidence overlays
+- `npm run operator:workspace -- -- --dir <private-workspace-dir> --check`
+  reviewed before final release-candidate bundling
 - [Release candidate bundle](release-candidate.md) rendered from the private
   release-gate status and operator evidence files
 - [Production cutover checklist](production-cutover.md) reviewed before live
