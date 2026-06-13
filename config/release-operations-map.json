@@ -45,6 +45,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "container-image-contract",
+          "script": "check:container-image",
+          "purpose": "Verify the central App server Dockerfile and .dockerignore keep the runtime image minimal, non-root, health-checked, and free of private repo artifacts.",
+          "doc": "docs/container-deployment.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

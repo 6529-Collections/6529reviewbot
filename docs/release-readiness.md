@@ -123,6 +123,8 @@ Ready for community review:
   mints short-lived GitHub App installation tokens;
 - repository-owned container packaging for the central App server with
   non-root runtime, health check, and runtime-only secret injection guidance;
+- container-image contract checker for the Dockerfile and `.dockerignore`
+  runtime boundary;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret

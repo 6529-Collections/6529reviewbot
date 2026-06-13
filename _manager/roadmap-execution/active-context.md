@@ -635,6 +635,9 @@ merged PRs.
 - Public issue templates should be part of governance validation so reporters
   are consistently warned away from secrets, private payloads, and public
   vulnerability disclosure.
+- The container image boundary should be machine-checked so Dockerfile and
+  `.dockerignore` edits cannot silently copy private repo artifacts, run as
+  root, or drop the health check.
 
 ## Constraints
 
@@ -648,7 +651,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the issue-template governance hardening.
+2. Validate, publish, and merge the container-image contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

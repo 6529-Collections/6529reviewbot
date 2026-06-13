@@ -22,6 +22,7 @@ runNode("scripts/check-doc-links.cjs");
 runNode("scripts/check-doc-index.cjs");
 runNode("scripts/check-public-governance.cjs");
 runNode("scripts/check-dependabot-config.cjs");
+runNode("scripts/check-container-image.cjs");
 runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");

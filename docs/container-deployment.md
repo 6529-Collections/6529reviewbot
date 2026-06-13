@@ -23,6 +23,12 @@ It intentionally does not copy docs, manager memory, local checkouts, local
 `node_modules`, `.env` files, private evidence, git metadata, or GitHub CLI
 state into the runtime image.
 
+`npm run check:container-image` statically enforces that contract for the
+checked-in `Dockerfile` and `.dockerignore`. It verifies the runtime-only copy
+set, non-root startup, `/healthz` health check, production dependency install,
+CA certificate setup, and public/private artifact exclusions without needing a
+local Docker daemon.
+
 ## Build
 
 Build locally or in a trusted builder:
@@ -149,6 +155,7 @@ operator runbooks rather than public release notes.
 Before allowing GitHub webhook traffic:
 
 ```bash
+npm run check:container-image
 npm run preflight -- -- --strict
 ```
 

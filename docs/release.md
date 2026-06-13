@@ -117,6 +117,9 @@ After stabilization:
   references existing package scripts and public documentation paths
 - `npm run check:dependabot` confirms weekly npm and GitHub Actions dependency
   update coverage is still configured
+- `npm run check:container-image` confirms the central App server Dockerfile
+  and `.dockerignore` keep the image runtime-only, non-root, health-checked,
+  and free of private repo artifacts
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
