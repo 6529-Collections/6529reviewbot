@@ -234,6 +234,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "dogfood-status-contract",
+          "script": "check:dogfood-status",
+          "purpose": "Verify dogfood status readiness, missing-id checks, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "doc": "docs/dogfood-status.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "dogfood-readiness-contract",
           "script": "check:dogfood-readiness",
           "purpose": "Verify dogfood readiness report defaults, operator workspace path redaction, preflight state, Markdown sanitization, source invariants, and public docs stay synchronized.",

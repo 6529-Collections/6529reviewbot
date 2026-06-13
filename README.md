@@ -169,6 +169,7 @@ npm run check:provider-adapters
 npm run check:ledger-privacy
 npm run check:webhook-replay
 npm run check:dogfood-target
+npm run check:dogfood-status
 npm run check:dogfood-readiness
 npm run check:dogfood-promotion
 npm run check:dogfood-go-live

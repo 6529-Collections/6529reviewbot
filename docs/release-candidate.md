@@ -14,6 +14,9 @@ It also does not replace the [Production Cutover](production-cutover.md)
 checklist, which is the go/no-go layer for live dogfood or production traffic.
 It can include [Dogfood Status](dogfood-status.md) when the release decision
 depends on command-only or limited initial-review dogfood evidence.
+Run the dogfood status checker after changing dogfood status readiness
+behavior, missing-id handling, deferral semantics, or public dogfood Markdown
+because release-candidate bundles can include those counts and deferrals.
 It can include [Security Review Status](security-review-status.md) when the
 release decision depends on a private manual security review status file.
 Run the security review status checker after changing manual review readiness

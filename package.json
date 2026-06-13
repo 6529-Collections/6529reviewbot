@@ -64,6 +64,7 @@
     "check:ledger-privacy": "node scripts/check-ledger-privacy-contract.cjs",
     "check:webhook-replay": "node scripts/check-webhook-replay-contract.cjs",
     "check:dogfood-target": "node scripts/check-dogfood-target-contract.cjs",
+    "check:dogfood-status": "node scripts/check-dogfood-status-contract.cjs",
     "check:dogfood-readiness": "node scripts/check-dogfood-readiness-contract.cjs",
     "check:dogfood-promotion": "node scripts/check-dogfood-promotion-contract.cjs",
     "check:dogfood-go-live": "node scripts/check-dogfood-go-live-contract.cjs",

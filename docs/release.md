@@ -197,6 +197,9 @@ After stabilization:
 - `npm run check:dogfood-target` confirms the dogfood target packet contract
   stays synchronized with mode inference, external config path markers,
   Markdown redaction, and docs
+- `npm run check:dogfood-status` confirms the dogfood status contract stays
+  synchronized with readiness, missing-id checks, deferral semantics, Markdown
+  redaction, and docs
 - `npm run check:dogfood-readiness` confirms the dogfood readiness report
   contract stays synchronized with static defaults, workspace path markers,
   preflight state, Markdown redaction, and docs

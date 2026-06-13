@@ -41,6 +41,7 @@ const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodGoLiveContractCheck = require("./check-dogfood-go-live-contract.cjs");
 const dogfoodStatus = require("../src/dogfood-status.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
+const dogfoodStatusContractCheck = require("./check-dogfood-status-contract.cjs");
 const diagnosticsRedactionCheck = require("./check-diagnostics-redaction.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
@@ -4995,6 +4996,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /dogfood target contract check found/
+  );
+  const dogfoodStatusContractResult =
+    dogfoodStatusContractCheck.checkDogfoodStatusContract();
+  assert.equal(dogfoodStatusContractResult.cliCases, 3);
+  assert.equal(dogfoodStatusContractResult.statusCases, 6);
+  assert.throws(
+    () =>
+      dogfoodStatusContractCheck.checkDogfoodStatusContract({
+        quiet: true,
+        docTexts: {
+          "docs/dogfood-status.md": "# Dogfood Status\n",
+        },
+      }),
+    /dogfood status contract check found/
   );
   const dogfoodReadinessContractResult =
     dogfoodReadinessContractCheck.checkDogfoodReadinessContract();
