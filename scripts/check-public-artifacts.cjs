@@ -89,7 +89,7 @@ const staticRules = [
 ];
 
 function main() {
-  const files = trackedFiles().filter(isPublicTextArtifact);
+  const files = repositoryFiles().filter(isPublicTextArtifact);
   const findings = [];
   for (const file of files) {
     const absolutePath = path.join(root, file);
@@ -105,8 +105,13 @@ function main() {
   console.log(`public artifact scan ok (${files.length} files checked)`);
 }
 
-function trackedFiles() {
-  const output = execFileSync(gitBin(), ["ls-files", "-z"], {
+function repositoryFiles() {
+  return [...new Set([...gitFiles(["ls-files", "-z"]), ...gitFiles(["ls-files", "-z", "--others", "--exclude-standard"])])]
+    .sort();
+}
+
+function gitFiles(args) {
+  const output = execFileSync(gitBin(), args, {
     cwd: root,
     encoding: "utf8",
   });
@@ -233,5 +238,6 @@ module.exports = {
   findLiveAwsAccountIds,
   findLiveAwsArns,
   isPublicTextArtifact,
+  repositoryFiles,
   scanFile,
 };

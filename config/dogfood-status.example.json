@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "items": {
+    "reviewed-bot-commit": {
+      "status": "complete",
+      "evidence": "Example only: reviewed source commit recorded as example-commit-or-tag."
+    },
+    "target-repo-selected": {
+      "status": "pending",
+      "notes": "Select one trusted repository and record only public-safe scope information here."
+    },
+    "command-config-reviewed": {
+      "status": "pending",
+      "notes": "Review command-only .github/6529bot.yml from the target repository base branch."
+    },
+    "dogfood-readiness-passes": {
+      "status": "pending",
+      "notes": "Run dogfood readiness with the reviewed target config and private budget policy."
+    },
+    "app-installed-selected-repo": {
+      "status": "pending",
+      "notes": "Install the GitHub App only on selected dogfood repositories."
+    },
+    "server-noop-running": {
+      "status": "pending",
+      "notes": "Start the central server in noop mode before live worker dispatch."
+    },
+    "webhook-ping-accepted": {
+      "status": "pending",
+      "notes": "Verify ping delivery and invalid-signature failure."
+    },
+    "dry-run-pull-request-delivery": {
+      "status": "pending",
+      "notes": "Replay a saved pull_request delivery without queueing workers."
+    },
+    "untrusted-actor-denied": {
+      "status": "pending",
+      "notes": "Confirm untrusted actors cannot create model-spend jobs."
+    },
+    "worker-enabled-conservative": {
+      "status": "pending",
+      "notes": "Enable worker traffic only after noop verification."
+    },
+    "maintainer-command-triggered": {
+      "status": "pending",
+      "notes": "Trigger exactly one small command-only review from a trusted maintainer comment."
+    },
+    "bot-comment-reviewed": {
+      "status": "pending",
+      "notes": "Review the public bot comment for correctness and data boundaries."
+    },
+    "usage-ledger-written": {
+      "status": "pending",
+      "notes": "Record aggregate usage, job, budget, and run-control evidence."
+    },
+    "budget-and-alerts-visible": {
+      "status": "pending",
+      "notes": "Check private budget and alert status surfaces after the first live command."
+    },
+    "limited-config-reviewed": {
+      "status": "deferred",
+      "notes": "Example only: limited initial reviews should wait until command-only evidence is healthy."
+    },
+    "initial-review-small-pr": {
+      "status": "deferred",
+      "notes": "Example only: limited initial review is deferred until command-only dogfood succeeds."
+    },
+    "followup-review-verified": {
+      "status": "deferred",
+      "notes": "Example only: followup automation is deferred until initial review is enabled."
+    },
+    "skip-paths-verified": {
+      "status": "deferred",
+      "notes": "Example only: skip-path verification follows limited initial-review enablement."
+    },
+    "public-summary-reviewed": {
+      "status": "pending",
+      "notes": "Review public aggregate output and repo disclosure allowlists."
+    },
+    "admin-snapshot-reviewed": {
+      "status": "pending",
+      "notes": "Run the private admin snapshot after live command-only traffic."
+    },
+    "alerts-delivered": {
+      "status": "pending",
+      "notes": "Verify dry-run and one operator-owned delivery channel."
+    },
+    "rollback-exercised": {
+      "status": "pending",
+      "notes": "Exercise a no-spend rollback path before expanding dogfood."
+    },
+    "dogfood-decision-recorded": {
+      "status": "pending",
+      "notes": "Record expand, continue command-only, defer, or block."
+    }
+  }
+}

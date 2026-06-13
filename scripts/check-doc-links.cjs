@@ -9,7 +9,7 @@ const path = require("path");
 const root = path.resolve(__dirname, "..");
 
 function main() {
-  const markdownFiles = trackedFiles().filter((file) => file.endsWith(".md"));
+  const markdownFiles = repositoryFiles().filter((file) => file.endsWith(".md"));
   const findings = [];
   for (const file of markdownFiles) {
     const content = fs.readFileSync(path.join(root, file), "utf8");
@@ -94,8 +94,13 @@ function isInsideRoot(absolutePath) {
   return Boolean(relative) && !relative.startsWith("..") && !path.isAbsolute(relative);
 }
 
-function trackedFiles() {
-  const output = execFileSync(gitBin(), ["ls-files", "-z"], {
+function repositoryFiles() {
+  return [...new Set([...gitFiles(["ls-files", "-z"]), ...gitFiles(["ls-files", "-z", "--others", "--exclude-standard"])])]
+    .sort();
+}
+
+function gitFiles(args) {
+  const output = execFileSync(gitBin(), args, {
     cwd: root,
     encoding: "utf8",
   });
@@ -129,4 +134,5 @@ module.exports = {
   checkMarkdownLinks,
   markdownLinkTargets,
   normalizeLocalLinkTarget,
+  repositoryFiles,
 };

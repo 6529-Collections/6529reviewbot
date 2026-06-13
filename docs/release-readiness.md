@@ -100,6 +100,8 @@ Ready for community review:
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;
+- dogfood execution status checklist for command-only, limited initial-review,
+  visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
@@ -215,14 +217,25 @@ npm run dogfood:readiness
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 ```
 
+Use [Dogfood Status](dogfood-status.md) as the private evidence overlay after
+the first live command-only trigger:
+
+```bash
+npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
+npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
+npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready
+```
+
 `npm run check:docs` is included in `npm run release:check` and verifies local
-Markdown links across repository docs before release.
+Markdown links across tracked and non-ignored untracked repository docs before
+release.
 `npm run check:6529-io-env` is included in `npm run release:check` and verifies
 that the public-safe 6529.io dashboard environment template keeps placeholder
 secrets blank and references only reviewed OpenAPI usage/admin paths.
 `npm run check:public-artifacts` is included in `npm run release:check` and
-scans public docs, configs, templates, workflows, and durable manager memory
-for live-looking credentials or cloud identifiers before release.
+scans tracked and non-ignored untracked public docs, configs, templates,
+workflows, and durable manager memory for live-looking credentials or cloud
+identifiers before release.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

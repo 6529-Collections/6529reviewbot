@@ -28,6 +28,14 @@ runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.exam
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.dogfood.example.json", "--quiet"]);
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet"]);
+runNode("bin/dogfood-status.cjs", ["--json", "--quiet"]);
+runNode("bin/dogfood-status.cjs", [
+  "--status-file",
+  "config/dogfood-status.example.json",
+  "--summary",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/operator-evidence.cjs", [
   "--file",

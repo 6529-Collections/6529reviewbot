@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "description": "Public-safe dogfood execution checklist for moving 6529bot from reviewed source to command-only and limited initial-review traffic on trusted repositories.",
+  "phases": [
+    {
+      "id": "baseline",
+      "title": "Baseline",
+      "objective": "Start from reviewed source, a selected trusted repository, and public-safe readiness evidence before any live model calls.",
+      "items": [
+        {
+          "id": "reviewed-bot-commit",
+          "title": "Bot source commit or tag is reviewed, merged, and recorded in private operator evidence.",
+          "evidence": "git rev-parse HEAD plus release PR or tag decision",
+          "runbook": "docs/release.md"
+        },
+        {
+          "id": "target-repo-selected",
+          "title": "Dogfood target repository is selected, trusted, and scoped for the GitHub App installation.",
+          "evidence": "selected-repository summary without private repo details",
+          "runbook": "docs/install.md"
+        },
+        {
+          "id": "command-config-reviewed",
+          "title": "Command-only repository config is reviewed before merge to the target repository base branch.",
+          "evidence": "validated .github/6529bot.yml summary from the target repo base branch",
+          "runbook": "docs/dogfood.md"
+        },
+        {
+          "id": "dogfood-readiness-passes",
+          "title": "Dogfood readiness check passes for reviewed target config, budget policy, model catalog, and optional strict preflight.",
+          "evidence": "npm run dogfood:readiness output summary",
+          "runbook": "docs/dogfood-readiness.md"
+        }
+      ]
+    },
+    {
+      "id": "noop-path",
+      "title": "Noop Path",
+      "objective": "Verify GitHub delivery, admission, budget, and fanout behavior without queueing worker jobs.",
+      "items": [
+        {
+          "id": "app-installed-selected-repo",
+          "title": "Production GitHub App is installed only on selected trusted dogfood repositories.",
+          "evidence": "installation scope summary without installation ids or private repo details",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "server-noop-running",
+          "title": "Central App server is running with REVIEWBOT_WORKER_ADAPTER=noop.",
+          "evidence": "health check and runtime config summary",
+          "runbook": "docs/deployment.md"
+        },
+        {
+          "id": "webhook-ping-accepted",
+          "title": "GitHub App ping delivery succeeds and invalid signatures fail closed.",
+          "evidence": "public-safe webhook acceptance summary",
+          "runbook": "docs/deployment.md"
+        },
+        {
+          "id": "dry-run-pull-request-delivery",
+          "title": "Saved pull_request delivery replays in dry-run mode with expected config, admission, budget, and fanout decisions.",
+          "evidence": "webhook replay summary without raw payloads",
+          "runbook": "docs/dogfood.md"
+        },
+        {
+          "id": "untrusted-actor-denied",
+          "title": "Untrusted public-repo actor cannot create model-spend jobs.",
+          "evidence": "admission denial summary with actor category only",
+          "runbook": "docs/security-model.md"
+        }
+      ]
+    },
+    {
+      "id": "command-only",
+      "title": "Command-Only Review",
+      "objective": "Run the first live review only from a trusted maintainer comment with conservative budgets and visible rollback.",
+      "items": [
+        {
+          "id": "worker-enabled-conservative",
+          "title": "Worker path is enabled with conservative capacity, run-control caps, and a single provider/model lane.",
+          "evidence": "worker adapter, capacity, run-control, and lane summary",
+          "runbook": "docs/worker-capacity.md"
+        },
+        {
+          "id": "maintainer-command-triggered",
+          "title": "Trusted maintainer triggers exactly one command-only review on a small PR.",
+          "evidence": "comment-command summary such as /6529bot general, without raw diff or prompt text",
+          "runbook": "docs/comment-commands.md"
+        },
+        {
+          "id": "bot-comment-reviewed",
+          "title": "6529bot posts a bounded PR comment with expected review kind, model attribution, and no private data.",
+          "evidence": "public PR comment link or public-safe summary",
+          "runbook": "docs/review-comment-format.md"
+        },
+        {
+          "id": "usage-ledger-written",
+          "title": "Usage, job lifecycle, budget, and run-control evidence are written for the command-only run.",
+          "evidence": "aggregate ledger counts and status summaries, not raw prompts, diffs, or private scope values",
+          "runbook": "docs/job-ledger.md"
+        },
+        {
+          "id": "budget-and-alerts-visible",
+          "title": "Budget status and scheduled alert posture are visible to private operators after the first live command.",
+          "evidence": "admin budget/status and alert/status summary without delivery secrets",
+          "runbook": "docs/6529-io-admin-integration.md"
+        }
+      ]
+    },
+    {
+      "id": "limited-initial",
+      "title": "Limited Initial Review",
+      "objective": "Enable a narrow automatic review only after command-only evidence is healthy.",
+      "items": [
+        {
+          "id": "limited-config-reviewed",
+          "title": "Limited initial-review repository config is reviewed and merged after command-only success.",
+          "evidence": "validated config summary showing initial review kinds and max jobs",
+          "runbook": "docs/dogfood.md"
+        },
+        {
+          "id": "initial-review-small-pr",
+          "title": "A small trusted PR receives only the intended initial review jobs.",
+          "evidence": "review-kind and lane summary without raw prompt or diff text",
+          "runbook": "docs/review-jobs.md"
+        },
+        {
+          "id": "followup-review-verified",
+          "title": "A follow-up commit triggers the followup review path and consults prior bot comments.",
+          "evidence": "followup run summary and public-safe comment link",
+          "runbook": "docs/comment-commands.md"
+        },
+        {
+          "id": "skip-paths-verified",
+          "title": "Draft PR, oversized diff, and disabled-review skip paths behave as expected.",
+          "evidence": "skip reason summaries without raw payloads",
+          "runbook": "docs/review-jobs.md"
+        }
+      ]
+    },
+    {
+      "id": "visibility-rollback",
+      "title": "Visibility And Rollback",
+      "objective": "Confirm operators can observe spend and stop traffic quickly before expanding dogfood.",
+      "items": [
+        {
+          "id": "public-summary-reviewed",
+          "title": "Public usage summary exposes only allowlisted public aggregate data.",
+          "evidence": "public summary counts and disclosure posture",
+          "runbook": "docs/usage-api.md"
+        },
+        {
+          "id": "admin-snapshot-reviewed",
+          "title": "Private admin snapshot is reviewed after command-only and limited-initial runs.",
+          "evidence": "npm run admin:snapshot summary without raw rows or scope values",
+          "runbook": "docs/6529-io-admin-integration.md"
+        },
+        {
+          "id": "alerts-delivered",
+          "title": "Spend and job-health alerts dry-run and deliver to an operator-owned private channel.",
+          "evidence": "alert evaluation and delivery summary without webhook URLs, ARNs, or addresses",
+          "runbook": "docs/alerting.md"
+        },
+        {
+          "id": "rollback-exercised",
+          "title": "Operators verify at least one no-spend rollback path before expanding dogfood.",
+          "evidence": "rollback exercise summary using noop, repo disable, budget cap, App uninstall, or provider-key disablement",
+          "runbook": "docs/dogfood.md"
+        },
+        {
+          "id": "dogfood-decision-recorded",
+          "title": "Dogfood decision is recorded as expand, continue command-only, defer, or block.",
+          "evidence": "decision summary in private operator evidence and public-safe release notes",
+          "runbook": "docs/operator-evidence-template.md"
+        }
+      ]
+    }
+  ]
+}

@@ -48,11 +48,17 @@ stabilized.
 - Dogfood readiness CLI validates repository config, central budget policy,
   model catalog, and optional no-network preflight before first dogfood
   traffic.
+- Dogfood execution status checklist and CLI for tracking command-only,
+  limited initial-review, visibility, alert, and rollback evidence with a
+  private operator status overlay.
 - Release-candidate bundles can optionally include production cutover status
   counts and enforce cutover readiness when a cutover status file is supplied.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.
+- Documentation link checks and public artifact scanning now include
+  non-ignored untracked files during local runs, so new docs/config examples
+  are checked before staging.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.

@@ -35,6 +35,7 @@
     "support:bundle": "node bin/support-bundle.cjs",
     "admin:snapshot": "node bin/admin-snapshot.cjs",
     "dogfood:readiness": "node bin/dogfood-readiness.cjs",
+    "dogfood:status": "node bin/dogfood-status.cjs",
     "production:cutover": "node bin/production-cutover.cjs",
     "operator:evidence": "node bin/operator-evidence.cjs",
     "release:candidate": "node bin/release-candidate.cjs",
