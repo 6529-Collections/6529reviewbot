@@ -102,6 +102,9 @@ Keep the HMAC secret in server-side `6529.io` infrastructure and the bot
 runtime only. Do not expose it to frontend JavaScript, GitHub Actions logs,
 browser storage, or public repository variables.
 
+For the recommended server-side 6529.io client helper and dashboard call list,
+see [6529.io Admin Integration](6529-io-admin-integration.md).
+
 Rotate the secret by deploying `6529.io` and `6529reviewbot` with overlapping
 support or a short maintenance window. Keep assertion TTL short enough that a
 captured request is not useful.

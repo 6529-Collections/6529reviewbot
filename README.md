@@ -495,6 +495,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Job ledger](docs/job-ledger.md)
 - [Usage API](docs/usage-api.md)
 - [Admin auth bridge](docs/admin-auth-bridge.md)
+- [6529.io admin integration](docs/6529-io-admin-integration.md)
 - [Alerting and scheduled operator checks](docs/alerting.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)

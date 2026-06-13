@@ -1567,3 +1567,26 @@
   - `npm test` passed;
   - `npm run validate:api-contract` passed;
   - `git diff --check` passed.
+- Final local validation for `codex/admin-model-price-status`:
+  - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #122 as `34f1ef9` after CI and Dependency Review
+  passed; the normal protected merge path allowed the merge while CodeRabbit
+  remained in its processing placeholder with no review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27450498582`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27450498576`, completed successfully.
+- Local clean-main validation after PR #122 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-api-client-contract` increment:
+  - add a server-side usage API client helper for 6529.io admin integration;
+  - sign HMAC admin requests with the existing admin-auth canonical payload;
+  - build only relative API paths, inject request timeouts, and redact API
+    error text before throwing;
+  - add a 6529.io integration guide and cross-links from usage/admin-auth docs;
+  - update configuration docs, release readiness, roadmap, changelog, security
+    model, and manager memory.
+- Local validation for `codex/admin-api-client-contract`:
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

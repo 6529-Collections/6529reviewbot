@@ -153,6 +153,10 @@ The `6529.io` frontend must never talk directly to Aurora or hold AWS/provider
 credentials. It should call bot-owned APIs that return safe public aggregates
 or authorized admin data.
 
+The `6529.io` server-side integration should use the tested usage API client
+helper in this repo or an equivalent implementation of the same HMAC contract,
+not ad hoc browser-side signing.
+
 Alerts should not depend on anyone opening the dashboard. Scheduled checks
 should run independently and send warnings through SNS/SES or the chosen 6529
 notification path.
@@ -317,6 +321,8 @@ Completed in `6529reviewbot`:
 - admin alert-status API for private alert threshold and notifier posture
   dashboards without exposing delivery secrets;
 - admin runtime status is backed by no-network preflight checks;
+- server-side 6529.io usage API client helper for signed admin calls and
+  redacted API failures;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

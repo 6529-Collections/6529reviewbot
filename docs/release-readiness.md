@@ -76,6 +76,7 @@ Ready for community review:
   operator explicitly allows a documented free price;
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
+- server-side 6529.io usage API client helper for signed admin endpoint calls;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, and SNS delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe
