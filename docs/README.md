@@ -63,6 +63,8 @@ be linked here before they are considered release-ready.
   artifact.
 - [Release Notes Draft](release-notes-draft.md): public-safe pre-v1 release
   notes draft from release-candidate evidence.
+- [Release Notes Publication](release-notes-publication.md): completed release
+  notes guard before publishing a tag or GitHub Release.
 - [Release Notes Template](release-notes-template.md): pre-v1 release notes
   shape.
 - [Release Operations Map](release-operations-map.md): command and evidence

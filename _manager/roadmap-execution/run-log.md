@@ -3658,3 +3658,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including the strengthened
     self-dogfood replay gate and 97 mapped release-operation tools.
+- Merged `6529reviewbot` PR #220 as `c5b498c`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-publish-guard` increment:
+  - add `src/release-notes-publication.cjs` and
+    `bin/release-notes-publication.cjs` as the completed-release-notes guard;
+  - add `scripts/check-release-notes-publication-contract.cjs` and
+    `npm run check:release-notes-publication`;
+  - keep draft generation and publication checks separate so drafts may carry
+    `TODO(operator)` markers but publishable release notes cannot;
+  - wire package scripts, release checks, smoke tests, operations map, README,
+    release notes docs, release readiness, roadmap, changelog, and manager
+    memory.
+- Local validation for `codex/release-notes-publish-guard` so far:
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check` passed with 159 CommonJS files;
+  - `npm run check:docs` passed with 68 files checked;
+  - `npm run check:doc-index` passed with 54 docs indexed;
+  - `npm run check:release-operations` passed with 99 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #220,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 111 files checked;
+  - `npm run release:check` passed, including release notes publication
+    contract validation and 99 mapped release-operation tools.

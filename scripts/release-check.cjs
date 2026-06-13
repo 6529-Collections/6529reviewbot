@@ -83,6 +83,7 @@ runNode("scripts/check-v0-gates-contract.cjs");
 runNode("scripts/check-release-candidate-contract.cjs");
 runNode("scripts/check-release-notes-template.cjs");
 runNode("scripts/check-release-notes-draft-contract.cjs");
+runNode("scripts/check-release-notes-publication-contract.cjs");
 runNode("scripts/check-release-operations-map.cjs");
 runNode("scripts/check-self-dogfood-replay.cjs");
 runNode("scripts/smoke-test.cjs");

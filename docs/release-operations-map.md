@@ -173,9 +173,14 @@ aligned.
 `npm run check:release-notes-draft` keeps the release notes draft command's
 release-candidate summaries, model defaults, TODO markers, redaction, CLI
 flags, operations map entries, and docs aligned.
+`npm run check:release-notes-publication` keeps the completed release-notes
+publication guard aligned with required fields, deferral handling,
+public-safety redaction, release-check wiring, smoke tests, and docs.
 `npm run release:notes -- -- --candidate-file <release-candidate.json>`
 builds a public-safe pre-v1 release notes draft from reviewed release-candidate
 evidence.
+`npm run release:notes:check -- -- --file <release-notes.md>` checks completed
+release notes before publishing a tag or GitHub Release.
 
 The local quality gate command inventory is:
 
@@ -235,6 +240,7 @@ The local quality gate command inventory is:
 - `npm run check:security-review-status`
 - `npm run check:release-candidate`
 - `npm run check:release-notes-draft`
+- `npm run check:release-notes-publication`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`

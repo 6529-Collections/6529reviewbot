@@ -136,6 +136,11 @@ After stabilization:
 - `npm run check:release-notes-draft` confirms the release notes draft command
   keeps release-candidate summaries, model defaults, redaction, TODO markers,
   CLI flags, and docs synchronized
+- `npm run release:notes:check -- -- --file <release-notes.md>` checks
+  completed pre-v1 release notes before publishing a tag or GitHub Release
+- `npm run check:release-notes-publication` confirms the publication guard
+  rejects unfinished TODO markers, missing evidence fields, incomplete
+  deferrals, and public-safety leaks
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:install-guide` confirms the installation guide contract keeps
@@ -244,6 +249,8 @@ After stabilization:
 - `npm run check:docs` passes before publishing docs-heavy release notes
 - `npm run check:public-artifacts` passes before publishing release notes or
   public operator evidence, including the tracked root `.env.example`
+- `npm run release:notes:check -- -- --file <release-notes.md>` passes before
+  publishing a GitHub Release or announcing a release tag
 - `npm run check:preflight` passes against the synthetic central App server
   and worker fixtures
 - `npm run check:preflight-contract` confirms the preflight check order,

@@ -414,6 +414,9 @@ Completed in `6529reviewbot`:
 - release notes draft command for turning release-candidate bundle evidence
   and model catalog defaults into a public-safe pre-v1 draft with operator TODO
   markers;
+- release notes publication guard for rejecting unfinished markers, missing
+  evidence fields, incomplete deferrals, and public-safety leaks before tags or
+  GitHub Releases;
 - release-candidate private workspace path redaction for JSON and Markdown
   bundles;
 - operator workspace bootstrap for private release-gate, dogfood,
@@ -544,6 +547,8 @@ Completed in `6529reviewbot`:
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - release notes draft command and contract check for public-safe pre-v1 notes
   generated from release-candidate bundle evidence and model catalog defaults.
+- release notes publication guard and contract check for completed release
+  notes before pre-v1 tags or GitHub Releases.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result

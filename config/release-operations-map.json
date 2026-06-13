@@ -430,6 +430,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "release-notes-publication-contract",
+          "script": "check:release-notes-publication",
+          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, missing evidence fields, incomplete deferrals, and public-safety leaks before tags or GitHub Releases.",
+          "doc": "docs/release-notes-publication.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "env-template-checks",
           "script": "check:env-templates",
           "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",
@@ -742,6 +749,15 @@
           "doc": "docs/release-notes-draft.md",
           "privateInputs": "Reads a saved release-candidate JSON bundle; keep raw private status files out of this command.",
           "publicOutput": "Designed as a first draft for public release notes after operator review and TODO completion."
+        },
+        {
+          "id": "release-notes-publication",
+          "script": "release:notes:check",
+          "args": "-- -- --file <release-notes.md>",
+          "purpose": "Check completed release notes before publishing a tag or GitHub Release.",
+          "doc": "docs/release-notes-publication.md",
+          "privateInputs": "Reads the operator-completed public release notes Markdown.",
+          "publicOutput": "Safe when the checked file is intended for publication."
         },
         {
           "id": "full-release-check",
