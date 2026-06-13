@@ -319,6 +319,9 @@ the GitHub Release template aligned with v0 release evidence expectations.
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud
 identifiers before release.
+`npm run check:workflow-permissions` is included in `npm run release:check`
+and verifies committed workflow permission blocks stay explicit and
+least-privilege.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

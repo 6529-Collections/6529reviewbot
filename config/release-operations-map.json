@@ -59,6 +59,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "workflow-permissions",
+          "script": "check:workflow-permissions",
+          "purpose": "Confirm committed workflow permission blocks stay least-privilege and avoid broad write scopes.",
+          "doc": "docs/release.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "api-contract-validation",
           "script": "validate:api-contract",
           "purpose": "Validate the public/admin usage API OpenAPI contract consumed by 6529.io.",

@@ -129,6 +129,7 @@ After stabilization:
   App server image; image digest, builder identity, and vulnerability scan are
   captured in private operator evidence
 - `npm run check:workflow-actions`
+- `npm run check:workflow-permissions`
 - GitHub CI runs `npm run release:check` on the release PR
 - `npm run validate:api-contract` if public or admin usage API contracts
   changed

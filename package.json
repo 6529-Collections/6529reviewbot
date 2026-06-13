@@ -63,6 +63,7 @@
     "check:release-operations": "node scripts/check-release-operations-map.cjs",
     "check:self-dogfood-replay": "node scripts/check-self-dogfood-replay.cjs",
     "check:workflow-actions": "node scripts/check-workflow-actions.cjs",
+    "check:workflow-permissions": "node scripts/check-workflow-permissions.cjs",
     "validate:api-contract": "node bin/validate-usage-api-openapi.cjs",
     "validate:model-catalog": "node bin/validate-model-catalog.cjs",
     "validate:repo-config": "node bin/validate-repository-config.cjs",

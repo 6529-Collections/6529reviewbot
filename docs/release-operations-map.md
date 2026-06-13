@@ -22,6 +22,8 @@ The canonical documentation index is [Docs Index](README.md), and
 linked there.
 `npm run check:governance` keeps the public MIT license, community files, issue
 templates, and README governance links present.
+`npm run check:workflow-permissions` keeps committed workflow and template
+permission blocks explicit and least-privilege.
 
 ## How To Read It
 
