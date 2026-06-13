@@ -142,13 +142,14 @@ Ready for community review:
   requirement, workspace path markers, Markdown redaction, source invariants,
   and docs synchronized;
 - operator drill command for rehearsing the release-candidate, dogfood
-  readiness, production deployment plan handoff, promotion, and go-live
-  sequence against a temporary or private operator workspace without calling
-  GitHub, AWS, or model providers;
+  readiness, production deployment plan handoff, dashboard deployment plan
+  handoff, promotion, and go-live sequence against a temporary or private
+  operator workspace without calling GitHub, AWS, or model providers;
 - `npm run check:operator-drill` keeps [Operator Drill](operator-drill.md)
   synchronized with temporary workspace cleanup, private path redaction,
   release-candidate, dogfood readiness, production deployment plan handoff,
-  promotion, go-live summaries, next commands, and docs;
+  dashboard deployment plan handoff, promotion, go-live summaries, next
+  commands, and docs;
 - manager memory contract for keeping active context, run-log state, latest
   shipped PR evidence, release-check wiring, smoke tests, and public docs
   synchronized during the autonomous workstream;
@@ -630,8 +631,9 @@ path redaction, generated README deployment handoff guidance, Markdown
 sanitization, source invariants, and docs stay aligned.
 `npm run check:operator-drill` is included in `npm run release:check` and
 verifies the public-safe operator drill keeps temporary workspace cleanup,
-private path redaction, release-candidate, dogfood readiness, promotion,
-go-live summaries, next commands, and docs aligned.
+private path redaction, release-candidate, dogfood readiness, production and
+dashboard deployment handoffs, promotion, go-live summaries, next commands,
+and docs aligned.
 `npm run check:manager-memory` is included in `npm run release:check` and
 verifies durable manager memory keeps core sections, latest merged PR state,
 validation status, release-check wiring, smoke tests, and docs aligned.

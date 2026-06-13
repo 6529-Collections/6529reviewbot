@@ -316,9 +316,9 @@ Build the operator experience:
   release-candidate, promotion, cutover, and workspace evidence stay aligned
   before live dogfood traffic.
 - operator drill command that rehearses release-candidate, dogfood readiness,
-  production deployment plan handoff, promotion, and go-live summaries against
-  a temporary or private workspace before an operator runs the final ready
-  gates.
+  production deployment plan handoff, dashboard deployment plan handoff,
+  promotion, and go-live summaries against a temporary or private workspace
+  before an operator runs the final ready gates.
 - production deployment plan command that builds a dry-run operator handoff
   across GitHub App registration, container publish, operator workspace,
   strict preflight, admin snapshot, cutover, and dogfood gates.
@@ -563,7 +563,8 @@ Completed in `6529reviewbot`:
   checklist coverage, workflow secret mapping, fail-closed controls, and
   implementation anchors.
 - operator drill command and contract check for public-safe release-candidate,
-  dogfood readiness, promotion, and go-live rehearsals.
+  dogfood readiness, production and dashboard deployment handoff, promotion,
+  and go-live rehearsals.
 - manager memory contract check for active context, run-log state, latest
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - release notes draft command and contract check for public-safe pre-v1 notes
@@ -644,7 +645,7 @@ Completed in `6529reviewbot`:
 - operations runbook contract for routine checks and triage paths covering
   replay, spend, ledgers, workers, dashboards, and bot comments.
 - operator drill contract for release-candidate, dogfood readiness, production
-  deployment plan handoff, and go-live rehearsal behavior.
+  and dashboard deployment plan handoffs, and go-live rehearsal behavior.
 - manager memory contract for durable manager memory release hygiene.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.

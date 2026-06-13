@@ -88,6 +88,7 @@ function checkDefaultDrill(findings) {
     "Temporary workspace cleanup: yes",
     "dogfood readiness: ready",
     "npm run production:deployment-plan",
+    "npm run dashboard:deployment-plan",
     "npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -141,6 +142,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "\"[operator-workspace]\"",
       "operatorDrillNextCommands",
       "production:deployment-plan",
+      "dashboard:deployment-plan",
     ],
     "bin/operator-drill.cjs": [
       "npm run operator:drill",
@@ -171,6 +173,7 @@ function checkDocs(docTexts, findings) {
       "public-safe release and dogfood operator drill",
       "without calling GitHub, AWS, or model providers",
       "npm run production:deployment-plan",
+      "npm run dashboard:deployment-plan",
       "npm --silent run operator:drill -- -- --dir <private-workspace-dir>",
       "npm run check:operator-drill",
     ],
@@ -192,7 +195,7 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/roadmap.md": [
       "operator drill",
-      "release-candidate, dogfood readiness, promotion, and go-live",
+      "release-candidate, dogfood readiness, production and dashboard deployment handoff, promotion",
     ],
   };
 

@@ -5108,7 +5108,7 @@ appServer.handleGitHubWebhook({
   const operatorDrillContractResult =
     operatorDrillContractCheck.checkOperatorDrillContract();
   assert.equal(operatorDrillContractResult.drillCases, 2);
-  assert.equal(operatorDrillContractResult.commands, 6);
+  assert.equal(operatorDrillContractResult.commands, 7);
   assert.throws(
     () =>
       operatorDrillContractCheck.checkOperatorDrillContract({
