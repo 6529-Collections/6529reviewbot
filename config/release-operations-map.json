@@ -227,6 +227,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "dogfood-readiness-contract",
+          "script": "check:dogfood-readiness",
+          "purpose": "Verify dogfood readiness report defaults, operator workspace path redaction, preflight state, Markdown sanitization, source invariants, and public docs stay synchronized.",
+          "doc": "docs/dogfood-readiness.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "dogfood-promotion-contract",
           "script": "check:dogfood-promotion",
           "purpose": "Verify dogfood promotion packet readiness gating, strict-preflight enforcement, workspace path redaction, Markdown sanitization, source invariants, and public docs stay synchronized.",

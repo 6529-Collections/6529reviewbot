@@ -88,6 +88,7 @@ From a private operator environment, include no-network runtime preflight:
 ```bash
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm run check:dogfood-readiness
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm run check:dogfood-promotion
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
@@ -175,6 +176,9 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 
 - Use `templates/dogfood-command-only-config.yml`.
 - Keep automatic initial and synchronize reviews disabled.
+- Run `npm run check:dogfood-readiness` after changing the readiness command,
+  report format, static defaults, workspace handling, or docs; the dogfood
+  readiness checker keeps that input gate synchronized.
 - Run `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
   before enabling command-only live traffic when release-candidate, promotion,
   cutover, and operator-workspace evidence should agree in one public-safe

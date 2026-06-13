@@ -60,6 +60,8 @@ npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace
 
 The command output redacts operator workspace paths, but a normal `npm run`
 invocation can still print the full command line before the script starts.
+The rendered report uses `[operator-workspace]` for private workspace roots
+and `[external-path-set]` for external file inputs.
 
 For expansion or final release gates where every private checklist must be
 complete, add the stricter workspace flag:
@@ -109,3 +111,18 @@ release-candidate behavior.
 - `admin:snapshot` verifies private bot API posture after the bot is deployed.
 
 Use all four when moving from source readiness to live dogfood traffic.
+
+## Contract Check
+
+Run the dogfood readiness contract check after changing readiness report
+formatting, static input defaults, operator workspace handling, preflight
+behavior, or release/dogfood docs:
+
+```bash
+npm run check:dogfood-readiness
+```
+
+The dogfood readiness contract check verifies the public static report,
+private workspace path redaction, strict preflight state, Markdown redaction
+for common secret and AWS identifier shapes, source invariants, and public doc
+synchronization.

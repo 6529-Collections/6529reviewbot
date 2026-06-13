@@ -133,6 +133,9 @@ stabilized.
 - Added a webhook-replay contract release check that validates dry-run default
   behavior, explicit dispatch, local payload signing, raw-payload omission, and
   docs.
+- Added a dogfood readiness contract release check that validates static input
+  defaults, private workspace path markers, preflight state, Markdown
+  redaction, source invariants, and docs.
 - Added a dogfood promotion contract release check that validates strict
   preflight readiness, private workspace path markers, Markdown redaction,
   source invariants, and docs.
