@@ -1,5 +1,10 @@
 # Configuration
 
+Run `npm run check:configuration-reference` after editing this reference,
+runtime env templates, or related deployment guidance. The configuration
+reference contract keeps central App, provider, budget, worker, usage API,
+admin auth, alerting, and review-engine controls synchronized.
+
 ## Required Runtime Environment
 
 ```text

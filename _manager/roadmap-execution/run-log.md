@@ -3491,3 +3491,25 @@
   - `npm test` passed;
   - `npm run release:check` passed, including budget policies runbook
     validation and 89 mapped release-operation tools.
+- Merged `6529reviewbot` PR #213 as `9eb65c7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/configuration-reference-contract` increment:
+  - add `scripts/check-configuration-reference-contract.cjs` and
+    `npm run check:configuration-reference`;
+  - validate configuration reference section order, central App/env keys,
+    provider defaults, budget controls, worker dispatch, usage/admin APIs,
+    admin auth, alerting, review limits, source parser anchors, and env
+    template presence;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/configuration-reference-contract` so far:
+  - `npm run check:configuration-reference` passed with 21 sections, 141 env
+    keys, and 8 docs/templates checked;
+  - `npm run check:release-operations` passed with 90 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 147 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including configuration reference
+    validation and 90 mapped release-operation tools.

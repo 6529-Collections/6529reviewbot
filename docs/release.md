@@ -130,6 +130,10 @@ After stabilization:
 - `npm run check:deployment-runbook` confirms the deployment runbook contract
   keeps GitHub App registration, central runtime, worker, 6529.io wiring,
   verification, and rollback guidance synchronized
+- `npm run check:configuration-reference` confirms the configuration reference
+  keeps central App env, provider defaults, budget controls, worker dispatch,
+  usage/admin APIs, admin auth, alerting, review limits, env templates, and
+  source parser anchors synchronized
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized

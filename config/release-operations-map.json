@@ -52,6 +52,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "configuration-reference-contract",
+          "script": "check:configuration-reference",
+          "purpose": "Verify the configuration reference keeps central App env, provider defaults, budget controls, worker dispatch, usage/admin APIs, admin auth, alerting, review limits, env templates, and source parser anchors synchronized.",
+          "doc": "docs/configuration.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "operations-runbook-contract",
           "script": "check:operations-runbook",
           "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",
