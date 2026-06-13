@@ -117,34 +117,38 @@ Do not create the `v0` tag until all of these are true:
 8. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode. Use
    `npm run dogfood:target` before opening the target repository config PR.
-9. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
+9. The dogfood promotion packet has passed from the private operator
+   environment before first live dogfood traffic, including target repository
+   config, central dogfood inputs, self-dogfood replay, private workspace, and
+   strict preflight gates.
+10. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
-10. Central budget policy rows have been reviewed and applied with
+11. Central budget policy rows have been reviewed and applied with
    `npm run budget-policies -- -- --file <file> --apply`, or release notes
    explicitly keep budget control to environment/repository caps.
-11. Model pricing rows have source URLs, fresh source-checked timestamps, have
+12. Model pricing rows have source URLs, fresh source-checked timestamps, have
    been reviewed against current provider docs, and have been applied with
    `npm run model-prices -- -- --file <file> --apply`, or release notes
    explicitly keep conservative default cost estimates. Any stale,
    future-dated, or zero-rate rows must be documented before using
    `--allow-stale-source` or `--allow-zero-price`.
-12. Run-control claims are either enforced with conservative caps using the
+13. Run-control claims are either enforced with conservative caps using the
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.
-13. A limited initial-review dogfood run has completed with conservative budget
+14. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage, tracked with
    `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file>`.
-14. Scheduled operator alerts route to an operator-owned channel.
-15. `npm run release:check` passes from a clean `main`.
+15. Scheduled operator alerts route to an operator-owned channel.
+16. `npm run release:check` passes from a clean `main`.
     The release check includes `npm run check:release-operations` so the
     operations map cannot reference stale scripts or missing docs.
-16. `npm run preflight -- -- --strict` passes in the release candidate
+17. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.
-17. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
-18. `docs/security-review-checklist.md` has been completed for the release
+18. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
+19. `docs/security-review-checklist.md` has been completed for the release
     candidate and tracked with
     `npm run security:review -- -- --status-file <operator-security-status-file>`.
-19. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
+20. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 
 Render the same gates as an operator checklist:

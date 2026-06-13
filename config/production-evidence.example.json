@@ -9,7 +9,7 @@
     "publicSummaryLocation": "public release issue or PR URL",
     "privateEvidenceLocation": "private operator runbook entry",
     "releaseGateStatusFile": "private v0 release gate status JSON",
-    "releaseGateSummary": "0/19 complete, example file only",
+    "releaseGateSummary": "0/20 complete, example file only",
     "releaseGateReadyCheck": "not run for example evidence",
     "productionCutoverStatusFile": "private production cutover status JSON",
     "productionCutoverSummary": "2/30 complete, example file only",
