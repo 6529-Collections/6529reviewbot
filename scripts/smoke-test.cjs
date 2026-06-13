@@ -59,6 +59,7 @@ const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs
 const githubAppRoutesContractCheck = require("./check-github-app-routes-contract.cjs");
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
+const configurationReferenceContractCheck = require("./check-configuration-reference-contract.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
@@ -5215,6 +5216,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /deployment runbook contract check found/
+  );
+  const configurationReferenceContractResult =
+    configurationReferenceContractCheck.checkConfigurationReferenceContract();
+  assert.equal(configurationReferenceContractResult.sections, 21);
+  await assert.throws(
+    () =>
+      configurationReferenceContractCheck.checkConfigurationReferenceContract({
+        quiet: true,
+        docTexts: {
+          "docs/configuration.md": "# Configuration\n",
+        },
+      }),
+    /configuration reference contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

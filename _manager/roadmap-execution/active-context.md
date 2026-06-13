@@ -386,11 +386,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Model pricing runbook contract PR: merged as PR #212, merge commit
   `813f20c`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/budget-policies-runbook-contract`.
-- Current local changes: adding a budget policies runbook contract check that
-  keeps policy-file shape, scope semantics, dry-run/apply behavior, central DB
-  caps, fail-closed admission precedence, review requirements, release checks,
-  smoke tests, and docs synchronized.
+- Budget policies runbook contract PR: merged as PR #213, merge commit
+  `9eb65c7`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/configuration-reference-contract`.
+- Current local changes: adding a configuration reference contract check that
+  keeps central App env, provider defaults, budget controls, worker dispatch,
+  usage/admin APIs, admin auth, alerting, review limits, env templates, source
+  parser anchors, release checks, smoke tests, and docs synchronized.
 
 ## Key Decisions
 
@@ -899,6 +901,10 @@ merged PRs.
   shape, canonical scopes, dry-run/apply behavior, fail-closed admission reads,
   central DB cap precedence, and review notes machine-checked so public
   operator docs cannot drift from production admission behavior.
+- Runtime configuration is a release-sensitive operator surface. Keep central
+  App env, provider defaults, budget controls, worker dispatch, usage/admin
+  APIs, admin auth, alerting, review limits, env templates, and parser anchors
+  machine-checked so deployment docs cannot drift from live settings.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -922,7 +928,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the budget policies runbook contract check.
+2. Publish and merge the configuration reference contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

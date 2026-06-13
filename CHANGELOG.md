@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a configuration reference contract release check for runtime env docs,
+  env templates, deployment guidance, and source parser anchors.
 - Added a budget policies runbook contract release check for central DB caps,
   dry-run/apply behavior, fail-closed admission precedence, and review
   requirements.

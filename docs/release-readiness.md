@@ -191,6 +191,10 @@ Ready for community review:
 - `npm run check:deployment-runbook` keeps [Production Deployment](deployment.md)
   synchronized with GitHub App registration, central runtime, worker, 6529.io
   wiring, verification, and rollback guidance;
+- `npm run check:configuration-reference` keeps the configuration reference
+  synchronized across central App env, provider defaults, budget controls,
+  worker dispatch, usage/admin APIs, admin auth, alerting, review limits, env
+  templates, and source parser anchors;
 - `npm run check:operations-runbook` keeps [Operations Runbook](operations.md)
   synchronized with routine checks and triage paths for replay, spend, ledgers,
   workers, dashboards, and bot comments;

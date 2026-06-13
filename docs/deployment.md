@@ -12,6 +12,9 @@ Run `npm run check:deployment-runbook` after changing this document. The
 deployment runbook contract keeps GitHub App registration, central runtime,
 worker dispatch, 6529.io wiring, verification, and rollback guidance aligned
 with release checks.
+Run `npm run check:configuration-reference` when deployment env names or
+runtime defaults change so [Configuration](configuration.md) stays aligned with
+the production runbook and env templates.
 
 For release or dogfood evidence, use
 [operator-evidence-template.md](operator-evidence-template.md). Keep

@@ -28,6 +28,10 @@ command-only target posture, and rollback controls synchronized.
 `npm run check:deployment-runbook` keeps the production deployment runbook's
 GitHub App registration, central runtime, worker, 6529.io wiring,
 verification, and rollback guidance synchronized.
+`npm run check:configuration-reference` keeps the configuration reference
+aligned across central App env, provider defaults, budget controls, worker
+dispatch, usage/admin APIs, admin auth, alerting, review limits, env templates,
+and source parser anchors.
 `npm run check:operations-runbook` keeps the operations runbook's routine
 checks and triage paths for replay, spend, ledgers, workers, dashboards, and
 bot comments synchronized.
@@ -158,6 +162,7 @@ The local quality gate command inventory is:
 - `npm run check:governance`
 - `npm run check:install-guide`
 - `npm run check:deployment-runbook`
+- `npm run check:configuration-reference`
 - `npm run check:operations-runbook`
 - `npm run check:dependabot`
 - `npm run check:container-image`
