@@ -115,6 +115,9 @@ Ready for community review:
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;
+- dogfood readiness checker that keeps static input defaults, private
+  workspace path markers, preflight state, Markdown redaction, source
+  invariants, and docs synchronized;
 - dogfood promotion packet command for composing target config readiness,
   central dogfood inputs, synthetic self-dogfood replay, private workspace
   parsing, and preflight into one final pre-traffic go/no-go report;

@@ -289,7 +289,7 @@ function formatDogfoodReadinessMarkdown(report) {
     }`,
     `- operator workspace: ${
       report.inputs.operatorWorkspace
-        ? `${report.inputs.operatorWorkspace.directory}${
+        ? `${publicText(report.inputs.operatorWorkspace.directory)}${
             report.inputs.operatorWorkspace.requireReady ? " require-ready" : ""
           }`
         : "not included"
