@@ -268,6 +268,9 @@ Build the operator experience:
 - model-default checks that keep catalog defaults, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes aligned as models
   update;
+- provider-contract checks that keep supported provider constants, model
+  catalog providers, preflight key requirements, workflow dispatch choices,
+  and provider docs aligned;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
@@ -418,6 +421,9 @@ Completed in `6529reviewbot`:
   synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
+- provider-contract checks that keep provider constants, model catalog
+  providers, preflight key requirements, workflow dispatch choices, and
+  provider docs synchronized.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

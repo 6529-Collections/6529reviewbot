@@ -125,6 +125,9 @@ Ready for community review:
   synchronized;
 - model-default checker that keeps the model catalog, reusable workflow
   fallbacks, provider-default docs, and conservative starter lanes synchronized;
+- provider contract checker that keeps supported provider constants, model
+  catalog providers, preflight key requirements, workflow dispatch choices, and
+  provider docs synchronized;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -349,6 +352,9 @@ options, reusable workflow defaults, and workflow routing stay aligned.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.
+`npm run check:providers` is included in `npm run release:check` and verifies
+supported provider constants, model catalog providers, preflight key
+requirements, workflow dispatch choices, and provider docs stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

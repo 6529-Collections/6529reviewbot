@@ -99,6 +99,9 @@ stabilized.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.
+- Added a provider-contract release check that validates supported provider
+  constants against model catalog providers, preflight key requirements,
+  workflow dispatch options, and provider docs.
 - Updated the v0 release gate and release notes contract to require explicit
   container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep

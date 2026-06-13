@@ -459,6 +459,7 @@ function loadModelPriceFileForPreflight(file) {
 }
 
 module.exports = {
+  PROVIDER_KEYS,
   formatPreflightResult,
   runPreflight,
 };

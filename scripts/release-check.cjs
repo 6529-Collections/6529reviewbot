@@ -26,6 +26,7 @@ runNode("scripts/check-container-image.cjs");
 runNode("scripts/check-comment-commands.cjs");
 runNode("scripts/check-review-workflow-kinds.cjs");
 runNode("scripts/check-model-defaults.cjs");
+runNode("scripts/check-provider-contract.cjs");
 runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");

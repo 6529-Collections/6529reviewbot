@@ -11,6 +11,7 @@ const {
 } = require("./usage-ledger.cjs");
 const {
   defaultModelForProvider,
+  PROVIDERS,
 } = require("./model-catalog.cjs");
 const {
   estimateUsageCostUsd,
@@ -349,8 +350,8 @@ function normalizeKind(kind) {
 
 function normalizeProvider(provider) {
   const normalized = String(provider).toLowerCase();
-  if (!["anthropic", "openai", "openrouter"].includes(normalized)) {
-    throw new Error("REVIEW_PROVIDER must be 'anthropic', 'openai', or 'openrouter'.");
+  if (!PROVIDERS.includes(normalized)) {
+    throw new Error(`REVIEW_PROVIDER must be one of: ${PROVIDERS.join(", ")}.`);
   }
   return normalized;
 }

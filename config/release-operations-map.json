@@ -73,6 +73,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "provider-contract",
+          "script": "check:providers",
+          "purpose": "Verify supported provider constants stay synchronized with model catalog providers, preflight key requirements, workflow dispatch options, and provider docs.",
+          "doc": "docs/provider-setup.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",
