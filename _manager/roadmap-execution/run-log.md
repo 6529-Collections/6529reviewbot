@@ -2368,3 +2368,20 @@
   - `npm run release:check` passed, including 20 v0 release gates and 40
     mapped release-operation tools;
   - `npm run check` passed with 98 CommonJS files.
+- Merged `6529reviewbot` PR #162 as `1dda26e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dependabot-config-check` increment:
+  - add `scripts/check-dependabot-config.cjs` and `npm run check:dependabot`;
+  - wire the check into `npm run release:check` and the release operations map;
+  - document weekly npm and GitHub Actions dependency update coverage as a
+    release-maintained public repo guardrail.
+- Local validation for `codex/dependabot-config-check`:
+  - `npm run check:dependabot` passed with 2 ecosystems checked;
+  - `npm run check:release-operations` passed with 41 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 99 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including Dependabot config validation and
+    20 v0 release gates.

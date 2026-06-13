@@ -38,6 +38,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "dependabot-config",
+          "script": "check:dependabot",
+          "purpose": "Verify weekly Dependabot coverage for npm and GitHub Actions dependencies.",
+          "doc": "docs/release.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

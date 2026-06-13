@@ -316,6 +316,8 @@ secrets blank and references only reviewed OpenAPI usage/admin paths.
 `npm run check:env-templates` is included in `npm run release:check` and checks
 all public env templates for valid syntax, duplicate keys, nonblank secret
 placeholders, and conservative dogfood defaults.
+`npm run check:dependabot` is included in `npm run release:check` and verifies
+weekly Dependabot coverage for npm and GitHub Actions dependencies.
 `npm run check:release-operations` is included in `npm run release:check` and
 keeps the command/evidence-boundary map aligned with package scripts and docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps

@@ -630,6 +630,8 @@ merged PRs.
 - The public roadmap should distinguish completed bot implementation from
   remaining external/operator-owned deployment, pricing, 6529.io merge, and
   dogfood evidence work.
+- Dependency maintenance should be release-checked so weekly npm and
+  GitHub Actions Dependabot coverage cannot be removed silently.
 
 ## Constraints
 
@@ -643,7 +645,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the roadmap current-state sweep.
+2. Validate, publish, and merge the Dependabot config release check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
