@@ -112,3 +112,6 @@ Findings should be grouped only when needed:
 ```
 
 The bot omits empty sections.
+
+See [Review Comment Format](review-comment-format.md) for the full visible
+comment, hidden metadata, and budget-skip contract.

@@ -304,6 +304,8 @@ Completed in `6529reviewbot`:
 - central runtime pause controls for org, repo, provider, model, review kind,
   and emergency global stops;
 - documented comment-command contract for maintainer-triggered reviews;
+- documented review comment format for visible review comments, hidden
+  metadata, and budget-skip comments;
 - GitHub App installation-token handling for repository config and actor
   permission resolution;
 - budget admission against the AWS usage ledger;
@@ -388,6 +390,8 @@ Completed in `6529reviewbot`:
 - GitHub Action checkout pins use the peeled commit SHA for annotated release
   tags.
 - documentation link checker for the public docs surface.
+- checklist runbook-link checker for dogfood, security-review, and
+  production-cutover JSON checklists.
 - public artifact leak scanner for docs, examples, workflows, and durable
   manager memory.
 - public env template checker for syntax, duplicate keys, blank secret

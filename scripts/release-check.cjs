@@ -18,6 +18,7 @@ const operatorWorkspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-release
 
 runNode("scripts/check.cjs");
 runNode("scripts/check-doc-links.cjs");
+runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");
 runNode("scripts/check-workflow-actions.cjs");
