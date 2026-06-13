@@ -129,7 +129,8 @@ Ready for community review:
   placeholders, and conservative dogfood defaults;
 - canonical docs index checker so every public docs page stays discoverable;
 - public governance checker for MIT/community files and README governance
-  links;
+  links, including issue-template safety prompts and private security-report
+  routing;
 - workflow permission checker for explicit least-privilege GitHub Actions
   permission maps;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;

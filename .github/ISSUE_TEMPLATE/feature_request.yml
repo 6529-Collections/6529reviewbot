@@ -3,6 +3,9 @@ description: Suggest an improvement.
 title: "[Feature]: "
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: Do not include secrets, provider keys, AWS credentials, private PR data, or non-public roadmap details.
   - type: textarea
     id: problem
     attributes:

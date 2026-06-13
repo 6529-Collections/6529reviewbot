@@ -67,6 +67,8 @@ function main() {
     findings.push("SUPPORT.md must point security reports to SECURITY.md.");
   }
 
+  findings.push(...checkIssueTemplates());
+
   if (findings.length) {
     for (const finding of findings) {
       console.error(finding);
@@ -79,6 +81,37 @@ function main() {
 
 function read(file) {
   return fs.readFileSync(path.join(root, file), "utf8");
+}
+
+function checkIssueTemplates() {
+  const findings = [];
+  const bugReport = read(".github/ISSUE_TEMPLATE/bug_report.yml");
+  if (!bugReport.includes("Do not include secrets")) {
+    findings.push("bug_report.yml must warn reporters not to include secrets.");
+  }
+  if (!bugReport.includes("npm run support:bundle")) {
+    findings.push("bug_report.yml must request sanitized support bundle output.");
+  }
+  if (!bugReport.includes("Do not paste secrets or private payloads")) {
+    findings.push("bug_report.yml must warn against pasting private payloads.");
+  }
+
+  const featureRequest = read(".github/ISSUE_TEMPLATE/feature_request.yml");
+  if (!featureRequest.includes("Do not include secrets")) {
+    findings.push("feature_request.yml must warn reporters not to include secrets.");
+  }
+  if (!featureRequest.includes("Security and cost considerations")) {
+    findings.push("feature_request.yml must ask for security and cost considerations.");
+  }
+
+  const config = read(".github/ISSUE_TEMPLATE/config.yml");
+  if (!/blank_issues_enabled:\s*false/.test(config)) {
+    findings.push("issue template config must disable blank issues.");
+  }
+  if (!config.includes("/security/policy")) {
+    findings.push("issue template config must link to the private security policy.");
+  }
+  return findings;
 }
 
 if (require.main === module) {
