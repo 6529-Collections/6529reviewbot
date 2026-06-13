@@ -283,6 +283,7 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   lines.push(`npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary`);
   lines.push(`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --release ${summary.release} --require-ready`);
   lines.push(`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${summary.release} --require-ready`);
+  lines.push(`npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${summary.release} --require-ready`);
   lines.push("```");
   return `${lines.join("\n")}\n`;
 }
@@ -354,6 +355,7 @@ npm run production:cutover -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILE
 npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary
 npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --release ${release} --require-ready
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${release} --require-ready
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${release} --require-ready
 npm run release:candidate -- -- --operator-workspace . --strict-preflight
 npm --silent run dogfood:promotion -- -- --operator-workspace . --strict-preflight --require-ready
 npm --silent run dogfood:go-live -- -- --operator-workspace . --strict-preflight --require-ready

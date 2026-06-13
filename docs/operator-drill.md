@@ -4,8 +4,8 @@
 It creates a temporary operator workspace skeleton, rehearses the
 release-candidate, dogfood readiness, promotion, and go-live summaries, and
 prints the next commands an operator should run from the private environment,
-including the production deployment plan and dashboard deployment plan
-handoffs.
+including the production deployment plan, dashboard deployment plan, and alert
+delivery plan handoffs.
 The default drill removes the temporary workspace before exiting.
 
 The drill rehearses the sequence without calling GitHub, AWS, or model
@@ -44,6 +44,8 @@ The drill composes existing public-safe commands and summaries:
   review before live App, registry, runtime, cutover, or dogfood actions;
 - `dashboard:deployment-plan` as the dry-run 6529.io dashboard handoff command
   to review before public/private dashboard exposure.
+- `alerts:delivery-plan` as the dry-run alert routing handoff command to
+  review before webhook, SNS, or SES delivery.
 
 Freshly generated operator workspace files are expected to be pending. A
 default drill should usually report `Ready: no`; that is useful because it
@@ -71,6 +73,7 @@ After filling the private workspace, run the real gates:
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready --out <public-bundle-file.md> --quiet
 npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
@@ -78,4 +81,4 @@ npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-d
 Run `npm run check:operator-drill` after changing the drill command, operator
 workspace flow, release-candidate bundle, dogfood readiness/promotion/go-live
 summaries, production deployment plan handoff, dashboard deployment plan
-handoff, or this runbook.
+handoff, alert delivery plan handoff, or this runbook.
