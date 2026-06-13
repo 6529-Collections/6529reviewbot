@@ -2436,3 +2436,25 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including container-image contract
     validation and 20 v0 release gates.
+- Merged `6529reviewbot` PR #166 as `c00b89e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Periodic frontend PR check:
+  - `6529seize-frontend` PR #2605 remains open, mergeable, and green; its
+    prior review thread is resolved and outdated;
+  - `6529seize-frontend` PR #2632 remains open, mergeable, and green with no
+    review threads.
+- Started `codex/release-operations-doc-sync` increment:
+  - extend `check:release-operations` to require the operations-map doc to
+    mention every local quality command from the machine-readable map;
+  - add the current local quality command inventory, including
+    `npm run check:container-image`, to `docs/release-operations-map.md`;
+  - add smoke-test coverage for missing command inventory entries.
+- Local validation for `codex/release-operations-doc-sync`:
+  - `npm run check:release-operations` passed with 42 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 100 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including release-operations doc-sync
+    validation and 42 mapped tools.

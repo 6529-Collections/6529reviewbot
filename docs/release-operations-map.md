@@ -27,6 +27,20 @@ update coverage present.
 `npm run check:workflow-permissions` keeps committed workflow and template
 permission blocks explicit and least-privilege.
 
+The local quality gate command inventory is:
+
+- `npm run check`
+- `npm run check:docs`
+- `npm run check:doc-index`
+- `npm run check:governance`
+- `npm run check:dependabot`
+- `npm run check:container-image`
+- `npm run check:public-artifacts`
+- `npm run check:env-templates`
+- `npm run check:workflow-actions`
+- `npm run check:workflow-permissions`
+- `npm run validate:api-contract`
+
 ## How To Read It
 
 - Local quality gates are public-safe and should run before each PR update.

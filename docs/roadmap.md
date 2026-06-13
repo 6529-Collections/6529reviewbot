@@ -365,6 +365,8 @@ Completed in `6529reviewbot`:
   manual-review evidence rollups;
 - release operations map for recurring checks, private evidence overlays, and
   release-bundle commands with explicit public/private output boundaries;
+- release operations map doc-sync checks so mapped local quality commands stay
+  visible in public operator docs;
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production cutover status, deferrals,
   known gaps, compatibility, and validation fields;

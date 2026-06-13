@@ -62,7 +62,7 @@ stabilized.
   supplied.
 - Release operations map CLI and checker index recurring release commands and
   evidence boundaries, and fail release checks when mapped scripts or docs
-  drift.
+  drift or when the operations-map doc omits a local quality command.
 - Checklist runbook validation now fails release checks when public dogfood,
   security-review, or production-cutover checklist items point at missing
   runbook docs.
