@@ -1717,3 +1717,20 @@
   - `npm run check:docs` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #129 as `81b1e08` after CI and Dependency Review
+  passed.
+- Started `codex/6529-io-env-template` increment:
+  - add `templates/6529-io-reviewbot-env.example` as the public-safe env-name
+    source for 6529.io public and private dashboard routes;
+  - add `scripts/check-6529-io-env-template.cjs` so release checks keep live
+    secrets blank in the public template and verify every configured dashboard
+    path exists in `docs/usage-api.openapi.json`;
+  - update install, deployment, configuration, admin integration, release,
+    readiness, roadmap, README, changelog, and manager memory.
+- Local validation for `codex/6529-io-env-template`:
+  - `npm run check:6529-io-env` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

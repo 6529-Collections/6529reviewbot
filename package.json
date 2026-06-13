@@ -44,6 +44,7 @@
     "github-app:convert": "node bin/convert-github-app-manifest.cjs",
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "check:docs": "node scripts/check-doc-links.cjs",
+    "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:public-artifacts": "node scripts/check-public-artifacts.cjs",
     "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:release-gates": "node scripts/check-release-gate-parity.cjs",

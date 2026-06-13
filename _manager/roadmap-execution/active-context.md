@@ -214,11 +214,15 @@ merged PRs.
 - Frontend private admin dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2632`
   stacked on public dashboard PR #2605.
-- Current branch: `codex/dogfood-readiness-check`
-- Current local changes: adding a public-safe dogfood readiness command that
-  validates target repository config inputs, central dogfood budget policy,
-  model catalog defaults, and optional no-network preflight before first live
-  dogfood traffic.
+- Roadmap progress memory PR: merged as PR #128, merge commit `a8e00f5`;
+  post-merge CI and Dependency Review completed successfully.
+- Dogfood readiness check PR: merged as PR #129, merge commit `81b1e08`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/6529-io-env-template`
+- Current local changes: adding a public-safe 6529.io dashboard environment
+  template, a checker that keeps secret placeholders blank, and release-check
+  validation that every configured dashboard path remains in the OpenAPI
+  usage/admin API contract.
 
 ## Key Decisions
 
@@ -471,6 +475,10 @@ merged PRs.
   stdout, webhook, and SNS. Sender and recipient addresses are operational
   routing details: admin status and support bundles report presence/counts, not
   full addresses.
+- The 6529.io dashboard environment template should stay public-safe and
+  machine-checked. It may name env vars and placeholder API paths, but live
+  origins, wallet allowlists, auth-check URLs, HMAC secrets, and production
+  routing details remain in the private 6529.io deployment configuration.
 
 ## Constraints
 
@@ -484,7 +492,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the dogfood readiness command if checks pass.
+2. Validate, publish, and merge the 6529.io env-template contract check.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
@@ -526,5 +534,6 @@ merged PRs.
   merge is still blocked by required human review.
 - Frontend PR #2632 adds the private `/tools/6529bot/admin` UI and is stacked
   on PR #2605; it is also blocked on the frontend review/merge path.
-- Private admin UI production deployment still needs 6529.io environment
-  wiring, real wallet allowlists, and a live auth-check endpoint.
+- Private admin UI production deployment still needs the 6529.io environment
+  template copied into private configuration with the real production origin,
+  wallet allowlists, auth-check endpoint, and HMAC secret.

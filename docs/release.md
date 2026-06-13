@@ -69,6 +69,8 @@ After stabilization:
   surface; keep the detailed snapshot private unless release notes only copy
   public-safe counts
 - `npm run release:check`
+- `npm run check:6529-io-env` confirms the public-safe 6529.io dashboard env
+  template still points only at reviewed usage/admin API contract paths
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list
 - `npm run check:docs` passes before publishing docs-heavy release notes

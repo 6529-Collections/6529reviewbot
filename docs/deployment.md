@@ -236,6 +236,16 @@ release evidence to resolve or explicitly accept before production traffic.
 
 ## 6529.io Wiring
 
+Use the public-safe frontend env template as the starting point:
+
+```bash
+npm run check:6529-io-env
+```
+
+The template lives at `templates/6529-io-reviewbot-env.example`. Copy the env
+names into the private 6529.io deployment configuration and replace only the
+deployment-owned values there.
+
 Public dashboard routes should call:
 
 ```text

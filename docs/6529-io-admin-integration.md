@@ -64,6 +64,24 @@ REVIEWBOT_ADMIN_AUTH_MAX_TTL_SECONDS=300
 Keep those values in private runtime secret stores. Do not commit live hosts,
 real secrets, or internal network details to this public repository.
 
+For the `6529.io` frontend route environment, start from:
+
+```text
+templates/6529-io-reviewbot-env.example
+```
+
+The template uses the env names expected by the public Open Data route and the
+private `/tools/6529bot/admin` route. It includes only placeholders and
+reviewed API paths. Validate it against the OpenAPI contract with:
+
+```bash
+npm run check:6529-io-env
+```
+
+Keep the live wallet allowlist, auth-check URL, HMAC secret, and production
+origin in the private 6529.io deployment configuration, not in this public
+repository.
+
 ## Recommended Page Calls
 
 For the first private admin page, use these client methods:

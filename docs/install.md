@@ -236,6 +236,23 @@ tokens. See [worker-adapters.md](worker-adapters.md).
 
 ## 7. Wire 6529.io Surfaces
 
+Copy the public-safe environment-name template into the private `6529.io`
+deployment configuration system:
+
+```text
+templates/6529-io-reviewbot-env.example
+```
+
+Validate that the template's dashboard paths still match the bot API contract:
+
+```bash
+npm run check:6529-io-env
+```
+
+Replace only the placeholder values in the private deployment configuration.
+Live wallet allowlists, auth-check URLs, HMAC secrets, and production origins
+must not be committed to this public repository.
+
 Public 6529.io pages should call:
 
 ```text

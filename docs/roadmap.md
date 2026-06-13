@@ -318,6 +318,8 @@ Completed in `6529reviewbot`:
   completion;
 - public and admin usage API contracts;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
+- public-safe 6529.io dashboard env-name template validated against the
+  OpenAPI usage/admin API contract;
 - admin recent usage-events, job-events, run-claims, and runtime-status APIs
   for private 6529.io operator surfaces;
 - admin budget-status API for private budget utilization dashboards without
