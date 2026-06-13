@@ -101,6 +101,9 @@ Ready for community review:
   posture before opening or updating a target repository PR;
 - command-only `.github/6529bot.yml` config in this repository for eventual
   self-dogfood with trusted maintainer comment commands only;
+- synthetic self-dogfood replay check for proving that the committed config
+  skips automatic PR-open jobs and admits trusted maintainer comment commands
+  without dispatching workers;
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;
@@ -251,6 +254,7 @@ first traffic:
 ```bash
 npm run dogfood:target
 npm run dogfood:target -- -- --mode limited-initial --require-ready
+npm run check:self-dogfood-replay
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready

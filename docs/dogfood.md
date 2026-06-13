@@ -40,6 +40,16 @@ This repository also carries its own command-only `.github/6529bot.yml` so it
 can become a first target when the production App is installed. It does not
 enable automatic initial or follow-up reviews.
 
+Before live delivery, run the synthetic self-dogfood replay check:
+
+```bash
+npm run check:self-dogfood-replay
+```
+
+The check uses public payload templates in `templates/` and dry-run queueing to
+prove that the self config creates no automatic PR-open jobs while admitting a
+trusted maintainer `/6529bot security` comment command.
+
 Move to limited initial PR reviews after webhook delivery, admission, budget,
 usage, and alerts are verified:
 
@@ -52,6 +62,7 @@ Validate the file from this repository before opening the target-repo PR:
 ```bash
 npm run dogfood:target
 npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready
+npm run check:self-dogfood-replay
 npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run validate:repo-config -- templates/dogfood-command-only-config.yml
 npm run validate:repo-config -- templates/dogfood-repository-config.yml

@@ -81,6 +81,8 @@ After stabilization:
   the release as dogfood-only and name every cutover deferral
 - `npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready`
   passes before opening or updating the target repository config PR
+- `npm run check:self-dogfood-replay`
+  passes before using this repository as the first command-only dogfood target
 - `npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
   passes before first live dogfood traffic, using the operator-reviewed target
   repo config, budget policy, and private workspace when they differ from the
