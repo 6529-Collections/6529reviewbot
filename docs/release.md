@@ -179,6 +179,9 @@ After stabilization:
   public operator evidence, including the tracked root `.env.example`
 - `npm run check:preflight` passes against the synthetic central App server
   and worker fixtures
+- `npm run check:preflight-contract` confirms the preflight check order,
+  strict/profile behavior, CLI flags, redacted diagnostics, and docs stay
+  synchronized
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App

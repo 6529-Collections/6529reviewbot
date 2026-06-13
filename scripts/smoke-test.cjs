@@ -77,6 +77,7 @@ const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const providerContractCheck = require("./check-provider-contract.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
+const preflightContractCheck = require("./check-preflight-contract.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
@@ -305,6 +306,27 @@ assert.throws(
       },
     }),
   /diagnostics redaction check found/
+);
+assert.equal(preflightContractCheck.checkPreflightContract().checks, 18);
+assert.deepEqual(preflightContractCheck.expectedChecks.slice(0, 3), [
+  "webhook",
+  "github_app_auth",
+  "model_catalog",
+]);
+assert.throws(
+  () =>
+    preflightContractCheck.checkPreflightContract({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\nnpm run preflight\n",
+        "docs/configuration.md": "# Configuration\n",
+        "docs/deployment.md": "# Deployment\n",
+        "docs/release.md": "# Release\n",
+        "docs/release-operations-map.md": "# Release Operations Map\n",
+        "docs/release-readiness.md": "# Release Readiness\n",
+      },
+    }),
+  /preflight contract check found/
 );
 assert.throws(
   () =>

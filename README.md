@@ -167,6 +167,8 @@ npm run check:alert-dimensions
 npm run check:alert-notifier-modes
 npm run check:container-image
 npm run check:public-artifacts
+npm run check:preflight
+npm run check:preflight-contract
 npm run check:release-notes
 npm run check:self-dogfood-replay
 npm test
@@ -183,6 +185,8 @@ Validate central runtime configuration without network calls:
 
 ```bash
 npm run preflight
+npm run check:preflight
+npm run check:preflight-contract
 ```
 
 Review the pre-v1 release boundary before tagging:

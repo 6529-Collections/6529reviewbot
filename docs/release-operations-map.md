@@ -66,6 +66,10 @@ parsing, claim SQL, docs, and env examples aligned.
 env parsing, docs, and env examples aligned.
 `npm run check:alert-notifier-modes` keeps scheduled alert delivery modes, env
 parsing, docs, and env examples aligned.
+`npm run check:preflight` runs no-network central App server and worker
+preflight fixtures.
+`npm run check:preflight-contract` keeps the no-network preflight check order,
+strict/profile behavior, CLI flags, redacted diagnostics, and docs aligned.
 
 The local quality gate command inventory is:
 
@@ -94,6 +98,8 @@ The local quality gate command inventory is:
 - `npm run check:alert-dimensions`
 - `npm run check:alert-notifier-modes`
 - `npm run check:public-artifacts`
+- `npm run check:preflight`
+- `npm run check:preflight-contract`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`

@@ -90,6 +90,8 @@ Ready for community review:
 - no-network production preflight command;
 - release-time preflight fixtures for central App server and worker
   configuration postures;
+- preflight contract checker that keeps check order, strict/profile behavior,
+  CLI flags, redacted diagnostics, and docs synchronized;
 - public usage summaries enforce repo/org allowlists before repo names are
   disclosed, even when data comes from a custom loader;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
@@ -353,6 +355,11 @@ the GitHub Release template aligned with v0 release evidence expectations.
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud
 identifiers before release.
+`npm run check:preflight` is included in `npm run release:check` and verifies
+deterministic no-network central App server and worker configuration fixtures.
+`npm run check:preflight-contract` is included in `npm run release:check` and
+verifies preflight check order, strict/profile behavior, CLI flags, redacted
+diagnostics, and docs stay aligned.
 `npm run check:workflow-permissions` is included in `npm run release:check`
 and verifies committed workflow permission blocks stay explicit and
 least-privilege.
