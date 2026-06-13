@@ -3839,3 +3839,29 @@
   - `npm run release:check` passed, including release notes draft,
     publication, and template validation for production deployment plan
     evidence.
+- Merged `6529reviewbot` PR #227 as `05f37aa`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Merged `6529seize-frontend` PR #2605 as `eb299f4`; post-merge CodeQL
+  completed successfully.
+- Rebased `6529seize-frontend` PR #2632 onto frontend `main` after PR #2605
+  landed, reran focused admin dashboard validation, and merged it as
+  `173aa33`; post-merge CodeQL completed successfully.
+- Started `codex/dashboard-merge-roadmap-sync` increment:
+  - update `6529reviewbot` roadmap/readiness docs to record the merged
+    6529.io public usage and private admin dashboard PRs;
+  - narrow remaining dashboard work to production configuration, deployment,
+    HMAC bridge wiring, and operator verification;
+  - update durable manager memory and changelog so the central bot repo no
+    longer says those frontend PRs are waiting.
+- Local validation for `codex/dashboard-merge-roadmap-sync` so far:
+  - `npm run check:docs` passed with 71 files checked;
+  - `npm run check:doc-index` passed with 57 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check:public-artifacts` passed with 114 files checked;
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #227,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including dashboard roadmap/memory
+    synchronization.

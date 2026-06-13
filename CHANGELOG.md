@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Recorded the merged 6529.io public usage and private admin dashboard PRs in
+  release roadmap docs.
 - Added production deployment plan evidence to release notes draft, template,
   and publication checks.
 - Added the production deployment plan handoff to operator drill next commands.

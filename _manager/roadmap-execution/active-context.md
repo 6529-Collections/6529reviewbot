@@ -28,8 +28,8 @@ merged PRs.
 - Release readiness docs PR: merged as PR #16, merge commit `6bb7e93`
 - GitHub App installation auth PR: merged as PR #17, merge commit `d667ffd`
 - Dogfood onboarding kit PR: merged as PR #18, merge commit `b5f458d`
-- Frontend public dashboard PR:
-  `https://github.com/6529-Collections/6529seize-frontend/pull/2605`
+- Frontend public dashboard PR: merged as frontend PR #2605, merge commit
+  `eb299f4`.
 - Frontend dogfood config PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2606`
 - Production deployment wiring PR: merged as PR #19, merge commit `cee929b`
@@ -211,9 +211,8 @@ merged PRs.
   `ad77def`; post-merge CI and OpenSSF Scorecard completed successfully.
 - SES alert delivery PR: merged as PR #127, merge commit `8ae2e69`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Frontend private admin dashboard PR:
-  `https://github.com/6529-Collections/6529seize-frontend/pull/2632`
-  stacked on public dashboard PR #2605.
+- Frontend private admin dashboard PR: merged as frontend PR #2632, merge
+  commit `173aa33`, after rebasing onto `main` once PR #2605 landed.
 - Roadmap progress memory PR: merged as PR #128, merge commit `a8e00f5`;
   post-merge CI and Dependency Review completed successfully.
 - Dogfood readiness check PR: merged as PR #129, merge commit `81b1e08`;
@@ -414,30 +413,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator drill deployment-plan guidance PR: merged as PR #226, merge commit `28a549b`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-deployment-plan-evidence`.
-- Current local changes: adding production deployment plan evidence to the
-  release notes draft, release notes template, release notes publication guard,
-  contract checks, public release docs, changelog, and durable manager memory
-  so pre-v1 tags and GitHub Releases cannot omit the reviewed deployment
-  handoff evidence.
+- Release notes deployment-plan evidence PR: merged as PR #227, merge commit `05f37aa`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dashboard-merge-roadmap-sync`.
+- Current local changes: updating release roadmap docs, changelog, and durable
+  manager memory after merging the 6529.io public usage dashboard PR #2605 and
+  private admin dashboard PR #2632 into frontend `main`; remaining dashboard
+  work is production deployment/configuration, not PR merge.
 - Current local validation:
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run check:release-notes-publication` passed with 4 publication cases
-    and 7 docs checked;
-  - `npm run check:release-notes` passed;
-  - `npm run check` passed with 168 CommonJS files;
   - `npm run check:docs` passed with 71 files checked;
   - `npm run check:doc-index` passed with 57 docs indexed;
-  - `npm run check:release-operations` passed with 105 mapped tools;
   - `git diff --check` passed;
   - `npm run check:public-artifacts` passed with 114 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #226,
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #227,
     and 5 docs checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including release notes draft,
-    publication, and template validation for production deployment plan
-    evidence.
+  - `npm run release:check` passed, including dashboard roadmap/memory
+    synchronization.
 
 ## Key Decisions
 
@@ -1002,11 +996,13 @@ merged PRs.
 
 ## Next Actions
 
-1. Keep frontend public/private dashboard PRs current while they wait for
-   required human review.
-2. Publish and merge the operator drill deployment-plan guidance.
-3. Continue hardening release and dogfood runbooks, checks, and operator
+1. Keep frontend public/private dashboard PRs current after merge by tracking
+   production deployment/configuration evidence in the central roadmap.
+2. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
+3. Prepare production deployment/configuration evidence for the merged
+   6529.io dashboard routes.
+4. Keep conservative dogfood rollout evidence ready for a trusted target repo.
 
 ## Open Risks
 
@@ -1042,10 +1038,9 @@ merged PRs.
   production deployment evidence before broad release.
 - Native workflow dispatch still needs production creation of the central-only
   dispatch GitHub App, or an explicitly reviewed fallback dispatch token.
-- Frontend PR #2605 is open and verified locally; all checks are green, but
-  merge is still blocked by required human review.
-- Frontend PR #2632 adds the private `/tools/6529bot/admin` UI and is stacked
-  on PR #2605; it is also blocked on the frontend review/merge path.
+- Merged 6529.io dashboard routes still need production configuration,
+  deployment, and operator verification before release evidence can mark them
+  ready.
 - Private admin UI production deployment still needs the 6529.io environment
   template copied into private configuration with the real production origin,
   wallet allowlists, auth-check endpoint, and HMAC secret.

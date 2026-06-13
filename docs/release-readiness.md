@@ -274,8 +274,8 @@ Not yet v1-ready:
 
 - production GitHub App registration and deployment execution;
 - production worker deployment execution;
-- 6529.io public dashboard merge and production routing;
-- 6529.io private admin UI and HMAC bridge wiring;
+- 6529.io public dashboard production routing;
+- 6529.io private admin UI production deployment and HMAC bridge wiring;
 - production SNS, SES, or webhook alert routing;
 - dogfood on one or two target repositories;
 - release tags and compatibility guarantees.
@@ -295,8 +295,9 @@ Before announcing broad community use:
 4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.
 5. Apply reviewed central budget policies or explicitly keep budget control to
    environment/repository caps for the release.
-6. Merge and deploy the 6529.io public transparency dashboard.
-7. Wire the 6529.io private admin surface to the HMAC admin auth bridge.
+6. Deploy the merged 6529.io public transparency dashboard.
+7. Deploy the merged 6529.io private admin surface and wire it to the HMAC
+   admin auth bridge.
 8. Enable scheduled operator alerts through private operator channels.
 9. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the

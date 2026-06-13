@@ -350,8 +350,8 @@ execution and dogfood evidence:
 2. Deploy the central App server and worker path in 6529-owned infrastructure.
 3. Apply and verify operator-owned ledger schema, budget policies, provider
    price rows, alert delivery, and runtime secrets outside this public repo.
-4. Merge and deploy the 6529.io public usage dashboard and private admin
-   dashboard.
+4. Deploy and configure the merged 6529.io public usage dashboard and private
+   admin dashboard.
 5. Install the App on one trusted 6529 target repository in command-only mode.
 6. Run the dogfood promotion and go-live packets from the private operator
    workspace with strict preflight and conservative budgets.
@@ -653,13 +653,15 @@ In progress in `6529reviewbot`:
 - production deployment execution support, dogfood operations, release
   evidence collection, and dashboard wiring.
 
-In progress outside this repository:
+Completed outside this repository:
 
-- Public `6529.io` usage dashboard PR:
-  [6529-Collections/6529seize-frontend#2605](https://github.com/6529-Collections/6529seize-frontend/pull/2605).
-- Private `6529.io` admin dashboard PR:
-  [6529-Collections/6529seize-frontend#2632](https://github.com/6529-Collections/6529seize-frontend/pull/2632),
-  stacked on the public dashboard branch.
+- Public `6529.io` usage dashboard PR
+  [6529-Collections/6529seize-frontend#2605](https://github.com/6529-Collections/6529seize-frontend/pull/2605)
+  merged into frontend `main`.
+- Private `6529.io` admin dashboard PR
+  [6529-Collections/6529seize-frontend#2632](https://github.com/6529-Collections/6529seize-frontend/pull/2632)
+  merged into frontend `main` after being rebased from the public dashboard
+  branch.
 
 Next implementation focus:
 
