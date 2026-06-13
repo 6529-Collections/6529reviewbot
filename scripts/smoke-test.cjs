@@ -70,6 +70,7 @@ const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
 const ledgerPrivacyCheck = require("./check-ledger-privacy-contract.cjs");
+const webhookReplayCheck = require("./check-webhook-replay-contract.cjs");
 const modelDefaultsCheck = require("./check-model-defaults.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
@@ -4971,6 +4972,23 @@ appServer.handleGitHubWebhook({
   );
   const usageApiRoutesResult = await usageApiRoutesCheck.checkUsageApiRoutes();
   assert.equal(usageApiRoutesResult.routes, 10);
+  const webhookReplayResult = await webhookReplayCheck.checkWebhookReplayContract();
+  assert.equal(webhookReplayResult.replayCases, 3);
+  await assert.rejects(
+    () =>
+      webhookReplayCheck.checkWebhookReplayContract({
+        quiet: true,
+        docTexts: {
+          "README.md": "# 6529reviewbot\n",
+          "docs/configuration.md": "# Configuration\n",
+          "docs/github-app.md": "# GitHub App\n",
+          "docs/incident-response.md": "# Incident Response\n",
+          "docs/release-operations-map.md": "# Release Operations Map\n",
+          "docs/release-readiness.md": "# Release Readiness\n",
+        },
+      }),
+    /webhook replay contract check found/
+  );
   await assert.rejects(
     () =>
       usageApiRoutesCheck.checkUsageApiRoutes({

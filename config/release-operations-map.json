@@ -220,6 +220,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "webhook-replay-contract",
+          "script": "check:webhook-replay",
+          "purpose": "Verify saved webhook replay stays dry-run by default, requires explicit dispatch for worker queueing, signs payloads locally, avoids raw payload echo, and keeps replay docs synchronized.",
+          "doc": "docs/configuration.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "env-template-checks",
           "script": "check:env-templates",
           "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",
