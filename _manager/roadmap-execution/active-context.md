@@ -232,10 +232,13 @@ merged PRs.
   `a74dbeb`; CI and Dependency Review completed successfully before merge.
 - Release operations map PR: merged as PR #136, merge commit `cfd807d`; CI
   and Dependency Review completed successfully before merge.
-- Current branch: `codex/operator-workspace-bootstrap`.
-- Current local changes: adding a private operator workspace bootstrap command
-  that creates release-gate, dogfood, security-review, production-cutover, and
-  operator-evidence skeleton files in one non-repo directory.
+- Operator workspace bootstrap PR: merged as PR #137, merge commit `00d4737`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/operator-workspace-check`.
+- Current local changes: adding operator workspace check mode so private
+  release-gate, dogfood, security-review, production-cutover, and
+  operator-evidence overlays can be validated as one set before tag/no-tag or
+  traffic expansion decisions.
 
 ## Key Decisions
 
@@ -515,6 +518,9 @@ merged PRs.
 - Private release work should start from an operator-owned workspace outside
   the public repository so status overlays and evidence files are harder to
   commit accidentally.
+- Operator workspace readiness should be checkable as a set, not only through
+  separate per-overlay commands, so final release and traffic decisions have a
+  single private workspace sanity check.
 
 ## Constraints
 
@@ -528,7 +534,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge operator workspace bootstrap integration.
+2. Validate, publish, and merge operator workspace check-mode integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

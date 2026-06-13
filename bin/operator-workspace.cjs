@@ -5,6 +5,7 @@
 const path = require("path");
 const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
+  checkOperatorWorkspace,
   createOperatorWorkspace,
   publicOperatorWorkspaceSummary,
   renderOperatorWorkspaceSummaryMarkdown,
@@ -12,7 +13,10 @@ const {
 
 function main(argv = process.argv.slice(2), options = {}) {
   const args = parseArgs(argv);
-  const workspace = createOperatorWorkspace({
+  if (args.requireReady && !args.check) {
+    throw new Error("--require-ready requires --check.");
+  }
+  const workspaceOptions = {
     allowRepoDir: args.allowRepoDir,
     commit: args.commit,
     date: args.date,
@@ -23,8 +27,12 @@ function main(argv = process.argv.slice(2), options = {}) {
     privateEvidenceLocation: args.privateEvidenceLocation,
     publicSummaryLocation: args.publicSummaryLocation,
     release: args.release,
+    requireReady: args.requireReady,
     repoRoot: options.repoRoot || path.resolve(__dirname, ".."),
-  });
+  };
+  const workspace = args.check
+    ? checkOperatorWorkspace(workspaceOptions)
+    : createOperatorWorkspace(workspaceOptions);
   if (args.quiet) {
     return workspace;
   }
@@ -38,6 +46,7 @@ function main(argv = process.argv.slice(2), options = {}) {
 function parseArgs(argv) {
   const result = {
     allowRepoDir: false,
+    check: false,
     commit: "",
     date: "",
     directory: "",
@@ -49,6 +58,7 @@ function parseArgs(argv) {
     publicSummaryLocation: "",
     quiet: false,
     release: "",
+    requireReady: false,
     showPaths: false,
   };
   for (let index = 0; index < argv.length; index += 1) {
@@ -58,6 +68,10 @@ function parseArgs(argv) {
     }
     if (arg === "--allow-repo-dir") {
       result.allowRepoDir = true;
+      continue;
+    }
+    if (arg === "--check") {
+      result.check = true;
       continue;
     }
     if (arg === "--force") {
@@ -70,6 +84,10 @@ function parseArgs(argv) {
     }
     if (arg === "--quiet") {
       result.quiet = true;
+      continue;
+    }
+    if (arg === "--require-ready") {
+      result.requireReady = true;
       continue;
     }
     if (arg === "--show-paths") {
@@ -116,6 +134,8 @@ function helpText() {
 
 Usage:
   npm run operator:workspace -- -- --dir <private-workspace-dir>
+  npm run operator:workspace -- -- --dir <private-workspace-dir> --check
+  npm run operator:workspace -- -- --dir <private-workspace-dir> --check --require-ready
   npm run operator:workspace -- -- --dir <private-workspace-dir> --json
   npm run operator:workspace -- -- --dir <private-workspace-dir> --force
 
@@ -129,6 +149,8 @@ Options:
   --private-evidence-location <text> Private evidence location placeholder.
   --public-summary-location <text>   Public summary location placeholder.
   --force                            Overwrite existing skeleton files.
+  --check                            Validate and summarize an existing workspace.
+  --require-ready                    With --check, fail unless every overlay is ready.
   --json                             Print public-safe JSON summary.
   --show-paths                       Include the absolute workspace path in output.
   --allow-repo-dir                   Allow writing inside the public repository.

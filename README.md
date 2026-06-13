@@ -203,6 +203,7 @@ skeletons:
 
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
+npm run operator:workspace -- -- --dir <private-workspace-dir> --check
 ```
 
 Track production cutover readiness from the public checklist plus private
