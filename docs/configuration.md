@@ -44,6 +44,8 @@ repository permissions and repository config through GitHub App installation
 tokens. The private key may be supplied as a PEM string with escaped newlines or
 as base64. GitHub API calls made by this auth bridge use the configured timeout
 and fail closed when token or collaborator-permission reads cannot complete.
+Run `npm run check:github-app-auth` after changing GitHub App auth env parsing,
+JWT TTL, installation-token refresh buffering, or token profile behavior.
 
 ## Admission Policy
 

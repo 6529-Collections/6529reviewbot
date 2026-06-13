@@ -3267,3 +3267,34 @@
   - `npm test` passed;
   - `npm run release:check` passed, including GitHub App manifest validation
     and 79 mapped release-operation tools.
+- Merged `6529reviewbot` PR #203 as `260ead4`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/github-app-auth-contract` increment:
+  - add `scripts/check-github-app-auth-contract.cjs` and
+    `npm run check:github-app-auth`;
+  - export the GitHub Actions output helper so token masking and output-file
+    writes are contract-tested directly;
+  - validate GitHub App env parsing, worker-dispatch credential overrides, JWT
+    shape, installation-token URL/method/API-version headers, token caching,
+    missing-token failures, unconfigured-auth failures, CLI profile parsing,
+    installation id env priority, GitHub Actions output masking, source
+    invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/github-app-auth-contract`:
+  - `npm run check:github-app-auth` passed with 7 auth cases, 5 CLI cases, and
+    7 docs checked;
+  - `npm run check:release-operations` passed with 80 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 137 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including GitHub App auth validation and
+    80 mapped release-operation tools.
+- PR #204 CI initially failed because GitHub Actions sets `GITHUB_OUTPUT`
+  during release checks; updated the negative output-mode fixture to blank the
+  variable explicitly, then reran:
+  - `npm run check:github-app-auth` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed.

@@ -135,4 +135,5 @@ module.exports = {
   githubAppAuthSettingsForProfile,
   installationIdFromEnv,
   parseArgs,
+  writeGitHubActionsOutput,
 };

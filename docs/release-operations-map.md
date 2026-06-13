@@ -78,6 +78,9 @@ parsing, docs, and env examples aligned.
 `npm run check:github-app-manifest` keeps the target GitHub App
 permissions/events, no-Actions-write boundary, private manifest conversion,
 redacted summaries, and docs aligned.
+`npm run check:github-app-auth` keeps GitHub App auth env parsing, JWT shape,
+installation-token caching, CLI profiles, GitHub Actions token output masking,
+source invariants, and docs aligned.
 `npm run check:preflight` runs no-network central App server and worker
 preflight fixtures.
 `npm run check:preflight-contract` keeps the no-network preflight check order,
@@ -151,6 +154,7 @@ The local quality gate command inventory is:
 - `npm run check:alert-notifier-modes`
 - `npm run check:public-artifacts`
 - `npm run check:github-app-manifest`
+- `npm run check:github-app-auth`
 - `npm run check:preflight`
 - `npm run check:preflight-contract`
 - `npm run check:release-gates`

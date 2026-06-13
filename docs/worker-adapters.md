@@ -119,6 +119,10 @@ mark the claim `running`, then `completed` or `failed`.
 central workflow uses it to mint a short-lived installation token for target
 checkout and PR comments.
 
+Run `npm run check:github-app-auth` after changing worker-dispatch token
+profiles, installation id env fallback behavior, GitHub Actions token output,
+or dispatch App credential handling.
+
 `target_repo` is the repository that owns the PR and receives comments.
 `head_repo` is the repository that owns the submitted head SHA, which can differ
 for fork PRs.

@@ -201,7 +201,13 @@ Operators can test either credential profile from a private environment:
 ```bash
 npm run github-app:token -- -- --profile main --installation-id <target-installation-id>
 npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+npm run check:github-app-auth
 ```
+
+Run `npm run check:github-app-auth` after changing GitHub App auth settings,
+installation-token minting, profile routing, or GitHub Actions token output.
+The installation token contract verifies env parsing, JWT shape, token
+caching, CLI profiles, output masking, and docs.
 
 ## Supported Events
 

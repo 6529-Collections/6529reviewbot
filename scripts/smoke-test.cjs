@@ -52,6 +52,7 @@ const githubAppManifestConversionCli = require("../bin/convert-github-app-manife
 const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const githubAppManifestContractCheck = require("./check-github-app-manifest-contract.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
+const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5152,6 +5153,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /GitHub App manifest contract check found/
+  );
+  const githubAppAuthContractResult =
+    await githubAppAuthContractCheck.checkGitHubAppAuthContract();
+  assert.equal(githubAppAuthContractResult.authCases, 7);
+  assert.equal(githubAppAuthContractResult.cliCases, 5);
+  await assert.rejects(
+    () =>
+      githubAppAuthContractCheck.checkGitHubAppAuthContract({
+        quiet: true,
+        docTexts: {
+          "docs/github-app.md": "# GitHub App\n",
+        },
+      }),
+    /GitHub App auth contract check found/
   );
   await assert.rejects(
     () =>

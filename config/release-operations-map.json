@@ -213,6 +213,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "github-app-auth-contract",
+          "script": "check:github-app-auth",
+          "purpose": "Verify GitHub App auth env parsing, JWT shape, installation-token caching, CLI profiles, GitHub Actions output masking, source invariants, and docs stay synchronized.",
+          "doc": "docs/github-app.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "preflight-fixtures",
           "script": "check:preflight",
           "purpose": "Run deterministic no-network preflight fixtures for central App server and worker runtime postures.",
