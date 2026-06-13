@@ -220,6 +220,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "github-app-routes-contract",
+          "script": "check:github-app-routes",
+          "purpose": "Verify GitHub App browser handoff routes are GET-only public-safe guidance surfaces that do not echo manifest codes, generated credentials, private repo details, or trigger review work.",
+          "doc": "docs/github-app.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "preflight-fixtures",
           "script": "check:preflight",
           "purpose": "Run deterministic no-network preflight fixtures for central App server and worker runtime postures.",

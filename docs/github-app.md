@@ -37,6 +37,10 @@ require an injected authorizer before they return data.
 The GitHub App browser handoff routes return public-safe operator guidance for
 manifest conversion, setup, and callback redirects. They do not echo temporary
 manifest codes, exchange credentials, or trigger review work.
+Run `npm run check:github-app-routes` after changing those browser handoff
+routes. The browser handoff route contract verifies the routes are GET-only,
+do not echo manifest codes, generated credentials, private repo details, or
+cloud identifiers, and do not trigger review work.
 
 ## Required Environment
 
@@ -114,6 +118,8 @@ GET /github-app/callback
 ```
 
 Those routes do not echo the manifest code or any generated credential values.
+`npm run check:github-app-routes` keeps this browser handoff route contract
+aligned with the runtime and release docs.
 
 Do not commit the generated App id, client secret, webhook secret, or private
 key returned by GitHub. Store those values only in the bot-owned runtime secret

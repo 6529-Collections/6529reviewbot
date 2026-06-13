@@ -185,6 +185,7 @@ npm run check:container-image
 npm run check:public-artifacts
 npm run check:github-app-manifest
 npm run check:github-app-auth
+npm run check:github-app-routes
 npm run check:preflight
 npm run check:preflight-contract
 npm run check:release-gates

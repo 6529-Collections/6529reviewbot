@@ -40,6 +40,8 @@ Target deployment:
   and credential-custody checks are complete or explicitly deferred.
 - GitHub App browser handoff routes do not echo manifest codes, generated
   credentials, webhook payloads, or private repository details.
+- `npm run check:github-app-routes` passes so GitHub App browser handoff routes
+  stay GET-only public-safe guidance surfaces and do not trigger review work.
 - Public repositories require trusted actors or are disabled.
 - Comment-command requestor attribution points to the comment author.
 - Hidden bot metadata is trusted only from configured bot accounts.

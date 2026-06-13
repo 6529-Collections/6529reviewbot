@@ -55,6 +55,10 @@ GET /github-app/callback
 These endpoints are for browser handoff during App registration/install. They
 do not start review work, exchange manifest codes, or expose generated
 credentials.
+Run `npm run check:github-app-routes` after changing these endpoints. The
+browser handoff route contract verifies they remain GET-only public-safe
+guidance responses that do not echo manifest codes, generated credentials,
+private repo details, or cloud identifiers.
 
 Use [github-app-registration.md](github-app-registration.md) as the complete
 registration packet for operator roles, settings verification,

@@ -368,10 +368,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - GitHub App manifest contract PR: merged as PR #203, merge commit `260ead4`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/github-app-auth-contract`.
-- Current local changes: adding a GitHub App auth contract check that keeps env
-  parsing, JWT shape, installation-token caching, CLI profiles, GitHub Actions
-  token output masking, source invariants, release checks, smoke tests, and docs
+- GitHub App auth contract PR: merged as PR #204, merge commit `5ed8bef`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/github-app-routes-contract`.
+- Current local changes: adding a GitHub App browser handoff route contract
+  check that keeps manifest-complete, setup, and callback routes GET-only,
+  public-safe, non-work-triggering, source invariants, release checks, smoke
+  tests, and docs
   synchronized.
 
 ## Key Decisions
@@ -846,6 +849,10 @@ merged PRs.
   installation id env fallback, and GitHub Actions output masking
   machine-checked so target repo access and central dispatch credentials do not
   drift.
+- GitHub App browser handoff routes are public operator guidance surfaces, not
+  auth, conversion, webhook, or review-work endpoints. Keep them GET-only, keep
+  code/state as presence booleans, and never echo manifest codes, generated
+  credentials, private repo details, or cloud identifiers.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -869,7 +876,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the GitHub App auth contract check.
+2. Publish and merge the GitHub App route contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

@@ -68,6 +68,9 @@ Ready for community review:
 - GitHub App manifest conversion CLI that writes one-time generated
   credentials only to an explicit private output path;
 - public-safe GitHub App registration/setup/callback guidance routes;
+- `npm run check:github-app-routes` keeps GitHub App browser handoff routes
+  public-safe, GET-only, non-work-triggering, and free of echoed manifest
+  codes or generated credentials;
 - GitHub App registration packet covering operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback;
 - dry-run/apply tooling for operator-maintained model price rows;

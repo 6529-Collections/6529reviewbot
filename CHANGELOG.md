@@ -169,6 +169,9 @@ stabilized.
 - Added a GitHub App auth contract release check that validates env parsing,
   JWT shape, installation-token caching, CLI profiles, GitHub Actions token
   output masking, source invariants, and docs.
+- Added a GitHub App browser handoff route contract release check that
+  validates setup, callback, and manifest-complete routes stay GET-only,
+  public-safe, non-work-triggering, and free of echoed codes or credentials.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.
