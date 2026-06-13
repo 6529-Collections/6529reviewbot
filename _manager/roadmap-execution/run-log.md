@@ -2150,3 +2150,24 @@
   - `npm run release:check` passed and ran the trusted-command plus
     untrusted-denial self-dogfood replay gate;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #150 as `d6348c8` after CI and Dependency Review
+  passed.
+- Started `codex/dogfood-promotion-packet` increment:
+  - add `npm run dogfood:promotion` as a final public-safe pre-traffic packet;
+  - compose target config readiness, central dogfood inputs, synthetic
+    self-dogfood replay, private operator workspace parsing, and no-network
+    preflight;
+  - keep public CI able to render the packet without secrets while
+    `--require-ready` fails until private workspace and preflight gates are
+    included;
+  - update README, dogfood docs, release readiness, release operations map,
+    roadmap, changelog, smoke tests, release checks, and manager memory.
+- Local validation for `codex/dogfood-promotion-packet`:
+  - `node bin/dogfood-promotion.cjs --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:release-operations` passed with 36 tools;
+  - `npm run check` passed;
+  - `npm run check:public-artifacts` passed with 105 files checked;
+  - `npm run release:check` passed and ran the dogfood promotion packet;
+  - `git diff --check` passed.

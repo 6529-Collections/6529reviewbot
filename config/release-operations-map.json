@@ -172,6 +172,15 @@
           "publicOutput": "Safe after reviewing preflight diagnostics and redacted workspace counts."
         },
         {
+          "id": "dogfood-promotion",
+          "script": "dogfood:promotion",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "purpose": "Compose target config, central dogfood inputs, self-dogfood replay, private workspace parsing, and preflight into one final pre-traffic go/no-go packet.",
+          "doc": "docs/dogfood-promotion.md",
+          "privateInputs": "Reads operator-owned private workspace files and the private runtime environment when preflight is included.",
+          "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
+        },
+        {
           "id": "dogfood-status-init",
           "script": "dogfood:status",
           "args": "-- -- --init-status <operator-dogfood-status-file>",

@@ -52,6 +52,7 @@ traffic:
 ```bash
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --quiet
+npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Equivalent explicit file flags are still available for non-standard private

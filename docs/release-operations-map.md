@@ -26,6 +26,9 @@ included in `npm run release:check`.
 - Dogfood, security review, and production cutover each use a public checklist
   plus a private status overlay. The raw overlay files stay in the operator
   workspace.
+- The dogfood promotion packet is the final composed go/no-go report before
+  live dogfood traffic; it should include the private operator workspace and
+  no-network preflight when used as a real traffic gate.
 - The release-candidate phase is the public-safe packaging layer. It reads the
   private overlays, redacts sensitive shapes, and produces the evidence bundle
   intended for release PRs, tag decisions, or public release notes.

@@ -85,6 +85,8 @@ private local config path. The packet output redacts external paths, but normal
 npm output can echo the full command line before the script starts.
 
 The packet is not a substitute for live readiness. Before first traffic, also
-run [Dogfood Readiness](dogfood-readiness.md), create or update the private
-[Dogfood Status](dogfood-status.md) overlay, and confirm central runtime,
-budget, run-control, ledger, and alert posture from the operator environment.
+run [Dogfood Readiness](dogfood-readiness.md), run the
+[Dogfood Promotion Packet](dogfood-promotion.md) from the private operator
+environment, create or update the private [Dogfood Status](dogfood-status.md)
+overlay, and confirm central runtime, budget, run-control, ledger, and alert
+posture from the operator environment.

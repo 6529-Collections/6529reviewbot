@@ -259,10 +259,13 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - Self-dogfood command-matrix PR: merged as PR #149, merge commit `8547783`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/self-dogfood-untrusted-replay`.
-- Current local changes: extending `npm run check:self-dogfood-replay` so the
-  self-dogfood config also proves an untrusted public command is denied at
-  admission before budget or queue work.
+- Self-dogfood untrusted-command replay PR: merged as PR #150, merge commit
+  `d6348c8`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/dogfood-promotion-packet`.
+- Current local changes: adding `npm run dogfood:promotion` as a public-safe
+  final pre-traffic packet that composes target config readiness, central
+  dogfood inputs, synthetic self-dogfood replay, private operator workspace
+  parsing, and no-network preflight.
 
 ## Key Decisions
 
@@ -579,6 +582,10 @@ merged PRs.
 - Pre-v1 release notes are part of the public release contract. They should be
   machine-checked for tested configuration, release-candidate evidence,
   deferrals, known gaps, compatibility, and validation fields before tagging.
+- Live dogfood promotion should have one composed go/no-go packet. The packet
+  should stay public-safe, but a real traffic decision should include the
+  private operator workspace and no-network preflight instead of relying only
+  on separate static checks.
 
 ## Constraints
 
@@ -592,8 +599,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the self-dogfood untrusted-command replay
-   check.
+2. Validate, publish, and merge the dogfood promotion packet.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

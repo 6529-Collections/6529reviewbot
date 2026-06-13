@@ -108,6 +108,9 @@ Ready for community review:
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;
+- dogfood promotion packet command for composing target config readiness,
+  central dogfood inputs, synthetic self-dogfood replay, private workspace
+  parsing, and preflight into one final pre-traffic go/no-go report;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
@@ -176,6 +179,8 @@ Before announcing broad community use:
    repository config PR.
    Run [Dogfood Readiness](dogfood-readiness.md) before the first command-only
    trigger.
+   Run [Dogfood Promotion Packet](dogfood-promotion.md) as the final
+   pre-traffic go/no-go check from the private operator environment.
 10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
 11. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 12. Update README, changelog, release notes, install docs, and example configs.
@@ -262,12 +267,15 @@ npm run dogfood:target
 npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run check:self-dogfood-replay
 npm run dogfood:readiness
+npm run dogfood:promotion
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
+npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
-Use the silent npm form when copying dogfood readiness evidence from a command
-that includes private workspace paths.
+Use [Dogfood Promotion Packet](dogfood-promotion.md) immediately before live
+command-only traffic. Use the silent npm form when copying promotion or
+readiness evidence from a command that includes private workspace paths.
 
 Use [Dogfood Status](dogfood-status.md) as the private evidence overlay after
 the first live command-only trigger:

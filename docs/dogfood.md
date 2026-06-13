@@ -80,6 +80,7 @@ catalog without requiring live secrets:
 
 ```bash
 npm run dogfood:readiness
+npm run dogfood:promotion
 ```
 
 From a private operator environment, include no-network runtime preflight:
@@ -87,12 +88,16 @@ From a private operator environment, include no-network runtime preflight:
 ```bash
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 See [Dogfood Readiness](dogfood-readiness.md) for custom target-repo config and
-private budget policy inputs. Use `npm --silent run` before copying output from
-commands that include private workspace paths into public notes.
+private budget policy inputs. See [Dogfood Promotion Packet](dogfood-promotion.md)
+for the final pre-traffic go/no-go packet that composes target config,
+readiness, self-dogfood replay, private workspace parsing, and preflight. Use
+`npm --silent run` before copying output from commands that include private
+workspace paths into public notes.
 
 When live dogfood starts, track the actual run with the private status overlay:
 
@@ -212,6 +217,8 @@ Fast rollback options, from narrowest to broadest:
 
 - Dogfood readiness passes for the target repo config and reviewed central
   budget policy.
+- Dogfood promotion passes with the private operator workspace, preflight, and
+  self-dogfood replay gates included.
 - Webhook delivery succeeds and invalid signatures fail.
 - Target repo config is loaded from the base ref.
 - Public repo untrusted actors cannot trigger spend.

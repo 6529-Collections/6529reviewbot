@@ -25,6 +25,8 @@ const dogfoodTarget = require("../src/dogfood-target.cjs");
 const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
+const dogfoodPromotion = require("../src/dogfood-promotion.cjs");
+const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
 const dogfoodStatus = require("../src/dogfood-status.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
@@ -674,6 +676,93 @@ assert.deepEqual(
     requireReady: true,
     strictPreflight: true,
   }
+);
+const promotionReplayRunner = () => ({
+  status: 0,
+  stdout: "self dogfood replay ok (8 trusted command cases checked; untrusted command denied)\n",
+  stderr: "",
+});
+const dogfoodPromotionPublicPacket = dogfoodPromotion.collectDogfoodPromotionPacket({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  root: dogfoodTargetRepoRoot,
+  selfDogfoodReplayRunner: promotionReplayRunner,
+  targetRepository: "6529-Collections/example",
+});
+assert.equal(dogfoodPromotionPublicPacket.ready, false);
+assert.equal(dogfoodPromotionPublicPacket.summary.warnings, 2);
+assert.equal(dogfoodPromotionPublicPacket.checks.selfDogfoodReplay.status, "ok");
+assert.match(
+  dogfoodPromotion.formatDogfoodPromotionMarkdown(dogfoodPromotionPublicPacket),
+  /Dogfood Promotion Packet/
+);
+assert.throws(
+  () => dogfoodPromotion.assertDogfoodPromotionReady(dogfoodPromotionPublicPacket),
+  /operator-workspace/
+);
+const dogfoodPromotionWorkspaceDir = fs.mkdtempSync(
+  path.join(os.tmpdir(), "6529-promotion-workspace-")
+);
+operatorWorkspace.createOperatorWorkspace({
+  directory: dogfoodPromotionWorkspaceDir,
+  repoRoot: dogfoodTargetRepoRoot,
+});
+const promotionPreflightEnv = {
+  GITHUB_WEBHOOK_SECRET: "secret",
+  REVIEW_PROVIDER: "anthropic",
+  REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8",
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "false",
+  REVIEWBOT_JOB_LEDGER_ENABLED: "false",
+  REVIEWBOT_ALERTS_ENABLED: "false",
+  REVIEWBOT_ADMIN_AUTH_MODE: "disabled",
+};
+const dogfoodPromotionReadyPacket = dogfoodPromotion.collectDogfoodPromotionPacket({
+  env: promotionPreflightEnv,
+  includePreflight: true,
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  operatorWorkspaceDir: dogfoodPromotionWorkspaceDir,
+  root: dogfoodTargetRepoRoot,
+  selfDogfoodReplayRunner: promotionReplayRunner,
+});
+assert.equal(dogfoodPromotionReadyPacket.ready, true);
+assert.equal(dogfoodPromotionReadyPacket.summary.errors, 0);
+assert.equal(JSON.stringify(dogfoodPromotionReadyPacket).includes(dogfoodPromotionWorkspaceDir), false);
+assert.deepEqual(
+  dogfoodPromotionCli.parseArgs([
+    "--",
+    "--mode",
+    "auto",
+    "--repository-config",
+    "target.yml",
+    "--repository",
+    "6529-Collections/example",
+    "--operator-workspace",
+    "workspace",
+    "--strict-preflight",
+    "--json",
+    "--quiet",
+    "--require-ready",
+  ]),
+  {
+    budgetPolicyFile: undefined,
+    includePreflight: true,
+    json: true,
+    mode: "auto",
+    modelCatalogFile: undefined,
+    operatorWorkspaceDir: "workspace",
+    preflightProfile: "server",
+    quiet: true,
+    repositoryConfigFile: "target.yml",
+    requireOperatorWorkspaceReady: false,
+    requireReady: true,
+    skipSelfDogfoodReplay: false,
+    strictPreflight: true,
+    targetRepository: "6529-Collections/example",
+  }
+);
+assert.equal(
+  dogfoodPromotionCli.main(["--skip-self-dogfood-replay", "--quiet"]).ready,
+  false
 );
 const dogfoodChecklist = dogfoodStatus.loadDogfoodChecklist("config/dogfood-checklist.json");
 assert.equal(dogfoodChecklist.release, "v0.1.0");
