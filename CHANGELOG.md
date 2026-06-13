@@ -91,6 +91,8 @@ stabilized.
   update coverage.
 - Added a container-image release check for the central App server Dockerfile
   and `.dockerignore` runtime boundary.
+- Updated the v0 release gate and release notes contract to require explicit
+  container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep
   secret/private-data warnings, support-bundle guidance, disabled blank issues,
   and private security-report routing.
