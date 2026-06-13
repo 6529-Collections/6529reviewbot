@@ -24,6 +24,14 @@ For first dogfood rollouts, start from
 `templates/dogfood-command-only-config.yml` or
 `templates/dogfood-repository-config.yml`.
 
+Before opening the target repository PR, run
+[Dogfood Target Packet](dogfood-target.md) to validate the selected config and
+render a public-safe PR checklist:
+
+```bash
+npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready
+```
+
 For pull requests, config is read from the base ref, not the PR head. This
 prevents a PR author from changing the bot policy inside the same PR that
 triggers model spend.

@@ -294,8 +294,13 @@ cp templates/dogfood-command-only-config.yml <target-repo>/.github/6529bot.yml
 Validate the config before opening the target repo PR:
 
 ```bash
+npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready
 npm run validate:repo-config -- <target-repo>/.github/6529bot.yml
 ```
+
+`dogfood:target` renders the public-safe target PR checklist and validates the
+dogfood posture. Use `npm --silent run dogfood:target` when the command line
+contains a private local path you plan to copy into public notes.
 
 Track the live dogfood run in a private operator status file:
 

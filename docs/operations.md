@@ -92,6 +92,8 @@ npm run alerts:operator -- -- --dry-run --force
 Validate target repo config before rollout:
 
 ```bash
+npm run dogfood:target
+npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 

@@ -21,6 +21,8 @@ const budgetPolicies = require("../src/budget-policies.cjs");
 const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
 const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
+const dogfoodTarget = require("../src/dogfood-target.cjs");
+const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const dogfoodStatus = require("../src/dogfood-status.cjs");
@@ -546,6 +548,80 @@ assert.deepEqual(
   budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--quiet"]),
   { apply: false, file: "budgets.json", quiet: true }
 );
+const dogfoodTargetRepoRoot = path.resolve(__dirname, "..");
+const commandOnlyTargetPacket = dogfoodTarget.collectDogfoodTargetPacket({
+  root: dogfoodTargetRepoRoot,
+  mode: "command-only",
+  targetRepository: "6529-Collections/example",
+});
+assert.equal(commandOnlyTargetPacket.ready, true);
+assert.equal(commandOnlyTargetPacket.mode, "command-only");
+assert.equal(commandOnlyTargetPacket.configFile, "templates/dogfood-command-only-config.yml");
+assert.equal(commandOnlyTargetPacket.targetRepository, "6529-Collections/example");
+assert.match(dogfoodTarget.formatDogfoodTargetMarkdown(commandOnlyTargetPacket), /Dogfood Target Packet/);
+const limitedTargetPacket = dogfoodTarget.collectDogfoodTargetPacket({
+  root: dogfoodTargetRepoRoot,
+  mode: "limited-initial",
+});
+assert.equal(limitedTargetPacket.ready, true);
+assert.equal(limitedTargetPacket.mode, "limited-initial");
+const autoTargetPacket = dogfoodTarget.collectDogfoodTargetPacket({
+  root: dogfoodTargetRepoRoot,
+  mode: "auto",
+  repositoryConfigFile: "templates/dogfood-repository-config.yml",
+});
+assert.equal(autoTargetPacket.mode, "limited-initial");
+const mismatchedTargetPacket = dogfoodTarget.collectDogfoodTargetPacket({
+  root: dogfoodTargetRepoRoot,
+  mode: "command-only",
+  repositoryConfigFile: "templates/dogfood-repository-config.yml",
+});
+assert.equal(mismatchedTargetPacket.ready, false);
+assert.throws(() => dogfoodTarget.assertDogfoodTargetReady(mismatchedTargetPacket), /not ready/);
+const externalDogfoodConfigDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-target-config-"));
+const externalDogfoodConfigPath = path.join(externalDogfoodConfigDir, "target.yml");
+fs.copyFileSync(path.join(dogfoodTargetRepoRoot, "templates/dogfood-command-only-config.yml"), externalDogfoodConfigPath);
+const externalTargetPacket = dogfoodTarget.collectDogfoodTargetPacket({
+  root: dogfoodTargetRepoRoot,
+  mode: "command-only",
+  repositoryConfigFile: externalDogfoodConfigPath,
+});
+assert.equal(externalTargetPacket.ready, true);
+assert.equal(externalTargetPacket.configFile, "[external-config]/target.yml");
+assert.equal(JSON.stringify(externalTargetPacket).includes(externalDogfoodConfigDir), false);
+assert.throws(
+  () =>
+    dogfoodTarget.collectDogfoodTargetPacket({
+      root: dogfoodTargetRepoRoot,
+      repositoryConfigFile: path.join(externalDogfoodConfigDir, "missing.yml"),
+    }),
+  (error) =>
+    /Unable to read repository config \[external-config\]\/missing\.yml/.test(error.message) &&
+    !error.message.includes(externalDogfoodConfigDir)
+);
+assert.deepEqual(
+  dogfoodTargetCli.parseArgs([
+    "--",
+    "--mode",
+    "auto",
+    "--repository-config",
+    "target.yml",
+    "--repository",
+    "6529-Collections/example",
+    "--json",
+    "--quiet",
+    "--require-ready",
+  ]),
+  {
+    json: true,
+    mode: "auto",
+    quiet: true,
+    repositoryConfigFile: "target.yml",
+    requireReady: true,
+    targetRepository: "6529-Collections/example",
+  }
+);
+assert.equal(dogfoodTargetCli.main(["--mode", "command-only", "--require-ready", "--quiet"]).ready, true);
 const dogfoodReport = dogfoodReadiness.collectDogfoodReadiness({
   now: new Date("2026-06-13T00:00:00.000Z"),
 });

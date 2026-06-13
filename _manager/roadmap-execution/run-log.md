@@ -2020,3 +2020,31 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #144 as `a64c022` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/dogfood-target-packet` increment:
+  - add `npm run dogfood:target` as a public-safe target-repository config PR
+    packet/checker;
+  - validate command-only and limited-initial dogfood posture before target
+    repo PRs are opened or updated;
+  - redact external config paths as `[external-config]/<file>`;
+  - update package scripts, release checks, release operations map, README,
+    dogfood/operations/release-readiness docs, roadmap, changelog, smoke
+    tests, and manager memory.
+- Local validation for `codex/dogfood-target-packet`:
+  - `npm run dogfood:target` passed for command-only mode;
+  - `npm run dogfood:target -- -- --mode limited-initial --require-ready`
+    passed for limited-initial mode;
+  - `npm run dogfood:target -- -- --mode auto --repository-config templates/dogfood-repository-config.yml --json`
+    inferred limited-initial mode and reported ready;
+  - smoke tests covered command-only, limited-initial, auto-inferred,
+    mismatched mode, CLI parsing, external config path redaction, and missing
+    external config file errors without private path leakage;
+  - `npm test` passed;
+  - `npm run check` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:release-operations` passed with 33 tools;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

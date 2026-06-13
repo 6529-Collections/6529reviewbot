@@ -103,6 +103,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
   worker evidence.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
+- [Dogfood Target Packet](docs/dogfood-target.md): target-repo config PR
+  checklist and conservative posture validation.
 - [Dogfood Readiness](docs/dogfood-readiness.md): public-safe dogfood input
   validation before first traffic.
 - [Dogfood Status](docs/dogfood-status.md): private status overlay for
@@ -250,6 +252,8 @@ npm run validate:repo-config -- templates/dogfood-repository-config.yml
 Validate dogfood inputs before first traffic:
 
 ```bash
+npm run dogfood:target
+npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready

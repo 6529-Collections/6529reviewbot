@@ -247,10 +247,13 @@ merged PRs.
 - Release-candidate operator-workspace redaction PR: merged as PR #143, merge
   commit `59a8c2e`; CI and Dependency Review completed successfully before
   merge.
-- Current branch: `codex/dogfood-readiness-silent-capture`.
-- Current local changes: documenting `npm --silent run dogfood:readiness`
-  capture for public evidence generated from commands that include private
-  operator workspace paths, plus matching CLI help.
+- Dogfood readiness silent-capture PR: merged as PR #144, merge commit
+  `a64c022`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/dogfood-target-packet`.
+- Current local changes: adding `npm run dogfood:target`, a public-safe
+  target-repository config PR packet/checker for command-only and
+  limited-initial dogfood rollout, with docs, release-map coverage, release
+  checks, and smoke tests.
 
 ## Key Decisions
 
@@ -552,6 +555,9 @@ merged PRs.
   script's own output is redacted, but normal `npm run` can echo private
   workspace paths before the script starts, so public evidence examples should
   prefer `npm --silent run` when private paths are present.
+- Target-repository dogfood should have a public-safe packet before the target
+  config PR opens. The packet should validate the config posture and provide a
+  PR checklist without reading target repo code or private operator evidence.
 
 ## Constraints
 
@@ -565,7 +571,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge dogfood readiness silent-capture documentation.
+2. Validate, publish, and merge the `dogfood:target` packet/checker.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

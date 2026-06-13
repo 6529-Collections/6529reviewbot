@@ -34,6 +34,7 @@
     "preflight": "node bin/preflight.cjs",
     "support:bundle": "node bin/support-bundle.cjs",
     "admin:snapshot": "node bin/admin-snapshot.cjs",
+    "dogfood:target": "node bin/dogfood-target.cjs",
     "dogfood:readiness": "node bin/dogfood-readiness.cjs",
     "dogfood:status": "node bin/dogfood-status.cjs",
     "security:review": "node bin/security-review-status.cjs",
