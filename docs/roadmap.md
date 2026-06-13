@@ -326,7 +326,8 @@ Build the operator experience:
   handoff across frontend env, bot public disclosure, HMAC admin auth,
   dashboard verification, cutover evidence, and release notes.
 - production cutover checklist evidence gate that requires the dashboard
-  deployment plan before public or private 6529.io dashboard exposure.
+  deployment plan before public or private 6529.io dashboard exposure, with
+  contract checks for evidence target and ordering drift.
 - manager memory contract that keeps durable manager memory synchronized with
   the latest shipped PR, release-check wiring, smoke coverage, and public docs.
 

@@ -3997,3 +3997,30 @@
   - `npm test` passed;
   - `npm run release:check` passed, including production cutover validation
     for 31 items and dashboard deployment-plan evidence gates.
+- Merged `6529reviewbot` PR #233 as `2d2698e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dashboard-gates-contract` increment:
+  - strengthen `npm run check:v0-gates` so the public/private 6529.io dashboard
+    release gates must keep `docs/dashboard-deployment-plan.md` as evidence
+    and require reviewed dashboard deployment-plan evidence in their titles;
+  - strengthen `npm run check:production-cutover` so
+    `dashboard-deployment-plan-reviewed` stays in the 6529.io cutover phase,
+    before public/private route exposure, with explicit origin/workspace/auth
+    inputs and the dashboard deployment plan runbook;
+  - update release-readiness docs, roadmap, changelog, and durable manager
+    memory to call out the new contract coverage.
+- Local validation for `codex/dashboard-gates-contract` so far:
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #233,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 171 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including v0 gate and production cutover
+    contract validation for dashboard deployment-plan evidence drift.

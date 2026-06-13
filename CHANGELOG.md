@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Strengthened the v0 gate and production cutover contract checks to pin
+  dashboard deployment-plan evidence targets and ordering.
 - Added dashboard deployment-plan evidence to v0 dashboard gates and production
   cutover before public/private 6529.io dashboard exposure.
 - Added the dashboard deployment plan handoff to operator drill next commands.

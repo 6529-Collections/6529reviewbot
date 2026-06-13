@@ -30,6 +30,7 @@ function checkV0GatesContract(options = {}) {
   const findings = [];
   checkCliContract(findings);
   checkStatusContract(findings);
+  checkGateConfig(findings);
   checkMarkdownRedaction(findings);
   checkSourceInvariants(options.sourceTexts || {}, findings);
   checkDocs(options.docTexts || {}, findings);
@@ -48,6 +49,24 @@ function checkV0GatesContract(options = {}) {
     statusCases: 6,
     docs: targetDocs.length,
   };
+}
+
+function checkGateConfig(findings) {
+  const gates = releaseGates.loadReleaseGates(path.join(root, "config/v0-release-gates.json"));
+  const gatesById = new Map(gates.gates.map((gate) => [gate.id, gate]));
+  for (const id of ["public-dashboard", "admin-surface"]) {
+    const gate = gatesById.get(id);
+    if (!gate) {
+      findings.push(`v0 release gates must include '${id}'.`);
+      continue;
+    }
+    if (gate.evidence !== "docs/dashboard-deployment-plan.md") {
+      findings.push(`${id} gate evidence must be docs/dashboard-deployment-plan.md.`);
+    }
+    if (!normalizeWhitespace(gate.title).toLowerCase().includes("reviewed dashboard deployment plan evidence")) {
+      findings.push(`${id} gate title must require reviewed dashboard deployment plan evidence.`);
+    }
+  }
 }
 
 function checkCliContract(findings) {

@@ -339,8 +339,8 @@ pre-v1 tagging gates and public release note expectations.
 verifies both gate count parity and v0 gate evidence references.
 `npm run check:v0-gates` is included in `npm run release:check` and keeps the
 v0 release gate contract synchronized across status readiness, missing-id
-checks, deferral semantics, public Markdown redaction, source invariants, and
-release docs.
+checks, deferral semantics, dashboard deployment-plan evidence targets for
+6529.io gates, public Markdown redaction, source invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 production deployment plan evidence, deferrals, known gaps, compatibility, and
@@ -526,6 +526,9 @@ dry-run, requires explicit 6529.io origin, production bot origin, private
 operator workspace, and auth-check URL inputs in ready mode, and renders the
 frontend env, bot public disclosure, HMAC admin auth, verification, cutover,
 and release-note handoff commands without executing live operations.
+`npm run check:production-cutover` also verifies the dashboard deployment-plan
+evidence item stays before public or private 6529.io dashboard exposure in the
+cutover checklist.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud
