@@ -153,8 +153,8 @@ Ready for community review:
   shipped PR evidence, release-check wiring, smoke tests, and public docs
   synchronized during the autonomous workstream;
 - generated operator workspace guidance includes the production deployment
-  plan handoff so private release evidence, cutover, and dogfood gates stay in
-  one operator flow;
+  plan and dashboard deployment plan handoffs so private release evidence,
+  dashboard evidence, cutover, and dogfood gates stay in one operator flow;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
@@ -626,8 +626,8 @@ verifies the scheduled alert runner, private notification routing, dogfood
 evidence, payload privacy, and central workflow posture stay aligned.
 `npm run check:operator-workspace` is included in `npm run release:check` and
 verifies operator workspace creation, check-mode readiness failures, private
-path redaction, Markdown sanitization, source invariants, and docs stay
-aligned.
+path redaction, generated README deployment handoff guidance, Markdown
+sanitization, source invariants, and docs stay aligned.
 `npm run check:operator-drill` is included in `npm run release:check` and
 verifies the public-safe operator drill keeps temporary workspace cleanup,
 private path redaction, release-candidate, dogfood readiness, promotion,

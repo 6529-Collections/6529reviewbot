@@ -419,27 +419,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard deployment plan PR: merged as PR #229, merge commit `a259f83`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-release-evidence`.
-- Current local changes: adding dashboard deployment plan evidence to release
-  notes draft generation, release notes template, publication checks, and
-  public roadmap/readiness docs.
+- Dashboard release evidence PR: merged as PR #230, merge commit `3037742`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-workspace-dashboard-plan`.
+- Current local changes: adding dashboard deployment plan guidance to generated
+  private operator workspace READMEs, public workspace summaries, the
+  operator-workspace contract, and public roadmap/readiness docs.
 - Current local validation:
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run check:release-notes-publication` passed with 4 publication cases
-    and 7 docs checked;
-  - `npm run check:release-notes` passed;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
   - `npm run check:docs` passed with 72 files checked;
   - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #229,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #230,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 115 files checked;
   - `npm run check` passed with 171 CommonJS files;
   - `git diff --check` passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including release notes draft,
-    publication, and template validation for dashboard deployment plan
-    evidence.
+  - `npm run release:check` passed, including operator workspace contract
+    validation for dashboard deployment plan guidance.
 
 ## Key Decisions
 

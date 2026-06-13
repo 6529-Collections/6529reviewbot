@@ -46,6 +46,13 @@ running live App, registry, runtime, cutover, or dogfood actions:
 npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 ```
 
+Review the 6529.io dashboard handoff against the same workspace before
+exposing the public Open Data or private admin dashboard routes:
+
+```bash
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready
+```
+
 Build a public-safe candidate bundle from the private files:
 
 ```bash

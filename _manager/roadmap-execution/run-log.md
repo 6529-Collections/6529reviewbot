@@ -3920,3 +3920,27 @@
   - `npm run release:check` passed, including release notes draft,
     publication, and template validation for dashboard deployment plan
     evidence.
+- Merged `6529reviewbot` PR #230 as `3037742`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-workspace-dashboard-plan` increment:
+  - add `dashboard:deployment-plan` to generated private operator workspace
+    README guidance and public workspace summary Markdown;
+  - strengthen `npm run check:operator-workspace` so generated workspace
+    guidance cannot drop the dashboard handoff command;
+  - update [Operator Workspace](../../docs/operator-workspace.md),
+    release-readiness, roadmap, changelog, and manager memory so private
+    operator workspaces include both production and dashboard deployment
+    handoffs.
+- Local validation for `codex/operator-workspace-dashboard-plan` so far:
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #230,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check` passed with 171 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator workspace contract
+    validation for dashboard deployment plan guidance.
