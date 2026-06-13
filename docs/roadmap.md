@@ -426,6 +426,9 @@ Completed in `6529reviewbot`:
 - review-comment format checks that keep generated public PR comment headings,
   hidden markers, review labels, verdict lines, and budget-skip wording
   synchronized with the public comment-format docs.
+- admission-policy checks that keep trusted-actor defaults, repo visibility
+  modes, draft handling, trusted permission levels, public examples, and
+  admission docs synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

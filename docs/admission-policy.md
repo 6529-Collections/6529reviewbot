@@ -14,7 +14,7 @@ REVIEWBOT_TRUSTED_PERMISSION=write
 
 Default behavior:
 
-- public repos require a trusted actor;
+- public repositories require trusted actors by default;
 - private repos allow review requests by default;
 - draft PRs are skipped until ready for review;
 - actors with `write`, `maintain`, or `admin` repository permission are trusted.
@@ -33,7 +33,9 @@ off       Disable review automation for that visibility.
 ```
 
 Use `trusted` for public open-source repositories to prevent arbitrary PR
-authors or commenters from burning model budget.
+authors or commenters from burning model budget. This keeps external PRs
+visible for review while requiring a maintainer or other trusted actor before
+provider spend can occur.
 
 ## Trusted Actors
 

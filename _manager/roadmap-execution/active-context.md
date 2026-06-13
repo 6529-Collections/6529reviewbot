@@ -316,11 +316,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert notifier mode contract PR: merged as PR #177, merge commit `864123a`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/review-comment-format-contract`.
-- Current local changes: adding a review-comment format contract check that
-  validates generated PR comment headings, hidden markers, review labels,
-  verdict lines, budget-skip wording, public docs, smoke tests, and release
-  operations stay synchronized.
+- Review comment format contract PR: merged as PR #178, merge commit
+  `a6755bf`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admission-policy-contract`.
+- Current local changes: adding an admission-policy contract check that keeps
+  trusted-actor defaults, repo visibility modes, draft handling, trusted
+  permission levels, public examples, admission docs, smoke tests, and release
+  operations synchronized.
 
 ## Key Decisions
 

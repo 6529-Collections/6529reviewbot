@@ -151,6 +151,7 @@ npm run check:comment-commands
 npm run check:review-workflows
 npm run check:review-bins
 npm run check:review-comment-format
+npm run check:admission-policy
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes

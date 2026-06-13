@@ -80,6 +80,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "admission-policy-contract",
+          "script": "check:admission-policy",
+          "purpose": "Verify trusted-actor admission defaults, repo visibility modes, draft handling, trusted permission levels, public examples, and admission docs stay synchronized.",
+          "doc": "docs/admission-policy.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",
