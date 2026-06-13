@@ -162,6 +162,7 @@ npm run check:support-bundle
 npm run check:diagnostics-redaction
 npm run check:model-defaults
 npm run check:providers
+npm run check:provider-adapters
 npm run check:budget-scopes
 npm run check:run-control-scopes
 npm run check:alert-dimensions

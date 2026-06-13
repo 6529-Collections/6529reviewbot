@@ -275,6 +275,9 @@ Build the operator experience:
 - provider-contract checks that keep supported provider constants, model
   catalog providers, preflight key requirements, workflow dispatch choices,
   and provider docs aligned;
+- provider-adapter checks that keep Anthropic, OpenAI, and OpenRouter request
+  shapes, option gating, usage normalization, error redaction, and docs
+  aligned;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
@@ -460,6 +463,9 @@ Completed in `6529reviewbot`:
 - provider-contract checks that keep provider constants, model catalog
   providers, preflight key requirements, workflow dispatch choices, and
   provider docs synchronized.
+- provider-adapter checks that keep Anthropic, OpenAI, and OpenRouter request
+  shapes, option gating, usage normalization, error redaction, and docs
+  synchronized.
 - budget-scope checks that keep central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized.
 - run-control scope checks that keep concurrency scopes synchronized with
