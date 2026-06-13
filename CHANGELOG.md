@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added dashboard deployment-plan evidence to v0 dashboard gates and production
+  cutover before public/private 6529.io dashboard exposure.
 - Added the dashboard deployment plan handoff to operator drill next commands.
 - Added dashboard deployment plan guidance to generated operator workspaces.
 - Added dashboard deployment plan evidence to release notes draft, template,

@@ -3967,3 +3967,33 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator drill contract
     validation for 7 next commands and dashboard deployment handoff guidance.
+- Merged `6529reviewbot` PR #232 as `22b501c`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dashboard-gates-evidence` increment:
+  - add dashboard deployment-plan evidence to the v0 public-dashboard and
+    private admin-surface gates;
+  - add a `dashboard-deployment-plan-reviewed` item to production cutover
+    before public/private 6529.io dashboard exposure;
+  - update public status/evidence examples, smoke-test counts, operator
+    evidence templates, release-readiness docs, roadmap, changelog, and
+    manager memory so dashboard exposure evidence flows through the same
+    release/cutover gates as other live-traffic decisions.
+- Local validation for `codex/dashboard-gates-evidence` so far:
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #232,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 171 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including production cutover validation
+    for 31 items and dashboard deployment-plan evidence gates.

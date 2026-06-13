@@ -325,6 +325,8 @@ Build the operator experience:
 - dashboard deployment plan command that builds a dry-run 6529.io dashboard
   handoff across frontend env, bot public disclosure, HMAC admin auth,
   dashboard verification, cutover evidence, and release notes.
+- production cutover checklist evidence gate that requires the dashboard
+  deployment plan before public or private 6529.io dashboard exposure.
 - manager memory contract that keeps durable manager memory synchronized with
   the latest shipped PR, release-check wiring, smoke coverage, and public docs.
 
@@ -404,7 +406,8 @@ Completed in `6529reviewbot`:
   redacted API failures;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for reviewed live-traffic
-  go/no-go decisions, including the dogfood promotion packet gate;
+  go/no-go decisions, including the dogfood promotion packet gate and
+  dashboard deployment plan evidence before 6529.io route exposure;
 - optional release-candidate cutover status summaries for one public-safe
   tag-readiness and traffic-readiness artifact;
 - optional release-candidate dogfood status summaries for public-safe
@@ -544,6 +547,8 @@ Completed in `6529reviewbot`:
 - dashboard deployment plan command for dry-run 6529.io dashboard handoff
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.
+- production cutover now includes an explicit dashboard deployment-plan
+  evidence item before public/private dashboard route exposure.
 - generated operator workspace guidance now includes the production deployment
   plan and dashboard deployment plan commands so release evidence and
   deployment handoff commands stay together in the private operator flow.

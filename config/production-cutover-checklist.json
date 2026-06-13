@@ -151,6 +151,12 @@
       "objective": "Wire human visibility through 6529.io and scheduled operator alerts without browser access to bot secrets or Aurora.",
       "items": [
         {
+          "id": "dashboard-deployment-plan-reviewed",
+          "title": "Dashboard deployment plan is rendered with explicit 6529.io origin, bot origin, private workspace, and auth-check URL before public or private dashboard exposure.",
+          "evidence": "npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready",
+          "runbook": "docs/dashboard-deployment-plan.md"
+        },
+        {
           "id": "public-dashboard-wired",
           "title": "6529.io public transparency route is merged, deployed, and wired to the public usage summary API, or explicitly deferred.",
           "evidence": "route, API target, and deployment summary",
