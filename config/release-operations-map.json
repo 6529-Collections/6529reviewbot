@@ -94,6 +94,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "run-control-scope-contract",
+          "script": "check:run-control-scopes",
+          "purpose": "Verify run-control concurrency scopes stay synchronized with budget scopes, env parsing, claim SQL, docs, and env examples.",
+          "doc": "docs/run-control.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

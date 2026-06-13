@@ -69,6 +69,9 @@ REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT=
 ```
 
+Supported run-control scopes are `global`, `org`, `repo`, `requestor`, `pr`,
+`provider`, `model`, and `review_kind`.
+
 A blank value means no cap for that scope. A value of `0` pauses that scope.
 For example, `REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=0` can stop all
 provider jobs when combined with a claim implementation that reports active

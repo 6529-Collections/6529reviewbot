@@ -430,6 +430,8 @@ Completed in `6529reviewbot`:
   provider docs synchronized.
 - budget-scope checks that keep central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized.
+- run-control scope checks that keep concurrency scopes synchronized with
+  budget scopes, env parsing, claim SQL, docs, and env examples.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

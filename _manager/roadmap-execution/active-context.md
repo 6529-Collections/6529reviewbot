@@ -308,10 +308,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Review bin entrypoint contract PR: merged as PR #173, merge commit
   `88cc326`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/budget-scope-contract`.
-- Current local changes: adding a budget-scope contract check that keeps
-  central budget policy validation, ledger schema constraints, public docs,
-  release operations, and dogfood examples synchronized.
+- Budget-scope contract PR: merged as PR #174, merge commit `f0d6101`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/run-control-scope-contract`.
+- Current local changes: adding a run-control scope contract check that keeps
+  concurrency scope constants, env parsing, claim SQL, public docs, env
+  examples, and release operations synchronized with budget scopes.
 
 ## Key Decisions
 
@@ -493,6 +495,9 @@ merged PRs.
 - Budget scope vocabulary is a release-sensitive cost-control contract and
   should be machine-checked across validators, ledger schema SQL, public docs,
   and examples instead of relying on manual doc sweeps.
+- Run-control concurrency scope vocabulary should stay aligned with budget
+  scopes where practical, because these are the two pre-provider guardrails
+  operators tune during dogfood and incident response.
 - Conservative dogfood budget policies have been applied to the live isolated
   ledger and aggregate scope counts were verified. Keep live resource
   identifiers and operator-owned policy files outside the public repo.
@@ -713,7 +718,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the budget-scope contract check.
+2. Validate, publish, and merge the run-control scope contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
