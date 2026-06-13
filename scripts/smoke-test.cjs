@@ -21,6 +21,8 @@ const budgetPolicies = require("../src/budget-policies.cjs");
 const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
 const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
+const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
+const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -524,6 +526,54 @@ assert.deepEqual(
 assert.deepEqual(
   budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--quiet"]),
   { apply: false, file: "budgets.json", quiet: true }
+);
+const dogfoodReport = dogfoodReadiness.collectDogfoodReadiness({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+});
+assert.equal(dogfoodReport.ready, true);
+assert.equal(dogfoodReport.checks.repositoryConfigs.count, 2);
+assert.equal(dogfoodReport.checks.budgetPolicies.enabledPolicyCount > 0, true);
+assert.equal(dogfoodReport.checks.modelCatalog.defaultModel, "claude-opus-4-8");
+assert.equal(
+  JSON.stringify(dogfoodReport).includes("123456789012"),
+  false
+);
+const dogfoodMarkdown = dogfoodReadiness.formatDogfoodReadinessMarkdown(dogfoodReport);
+assert.match(dogfoodMarkdown, /Dogfood Readiness/);
+assert.match(dogfoodMarkdown, /templates\/dogfood-command-only-config.yml/);
+const dogfoodPreflightReport = dogfoodReadiness.collectDogfoodReadiness({
+  env: {},
+  includePreflight: true,
+  now: new Date("2026-06-13T00:00:00.000Z"),
+});
+assert.equal(dogfoodPreflightReport.ready, false);
+assert.equal(dogfoodPreflightReport.checks.preflight.ok, false);
+assert.deepEqual(
+  dogfoodReadinessCli.parseArgs([
+    "--repository-config",
+    "one.yml",
+    "--repository-config",
+    "two.yml",
+    "--budget-policy-file",
+    "budgets.json",
+    "--model-catalog-file",
+    "catalog.json",
+    "--strict-preflight",
+    "--json",
+    "--quiet",
+    "--require-ready",
+  ]),
+  {
+    budgetPolicyFile: "budgets.json",
+    includePreflight: true,
+    json: true,
+    modelCatalogFile: "catalog.json",
+    preflightProfile: "server",
+    quiet: true,
+    repositoryConfigFiles: ["one.yml", "two.yml"],
+    requireReady: true,
+    strictPreflight: true,
+  }
 );
 
 withEnv(

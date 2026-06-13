@@ -50,6 +50,23 @@ npm run validate:repo-config -- templates/dogfood-command-only-config.yml
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Before first traffic, run the dogfood readiness summary. It validates the
+target repository config templates, dogfood budget policy file, and model
+catalog without requiring live secrets:
+
+```bash
+npm run dogfood:readiness
+```
+
+From a private operator environment, include no-network runtime preflight:
+
+```bash
+npm run dogfood:readiness -- -- --strict-preflight --require-ready
+```
+
+See [Dogfood Readiness](dogfood-readiness.md) for custom target-repo config and
+private budget policy inputs.
+
 For a target repository checkout, point the validator at that repo's file:
 
 ```bash
@@ -155,6 +172,8 @@ Fast rollback options, from narrowest to broadest:
 
 ## Acceptance Checklist
 
+- Dogfood readiness passes for the target repo config and reviewed central
+  budget policy.
 - Webhook delivery succeeds and invalid signatures fail.
 - Target repo config is loaded from the base ref.
 - Public repo untrusted actors cannot trigger spend.

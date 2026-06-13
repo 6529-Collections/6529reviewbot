@@ -26,6 +26,7 @@ runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.example.json", "--quiet"]);
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.dogfood.example.json", "--quiet"]);
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
+runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet"]);
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/operator-evidence.cjs", [
   "--file",

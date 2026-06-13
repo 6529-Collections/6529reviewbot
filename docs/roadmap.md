@@ -348,6 +348,9 @@ Completed in `6529reviewbot`:
   stdout, webhook, SNS, and SES email delivery.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
+- dogfood readiness command for validating target config, central budget
+  policy, model catalog, and optional no-network preflight before first
+  traffic.
 - production deployment runbook and central worker installation-token flow.
 - production server entrypoint wiring for the configured worker adapter.
 - repository-owned container packaging for the central App server with

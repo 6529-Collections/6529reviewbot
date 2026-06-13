@@ -1700,3 +1700,20 @@
   worktree due the wrapper path/script-shell issue, so equivalent underlying
   scripts were run with `SEIZE_6529_COMMAND=1` and the result was documented in
   PR #2632.
+- Started `codex/dogfood-readiness-check` increment:
+  - add a public-safe `dogfood:readiness` command that composes target repo
+    config validation, dogfood budget policy validation, model catalog
+    validation, and optional no-network preflight;
+  - wire the command into release checks and smoke coverage;
+  - update README, dogfood, operations, release, release-readiness, roadmap,
+    changelog, and manager memory.
+- Local validation for `codex/dogfood-readiness-check`:
+  - `npm run dogfood:readiness` passed and rendered the public-safe Markdown
+    report;
+  - `npm run dogfood:readiness -- -- --json --quiet --require-ready` passed;
+  - `npm run dogfood:readiness -- -- --preflight --json` passed and reported
+    missing private runtime config without failing;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

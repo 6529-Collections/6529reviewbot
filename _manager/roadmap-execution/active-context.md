@@ -214,9 +214,11 @@ merged PRs.
 - Frontend private admin dashboard PR:
   `https://github.com/6529-Collections/6529seize-frontend/pull/2632`
   stacked on public dashboard PR #2605.
-- Current branch: `main`
-- Current local changes: durable memory and roadmap refresh after shipping the
-  frontend admin dashboard PR.
+- Current branch: `codex/dogfood-readiness-check`
+- Current local changes: adding a public-safe dogfood readiness command that
+  validates target repository config inputs, central dogfood budget policy,
+  model catalog defaults, and optional no-network preflight before first live
+  dogfood traffic.
 
 ## Key Decisions
 
@@ -482,8 +484,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Continue production deployment and dogfood readiness slices that are not
-   blocked on external credentials.
+2. Validate, publish, and merge the dogfood readiness command if checks pass.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
