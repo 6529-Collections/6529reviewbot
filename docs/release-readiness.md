@@ -78,6 +78,9 @@ Ready for community review:
 - model price apply and production preflight can reject stale or future-dated
   source-checked timestamps before cost estimates rely on bad provider pricing
   evidence;
+- `npm run check:model-pricing-runbook` keeps [Model Pricing](model-pricing.md)
+  synchronized with price-file shape, source-checked evidence, stale/zero
+  overrides, apply behavior, and estimation semantics;
 - model-price apply safety that rejects zero-rate placeholder rows unless an
   operator explicitly allows a documented free price;
 - usage-write cost estimation from active provider/model price rows;
@@ -492,6 +495,9 @@ access-key ids, private keys, error lines, and diagnostic tails.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.
+`npm run check:model-pricing-runbook` is included in `npm run release:check`
+and verifies model pricing guidance for price-file shape, source-checked
+evidence, stale/zero overrides, apply behavior, and estimation semantics.
 `npm run check:providers` is included in `npm run release:check` and verifies
 supported provider constants, model catalog providers, preflight key
 requirements, workflow dispatch choices, and provider docs stay aligned.

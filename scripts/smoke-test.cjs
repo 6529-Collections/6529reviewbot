@@ -93,6 +93,7 @@ const webhookReplayCheck = require("./check-webhook-replay-contract.cjs");
 const modelDefaultsCheck = require("./check-model-defaults.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
+const modelPricingRunbookContractCheck = require("./check-model-pricing-runbook-contract.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const providerAdapterCheck = require("./check-provider-adapters.cjs");
@@ -5314,8 +5315,21 @@ appServer.handleGitHubWebhook({
         docTexts: {
           "docs/alerting.md": "# Alerting\n",
         },
-      }),
+    }),
     /alerting runbook contract check found/
+  );
+  const modelPricingRunbookContractResult =
+    modelPricingRunbookContractCheck.checkModelPricingRunbookContract();
+  assert.equal(modelPricingRunbookContractResult.runbookCases, 5);
+  assert.throws(
+    () =>
+      modelPricingRunbookContractCheck.checkModelPricingRunbookContract({
+        quiet: true,
+        docTexts: {
+          "docs/model-pricing.md": "# Model Pricing\n",
+        },
+      }),
+    /model pricing runbook contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

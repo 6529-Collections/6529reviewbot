@@ -283,6 +283,9 @@ Build the operator experience:
 - model-default checks that keep catalog defaults, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes aligned as models
   update;
+- model pricing runbook contract checks that keep source-checked evidence,
+  stale-source overrides, zero-rate overrides, apply behavior, and estimation
+  semantics aligned;
 - provider-contract checks that keep supported provider constants, model
   catalog providers, preflight key requirements, workflow dispatch choices,
   and provider docs aligned;
@@ -569,6 +572,8 @@ Completed in `6529reviewbot`:
   provider-documented free prices.
 - source-check freshness guard for model price apply and optional preflight,
   with explicit override for accepted stale evidence.
+- model pricing runbook contract for source-checked price evidence, stale and
+  zero-rate overrides, apply behavior, and cost-estimation semantics.
 - installation and onboarding guide for conservative central App dogfood.
 - installation guide contract for the conservative dogfood onboarding path,
   GitHub App validation commands, runtime defaults, target-repo posture, and

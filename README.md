@@ -169,6 +169,7 @@ npm run check:support-bundle
 npm run check:support-runbooks
 npm run check:diagnostics-redaction
 npm run check:model-defaults
+npm run check:model-pricing-runbook
 npm run check:providers
 npm run check:provider-adapters
 npm run check:ledger-privacy

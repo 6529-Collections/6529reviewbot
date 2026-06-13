@@ -11,6 +11,10 @@ Use this guide with:
 - [Model Pricing](model-pricing.md)
 - [Deployment](deployment.md)
 
+Run `npm run check:model-pricing-runbook` after editing model-pricing guidance
+so provider setup, source URLs, source-checked timestamps, stale-source
+overrides, and zero-price overrides stay aligned.
+
 Provider documentation and pricing change over time. Treat provider-owned docs
 as the source of truth and keep this repository focused on the operational
 contract.

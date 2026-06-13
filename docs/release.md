@@ -184,6 +184,9 @@ After stabilization:
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes
+- `npm run check:model-pricing-runbook` confirms model pricing guidance keeps
+  price-file shape, source-checked evidence, stale/zero overrides, apply
+  behavior, and estimation semantics synchronized
 - `npm run check:providers` confirms supported provider constants stay
   synchronized with model catalog providers, preflight key requirements,
   workflow dispatch choices, and provider docs

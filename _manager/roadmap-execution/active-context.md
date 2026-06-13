@@ -382,11 +382,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Worker capacity contract PR: merged as PR #210, merge commit `73ebbc8`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/alerting-runbook-contract`.
-- Current local changes: adding an alerting runbook contract check that keeps
-  scheduled alert runner posture, no-provider behavior, private notification
-  routing, dogfood evidence, alert payload privacy, release checks, smoke
-  tests, and docs synchronized.
+- Alerting runbook contract PR: merged as PR #211, merge commit `486cb47`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-pricing-runbook-contract`.
+- Current local changes: adding a model pricing runbook contract check that
+  keeps source-checked price evidence, stale/zero-price overrides, apply
+  behavior, estimation semantics, release checks, smoke tests, and docs
+  synchronized.
 
 ## Key Decisions
 
@@ -887,6 +889,10 @@ merged PRs.
   no-provider boundary, central workflow posture, private notification routing,
   dogfood evidence, and payload privacy machine-checked so warnings do not
   drift into unsafe or target-repo-owned operations.
+- Model pricing is a cost-estimation integrity boundary. Keep price-file
+  shape, source-checked evidence, stale-source overrides, zero-rate overrides,
+  apply behavior, and token-class estimation semantics machine-checked so
+  operator-maintained pricing does not drift from budget evidence.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -910,7 +916,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the alerting runbook contract check.
+2. Publish and merge the model pricing runbook contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
