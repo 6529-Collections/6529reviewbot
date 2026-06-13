@@ -34,6 +34,8 @@ entrypoints, package scripts, and review workflow docs aligned.
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
 requirements, workflow dispatch choices, and provider docs aligned.
+`npm run check:budget-scopes` keeps central budget scope validation, ledger
+schema constraints, public docs, and dogfood examples aligned.
 
 The local quality gate command inventory is:
 
@@ -48,6 +50,7 @@ The local quality gate command inventory is:
 - `npm run check:review-bins`
 - `npm run check:model-defaults`
 - `npm run check:providers`
+- `npm run check:budget-scopes`
 - `npm run check:public-artifacts`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`

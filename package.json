@@ -60,6 +60,7 @@
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
     "check:providers": "node scripts/check-provider-contract.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
+    "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",

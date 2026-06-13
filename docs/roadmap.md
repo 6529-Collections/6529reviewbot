@@ -428,6 +428,8 @@ Completed in `6529reviewbot`:
 - provider-contract checks that keep provider constants, model catalog
   providers, preflight key requirements, workflow dispatch choices, and
   provider docs synchronized.
+- budget-scope checks that keep central policy validation, ledger schema
+  constraints, public docs, and dogfood examples synchronized.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

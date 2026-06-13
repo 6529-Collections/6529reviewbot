@@ -28,6 +28,8 @@ config/budget-policies.dogfood.example.json
 The dogfood example includes global, org, repo, requestor, provider, model, and
 review-kind caps. Replace `replace-with-maintainer-login` and adjust caps in
 an operator-owned file before applying to production.
+Dogfood examples intentionally omit `pr` rows because PR caps are usually
+one-off operator-owned rows tied to a specific rollout or incident.
 
 For a custom operator file, use the same shape:
 

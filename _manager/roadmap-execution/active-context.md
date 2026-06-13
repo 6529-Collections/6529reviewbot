@@ -306,10 +306,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Provider contract PR: merged as PR #172, merge commit `48d69aa`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/review-bin-contract`.
-- Current local changes: adding a review-bin entrypoint contract check that
-  keeps review-kind prompt configs, CLI entrypoints, package scripts, and
-  review workflow docs synchronized.
+- Review bin entrypoint contract PR: merged as PR #173, merge commit
+  `88cc326`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/budget-scope-contract`.
+- Current local changes: adding a budget-scope contract check that keeps
+  central budget policy validation, ledger schema constraints, public docs,
+  release operations, and dogfood examples synchronized.
 
 ## Key Decisions
 
@@ -488,6 +490,9 @@ merged PRs.
 - The ledger schema CLI should also refresh managed budget-scope constraints so
   older databases accept the canonical `global`, `org`, `repo`, `requestor`,
   `pr`, `provider`, `model`, and `review_kind` scopes.
+- Budget scope vocabulary is a release-sensitive cost-control contract and
+  should be machine-checked across validators, ledger schema SQL, public docs,
+  and examples instead of relying on manual doc sweeps.
 - Conservative dogfood budget policies have been applied to the live isolated
   ledger and aggregate scope counts were verified. Keep live resource
   identifiers and operator-owned policy files outside the public repo.
@@ -708,7 +713,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the review-bin entrypoint contract check.
+2. Validate, publish, and merge the budget-scope contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
