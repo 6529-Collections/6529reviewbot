@@ -272,6 +272,12 @@ Generate a sanitized support bundle:
 npm run support:bundle
 ```
 
+Collect a private admin API posture snapshot:
+
+```bash
+npm run admin:snapshot -- --base-url https://reviewbot.example.com
+```
+
 Replay a saved GitHub webhook payload without dispatching workers:
 
 ```bash

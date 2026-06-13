@@ -1590,3 +1590,23 @@
   - `npm run check:docs` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #123 as `d76a02e` after CI and Dependency Review
+  passed; the normal protected merge path allowed the merge while CodeRabbit
+  remained in its processing placeholder with no review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27450861094`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27450861103`, completed successfully.
+- Local clean-main validation after PR #123 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-snapshot-client` increment:
+  - add an admin snapshot reducer and CLI that calls the server-side usage API
+    client and summarizes endpoint posture;
+  - keep output to counts, posture flags, and redacted errors instead of raw
+    admin rows or private scope values;
+  - add release/evidence docs so operators can use the command for private
+    dashboard bring-up and release validation.
+- Local validation for `codex/admin-snapshot-client`:
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

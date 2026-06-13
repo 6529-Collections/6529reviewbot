@@ -77,6 +77,7 @@ Ready for community review:
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - server-side 6529.io usage API client helper for signed admin endpoint calls;
+- admin snapshot CLI for private dashboard bring-up and release evidence;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, and SNS delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe

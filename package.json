@@ -33,6 +33,7 @@
     "model-prices": "node bin/apply-model-prices.cjs",
     "preflight": "node bin/preflight.cjs",
     "support:bundle": "node bin/support-bundle.cjs",
+    "admin:snapshot": "node bin/admin-snapshot.cjs",
     "operator:evidence": "node bin/operator-evidence.cjs",
     "release:candidate": "node bin/release-candidate.cjs",
     "v0:gates": "node bin/v0-gates.cjs",

@@ -9,6 +9,8 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const adminAuth = require("../src/admin-auth.cjs");
+const adminSnapshot = require("../src/admin-snapshot.cjs");
+const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
 const alertStatus = require("../src/alert-status.cjs");
@@ -3299,6 +3301,112 @@ const usageApiClientFailurePromise = usageApiClient
     () => null,
     (error) => error
   );
+const adminSnapshotPromise = adminSnapshot.collectAdminSnapshot({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  client: {
+    adminUsageSummary: async () => ({
+      totals: {
+        reviewRuns: 4,
+        costUsd: 3.5,
+        totalTokens: 1234,
+        budgetSkippedRuns: 1,
+      },
+      byRequestor: [{ key: "operator" }],
+      byPr: [{ key: "6529-Collections/private#1" }],
+    }),
+    recentUsageEvents: async () => ({
+      events: [{ budgetSkipped: true }, { budgetSkipped: false }],
+    }),
+    budgetStatus: async () => ({
+      policies: [{
+        utilization: {
+          daily: { percentUsed: 90, overBudget: false },
+          weekly: { percentUsed: 110, overBudget: true },
+          monthly: { percentUsed: null, overBudget: false },
+        },
+      }],
+    }),
+    modelPriceStatus: async () => ({
+      status: {
+        summary: {
+          activeRows: 2,
+          providerModelCount: 2,
+          staleRows: 1,
+          futureRows: 0,
+          missingSourceRows: 0,
+          invalidSourceRows: 0,
+          incompleteRows: 1,
+        },
+      },
+    }),
+    alertStatus: async () => ({
+      status: {
+        enabled: true,
+        spend: { enabled: true },
+        jobHealth: { enabled: true },
+        notifier: {
+          mode: "sns",
+          webhookConfigured: false,
+          snsTopicConfigured: true,
+        },
+      },
+    }),
+    jobEvents: async () => ({ events: [{ jobId: "failed" }] }),
+    runClaims: async () => ({ active: true, staleMinutes: 120, claims: [{ jobId: "stale" }] }),
+    runtimeStatus: async ({ profile }) => ({
+      profile,
+      preflight: {
+        ok: profile === "server",
+        checks: [{ name: "webhook" }],
+        warnings: profile === "worker" ? [{ name: "worker" }] : [],
+        errors: profile === "worker" ? [{ name: "worker" }] : [],
+      },
+    }),
+  },
+});
+const adminSnapshotFailurePromise = adminSnapshot.collectAdminSnapshot({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  client: {
+    adminUsageSummary: async () => {
+      throw new Error("failed with sk-proj-abcdefghijklmnopqrstuvwx123456");
+    },
+    recentUsageEvents: async () => ({ events: [] }),
+    budgetStatus: async () => ({ policies: [] }),
+    modelPriceStatus: async () => ({ status: { summary: {} } }),
+    alertStatus: async () => ({ status: { enabled: false, notifier: {} } }),
+    jobEvents: async () => ({ events: [] }),
+    runClaims: async () => ({ claims: [] }),
+    runtimeStatus: async ({ profile }) => ({ profile, preflight: { ok: true } }),
+  },
+});
+assert.deepEqual(
+  adminSnapshotCli.parseArgs([
+    "--",
+    "--json",
+    "--quiet",
+    "--require-ok",
+    "--days",
+    "14",
+    "--recent-days",
+    "3",
+    "--limit",
+    "9",
+    "--stale-minutes",
+    "60",
+    "--roles",
+    "reviewbot-admin,admin",
+  ]),
+  {
+    json: true,
+    quiet: true,
+    requireOk: true,
+    days: "14",
+    recentDays: "3",
+    limit: "9",
+    staleMinutes: "60",
+    roles: ["reviewbot-admin", "admin"],
+  }
+);
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
@@ -3503,6 +3611,25 @@ appServer.handleGitHubWebhook({
   assert.match(usageApiClientFailure.message, /Bearer \[redacted\]/);
   assert.match(usageApiClientFailure.message, /sk-\[redacted\]/);
   assert.equal(usageApiClientFailure.message.includes("sk-proj-"), false);
+  const adminSnapshotResult = await adminSnapshotPromise;
+  assert.equal(adminSnapshotResult.ok, false);
+  assert.equal(adminSnapshotResult.checks.length, 9);
+  assert.equal(
+    adminSnapshotResult.checks.find((check) => check.name === "admin_usage_summary").summary.reviewRuns,
+    4
+  );
+  assert(adminSnapshotResult.warnings.includes("budget_status: over-budget periods present"));
+  assert(adminSnapshotResult.warnings.includes("model_price_status: staleRows=1"));
+  assert(adminSnapshotResult.warnings.includes("failed_job_events: recent dispatch failures present"));
+  assert(adminSnapshotResult.warnings.includes("stale_run_claims: stale active claims present"));
+  assert(adminSnapshotResult.warnings.includes("runtime_status_worker: preflight not ok"));
+  const adminSnapshotMarkdown = adminSnapshot.formatAdminSnapshotMarkdown(adminSnapshotResult);
+  assert.match(adminSnapshotMarkdown, /Admin Snapshot/);
+  assert.match(adminSnapshotMarkdown, /model_price_status: ok/);
+  const adminSnapshotFailure = await adminSnapshotFailurePromise;
+  assert.equal(adminSnapshotFailure.ok, false);
+  assert.match(adminSnapshotFailure.checks[0].error, /sk-\[redacted\]/);
+  assert.equal(adminSnapshotFailure.checks[0].error.includes("sk-proj-"), false);
   const serverAppDispatchResult = await serverAppDispatchPromise;
   assert.equal(serverAppDispatchResult.accepted, true);
   assert.equal(serverAppDispatchResult.jobs[0].dispatchMode, "api");

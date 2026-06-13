@@ -111,6 +111,8 @@ stabilized.
   accepts signed 6529.io admin assertions.
 - Server-side 6529.io usage API client helper for signed admin requests,
   endpoint path building, timeouts, and redacted API failures.
+- Admin snapshot CLI for private dashboard bring-up and release evidence
+  without dumping raw usage rows or private scope values.
 - Scheduled operator alerts for budget utilization, unusual spend spikes,
   failed jobs, and stale run-control claims.
 - Dry-run webhook replay CLI for GitHub delivery, admission, budget, and job
