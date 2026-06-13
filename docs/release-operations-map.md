@@ -33,6 +33,9 @@ entrypoints, package scripts, and review workflow docs aligned.
 `npm run check:review-comment-format` keeps generated public comment headings,
 verdict lines, hidden markers, review labels, and budget-skip wording aligned
 with the documented PR comment contract.
+`npm run check:admission-policy` keeps trusted-actor admission defaults, repo
+visibility modes, draft handling, trusted permission levels, public examples,
+and admission docs aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
@@ -58,6 +61,7 @@ The local quality gate command inventory is:
 - `npm run check:review-workflows`
 - `npm run check:review-bins`
 - `npm run check:review-comment-format`
+- `npm run check:admission-policy`
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`

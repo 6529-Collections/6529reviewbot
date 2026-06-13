@@ -11,6 +11,7 @@ const path = require("path");
 const adminAuth = require("../src/admin-auth.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
 const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
+const admissionPolicyCheck = require("./check-admission-policy.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
 const alertNotifierModesCheck = require("./check-alert-notifier-modes.cjs");
@@ -194,6 +195,19 @@ assert.throws(
       },
     }),
   /review comment format check found/
+);
+assert.equal(admissionPolicyCheck.checkAdmissionPolicy().repoModes, 3);
+assert.deepEqual(admissionPolicyCheck.expectedRepoModes, ["trusted", "off", "open"]);
+assert.throws(
+  () =>
+    admissionPolicyCheck.checkAdmissionPolicy({
+      quiet: true,
+      docTexts: {
+        "docs/admission-policy.md": "# Admission\nREVIEWBOT_PUBLIC_REPO_MODE=open\n",
+        "docs/configuration.md": "# Configuration\n",
+      },
+    }),
+  /admission policy check found/
 );
 assert.throws(
   () =>

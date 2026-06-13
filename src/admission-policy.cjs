@@ -1,25 +1,37 @@
 "use strict";
 
+const ADMISSION_REPO_MODES = ["trusted", "off", "open"];
+const DRAFT_PR_MODES = ["skip", "allow"];
 const TRUSTED_PERMISSION_ORDER = ["none", "read", "triage", "write", "maintain", "admin"];
+const DEFAULT_ADMISSION_POLICY = {
+  publicRepoMode: "trusted",
+  privateRepoMode: "open",
+  draftPrMode: "skip",
+  trustedPermission: "write",
+};
 
 function admissionPolicyFromEnv(env = process.env) {
   return {
     publicRepoMode: enumValue(
-      env.REVIEWBOT_PUBLIC_REPO_MODE || "trusted",
-      ["trusted", "off", "open"],
+      env.REVIEWBOT_PUBLIC_REPO_MODE || DEFAULT_ADMISSION_POLICY.publicRepoMode,
+      ADMISSION_REPO_MODES,
       "REVIEWBOT_PUBLIC_REPO_MODE"
     ),
     privateRepoMode: enumValue(
-      env.REVIEWBOT_PRIVATE_REPO_MODE || "open",
-      ["trusted", "off", "open"],
+      env.REVIEWBOT_PRIVATE_REPO_MODE || DEFAULT_ADMISSION_POLICY.privateRepoMode,
+      ADMISSION_REPO_MODES,
       "REVIEWBOT_PRIVATE_REPO_MODE"
     ),
-    draftPrMode: enumValue(env.REVIEWBOT_DRAFT_PR_MODE || "skip", ["skip", "allow"], "REVIEWBOT_DRAFT_PR_MODE"),
+    draftPrMode: enumValue(
+      env.REVIEWBOT_DRAFT_PR_MODE || DEFAULT_ADMISSION_POLICY.draftPrMode,
+      DRAFT_PR_MODES,
+      "REVIEWBOT_DRAFT_PR_MODE"
+    ),
     trustedUsers: csvSet(env.REVIEWBOT_TRUSTED_USERS || ""),
     trustedTeams: csvSet(env.REVIEWBOT_TRUSTED_TEAMS || ""),
     trustedOrganizations: csvSet(env.REVIEWBOT_TRUSTED_ORGS || ""),
     trustedPermission: enumValue(
-      env.REVIEWBOT_TRUSTED_PERMISSION || "write",
+      env.REVIEWBOT_TRUSTED_PERMISSION || DEFAULT_ADMISSION_POLICY.trustedPermission,
       TRUSTED_PERMISSION_ORDER,
       "REVIEWBOT_TRUSTED_PERMISSION"
     ),
@@ -174,6 +186,9 @@ function decision(status, allowedValue, code, reason, requestor, policy, extra) 
 }
 
 module.exports = {
+  ADMISSION_REPO_MODES,
+  DEFAULT_ADMISSION_POLICY,
+  DRAFT_PR_MODES,
   TRUSTED_PERMISSION_ORDER,
   admissionPolicyFromEnv,
   evaluateAdmission,

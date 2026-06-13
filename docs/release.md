@@ -130,6 +130,9 @@ After stabilization:
 - `npm run check:review-comment-format` confirms generated PR comments,
   hidden markers, review labels, verdict lines, and budget-skip wording stay
   synchronized with the public comment-format docs
+- `npm run check:admission-policy` confirms trusted-actor admission defaults,
+  repo visibility modes, draft handling, trusted permission levels, public
+  examples, and admission docs stay synchronized
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

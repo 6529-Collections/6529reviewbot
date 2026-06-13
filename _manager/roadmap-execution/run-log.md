@@ -2692,3 +2692,28 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including review comment format
     validation and 52 mapped release-operation tools.
+- Merged `6529reviewbot` PR #178 as `a6755bf`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/admission-policy-contract` increment:
+  - add `scripts/check-admission-policy.cjs` and
+    `npm run check:admission-policy`;
+  - export admission repo-mode, draft-mode, default-policy, and trusted
+    permission constants from `src/admission-policy.cjs`;
+  - validate trusted-actor defaults, repo visibility modes, draft handling,
+    trusted permission levels, deny precedence, trusted-user admission, public
+    examples, env template defaults, and admission docs;
+  - clarify that public repositories require trusted actors by default and that
+    this prevents arbitrary PR authors or commenters from burning model budget;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/admission-policy-contract`:
+  - `npm run check:admission-policy` passed with 3 repo modes, 6 permission
+    levels, and 7 docs/configs checked;
+  - `npm run check:release-operations` passed with 53 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 111 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including admission policy validation and
+    53 mapped release-operation tools.

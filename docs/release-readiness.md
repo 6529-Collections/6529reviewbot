@@ -366,6 +366,10 @@ review workflow docs stay aligned.
 and verifies generated PR comment headings, hidden markers, review labels,
 verdict lines, and budget-skip wording stay aligned with the public comment
 format docs.
+`npm run check:admission-policy` is included in `npm run release:check` and
+verifies trusted-actor admission defaults, repo visibility modes, draft
+handling, trusted permission levels, public examples, and admission docs stay
+aligned.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

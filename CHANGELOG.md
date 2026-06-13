@@ -101,6 +101,9 @@ stabilized.
 - Added a review-comment format release check that validates generated PR
   comment headings, hidden markers, review labels, verdict lines, and
   budget-skip wording against the public comment-format docs.
+- Added an admission-policy release check that validates trusted-actor
+  defaults, repo visibility modes, draft handling, trusted permission levels,
+  public examples, and admission docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.
