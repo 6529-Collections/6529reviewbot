@@ -32,7 +32,17 @@ function validateDogfoodStatus(document, source = "dogfood status") {
 }
 
 function mergeDogfoodStatus(checklistDocument, statusDocument, options = {}) {
-  return mergeProductionCutoverStatus(checklistDocument, statusDocument, options);
+  const merged = mergeProductionCutoverStatus(checklistDocument, statusDocument, {
+    ...options,
+    requireComplete: false,
+  });
+  const missingIds = missingDogfoodStatusIds(checklistDocument, statusDocument);
+  if (options.requireComplete && missingIds.length) {
+    throw new Error(
+      `dogfood status is missing ${missingIds.length} current item(s): ${missingIds.join(", ")}.`
+    );
+  }
+  return merged;
 }
 
 function createDogfoodStatusSkeleton(document, options = {}) {
@@ -66,11 +76,15 @@ function assertDogfoodReady(document) {
 function missingDogfoodStatusIds(checklistDocument, statusDocument) {
   const checklist = validateDogfoodChecklist(checklistDocument);
   const status = validateDogfoodStatus(statusDocument);
-  const merged = mergeDogfoodStatus(checklist, status);
-  const knownIds = new Set(dogfoodItems(merged).map((item) => item.id));
+  const knownIds = new Set(dogfoodItems(checklist).map((item) => item.id));
+  for (const id of Object.keys(status.items)) {
+    if (!knownIds.has(id)) {
+      throw new Error(`dogfood status references unknown item '${id}'.`);
+    }
+  }
   return dogfoodItems(checklist)
     .map((item) => item.id)
-    .filter((id) => !knownIds.has(id) || status.items[id] === undefined);
+    .filter((id) => status.items[id] === undefined);
 }
 
 function renderDogfoodMarkdown(document) {

@@ -368,7 +368,12 @@ the first live command-only trigger:
 npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
 npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
 npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready
+npm run check:dogfood-status
 ```
+
+The dogfood status contract keeps readiness behavior, missing-id checks,
+complete evidence requirements, deferred item semantics, public Markdown
+redaction, and docs synchronized.
 
 `npm run check:docs` is included in `npm run release:check` and verifies local
 Markdown links across tracked and non-ignored untracked repository docs before

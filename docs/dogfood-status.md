@@ -66,6 +66,18 @@ npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --requ
 `deferred` items are allowed only when the status includes notes. Release notes
 must name the deferral, risk, and follow-up owner.
 
+Run the dogfood status contract check after changing the status schema,
+readiness behavior, missing-id handling, deferral handling, Markdown redaction,
+source invariants, or this runbook:
+
+```bash
+npm run check:dogfood-status
+```
+
+The dogfood status contract check verifies pending skeletons, complete and
+deferred readiness semantics, required evidence rules, public Markdown
+redaction, and docs stay synchronized.
+
 ## Evidence Boundary
 
 Status evidence may include:

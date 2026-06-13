@@ -136,6 +136,9 @@ stabilized.
 - Added a dogfood target contract release check that validates target packet
   modes, external config path markers, Markdown redaction, source invariants,
   and docs.
+- Added a dogfood-status contract release check that validates dogfood status
+  readiness, missing-id checks, deferral semantics, Markdown redaction, source
+  invariants, and docs.
 - Added a dogfood readiness contract release check that validates static input
   defaults, private workspace path markers, preflight state, Markdown
   redaction, source invariants, and docs.

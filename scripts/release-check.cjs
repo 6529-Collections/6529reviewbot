@@ -32,6 +32,7 @@ runNode("scripts/check-provider-adapters.cjs");
 runNode("scripts/check-ledger-privacy-contract.cjs");
 runNode("scripts/check-webhook-replay-contract.cjs");
 runNode("scripts/check-dogfood-target-contract.cjs");
+runNode("scripts/check-dogfood-status-contract.cjs");
 runNode("scripts/check-dogfood-readiness-contract.cjs");
 runNode("scripts/check-dogfood-promotion-contract.cjs");
 runNode("scripts/check-dogfood-go-live-contract.cjs");

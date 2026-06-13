@@ -358,10 +358,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Production-cutover contract PR: merged as PR #198, merge commit `6eb143c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/security-review-status-contract`.
-- Current local changes: adding a security-review-status contract check that
-  keeps manual review status readiness, deferral semantics, Markdown
-  redaction, source invariants, and docs synchronized.
+- Security-review-status contract PR: merged as PR #199, merge commit
+  `f5615ac`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dogfood-status-contract`.
+- Current local changes: adding a dogfood-status contract check that keeps
+  dogfood execution status readiness, missing-id checks, deferral semantics,
+  Markdown redaction, source invariants, and docs synchronized.
 
 ## Key Decisions
 
@@ -803,6 +805,10 @@ merged PRs.
 - Dogfood target packets are the first target-repo PR gate. Keep mode
   inference, external config path markers, token/AWS redaction, and public docs
   covered by no-network contract checks.
+- Dogfood status is the live dogfood evidence overlay. Keep complete evidence
+  requirements, missing-id checks, deferred-item semantics, pending/blocked
+  failures, and public Markdown redaction covered by no-network contract
+  checks.
 - Operator workspace files are private evidence inputs. Keep skeleton creation,
   check-mode readiness failures, generated README guidance, private path
   markers, and public-summary redaction covered by no-network contract checks.
@@ -835,7 +841,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the security-review-status contract check.
+2. Publish and merge the dogfood-status contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

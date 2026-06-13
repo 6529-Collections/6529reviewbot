@@ -107,11 +107,14 @@ When live dogfood starts, track the actual run with the private status overlay:
 ```bash
 npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
 npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
+npm run check:dogfood-status
 ```
 
 Keep target repository details, raw payloads, prompts, diffs, ledger rows,
 alert destinations, and live infrastructure details in the private operator
-workspace. See [Dogfood Status](dogfood-status.md).
+workspace. See [Dogfood Status](dogfood-status.md). Run the dogfood status
+checker when status schema, readiness, deferral, or public Markdown behavior
+changes.
 
 For a target repository checkout, point the validator at that repo's file:
 
