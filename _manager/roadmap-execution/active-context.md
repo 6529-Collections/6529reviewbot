@@ -220,11 +220,13 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - 6529.io env template check PR: merged as PR #130, merge commit `5015b66`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/dogfood-status-checklist`.
-- Current local changes: adding dogfood execution checklist/status tooling so
-  operators can track command-only, limited initial-review, visibility, alert,
-  and rollback evidence in a private status overlay; also hardening docs and
-  public-artifact checks so untracked public files are scanned before staging.
+- Dogfood execution status checklist PR: merged as PR #131, merge commit
+  `1a7915a`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-candidate-dogfood-status`.
+- Current local changes: adding optional dogfood status summaries to the
+  release-candidate bundle so tag/no-tag evidence can include command-only and
+  limited initial-review dogfood posture alongside release gates, operator
+  evidence, cutover status, preflight, and git metadata.
 
 ## Key Decisions
 
@@ -486,6 +488,9 @@ merged PRs.
   after command-only and limited initial-review traffic starts.
 - Local public-surface checks should include non-ignored untracked files so new
   docs/config examples are checked before they are staged.
+- Release-candidate bundles should include dogfood status when the release
+  decision depends on actual command-only or limited initial-review dogfood
+  evidence, but the private dogfood status file remains operator-owned.
 
 ## Constraints
 
@@ -499,7 +504,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the dogfood status checklist/tooling.
+2. Validate, publish, and merge release-candidate dogfood status integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

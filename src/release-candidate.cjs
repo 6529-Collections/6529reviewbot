@@ -26,6 +26,14 @@ const {
   missingProductionCutoverStatusIds,
   summarizeProductionCutover,
 } = require("./production-cutover.cjs");
+const {
+  assertDogfoodReady,
+  loadDogfoodChecklist,
+  loadDogfoodStatus,
+  mergeDogfoodStatus,
+  missingDogfoodStatusIds,
+  summarizeDogfood,
+} = require("./dogfood-status.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
@@ -46,6 +54,8 @@ function collectReleaseCandidateBundle(options = {}) {
   const cutoverChecklistFile =
     options.cutoverChecklistFile || "config/production-cutover-checklist.json";
   const cutoverStatusFile = options.cutoverStatusFile || "";
+  const dogfoodChecklistFile = options.dogfoodChecklistFile || "config/dogfood-checklist.json";
+  const dogfoodStatusFile = options.dogfoodStatusFile || "";
 
   const gates = loadReleaseGates(gatesFile);
   const gateStatus = gateStatusFile ? loadReleaseGateStatus(gateStatusFile) : null;
@@ -60,6 +70,9 @@ function collectReleaseCandidateBundle(options = {}) {
   const cutover = cutoverStatusFile
     ? collectCutoverSummary(cutoverChecklistFile, cutoverStatusFile)
     : null;
+  const dogfood = dogfoodStatusFile
+    ? collectDogfoodSummary(dogfoodChecklistFile, dogfoodStatusFile)
+    : null;
   const preflight = preflightSummary(
     runPreflight({
       env: options.env || process.env,
@@ -73,6 +86,7 @@ function collectReleaseCandidateBundle(options = {}) {
     releaseGateSummary.ready &&
     missingGateStatusIds.length === 0 &&
     operatorEvidenceSummary.ready &&
+    (!dogfood || (dogfood.summary.ready && dogfood.missingStatusIds.length === 0)) &&
     (!cutover || (cutover.summary.ready && cutover.missingStatusIds.length === 0)) &&
     preflight.ok;
 
@@ -89,6 +103,8 @@ function collectReleaseCandidateBundle(options = {}) {
       releaseGatesFile: publicPath(gatesFile, root),
       releaseGateStatusFile: gateStatusFile ? publicPath(gateStatusFile, root) : "",
       operatorEvidenceFile: publicPath(operatorEvidenceFile, root),
+      dogfoodChecklistFile: dogfood ? publicPath(dogfoodChecklistFile, root) : "",
+      dogfoodStatusFile: dogfoodStatusFile ? publicPath(dogfoodStatusFile, root) : "",
       productionCutoverChecklistFile: cutover ? publicPath(cutoverChecklistFile, root) : "",
       productionCutoverStatusFile: cutoverStatusFile ? publicPath(cutoverStatusFile, root) : "",
       preflightProfile: preflight.profile,
@@ -101,6 +117,14 @@ function collectReleaseCandidateBundle(options = {}) {
         missingStatusIds: missingGateStatusIds.map((id) => publicText(id)),
       },
       operatorEvidence: operatorEvidenceSummary,
+      ...(dogfood
+        ? {
+            dogfood: {
+              ...dogfood.summary,
+              missingStatusIds: dogfood.missingStatusIds.map((id) => publicText(id)),
+            },
+          }
+        : {}),
       ...(cutover
         ? {
             productionCutover: {
@@ -129,6 +153,18 @@ function collectReleaseCandidateBundle(options = {}) {
     }
     assertReleaseGatesReady(mergedGates);
     assertOperatorEvidenceReady(operatorEvidence);
+    if (dogfood) {
+      if (dogfood.missingStatusIds.length) {
+        throw new Error(
+          [
+            "dogfood status is missing",
+            `${dogfood.missingStatusIds.length} current item(s):`,
+            `${dogfood.missingStatusIds.join(", ")}.`,
+          ].join(" ")
+        );
+      }
+      assertDogfoodReady(dogfood.merged);
+    }
     if (cutover) {
       if (cutover.missingStatusIds.length) {
         throw new Error(
@@ -162,6 +198,16 @@ function collectCutoverSummary(cutoverChecklistFile, cutoverStatusFile) {
     missingStatusIds: missingProductionCutoverStatusIds(checklist, status),
     merged: mergeProductionCutoverStatus(checklist, status),
     summary: summarizeProductionCutover(mergeProductionCutoverStatus(checklist, status)),
+  };
+}
+
+function collectDogfoodSummary(dogfoodChecklistFile, dogfoodStatusFile) {
+  const checklist = loadDogfoodChecklist(dogfoodChecklistFile);
+  const status = loadDogfoodStatus(dogfoodStatusFile);
+  return {
+    missingStatusIds: missingDogfoodStatusIds(checklist, status),
+    merged: mergeDogfoodStatus(checklist, status),
+    summary: summarizeDogfood(mergeDogfoodStatus(checklist, status)),
   };
 }
 
@@ -200,6 +246,12 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     `- release gates: ${publicText(bundle.inputs.releaseGatesFile)}`,
     `- release gate status: ${publicText(bundle.inputs.releaseGateStatusFile || "not provided")}`,
     `- operator evidence: ${publicText(bundle.inputs.operatorEvidenceFile)}`,
+    ...(bundle.inputs.dogfoodStatusFile
+      ? [
+          `- dogfood checklist: ${publicText(bundle.inputs.dogfoodChecklistFile)}`,
+          `- dogfood status: ${publicText(bundle.inputs.dogfoodStatusFile)}`,
+        ]
+      : []),
     ...(bundle.inputs.productionCutoverStatusFile
       ? [
           `- production cutover checklist: ${publicText(bundle.inputs.productionCutoverChecklistFile)}`,
@@ -214,6 +266,9 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     "",
     readinessLine("release gates", bundle.readiness.releaseGates),
     readinessLine("operator evidence", bundle.readiness.operatorEvidence),
+    ...(bundle.readiness.dogfood
+      ? [readinessLine("dogfood", bundle.readiness.dogfood)]
+      : []),
     ...(bundle.readiness.productionCutover
       ? [readinessLine("production cutover", bundle.readiness.productionCutover)]
       : []),
@@ -223,6 +278,9 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
       `${bundle.readiness.preflight.warnings.length} warnings)`,
     ].join(" "),
     `- missing gate status ids: ${idList(bundle.readiness.releaseGates.missingStatusIds)}`,
+    ...(bundle.readiness.dogfood
+      ? [`- missing dogfood status ids: ${idList(bundle.readiness.dogfood.missingStatusIds)}`]
+      : []),
     ...(bundle.readiness.productionCutover
       ? [
           `- missing cutover status ids: ${idList(
@@ -300,6 +358,14 @@ function releaseCandidateCommands() {
     {
       label: "operator evidence readiness",
       command: "npm run operator:evidence -- -- --file <private-evidence-file> --require-ready",
+    },
+    {
+      label: "dogfood summary",
+      command: "npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary",
+    },
+    {
+      label: "dogfood readiness",
+      command: "npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready",
     },
     {
       label: "production cutover summary",

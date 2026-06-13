@@ -17,6 +17,8 @@ function main(argv = process.argv.slice(2), options = {}) {
     gatesFile: args.gatesFile,
     cutoverChecklistFile: args.cutoverChecklistFile,
     cutoverStatusFile: args.cutoverStatusFile,
+    dogfoodChecklistFile: args.dogfoodChecklistFile,
+    dogfoodStatusFile: args.dogfoodStatusFile,
     includeGitStatus: args.includeGitStatus,
     operatorEvidenceFile: args.operatorEvidenceFile,
     preflightProfile: args.preflightProfile,
@@ -41,6 +43,8 @@ function parseArgs(argv) {
     gatesFile: "config/v0-release-gates.json",
     cutoverChecklistFile: "config/production-cutover-checklist.json",
     cutoverStatusFile: "",
+    dogfoodChecklistFile: "config/dogfood-checklist.json",
+    dogfoodStatusFile: "",
     includeGitStatus: false,
     json: false,
     operatorEvidenceFile: "config/production-evidence.example.json",
@@ -100,6 +104,16 @@ function parseArgs(argv) {
       index += 1;
       continue;
     }
+    if (arg === "--dogfood-file" || arg === "--dogfood-checklist-file") {
+      result.dogfoodChecklistFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--dogfood-status-file") {
+      result.dogfoodStatusFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
     if (arg === "--profile") {
       result.preflightProfile = enumValue(requiredValue(argv, index, arg), ["server", "worker"], arg);
       index += 1;
@@ -141,6 +155,7 @@ Usage:
   npm run release:candidate
   npm run release:candidate -- -- --json
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+  npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 
@@ -148,6 +163,8 @@ Options:
   --gate-file <path>              Release gates JSON file. Default: config/v0-release-gates.json
   --status-file <path>            Optional release gate status/evidence JSON file.
   --operator-evidence-file <path> Operator evidence JSON file. Default: config/production-evidence.example.json
+  --dogfood-file <path>            Dogfood checklist JSON file. Default: config/dogfood-checklist.json
+  --dogfood-status-file <path>     Optional dogfood status/evidence JSON file.
   --cutover-file <path>            Production cutover checklist JSON file. Default: config/production-cutover-checklist.json
   --cutover-status-file <path>     Optional production cutover status/evidence JSON file.
   --profile server|worker         Preflight profile. Default: server.
