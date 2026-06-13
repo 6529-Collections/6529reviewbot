@@ -77,8 +77,10 @@ function checkDefaultDraft(findings) {
     "Providers/models: anthropic:claude-opus-4-8",
     "openrouter:explicit required",
     "Release candidate bundle:",
+    "Production deployment plan:",
     "TODO(operator)",
     "`npm run release:check`",
+    "`npm run production:deployment-plan",
     "`npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {

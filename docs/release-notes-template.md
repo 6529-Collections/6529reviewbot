@@ -61,6 +61,7 @@ repositories.
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
 - Release candidate bundle:
+- Production deployment plan:
 - Dogfood promotion packet:
 - Dogfood go-live packet:
 - Production cutover status:
@@ -124,6 +125,7 @@ before updating.
 - `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:
+- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`:
 - `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
 - `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`:

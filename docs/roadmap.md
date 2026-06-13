@@ -413,11 +413,12 @@ Completed in `6529reviewbot`:
 - release operations map doc-sync checks so mapped local quality commands stay
   visible in public operator docs;
 - release notes template validation for required pre-v1 tested configuration,
-  dogfood promotion/go-live evidence, production cutover status, deferrals,
-  known gaps, compatibility, and validation fields;
+  dogfood promotion/go-live evidence, production deployment plan evidence,
+  production cutover status, deferrals, known gaps, compatibility, and
+  validation fields;
 - release notes draft command for turning release-candidate bundle evidence
   and model catalog defaults into a public-safe pre-v1 draft with operator TODO
-  markers;
+  markers, including production deployment plan evidence;
 - release notes publication guard for rejecting unfinished markers, missing
   evidence fields, incomplete deferrals, and public-safety leaks before tags or
   GitHub Releases;
@@ -560,7 +561,8 @@ Completed in `6529reviewbot`:
 - manager memory contract check for active context, run-log state, latest
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - release notes draft command and contract check for public-safe pre-v1 notes
-  generated from release-candidate bundle evidence and model catalog defaults.
+  generated from release-candidate bundle evidence, production deployment plan
+  evidence, and model catalog defaults.
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
 - release tag plan command and contract check for completed release notes,

@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added production deployment plan evidence to release notes draft, template,
+  and publication checks.
 - Added the production deployment plan handoff to operator drill next commands.
 - Added production deployment plan guidance to generated operator workspaces.
 - Added a production deployment plan guard and contract check for dry-run

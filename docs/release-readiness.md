@@ -258,8 +258,8 @@ Ready for community review:
 - machine-readable v0 release gates with optional status/evidence rendering,
   including the dogfood promotion packet before first live dogfood traffic;
 - release notes template validation for required pre-v1 evidence, dogfood
-  promotion/go-live packets, production cutover status, deferrals, known gaps,
-  compatibility, and validation fields;
+  promotion/go-live packets, production deployment plan evidence, production
+  cutover status, deferrals, known gaps, compatibility, and validation fields;
 - release operations map validation that keeps the public command inventory in
   sync with mapped local quality gates;
 - structured operator evidence validation and redacted public-summary rendering
@@ -328,11 +328,12 @@ checks, deferral semantics, public Markdown redaction, source invariants, and
 release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
-deferrals, known gaps, compatibility, and validation.
+production deployment plan evidence, deferrals, known gaps, compatibility, and
+validation.
 `npm run check:release-notes-draft` is included in `npm run release:check` and
 keeps the public-safe release notes draft aligned with release-candidate
-summaries, model defaults, TODO markers, redaction, CLI flags, operations map
-entries, and docs.
+summaries, model defaults, production deployment plan evidence, TODO markers,
+redaction, CLI flags, operations map entries, and docs.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and keeps the completed release notes publication
 guard aligned with required fields, deferral handling, public-safety
