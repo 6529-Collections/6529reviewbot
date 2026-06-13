@@ -369,6 +369,9 @@ Completed in `6529reviewbot`:
 - dogfood readiness command for validating target config, central budget
   policy, model catalog, optional no-network preflight, and private operator
   workspace parsing before first traffic.
+- dogfood promotion packet for composing target config readiness, central
+  dogfood inputs, self-dogfood replay, private workspace parsing, and preflight
+  into one final pre-traffic go/no-go report.
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
 - command-only `.github/6529bot.yml` config in this repository for eventual

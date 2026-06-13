@@ -318,6 +318,12 @@ npm run dogfood:readiness -- -- \
   --operator-workspace <private-workspace-dir> \
   --strict-preflight \
   --require-ready
+npm --silent run dogfood:promotion -- -- \
+  --repository-config <target-repo>/.github/6529bot.yml \
+  --budget-policy-file <reviewed-budget-policy-file.json> \
+  --operator-workspace <private-workspace-dir> \
+  --strict-preflight \
+  --require-ready
 ```
 
 After the config merges, trigger a trusted maintainer command:

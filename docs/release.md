@@ -88,6 +88,9 @@ After stabilization:
   passes before first live dogfood traffic, using the operator-reviewed target
   repo config, budget policy, and private workspace when they differ from the
   public examples
+- `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+  passes as the final composed pre-traffic go/no-go packet before command-only
+  live dogfood traffic
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary`
   reviewed after command-only and limited initial-review dogfood runs
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready`
