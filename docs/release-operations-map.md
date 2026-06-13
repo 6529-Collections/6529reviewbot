@@ -28,6 +28,9 @@ update coverage present.
 permission blocks explicit and least-privilege.
 `npm run check:review-workflows` keeps review-kind constants, worker bins,
 workflow dispatch choices, reusable defaults, and workflow routing aligned.
+`npm run check:review-context-boundary` keeps review context path safety,
+trusted metadata handling, prompt hygiene, hard caps, and source-boundary docs
+aligned.
 `npm run check:review-bins` keeps review-kind prompt configs, bin
 entrypoints, package scripts, and review workflow docs aligned.
 `npm run check:review-comment-format` keeps generated public comment headings,
@@ -81,6 +84,7 @@ The local quality gate command inventory is:
 - `npm run check:container-image`
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
+- `npm run check:review-context-boundary`
 - `npm run check:review-bins`
 - `npm run check:review-comment-format`
 - `npm run check:admission-policy`

@@ -125,6 +125,9 @@ After stabilization:
 - `npm run check:review-workflows` confirms review-kind constants stay
   synchronized with worker bins, workflow dispatch choices, reusable workflow
   defaults, and workflow routing
+- `npm run check:review-context-boundary` confirms review context path safety,
+  trusted metadata handling, prompt hygiene, hard caps, and source-boundary
+  docs stay synchronized
 - `npm run check:review-bins` confirms review-kind prompt configs, bin
   entrypoints, package scripts, and review workflow docs stay synchronized
 - `npm run check:review-comment-format` confirms generated PR comments,

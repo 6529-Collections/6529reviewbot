@@ -96,6 +96,9 @@ stabilized.
 - Added a review-workflow kind release check that validates review-kind
   constants against worker bins, central workflow dispatch options, reusable
   workflow defaults, and workflow routing.
+- Added a review-context boundary release check that validates path safety,
+  trusted metadata handling, prompt hygiene, hard caps, and source-boundary
+  docs.
 - Added a review-bin entrypoint release check that validates review-kind prompt
   configs, CLI entrypoints, package scripts, and review workflow docs.
 - Added a review-comment format release check that validates generated PR

@@ -149,6 +149,7 @@ npm run check
 npm run check:docs
 npm run check:comment-commands
 npm run check:review-workflows
+npm run check:review-context-boundary
 npm run check:review-bins
 npm run check:review-comment-format
 npm run check:admission-policy
@@ -609,6 +610,8 @@ input. In particular:
 - target PR code is read as text and is not executed;
 - source context refuses absolute paths, parent traversal, `.git` paths, and
   symlinks;
+- `npm run check:review-context-boundary` keeps path safety, trusted metadata,
+  prompt hygiene, and context caps synchronized with docs;
 - provider errors are sanitized before logging;
 - empty provider responses fail closed instead of becoming no-finding comments;
 - worker, dispatch, ledger, alert, preflight, and repository-config diagnostics
