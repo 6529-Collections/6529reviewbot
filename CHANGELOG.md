@@ -88,6 +88,8 @@ stabilized.
   used as a first trusted-maintainer dogfood target after App installation.
 - Added synthetic self-dogfood replay fixtures and check coverage for the
   command-only PR-open skip and trusted maintainer comment-command path.
+- Self-dogfood replay now covers the trusted maintainer command-only command
+  matrix before live delivery.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.

@@ -48,7 +48,8 @@ npm run check:self-dogfood-replay
 
 The check uses public payload templates in `templates/` and dry-run queueing to
 prove that the self config creates no automatic PR-open jobs while admitting a
-trusted maintainer `/6529bot security` comment command.
+trusted maintainer command matrix for default, explicit single-kind, and
+two-kind mention commands.
 
 Move to limited initial PR reviews after webhook delivery, admission, budget,
 usage, and alerts are verified:
