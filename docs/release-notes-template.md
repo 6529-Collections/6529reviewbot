@@ -51,6 +51,9 @@ repositories.
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
 - Release candidate bundle:
+- Dogfood promotion packet:
+- Dogfood go-live packet:
+- Production cutover status:
 - Preflight result:
 - v0 gate checklist:
 - v0 gate status file/evidence:
@@ -110,6 +113,9 @@ before updating.
 - `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:
+- `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
+- `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`:
 - CI:
 - Dependency Review:
 - OpenSSF Scorecard:

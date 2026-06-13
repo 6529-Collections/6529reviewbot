@@ -138,8 +138,9 @@ Ready for community review:
   run-control ledgers are enabled in the scheduled job;
 - machine-readable v0 release gates with optional status/evidence rendering,
   including the dogfood promotion packet before first live dogfood traffic;
-- release notes template validation for required pre-v1 evidence, deferrals,
-  known gaps, compatibility, and validation fields;
+- release notes template validation for required pre-v1 evidence, dogfood
+  promotion/go-live packets, production cutover status, deferrals, known gaps,
+  compatibility, and validation fields;
 - structured operator evidence validation and redacted public-summary rendering
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private

@@ -2231,3 +2231,18 @@
   - `npm run check:public-artifacts` passed with 106 files checked;
   - `npm run release:check` passed and ran the go-live packet checks;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #154 as `ffcb471`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-go-live-evidence` increment:
+  - require pre-v1 release notes to name dogfood promotion, dogfood go-live,
+    and production cutover evidence;
+  - update the release-notes checker so those fields remain part of the
+    machine-checked release contract;
+  - update changelog, release-readiness, roadmap, and manager memory.
+- Local validation for `codex/release-notes-go-live-evidence`:
+  - `npm run check:release-notes` passed;
+  - `npm run check:docs` passed with 63 files checked;
+  - `npm run check:public-artifacts` passed with 106 files checked;
+  - `git diff --check` passed;
+  - `npm run release:check` passed;
+  - `npm run check` passed with 95 CommonJS files.
