@@ -195,6 +195,9 @@ Ready for community review:
   synchronized across central App env, provider defaults, budget controls,
   worker dispatch, usage/admin APIs, admin auth, alerting, review limits, env
   templates, and source parser anchors;
+- `npm run check:aws-iam-templates` keeps AWS IAM/OIDC examples least-privilege,
+  placeholder-only, scoped to the bot repository or protected environment, and
+  linked from production cutover evidence;
 - `npm run check:operations-runbook` keeps [Operations Runbook](operations.md)
   synchronized with routine checks and triage paths for replay, spend, ledgers,
   workers, dashboards, and bot comments;

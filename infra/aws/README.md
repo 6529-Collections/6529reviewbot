@@ -5,6 +5,11 @@ deployment. They are not applied automatically and they intentionally contain
 placeholder account, region, repository, branch, cluster, secret, SNS topic,
 and SES identity values.
 
+Run `npm run check:aws-iam-templates` after editing these templates or related
+release guidance. The AWS IAM/OIDC template check keeps the placeholder
+discipline, exact allowed actions, bot-repository trust boundary, and public
+cutover references synchronized.
+
 Use them to create least-privilege roles for the bot repository or another
 6529-owned runtime. Target application repositories should not receive AWS
 credentials or roles for provider spend.

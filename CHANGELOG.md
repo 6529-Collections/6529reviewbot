@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added an AWS IAM/OIDC template contract release check for least-privilege
+  placeholder examples, exact allowed actions, and production cutover links.
 - Added a configuration reference contract release check for runtime env docs,
   env templates, deployment guidance, and source parser anchors.
 - Added a budget policies runbook contract release check for central DB caps,

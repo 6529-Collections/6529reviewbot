@@ -56,6 +56,7 @@
     "check:install-guide": "node scripts/check-install-guide-contract.cjs",
     "check:deployment-runbook": "node scripts/check-deployment-runbook-contract.cjs",
     "check:configuration-reference": "node scripts/check-configuration-reference-contract.cjs",
+    "check:aws-iam-templates": "node scripts/check-aws-iam-templates.cjs",
     "check:operations-runbook": "node scripts/check-operations-runbook-contract.cjs",
     "check:dependabot": "node scripts/check-dependabot-config.cjs",
     "check:container-image": "node scripts/check-container-image.cjs",

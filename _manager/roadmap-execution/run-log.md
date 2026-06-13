@@ -3513,3 +3513,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including configuration reference
     validation and 90 mapped release-operation tools.
+- Merged `6529reviewbot` PR #214 as `3d39f79`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/aws-iam-template-contract` increment:
+  - add `scripts/check-aws-iam-templates.cjs` and
+    `npm run check:aws-iam-templates`;
+  - validate GitHub Actions OIDC trust, exact RDS Data API, Secrets Manager,
+    SNS, and SES permissions, placeholder-only resource ARNs, no wildcard
+    actions/resources, and production cutover checklist linkage;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/aws-iam-template-contract` so far:
+  - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
+    9 docs checked;
+  - `npm run check:release-operations` passed with 91 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 148 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run release:check` passed, including AWS IAM template validation and
+    91 mapped release-operation tools.

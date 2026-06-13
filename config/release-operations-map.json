@@ -59,6 +59,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "aws-iam-template-contract",
+          "script": "check:aws-iam-templates",
+          "purpose": "Verify AWS IAM/OIDC examples stay least-privilege, placeholder-only, scoped to the bot repository or protected environment, and linked from production cutover evidence.",
+          "doc": "infra/aws/README.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "operations-runbook-contract",
           "script": "check:operations-runbook",
           "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",

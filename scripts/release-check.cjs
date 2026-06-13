@@ -24,6 +24,7 @@ runNode("scripts/check-public-governance.cjs");
 runNode("scripts/check-install-guide-contract.cjs");
 runNode("scripts/check-deployment-runbook-contract.cjs");
 runNode("scripts/check-configuration-reference-contract.cjs");
+runNode("scripts/check-aws-iam-templates.cjs");
 runNode("scripts/check-operations-runbook-contract.cjs");
 runNode("scripts/check-dependabot-config.cjs");
 runNode("scripts/check-container-image.cjs");
