@@ -56,6 +56,9 @@ After stabilization:
   passes before tagging; every current gate must be present in the status file,
   and deferred gates remain allowed only when release notes name the risk and
   follow-up owner
+- `npm run check:v0-gates` confirms the v0 release gate contract stays
+  synchronized with status readiness, missing-id checks, deferral semantics,
+  public Markdown redaction, and docs
 - release-gate status notes/evidence are public-safe before copying them into
   issues, PRs, release notes, or durable manager memory; the CLI redacts common
   secret-shaped values, but private evidence remains operator-owned
@@ -113,6 +116,9 @@ After stabilization:
   blank secret placeholders, and conservative dogfood defaults
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list and that evidence paths or commands resolve
+- `npm run check:v0-gates` confirms the v0 release gate contract stays
+  synchronized with status readiness, missing-id checks, deferral semantics,
+  public Markdown redaction, and docs
 - `npm run check:release-notes` confirms the pre-v1 release notes template
   still names required evidence, known gaps, deferrals, compatibility, and
   validation fields

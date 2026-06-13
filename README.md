@@ -185,6 +185,8 @@ npm run check:container-image
 npm run check:public-artifacts
 npm run check:preflight
 npm run check:preflight-contract
+npm run check:release-gates
+npm run check:v0-gates
 npm run check:release-candidate
 npm run check:release-notes
 npm run check:self-dogfood-replay
@@ -220,6 +222,7 @@ npm run v0:gates -- -- --init-status <operator-status-file>
 npm run v0:gates -- -- --status-file config/v0-release-status.example.json
 npm run v0:gates -- -- --status-file <operator-status-file> --summary
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
+npm run check:v0-gates
 ```
 
 The final `--require-ready` check also verifies that the status file lists

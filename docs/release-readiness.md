@@ -258,6 +258,10 @@ Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
 `npm run check:release-gates` is included in `npm run release:check` and
 verifies both gate count parity and v0 gate evidence references.
+`npm run check:v0-gates` is included in `npm run release:check` and keeps the
+v0 release gate contract synchronized across status readiness, missing-id
+checks, deferral semantics, public Markdown redaction, source invariants, and
+release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 deferrals, known gaps, compatibility, and validation.

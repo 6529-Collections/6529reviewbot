@@ -220,6 +220,20 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "release-gate-parity",
+          "script": "check:release-gates",
+          "purpose": "Verify the machine-readable v0 release gates match the release plan and that public evidence references point at existing docs or package scripts.",
+          "doc": "docs/v0-release-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
+          "id": "v0-release-gates-contract",
+          "script": "check:v0-gates",
+          "purpose": "Verify v0 release-gate status readiness, missing-id checks, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "doc": "docs/v0-release-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "webhook-replay-contract",
           "script": "check:webhook-replay",
           "purpose": "Verify saved webhook replay stays dry-run by default, requires explicit dispatch for worker queueing, signs payloads locally, avoids raw payload echo, and keeps replay docs synchronized.",

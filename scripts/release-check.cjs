@@ -63,6 +63,7 @@ runNode("scripts/check-public-artifacts.cjs");
 runNode("scripts/check-preflight-fixtures.cjs");
 runNode("scripts/check-preflight-contract.cjs");
 runNode("scripts/check-release-gate-parity.cjs");
+runNode("scripts/check-v0-gates-contract.cjs");
 runNode("scripts/check-release-candidate-contract.cjs");
 runNode("scripts/check-release-notes-template.cjs");
 runNode("scripts/check-release-operations-map.cjs");

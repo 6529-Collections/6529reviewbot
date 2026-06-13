@@ -93,6 +93,7 @@
     "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:preflight-contract": "node scripts/check-preflight-contract.cjs",
     "check:release-gates": "node scripts/check-release-gate-parity.cjs",
+    "check:v0-gates": "node scripts/check-v0-gates-contract.cjs",
     "check:release-candidate": "node scripts/check-release-candidate-contract.cjs",
     "check:release-notes": "node scripts/check-release-notes-template.cjs",
     "check:release-operations": "node scripts/check-release-operations-map.cjs",

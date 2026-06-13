@@ -362,11 +362,13 @@ merged PRs.
   `f5615ac`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Dogfood-status contract PR: merged as PR #200, merge commit `b6bf6d6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-evidence-contract`.
-- Current local changes: adding an operator-evidence contract check that keeps
-  evidence section readiness, required evidence, deferral semantics, public
-  summary redaction, source invariants, release checks, smoke tests, and docs
-  synchronized.
+- Operator-evidence contract PR: merged as PR #201, merge commit `f955f83`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/v0-release-gates-contract`.
+- Current local changes: adding a v0 release-gates contract check that keeps
+  release-gate status readiness, missing-id checks, complete evidence
+  requirements, deferral semantics, Markdown redaction, source invariants,
+  release checks, smoke tests, and docs synchronized.
 
 ## Key Decisions
 
@@ -826,6 +828,10 @@ merged PRs.
   complete-section evidence requirements, deferred/blocked notes, pending and
   blocked failures, and public-summary redaction covered by no-network
   contract checks.
+- v0 release-gate status is the tag/no-tag evidence overlay. Keep gate-list
+  parity, complete-gate evidence requirements, missing-id checks,
+  deferred/blocked notes, pending/blocked failures, and public Markdown
+  redaction covered by no-network contract checks.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -849,7 +855,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the operator-evidence contract check.
+2. Publish and merge the v0 release-gates contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
