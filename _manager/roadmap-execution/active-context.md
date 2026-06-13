@@ -627,6 +627,9 @@ merged PRs.
 - GitHub workflow permission posture should be machine-checked alongside
   action pinning so future workflow/template edits cannot silently widen write
   permissions.
+- The public roadmap should distinguish completed bot implementation from
+  remaining external/operator-owned deployment, pricing, 6529.io merge, and
+  dogfood evidence work.
 
 ## Constraints
 
@@ -640,7 +643,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the workflow permissions release check.
+2. Validate, publish, and merge the roadmap current-state sweep.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

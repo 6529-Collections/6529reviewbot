@@ -87,6 +87,8 @@ stabilized.
   files, issue templates, and root README governance links.
 - Added a workflow-permissions release check for explicit least-privilege
   GitHub Actions permission blocks.
+- Refreshed the public roadmap to distinguish completed bot implementation
+  work from remaining operator-owned deployment and dogfood evidence.
 - Release notes template validation keeps pre-v1 release notes explicit about
   tested configuration, dogfood promotion/go-live evidence, production cutover,
   deferrals, known gaps, compatibility, and validation.

@@ -292,21 +292,28 @@ Before broad community release:
 - confirm SECURITY.md, support policy, and contribution process are accurate;
 - verify OpenSSF Scorecard and dependency review are clean.
 
-## Near-Term Implementation Order
+## Current Implementation Focus
 
-1. Implement the central GitHub App skeleton and webhook verifier.
-2. Add the policy/admission engine with trusted-actor checks.
-3. Add budget checks against the AWS usage ledger before model calls.
-4. Move the current review engine behind a worker/job interface.
-5. Add bot API endpoints for public aggregates and authenticated admin data.
-6. Add the `6529.io` public transparency page and private admin page.
-7. Add repo/org configuration loading and validation.
-8. Add worker execution adapters.
-9. Add worker capacity and backpressure policy.
-10. Add the 6529.io admin auth bridge contract.
-11. Add alerting and scheduled operator checks.
-12. Dogfood on one target repo with conservative limits.
-13. Iterate docs, release process, and install flow toward a v1 tag.
+The original implementation sequence for the central App, trusted admission,
+budget admission, worker abstraction, usage APIs, repo config loading, worker
+adapters, alerting, release tooling, and public docs is now substantially
+implemented in this repository. The remaining near-term work is release
+execution and dogfood evidence:
+
+1. Create the production GitHub App from the reviewed manifest packet.
+2. Deploy the central App server and worker path in 6529-owned infrastructure.
+3. Apply and verify operator-owned ledger schema, budget policies, provider
+   price rows, alert delivery, and runtime secrets outside this public repo.
+4. Merge and deploy the 6529.io public usage dashboard and private admin
+   dashboard.
+5. Install the App on one trusted 6529 target repository in command-only mode.
+6. Run the dogfood promotion and go-live packets from the private operator
+   workspace with strict preflight and conservative budgets.
+7. Keep command-only dogfood until usage, comments, budgets, alerts, support,
+   and rollback evidence are clean enough for limited initial reviews.
+8. Cut the first public dogfood tag only after the v0 release gates, release
+   notes, security review status, production cutover status, and go-live packet
+   are complete or explicitly deferred with named owners.
 
 ## Current Progress
 
@@ -428,6 +435,11 @@ Completed in `6529reviewbot`:
   manager memory.
 - public env template checker for syntax, duplicate keys, blank secret
   placeholders, and conservative dogfood defaults.
+- canonical docs index checker so every public docs page remains discoverable.
+- public governance checker for MIT/community files and README governance
+  links.
+- workflow permission checker for explicit least-privilege GitHub Actions
+  permission maps.
 - machine-readable v0 release gates and checklist renderer, including the
   dogfood promotion packet before first live dogfood traffic.
 - v0 release gate readiness summaries and tag/no-tag enforcement for

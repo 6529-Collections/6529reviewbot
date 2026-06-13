@@ -2352,3 +2352,19 @@
   - `npm run check:public-artifacts` passed with 107 files checked;
   - `npm run release:check` passed, including workflow permission checks and
     20 v0 release gates.
+- Merged `6529reviewbot` PR #161 as `d2c2f6b`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/roadmap-current-state-sweep` increment:
+  - replace stale near-term implementation order with current release
+    execution and dogfood evidence focus;
+  - add docs index, public governance, and workflow permission checks to the
+    completed-progress summaries;
+  - keep release-readiness, changelog, and manager memory aligned.
+- Local validation for `codex/roadmap-current-state-sweep`:
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:doc-index` passed with 50 docs indexed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including 20 v0 release gates and 40
+    mapped release-operation tools;
+  - `npm run check` passed with 98 CommonJS files.
