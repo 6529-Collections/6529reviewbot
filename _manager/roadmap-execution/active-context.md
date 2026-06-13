@@ -314,10 +314,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert-dimension contract PR: merged as PR #176, merge commit `9716bc6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/alert-notifier-mode-contract`.
-- Current local changes: adding an alert notifier mode contract check that
-  keeps scheduled alert delivery modes, notifier constants, env parsing,
-  public docs, env examples, and release operations synchronized.
+- Alert notifier mode contract PR: merged as PR #177, merge commit `864123a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/review-comment-format-contract`.
+- Current local changes: adding a review-comment format contract check that
+  validates generated PR comment headings, hidden markers, review labels,
+  verdict lines, budget-skip wording, public docs, smoke tests, and release
+  operations stay synchronized.
 
 ## Key Decisions
 

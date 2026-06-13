@@ -127,6 +127,9 @@ After stabilization:
   defaults, and workflow routing
 - `npm run check:review-bins` confirms review-kind prompt configs, bin
   entrypoints, package scripts, and review workflow docs stay synchronized
+- `npm run check:review-comment-format` confirms generated PR comments,
+  hidden markers, review labels, verdict lines, and budget-skip wording stay
+  synchronized with the public comment-format docs
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

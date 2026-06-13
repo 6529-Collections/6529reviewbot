@@ -1396,9 +1396,12 @@ if (require.main === module) {
 }
 
 module.exports = {
+  REVIEW_BOT_MARKER: BOT_MARKER,
   REVIEW_KIND_CONFIGS: KIND_CONFIGS,
   main,
   readSettings,
+  buildComment,
+  buildBudgetSkipComment,
   reviewLane,
   commentMarker,
   budgetSkipMarker,

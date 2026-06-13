@@ -362,6 +362,10 @@ options, reusable workflow defaults, and workflow routing stay aligned.
 `npm run check:review-bins` is included in `npm run release:check` and
 verifies review-kind prompt configs, CLI entrypoints, package scripts, and
 review workflow docs stay aligned.
+`npm run check:review-comment-format` is included in `npm run release:check`
+and verifies generated PR comment headings, hidden markers, review labels,
+verdict lines, and budget-skip wording stay aligned with the public comment
+format docs.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

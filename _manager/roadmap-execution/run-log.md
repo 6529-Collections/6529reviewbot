@@ -2667,3 +2667,28 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including alert notifier mode validation
     and 51 mapped release-operation tools.
+- Merged `6529reviewbot` PR #177 as `864123a`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/review-comment-format-contract` increment:
+  - add `scripts/check-review-comment-format.cjs` and
+    `npm run check:review-comment-format`;
+  - export the narrow review-comment formatter helpers from
+    `src/review-bot.cjs` for contract validation;
+  - validate generated review comments and budget-skip comments against the
+    public heading, hidden marker, metadata, review-label, verdict, and
+    no-provider-call wording contract;
+  - expand the review-comment format docs with the review-kind, label, and
+    allowed-verdict table;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/review-comment-format-contract`:
+  - `npm run check:review-comment-format` passed with 5 kinds and 1 docs
+    checked;
+  - `npm run check:release-operations` passed with 52 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 110 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including review comment format
+    validation and 52 mapped release-operation tools.
