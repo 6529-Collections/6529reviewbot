@@ -13,6 +13,10 @@ const {
   stringParam,
 } = require("./data-api.cjs");
 const {
+  modelPriceStatusPolicyFromEnv,
+  readModelPriceStatus,
+} = require("./model-price-status.cjs");
+const {
   isPublicUsageRepo,
   usageApiSettingsFromEnv,
 } = require("./usage-api.cjs");
@@ -22,6 +26,7 @@ function usageApiLedgerLoadersFromEnv(env = process.env) {
   return createUsageApiLedgerLoaders({
     ledgerSettings: usageLedgerSettingsFromEnv(env),
     apiSettings: usageApiSettingsFromEnv(env),
+    modelPriceStatusPolicy: modelPriceStatusPolicyFromEnv(env),
   });
 }
 
@@ -42,6 +47,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     }),
     loadBudgetStatus: async () => ({
       policies: readBudgetPolicyStatus(ledgerSettings),
+    }),
+    loadModelPriceStatus: async () => ({
+      status: readModelPriceStatus(ledgerSettings, options.modelPriceStatusPolicy || {}),
     }),
     loadJobEvents: async ({ query }) => ({
       events: readJobEvents(ledgerSettings, { query }),

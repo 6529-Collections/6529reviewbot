@@ -16,6 +16,7 @@ GET /api/admin/usage/summary?days=30
 GET /api/admin/usage/events/recent?days=7&limit=50
 GET /api/admin/budget/policies
 GET /api/admin/budget/status
+GET /api/admin/model-prices/status
 GET /api/admin/alerts/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
@@ -30,6 +31,7 @@ REVIEWBOT_USAGE_API_ADMIN_SUMMARY_PATH=/api/admin/usage/summary
 REVIEWBOT_USAGE_API_ADMIN_USAGE_EVENTS_PATH=/api/admin/usage/events/recent
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH=/api/admin/budget/policies
 REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH=/api/admin/budget/status
+REVIEWBOT_USAGE_API_ADMIN_MODEL_PRICE_STATUS_PATH=/api/admin/model-prices/status
 REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH=/api/admin/alerts/status
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
@@ -205,6 +207,63 @@ Use budget status for private admin dashboards and warning banners. It keeps
 the utilization calculation bot-side, where the same ledger scope rules used by
 budget admission are available. The browser should still receive this through
 server-side 6529.io admin auth, not by reading Aurora directly.
+
+## Model Price Status
+
+`GET /api/admin/model-prices/status` returns active model price rows and
+source-evidence posture for private operator dashboards:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "model_price_status",
+  "generatedAt": "2026-06-12T12:00:00.000Z",
+  "status": {
+    "policy": {
+      "maxSourceAgeDays": 30
+    },
+    "summary": {
+      "activeRows": 2,
+      "providerCount": 2,
+      "providerModelCount": 2,
+      "staleRows": 0,
+      "futureRows": 0,
+      "missingSourceRows": 0,
+      "invalidSourceRows": 0,
+      "incompleteRows": 1
+    },
+    "prices": [
+      {
+        "provider": "anthropic",
+        "model": "claude-opus-4-8",
+        "currency": "USD",
+        "rates": {
+          "inputUsdPerMillion": 1,
+          "cachedInputUsdPerMillion": null,
+          "outputUsdPerMillion": 2,
+          "reasoningUsdPerMillion": null
+        },
+        "missingRates": ["cachedInputUsdPerMillion", "reasoningUsdPerMillion"],
+        "effectiveFrom": "2026-06-12 00:00:00+00",
+        "effectiveTo": "",
+        "sourceCheckedAt": "2026-06-12 12:00:00+00",
+        "sourceAgeDays": 0,
+        "sourceStatus": "fresh",
+        "sourceHost": "docs.anthropic.com",
+        "hasSourceUrl": true
+      }
+    ]
+  }
+}
+```
+
+The endpoint uses the same `REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS`
+freshness policy as preflight and marks rows as `fresh`, `stale`, `future`,
+`missing`, or `invalid`. It is admin-only because live price rows reveal
+deployed model/provider choices and can include private rollout timing.
+Responses omit operator notes and full source URLs; dashboards can still show
+the source host, freshness, and whether any token-class rates are absent.
 
 ## Alert Status
 
@@ -412,6 +471,9 @@ The HTTP server accepts injectable loaders:
 ```js
 loadUsageEvents({ request, settings, range, visibility, query })
 loadBudgetPolicies({ request, settings })
+loadBudgetStatus({ request, settings })
+loadModelPriceStatus({ request, settings })
+loadAlertStatus({ request, settings })
 loadJobEvents({ request, settings, query })
 loadRunClaims({ request, settings, query })
 loadAdminStatus({ request, settings, query })

@@ -7,6 +7,7 @@ const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
 const DEFAULT_ADMIN_USAGE_EVENTS_PATH = "/api/admin/usage/events/recent";
 const DEFAULT_ADMIN_BUDGET_POLICIES_PATH = "/api/admin/budget/policies";
 const DEFAULT_ADMIN_BUDGET_STATUS_PATH = "/api/admin/budget/status";
+const DEFAULT_ADMIN_MODEL_PRICE_STATUS_PATH = "/api/admin/model-prices/status";
 const DEFAULT_ADMIN_ALERT_STATUS_PATH = "/api/admin/alerts/status";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
@@ -35,6 +36,9 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_POLICIES_PATH || DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
     adminBudgetStatusPath:
       env.REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH || DEFAULT_ADMIN_BUDGET_STATUS_PATH,
+    adminModelPriceStatusPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_MODEL_PRICE_STATUS_PATH ||
+      DEFAULT_ADMIN_MODEL_PRICE_STATUS_PATH,
     adminAlertStatusPath:
       env.REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH || DEFAULT_ADMIN_ALERT_STATUS_PATH,
     adminJobEventsPath:
@@ -58,6 +62,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminUsageEventsPath,
     settings.adminBudgetPoliciesPath,
     settings.adminBudgetStatusPath,
+    settings.adminModelPriceStatusPath,
     settings.adminAlertStatusPath,
     settings.adminJobEventsPath,
     settings.adminRunClaimsPath,
@@ -122,6 +127,28 @@ async function handleUsageApiRequest(request, options = {}) {
         kind: "budget_status",
         generatedAt: new Date().toISOString(),
         policies: (result.policies || []).map(publicBudgetPolicyStatus),
+      },
+    };
+  }
+
+  if (route.kind === "model_price_status") {
+    const result = await (options.loadModelPriceStatus || defaultLoadModelPriceStatus)({
+      request,
+      settings,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Model price status is unavailable.");
+    }
+    return {
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "model_price_status",
+        generatedAt: new Date().toISOString(),
+        status: normalizeAdminStatusObject(
+          sanitizeAdminDiagnosticPayload(result.status || result.modelPriceStatus || {})
+        ),
       },
     };
   }
@@ -287,6 +314,9 @@ function usageApiRoute(pathname, settings) {
   }
   if (pathname === settings.adminBudgetStatusPath) {
     return { visibility: "admin", kind: "budget_status" };
+  }
+  if (pathname === settings.adminModelPriceStatusPath) {
+    return { visibility: "admin", kind: "model_price_status" };
   }
   if (pathname === settings.adminAlertStatusPath) {
     return { visibility: "admin", kind: "alert_status" };
@@ -890,6 +920,13 @@ async function defaultLoadBudgetStatus() {
   };
 }
 
+async function defaultLoadModelPriceStatus() {
+  return {
+    unavailable: true,
+    reason: "No model price status loader configured.",
+  };
+}
+
 async function defaultLoadAlertStatus() {
   return {
     unavailable: true,
@@ -964,6 +1001,7 @@ module.exports = {
   DEFAULT_ADMIN_ALERT_STATUS_PATH,
   DEFAULT_ADMIN_BUDGET_STATUS_PATH,
   DEFAULT_ADMIN_BUDGET_POLICIES_PATH,
+  DEFAULT_ADMIN_MODEL_PRICE_STATUS_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
   DEFAULT_ADMIN_RUN_CLAIMS_PATH,
   DEFAULT_ADMIN_STATUS_PATH,

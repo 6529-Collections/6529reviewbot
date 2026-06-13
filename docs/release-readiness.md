@@ -47,6 +47,9 @@ Ready for community review:
   Aurora browser access;
 - admin budget-status API for current daily, weekly, and monthly policy
   utilization without direct Aurora browser access;
+- admin model-price status API for active price rows, token-class rate
+  coverage, and source-evidence freshness without direct Aurora browser
+  access;
 - admin alert-status API for private alert threshold, schedule, and notifier
   posture checks without exposing delivery secrets;
 - admin run-claims API for stale active claim triage without direct Aurora

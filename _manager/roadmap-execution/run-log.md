@@ -1546,3 +1546,24 @@
   - `git diff --check` passed.
 - Final local validation for `codex/admin-alert-status`:
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #121 as `103d4b8` after CI and Dependency Review
+  passed; the normal protected merge path allowed the merge while CodeRabbit
+  remained in its processing placeholder with no review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27449932488`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27449932485`, completed successfully.
+- Local clean-main validation after PR #121 merge:
+  - `npm run release:check` passed.
+- Started `codex/admin-model-price-status` increment:
+  - add an admin-only `GET /api/admin/model-prices/status` endpoint for active
+    model price rows, token-class rate coverage, and source freshness;
+  - add an Aurora reader that returns admin-safe price posture without operator
+    notes or full source URLs;
+  - wire the production server loader through the existing usage-ledger
+    settings and shared model-price freshness policy;
+  - update OpenAPI, configuration docs, usage API docs, release readiness,
+    roadmap, changelog, and manager memory.
+- Focused local validation for `codex/admin-model-price-status`:
+  - `npm test` passed;
+  - `npm run validate:api-contract` passed;
+  - `git diff --check` passed.

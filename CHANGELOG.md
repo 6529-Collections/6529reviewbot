@@ -97,6 +97,8 @@ stabilized.
 - Admin-only recent usage-events API for private raw usage diagnostics.
 - Admin-only budget-status API for current daily, weekly, and monthly budget
   utilization diagnostics.
+- Admin-only model-price status API for active price rows, token-class rate
+  coverage, and source-evidence freshness without exposing operator notes.
 - Admin-only alert-status API for alert thresholds, schedule caps, and
   notifier posture without exposing delivery secrets.
 - Structured operator evidence validation and redacted public-summary rendering
