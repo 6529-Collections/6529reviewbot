@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added the dashboard deployment plan handoff to operator drill next commands.
 - Added dashboard deployment plan guidance to generated operator workspaces.
 - Added dashboard deployment plan evidence to release notes draft, template,
   and publication checks.

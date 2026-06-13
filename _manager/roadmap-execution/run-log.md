@@ -3944,3 +3944,26 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator workspace contract
     validation for dashboard deployment plan guidance.
+- Merged `6529reviewbot` PR #231 as `7525aa0`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-drill-dashboard-plan` increment:
+  - add `dashboard:deployment-plan` to `operator:drill` next commands after
+    the production deployment handoff;
+  - update `npm run check:operator-drill` and smoke-test command counts so
+    the dashboard handoff cannot drift out of the drill;
+  - update [Operator Drill](../../docs/operator-drill.md),
+    release-operations, release-readiness, roadmap, changelog, and manager
+    memory so the public-safe rehearsal includes both deployment handoffs.
+- Local validation for `codex/operator-drill-dashboard-plan` so far:
+  - `npm run check:operator-drill` passed with 2 drill cases, 7 commands, and
+    7 docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #231,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check` passed with 171 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator drill contract
+    validation for 7 next commands and dashboard deployment handoff guidance.

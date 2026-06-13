@@ -421,23 +421,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard release evidence PR: merged as PR #230, merge commit `3037742`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-workspace-dashboard-plan`.
-- Current local changes: adding dashboard deployment plan guidance to generated
-  private operator workspace READMEs, public workspace summaries, the
-  operator-workspace contract, and public roadmap/readiness docs.
+- Operator workspace dashboard-plan guidance PR: merged as PR #231, merge commit `7525aa0`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-drill-dashboard-plan`.
+- Current local changes: adding the dashboard deployment plan handoff to
+  `operator:drill` next commands, operator-drill contract checks, smoke-test
+  command counts, and public operator-drill/release docs.
 - Current local validation:
-  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
-    cases, and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 7 commands, and
+    7 docs checked;
   - `npm run check:docs` passed with 72 files checked;
   - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #230,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #231,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 115 files checked;
   - `npm run check` passed with 171 CommonJS files;
   - `git diff --check` passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator workspace contract
-    validation for dashboard deployment plan guidance.
+  - `npm run release:check` passed, including operator drill contract
+    validation for 7 next commands and dashboard deployment handoff guidance.
 
 ## Key Decisions
 
