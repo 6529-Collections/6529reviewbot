@@ -81,6 +81,7 @@ Render the template for a concrete HTTPS host with:
 
 ```bash
 npm run github-app:manifest -- -- --host https://reviewbot.example.com
+npm run check:github-app-manifest
 ```
 
 To generate an operator-owned registration form for an organization install:
@@ -122,6 +123,10 @@ manifest's permissions and events exactly.
 Use [github-app-registration.md](github-app-registration.md) as the operator
 packet for first registration, credential custody, post-registration checks,
 permission changes, rotation, and rollback.
+
+The GitHub App manifest contract check keeps the target App manifest
+permissions, events, no-`Actions: write` boundary, dispatch-only App guidance,
+registration form rendering, private conversion flow, and docs synchronized.
 
 GitHub documents the manifest flow in
 [Registering a GitHub App from a manifest](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).

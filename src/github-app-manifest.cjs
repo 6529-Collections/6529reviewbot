@@ -154,6 +154,11 @@ function validateGitHubAppManifestShape(manifest, name) {
     throw new Error(`${name} public must be a boolean.`);
   }
   assertPlainObject(manifest.default_permissions, `${name} default_permissions`);
+  if (Object.prototype.hasOwnProperty.call(manifest.default_permissions, "actions")) {
+    throw new Error(
+      `${name} default_permissions.actions must be omitted; use a dispatch-only App for Actions write.`
+    );
+  }
   for (const [permission, access] of Object.entries(REQUIRED_DEFAULT_PERMISSIONS)) {
     if (manifest.default_permissions[permission] !== access) {
       throw new Error(

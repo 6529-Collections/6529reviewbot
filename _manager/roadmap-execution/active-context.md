@@ -364,11 +364,14 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator-evidence contract PR: merged as PR #201, merge commit `f955f83`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/v0-release-gates-contract`.
-- Current local changes: adding a v0 release-gates contract check that keeps
-  release-gate status readiness, missing-id checks, complete evidence
-  requirements, deferral semantics, Markdown redaction, source invariants,
-  release checks, smoke tests, and docs synchronized.
+- V0 release-gates contract PR: merged as PR #202, merge commit `16aa63f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/github-app-manifest-contract`.
+- Current local changes: adding a GitHub App manifest contract check that
+  keeps target App permissions/events, the no-Actions-write boundary,
+  registration form rendering, private manifest conversion behavior, redacted
+  summaries, source invariants, release checks, smoke tests, and docs
+  synchronized.
 
 ## Key Decisions
 
@@ -832,6 +835,11 @@ merged PRs.
   parity, complete-gate evidence requirements, missing-id checks,
   deferred/blocked notes, pending/blocked failures, and public Markdown
   redaction covered by no-network contract checks.
+- The target-repository GitHub App manifest must stay least-privilege and must
+  not request `Actions: write`; central workflow dispatch should use a
+  dispatch-only App or explicitly reviewed fallback credential. Manifest
+  conversion summaries must never expose generated credentials, manifest codes,
+  private keys, AWS identifiers, or unsafe output paths.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -855,7 +863,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the v0 release-gates contract check.
+2. Publish and merge the GitHub App manifest contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

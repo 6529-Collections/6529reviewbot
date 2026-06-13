@@ -50,6 +50,7 @@ const githubAppManifest = require("../src/github-app-manifest.cjs");
 const githubAppManifestConversion = require("../src/github-app-manifest-conversion.cjs");
 const githubAppManifestConversionCli = require("../bin/convert-github-app-manifest.cjs");
 const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
+const githubAppManifestContractCheck = require("./check-github-app-manifest-contract.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
@@ -5137,6 +5138,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /release candidate contract check found/
+  );
+  const githubAppManifestContractResult =
+    await githubAppManifestContractCheck.checkGitHubAppManifestContract();
+  assert.equal(githubAppManifestContractResult.manifestCases, 6);
+  assert.equal(githubAppManifestContractResult.conversionCases, 6);
+  await assert.rejects(
+    () =>
+      githubAppManifestContractCheck.checkGitHubAppManifestContract({
+        quiet: true,
+        docTexts: {
+          "docs/github-app-registration.md": "# GitHub App Registration\n",
+        },
+      }),
+    /GitHub App manifest contract check found/
   );
   await assert.rejects(
     () =>

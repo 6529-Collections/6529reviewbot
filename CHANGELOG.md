@@ -357,6 +357,9 @@ stabilized.
   registration-form output.
 - GitHub App manifest conversion CLI for one-time generated credentials with
   explicit private output and redacted summaries.
+- GitHub App manifest contract checker verifies target App permissions/events,
+  no Actions write permission, registration form rendering, private manifest
+  conversion behavior, redacted summaries, source invariants, and docs.
 - Public-safe GitHub App registration/setup/callback guidance routes that do
   not echo manifest codes or generated credentials.
 - GitHub App registration packet for operator roles, credential custody,

@@ -234,6 +234,10 @@ After stabilization:
   release-candidate bundle contract stays synchronized with redaction,
   workspace path markers, CLI defaults, and docs
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
+- `npm run check:github-app-manifest` confirms the GitHub App manifest
+  contract stays synchronized with target App permissions/events, the
+  no-Actions-write boundary, private conversion behavior, redacted summaries,
+  and docs
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App
 - [Container deployment](container-deployment.md) reviewed when shipping the

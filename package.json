@@ -89,6 +89,7 @@
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",
+    "check:github-app-manifest": "node scripts/check-github-app-manifest-contract.cjs",
     "check:public-artifacts": "node scripts/check-public-artifacts.cjs",
     "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:preflight-contract": "node scripts/check-preflight-contract.cjs",

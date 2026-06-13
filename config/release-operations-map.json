@@ -206,6 +206,13 @@
           "publicOutput": "Safe; findings redact the matched value."
         },
         {
+          "id": "github-app-manifest-contract",
+          "script": "check:github-app-manifest",
+          "purpose": "Verify target GitHub App manifest permissions/events, no Actions write permission, registration form rendering, private manifest conversion, redacted summaries, and docs stay synchronized.",
+          "doc": "docs/github-app-registration.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "preflight-fixtures",
           "script": "check:preflight",
           "purpose": "Run deterministic no-network preflight fixtures for central App server and worker runtime postures.",
