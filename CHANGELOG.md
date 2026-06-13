@@ -78,6 +78,9 @@ stabilized.
 - Release-candidate bundles redact private operator workspace paths in JSON and
   Markdown output, and docs now recommend `npm --silent run` or `--out --quiet`
   when capturing public bundles from private paths.
+- Operator docs and the PR template now keep the dogfood go-live packet in the
+  release, promotion, production cutover, and evidence-review path before live
+  dogfood traffic.
 - Release notes template validation keeps pre-v1 release notes explicit about
   tested configuration, dogfood promotion/go-live evidence, production cutover,
   deferrals, known gaps, compatibility, and validation.

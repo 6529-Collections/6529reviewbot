@@ -120,10 +120,11 @@ Do not create the `v0` tag until all of these are true:
 8. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode. Use
    `npm run dogfood:target` before opening the target repository config PR.
-9. The dogfood promotion packet has passed from the private operator
-   environment before first live dogfood traffic, including target repository
-   config, central dogfood inputs, self-dogfood replay, private workspace, and
-   strict preflight gates.
+9. The dogfood promotion packet and dogfood go-live packet have passed from
+   the private operator environment before first live dogfood traffic,
+   including target repository config, central dogfood inputs, self-dogfood
+   replay, production cutover status, private workspace, and strict preflight
+   gates.
 10. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
 11. Central budget policy rows have been reviewed and applied with

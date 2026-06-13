@@ -6,6 +6,9 @@ Describe what changed and why.
 
 - Does this change affect comment commands, review kinds, repository config,
   hidden metadata, API response shapes, release gates, or operator runbooks?
+- If it changes release, dogfood, cutover, or traffic policy behavior, do the
+  release-candidate, dogfood promotion, dogfood go-live, production cutover,
+  and release-notes evidence paths still agree?
 - If it changes a public/admin API, is `docs/usage-api.openapi.json` updated?
 
 ## Security Notes
