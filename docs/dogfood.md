@@ -65,6 +65,7 @@ Validate the file from this repository before opening the target-repo PR:
 npm run dogfood:target
 npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready
 npm run check:self-dogfood-replay
+npm run check:dogfood-target
 npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run validate:repo-config -- templates/dogfood-command-only-config.yml
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
@@ -176,6 +177,9 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 
 - Use `templates/dogfood-command-only-config.yml`.
 - Keep automatic initial and synchronize reviews disabled.
+- Run `npm run check:dogfood-target` after changing the target command,
+  target packet format, mode inference, external config handling, or docs; the
+  dogfood target checker keeps that PR gate synchronized.
 - Run `npm run check:dogfood-readiness` after changing the readiness command,
   report format, static defaults, workspace handling, or docs; the dogfood
   readiness checker keeps that input gate synchronized.

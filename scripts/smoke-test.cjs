@@ -29,6 +29,7 @@ const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodTarget = require("../src/dogfood-target.cjs");
 const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
+const dogfoodTargetContractCheck = require("./check-dogfood-target-contract.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const dogfoodReadinessContractCheck = require("./check-dogfood-readiness-contract.cjs");
@@ -4978,6 +4979,20 @@ appServer.handleGitHubWebhook({
   assert.equal(usageApiRoutesResult.routes, 10);
   const webhookReplayResult = await webhookReplayCheck.checkWebhookReplayContract();
   assert.equal(webhookReplayResult.replayCases, 3);
+  const dogfoodTargetContractResult =
+    dogfoodTargetContractCheck.checkDogfoodTargetContract();
+  assert.equal(dogfoodTargetContractResult.cliCases, 3);
+  assert.equal(dogfoodTargetContractResult.packetCases, 4);
+  assert.throws(
+    () =>
+      dogfoodTargetContractCheck.checkDogfoodTargetContract({
+        quiet: true,
+        docTexts: {
+          "docs/dogfood-target.md": "# Dogfood Target\n",
+        },
+      }),
+    /dogfood target contract check found/
+  );
   const dogfoodReadinessContractResult =
     dogfoodReadinessContractCheck.checkDogfoodReadinessContract();
   assert.equal(dogfoodReadinessContractResult.cliCases, 3);

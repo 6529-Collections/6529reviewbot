@@ -9,6 +9,11 @@ const DEFAULT_COMMAND_ONLY_CONFIG = "templates/dogfood-command-only-config.yml";
 const DEFAULT_LIMITED_INITIAL_CONFIG = "templates/dogfood-repository-config.yml";
 const DOGFOOD_TARGET_MODES = ["auto", "command-only", "limited-initial"];
 const ALL_REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security"];
+const DOGFOOD_TARGET_TEXT_MAX_CHARS = 1000;
+const PUBLIC_REDACTION_PATTERNS = [
+  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
+  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
+];
 
 function collectDogfoodTargetPacket(options = {}) {
   const root = path.resolve(options.root || process.cwd());
@@ -53,9 +58,9 @@ function formatDogfoodTargetMarkdown(packet) {
     "Use this packet before opening or updating a target repository PR that adds",
     "`.github/6529bot.yml`.",
     "",
-    `Target repository: ${packet.targetRepository ? `\`${packet.targetRepository}\`` : "not specified"}`,
-    `Mode: \`${packet.mode}\``,
-    `Config: \`${packet.configFile}\``,
+    `Target repository: ${packet.targetRepository ? `\`${publicLine(packet.targetRepository)}\`` : "not specified"}`,
+    `Mode: \`${publicLine(packet.mode)}\``,
+    `Config: \`${publicLine(packet.configFile)}\``,
     `Ready for target config PR: ${packet.ready ? "yes" : "no"}`,
     "",
     "## Checks",
@@ -70,7 +75,7 @@ function formatDogfoodTargetMarkdown(packet) {
   }
   lines.push("", "## Target PR Checklist", "");
   for (const item of packet.prChecklist) {
-    lines.push(`- ${item}`);
+    lines.push(`- ${publicLine(item)}`);
   }
   lines.push(
     "",
@@ -275,7 +280,7 @@ function check(id, title, status, detail) {
     id,
     title,
     status,
-    detail: redactSensitiveText(String(detail || "")).slice(0, 500),
+    detail: publicText(detail, 500),
   };
 }
 
@@ -296,7 +301,7 @@ function laneSummary(lane) {
 }
 
 function safeTargetRepository(value) {
-  const text = redactSensitiveText(String(value || "").trim()).slice(0, 200);
+  const text = publicText(String(value || "").trim(), 200);
   if (!text) {
     return "";
   }
@@ -312,7 +317,7 @@ function publicConfigPath(filePath, root) {
     return normalizeSlashes(relative);
   }
   const baseName = path.basename(filePath) || "repository-config.yml";
-  return `[external-config]/${redactSensitiveText(baseName).slice(0, 120)}`;
+  return `[external-config]/${publicText(baseName, 120)}`;
 }
 
 function modeField(value) {
@@ -323,11 +328,23 @@ function modeField(value) {
 }
 
 function markdownCell(value) {
-  return String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+  return publicText(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
 
 function normalizeSlashes(value) {
   return value.replace(/\\/g, "/");
+}
+
+function publicText(value, maxChars = DOGFOOD_TARGET_TEXT_MAX_CHARS) {
+  let text = redactSensitiveText(String(value || ""));
+  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
+    text = text.replace(pattern, replacement);
+  }
+  return text.slice(0, maxChars);
+}
+
+function publicLine(value, maxChars = DOGFOOD_TARGET_TEXT_MAX_CHARS) {
+  return publicText(value, maxChars).replace(/\r?\n/g, " ");
 }
 
 module.exports = {
@@ -338,4 +355,6 @@ module.exports = {
   collectDogfoodTargetPacket,
   formatDogfoodTargetMarkdown,
   inferDogfoodMode,
+  publicLine,
+  publicText,
 };

@@ -82,6 +82,9 @@ strict/profile behavior, CLI flags, redacted diagnostics, and docs aligned.
 `npm run check:webhook-replay` keeps saved webhook replay dry-run by default,
 requires explicit dispatch for worker queueing, checks local payload signing,
 avoids raw payload echo, and keeps replay docs aligned.
+`npm run check:dogfood-target` keeps dogfood target packet modes, external
+config path redaction, Markdown sanitization, source invariants, and docs
+aligned.
 `npm run check:dogfood-readiness` keeps dogfood readiness static defaults,
 private workspace markers, preflight state, Markdown redaction, source
 invariants, and docs aligned.
@@ -128,6 +131,7 @@ The local quality gate command inventory is:
 - `npm run check:preflight`
 - `npm run check:preflight-contract`
 - `npm run check:webhook-replay`
+- `npm run check:dogfood-target`
 - `npm run check:dogfood-readiness`
 - `npm run check:dogfood-promotion`
 - `npm run check:dogfood-go-live`
