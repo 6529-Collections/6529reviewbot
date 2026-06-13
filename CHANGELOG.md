@@ -130,6 +130,9 @@ stabilized.
 - Added a preflight contract release check that validates no-network preflight
   check order, strict/profile behavior, CLI flags, redacted diagnostics, and
   docs.
+- Added a webhook-replay contract release check that validates dry-run default
+  behavior, explicit dispatch, local payload signing, raw-payload omission, and
+  docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

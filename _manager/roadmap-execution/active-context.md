@@ -340,11 +340,12 @@ merged PRs.
   `9744c6b`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Provider-adapter contract PR: merged as PR #189, merge commit `24990af`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/ledger-privacy-contract`.
-- Current local changes: adding shared ledger metadata normalization and a
-  ledger-privacy contract check that keeps usage, job, and run-control
-  metadata writes, usage API event visibility, schema omissions, and docs
-  synchronized.
+- Ledger-privacy contract PR: merged as PR #190, merge commit `913fba2`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/webhook-replay-contract`.
+- Current local changes: adding a webhook replay contract check that keeps
+  saved-payload diagnostics dry-run by default, explicit before dispatch,
+  locally signed, payload-safe, and documented.
 
 ## Key Decisions
 
@@ -777,6 +778,9 @@ merged PRs.
 - Ledger metadata is a durable privacy boundary. Usage, job, and run-control
   ledgers should normalize custom metadata before persistence and the usage API
   should avoid exposing provider request identifiers or private raw rows.
+- Webhook replay is an operator diagnostic boundary. Saved payloads should be
+  signed locally, dry-run by default, explicit before worker dispatch, and
+  summarized without echoing raw payload fields.
 
 ## Constraints
 
@@ -790,7 +794,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the ledger-privacy contract check.
+2. Publish and merge the webhook-replay contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

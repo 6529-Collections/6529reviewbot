@@ -2963,3 +2963,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including ledger-privacy validation and
     65 mapped release-operation tools.
+- Merged `6529reviewbot` PR #190 as `913fba2`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/webhook-replay-contract` increment:
+  - add `scripts/check-webhook-replay-contract.cjs` and
+    `npm run check:webhook-replay`;
+  - validate replay argument defaults, explicit `--dispatch`, non-negative
+    cost parsing, dry-run queue behavior, local payload signing, payload byte
+    summary without raw payload echo, source invariants, and replay docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/webhook-replay-contract`:
+  - `npm run check:webhook-replay` passed with 3 replay cases and 6 docs
+    checked;
+  - `npm run check:release-operations` passed with 66 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 124 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including webhook-replay validation and
+    66 mapped release-operation tools.

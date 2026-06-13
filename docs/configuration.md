@@ -321,6 +321,12 @@ and runs it through the same webhook verification, event normalization,
 repository config, admission, budget, and job-fanout path as the App server.
 It is dry-run by default and does not dispatch workers or call providers.
 
+The replay safety contract is checked by:
+
+```bash
+npm run check:webhook-replay
+```
+
 Useful diagnostic flags:
 
 ```text

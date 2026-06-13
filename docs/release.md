@@ -191,6 +191,9 @@ After stabilization:
 - `npm run check:preflight-contract` confirms the preflight check order,
   strict/profile behavior, CLI flags, redacted diagnostics, and docs stay
   synchronized
+- `npm run check:webhook-replay` confirms saved webhook replay stays dry-run by
+  default, explicit before dispatch, locally signed, payload-safe, and
+  documented
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App

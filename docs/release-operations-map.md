@@ -79,6 +79,9 @@ parsing, docs, and env examples aligned.
 preflight fixtures.
 `npm run check:preflight-contract` keeps the no-network preflight check order,
 strict/profile behavior, CLI flags, redacted diagnostics, and docs aligned.
+`npm run check:webhook-replay` keeps saved webhook replay dry-run by default,
+requires explicit dispatch for worker queueing, checks local payload signing,
+avoids raw payload echo, and keeps replay docs aligned.
 
 The local quality gate command inventory is:
 
@@ -112,6 +115,7 @@ The local quality gate command inventory is:
 - `npm run check:public-artifacts`
 - `npm run check:preflight`
 - `npm run check:preflight-contract`
+- `npm run check:webhook-replay`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`

@@ -92,6 +92,8 @@ Ready for community review:
   configuration postures;
 - preflight contract checker that keeps check order, strict/profile behavior,
   CLI flags, redacted diagnostics, and docs synchronized;
+- webhook replay checker that keeps saved webhook replay dry-run by default,
+  explicit before dispatch, locally signed, payload-safe, and documented;
 - public usage summaries enforce repo/org allowlists before repo names are
   disclosed, even when data comes from a custom loader;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
@@ -368,6 +370,10 @@ deterministic no-network central App server and worker configuration fixtures.
 `npm run check:preflight-contract` is included in `npm run release:check` and
 verifies preflight check order, strict/profile behavior, CLI flags, redacted
 diagnostics, and docs stay aligned.
+`npm run check:webhook-replay` is included in `npm run release:check` and
+verifies saved webhook replay stays dry-run by default, requires explicit
+dispatch for worker queueing, signs payloads locally, avoids raw payload echo,
+and keeps replay docs aligned.
 `npm run check:workflow-permissions` is included in `npm run release:check`
 and verifies committed workflow permission blocks stay explicit and
 least-privilege.

@@ -253,6 +253,8 @@ Build the operator experience:
   provider errors, and unusual spend spikes;
 - replay tooling for webhook events, starting with dry-run saved-payload
   replay;
+- webhook replay checks that keep saved-payload diagnostics dry-run by
+  default, explicit before dispatch, locally signed, and payload-safe;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
 - canonical docs index coverage so public runbooks and reference docs remain
@@ -461,6 +463,8 @@ Completed in `6529reviewbot`:
 - preflight contract checks that keep no-network preflight check order,
   strict/profile behavior, CLI flags, redacted diagnostics, and docs
   synchronized.
+- webhook replay checks that keep saved-payload diagnostics dry-run by default,
+  explicit before dispatch, locally signed, payload-safe, and documented.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

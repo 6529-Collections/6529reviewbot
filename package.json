@@ -62,6 +62,7 @@
     "check:providers": "node scripts/check-provider-contract.cjs",
     "check:provider-adapters": "node scripts/check-provider-adapters.cjs",
     "check:ledger-privacy": "node scripts/check-ledger-privacy-contract.cjs",
+    "check:webhook-replay": "node scripts/check-webhook-replay-contract.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
     "check:review-comment-format": "node scripts/check-review-comment-format.cjs",
     "check:admission-policy": "node scripts/check-admission-policy.cjs",
