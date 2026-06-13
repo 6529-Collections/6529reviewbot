@@ -43,6 +43,7 @@ Validate the rendered manifest:
 
 ```bash
 npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run check:github-app-manifest
 ```
 
 When using GitHub's manifest flow, render a local registration form:

@@ -75,6 +75,9 @@ parsing, claim SQL, docs, and env examples aligned.
 env parsing, docs, and env examples aligned.
 `npm run check:alert-notifier-modes` keeps scheduled alert delivery modes, env
 parsing, docs, and env examples aligned.
+`npm run check:github-app-manifest` keeps the target GitHub App
+permissions/events, no-Actions-write boundary, private manifest conversion,
+redacted summaries, and docs aligned.
 `npm run check:preflight` runs no-network central App server and worker
 preflight fixtures.
 `npm run check:preflight-contract` keeps the no-network preflight check order,
@@ -147,6 +150,7 @@ The local quality gate command inventory is:
 - `npm run check:alert-dimensions`
 - `npm run check:alert-notifier-modes`
 - `npm run check:public-artifacts`
+- `npm run check:github-app-manifest`
 - `npm run check:preflight`
 - `npm run check:preflight-contract`
 - `npm run check:release-gates`

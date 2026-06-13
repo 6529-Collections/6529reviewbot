@@ -183,6 +183,7 @@ npm run check:alert-dimensions
 npm run check:alert-notifier-modes
 npm run check:container-image
 npm run check:public-artifacts
+npm run check:github-app-manifest
 npm run check:preflight
 npm run check:preflight-contract
 npm run check:release-gates
@@ -349,6 +350,7 @@ Validate the GitHub App manifest template:
 
 ```bash
 npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run check:github-app-manifest
 ```
 
 Render a production-hosted manifest without generating any secrets:

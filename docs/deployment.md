@@ -30,6 +30,7 @@ Render and validate the manifest before registration:
 
 ```bash
 npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run check:github-app-manifest
 ```
 
 If using the GitHub App manifest flow, generate an operator-owned registration

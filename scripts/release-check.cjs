@@ -57,6 +57,7 @@ runNode("scripts/check-alert-notifier-modes.cjs");
 runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");
+runNode("scripts/check-github-app-manifest-contract.cjs");
 runNode("scripts/check-workflow-actions.cjs");
 runNode("scripts/check-workflow-permissions.cjs");
 runNode("scripts/check-public-artifacts.cjs");

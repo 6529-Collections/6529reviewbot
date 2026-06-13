@@ -275,6 +275,7 @@ Treat GitHub App permission or event changes as release-sensitive:
    ```bash
    npm run release:check
    npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+   npm run check:github-app-manifest
    ```
 
 5. Open a PR that explains why the new permission/event is necessary and what
@@ -288,6 +289,12 @@ Central workflow dispatch is the main exception to keep separate. Prefer a
 dispatch-only App installed only on `6529-Collections/6529reviewbot` with
 `Actions: write`; adding that permission to the target-repository App requires
 an explicit security review because it affects every installed repository.
+
+The GitHub App manifest contract check verifies the target App permissions,
+events, no-`Actions: write` boundary, registration form rendering, private
+manifest conversion behavior, redacted conversion summaries, and these docs.
+Run it after changing the manifest template, manifest renderer, conversion
+helper, App browser handoff, or permission guidance.
 
 ## Rollback
 

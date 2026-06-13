@@ -3241,3 +3241,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including v0 release gates validation and
     78 mapped release-operation tools.
+- Merged `6529reviewbot` PR #202 as `16aa63f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/github-app-manifest-contract` increment:
+  - add `scripts/check-github-app-manifest-contract.cjs` and
+    `npm run check:github-app-manifest`;
+  - reject `default_permissions.actions` in the target GitHub App manifest so
+    `Actions: write` stays in a dispatch-only App or explicitly reviewed
+    fallback credential;
+  - harden manifest-conversion public summaries and error suffixes so AWS
+    identifiers and embedded newlines are redacted before operator output;
+  - validate manifest CLI parsing, template permissions/events, rendered
+    URLs, registration form escaping, private conversion output boundaries,
+    conversion summary redaction, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/github-app-manifest-contract`:
+  - `npm run check:github-app-manifest` passed with 6 manifest cases, 6
+    conversion cases, and 7 docs checked;
+  - `npm run check:release-operations` passed with 79 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 136 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including GitHub App manifest validation
+    and 79 mapped release-operation tools.
