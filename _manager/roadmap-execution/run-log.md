@@ -2332,3 +2332,23 @@
   - `npm test` passed;
   - `npm run release:check` passed, including docs index, public governance,
     and 20 v0 release gates.
+- Merged `6529reviewbot` PR #160 as `bb77877`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/workflow-permissions-check` increment:
+  - add `scripts/check-workflow-permissions.cjs` and
+    `npm run check:workflow-permissions`;
+  - wire the permissions check into `npm run release:check` and the release
+    operations map;
+  - document the gate alongside workflow action pinning.
+- Local validation for `codex/workflow-permissions-check`:
+  - `npm run check:workflow-permissions` passed with 10 permission blocks
+    checked;
+  - `npm run check:workflow-actions` passed with 24 pinned action refs checked;
+  - `npm run check:release-operations` passed with 40 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 98 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run release:check` passed, including workflow permission checks and
+    20 v0 release gates.

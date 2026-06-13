@@ -259,6 +259,8 @@ Build the operator experience:
   discoverable as the repo grows;
 - public-governance checks for MIT license metadata, community files, issue
   templates, and README governance links;
+- workflow-permission checks that keep committed workflows and templates on
+  explicit least-privilege permission maps;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;

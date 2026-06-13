@@ -624,6 +624,9 @@ merged PRs.
 - Public MIT/community governance files should be machine-checked, not only
   manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
   template, and license entry points stay present for community release.
+- GitHub workflow permission posture should be machine-checked alongside
+  action pinning so future workflow/template edits cannot silently widen write
+  permissions.
 
 ## Constraints
 
@@ -637,7 +640,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the public governance release check.
+2. Validate, publish, and merge the workflow permissions release check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
