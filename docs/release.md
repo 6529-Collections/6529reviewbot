@@ -241,6 +241,9 @@ After stabilization:
 - `npm run check:github-app-auth` confirms the GitHub App auth contract stays
   synchronized with env parsing, JWT shape, installation-token caching, CLI
   profiles, GitHub Actions token output masking, source invariants, and docs
+- `npm run check:github-app-routes` confirms the GitHub App route contract
+  keeps browser handoff endpoints GET-only, public-safe, non-work-triggering,
+  and free of echoed manifest codes or generated credentials
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App
 - [Container deployment](container-deployment.md) reviewed when shipping the

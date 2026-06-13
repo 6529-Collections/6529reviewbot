@@ -53,6 +53,7 @@ const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const githubAppManifestContractCheck = require("./check-github-app-manifest-contract.cjs");
 const githubAppInstallationToken = require("../bin/github-app-installation-token.cjs");
 const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs");
+const githubAppRoutesContractCheck = require("./check-github-app-routes-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5167,6 +5168,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /GitHub App auth contract check found/
+  );
+  const githubAppRoutesContractResult =
+    await githubAppRoutesContractCheck.checkGitHubAppRoutesContract();
+  assert.equal(githubAppRoutesContractResult.routeCases, 6);
+  await assert.rejects(
+    () =>
+      githubAppRoutesContractCheck.checkGitHubAppRoutesContract({
+        quiet: true,
+        docTexts: {
+          "docs/github-app.md": "# GitHub App\n",
+        },
+      }),
+    /GitHub App route contract check found/
   );
   await assert.rejects(
     () =>

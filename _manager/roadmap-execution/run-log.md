@@ -3298,3 +3298,25 @@
   - `npm run check:github-app-auth` passed;
   - `git diff --check` passed;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #204 as `5ed8bef`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/github-app-routes-contract` increment:
+  - add `scripts/check-github-app-routes-contract.cjs` and
+    `npm run check:github-app-routes`;
+  - validate exact GitHub App browser handoff route allowlisting,
+    manifest-complete code/state presence booleans, setup guidance, callback
+    guidance, GET-only HTTP behavior, query secret/code non-echoing, no
+    review-work fields, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/github-app-routes-contract`:
+  - `npm run check:github-app-routes` passed with 6 route cases and 7 docs
+    checked;
+  - `npm run check:release-operations` passed with 81 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 138 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including GitHub App route validation and
+    81 mapped release-operation tools.
