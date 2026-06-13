@@ -209,10 +209,14 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release-candidate cutover summary PR: merged as PR #126, merge commit
   `ad77def`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/ses-alert-notifier`
-- Current local changes: adding AWS SES email as a first-class scheduled alert
-  delivery mode alongside stdout, webhook, and SNS, using the existing
-  sanitized alert payload and AWS CLI execution boundary.
+- SES alert delivery PR: merged as PR #127, merge commit `8ae2e69`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Frontend private admin dashboard PR:
+  `https://github.com/6529-Collections/6529seize-frontend/pull/2632`
+  stacked on public dashboard PR #2605.
+- Current branch: `main`
+- Current local changes: durable memory and roadmap refresh after shipping the
+  frontend admin dashboard PR.
 
 ## Key Decisions
 
@@ -476,8 +480,10 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship SES alert notifier support and merge it if checks stay green.
-2. Continue dogfood target-repo PRs once required human review completes.
+1. Keep frontend public/private dashboard PRs current while they wait for
+   required human review.
+2. Continue production deployment and dogfood readiness slices that are not
+   blocked on external credentials.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
@@ -517,6 +523,7 @@ merged PRs.
   dispatch GitHub App, or an explicitly reviewed fallback dispatch token.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
-- Private admin UI still needs production wiring to the usage, budget-status,
-  model-price status, alert-status, job-events, run-claims, and runtime-status
-  endpoints through the 6529.io auth bridge.
+- Frontend PR #2632 adds the private `/tools/6529bot/admin` UI and is stacked
+  on PR #2605; it is also blocked on the frontend review/merge path.
+- Private admin UI production deployment still needs 6529.io environment
+  wiring, real wallet allowlists, and a live auth-check endpoint.

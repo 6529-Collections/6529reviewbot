@@ -1672,3 +1672,31 @@
   - `npm run check:workflow-actions` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #127 as `8ae2e69` after CI and OpenSSF Scorecard
+  passed.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27452378228`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27452378237`, completed successfully.
+- Started frontend branch `codex/reviewbot-admin-dashboard` in
+  `D:\repos\6529seize-frontend-reviewbot`, stacked on
+  `codex/reviewbot-usage-dashboard`.
+- Opened frontend PR #2632:
+  `https://github.com/6529-Collections/6529seize-frontend/pull/2632`.
+  It adds `/tools/6529bot/admin`, a server-only admin API client, the
+  operator dashboard UI, env placeholders, tests, and docs for the private
+  6529.io admin surface.
+- Frontend validation for PR #2632:
+  - `pnpm run format:changed` passed;
+  - `pnpm run test:no-coverage -- __tests__/services/reviewbot-admin-api.test.ts __tests__/services/reviewbot-usage-api.test.ts --runInBand` passed with 13 tests;
+  - `pnpm run lint:changed` passed;
+  - `pnpm run typecheck:changed` passed;
+  - `pnpm run base-build` passed and confirmed `/tools/6529bot/admin` is
+    dynamic server-rendered;
+  - `git diff --cached --check` passed;
+  - Playwright smoke against `http://localhost:3101/tools/6529bot/admin`
+    returned HTTP 200 with the expected fail-closed `Admin Not Configured`
+    state and no rendered secret-like admin terms.
+- Local note: the frontend repo-local `6529` wrapper failed in this Windows
+  worktree due the wrapper path/script-shell issue, so equivalent underlying
+  scripts were run with `SEIZE_6529_COMMAND=1` and the result was documented in
+  PR #2632.

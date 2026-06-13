@@ -416,9 +416,12 @@ In progress outside this repository:
 
 - Public `6529.io` usage dashboard PR:
   [6529-Collections/6529seize-frontend#2605](https://github.com/6529-Collections/6529seize-frontend/pull/2605).
+- Private `6529.io` admin dashboard PR:
+  [6529-Collections/6529seize-frontend#2632](https://github.com/6529-Collections/6529seize-frontend/pull/2632),
+  stacked on the public dashboard branch.
 
 Next implementation focus:
 
 - dogfood on a target repo with conservative limits;
 - production GitHub App deployment, reviewed container/runtime evidence, and
-  6529.io wiring.
+  6529.io production environment wiring.
