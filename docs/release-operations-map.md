@@ -165,7 +165,8 @@ check-mode readiness failures, private path redaction, Markdown sanitization,
 source invariants, and docs aligned.
 `npm run check:operator-drill` keeps the operator drill's temporary workspace
 cleanup, private path redaction, release-candidate, dogfood readiness,
-promotion, go-live summaries, next commands, and docs aligned.
+promotion, go-live summaries, production deployment plan handoff, next
+commands, and docs aligned.
 `npm run check:operator-evidence` keeps operator evidence sections,
 readiness semantics, public-summary redaction, source invariants, and docs
 aligned.
@@ -274,8 +275,9 @@ The local quality gate command inventory is:
   traffic timing can remain private until a reviewed release artifact publishes
   a summary.
 - Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
-  public-safe rehearsal before final release-candidate, dogfood promotion, and
-  go-live `--require-ready` commands.
+  public-safe rehearsal before the production deployment plan and final
+  release-candidate, dogfood promotion, and go-live `--require-ready`
+  commands.
 - Dogfood, security review, and production cutover each use a public checklist
   plus a private status overlay. The raw overlay files stay in the operator
   workspace.

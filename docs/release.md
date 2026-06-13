@@ -33,8 +33,8 @@ After stabilization:
   dogfood promotion, or go-live `--require-ready` commands
 - `npm run check:operator-drill` confirms the operator drill contract keeps
   temporary workspace cleanup, private path redaction, release-candidate,
-  dogfood readiness, promotion, go-live summaries, next commands, and docs
-  synchronized
+  dogfood readiness, promotion, go-live summaries, production deployment plan
+  handoff, next commands, and docs synchronized
 - `npm run release:candidate -- -- --operator-workspace <private-workspace-dir>`
   reviewed as the public-safe workspace bundle
 - `npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet`
@@ -92,6 +92,9 @@ After stabilization:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
   passes before broad community traffic unless release notes intentionally mark
   the release as dogfood-only and name every cutover deferral
+- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`
+  reviewed as the ordered dry-run handoff before live App, registry, runtime,
+  cutover, or dogfood actions
 - `npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready`
   passes before opening or updating the target repository config PR
 - `npm run check:self-dogfood-replay`

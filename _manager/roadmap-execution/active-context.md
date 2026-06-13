@@ -410,24 +410,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Production deployment plan guard PR: merged as PR #224, merge commit `e88a7d3`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-workspace-deployment-plan`.
+- Operator workspace deployment-plan guidance PR: merged as PR #225, merge commit `fa1155f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-drill-deployment-plan`.
 - Current local changes: adding the production deployment plan handoff command
-  to generated private operator workspace README guidance, public operator
-  workspace docs, and the operator workspace contract so deployment handoff,
-  release evidence, cutover, promotion, and go-live commands stay together.
+  to `operator:drill` next commands, the operator drill contract, and public
+  release/operator docs so the public-safe drill points operators at the
+  dry-run deployment handoff before final live gates.
 - Current local validation:
-  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
-    cases, and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 6 commands, and
+    7 docs checked;
   - `npm run check` passed with 168 CommonJS files;
   - `npm run check:docs` passed with 71 files checked;
   - `npm run check:doc-index` passed with 57 docs indexed;
   - `npm run check:release-operations` passed with 105 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #224,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #225,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check:public-artifacts` passed with 114 files checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator workspace contract
+  - `npm run release:check` passed, including operator drill contract
     validation and 105 mapped release-operation tools.
 
 ## Key Decisions
@@ -995,7 +997,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the operator workspace deployment-plan guidance.
+2. Publish and merge the operator drill deployment-plan guidance.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

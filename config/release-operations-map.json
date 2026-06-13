@@ -397,7 +397,7 @@
         {
           "id": "operator-drill-contract",
           "script": "check:operator-drill",
-          "purpose": "Verify the operator drill keeps temporary workspace cleanup, private path redaction, release-candidate, dogfood readiness, promotion, go-live summaries, next commands, and docs synchronized.",
+          "purpose": "Verify the operator drill keeps temporary workspace cleanup, private path redaction, release-candidate, dogfood readiness, promotion, go-live summaries, production deployment plan handoff, next commands, and docs synchronized.",
           "doc": "docs/operator-drill.md",
           "publicOutput": "Safe."
         },
@@ -577,7 +577,7 @@
           "id": "operator-drill",
           "script": "operator:drill",
           "args": "-- -- --dir <private-workspace-dir>",
-          "purpose": "Rehearse the release-candidate, dogfood readiness, promotion, and go-live sequence against a private operator workspace and print public-safe next commands.",
+          "purpose": "Rehearse the release-candidate, production deployment plan, dogfood readiness, promotion, and go-live sequence against a private operator workspace and print public-safe next commands.",
           "doc": "docs/operator-drill.md",
           "privateInputs": "Reads or writes operator-owned private workspace skeleton files.",
           "publicOutput": "Share the public-safe report after reviewing command lines for private paths; prefer npm --silent run or --out with --quiet."

@@ -3,7 +3,8 @@
 `npm run operator:drill` runs a public-safe release and dogfood operator drill.
 It creates a temporary operator workspace skeleton, rehearses the
 release-candidate, dogfood readiness, promotion, and go-live summaries, and
-prints the next commands an operator should run from the private environment.
+prints the next commands an operator should run from the private environment,
+including the production deployment plan handoff.
 The default drill removes the temporary workspace before exiting.
 
 The drill rehearses the sequence without calling GitHub, AWS, or model
@@ -38,6 +39,8 @@ The drill composes existing public-safe commands and summaries:
   model catalog, and workspace parsing;
 - `dogfood:promotion` summary with self-dogfood replay included by default;
 - `dogfood:go-live` summary that shows which final gates are still pending.
+- `production:deployment-plan` as the dry-run deployment handoff command to
+  review before live App, registry, runtime, cutover, or dogfood actions.
 
 Freshly generated operator workspace files are expected to be pending. A
 default drill should usually report `Ready: no`; that is useful because it
@@ -63,10 +66,11 @@ After filling the private workspace, run the real gates:
 
 ```bash
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready --out <public-bundle-file.md> --quiet
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Run `npm run check:operator-drill` after changing the drill command, operator
 workspace flow, release-candidate bundle, dogfood readiness/promotion/go-live
-summaries, or this runbook.
+summaries, production deployment plan handoff, or this runbook.

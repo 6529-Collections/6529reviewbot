@@ -87,6 +87,7 @@ function checkDefaultDrill(findings) {
     "Workspace: [operator-workspace] (temporary)",
     "Temporary workspace cleanup: yes",
     "dogfood readiness: ready",
+    "npm run production:deployment-plan",
     "npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -139,6 +140,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "fs.rmSync(directory, { force: true, recursive: true })",
       "\"[operator-workspace]\"",
       "operatorDrillNextCommands",
+      "production:deployment-plan",
     ],
     "bin/operator-drill.cjs": [
       "npm run operator:drill",
@@ -168,6 +170,7 @@ function checkDocs(docTexts, findings) {
       "npm run operator:drill",
       "public-safe release and dogfood operator drill",
       "without calling GitHub, AWS, or model providers",
+      "npm run production:deployment-plan",
       "npm --silent run operator:drill -- -- --dir <private-workspace-dir>",
       "npm run check:operator-drill",
     ],
