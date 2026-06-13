@@ -5,7 +5,8 @@ needs while preparing release notes or a tag/no-tag decision.
 
 It is intentionally no-network. It reads local release gate definitions,
 optional private release-gate status, optional private operator evidence, git
-metadata, package metadata, and the same preflight checks used by the runtime.
+metadata, package metadata, optional production cutover status, and the same
+preflight checks used by the runtime.
 It does not replace `npm run release:check`, CI, Dependency Review, OpenSSF
 Scorecard, or private operator evidence.
 It also does not replace the [Production Cutover](production-cutover.md)
@@ -31,11 +32,21 @@ Render from private operator files:
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
 ```
 
+Include production cutover status in the same public-safe bundle:
+
+```bash
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
+```
+
 Fail unless the candidate is ready:
 
 ```bash
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
+
+When `--cutover-status-file` is provided, `--require-ready` also fails unless
+the production cutover status lists every current cutover item and no cutover
+item is pending or blocked.
 
 Write the bundle to a file:
 
@@ -50,11 +61,13 @@ npm run release:candidate -- -- --status-file <operator-status-file> --operator-
 - every current v0 release gate is present in the status file;
 - release gates have no `pending` or `blocked` entries;
 - operator evidence has no `pending` or `blocked` sections;
+- if provided, production cutover status has no missing, `pending`, or
+  `blocked` items;
 - preflight passes, with warnings treated as failures when
   `--strict-preflight` is set.
 
-Deferred release gates or operator evidence sections are allowed, but release
-notes must name the risk and follow-up owner.
+Deferred release gates, operator evidence sections, or production cutover items
+are allowed, but release notes must name the risk and follow-up owner.
 
 ## Public-Safe Output
 
@@ -78,6 +91,8 @@ operator runbook, not in this public repository.
 - release-gate complete/deferred/pending/blocked counts;
 - missing release-gate status ids;
 - operator-evidence complete/deferred/pending/blocked counts;
+- production cutover complete/deferred/pending/blocked counts when a cutover
+  status file is provided;
 - preflight error and warning summaries;
 - redacted operator evidence sections;
 - the follow-up release commands the operator should run.

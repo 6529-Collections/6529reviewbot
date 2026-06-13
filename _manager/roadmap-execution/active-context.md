@@ -205,11 +205,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin snapshot CLI PR: merged as PR #124, merge commit `ddf81f1`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-cutover-checklist`
-- Current local changes: adding a production cutover checklist artifact and
-  validator so operators can track go/no-go readiness from registration,
-  secret custody, deployment, dashboards, alerts, dogfood, rollback, and release
-  evidence without committing private deployment details.
+- Production cutover checklist PR: merged as PR #125, merge commit `0d9a91d`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-candidate-cutover-summary`
+- Current local changes: adding optional production cutover status summaries to
+  the release-candidate bundle so operators can review tag/no-tag readiness and
+  live-traffic go/no-go posture from one public-safe artifact.
 
 ## Key Decisions
 
@@ -454,6 +455,10 @@ merged PRs.
   can include counts and redacted notes; live App ids, account ids, ARNs,
   secret names, private repo names, raw payloads, prompts, provider responses,
   and detailed admin snapshots stay outside this repository.
+- Release-candidate bundles can optionally include production cutover status
+  when the decision covers live dogfood or production traffic. Default
+  tag/no-tag behavior remains unchanged unless a cutover status file is
+  provided.
 
 ## Constraints
 
@@ -465,8 +470,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the production cutover checklist increment and merge it if checks stay
-   green.
+1. Ship release-candidate cutover summary integration and merge it if checks
+   stay green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

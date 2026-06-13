@@ -35,6 +35,12 @@ Render a public-safe summary from private status:
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
 ```
 
+Include the cutover summary in the release-candidate bundle:
+
+```bash
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
+```
+
 Fail unless every current checklist item is represented and no item is pending
 or blocked:
 

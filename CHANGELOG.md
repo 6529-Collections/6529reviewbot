@@ -45,6 +45,8 @@ stabilized.
   summary.
 - Production cutover CLI validates and renders a public-safe go/no-go checklist
   plus private status overlay before live dogfood traffic.
+- Release-candidate bundles can optionally include production cutover status
+  counts and enforce cutover readiness when a cutover status file is supplied.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.

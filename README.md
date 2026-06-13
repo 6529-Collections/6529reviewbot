@@ -174,6 +174,7 @@ evidence, git metadata, and no-network preflight:
 ```bash
 npm run release:candidate
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
 

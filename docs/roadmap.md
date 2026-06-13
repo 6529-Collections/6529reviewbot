@@ -263,6 +263,8 @@ Build the operator experience:
   deployment proof.
 - production cutover checklist and private status overlay for go/no-go
   readiness before live dogfood traffic.
+- release-candidate bundles that can include production cutover status when
+  the release decision also covers live dogfood or production traffic.
 
 ### 9. Community Release
 
@@ -330,6 +332,8 @@ Completed in `6529reviewbot`:
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for reviewed live-traffic
   go/no-go decisions;
+- optional release-candidate cutover status summaries for one public-safe
+  tag-readiness and traffic-readiness artifact;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;
