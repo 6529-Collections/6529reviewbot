@@ -3603,3 +3603,32 @@
   - `npm run check:public-artifacts` passed with 109 files checked;
   - `npm run release:check` passed, including manager memory validation and
     95 mapped release-operation tools.
+- Merged `6529reviewbot` PR #218 as `a2e4d39`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-draft` increment:
+  - add `src/release-notes-draft.cjs`, `bin/release-notes-draft.cjs`, and
+    `npm run release:notes`;
+  - add `scripts/check-release-notes-draft-contract.cjs` and
+    `npm run check:release-notes-draft`;
+  - build public-safe pre-v1 release notes from release-candidate evidence and
+    model catalog defaults while leaving private operator-owned facts as
+    `TODO(operator)`;
+  - wire the command and check into release checks, smoke tests, release
+    operations map, README, release docs, roadmap, changelog, and manager
+    memory.
+- Local validation for `codex/release-notes-draft` so far:
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run release:notes -- -- --json --quiet` passed;
+  - `npm run check` passed with 156 CommonJS files;
+  - `npm run check:docs` passed with 67 files checked;
+  - `npm run check:doc-index` passed with 53 docs indexed;
+  - `npm run check:release-operations` passed with 97 mapped tools;
+  - `git diff --check` passed;
+  - `npm run check:release-notes` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #218,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 110 files checked;
+  - `npm run release:check` passed, including release notes draft contract
+    validation and 97 mapped release-operation tools.

@@ -132,6 +132,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and
   evidence-boundary index for release operators.
+- [Release Notes Draft](docs/release-notes-draft.md): public-safe pre-v1
+  release notes draft from release-candidate evidence.
 - [Operator Workspace](docs/operator-workspace.md): private release evidence
   skeleton bootstrap.
 - [Operator Evidence Template](docs/operator-evidence-template.md): redacted
@@ -205,6 +207,7 @@ npm run check:release-gates
 npm run check:v0-gates
 npm run check:release-candidate
 npm run check:release-notes
+npm run check:release-notes-draft
 npm run check:self-dogfood-replay
 npm test
 npm run check:workflow-actions
@@ -220,6 +223,12 @@ Run a public-safe release and dogfood rehearsal:
 
 ```bash
 npm run operator:drill
+```
+
+Draft pre-v1 release notes from public-safe evidence:
+
+```bash
+npm run release:notes
 ```
 
 Validate central runtime configuration without network calls:
@@ -711,6 +720,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
 - [Release operations map](docs/release-operations-map.md)
+- [Release notes draft](docs/release-notes-draft.md)
 - [Operator workspace](docs/operator-workspace.md)
 - [Operator Drill](docs/operator-drill.md)
 - [Operator evidence template](docs/operator-evidence-template.md)

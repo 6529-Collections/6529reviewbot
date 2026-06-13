@@ -3,6 +3,11 @@
 Use this template for pre-v1 GitHub Releases. Keep the language specific about
 what was tested and conservative about what is promised.
 
+Use [Release Notes Draft](release-notes-draft.md) or `npm run release:notes`
+to create the first public-safe draft from release-candidate evidence, then
+complete every `TODO(operator)` field from private operator evidence before
+publishing.
+
 ```markdown
 # 6529reviewbot v0.x.x
 
