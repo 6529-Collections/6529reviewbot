@@ -51,6 +51,8 @@ stabilized.
 - Dogfood execution status checklist and CLI for tracking command-only,
   limited initial-review, visibility, alert, and rollback evidence with a
   private operator status overlay.
+- Security review status checklist and CLI for private manual-review evidence
+  before dogfood expansion or public pre-v1 tags.
 - Release-candidate bundles can optionally include production cutover status
   counts and enforce cutover readiness when a cutover status file is supplied.
 - Release-candidate bundles can optionally include dogfood execution status

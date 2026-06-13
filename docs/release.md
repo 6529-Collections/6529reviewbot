@@ -125,6 +125,10 @@ After stabilization:
 - alerting and admin-auth changes documented
 - release-readiness checklist reviewed
 - [Security review checklist](security-review-checklist.md) completed
+- `npm run security:review -- -- --status-file <operator-security-status-file> --summary`
+  reviewed for the candidate
+- `npm run security:review -- -- --status-file <operator-security-status-file> --require-ready`
+  passes before tagging unless release notes name every security deferral
 - CodeRabbit or equivalent review feedback resolved
 - CI, Dependency Review, and OpenSSF Scorecard reviewed
 - OpenSSF Scorecard workflow-level permissions remain read-only; job-level

@@ -106,6 +106,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Dogfood Status](docs/dogfood-status.md): private status overlay for
   command-only and limited initial-review dogfood evidence.
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
+- [Security Review Status](docs/security-review-status.md): private status
+  overlay for manual security review evidence.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 - [Release Candidate Bundle](docs/release-candidate.md): public-safe
@@ -234,6 +236,14 @@ Track private dogfood execution evidence:
 npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
 npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
 npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready
+```
+
+Track private security review evidence:
+
+```bash
+npm run security:review -- -- --init-status <operator-security-status-file>
+npm run security:review -- -- --status-file <operator-security-status-file> --summary
+npm run security:review -- -- --status-file <operator-security-status-file> --require-ready
 ```
 
 Validate the GitHub App manifest template:
@@ -544,6 +554,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Reusable workflow](docs/reusable-workflow.md)
 - [Run control](docs/run-control.md)
 - [Support](docs/support.md)
+- [Security review status](docs/security-review-status.md)
 - [Worker adapters](docs/worker-adapters.md)
 - [Worker capacity](docs/worker-capacity.md)
 - [Job ledger](docs/job-ledger.md)

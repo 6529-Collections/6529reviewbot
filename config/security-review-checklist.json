@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "description": "Public-safe security review checklist for 6529bot dogfood expansion, public pre-v1 tags, and changes touching provider calls, GitHub permissions, AWS access, prompt construction, hidden metadata, budget admission, or run control.",
+  "phases": [
+    {
+      "id": "scope",
+      "title": "Scope And Baseline",
+      "objective": "Anchor the review to a specific candidate and private evidence bundle before evaluating controls.",
+      "items": [
+        {
+          "id": "review-scope-recorded",
+          "title": "Review date, reviewer, commit or tag, target deployment, and release decision scope are recorded privately.",
+          "evidence": "private review header without live credentials or private payloads",
+          "runbook": "docs/security-review-checklist.md"
+        },
+        {
+          "id": "release-candidate-reviewed",
+          "title": "Release-candidate bundle is rendered and reviewed for the security-review candidate.",
+          "evidence": "public-safe release:candidate summary",
+          "runbook": "docs/release-candidate.md"
+        },
+        {
+          "id": "operator-evidence-reviewed",
+          "title": "Operator evidence sections are complete or explicitly deferred with accepted risk.",
+          "evidence": "operator evidence summary, not the private evidence file",
+          "runbook": "docs/operator-evidence-template.md"
+        },
+        {
+          "id": "security-deferrals-named",
+          "title": "Every security deferral is named in release notes with risk and follow-up ownership.",
+          "evidence": "release-note deferral summary",
+          "runbook": "docs/release-notes-template.md"
+        }
+      ]
+    },
+    {
+      "id": "github-trust",
+      "title": "GitHub And Trust Boundaries",
+      "objective": "Verify GitHub identity, webhook, repository config, and App permission boundaries before model spend.",
+      "items": [
+        {
+          "id": "webhook-signatures",
+          "title": "Webhooks require valid X-Hub-Signature-256 before parsing and weak-secret warnings are accepted only for non-production.",
+          "evidence": "preflight and webhook acceptance summary",
+          "runbook": "docs/github-app.md"
+        },
+        {
+          "id": "github-app-permissions",
+          "title": "Production GitHub App settings match the reviewed manifest or an explicitly reviewed manual equivalent.",
+          "evidence": "registration packet acceptance summary",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "browser-handoff-safe",
+          "title": "GitHub App browser handoff routes do not echo manifest codes, generated credentials, payloads, or private repository details.",
+          "evidence": "handoff route review summary",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "trusted-actor-admission",
+          "title": "Public repositories require trusted actors or are disabled before model calls.",
+          "evidence": "admission config and denial summary",
+          "runbook": "docs/admission-policy.md"
+        },
+        {
+          "id": "base-ref-config",
+          "title": "Repository config is read from the base ref and can only narrow central policy.",
+          "evidence": "repo config source and merge summary",
+          "runbook": "docs/repository-config.md"
+        }
+      ]
+    },
+    {
+      "id": "prompt-provider",
+      "title": "Prompt And Provider Boundaries",
+      "objective": "Treat all target repo content as untrusted text and keep provider behavior bounded and fail-closed.",
+      "items": [
+        {
+          "id": "target-code-not-executed",
+          "title": "Target repository code is read as text and not executed during review context gathering.",
+          "evidence": "review context implementation summary",
+          "runbook": "docs/security-model.md"
+        },
+        {
+          "id": "path-read-guards",
+          "title": "Path reads reject absolute paths, parent traversal, .git paths, directories, and symlinks.",
+          "evidence": "source context guard summary",
+          "runbook": "docs/security-model.md"
+        },
+        {
+          "id": "prompt-untrusted-context",
+          "title": "Prompts clearly label diffs, files, commits, and comments as untrusted context.",
+          "evidence": "prompt contract review summary",
+          "runbook": "docs/review-workflows.md"
+        },
+        {
+          "id": "provider-bounds",
+          "title": "Provider calls have bounded input, output, timeout, and changed-file limits.",
+          "evidence": "provider settings summary",
+          "runbook": "docs/configuration.md"
+        },
+        {
+          "id": "provider-fail-closed",
+          "title": "Provider errors are sanitized and empty provider output fails closed before comment posting.",
+          "evidence": "error redaction and empty-output guard summary",
+          "runbook": "docs/security-model.md"
+        }
+      ]
+    },
+    {
+      "id": "spend-run-control",
+      "title": "Spend And Run Control",
+      "objective": "Verify spend controls and duplicate/concurrency controls run before worker dispatch and provider calls.",
+      "items": [
+        {
+          "id": "runtime-pauses-first",
+          "title": "Runtime pause controls are evaluated before budget admission, run-control claims, worker dispatch, and provider calls.",
+          "evidence": "runtime control summary",
+          "runbook": "docs/configuration.md"
+        },
+        {
+          "id": "budget-before-dispatch",
+          "title": "Budget admission happens before queueing model jobs.",
+          "evidence": "budget admission summary",
+          "runbook": "docs/budget-admission.md"
+        },
+        {
+          "id": "budget-policies-reviewed",
+          "title": "Central DB budget policy rows are reviewed, applied from operator-owned files, and loaded before admission.",
+          "evidence": "budget-policy dry-run/apply summary",
+          "runbook": "docs/budget-policies.md"
+        },
+        {
+          "id": "run-control-before-dispatch",
+          "title": "Run-control claims happen before worker dispatch and dedupe keys include provider and model.",
+          "evidence": "run-control mode and key summary",
+          "runbook": "docs/run-control.md"
+        },
+        {
+          "id": "worker-dispatch-auth",
+          "title": "Central worker dispatch uses short-lived GitHub App installation tokens where possible and avoids target-repo long-lived tokens.",
+          "evidence": "worker dispatch auth summary",
+          "runbook": "docs/worker-adapters.md"
+        }
+      ]
+    },
+    {
+      "id": "aws-ledger",
+      "title": "AWS Ledger And Pricing",
+      "objective": "Verify AWS access, schema, usage ledger behavior, and model pricing evidence before release.",
+      "items": [
+        {
+          "id": "aws-least-privilege",
+          "title": "AWS IAM/OIDC policies are rendered from reviewed least-privilege templates or equivalent private policy artifacts.",
+          "evidence": "AWS policy review summary without live account ids or ARNs",
+          "runbook": "infra/aws/README.md"
+        },
+        {
+          "id": "ledger-schema-reviewed",
+          "title": "Ledger schema changes are reflected in npm run ledger:schema and reviewed before applying to Aurora.",
+          "evidence": "ledger schema dry-run/apply summary",
+          "runbook": "docs/aws-usage-ledger.md"
+        },
+        {
+          "id": "usage-ledger-mode-reviewed",
+          "title": "Usage ledger failure mode is explicit and appropriate for the release stage.",
+          "evidence": "usage ledger fail-open/fail-closed summary",
+          "runbook": "docs/configuration.md"
+        },
+        {
+          "id": "model-pricing-reviewed",
+          "title": "Model pricing rows include source URLs, fresh source-checked timestamps, and reviewed stale/zero-price overrides.",
+          "evidence": "model-pricing dry-run/apply summary",
+          "runbook": "docs/model-pricing.md"
+        }
+      ]
+    },
+    {
+      "id": "data-exposure",
+      "title": "Public And Private Data Exposure",
+      "objective": "Verify public outputs are intentionally public and private admin outputs are authenticated, bounded, and sanitized.",
+      "items": [
+        {
+          "id": "public-summary-allowlists",
+          "title": "Public usage summaries redact private repo names unless allowlisted.",
+          "evidence": "public usage summary disclosure posture",
+          "runbook": "docs/usage-api.md"
+        },
+        {
+          "id": "admin-auth-fail-closed",
+          "title": "Admin usage routes fail closed unless the 6529.io auth bridge authorizes the request.",
+          "evidence": "admin auth bridge mode and required-role summary",
+          "runbook": "docs/admin-auth-bridge.md"
+        },
+        {
+          "id": "admin-output-bounded",
+          "title": "Admin raw events, job events, run claims, and runtime status expose bounded fields and no raw prompts, provider payloads, or webhook bodies.",
+          "evidence": "admin endpoint contract summary",
+          "runbook": "docs/usage-api.md"
+        },
+        {
+          "id": "support-preflight-secret-presence",
+          "title": "Preflight, admin runtime status, and support bundles report secret presence or missing configuration only, never secret values.",
+          "evidence": "support/preflight redaction summary",
+          "runbook": "docs/support.md"
+        }
+      ]
+    },
+    {
+      "id": "workflow-release-artifacts",
+      "title": "Workflow And Release Artifacts",
+      "objective": "Verify committed workflows and public artifacts keep release-time security boundaries intact.",
+      "items": [
+        {
+          "id": "actions-pinned",
+          "title": "Workflow permissions are minimal and third-party actions are pinned by commit SHA.",
+          "evidence": "npm run check:workflow-actions summary",
+          "runbook": "docs/security-model.md"
+        },
+        {
+          "id": "reusable-secret-boundary",
+          "title": "Reusable workflow callers map only declared provider secrets and do not use secrets: inherit.",
+          "evidence": "reusable workflow secret mapping summary",
+          "runbook": "docs/reusable-workflow.md"
+        },
+        {
+          "id": "public-artifacts-clean",
+          "title": "Public docs, configs, templates, workflows, and durable memory pass release public-artifact checks.",
+          "evidence": "npm run check:public-artifacts and npm run check:env-templates summaries",
+          "runbook": "docs/release.md"
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Operations And Decision",
+      "objective": "Verify operators can observe, contain, and make a clear release decision.",
+      "items": [
+        {
+          "id": "alerts-safe",
+          "title": "Alerting paths do not include secrets, raw prompts, raw diffs, provider payloads, or unsafe custom keys.",
+          "evidence": "alert payload and delivery summary",
+          "runbook": "docs/alerting.md"
+        },
+        {
+          "id": "incident-response-ready",
+          "title": "Incident response covers spend spikes, secret exposure, provider outages, webhook abuse, ledger outages, and bad bot comments.",
+          "evidence": "incident response review summary",
+          "runbook": "docs/incident-response.md"
+        },
+        {
+          "id": "security-decision-recorded",
+          "title": "Security review decision is recorded as approve, approve with follow-up, defer, or block.",
+          "evidence": "private decision summary and public-safe release note language",
+          "runbook": "docs/security-review-checklist.md"
+        }
+      ]
+    }
+  ]
+}

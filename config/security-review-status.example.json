@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "items": {
+    "review-scope-recorded": {
+      "status": "complete",
+      "evidence": "Example only: security review scope recorded for example-commit-or-tag."
+    },
+    "release-candidate-reviewed": {
+      "status": "pending",
+      "notes": "Render and review the release-candidate bundle for the candidate."
+    },
+    "operator-evidence-reviewed": {
+      "status": "pending",
+      "notes": "Review private operator evidence and copy only redacted summaries."
+    },
+    "security-deferrals-named": {
+      "status": "pending",
+      "notes": "Name every accepted deferral in release notes."
+    },
+    "webhook-signatures": {
+      "status": "pending",
+      "notes": "Review webhook signature checks and preflight posture."
+    },
+    "github-app-permissions": {
+      "status": "pending",
+      "notes": "Compare production App settings to reviewed manifest or manual equivalent."
+    },
+    "browser-handoff-safe": {
+      "status": "pending",
+      "notes": "Review manifest/setup/callback handoff routes."
+    },
+    "trusted-actor-admission": {
+      "status": "pending",
+      "notes": "Confirm public repo model calls require trusted actors."
+    },
+    "base-ref-config": {
+      "status": "pending",
+      "notes": "Confirm target repo config is loaded from base-ref content."
+    },
+    "target-code-not-executed": {
+      "status": "pending",
+      "notes": "Review context gathering path."
+    },
+    "path-read-guards": {
+      "status": "pending",
+      "notes": "Review source context path guards."
+    },
+    "prompt-untrusted-context": {
+      "status": "pending",
+      "notes": "Review prompt contract."
+    },
+    "provider-bounds": {
+      "status": "pending",
+      "notes": "Review provider context, timeout, and output caps."
+    },
+    "provider-fail-closed": {
+      "status": "pending",
+      "notes": "Review provider error redaction and empty-output behavior."
+    },
+    "runtime-pauses-first": {
+      "status": "pending",
+      "notes": "Confirm runtime pauses run before spend and dispatch."
+    },
+    "budget-before-dispatch": {
+      "status": "pending",
+      "notes": "Confirm budget admission runs before queueing."
+    },
+    "budget-policies-reviewed": {
+      "status": "pending",
+      "notes": "Review central DB budget policy evidence."
+    },
+    "run-control-before-dispatch": {
+      "status": "pending",
+      "notes": "Review run-control claim order and dedupe key shape."
+    },
+    "worker-dispatch-auth": {
+      "status": "pending",
+      "notes": "Review worker dispatch token source and App scope."
+    },
+    "aws-least-privilege": {
+      "status": "pending",
+      "notes": "Review AWS policy evidence without live identifiers."
+    },
+    "ledger-schema-reviewed": {
+      "status": "pending",
+      "notes": "Review ledger schema dry-run/apply evidence."
+    },
+    "usage-ledger-mode-reviewed": {
+      "status": "pending",
+      "notes": "Review usage ledger failure mode."
+    },
+    "model-pricing-reviewed": {
+      "status": "pending",
+      "notes": "Review model price source evidence and any accepted overrides."
+    },
+    "public-summary-allowlists": {
+      "status": "pending",
+      "notes": "Review public usage disclosure allowlists."
+    },
+    "admin-auth-fail-closed": {
+      "status": "pending",
+      "notes": "Review 6529.io admin auth bridge posture."
+    },
+    "admin-output-bounded": {
+      "status": "pending",
+      "notes": "Review admin endpoint output boundaries."
+    },
+    "support-preflight-secret-presence": {
+      "status": "pending",
+      "notes": "Review support and preflight redaction behavior."
+    },
+    "actions-pinned": {
+      "status": "pending",
+      "notes": "Run and review workflow action pin check."
+    },
+    "reusable-secret-boundary": {
+      "status": "pending",
+      "notes": "Review reusable workflow secret mapping."
+    },
+    "public-artifacts-clean": {
+      "status": "pending",
+      "notes": "Run public artifact and env template checks."
+    },
+    "alerts-safe": {
+      "status": "pending",
+      "notes": "Review alert payload sanitization and delivery summaries."
+    },
+    "incident-response-ready": {
+      "status": "pending",
+      "notes": "Review incident response runbook coverage."
+    },
+    "security-decision-recorded": {
+      "status": "pending",
+      "notes": "Record approve, approve with follow-up, defer, or block."
+    }
+  }
+}

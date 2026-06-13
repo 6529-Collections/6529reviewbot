@@ -368,6 +368,14 @@ function releaseCandidateCommands() {
       command: "npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready",
     },
     {
+      label: "security review summary",
+      command: "npm run security:review -- -- --status-file <operator-security-status-file> --summary",
+    },
+    {
+      label: "security review readiness",
+      command: "npm run security:review -- -- --status-file <operator-security-status-file> --require-ready",
+    },
+    {
       label: "production cutover summary",
       command: "npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary",
     },

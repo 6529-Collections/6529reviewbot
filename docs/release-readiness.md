@@ -127,6 +127,9 @@ Ready for community review:
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private
   data boundaries, budget controls, runtime pauses, and release validation.
+- security review status checklist for private manual-review evidence without
+  copying raw payloads, prompts, private repo details, or live identifiers into
+  public release artifacts.
 
 Not yet v1-ready:
 
@@ -184,6 +187,14 @@ when evidence contains live deployment details.
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
+Use [Security Review Status](security-review-status.md) to track manual
+security review evidence in a private status file:
+
+```bash
+npm run security:review -- -- --init-status <operator-security-status-file>
+npm run security:review -- -- --status-file <operator-security-status-file> --summary
+npm run security:review -- -- --status-file <operator-security-status-file> --require-ready
+```
 Use `npm run operator:evidence -- -- --file <private-evidence-file> --summary` to
 validate a structured private evidence file and render a redacted public
 summary. `operator:evidence --require-ready` is useful for the evidence file

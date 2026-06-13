@@ -43,6 +43,8 @@ const releaseCandidate = require("../src/release-candidate.cjs");
 const releaseCandidateCli = require("../bin/release-candidate.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
+const securityReviewStatus = require("../src/security-review-status.cjs");
+const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const productionCutover = require("../src/production-cutover.cjs");
@@ -1690,6 +1692,99 @@ assert.deepEqual(
   ]),
   {
     file: "cutover.json",
+    force: true,
+    initStatusFile: "new-status.json",
+    json: true,
+    quiet: true,
+    requireReady: true,
+    statusFile: "status.json",
+    summary: true,
+  }
+);
+const securityReviewChecklist = securityReviewStatus.loadSecurityReviewChecklist(
+  "config/security-review-checklist.json"
+);
+assert.equal(securityReviewChecklist.release, "v0.1.0");
+assert.equal(securityReviewChecklist.phases.length, 8);
+assert.equal(securityReviewChecklist.phases.flatMap((phase) => phase.items).length, 33);
+const securityReviewExampleStatus = securityReviewStatus.loadSecurityReviewStatus(
+  "config/security-review-status.example.json"
+);
+const securityReviewWithStatus = securityReviewStatus.mergeSecurityReviewStatus(
+  securityReviewChecklist,
+  securityReviewExampleStatus,
+  { requireComplete: true }
+);
+const securityReviewSummary = securityReviewStatus.summarizeSecurityReview(securityReviewWithStatus);
+assert.equal(securityReviewSummary.ready, false);
+assert.equal(securityReviewSummary.complete, 1);
+assert.equal(securityReviewSummary.pending, 32);
+assert.equal(
+  securityReviewStatus.missingSecurityReviewStatusIds(
+    securityReviewChecklist,
+    securityReviewExampleStatus
+  ).length,
+  0
+);
+assert.match(
+  securityReviewStatus.renderSecurityReviewMarkdown(securityReviewWithStatus),
+  /Security Review/
+);
+assert.match(
+  securityReviewStatus.renderSecurityReviewSummaryMarkdown(securityReviewWithStatus),
+  /Security review ready: no/
+);
+const readySecurityReviewStatus = securityReviewStatus.validateSecurityReviewStatus({
+  version: 1,
+  release: "v0.1.0",
+  items: Object.fromEntries(
+    securityReviewChecklist.phases.flatMap((phase) =>
+      phase.items.map((item) => [
+        item.id,
+        {
+          status: "complete",
+          evidence: `public-safe security evidence for ${item.id}`,
+        },
+      ])
+    )
+  ),
+});
+assert.equal(
+  securityReviewStatus.assertSecurityReviewReady(
+    securityReviewStatus.mergeSecurityReviewStatus(securityReviewChecklist, readySecurityReviewStatus)
+  ).ready,
+  true
+);
+assert.throws(
+  () => securityReviewStatus.assertSecurityReviewReady(securityReviewWithStatus),
+  /security review is not ready/
+);
+const securityReviewSkeletonPath = path.join(os.tmpdir(), `6529-security-review-${Date.now()}.json`);
+securityReviewStatus.writeSecurityReviewStatusFile(
+  securityReviewSkeletonPath,
+  securityReviewStatus.createSecurityReviewStatusSkeleton(securityReviewChecklist)
+);
+assert.equal(
+  securityReviewStatus.loadSecurityReviewStatus(securityReviewSkeletonPath).items["review-scope-recorded"].status,
+  "pending"
+);
+assert.deepEqual(
+  securityReviewStatusCli.parseArgs([
+    "--",
+    "--file",
+    "security.json",
+    "--status-file",
+    "status.json",
+    "--json",
+    "--quiet",
+    "--summary",
+    "--require-ready",
+    "--init-status",
+    "new-status.json",
+    "--force",
+  ]),
+  {
+    file: "security.json",
     force: true,
     initStatusFile: "new-status.json",
     json: true,

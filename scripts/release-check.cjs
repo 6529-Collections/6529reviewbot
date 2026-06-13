@@ -37,6 +37,14 @@ runNode("bin/dogfood-status.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/security-review-status.cjs", ["--json", "--quiet"]);
+runNode("bin/security-review-status.cjs", [
+  "--status-file",
+  "config/security-review-status.example.json",
+  "--summary",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/support-bundle.cjs", ["--json", "--quiet"]);
 runNode("bin/operator-evidence.cjs", [
   "--file",
