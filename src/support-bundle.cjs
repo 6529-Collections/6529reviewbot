@@ -208,7 +208,13 @@ function safeGit(run, args) {
 }
 
 function supportText(value, maxChars = SUPPORT_VALUE_MAX_CHARS) {
-  return redactSensitiveText(value).slice(0, maxChars);
+  return redactLocalPaths(redactSensitiveText(value)).slice(0, maxChars);
+}
+
+function redactLocalPaths(value) {
+  return String(value || "")
+    .replace(/\b[A-Za-z]:\\[^\r\n\t "'`<>]+/g, "[absolute-path]")
+    .replace(/(^|[\s("'`])\/(?:Users|home)\/[^\r\n\t "'`<>]+/g, "$1[absolute-path]");
 }
 
 module.exports = {
@@ -218,5 +224,6 @@ module.exports = {
   environmentSummary,
   formatSupportBundleMarkdown,
   preflightSummary,
+  redactLocalPaths,
   safeEnvValue,
 };

@@ -95,6 +95,7 @@ const scheduledSpendCheck = require("../src/scheduled-spend-check.cjs");
 const spendAlerts = require("../src/spend-alerts.cjs");
 const supportBundle = require("../src/support-bundle.cjs");
 const supportBundleCli = require("../bin/support-bundle.cjs");
+const supportBundleContractCheck = require("./check-support-bundle-contract.cjs");
 const usageApi = require("../src/usage-api.cjs");
 const usageApiClient = require("../src/usage-api-client.cjs");
 const usageApiRoutesCheck = require("./check-usage-api-routes.cjs");
@@ -288,6 +289,11 @@ assert.deepEqual(adminSnapshotContractCheck.expectedChecks, [
   "runtime_status_server",
   "runtime_status_worker",
 ]);
+assert.equal(supportBundleContractCheck.requiredSafeEnvKeys.includes("REVIEWBOT_ADMIN_AUTH_MODE"), true);
+assert.equal(
+  supportBundleContractCheck.requiredPresenceEnvKeys.includes("REVIEWBOT_ADMIN_AUTH_HMAC_SECRET"),
+  true
+);
 assert.throws(
   () =>
     reviewBinEntrypointsCheck.checkReviewBinEntrypoints({
@@ -4896,6 +4902,18 @@ appServer.handleGitHubWebhook({
         },
       }),
     /admin snapshot contract check found/
+  );
+  const supportBundleContractResult = supportBundleContractCheck.checkSupportBundleContract();
+  assert.equal(supportBundleContractResult.safeKeys, 17);
+  assert.throws(
+    () =>
+      supportBundleContractCheck.checkSupportBundleContract({
+        quiet: true,
+        docTexts: {
+          "docs/support.md": "# Support\n",
+        },
+      }),
+    /support bundle contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

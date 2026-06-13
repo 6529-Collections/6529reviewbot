@@ -328,10 +328,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Usage API route contract PR: merged as PR #183, merge commit `d4f8cb6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-snapshot-contract`.
-- Current local changes: adding an admin-snapshot contract check that keeps
-  private operator snapshot names, default policy, warning posture, redaction
-  behavior, CLI flags, and docs synchronized.
+- Admin snapshot contract PR: merged as PR #184, merge commit `9b020a6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/support-bundle-contract`.
+- Current local changes: adding a support-bundle contract check and tightening
+  support output local-path redaction so safe env values, presence-only secret
+  keys, local path handling, CLI flags, and docs stay synchronized.
 
 ## Key Decisions
 
@@ -743,6 +745,11 @@ merged PRs.
   endpoint posture into bounded counts and warnings, preserve redacted
   placeholders, and keep raw usage rows, repo names, budget scope details,
   prompts, diffs, provider responses, and credentials out of public artifacts.
+- Support bundles are intended for triage, not raw evidence dumps. They should
+  report secret/account-linked configuration as `set` or `unset`, redact
+  common secret-shaped strings and local absolute paths, and still be reviewed
+  before public posting because file names and runtime posture can be
+  sensitive.
 
 ## Constraints
 
@@ -756,7 +763,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the admin-snapshot contract check.
+2. Publish and merge the support-bundle contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

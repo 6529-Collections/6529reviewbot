@@ -49,6 +49,8 @@ env templates aligned.
 OpenAPI paths, 6529.io client methods, env templates, and docs aligned.
 `npm run check:admin-snapshot` keeps admin snapshot check names, default
 policy, warning posture, redaction behavior, CLI flags, and docs aligned.
+`npm run check:support-bundle` keeps sanitized support-bundle safe env keys,
+presence-only secret keys, local path redaction, CLI flags, and docs aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
@@ -80,6 +82,7 @@ The local quality gate command inventory is:
 - `npm run check:admin-auth`
 - `npm run check:usage-api-routes`
 - `npm run check:admin-snapshot`
+- `npm run check:support-bundle`
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`

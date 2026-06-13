@@ -387,6 +387,9 @@ methods, env templates, and docs stay synchronized.
 `npm run check:admin-snapshot` is included in `npm run release:check` and
 verifies admin snapshot check names, default policy, warning posture,
 redaction behavior, CLI flags, and docs stay synchronized.
+`npm run check:support-bundle` is included in `npm run release:check` and
+verifies sanitized support-bundle safe env keys, presence-only secret keys,
+local path redaction, CLI flags, and docs stay synchronized.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

@@ -443,6 +443,8 @@ Completed in `6529reviewbot`:
 - admin-snapshot checks that keep private operator snapshot names, default
   policy, warning posture, redaction behavior, CLI flags, and docs
   synchronized.
+- support-bundle checks that keep safe env keys, presence-only secret keys,
+  local path redaction, CLI flags, and support docs synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog
