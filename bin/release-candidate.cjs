@@ -15,6 +15,8 @@ function main(argv = process.argv.slice(2), options = {}) {
     ...options,
     gateStatusFile: args.gateStatusFile,
     gatesFile: args.gatesFile,
+    cutoverChecklistFile: args.cutoverChecklistFile,
+    cutoverStatusFile: args.cutoverStatusFile,
     includeGitStatus: args.includeGitStatus,
     operatorEvidenceFile: args.operatorEvidenceFile,
     preflightProfile: args.preflightProfile,
@@ -37,6 +39,8 @@ function parseArgs(argv) {
   const result = {
     gateStatusFile: "",
     gatesFile: "config/v0-release-gates.json",
+    cutoverChecklistFile: "config/production-cutover-checklist.json",
+    cutoverStatusFile: "",
     includeGitStatus: false,
     json: false,
     operatorEvidenceFile: "config/production-evidence.example.json",
@@ -86,6 +90,16 @@ function parseArgs(argv) {
       index += 1;
       continue;
     }
+    if (arg === "--cutover-file" || arg === "--cutover-checklist-file") {
+      result.cutoverChecklistFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--cutover-status-file") {
+      result.cutoverStatusFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
     if (arg === "--profile") {
       result.preflightProfile = enumValue(requiredValue(argv, index, arg), ["server", "worker"], arg);
       index += 1;
@@ -127,12 +141,15 @@ Usage:
   npm run release:candidate
   npm run release:candidate -- -- --json
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+  npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 
 Options:
   --gate-file <path>              Release gates JSON file. Default: config/v0-release-gates.json
   --status-file <path>            Optional release gate status/evidence JSON file.
   --operator-evidence-file <path> Operator evidence JSON file. Default: config/production-evidence.example.json
+  --cutover-file <path>            Production cutover checklist JSON file. Default: config/production-cutover-checklist.json
+  --cutover-status-file <path>     Optional production cutover status/evidence JSON file.
   --profile server|worker         Preflight profile. Default: server.
   --strict-preflight              Treat preflight warnings as failures.
   --require-ready                 Fail unless gates, operator evidence, and preflight are ready.

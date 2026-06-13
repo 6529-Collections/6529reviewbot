@@ -1594,11 +1594,27 @@ assert.equal(candidateBundle.readiness.releaseGates.deferred, 1);
 assert(candidateBundle.readiness.releaseGates.missingStatusIds.includes("container-image"));
 assert.equal(candidateBundle.readiness.operatorEvidence.pending, 8);
 assert.equal(candidateBundle.readiness.preflight.ok, true);
+assert.equal(Object.prototype.hasOwnProperty.call(candidateBundle.readiness, "productionCutover"), false);
 assert.match(candidateBundle.git.branch, /sk-\[redacted\]/);
 assert.match(candidateBundle.git.status, /github_pat_\[redacted\]/);
 const candidateBundleMarkdown = releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundle);
 assert.match(candidateBundleMarkdown, /Release Candidate Bundle/);
 assert.match(candidateBundleMarkdown, /missing gate status ids/);
+const candidateBundleWithCutover = releaseCandidate.collectReleaseCandidateBundle({
+  env: preflightEnv,
+  gateStatusFile: "config/v0-release-status.example.json",
+  cutoverStatusFile: "config/production-cutover-status.example.json",
+  now: new Date("2026-06-12T00:00:00.000Z"),
+});
+assert.equal(candidateBundleWithCutover.readiness.productionCutover.complete, 2);
+assert.equal(candidateBundleWithCutover.readiness.productionCutover.deferred, 2);
+assert.equal(candidateBundleWithCutover.readiness.productionCutover.pending, 25);
+assert.deepEqual(candidateBundleWithCutover.readiness.productionCutover.missingStatusIds, []);
+assert.equal(candidateBundleWithCutover.ready, false);
+const candidateBundleWithCutoverMarkdown =
+  releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithCutover);
+assert.match(candidateBundleWithCutoverMarkdown, /production cutover: not ready/);
+assert.match(candidateBundleWithCutoverMarkdown, /missing cutover status ids: none/);
 assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(
@@ -1627,6 +1643,10 @@ assert.deepEqual(
     "status.json",
     "--operator-evidence-file",
     "evidence.json",
+    "--cutover-file",
+    "cutover.json",
+    "--cutover-status-file",
+    "cutover-status.json",
     "--strict-preflight",
     "--require-ready",
     "--profile",
@@ -1636,6 +1656,8 @@ assert.deepEqual(
     "--include-git-status",
   ]),
   {
+    cutoverChecklistFile: "cutover.json",
+    cutoverStatusFile: "cutover-status.json",
     gateStatusFile: "status.json",
     gatesFile: "config/v0-release-gates.json",
     includeGitStatus: true,

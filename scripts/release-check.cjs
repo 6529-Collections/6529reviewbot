@@ -42,6 +42,12 @@ runNode("bin/production-cutover.cjs", [
   "--quiet",
 ]);
 runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
+runNode("bin/release-candidate.cjs", [
+  "--cutover-status-file",
+  "config/production-cutover-status.example.json",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", [
   "--status-file",

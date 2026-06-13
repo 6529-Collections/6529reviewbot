@@ -1631,3 +1631,24 @@
   - `npm run production:cutover -- -- --status-file config/production-cutover-status.example.json --summary` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #125 as `0d9a91d` after CI and Dependency Review
+  passed; the normal protected merge path allowed the merge while CodeRabbit
+  remained in its processing placeholder with no review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27451765258`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27451765279`, completed successfully.
+- Local clean-main validation after PR #125 merge:
+  - `npm run release:check` passed.
+- Started `codex/release-candidate-cutover-summary` increment:
+  - add optional production cutover status summary support to the
+    release-candidate bundle;
+  - keep cutover evidence public-safe and redacted, while the real status file
+    remains private operator-owned state;
+  - update release docs, smoke tests, release checks, changelog, roadmap, and
+    manager memory.
+- Local validation for `codex/release-candidate-cutover-summary`:
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:candidate -- -- --cutover-status-file config/production-cutover-status.example.json --json --quiet` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

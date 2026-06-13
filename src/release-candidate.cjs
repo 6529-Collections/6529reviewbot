@@ -18,6 +18,14 @@ const {
   publicOperatorEvidenceDocument,
   summarizeOperatorEvidence,
 } = require("./operator-evidence.cjs");
+const {
+  assertProductionCutoverReady,
+  loadProductionCutoverChecklist,
+  loadProductionCutoverStatus,
+  mergeProductionCutoverStatus,
+  missingProductionCutoverStatusIds,
+  summarizeProductionCutover,
+} = require("./production-cutover.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
@@ -35,6 +43,9 @@ function collectReleaseCandidateBundle(options = {}) {
   const operatorEvidenceFile =
     options.operatorEvidenceFile || "config/production-evidence.example.json";
   const gateStatusFile = options.gateStatusFile || "";
+  const cutoverChecklistFile =
+    options.cutoverChecklistFile || "config/production-cutover-checklist.json";
+  const cutoverStatusFile = options.cutoverStatusFile || "";
 
   const gates = loadReleaseGates(gatesFile);
   const gateStatus = gateStatusFile ? loadReleaseGateStatus(gateStatusFile) : null;
@@ -46,6 +57,9 @@ function collectReleaseCandidateBundle(options = {}) {
 
   const operatorEvidence = loadOperatorEvidence(operatorEvidenceFile);
   const operatorEvidenceSummary = summarizeOperatorEvidence(operatorEvidence);
+  const cutover = cutoverStatusFile
+    ? collectCutoverSummary(cutoverChecklistFile, cutoverStatusFile)
+    : null;
   const preflight = preflightSummary(
     runPreflight({
       env: options.env || process.env,
@@ -59,6 +73,7 @@ function collectReleaseCandidateBundle(options = {}) {
     releaseGateSummary.ready &&
     missingGateStatusIds.length === 0 &&
     operatorEvidenceSummary.ready &&
+    (!cutover || (cutover.summary.ready && cutover.missingStatusIds.length === 0)) &&
     preflight.ok;
 
   const bundle = {
@@ -74,6 +89,8 @@ function collectReleaseCandidateBundle(options = {}) {
       releaseGatesFile: publicPath(gatesFile, root),
       releaseGateStatusFile: gateStatusFile ? publicPath(gateStatusFile, root) : "",
       operatorEvidenceFile: publicPath(operatorEvidenceFile, root),
+      productionCutoverChecklistFile: cutover ? publicPath(cutoverChecklistFile, root) : "",
+      productionCutoverStatusFile: cutoverStatusFile ? publicPath(cutoverStatusFile, root) : "",
       preflightProfile: preflight.profile,
       strictPreflight: preflight.strict,
     },
@@ -84,6 +101,14 @@ function collectReleaseCandidateBundle(options = {}) {
         missingStatusIds: missingGateStatusIds.map((id) => publicText(id)),
       },
       operatorEvidence: operatorEvidenceSummary,
+      ...(cutover
+        ? {
+            productionCutover: {
+              ...cutover.summary,
+              missingStatusIds: cutover.missingStatusIds.map((id) => publicText(id)),
+            },
+          }
+        : {}),
       preflight,
     },
     publicEvidence: {
@@ -104,6 +129,18 @@ function collectReleaseCandidateBundle(options = {}) {
     }
     assertReleaseGatesReady(mergedGates);
     assertOperatorEvidenceReady(operatorEvidence);
+    if (cutover) {
+      if (cutover.missingStatusIds.length) {
+        throw new Error(
+          [
+            "production cutover status is missing",
+            `${cutover.missingStatusIds.length} current item(s):`,
+            `${cutover.missingStatusIds.join(", ")}.`,
+          ].join(" ")
+        );
+      }
+      assertProductionCutoverReady(cutover.merged);
+    }
     if (!preflight.ok) {
       throw new Error(
         [
@@ -116,6 +153,16 @@ function collectReleaseCandidateBundle(options = {}) {
   }
 
   return bundle;
+}
+
+function collectCutoverSummary(cutoverChecklistFile, cutoverStatusFile) {
+  const checklist = loadProductionCutoverChecklist(cutoverChecklistFile);
+  const status = loadProductionCutoverStatus(cutoverStatusFile);
+  return {
+    missingStatusIds: missingProductionCutoverStatusIds(checklist, status),
+    merged: mergeProductionCutoverStatus(checklist, status),
+    summary: summarizeProductionCutover(mergeProductionCutoverStatus(checklist, status)),
+  };
 }
 
 function preflightSummary(result, strict) {
@@ -153,6 +200,12 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     `- release gates: ${publicText(bundle.inputs.releaseGatesFile)}`,
     `- release gate status: ${publicText(bundle.inputs.releaseGateStatusFile || "not provided")}`,
     `- operator evidence: ${publicText(bundle.inputs.operatorEvidenceFile)}`,
+    ...(bundle.inputs.productionCutoverStatusFile
+      ? [
+          `- production cutover checklist: ${publicText(bundle.inputs.productionCutoverChecklistFile)}`,
+          `- production cutover status: ${publicText(bundle.inputs.productionCutoverStatusFile)}`,
+        ]
+      : []),
     `- preflight: ${publicText(bundle.inputs.preflightProfile)}${
       bundle.inputs.strictPreflight ? " strict" : ""
     }`,
@@ -161,12 +214,22 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     "",
     readinessLine("release gates", bundle.readiness.releaseGates),
     readinessLine("operator evidence", bundle.readiness.operatorEvidence),
+    ...(bundle.readiness.productionCutover
+      ? [readinessLine("production cutover", bundle.readiness.productionCutover)]
+      : []),
     [
       `- preflight: ${bundle.readiness.preflight.ok ? "ready" : "not ready"}`,
       `(${bundle.readiness.preflight.errors.length} errors,`,
       `${bundle.readiness.preflight.warnings.length} warnings)`,
     ].join(" "),
     `- missing gate status ids: ${idList(bundle.readiness.releaseGates.missingStatusIds)}`,
+    ...(bundle.readiness.productionCutover
+      ? [
+          `- missing cutover status ids: ${idList(
+            bundle.readiness.productionCutover.missingStatusIds
+          )}`,
+        ]
+      : []),
     "",
     "## Preflight Errors",
     "",
@@ -237,6 +300,14 @@ function releaseCandidateCommands() {
     {
       label: "operator evidence readiness",
       command: "npm run operator:evidence -- -- --file <private-evidence-file> --require-ready",
+    },
+    {
+      label: "production cutover summary",
+      command: "npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary",
+    },
+    {
+      label: "production cutover readiness",
+      command: "npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready",
     },
     { label: "production preflight", command: "npm run preflight -- -- --strict" },
   ];
