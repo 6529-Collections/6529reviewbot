@@ -82,6 +82,7 @@ const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
+const reviewContextBoundaryCheck = require("./check-review-context-boundary.cjs");
 const reviewWorkflowKindsCheck = require("./check-review-workflow-kinds.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -203,6 +204,25 @@ assert.throws(
       },
     }),
   /review comment format check found/
+);
+const reviewContextBoundaryResult = reviewContextBoundaryCheck.checkReviewContextBoundary();
+assert.equal(reviewContextBoundaryResult.pathCases, 11);
+assert.equal(reviewContextBoundaryResult.hardLimits, 9);
+assert.throws(
+  () =>
+    reviewContextBoundaryCheck.checkReviewContextBoundary({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        "docs/architecture.md": "# Architecture\n",
+        "docs/configuration.md": "# Configuration\n",
+        "docs/security-model.md": "# Security Model\n",
+        "docs/security-review-checklist.md": "# Security Review Checklist\n",
+        "docs/release-operations-map.md": "# Release Operations Map\n",
+        "docs/release-readiness.md": "# Release Readiness\n",
+      },
+    }),
+  /review context boundary check found/
 );
 assert.equal(admissionPolicyCheck.checkAdmissionPolicy().repoModes, 3);
 assert.deepEqual(admissionPolicyCheck.expectedRepoModes, ["trusted", "off", "open"]);

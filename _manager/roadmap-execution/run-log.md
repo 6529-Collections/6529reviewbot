@@ -2895,3 +2895,25 @@
   - `npm test` passed;
   - `npm run release:check` passed, including preflight contract validation
     and 62 mapped release-operation tools.
+- Merged `6529reviewbot` PR #187 as `7e4aa6d`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/review-context-boundary-contract` increment:
+  - add `scripts/check-review-context-boundary.cjs` and
+    `npm run check:review-context-boundary`;
+  - validate repository path safety, workspace containment, trusted hidden
+    metadata handling, prompt metadata stripping, prompt input truncation,
+    provider diagnostic redaction, hard context/token/timeout caps, and source
+    invariants for symlink rejection and untrusted-content wording;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/review-context-boundary-contract`:
+  - `npm run check:review-context-boundary` passed with 11 path cases, 9 hard
+    limits, and 7 docs checked;
+  - `npm run check:release-operations` passed with 63 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 120 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including review-context boundary
+    validation and 63 mapped release-operation tools.

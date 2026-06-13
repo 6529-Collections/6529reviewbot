@@ -334,10 +334,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Diagnostics redaction contract PR: merged as PR #186, merge commit
   `cc98f88`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/preflight-contract`.
-- Current local changes: adding a preflight contract check that keeps
-  no-network preflight check order, strict/profile behavior, CLI flags,
-  redacted diagnostics, and docs synchronized.
+- Preflight contract PR: merged as PR #187, merge commit `7e4aa6d`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/review-context-boundary-contract`.
+- Current local changes: adding a review-context boundary contract check that
+  keeps path safety, trusted metadata handling, prompt hygiene, hard caps, and
+  source-boundary docs synchronized.
 
 ## Key Decisions
 
@@ -761,6 +763,9 @@ merged PRs.
 - Runtime preflight is a deployment gate and an admin-status input. Keep check
   order, strict/profile behavior, CLI flags, redacted diagnostics, and docs
   machine-checked so operator evidence stays stable as config parsers evolve.
+- Review context is a core untrusted-input boundary. Path safety, trusted
+  hidden metadata, prompt hygiene, and hard model-call caps should be
+  machine-checked independently of broad smoke coverage.
 
 ## Constraints
 
@@ -774,7 +779,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the preflight contract check.
+2. Publish and merge the review-context boundary contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

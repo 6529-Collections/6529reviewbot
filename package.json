@@ -57,6 +57,7 @@
     "check:container-image": "node scripts/check-container-image.cjs",
     "check:comment-commands": "node scripts/check-comment-commands.cjs",
     "check:review-workflows": "node scripts/check-review-workflow-kinds.cjs",
+    "check:review-context-boundary": "node scripts/check-review-context-boundary.cjs",
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
     "check:providers": "node scripts/check-provider-contract.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",

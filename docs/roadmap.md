@@ -265,6 +265,8 @@ Build the operator experience:
 - review-workflow kind checks that keep App constants, worker bins, workflow
   dispatch choices, reusable defaults, and routing aligned as review modes
   evolve;
+- review-context boundary checks that keep path safety, trusted metadata,
+  prompt hygiene, and hard caps aligned with the security model;
 - review-bin entrypoint checks that keep prompt configs, CLI entrypoints,
   package scripts, and review workflow docs aligned as review modes evolve;
 - model-default checks that keep catalog defaults, reusable workflow fallbacks,
@@ -421,6 +423,8 @@ Completed in `6529reviewbot`:
 - review-workflow kind checks that keep review-kind constants, worker bins,
   workflow dispatch choices, reusable workflow defaults, and workflow routing
   synchronized.
+- review-context boundary checks that keep path safety, trusted metadata,
+  prompt hygiene, hard caps, and source-boundary docs synchronized.
 - review-bin entrypoint checks that keep review-kind prompt configs, CLI
   entrypoints, package scripts, and review workflow docs synchronized.
 - review-comment format checks that keep generated public PR comment headings,

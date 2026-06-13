@@ -66,6 +66,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "review-context-boundary-contract",
+          "script": "check:review-context-boundary",
+          "purpose": "Verify review context path safety, trusted metadata handling, prompt hygiene, hard caps, and source-boundary docs stay synchronized.",
+          "doc": "docs/security-model.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "review-bin-entrypoint-contract",
           "script": "check:review-bins",
           "purpose": "Verify review-kind prompt configs, bin entrypoints, package scripts, and review workflow docs stay synchronized.",
