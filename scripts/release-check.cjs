@@ -68,8 +68,16 @@ runNode("bin/release-candidate.cjs", [
   "--quiet",
 ]);
 runNode("bin/release-candidate.cjs", [
+  "--security-review-status-file",
+  "config/security-review-status.example.json",
+  "--json",
+  "--quiet",
+]);
+runNode("bin/release-candidate.cjs", [
   "--dogfood-status-file",
   "config/dogfood-status.example.json",
+  "--security-review-status-file",
+  "config/security-review-status.example.json",
   "--cutover-status-file",
   "config/production-cutover-status.example.json",
   "--json",

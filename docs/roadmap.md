@@ -338,6 +338,8 @@ Completed in `6529reviewbot`:
   tag-readiness and traffic-readiness artifact;
 - optional release-candidate dogfood status summaries for public-safe
   command-only and limited-initial evidence rollups;
+- optional release-candidate security-review status summaries for public-safe
+  manual-review evidence rollups;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

@@ -34,6 +34,14 @@ const {
   missingDogfoodStatusIds,
   summarizeDogfood,
 } = require("./dogfood-status.cjs");
+const {
+  assertSecurityReviewReady,
+  loadSecurityReviewChecklist,
+  loadSecurityReviewStatus,
+  mergeSecurityReviewStatus,
+  missingSecurityReviewStatusIds,
+  summarizeSecurityReview,
+} = require("./security-review-status.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const packageJson = require("../package.json");
 
@@ -56,6 +64,9 @@ function collectReleaseCandidateBundle(options = {}) {
   const cutoverStatusFile = options.cutoverStatusFile || "";
   const dogfoodChecklistFile = options.dogfoodChecklistFile || "config/dogfood-checklist.json";
   const dogfoodStatusFile = options.dogfoodStatusFile || "";
+  const securityReviewChecklistFile =
+    options.securityReviewChecklistFile || "config/security-review-checklist.json";
+  const securityReviewStatusFile = options.securityReviewStatusFile || "";
 
   const gates = loadReleaseGates(gatesFile);
   const gateStatus = gateStatusFile ? loadReleaseGateStatus(gateStatusFile) : null;
@@ -73,6 +84,9 @@ function collectReleaseCandidateBundle(options = {}) {
   const dogfood = dogfoodStatusFile
     ? collectDogfoodSummary(dogfoodChecklistFile, dogfoodStatusFile)
     : null;
+  const securityReview = securityReviewStatusFile
+    ? collectSecurityReviewSummary(securityReviewChecklistFile, securityReviewStatusFile)
+    : null;
   const preflight = preflightSummary(
     runPreflight({
       env: options.env || process.env,
@@ -87,6 +101,8 @@ function collectReleaseCandidateBundle(options = {}) {
     missingGateStatusIds.length === 0 &&
     operatorEvidenceSummary.ready &&
     (!dogfood || (dogfood.summary.ready && dogfood.missingStatusIds.length === 0)) &&
+    (!securityReview ||
+      (securityReview.summary.ready && securityReview.missingStatusIds.length === 0)) &&
     (!cutover || (cutover.summary.ready && cutover.missingStatusIds.length === 0)) &&
     preflight.ok;
 
@@ -105,6 +121,8 @@ function collectReleaseCandidateBundle(options = {}) {
       operatorEvidenceFile: publicPath(operatorEvidenceFile, root),
       dogfoodChecklistFile: dogfood ? publicPath(dogfoodChecklistFile, root) : "",
       dogfoodStatusFile: dogfoodStatusFile ? publicPath(dogfoodStatusFile, root) : "",
+      securityReviewChecklistFile: securityReview ? publicPath(securityReviewChecklistFile, root) : "",
+      securityReviewStatusFile: securityReviewStatusFile ? publicPath(securityReviewStatusFile, root) : "",
       productionCutoverChecklistFile: cutover ? publicPath(cutoverChecklistFile, root) : "",
       productionCutoverStatusFile: cutoverStatusFile ? publicPath(cutoverStatusFile, root) : "",
       preflightProfile: preflight.profile,
@@ -122,6 +140,14 @@ function collectReleaseCandidateBundle(options = {}) {
             dogfood: {
               ...dogfood.summary,
               missingStatusIds: dogfood.missingStatusIds.map((id) => publicText(id)),
+            },
+          }
+        : {}),
+      ...(securityReview
+        ? {
+            securityReview: {
+              ...securityReview.summary,
+              missingStatusIds: securityReview.missingStatusIds.map((id) => publicText(id)),
             },
           }
         : {}),
@@ -164,6 +190,18 @@ function collectReleaseCandidateBundle(options = {}) {
         );
       }
       assertDogfoodReady(dogfood.merged);
+    }
+    if (securityReview) {
+      if (securityReview.missingStatusIds.length) {
+        throw new Error(
+          [
+            "security review status is missing",
+            `${securityReview.missingStatusIds.length} current item(s):`,
+            `${securityReview.missingStatusIds.join(", ")}.`,
+          ].join(" ")
+        );
+      }
+      assertSecurityReviewReady(securityReview.merged);
     }
     if (cutover) {
       if (cutover.missingStatusIds.length) {
@@ -211,6 +249,16 @@ function collectDogfoodSummary(dogfoodChecklistFile, dogfoodStatusFile) {
   };
 }
 
+function collectSecurityReviewSummary(securityReviewChecklistFile, securityReviewStatusFile) {
+  const checklist = loadSecurityReviewChecklist(securityReviewChecklistFile);
+  const status = loadSecurityReviewStatus(securityReviewStatusFile);
+  return {
+    missingStatusIds: missingSecurityReviewStatusIds(checklist, status),
+    merged: mergeSecurityReviewStatus(checklist, status),
+    summary: summarizeSecurityReview(mergeSecurityReviewStatus(checklist, status)),
+  };
+}
+
 function preflightSummary(result, strict) {
   return {
     ok: Boolean(result.ok),
@@ -252,6 +300,12 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
           `- dogfood status: ${publicText(bundle.inputs.dogfoodStatusFile)}`,
         ]
       : []),
+    ...(bundle.inputs.securityReviewStatusFile
+      ? [
+          `- security review checklist: ${publicText(bundle.inputs.securityReviewChecklistFile)}`,
+          `- security review status: ${publicText(bundle.inputs.securityReviewStatusFile)}`,
+        ]
+      : []),
     ...(bundle.inputs.productionCutoverStatusFile
       ? [
           `- production cutover checklist: ${publicText(bundle.inputs.productionCutoverChecklistFile)}`,
@@ -269,6 +323,9 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     ...(bundle.readiness.dogfood
       ? [readinessLine("dogfood", bundle.readiness.dogfood)]
       : []),
+    ...(bundle.readiness.securityReview
+      ? [readinessLine("security review", bundle.readiness.securityReview)]
+      : []),
     ...(bundle.readiness.productionCutover
       ? [readinessLine("production cutover", bundle.readiness.productionCutover)]
       : []),
@@ -280,6 +337,13 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     `- missing gate status ids: ${idList(bundle.readiness.releaseGates.missingStatusIds)}`,
     ...(bundle.readiness.dogfood
       ? [`- missing dogfood status ids: ${idList(bundle.readiness.dogfood.missingStatusIds)}`]
+      : []),
+    ...(bundle.readiness.securityReview
+      ? [
+          `- missing security review status ids: ${idList(
+            bundle.readiness.securityReview.missingStatusIds
+          )}`,
+        ]
       : []),
     ...(bundle.readiness.productionCutover
       ? [

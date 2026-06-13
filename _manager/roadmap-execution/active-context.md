@@ -226,10 +226,13 @@ merged PRs.
   `5aa39b1`; CI and Dependency Review completed successfully before merge.
 - Public env template validation PR: merged as PR #133, merge commit
   `559c449`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/security-review-status`.
-- Current local changes: adding security review checklist/status tooling so
-  operators can track private manual-review evidence before dogfood expansion
-  or public pre-v1 tags.
+- Security review status PR: merged as PR #134, merge commit `5884263`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-candidate-security-status`.
+- Current local changes: adding optional security-review status summaries to
+  the release-candidate bundle so tag/no-tag evidence can include manual
+  security-review posture alongside release gates, operator evidence, dogfood
+  status, cutover status, preflight, and git metadata.
 
 ## Key Decisions
 
@@ -500,6 +503,9 @@ merged PRs.
 - Manual security review should have a private status overlay like dogfood and
   production cutover so release notes can include public-safe readiness counts
   without copying reviewer-private evidence into the public repository.
+- Release-candidate bundles should include security-review status when the
+  release decision depends on a completed manual security review, but the
+  private security status file remains operator-owned.
 
 ## Constraints
 
@@ -513,7 +519,8 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge security review status tooling.
+2. Validate, publish, and merge release-candidate security-review status
+   integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

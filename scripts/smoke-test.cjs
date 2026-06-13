@@ -1855,6 +1855,20 @@ const candidateBundleWithDogfoodMarkdown =
   releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithDogfood);
 assert.match(candidateBundleWithDogfoodMarkdown, /dogfood: not ready/);
 assert.match(candidateBundleWithDogfoodMarkdown, /missing dogfood status ids: none/);
+const candidateBundleWithSecurityReview = releaseCandidate.collectReleaseCandidateBundle({
+  env: preflightEnv,
+  gateStatusFile: "config/v0-release-status.example.json",
+  securityReviewStatusFile: "config/security-review-status.example.json",
+  now: new Date("2026-06-12T00:00:00.000Z"),
+});
+assert.equal(candidateBundleWithSecurityReview.readiness.securityReview.complete, 1);
+assert.equal(candidateBundleWithSecurityReview.readiness.securityReview.pending, 32);
+assert.deepEqual(candidateBundleWithSecurityReview.readiness.securityReview.missingStatusIds, []);
+assert.equal(candidateBundleWithSecurityReview.ready, false);
+const candidateBundleWithSecurityReviewMarkdown =
+  releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithSecurityReview);
+assert.match(candidateBundleWithSecurityReviewMarkdown, /security review: not ready/);
+assert.match(candidateBundleWithSecurityReviewMarkdown, /missing security review status ids: none/);
 assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(
@@ -1887,6 +1901,10 @@ assert.deepEqual(
     "dogfood.json",
     "--dogfood-status-file",
     "dogfood-status.json",
+    "--security-review-file",
+    "security.json",
+    "--security-review-status-file",
+    "security-status.json",
     "--cutover-file",
     "cutover.json",
     "--cutover-status-file",
@@ -1913,6 +1931,8 @@ assert.deepEqual(
     preflightProfile: "worker",
     quiet: true,
     requireReady: true,
+    securityReviewChecklistFile: "security.json",
+    securityReviewStatusFile: "security-status.json",
     strictPreflight: true,
   }
 );

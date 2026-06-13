@@ -57,6 +57,9 @@ stabilized.
   counts and enforce cutover readiness when a cutover status file is supplied.
 - Release-candidate bundles can optionally include dogfood execution status
   counts and enforce dogfood readiness when a dogfood status file is supplied.
+- Release-candidate bundles can optionally include security-review status
+  counts and enforce security-review readiness when a security status file is
+  supplied.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.

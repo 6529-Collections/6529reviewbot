@@ -5,14 +5,17 @@ needs while preparing release notes or a tag/no-tag decision.
 
 It is intentionally no-network. It reads local release gate definitions,
 optional private release-gate status, optional private operator evidence, git
-metadata, package metadata, optional dogfood status, optional production
-cutover status, and the same preflight checks used by the runtime.
+metadata, package metadata, optional dogfood status, optional security-review
+status, optional production cutover status, and the same preflight checks used
+by the runtime.
 It does not replace `npm run release:check`, CI, Dependency Review, OpenSSF
 Scorecard, or private operator evidence.
 It also does not replace the [Production Cutover](production-cutover.md)
 checklist, which is the go/no-go layer for live dogfood or production traffic.
 It can include [Dogfood Status](dogfood-status.md) when the release decision
 depends on command-only or limited initial-review dogfood evidence.
+It can include [Security Review Status](security-review-status.md) when the
+release decision depends on a private manual security review status file.
 
 ## Command
 
@@ -40,6 +43,12 @@ Include dogfood status in the same public-safe bundle:
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>
 ```
 
+Include security-review status in the same public-safe bundle:
+
+```bash
+npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
+```
+
 Include production cutover status in the same public-safe bundle:
 
 ```bash
@@ -52,9 +61,10 @@ Fail unless the candidate is ready:
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
 
-When `--dogfood-status-file` or `--cutover-status-file` is provided,
-`--require-ready` also fails unless that status lists every current checklist
-item and no provided dogfood/cutover item is pending or blocked.
+When `--dogfood-status-file`, `--security-review-status-file`, or
+`--cutover-status-file` is provided, `--require-ready` also fails unless that
+status lists every current checklist item and no provided dogfood, security
+review, or cutover item is pending or blocked.
 
 Write the bundle to a file:
 
@@ -70,6 +80,8 @@ npm run release:candidate -- -- --status-file <operator-status-file> --operator-
 - release gates have no `pending` or `blocked` entries;
 - operator evidence has no `pending` or `blocked` sections;
 - if provided, dogfood status has no missing, `pending`, or `blocked` items;
+- if provided, security-review status has no missing, `pending`, or `blocked`
+  items;
 - if provided, production cutover status has no missing, `pending`, or
   `blocked` items;
 - preflight passes, with warnings treated as failures when
@@ -103,6 +115,8 @@ operator runbook, not in this public repository.
 - operator-evidence complete/deferred/pending/blocked counts;
 - dogfood complete/deferred/pending/blocked counts when a dogfood status file
   is provided;
+- security-review complete/deferred/pending/blocked counts when a security
+  review status file is provided;
 - production cutover complete/deferred/pending/blocked counts when a cutover
   status file is provided;
 - preflight error and warning summaries;

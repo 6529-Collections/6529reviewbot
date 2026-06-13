@@ -51,6 +51,9 @@ After stabilization:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file> --strict-preflight`
   reviewed when the release decision also covers command-only or limited
   initial-review dogfood evidence
+- `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file> --strict-preflight`
+  reviewed when the release decision also covers manual security review
+  evidence
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file> --strict-preflight`
   reviewed when the release decision also covers live dogfood or production
   traffic

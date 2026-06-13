@@ -19,6 +19,8 @@ function main(argv = process.argv.slice(2), options = {}) {
     cutoverStatusFile: args.cutoverStatusFile,
     dogfoodChecklistFile: args.dogfoodChecklistFile,
     dogfoodStatusFile: args.dogfoodStatusFile,
+    securityReviewChecklistFile: args.securityReviewChecklistFile,
+    securityReviewStatusFile: args.securityReviewStatusFile,
     includeGitStatus: args.includeGitStatus,
     operatorEvidenceFile: args.operatorEvidenceFile,
     preflightProfile: args.preflightProfile,
@@ -45,6 +47,8 @@ function parseArgs(argv) {
     cutoverStatusFile: "",
     dogfoodChecklistFile: "config/dogfood-checklist.json",
     dogfoodStatusFile: "",
+    securityReviewChecklistFile: "config/security-review-checklist.json",
+    securityReviewStatusFile: "",
     includeGitStatus: false,
     json: false,
     operatorEvidenceFile: "config/production-evidence.example.json",
@@ -114,6 +118,16 @@ function parseArgs(argv) {
       index += 1;
       continue;
     }
+    if (arg === "--security-review-file" || arg === "--security-review-checklist-file") {
+      result.securityReviewChecklistFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--security-review-status-file") {
+      result.securityReviewStatusFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
     if (arg === "--profile") {
       result.preflightProfile = enumValue(requiredValue(argv, index, arg), ["server", "worker"], arg);
       index += 1;
@@ -156,6 +170,7 @@ Usage:
   npm run release:candidate -- -- --json
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>
+  npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 
@@ -165,6 +180,9 @@ Options:
   --operator-evidence-file <path> Operator evidence JSON file. Default: config/production-evidence.example.json
   --dogfood-file <path>            Dogfood checklist JSON file. Default: config/dogfood-checklist.json
   --dogfood-status-file <path>     Optional dogfood status/evidence JSON file.
+  --security-review-file <path>    Security review checklist JSON file. Default: config/security-review-checklist.json
+  --security-review-status-file <path>
+                                   Optional security review status/evidence JSON file.
   --cutover-file <path>            Production cutover checklist JSON file. Default: config/production-cutover-checklist.json
   --cutover-status-file <path>     Optional production cutover status/evidence JSON file.
   --profile server|worker         Preflight profile. Default: server.
