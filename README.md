@@ -306,6 +306,12 @@ Validate the public-safe 6529.io dashboard env template:
 npm run check:6529-io-env
 ```
 
+Validate all public env templates:
+
+```bash
+npm run check:env-templates
+```
+
 Generate a sanitized support bundle:
 
 ```bash

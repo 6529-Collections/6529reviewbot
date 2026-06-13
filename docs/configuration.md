@@ -361,6 +361,16 @@ central App server and worker postures. It is included in
 `npm run release:check` so parser drift or missing required settings are caught
 before maintainers rely on a live environment.
 
+Public env examples are checked separately with:
+
+```bash
+npm run check:env-templates
+```
+
+This validates syntax, duplicate keys, blank secret placeholders, and the
+conservative dogfood defaults. It does not replace runtime preflight in a
+private operator environment.
+
 ## Usage API
 
 ```text

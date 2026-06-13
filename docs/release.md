@@ -78,6 +78,8 @@ After stabilization:
 - `npm run release:check`
 - `npm run check:6529-io-env` confirms the public-safe 6529.io dashboard env
   template still points only at reviewed usage/admin API contract paths
+- `npm run check:env-templates` confirms public env examples have valid syntax,
+  blank secret placeholders, and conservative dogfood defaults
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list
 - `npm run check:docs` passes before publishing docs-heavy release notes

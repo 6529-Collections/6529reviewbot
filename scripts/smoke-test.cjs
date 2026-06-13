@@ -49,6 +49,7 @@ const productionCutover = require("../src/production-cutover.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
+const envTemplatesCheck = require("./check-env-templates.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
 const modelPrices = require("../src/model-prices.cjs");
@@ -107,6 +108,9 @@ assert.equal(
   ""
 );
 assert.equal(envTemplateCheck.check6529IoEnvTemplate().pathCount, 8);
+assert.equal(envTemplatesCheck.checkEnvTemplates().files.length, 3);
+assert.equal(envTemplatesCheck.isSensitiveTemplateKey("REVIEWBOT_ALERTS_WEBHOOK_URL"), true);
+assert.equal(envTemplatesCheck.isSensitiveTemplateKey("REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS"), false);
 const catalog = modelCatalog.loadModelCatalog();
 assert.equal(catalog.providers.anthropic.defaultModel, "claude-opus-4-8");
 assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
