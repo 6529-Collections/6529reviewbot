@@ -134,7 +134,9 @@ function checkSourceAnchors(sourceTexts, findings) {
       "redactSensitiveText",
       "No accepted deferrals",
       "Dashboard deployment plan:",
+      "Alert delivery plan:",
       "`npm run dashboard:deployment-plan",
+      "`npm run alerts:delivery-plan",
     ],
     "bin/release-notes-publication.cjs": [
       "npm run release:notes:check",
@@ -178,6 +180,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-notes-template.md": [
       "Release Notes Publication",
       "Dashboard deployment plan:",
+      "Alert delivery plan:",
       "No accepted deferrals",
     ],
     "docs/release.md": [
@@ -230,6 +233,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Model pricing status: conservative defaults reviewed
 - Model price source freshness policy: reviewed during release candidate
 - Alert delivery: operator-owned channel verified
+- Alert delivery plan: ready
 - Empty provider output fail-closed evidence: smoke and release checks passed
 - Worker diagnostic redaction evidence: diagnostics redaction checks passed
 - 6529.io dashboard/admin status: public dashboard deployed or deferred
@@ -281,6 +285,7 @@ Pre-v1 releases may change worker payloads. Pin target repositories to an exact 
 - \`npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready\`: passed
 - \`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready\`: passed
 - \`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready\`: passed
+- \`npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready\`: passed
 - \`npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready\`: passed
 - \`npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready\`: passed
 - \`npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready\`: passed or explicitly dogfood-only

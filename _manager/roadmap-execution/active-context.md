@@ -431,27 +431,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert delivery plan PR: merged as PR #235, merge commit `e63001f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-alert-delivery-guidance`.
-- Current local changes: adding the alert delivery plan to generated operator
-  workspace guidance and `operator:drill` next commands so production alert
-  routing handoff commands stay in the same private operator flow as
-  production deployment, dashboard deployment, release-candidate, promotion,
-  and go-live gates.
+- Operator alert delivery guidance PR: merged as PR #236, merge commit `0694ed7`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-alert-delivery`.
+- Current local changes: adding alert delivery plan evidence to release notes
+  draft output, template, publication guard, contract checks, release docs,
+  roadmap, changelog, and durable manager memory so public pre-v1 notes require
+  the reviewed alert routing handoff alongside production and dashboard plan
+  evidence.
 - Current local validation:
-  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
-    cases, and 6 docs checked;
-  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases and
     7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #235,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #236,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator drill contract
-    validation for 8 next commands and alert delivery handoff guidance.
+  - `npm run release:check` passed, including release notes draft and
+    publication contract validation with alert delivery plan evidence.
 
 ## Key Decisions
 

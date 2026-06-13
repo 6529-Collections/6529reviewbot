@@ -79,10 +79,12 @@ function checkDefaultDraft(findings) {
     "Release candidate bundle:",
     "Production deployment plan:",
     "Dashboard deployment plan:",
+    "Alert delivery plan:",
     "TODO(operator)",
     "`npm run release:check`",
     "`npm run production:deployment-plan",
     "`npm run dashboard:deployment-plan",
+    "`npm run alerts:delivery-plan",
     "`npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -162,6 +164,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "loadModelCatalog",
       "TODO(operator)",
       "dashboard:deployment-plan",
+      "alerts:delivery-plan",
       "publicText",
     ],
     "bin/release-notes-draft.cjs": [

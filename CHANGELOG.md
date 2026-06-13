@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added alert delivery plan evidence to release notes draft, template, and
+  publication checks.
 - Added alert delivery plan guidance to generated operator workspaces and
   operator drill next commands.
 - Added an alert delivery plan command and contract check for dry-run

@@ -4078,3 +4078,28 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator drill contract
     validation for 8 next commands and alert delivery handoff guidance.
+- Merged `6529reviewbot` PR #236 as `0694ed7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-alert-delivery` increment:
+  - add `Alert delivery plan` to release notes draft tested configuration and
+    completed-notes publication requirements;
+  - add the `npm run alerts:delivery-plan` validation command to release notes
+    drafts, templates, and publication guard fixtures;
+  - update release-notes docs, release-readiness, roadmap, changelog, and
+    durable manager memory so pre-v1 release notes require reviewed alert
+    delivery handoff evidence alongside production and dashboard plan evidence.
+- Local validation for `codex/release-notes-alert-delivery` so far:
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #236,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including release notes draft and
+    publication contract validation with alert delivery plan evidence.
