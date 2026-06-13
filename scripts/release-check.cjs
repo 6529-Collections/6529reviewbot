@@ -50,6 +50,7 @@ runNode("scripts/check-operator-drill-contract.cjs");
 runNode("scripts/check-operator-evidence-contract.cjs");
 runNode("scripts/check-production-cutover-contract.cjs");
 runNode("scripts/check-production-deployment-plan-contract.cjs");
+runNode("scripts/check-dashboard-deployment-plan-contract.cjs");
 runNode("scripts/check-security-review-status-contract.cjs");
 runNode("scripts/check-review-bin-entrypoints.cjs");
 runNode("scripts/check-review-comment-format.cjs");
@@ -152,6 +153,7 @@ runNode("bin/production-cutover.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/dashboard-deployment-plan.cjs", ["--json", "--quiet"]);
 runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
 runNode("bin/release-candidate.cjs", [
   "--dogfood-status-file",

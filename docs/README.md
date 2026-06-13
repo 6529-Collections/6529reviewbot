@@ -42,6 +42,8 @@ be linked here before they are considered release-ready.
 - [Production Deployment Plan](production-deployment-plan.md): dry-run
   operator handoff across App registration, image publish, operator workspace,
   preflight, cutover, and dogfood gates.
+- [Dashboard Deployment Plan](dashboard-deployment-plan.md): dry-run 6529.io
+  public/private dashboard configuration and verification handoff.
 
 ## Policy, Spend, And Reporting
 

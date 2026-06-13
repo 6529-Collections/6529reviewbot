@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a dashboard deployment plan guard and contract check for dry-run
+  6529.io dashboard handoff across frontend env, bot public disclosure, HMAC
+  admin auth, route verification, cutover evidence, and release notes.
 - Recorded the merged 6529.io public usage and private admin dashboard PRs in
   release roadmap docs.
 - Added production deployment plan evidence to release notes draft, template,

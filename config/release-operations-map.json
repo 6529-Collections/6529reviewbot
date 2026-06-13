@@ -423,6 +423,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "dashboard-deployment-plan-contract",
+          "script": "check:dashboard-deployment-plan",
+          "purpose": "Verify the dry-run 6529.io dashboard deployment plan keeps frontend env, bot public disclosure, HMAC admin auth, dashboard verification, cutover evidence, and release notes synchronized.",
+          "doc": "docs/dashboard-deployment-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "security-review-status-contract",
           "script": "check:security-review-status",
           "purpose": "Verify security review status readiness, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
@@ -599,6 +606,15 @@
           "doc": "docs/production-deployment-plan.md",
           "privateInputs": "Reads operator-supplied origins, registry names, and private workspace paths from command-line inputs.",
           "publicOutput": "Review before public sharing because command lines can include private deployment origins, registry names, and workspace paths."
+        },
+        {
+          "id": "dashboard-deployment-plan",
+          "script": "dashboard:deployment-plan",
+          "args": "-- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready",
+          "purpose": "Build the dry-run 6529.io dashboard deployment handoff plan across frontend env, bot public disclosure, HMAC admin auth, dashboard verification, cutover evidence, and release notes.",
+          "doc": "docs/dashboard-deployment-plan.md",
+          "privateInputs": "Reads operator-supplied frontend origins, bot origins, auth-check URLs, and private workspace paths from command-line inputs.",
+          "publicOutput": "Review before public sharing because command lines can include private deployment origins, auth endpoint names, wallet-config context, and workspace paths."
         }
       ]
     },

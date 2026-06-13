@@ -415,23 +415,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes deployment-plan evidence PR: merged as PR #227, merge commit `05f37aa`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-merge-roadmap-sync`.
-- Current local changes: updating release roadmap docs, changelog, and durable
-  manager memory after merging the 6529.io public usage dashboard PR #2605 and
-  private admin dashboard PR #2632 into frontend `main`; remaining dashboard
-  work is production deployment/configuration, not PR merge.
+- Dashboard merge roadmap sync PR: merged as PR #228, merge commit `f5b0a5f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dashboard-deployment-plan`.
+- Current local changes: adding a dry-run 6529.io dashboard deployment plan,
+  CLI, contract check, release-operation wiring, and docs so production
+  dashboard configuration has an explicit operator handoff.
 - Current local validation:
-  - `npm run check:docs` passed with 71 files checked;
-  - `npm run check:doc-index` passed with 57 docs indexed;
-  - `git diff --check` passed;
-  - `npm run check:public-artifacts` passed with 114 files checked;
-  - `npm run check` passed with 168 CommonJS files;
-  - `npm run check:release-operations` passed with 105 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #227,
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:release-operations` passed with 107 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #228,
     and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check` passed with 171 CommonJS files;
+  - `git diff --check` passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including dashboard roadmap/memory
-    synchronization.
+  - `npm run release:check` passed, including dashboard deployment plan
+    contract validation and 107 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -985,6 +988,11 @@ merged PRs.
   workspace inputs, but the operator still creates the App, converts manifest
   codes, deploys services, runs live checks, and enables dogfood traffic
   explicitly.
+- Dashboard deployment planning is intentionally dry-run only: the guard can
+  require explicit 6529.io origin, production bot origin, private workspace,
+  and auth-check URL inputs, but the operator still deploys 6529.io, creates
+  secrets, verifies wallet allowlists, checks the HMAC bridge, and records
+  dashboard evidence explicitly.
 
 ## Constraints
 

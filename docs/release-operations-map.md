@@ -54,6 +54,10 @@ commands, and private evidence guidance.
 deployment plan aligned with explicit operator inputs, App registration,
 container publish, operator workspace, preflight, admin snapshot, cutover, and
 dogfood handoff commands.
+`npm run check:dashboard-deployment-plan` keeps the dry-run 6529.io dashboard
+deployment plan aligned with explicit frontend origin, bot origin, private
+workspace, auth-check URL, public disclosure, HMAC admin auth, verification,
+cutover evidence, and release-note handoff commands.
 `npm run check:workflow-permissions` keeps committed workflow and template
 permission blocks explicit and least-privilege.
 `npm run check:review-workflows` keeps review-kind constants, worker bins,
@@ -212,6 +216,7 @@ The local quality gate command inventory is:
 - `npm run check:container-image`
 - `npm run check:container-publish-plan`
 - `npm run check:production-deployment-plan`
+- `npm run check:dashboard-deployment-plan`
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
 - `npm run check:review-context-boundary`
@@ -274,6 +279,10 @@ The local quality gate command inventory is:
   production origins, registry names, private workspace paths, and exact
   traffic timing can remain private until a reviewed release artifact publishes
   a summary.
+- `dashboard:deployment-plan` belongs to operator input preparation because
+  6529.io origins, auth-check endpoints, wallet-config context, and private
+  workspace paths can remain private until a reviewed release artifact
+  publishes a summary.
 - Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
   public-safe rehearsal before the production deployment plan and final
   release-candidate, dogfood promotion, and go-live `--require-ready`

@@ -16,6 +16,13 @@ publish, workspace checks, preflight, cutover, and dogfood gates, use the
 npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 ```
 
+For the 6529.io public/private dashboard handoff after the frontend routes are
+merged, use the [dashboard deployment plan](dashboard-deployment-plan.md):
+
+```bash
+npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
+```
+
 Run `npm run check:deployment-runbook` after changing this document. The
 deployment runbook contract keeps GitHub App registration, central runtime,
 worker dispatch, 6529.io wiring, verification, and rollback guidance aligned
@@ -273,6 +280,12 @@ The template lives at `templates/6529-io-reviewbot-env.example`. Copy the env
 names into the private 6529.io deployment configuration and replace only the
 deployment-owned values there.
 
+Before wiring production routes, render the dashboard deployment plan:
+
+```bash
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
+```
+
 Public dashboard routes should call:
 
 ```text
@@ -303,6 +316,9 @@ or GitHub App private keys.
 - `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`
   has been reviewed as the production deployment plan before running live
   operator steps.
+- `npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready`
+  has been reviewed as the dashboard deployment plan before exposing the
+  public Open Data or private admin routes.
 - `npm run production:cutover -- -- --init-status <operator-cutover-status-file>`
   has bootstrapped the private cutover status file for the current checklist.
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`

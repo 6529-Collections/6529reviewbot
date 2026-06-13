@@ -78,9 +78,18 @@ reviewed API paths. Validate it against the OpenAPI contract with:
 npm run check:6529-io-env
 ```
 
+Before wiring the merged 6529.io routes to production, render the dry-run
+dashboard handoff:
+
+```bash
+npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --require-ready
+```
+
 Keep the live wallet allowlist, auth-check URL, HMAC secret, and production
 origin in the private 6529.io deployment configuration, not in this public
-repository.
+repository. Keep bot-side public repo-name disclosure intentional by setting
+`REVIEWBOT_USAGE_API_PUBLIC_ORGS` only for organizations approved for public
+Open Data summaries.
 
 ## Recommended Page Calls
 

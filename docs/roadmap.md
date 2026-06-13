@@ -322,6 +322,9 @@ Build the operator experience:
 - production deployment plan command that builds a dry-run operator handoff
   across GitHub App registration, container publish, operator workspace,
   strict preflight, admin snapshot, cutover, and dogfood gates.
+- dashboard deployment plan command that builds a dry-run 6529.io dashboard
+  handoff across frontend env, bot public disclosure, HMAC admin auth,
+  dashboard verification, cutover evidence, and release notes.
 - manager memory contract that keeps durable manager memory synchronized with
   the latest shipped PR, release-check wiring, smoke coverage, and public docs.
 
@@ -350,8 +353,8 @@ execution and dogfood evidence:
 2. Deploy the central App server and worker path in 6529-owned infrastructure.
 3. Apply and verify operator-owned ledger schema, budget policies, provider
    price rows, alert delivery, and runtime secrets outside this public repo.
-4. Deploy and configure the merged 6529.io public usage dashboard and private
-   admin dashboard.
+4. Run the dashboard deployment plan, then deploy and configure the merged
+   6529.io public usage dashboard and private admin dashboard.
 5. Install the App on one trusted 6529 target repository in command-only mode.
 6. Run the dogfood promotion and go-live packets from the private operator
    workspace with strict preflight and conservative budgets.
@@ -538,6 +541,9 @@ Completed in `6529reviewbot`:
 - production deployment plan command for dry-run operator handoff across App
   registration, image publish, workspace, preflight, admin snapshot, cutover,
   and dogfood gates.
+- dashboard deployment plan command for dry-run 6529.io dashboard handoff
+  across frontend env, bot public disclosure, HMAC admin auth, verification,
+  cutover evidence, and release notes.
 - generated operator workspace guidance now includes the production deployment
   plan command so release evidence and deployment handoff commands stay
   together in the private operator flow.
@@ -651,7 +657,7 @@ Completed in `6529reviewbot`:
 In progress in `6529reviewbot`:
 
 - production deployment execution support, dogfood operations, release
-  evidence collection, and dashboard wiring.
+  evidence collection, and dashboard production configuration.
 
 Completed outside this repository:
 

@@ -95,6 +95,7 @@ const productionCutover = require("../src/production-cutover.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
 const productionCutoverContractCheck = require("./check-production-cutover-contract.cjs");
 const productionDeploymentPlanContractCheck = require("./check-production-deployment-plan-contract.cjs");
+const dashboardDeploymentPlanContractCheck = require("./check-dashboard-deployment-plan-contract.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
@@ -5159,6 +5160,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /production deployment plan contract check found/
+  );
+  const dashboardDeploymentPlanContractResult =
+    dashboardDeploymentPlanContractCheck.checkDashboardDeploymentPlanContract();
+  assert.equal(dashboardDeploymentPlanContractResult.planCases, 6);
+  assert.equal(dashboardDeploymentPlanContractResult.docs, 7);
+  assert.throws(
+    () =>
+      dashboardDeploymentPlanContractCheck.checkDashboardDeploymentPlanContract({
+        quiet: true,
+        docTexts: {
+          "docs/dashboard-deployment-plan.md": "# Dashboard Deployment Plan\n",
+        },
+      }),
+    /dashboard deployment plan contract check found/
   );
   const securityReviewStatusContractResult =
     securityReviewStatusContractCheck.checkSecurityReviewStatusContract();
