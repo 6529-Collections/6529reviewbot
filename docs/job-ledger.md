@@ -249,3 +249,9 @@ job events as admin-only data. The admin API performs another redaction and
 shape-normalization pass before returning rows to 6529.io, but public 6529.io
 pages should still summarize counts only and must not disclose raw rows or
 private repository identifiers.
+
+The same ledger metadata normalizer is used before job-event and run-control
+metadata writes. It keeps safe scalar fields, drops nested values and unsafe
+keys, and rejects metadata keys that look like prompts, diffs, provider
+payloads, webhook payloads, worker output, credentials, secrets, tokens, or
+authorization headers.

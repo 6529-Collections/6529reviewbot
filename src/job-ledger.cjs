@@ -2,6 +2,7 @@
 
 const { executeStatement, stringParam, longParam } = require("./data-api.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
+const { normalizeLedgerMetadata } = require("./ledger-metadata.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function jobLedgerSettingsFromEnv(env = process.env) {
@@ -273,23 +274,7 @@ function nullableBool(value) {
 }
 
 function normalizeMetadata(value) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return {};
-  }
-  const result = {};
-  for (const [key, item] of Object.entries(value)) {
-    if (!/^[A-Za-z0-9_.-]{1,80}$/.test(key)) {
-      continue;
-    }
-    if (item === undefined) {
-      continue;
-    }
-    if (item === null || ["string", "number", "boolean"].includes(typeof item)) {
-      result[key] =
-        typeof item === "string" ? truncateText(redactSensitiveText(item), 1000) : item;
-    }
-  }
-  return result;
+  return normalizeLedgerMetadata(value, { includeNull: true, maxStringChars: 1000 });
 }
 
 function truncateText(value, maxChars) {

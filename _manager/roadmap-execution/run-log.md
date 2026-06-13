@@ -2939,3 +2939,27 @@
   - `npm test` passed;
   - `npm run release:check` passed, including provider-adapter validation and
     64 mapped release-operation tools.
+- Merged `6529reviewbot` PR #189 as `24990af`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/ledger-privacy-contract` increment:
+  - add shared `src/ledger-metadata.cjs` normalization for usage, job, and
+    run-control ledger metadata;
+  - add `scripts/check-ledger-privacy-contract.cjs` and
+    `npm run check:ledger-privacy`;
+  - validate safe-key scalar metadata persistence, prompt/diff/provider-output
+    key rejection, string redaction/truncation, job/run-control write
+    boundaries, admin usage-event output normalization, public summary
+    disclosure limits, usage API query omissions, schema omissions, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/ledger-privacy-contract`:
+  - `npm run check:ledger-privacy` passed with 3 ledgers, 21 metadata cases,
+    and 8 docs checked;
+  - `npm run check:release-operations` passed with 65 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 123 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including ledger-privacy validation and
+    65 mapped release-operation tools.

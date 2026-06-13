@@ -33,6 +33,9 @@ requests.
 - Redacts common token, alert-webhook, AWS access-key id, and private-key
   shapes from worker, dispatch, ledger, alert, preflight, and repository-config
   diagnostics before they enter public or operator summaries.
+- Normalizes usage, job, and run-control ledger metadata before persistence so
+  prompts, diffs, provider payloads, webhook payloads, worker output, and
+  credential-shaped fields do not become durable audit data.
 - Records review-job budget and dispatch lifecycle events in a separate
   operator job ledger when enabled.
 - Adds run-control claims for duplicate-job and concurrency protection before
@@ -163,6 +166,7 @@ npm run check:diagnostics-redaction
 npm run check:model-defaults
 npm run check:providers
 npm run check:provider-adapters
+npm run check:ledger-privacy
 npm run check:budget-scopes
 npm run check:run-control-scopes
 npm run check:alert-dimensions

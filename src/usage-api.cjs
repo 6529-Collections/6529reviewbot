@@ -1,6 +1,7 @@
 "use strict";
 
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
+const { normalizeLedgerMetadata } = require("./ledger-metadata.cjs");
 
 const DEFAULT_PUBLIC_SUMMARY_PATH = "/api/public/usage/summary";
 const DEFAULT_ADMIN_SUMMARY_PATH = "/api/admin/usage/summary";
@@ -21,7 +22,6 @@ const ACTIVE_RUN_CLAIM_STATUSES = ["claimed", "dispatching", "running"];
 const ADMIN_STATUS_MAX_ARRAY_ITEMS = 100;
 const ADMIN_STATUS_MAX_OBJECT_KEYS = 100;
 const ADMIN_STATUS_MAX_DEPTH = 6;
-const JOB_METADATA_KEY_PATTERN = /^[A-Za-z0-9_.-]{1,80}$/;
 const ADMIN_STATUS_KEY_PATTERN = /^[A-Za-z0-9_.:-]{1,80}$/;
 
 function usageApiSettingsFromEnv(env = process.env) {
@@ -653,28 +653,10 @@ function normalizeUsageEvent(event = {}) {
 
 function normalizeJobMetadata(value) {
   const metadata = normalizeMetadata(value);
-  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
-    return {};
-  }
-  const result = {};
-  for (const [key, item] of Object.entries(metadata)) {
-    if (!isSafeAdminKey(key, JOB_METADATA_KEY_PATTERN)) {
-      continue;
-    }
-    if (item === undefined) {
-      continue;
-    }
-    if (item === null) {
-      result[key] = null;
-    } else if (typeof item === "string") {
-      result[key] = adminText(item);
-    } else if (typeof item === "number") {
-      result[key] = Number.isFinite(item) ? item : null;
-    } else if (typeof item === "boolean") {
-      result[key] = item;
-    }
-  }
-  return result;
+  return normalizeLedgerMetadata(metadata, {
+    includeNull: true,
+    maxStringChars: DEFAULT_ADMIN_TEXT_MAX_CHARS,
+  });
 }
 
 function publicBudgetPolicy(policy = {}) {

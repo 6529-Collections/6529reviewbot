@@ -63,6 +63,23 @@ data, not cost accounting. See [job-ledger.md](job-ledger.md).
 concurrency. It represents active or recently completed job ownership, not
 prompt or provider data. See [run-control.md](run-control.md).
 
+## Ledger Privacy
+
+Usage, job, and run-control ledgers normalize custom metadata before
+persistence. The shared normalizer keeps safe scalar audit fields, bounds and
+redacts string values, drops nested values and unsafe keys, and rejects keys
+that look like prompts, diffs, provider payloads, webhook payloads, worker
+stdout/stderr, credentials, secrets, tokens, or authorization headers.
+
+The usage API and schema boundaries are also checked so public summaries do
+not expose private repo/requestor detail and admin event responses do not
+return provider request identifiers. Run the no-network contract check after
+changing ledger metadata, usage API event normalization, or schema fields:
+
+```bash
+npm run check:ledger-privacy
+```
+
 ## Schema Tooling
 
 Print the full schema SQL without contacting AWS:

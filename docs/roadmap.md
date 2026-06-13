@@ -278,6 +278,9 @@ Build the operator experience:
 - provider-adapter checks that keep Anthropic, OpenAI, and OpenRouter request
   shapes, option gating, usage normalization, error redaction, and docs
   aligned;
+- ledger privacy checks that keep usage, job, and run-control metadata
+  normalization, usage API event visibility, schema omissions, and docs
+  aligned;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
@@ -465,6 +468,9 @@ Completed in `6529reviewbot`:
   provider docs synchronized.
 - provider-adapter checks that keep Anthropic, OpenAI, and OpenRouter request
   shapes, option gating, usage normalization, error redaction, and docs
+  synchronized.
+- ledger privacy checks that keep usage, job, and run-control metadata
+  normalization, usage API event visibility, schema omissions, and docs
   synchronized.
 - budget-scope checks that keep central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized.

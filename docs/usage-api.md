@@ -8,6 +8,12 @@ The machine-readable OpenAPI contract lives at
 [usage-api.openapi.json](usage-api.openapi.json) and is validated by
 `npm run release:check`.
 
+Ledger privacy and usage API event boundaries are validated by:
+
+```bash
+npm run check:ledger-privacy
+```
+
 ## Endpoints
 
 ```text

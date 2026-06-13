@@ -113,6 +113,12 @@ The ledger records one row per review run with:
 - cost fields when available;
 - metadata needed for audit/debugging.
 
+The usage, job, and run-control ledgers normalize custom metadata before
+persistence. They keep safe scalar audit fields, redact common secret-shaped
+strings, drop unsafe/nested keys, and reject metadata fields that look like
+prompts, diffs, provider payloads, webhook payloads, worker output, or
+credentials.
+
 ## 7. Job Ledger
 
 The job ledger records append-only lifecycle events for each review job. It is

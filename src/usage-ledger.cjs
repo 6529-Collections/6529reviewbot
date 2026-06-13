@@ -6,6 +6,7 @@ const {
   shouldUseShellForAwsCli,
 } = require("./data-api.cjs");
 const { safeErrorLine } = require("./diagnostics.cjs");
+const { normalizeLedgerMetadata } = require("./ledger-metadata.cjs");
 
 function usageLedgerSettingsFromEnv(env = process.env) {
   return {
@@ -116,7 +117,7 @@ insert into ${quoteIdent(settings.schema)}.ai_review_usage_events (
       decimalParam("actual_cost_usd", event.actualCostUsd),
       stringParam("currency", event.currency || "USD"),
       boolParam("budget_skipped", Boolean(event.budgetSkipped)),
-      stringParam("metadata", JSON.stringify(event.metadata || {})),
+      stringParam("metadata", JSON.stringify(normalizeUsageLedgerMetadata(event.metadata))),
     ];
 
     const executor = options.executeStatement || executeStatement;
@@ -172,8 +173,13 @@ function safeError(error) {
   return safeErrorLine(error);
 }
 
+function normalizeUsageLedgerMetadata(value) {
+  return normalizeLedgerMetadata(value, { includeNull: true, maxStringChars: 1000 });
+}
+
 module.exports = {
   assertUsageLedgerConfigured,
+  normalizeUsageLedgerMetadata,
   usageLedgerSettingsFromEnv,
   writeUsageEvent,
   quoteIdent,

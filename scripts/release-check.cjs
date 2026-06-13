@@ -29,6 +29,7 @@ runNode("scripts/check-review-context-boundary.cjs");
 runNode("scripts/check-model-defaults.cjs");
 runNode("scripts/check-provider-contract.cjs");
 runNode("scripts/check-provider-adapters.cjs");
+runNode("scripts/check-ledger-privacy-contract.cjs");
 runNode("scripts/check-review-bin-entrypoints.cjs");
 runNode("scripts/check-review-comment-format.cjs");
 runNode("scripts/check-admission-policy.cjs");

@@ -64,6 +64,9 @@ requirements, workflow dispatch choices, and provider docs aligned.
 `npm run check:provider-adapters` keeps Anthropic, OpenAI, and OpenRouter
 request shapes, option gating, usage normalization, error redaction, and docs
 aligned.
+`npm run check:ledger-privacy` keeps usage, job, and run-control ledger
+metadata normalization, usage API event visibility, schema omissions, and docs
+aligned.
 `npm run check:budget-scopes` keeps central budget scope validation, ledger
 schema constraints, public docs, and dogfood examples aligned.
 `npm run check:run-control-scopes` keeps run-control concurrency scopes, env
@@ -101,6 +104,7 @@ The local quality gate command inventory is:
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:provider-adapters`
+- `npm run check:ledger-privacy`
 - `npm run check:budget-scopes`
 - `npm run check:run-control-scopes`
 - `npm run check:alert-dimensions`
