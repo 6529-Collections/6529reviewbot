@@ -3735,3 +3735,32 @@
   - `npm test` passed;
   - `npm run release:check` passed, including container publish plan contract
     validation and 103 mapped release-operation tools.
+- Merged `6529reviewbot` PR #223 as `ad99205`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/production-deployment-plan` increment:
+  - add `src/production-deployment-plan.cjs`,
+    `bin/production-deployment-plan.cjs`, and
+    `npm run production:deployment-plan` as a dry-run production deployment
+    planner;
+  - add `scripts/check-production-deployment-plan-contract.cjs` and
+    `npm run check:production-deployment-plan`;
+  - require explicit production origin, operator-owned image repository, and
+    private operator workspace inputs for `--require-ready`;
+  - render the GitHub App registration, container publish, operator workspace,
+    strict preflight, admin snapshot, production cutover, dogfood promotion,
+    and dogfood go-live handoff commands without creating Apps, converting
+    manifest codes, deploying services, running checks, or sending traffic.
+- Local validation for `codex/production-deployment-plan` so far:
+  - `npm run check:production-deployment-plan` passed with 4 plan cases and 6
+    docs checked;
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:docs` passed with 71 files checked;
+  - `npm run check:doc-index` passed with 57 docs indexed;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #223,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check:public-artifacts` passed with 114 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including production deployment plan
+    contract validation and 105 mapped release-operation tools.

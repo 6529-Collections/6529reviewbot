@@ -110,6 +110,9 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   secret injection, and container verification.
 - [Container Publish Plan](docs/container-publish-plan.md): dry-run
   build/push/scan/evidence steps for operator-owned registries.
+- [Production Deployment Plan](docs/production-deployment-plan.md): dry-run
+  operator handoff across App registration, image publish, workspace,
+  preflight, cutover, and dogfood gates.
 - [Production Cutover](docs/production-cutover.md): go/no-go checklist and
   private status overlay for moving to live dogfood traffic.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
@@ -204,6 +207,7 @@ npm run check:alert-notifier-modes
 npm run check:alerting-runbook
 npm run check:container-image
 npm run check:container-publish-plan
+npm run check:production-deployment-plan
 npm run check:public-artifacts
 npm run check:github-app-manifest
 npm run check:github-app-auth
@@ -247,6 +251,14 @@ Build a dry-run container publish plan before operator-owned registry work:
 ```bash
 npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready
 npm run check:container-publish-plan
+```
+
+Build a dry-run production deployment plan before App registration, registry,
+runtime, cutover, or dogfood handoff work:
+
+```bash
+npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run check:production-deployment-plan
 ```
 
 Run a public-safe release and dogfood rehearsal:

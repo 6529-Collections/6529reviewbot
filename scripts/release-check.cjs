@@ -49,6 +49,7 @@ runNode("scripts/check-operator-workspace-contract.cjs");
 runNode("scripts/check-operator-drill-contract.cjs");
 runNode("scripts/check-operator-evidence-contract.cjs");
 runNode("scripts/check-production-cutover-contract.cjs");
+runNode("scripts/check-production-deployment-plan-contract.cjs");
 runNode("scripts/check-security-review-status-contract.cjs");
 runNode("scripts/check-review-bin-entrypoints.cjs");
 runNode("scripts/check-review-comment-format.cjs");

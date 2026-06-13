@@ -226,6 +226,9 @@ Ready for community review:
   runtime boundary;
 - container publish plan for dry-run build, push, vulnerability scan, and
   private evidence commands before operator-owned registry work;
+- production deployment plan for a dry-run operator handoff across GitHub App
+  registration, container publish, operator workspace, strict preflight, admin
+  snapshot, cutover, and dogfood gates before live operator steps;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
@@ -487,6 +490,12 @@ synced `main` and completed release notes before rendering operator commands.
 and verifies the container publish plan remains dry-run, checks clean synced
 `main`, runs the image contract, and renders build, push, vulnerability scan,
 and private evidence guidance for an operator-owned registry.
+`npm run check:production-deployment-plan` is included in
+`npm run release:check` and verifies the production deployment plan remains
+dry-run, requires explicit production origin, image repository, and private
+operator workspace inputs in ready mode, and renders the App registration,
+container publish, workspace, preflight, admin snapshot, cutover, and dogfood
+handoff commands without executing live operations.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

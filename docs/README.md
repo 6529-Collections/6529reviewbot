@@ -39,6 +39,9 @@ be linked here before they are considered release-ready.
   runtime boundaries.
 - [Container Publish Plan](container-publish-plan.md): dry-run build, push,
   vulnerability scan, and private evidence guidance.
+- [Production Deployment Plan](production-deployment-plan.md): dry-run
+  operator handoff across App registration, image publish, operator workspace,
+  preflight, cutover, and dogfood gates.
 
 ## Policy, Spend, And Reporting
 
