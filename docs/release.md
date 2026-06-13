@@ -145,6 +145,9 @@ After stabilization:
 - `npm run check:usage-api-routes` confirms usage/admin API paths, server
   defaults, OpenAPI paths, 6529.io client methods, env templates, and docs stay
   synchronized
+- `npm run check:admin-snapshot` confirms admin snapshot check names, default
+  policy, warning posture, redaction behavior, CLI flags, and docs stay
+  synchronized
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

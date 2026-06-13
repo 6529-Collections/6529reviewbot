@@ -12,6 +12,7 @@ const adminAuth = require("../src/admin-auth.cjs");
 const adminAuthContractCheck = require("./check-admin-auth-contract.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
 const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
+const adminSnapshotContractCheck = require("./check-admin-snapshot-contract.cjs");
 const admissionPolicyCheck = require("./check-admission-policy.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
@@ -276,6 +277,17 @@ assert.deepEqual(
     "/api/admin/status",
   ]
 );
+assert.deepEqual(adminSnapshotContractCheck.expectedChecks, [
+  "admin_usage_summary",
+  "recent_usage_events",
+  "budget_status",
+  "model_price_status",
+  "alert_status",
+  "failed_job_events",
+  "stale_run_claims",
+  "runtime_status_server",
+  "runtime_status_worker",
+]);
 assert.throws(
   () =>
     reviewBinEntrypointsCheck.checkReviewBinEntrypoints({
@@ -4871,6 +4883,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /usage api route contract check found/
+  );
+  const adminSnapshotContractResult =
+    await adminSnapshotContractCheck.checkAdminSnapshotContract();
+  assert.equal(adminSnapshotContractResult.checks, 9);
+  await assert.rejects(
+    () =>
+      adminSnapshotContractCheck.checkAdminSnapshotContract({
+        quiet: true,
+        docTexts: {
+          "docs/6529-io-admin-integration.md": "# Admin Integration\n",
+        },
+      }),
+    /admin snapshot contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

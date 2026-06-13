@@ -156,6 +156,7 @@ npm run check:repository-config-boundary
 npm run check:worker-adapter-contract
 npm run check:admin-auth
 npm run check:usage-api-routes
+npm run check:admin-snapshot
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes

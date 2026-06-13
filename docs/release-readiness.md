@@ -384,6 +384,9 @@ checks, 6529.io bridge docs, and public env templates stay synchronized.
 `npm run check:usage-api-routes` is included in `npm run release:check` and
 verifies usage/admin API paths, server defaults, OpenAPI paths, 6529.io client
 methods, env templates, and docs stay synchronized.
+`npm run check:admin-snapshot` is included in `npm run release:check` and
+verifies admin snapshot check names, default policy, warning posture,
+redaction behavior, CLI flags, and docs stay synchronized.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.
