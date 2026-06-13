@@ -1811,3 +1811,22 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #134 as `5884263` after CI and Dependency Review
+  passed.
+- Started `codex/release-candidate-security-status` increment:
+  - add optional `--security-review-status-file` support to
+    `release:candidate`;
+  - include security-review complete/deferred/pending/blocked counts and
+    missing item ids in JSON and Markdown bundles;
+  - enforce security-review readiness under `--require-ready` when supplied;
+  - update release docs, README, v0 plan, roadmap, changelog, smoke tests,
+    release checks, and manager memory.
+- Local validation for `codex/release-candidate-security-status`:
+  - `npm run release:candidate -- -- --security-review-status-file config/security-review-status.example.json --json --quiet` passed;
+  - `npm run release:candidate -- -- --dogfood-status-file config/dogfood-status.example.json --security-review-status-file config/security-review-status.example.json --cutover-status-file config/production-cutover-status.example.json --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
