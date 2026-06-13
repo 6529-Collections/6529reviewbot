@@ -113,6 +113,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [Production Deployment Plan](docs/production-deployment-plan.md): dry-run
   operator handoff across App registration, image publish, workspace,
   preflight, cutover, and dogfood gates.
+- [Dashboard Deployment Plan](docs/dashboard-deployment-plan.md): dry-run
+  6529.io public/private dashboard configuration and verification handoff.
 - [Production Cutover](docs/production-cutover.md): go/no-go checklist and
   private status overlay for moving to live dogfood traffic.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
@@ -208,6 +210,7 @@ npm run check:alerting-runbook
 npm run check:container-image
 npm run check:container-publish-plan
 npm run check:production-deployment-plan
+npm run check:dashboard-deployment-plan
 npm run check:public-artifacts
 npm run check:github-app-manifest
 npm run check:github-app-auth
@@ -259,6 +262,14 @@ runtime, cutover, or dogfood handoff work:
 ```bash
 npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 npm run check:production-deployment-plan
+```
+
+Build a dry-run 6529.io dashboard deployment plan before wiring the public
+Open Data and private admin routes to production:
+
+```bash
+npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
+npm run check:dashboard-deployment-plan
 ```
 
 Run a public-safe release and dogfood rehearsal:

@@ -3865,3 +3865,32 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dashboard roadmap/memory
     synchronization.
+- Merged `6529reviewbot` PR #228 as `f5b0a5f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dashboard-deployment-plan` increment:
+  - add `src/dashboard-deployment-plan.cjs`,
+    `bin/dashboard-deployment-plan.cjs`, and
+    `npm run dashboard:deployment-plan` as a dry-run 6529.io dashboard
+    deployment handoff;
+  - add `scripts/check-dashboard-deployment-plan-contract.cjs` and
+    `npm run check:dashboard-deployment-plan`;
+  - wire the command into release checks, smoke tests, release-operations map,
+    README, docs index, deployment docs, release readiness, roadmap, changelog,
+    6529.io admin integration docs, and durable manager memory;
+  - keep the actual 6529.io production deployment, wallet allowlist, auth-check
+    endpoint, HMAC secret, and operator verification in private operator
+    configuration/evidence.
+- Local validation for `codex/dashboard-deployment-plan` so far:
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:release-operations` passed with 107 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #228,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check` passed with 171 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including dashboard deployment plan
+    contract validation and 107 mapped release-operation tools.

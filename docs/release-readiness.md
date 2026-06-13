@@ -233,6 +233,9 @@ Ready for community review:
 - production deployment plan for a dry-run operator handoff across GitHub App
   registration, container publish, operator workspace, strict preflight, admin
   snapshot, cutover, and dogfood gates before live operator steps;
+- dashboard deployment plan for a dry-run 6529.io handoff across public and
+  private dashboard env, bot public disclosure settings, HMAC admin auth,
+  route verification, cutover evidence, and release notes;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
@@ -295,11 +298,17 @@ Before announcing broad community use:
 4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.
 5. Apply reviewed central budget policies or explicitly keep budget control to
    environment/repository caps for the release.
-6. Deploy the merged 6529.io public transparency dashboard.
-7. Deploy the merged 6529.io private admin surface and wire it to the HMAC
+6. Run the dashboard deployment plan:
+
+   ```bash
+   npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
+   ```
+
+7. Deploy the merged 6529.io public transparency dashboard.
+8. Deploy the merged 6529.io private admin surface and wire it to the HMAC
    admin auth bridge.
-8. Enable scheduled operator alerts through private operator channels.
-9. Dogfood on a small set of trusted repositories with conservative budgets.
+9. Enable scheduled operator alerts through private operator channels.
+10. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
    Run [Dogfood Target Packet](dogfood-target.md) before opening the target
@@ -311,9 +320,9 @@ Before announcing broad community use:
    Run [Dogfood Go-Live Packet](dogfood-go-live.md) when release-candidate,
    promotion, cutover, and operator-workspace evidence should agree in one
    public-safe summary.
-10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
-11. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
-12. Update README, changelog, release notes, install docs, and example configs.
+11. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
+12. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
+13. Update README, changelog, release notes, install docs, and example configs.
 
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable
@@ -502,6 +511,12 @@ dry-run, requires explicit production origin, image repository, and private
 operator workspace inputs in ready mode, and renders the App registration,
 container publish, workspace, preflight, admin snapshot, cutover, and dogfood
 handoff commands without executing live operations.
+`npm run check:dashboard-deployment-plan` is included in
+`npm run release:check` and verifies the dashboard deployment plan remains
+dry-run, requires explicit 6529.io origin, production bot origin, private
+operator workspace, and auth-check URL inputs in ready mode, and renders the
+frontend env, bot public disclosure, HMAC admin auth, verification, cutover,
+and release-note handoff commands without executing live operations.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud
