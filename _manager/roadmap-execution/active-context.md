@@ -641,6 +641,9 @@ merged PRs.
 - v0 release gates and release notes should explicitly call out
   `npm run check:container-image` so container deployment evidence includes
   both source-contract validation and operator-owned image evidence.
+- Release-operations documentation should be checked against the
+  machine-readable local quality command inventory so new checks do not become
+  hidden in public operator docs.
 
 ## Constraints
 
@@ -654,7 +657,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the container release-contract follow-up.
+2. Validate, publish, and merge the release operations doc-sync guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

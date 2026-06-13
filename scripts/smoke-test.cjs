@@ -2490,6 +2490,16 @@ assert.equal(
   operationsSummary.toolCount
 );
 assert.equal(releaseOperationsMapCheck.checkReleaseOperationsMap().toolCount, operationsSummary.toolCount);
+const releaseOperationsDocFixture = path.join(os.tmpdir(), `6529-release-operations-${Date.now()}.md`);
+fs.writeFileSync(releaseOperationsDocFixture, "`npm run check`\n");
+try {
+  assert.throws(
+    () => releaseOperationsMapCheck.checkReleaseOperationsDoc(operationsMap, releaseOperationsDocFixture),
+    /missing local quality command/
+  );
+} finally {
+  fs.rmSync(releaseOperationsDocFixture, { force: true });
+}
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
   host: "https://reviewbot.example.com/",
 });

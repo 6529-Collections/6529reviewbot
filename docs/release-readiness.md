@@ -150,6 +150,8 @@ Ready for community review:
 - release notes template validation for required pre-v1 evidence, dogfood
   promotion/go-live packets, production cutover status, deferrals, known gaps,
   compatibility, and validation fields;
+- release operations map validation that keeps the public command inventory in
+  sync with mapped local quality gates;
 - structured operator evidence validation and redacted public-summary rendering
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private

@@ -15,6 +15,7 @@ const root = path.resolve(__dirname, "..");
 
 function checkReleaseOperationsMap(options = {}) {
   const file = options.file || DEFAULT_RELEASE_OPERATIONS_MAP_PATH;
+  const docFile = options.docFile || path.join(root, "docs", "release-operations-map.md");
   const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   const map = loadReleaseOperationsMap(file);
   const validated = validateReleaseOperationsMap(map, file, {
@@ -22,7 +23,24 @@ function checkReleaseOperationsMap(options = {}) {
     packageScripts: packageJson.scripts || {},
     repoRoot: root,
   });
+  checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
+}
+
+function checkReleaseOperationsDoc(map, docFile) {
+  const doc = fs.readFileSync(docFile, "utf8");
+  const localQualityPhase = map.phases.find((phase) => phase.id === "local-quality");
+  if (!localQualityPhase) {
+    throw new Error("release operations map must include the local-quality phase.");
+  }
+  const missing = localQualityPhase.tools
+    .map((tool) => `npm run ${tool.script}`)
+    .filter((command) => !doc.includes(command));
+  if (missing.length) {
+    throw new Error(
+      `docs/release-operations-map.md is missing local quality command(s): ${missing.join(", ")}`
+    );
+  }
 }
 
 if (require.main === module) {
@@ -38,5 +56,6 @@ if (require.main === module) {
 }
 
 module.exports = {
+  checkReleaseOperationsDoc,
   checkReleaseOperationsMap,
 };
