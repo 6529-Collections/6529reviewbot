@@ -127,6 +127,9 @@ After stabilization:
 - `npm run check:install-guide` confirms the installation guide contract keeps
   the conservative dogfood path, GitHub App validation commands, runtime
   defaults, command-only target posture, and rollback controls synchronized
+- `npm run check:deployment-runbook` confirms the deployment runbook contract
+  keeps GitHub App registration, central runtime, worker, 6529.io wiring,
+  verification, and rollback guidance synchronized
 - `npm run check:dependabot` confirms weekly npm and GitHub Actions dependency
   update coverage is still configured
 - `npm run check:container-image` confirms the central App server Dockerfile

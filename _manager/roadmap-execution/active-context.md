@@ -372,11 +372,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - GitHub App route contract PR: merged as PR #205, merge commit `7f6f10b`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/install-guide-contract`.
-- Current local changes: adding an installation guide contract check that keeps
-  the conservative central App dogfood path, GitHub App validation commands,
-  runtime defaults, command-only target posture, rollback controls, release
-  checks, smoke tests, and docs
+- Installation guide contract PR: merged as PR #206, merge commit `38b73a5`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/deployment-runbook-contract`.
+- Current local changes: adding a deployment runbook contract check that keeps
+  production GitHub App registration, central runtime, worker dispatch,
+  6529.io wiring, verification, rollback guidance, release checks, smoke
+  tests, and docs
   synchronized.
 
 ## Key Decisions
@@ -859,6 +861,10 @@ merged PRs.
   Keep its order conservative: release checks, GitHub App validation, noop
   server, worker path, 6529.io surfaces, command-only target repo, gradual live
   coverage, and rollback.
+- The deployment runbook is the production execution companion to install.md.
+  Keep GitHub App registration, central runtime, worker dispatch, 6529.io
+  wiring, verification, and rollback in one checked path so production changes
+  do not drift into partial docs.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -882,7 +888,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the installation guide contract check.
+2. Publish and merge the deployment runbook contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

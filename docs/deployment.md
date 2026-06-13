@@ -8,6 +8,10 @@ For an ordered first-install path, start with
 [install.md](install.md), then return here for production details.
 For containerized deployment, use
 [container-deployment.md](container-deployment.md) with this runbook.
+Run `npm run check:deployment-runbook` after changing this document. The
+deployment runbook contract keeps GitHub App registration, central runtime,
+worker dispatch, 6529.io wiring, verification, and rollback guidance aligned
+with release checks.
 
 For release or dogfood evidence, use
 [operator-evidence-template.md](operator-evidence-template.md). Keep

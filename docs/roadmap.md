@@ -560,6 +560,9 @@ Completed in `6529reviewbot`:
 - installation guide contract for the conservative dogfood onboarding path,
   GitHub App validation commands, runtime defaults, target-repo posture, and
   rollback controls.
+- deployment runbook contract for production central App server registration,
+  runtime configuration, worker dispatch, 6529.io wiring, verification, and
+  rollback guidance.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.
