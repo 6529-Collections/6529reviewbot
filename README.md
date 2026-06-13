@@ -150,6 +150,7 @@ Run local checks:
 ```bash
 npm run check
 npm run check:docs
+npm run check:manager-memory
 npm run check:install-guide
 npm run check:deployment-runbook
 npm run check:configuration-reference
@@ -714,6 +715,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Operator Drill](docs/operator-drill.md)
 - [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
+- [Manager Memory](docs/manager-memory.md)
 
 ## Community And Governance
 

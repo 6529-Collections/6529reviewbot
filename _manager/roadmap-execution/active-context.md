@@ -394,24 +394,25 @@ merged PRs.
   `0562b56`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Security model contract PR: merged as PR #216, merge commit `d8df404`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-drill`.
-- Current local changes: adding a public-safe operator drill command and
-  release contract that rehearse the release-candidate, dogfood readiness,
-  promotion, and go-live sequence against a temporary or private operator
-  workspace without calling GitHub, AWS, or model providers.
+- Operator drill command PR: merged as PR #217, merge commit `bddb158`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/manager-memory-contract`.
+- Current local changes: updating durable manager context after PR #217 and
+  adding a manager memory contract check that keeps active-context, run-log,
+  latest merged PR evidence, release-check wiring, smoke coverage, release
+  operations map, and public docs synchronized.
 - Current local validation:
-  - `npm run check:operator-drill` passed with 2 drill cases, 5 commands,
-    and 7 docs checked;
-  - `npm run check:doc-index` passed with 51 docs indexed;
-  - `npm run check:docs` passed with 65 files checked;
-  - `npm run check:release-operations` passed with 94 mapped tools;
-  - `npm run operator:drill -- -- --json --quiet` passed;
-  - `npm run check` passed with 152 CommonJS files;
+  - `npm run check` passed with 153 CommonJS files;
+  - `npm run check:docs` passed with 66 files checked;
+  - `npm run check:doc-index` passed with 52 docs indexed;
+  - `npm run check:release-operations` passed with 95 mapped tools;
   - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #217,
+    and 5 docs checked;
   - `npm test` passed;
-  - `npm run check:public-artifacts` passed with 108 files checked;
-  - `npm run release:check` passed, including operator drill contract
-    validation and 94 mapped release-operation tools.
+  - `npm run check:public-artifacts` passed with 109 files checked;
+  - `npm run release:check` passed, including manager memory validation and
+    95 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -960,7 +961,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the operator drill command and contract check.
+2. Publish and merge the manager memory contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

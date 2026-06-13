@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a manager memory contract check so active context, run-log state,
+  release checks, smoke tests, and public docs stay synchronized during the
+  autonomous release workstream.
 - Added an operator drill command and contract check for public-safe rehearsal
   of release-candidate, dogfood readiness, promotion, and go-live summaries.
 - Added a security model contract release check for first-principles trust

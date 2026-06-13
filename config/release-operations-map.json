@@ -31,6 +31,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "manager-memory-contract",
+          "script": "check:manager-memory",
+          "purpose": "Verify durable manager memory keeps core sections, latest merged PR state, validation status, release-check wiring, smoke tests, and public docs synchronized.",
+          "doc": "docs/manager-memory.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-governance",
           "script": "check:governance",
           "purpose": "Verify public MIT license metadata, community files, issue templates, and root README governance links.",

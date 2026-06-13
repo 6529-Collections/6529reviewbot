@@ -147,6 +147,9 @@ Ready for community review:
   synchronized with temporary workspace cleanup, private path redaction,
   release-candidate, dogfood readiness, promotion, go-live summaries, next
   commands, and docs;
+- manager memory contract for keeping active context, run-log state, latest
+  shipped PR evidence, release-check wiring, smoke tests, and public docs
+  synchronized during the autonomous workstream;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
@@ -563,6 +566,9 @@ aligned.
 verifies the public-safe operator drill keeps temporary workspace cleanup,
 private path redaction, release-candidate, dogfood readiness, promotion,
 go-live summaries, next commands, and docs aligned.
+`npm run check:manager-memory` is included in `npm run release:check` and
+verifies durable manager memory keeps core sections, latest merged PR state,
+validation status, release-check wiring, smoke tests, and docs aligned.
 `npm run check:operator-evidence` is included in `npm run release:check` and
 verifies operator evidence sections, readiness semantics, public-summary
 redaction, source invariants, and docs stay aligned.

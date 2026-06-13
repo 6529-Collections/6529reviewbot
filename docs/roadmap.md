@@ -318,6 +318,8 @@ Build the operator experience:
 - operator drill command that rehearses release-candidate, dogfood readiness,
   promotion, and go-live summaries against a temporary or private workspace
   before an operator runs the final ready gates.
+- manager memory contract that keeps durable manager memory synchronized with
+  the latest shipped PR, release-check wiring, smoke coverage, and public docs.
 
 ### 9. Community Release
 
@@ -534,6 +536,8 @@ Completed in `6529reviewbot`:
   implementation anchors.
 - operator drill command and contract check for public-safe release-candidate,
   dogfood readiness, promotion, and go-live rehearsals.
+- manager memory contract check for active context, run-log state, latest
+  shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
@@ -606,6 +610,7 @@ Completed in `6529reviewbot`:
   replay, spend, ledgers, workers, dashboards, and bot comments.
 - operator drill contract for release-candidate, dogfood readiness, promotion,
   and go-live rehearsal behavior.
+- manager memory contract for durable manager memory release hygiene.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.
