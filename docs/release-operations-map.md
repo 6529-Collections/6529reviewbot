@@ -30,6 +30,9 @@ permission blocks explicit and least-privilege.
 workflow dispatch choices, reusable defaults, and workflow routing aligned.
 `npm run check:review-bins` keeps review-kind prompt configs, bin
 entrypoints, package scripts, and review workflow docs aligned.
+`npm run check:review-comment-format` keeps generated public comment headings,
+verdict lines, hidden markers, review labels, and budget-skip wording aligned
+with the documented PR comment contract.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
@@ -54,6 +57,7 @@ The local quality gate command inventory is:
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
 - `npm run check:review-bins`
+- `npm run check:review-comment-format`
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`

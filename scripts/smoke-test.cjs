@@ -76,6 +76,7 @@ const preflightCli = require("../bin/preflight.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
+const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
 const reviewWorkflowKindsCheck = require("./check-review-workflow-kinds.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -181,6 +182,18 @@ assert.throws(
       envExampleText: "REVIEWBOT_ALERTS_NOTIFY_MODE=stdout\n",
     }),
   /alert notifier mode check found/
+);
+assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 5);
+assert.equal(reviewCommentFormatCheck.expectedMarker, "6529-review-bot");
+assert.throws(
+  () =>
+    reviewCommentFormatCheck.checkReviewCommentFormat({
+      quiet: true,
+      docTexts: {
+        "docs/review-comment-format.md": "# Review Comment Format\n\n`general`\n",
+      },
+    }),
+  /review comment format check found/
 );
 assert.throws(
   () =>

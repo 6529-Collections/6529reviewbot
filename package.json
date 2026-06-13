@@ -60,6 +60,7 @@
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
     "check:providers": "node scripts/check-provider-contract.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
+    "check:review-comment-format": "node scripts/check-review-comment-format.cjs",
     "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
     "check:run-control-scopes": "node scripts/check-run-control-scopes.cjs",
     "check:alert-dimensions": "node scripts/check-alert-dimensions.cjs",

@@ -73,6 +73,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "review-comment-format-contract",
+          "script": "check:review-comment-format",
+          "purpose": "Verify generated public PR comment headings, hidden markers, review labels, verdict lines, and budget-skip wording stay synchronized with the public comment-format docs.",
+          "doc": "docs/review-comment-format.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",

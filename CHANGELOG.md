@@ -98,6 +98,9 @@ stabilized.
   workflow defaults, and workflow routing.
 - Added a review-bin entrypoint release check that validates review-kind prompt
   configs, CLI entrypoints, package scripts, and review workflow docs.
+- Added a review-comment format release check that validates generated PR
+  comment headings, hidden markers, review labels, verdict lines, and
+  budget-skip wording against the public comment-format docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

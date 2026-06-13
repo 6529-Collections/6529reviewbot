@@ -16,18 +16,18 @@ Successful model-backed comments use this shape:
 <concise findings and supporting detail>
 ```
 
-The review label is tied to the review kind:
+The review label and allowed verdicts are tied to the review kind:
 
-- `general PR review`
-- `follow-up commit review`
-- `WCAG 2.2 AA analysis`
-- `i18n analysis`
-- `crypto security analysis`
+| Review kind | Review label | Allowed verdicts |
+| --- | --- | --- |
+| `general` | `general PR review` | `Good to merge`, `Needs changes`, `Blocking issues` |
+| `followup` | `follow-up commit review` | `No new findings`, `Needs changes`, `Blocking issues` |
+| `wcag` | `WCAG 2.2 AA analysis` | `No WCAG findings`, `Needs changes`, `Blocking issues` |
+| `i18n` | `i18n analysis` | `No i18n findings`, `Needs changes`, `Blocking issues` |
+| `security` | `crypto security analysis` | `No security findings`, `Needs changes`, `Blocking issues` |
 
-The first visible body line should be a verdict. Allowed verdicts are defined
-per review kind in the review workflow prompt, for example `Good to merge`,
-`Needs changes`, `Blocking issues`, `No new findings`, or
-`No security findings`.
+The first visible body line should be a verdict and should use one of the
+allowed verdicts for the review kind.
 
 Findings may be grouped when it improves scanning:
 
