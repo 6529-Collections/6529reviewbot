@@ -153,6 +153,7 @@ npm run check:review-bins
 npm run check:review-comment-format
 npm run check:admission-policy
 npm run check:repository-config-boundary
+npm run check:worker-adapter-contract
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes

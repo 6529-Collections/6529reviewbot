@@ -98,6 +98,7 @@ const usageApiClient = require("../src/usage-api-client.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 const workerAdapter = require("../src/worker-adapter.cjs");
+const workerAdapterContractCheck = require("./check-worker-adapter-contract.cjs");
 
 const settings = withEnv(
   {
@@ -229,6 +230,20 @@ assert.throws(
       },
     }),
   /repository config boundary check found/
+);
+assert.equal(workerAdapterContractCheck.checkWorkerAdapterContract().workerModes, 3);
+assert.deepEqual(workerAdapterContractCheck.expectedWorkerModes, ["noop", "local", "github_actions"]);
+assert.throws(
+  () =>
+    workerAdapterContractCheck.checkWorkerAdapterContract({
+      quiet: true,
+      docTexts: {
+        "docs/worker-adapters.md": "# Worker Adapters\n",
+        "docs/deployment.md": "# Deployment\n",
+        "docs/architecture.md": "# Architecture\n",
+      },
+    }),
+  /worker adapter contract check found/
 );
 assert.throws(
   () =>

@@ -39,6 +39,9 @@ and admission docs aligned.
 `npm run check:repository-config-boundary` keeps repository configuration a
 narrowing layer for lanes, max jobs, admission, budget caps, default cost, and
 base-ref loading.
+`npm run check:worker-adapter-contract` keeps worker adapter modes, GitHub
+dispatch fields, local worker environment, redacted diagnostics, the workflow
+template, and worker docs aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
@@ -66,6 +69,7 @@ The local quality gate command inventory is:
 - `npm run check:review-comment-format`
 - `npm run check:admission-policy`
 - `npm run check:repository-config-boundary`
+- `npm run check:worker-adapter-contract`
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`
