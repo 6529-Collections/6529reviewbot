@@ -177,6 +177,18 @@ function checkWorkspaceLifecycle(findings) {
     "operator workspace directory must be outside the public repository unless --allow-repo-dir is set.",
     findings
   );
+
+  const readme = fs.readFileSync(path.join(tempDir, "README.md"), "utf8");
+  for (const snippet of [
+    "npm run production:deployment-plan",
+    "--operator-workspace .",
+    "--release v0.1.0",
+    "--require-ready",
+  ]) {
+    if (!readme.includes(snippet)) {
+      findings.push(`operator workspace README must include '${snippet}'.`);
+    }
+  }
 }
 
 function checkPublicRedaction(findings) {
@@ -237,6 +249,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "assertWorkspaceDirectory",
     "privateWorkspaceReadme",
     "publicLine",
+    "production:deployment-plan",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -260,6 +273,7 @@ function checkDocs(docTexts, findings) {
     "README.md": ["npm run check:operator-workspace"],
     "docs/operator-workspace.md": [
       "npm run check:operator-workspace",
+      "npm run production:deployment-plan",
       "operator workspace contract check",
       "[operator-workspace]",
     ],

@@ -536,6 +536,9 @@ Completed in `6529reviewbot`:
 - production deployment plan command for dry-run operator handoff across App
   registration, image publish, workspace, preflight, admin snapshot, cutover,
   and dogfood gates.
+- generated operator workspace guidance now includes the production deployment
+  plan command so release evidence and deployment handoff commands stay
+  together in the private operator flow.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.

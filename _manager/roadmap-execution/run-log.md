@@ -3764,3 +3764,27 @@
   - `npm test` passed;
   - `npm run release:check` passed, including production deployment plan
     contract validation and 105 mapped release-operation tools.
+- Merged `6529reviewbot` PR #224 as `e88a7d3`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-workspace-deployment-plan` increment:
+  - add the `production:deployment-plan` handoff command to generated private
+    operator workspace README guidance;
+  - update [Operator Workspace](../../docs/operator-workspace.md),
+    release-readiness, roadmap, and changelog references so the private
+    workspace flow includes deployment handoff before final live operations;
+  - strengthen `npm run check:operator-workspace` so generated workspace
+    README guidance cannot drop the deployment plan command.
+- Local validation for `codex/operator-workspace-deployment-plan` so far:
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked.
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:docs` passed with 71 files checked;
+  - `npm run check:doc-index` passed with 57 docs indexed;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #224,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check:public-artifacts` passed with 114 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator workspace contract
+    validation and 105 mapped release-operation tools.

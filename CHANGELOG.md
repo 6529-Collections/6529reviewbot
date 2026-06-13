@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added production deployment plan guidance to generated operator workspaces.
 - Added a production deployment plan guard and contract check for dry-run
   operator handoff across GitHub App registration, container publish,
   operator workspace, preflight, admin snapshot, cutover, and dogfood gates.

@@ -151,6 +151,9 @@ Ready for community review:
 - manager memory contract for keeping active context, run-log state, latest
   shipped PR evidence, release-check wiring, smoke tests, and public docs
   synchronized during the autonomous workstream;
+- generated operator workspace guidance includes the production deployment
+  plan handoff so private release evidence, cutover, and dogfood gates stay in
+  one operator flow;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
