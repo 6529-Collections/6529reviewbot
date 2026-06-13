@@ -50,6 +50,7 @@ repositories.
 - Empty provider output fail-closed evidence:
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
+- Release candidate bundle:
 - Preflight result:
 - v0 gate checklist:
 - v0 gate status file/evidence:
@@ -78,6 +79,16 @@ are true:
 - Accepted model-price overrides:
 - Incident response readiness:
 - Compatibility guarantees:
+
+## Deferrals And Accepted Risks
+
+For every deferred release gate or incomplete production-control item:
+
+- Gate:
+- Risk accepted:
+- Follow-up owner:
+- Follow-up trigger/date:
+- Public-safe evidence:
 
 ## Upgrade Notes
 

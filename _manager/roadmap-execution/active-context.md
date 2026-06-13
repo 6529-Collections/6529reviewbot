@@ -253,11 +253,13 @@ merged PRs.
   Dependency Review completed successfully before merge.
 - Self-dogfood config PR: merged as PR #146, merge commit `4125cff`; CI and
   Dependency Review completed successfully before merge.
-- Current branch: `codex/self-dogfood-replay-check`.
-- Current local changes: adding synthetic self-dogfood webhook payload
-  fixtures and `npm run check:self-dogfood-replay` to prove command-only
-  PR-open skips and trusted maintainer comment-command dry runs before live
-  delivery.
+- Self-dogfood replay check PR: merged as PR #147, merge commit `cb95ec9`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-notes-contract-check`.
+- Current local changes: adding `npm run check:release-notes`, wiring it into
+  `npm run release:check`, and updating the pre-v1 release notes template so
+  tested configuration, deferrals, known gaps, compatibility, and validation
+  stay explicit.
 
 ## Key Decisions
 
@@ -570,6 +572,9 @@ merged PRs.
   payloads can prove the committed config skips automatic PR-open jobs and
   admits trusted maintainer comment commands through dry-run queueing without
   exposing private webhook payloads.
+- Pre-v1 release notes are part of the public release contract. They should be
+  machine-checked for tested configuration, release-candidate evidence,
+  deferrals, known gaps, compatibility, and validation fields before tagging.
 
 ## Constraints
 
@@ -583,7 +588,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the self-dogfood replay check.
+2. Validate, publish, and merge the release notes contract check.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

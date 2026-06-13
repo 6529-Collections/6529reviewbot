@@ -2099,3 +2099,20 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed and ran the self-dogfood replay gate;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #147 as `cb95ec9` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/release-notes-contract-check` increment:
+  - add `npm run check:release-notes`;
+  - validate that the pre-v1 release notes template still includes required
+    tested configuration, safety, known-gap, deferral, rollback, and validation
+    fields;
+  - make the checker whitespace-tolerant so Markdown prose can wrap naturally;
+  - wire the check into `npm run release:check` and the release operations map;
+  - update the release notes template, release process, release readiness,
+    roadmap, README, changelog, and manager memory.
+- Local validation for `codex/release-notes-contract-check`:
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-operations` passed with 35 tools;
+  - `npm run release:check` passed and ran the release notes template gate;
+  - `git diff --check` passed.

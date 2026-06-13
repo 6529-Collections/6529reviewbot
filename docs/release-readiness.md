@@ -130,6 +130,8 @@ Ready for community review:
   dry-run mode, with job-health alert evaluation available once job and
   run-control ledgers are enabled in the scheduled job;
 - machine-readable v0 release gates with optional status/evidence rendering;
+- release notes template validation for required pre-v1 evidence, deferrals,
+  known gaps, compatibility, and validation fields;
 - structured operator evidence validation and redacted public-summary rendering
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private
@@ -185,6 +187,9 @@ Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
 `npm run check:release-gates` is included in `npm run release:check` and
 verifies both gate count parity and v0 gate evidence references.
+`npm run check:release-notes` is included in `npm run release:check` and keeps
+the pre-v1 release notes template explicit about tested configuration,
+deferrals, known gaps, compatibility, and validation.
 Use [Release Operations Map](release-operations-map.md) or
 `npm run release:operations` when choosing the next public check, private
 status overlay, or release-candidate command.
@@ -286,6 +291,8 @@ all public env templates for valid syntax, duplicate keys, nonblank secret
 placeholders, and conservative dogfood defaults.
 `npm run check:release-operations` is included in `npm run release:check` and
 keeps the command/evidence-boundary map aligned with package scripts and docs.
+`npm run check:release-notes` is included in `npm run release:check` and keeps
+the GitHub Release template aligned with v0 release evidence expectations.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud
