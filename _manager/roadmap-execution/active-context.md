@@ -356,10 +356,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator-workspace contract PR: merged as PR #197, merge commit `92a7202`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-cutover-contract`.
-- Current local changes: adding a production-cutover contract check that keeps
-  checklist/status readiness, deferral semantics, Markdown redaction, source
-  invariants, and docs synchronized.
+- Production-cutover contract PR: merged as PR #198, merge commit `6eb143c`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/security-review-status-contract`.
+- Current local changes: adding a security-review-status contract check that
+  keeps manual review status readiness, deferral semantics, Markdown
+  redaction, source invariants, and docs synchronized.
 
 ## Key Decisions
 
@@ -807,6 +809,9 @@ merged PRs.
 - Production cutover is a live-traffic go/no-go overlay. Keep complete
   evidence requirements, deferred-item semantics, pending/blocked failures, and
   public Markdown redaction covered by no-network contract checks.
+- Security review status is a manual-release evidence overlay. Keep complete
+  evidence requirements, deferred-item semantics, pending/blocked failures, and
+  public Markdown redaction covered by no-network contract checks.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -830,7 +835,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the production-cutover contract check.
+2. Publish and merge the security-review-status contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

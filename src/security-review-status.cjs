@@ -32,7 +32,17 @@ function validateSecurityReviewStatus(document, source = "security review status
 }
 
 function mergeSecurityReviewStatus(checklistDocument, statusDocument, options = {}) {
-  return mergeProductionCutoverStatus(checklistDocument, statusDocument, options);
+  const merged = mergeProductionCutoverStatus(checklistDocument, statusDocument, {
+    ...options,
+    requireComplete: false,
+  });
+  const missingIds = missingSecurityReviewStatusIds(checklistDocument, statusDocument);
+  if (options.requireComplete && missingIds.length) {
+    throw new Error(
+      `security review status is missing ${missingIds.length} current item(s): ${missingIds.join(", ")}.`
+    );
+  }
+  return merged;
 }
 
 function createSecurityReviewStatusSkeleton(document, options = {}) {
