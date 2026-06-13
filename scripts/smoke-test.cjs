@@ -27,6 +27,8 @@ const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const dogfoodPromotion = require("../src/dogfood-promotion.cjs");
 const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
+const dogfoodGoLive = require("../src/dogfood-go-live.cjs");
+const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodStatus = require("../src/dogfood-status.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
@@ -764,6 +766,88 @@ assert.equal(
   dogfoodPromotionCli.main(["--skip-self-dogfood-replay", "--quiet"]).ready,
   false
 );
+const dogfoodGoLivePublicPacket = dogfoodGoLive.collectDogfoodGoLivePacket({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  root: dogfoodTargetRepoRoot,
+  selfDogfoodReplayRunner: promotionReplayRunner,
+});
+assert.equal(dogfoodGoLivePublicPacket.ready, false);
+assert.equal(dogfoodGoLivePublicPacket.gates.length, 4);
+assert.equal(dogfoodGoLivePublicPacket.gates[0].status, "warning");
+assert.match(
+  dogfoodGoLive.formatDogfoodGoLiveMarkdown(dogfoodGoLivePublicPacket),
+  /Dogfood Go-Live Packet/
+);
+assert.throws(
+  () => dogfoodGoLive.assertDogfoodGoLiveReady(dogfoodGoLivePublicPacket),
+  /operator-workspace/
+);
+const dogfoodGoLiveWorkspacePacket = dogfoodGoLive.collectDogfoodGoLivePacket({
+  env: promotionPreflightEnv,
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  operatorWorkspaceDir: dogfoodPromotionWorkspaceDir,
+  root: dogfoodTargetRepoRoot,
+  selfDogfoodReplayRunner: promotionReplayRunner,
+});
+assert.equal(dogfoodGoLiveWorkspacePacket.ready, false);
+assert.equal(
+  dogfoodGoLiveWorkspacePacket.gates.find((item) => item.id === "dogfood-promotion").status,
+  "ok"
+);
+assert.equal(
+  dogfoodGoLiveWorkspacePacket.gates.find((item) => item.id === "release-candidate").status,
+  "error"
+);
+assert.equal(JSON.stringify(dogfoodGoLiveWorkspacePacket).includes(dogfoodPromotionWorkspaceDir), false);
+assert.deepEqual(
+  dogfoodGoLive.operatorWorkspaceFilePaths("workspace"),
+  {
+    dogfoodStatus: path.join("workspace", "dogfood-status.json"),
+    operatorEvidence: path.join("workspace", "operator-evidence.json"),
+    productionCutoverStatus: path.join("workspace", "production-cutover-status.json"),
+    readme: path.join("workspace", "README.md"),
+    releaseGateStatus: path.join("workspace", "v0-release-status.json"),
+    securityReviewStatus: path.join("workspace", "security-review-status.json"),
+  }
+);
+assert.deepEqual(
+  dogfoodGoLiveCli.parseArgs([
+    "--",
+    "--operator-workspace",
+    "workspace",
+    "--repository",
+    "6529-Collections/example",
+    "--strict-preflight",
+    "--require-ready",
+    "--json",
+    "--quiet",
+  ]),
+  {
+    budgetPolicyFile: "",
+    cutoverStatusFile: "",
+    dogfoodStatusFile: "",
+    gateStatusFile: "",
+    help: false,
+    includeGitStatus: false,
+    json: true,
+    mode: "command-only",
+    modelCatalogFile: "",
+    operatorEvidenceFile: "",
+    operatorWorkspaceDir: "workspace",
+    out: "",
+    preflightProfile: "server",
+    quiet: true,
+    repositoryConfigFile: "",
+    requireOperatorWorkspaceReady: false,
+    requireReady: true,
+    securityReviewStatusFile: "",
+    skipPreflight: false,
+    skipSelfDogfoodReplay: false,
+    strictPreflight: true,
+    targetRepository: "6529-Collections/example",
+  }
+);
+assert.equal(dogfoodGoLiveCli.main(["--skip-self-dogfood-replay", "--quiet"]).ready, false);
 const dogfoodChecklist = dogfoodStatus.loadDogfoodChecklist("config/dogfood-checklist.json");
 assert.equal(dogfoodChecklist.release, "v0.1.0");
 assert.equal(dogfoodChecklist.phases.length, 5);

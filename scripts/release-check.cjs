@@ -52,6 +52,13 @@ runNode("bin/dogfood-promotion.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/dogfood-go-live.cjs", ["--json", "--quiet"]);
+runNode("bin/dogfood-go-live.cjs", [
+  "--operator-workspace",
+  operatorWorkspaceDir,
+  "--json",
+  "--quiet",
+]);
 runNode("bin/dogfood-status.cjs", ["--json", "--quiet"]);
 runNode("bin/dogfood-status.cjs", [
   "--status-file",

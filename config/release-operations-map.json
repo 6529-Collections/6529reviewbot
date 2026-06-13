@@ -181,6 +181,15 @@
           "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
         },
         {
+          "id": "dogfood-go-live",
+          "script": "dogfood:go-live",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "purpose": "Cross-check release-candidate, dogfood promotion, production cutover, and operator workspace evidence before command-only live dogfood traffic.",
+          "doc": "docs/dogfood-go-live.md",
+          "privateInputs": "Reads operator-owned private workspace files and private runtime preflight settings.",
+          "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
+        },
+        {
           "id": "dogfood-status-init",
           "script": "dogfood:status",
           "args": "-- -- --init-status <operator-dogfood-status-file>",

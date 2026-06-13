@@ -29,6 +29,9 @@ included in `npm run release:check`.
 - The dogfood promotion packet is the final composed go/no-go report before
   live dogfood traffic; it should include the private operator workspace and
   no-network preflight when used as a real traffic gate.
+- The dogfood go-live packet is the final cross-check that release-candidate,
+  dogfood promotion, production cutover, and operator workspace evidence agree
+  before command-only live dogfood traffic.
 - The release-candidate phase is the public-safe packaging layer. It reads the
   private overlays, redacts sensitive shapes, and produces the evidence bundle
   intended for release PRs, tag decisions, or public release notes.

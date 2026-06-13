@@ -37,6 +37,7 @@
     "dogfood:target": "node bin/dogfood-target.cjs",
     "dogfood:readiness": "node bin/dogfood-readiness.cjs",
     "dogfood:promotion": "node bin/dogfood-promotion.cjs",
+    "dogfood:go-live": "node bin/dogfood-go-live.cjs",
     "dogfood:status": "node bin/dogfood-status.cjs",
     "security:review": "node bin/security-review-status.cjs",
     "production:cutover": "node bin/production-cutover.cjs",

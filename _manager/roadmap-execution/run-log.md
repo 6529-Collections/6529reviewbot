@@ -2208,3 +2208,26 @@
   - `npm run check` passed;
   - `npm run release:check` passed and reported 20 v0 release gates;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #153 as `8d1079b`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-go-live-packet` increment:
+  - add `npm run dogfood:go-live` as a public-safe final cross-check before
+    command-only live dogfood traffic;
+  - compose release-candidate readiness, dogfood promotion, production cutover,
+    and private operator workspace summaries in one packet;
+  - keep the packet renderable without private inputs while `--require-ready`
+    fails until real operator evidence is complete;
+  - update README, dogfood docs, release docs, release operations map,
+    release-readiness, v0 plan, roadmap, changelog, smoke tests, release
+    checks, and manager memory.
+- Local validation for `codex/dogfood-go-live-packet`:
+  - `npm run check` passed with 95 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 63 files checked;
+  - `npm run check:release-operations` passed with 37 tools;
+  - `node bin/dogfood-go-live.cjs --json --quiet` passed;
+  - generated a temporary operator workspace and
+    `node bin/dogfood-go-live.cjs --operator-workspace <temp-dir> --json --quiet` passed;
+  - `npm run check:public-artifacts` passed with 106 files checked;
+  - `npm run release:check` passed and ran the go-live packet checks;
+  - `git diff --check` passed.

@@ -99,7 +99,11 @@ evidence is what operators fill in after live dogfood starts.
 - `check:self-dogfood-replay` proves the committed self-dogfood config behaves
   safely before live delivery.
 - `dogfood:promotion` composes those checks into the final pre-traffic packet.
+- `dogfood:go-live` cross-checks the promotion packet against release
+  candidate, production cutover, and operator workspace evidence.
 - `dogfood:status` tracks private evidence after traffic starts.
 
 Use the promotion packet immediately before enabling live command-only traffic,
-then record the first run in the private dogfood status overlay.
+then use the go-live packet when the traffic decision should include all
+release and cutover evidence in one public-safe summary. Record the first run
+in the private dogfood status overlay.

@@ -174,6 +174,10 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 
 - Use `templates/dogfood-command-only-config.yml`.
 - Keep automatic initial and synchronize reviews disabled.
+- Run `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+  before enabling command-only live traffic when release-candidate, promotion,
+  cutover, and operator-workspace evidence should agree in one public-safe
+  summary.
 - Switch the worker adapter to the chosen live worker.
 - Trigger one review with a maintainer comment, such as `/6529bot general`.
 - Confirm the PR comment is posted by `6529bot`.

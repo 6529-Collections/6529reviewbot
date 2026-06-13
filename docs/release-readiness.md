@@ -111,6 +111,9 @@ Ready for community review:
 - dogfood promotion packet command for composing target config readiness,
   central dogfood inputs, synthetic self-dogfood replay, private workspace
   parsing, and preflight into one final pre-traffic go/no-go report;
+- dogfood go-live packet command for cross-checking release-candidate,
+  promotion, production-cutover, and operator-workspace evidence before
+  command-only live dogfood traffic;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
@@ -182,6 +185,9 @@ Before announcing broad community use:
    trigger.
    Run [Dogfood Promotion Packet](dogfood-promotion.md) as the final
    pre-traffic go/no-go check from the private operator environment.
+   Run [Dogfood Go-Live Packet](dogfood-go-live.md) when release-candidate,
+   promotion, cutover, and operator-workspace evidence should agree in one
+   public-safe summary.
 10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
 11. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 12. Update README, changelog, release notes, install docs, and example configs.
