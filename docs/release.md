@@ -209,6 +209,9 @@ After stabilization:
 - `npm run check:operator-workspace` confirms the operator workspace contract
   stays synchronized with creation/check behavior, private path markers,
   Markdown redaction, and docs
+- `npm run check:production-cutover` confirms the production cutover contract
+  stays synchronized with checklist/status readiness, deferral semantics,
+  Markdown redaction, and docs
 - `npm run check:release-candidate` confirms the public-safe
   release-candidate bundle contract stays synchronized with redaction,
   workspace path markers, CLI defaults, and docs

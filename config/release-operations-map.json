@@ -262,6 +262,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "production-cutover-contract",
+          "script": "check:production-cutover",
+          "purpose": "Verify production cutover checklist/status readiness, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "doc": "docs/production-cutover.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "release-candidate-contract",
           "script": "check:release-candidate",
           "purpose": "Verify release-candidate bundle redaction, private workspace path markers, CLI flags, source invariants, and public release docs stay synchronized.",

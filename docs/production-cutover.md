@@ -51,6 +51,18 @@ npm run production:cutover -- -- --status-file <operator-cutover-status-file> --
 `--require-ready` permits `deferred` items only when the status includes notes.
 Release notes must name every deferral, the accepted risk, and follow-up owner.
 
+Run the production cutover contract check after changing the checklist/status
+schema, readiness behavior, deferral handling, Markdown redaction, source
+invariants, or this runbook:
+
+```bash
+npm run check:production-cutover
+```
+
+The production cutover contract check verifies the pending skeleton, complete
+and deferred readiness semantics, required evidence rules, public Markdown
+redaction, and docs stay synchronized.
+
 ## Cutover Phases
 
 The checklist tracks these phases:

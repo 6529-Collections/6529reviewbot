@@ -3125,3 +3125,26 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator workspace validation
     and 72 mapped release-operation tools.
+- Merged `6529reviewbot` PR #197 as `92a7202`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/production-cutover-contract` increment:
+  - add `scripts/check-production-cutover-contract.cjs` and
+    `npm run check:production-cutover`;
+  - harden production cutover public text so release labels, evidence, notes,
+    and checklist text normalize newlines before Markdown rendering;
+  - validate CLI parsing, pending skeletons, complete readiness, deferral
+    semantics, required evidence rules, Markdown redaction, source invariants,
+    and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/production-cutover-contract`:
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:release-operations` passed with 73 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 131 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including production cutover validation
+    and 73 mapped release-operation tools.

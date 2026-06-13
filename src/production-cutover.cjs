@@ -319,7 +319,7 @@ function publicCutoverText(value) {
   for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
     text = text.replace(pattern, replacement);
   }
-  return text.slice(0, CUTOVER_TEXT_MAX_CHARS);
+  return text.slice(0, CUTOVER_TEXT_MAX_CHARS).replace(/\r?\n/g, " ");
 }
 
 function cutoverText(value, source, maxChars = CUTOVER_TEXT_MAX_CHARS) {

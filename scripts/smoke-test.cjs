@@ -71,6 +71,7 @@ const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
 const operatorWorkspaceContractCheck = require("./check-operator-workspace-contract.cjs");
 const productionCutover = require("../src/production-cutover.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
+const productionCutoverContractCheck = require("./check-production-cutover-contract.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
@@ -5049,6 +5050,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /operator workspace contract check found/
+  );
+  const productionCutoverContractResult =
+    productionCutoverContractCheck.checkProductionCutoverContract();
+  assert.equal(productionCutoverContractResult.cliCases, 3);
+  assert.equal(productionCutoverContractResult.statusCases, 5);
+  assert.throws(
+    () =>
+      productionCutoverContractCheck.checkProductionCutoverContract({
+        quiet: true,
+        docTexts: {
+          "docs/production-cutover.md": "# Production Cutover\n",
+        },
+      }),
+    /production cutover contract check found/
   );
   const releaseCandidateContractResult =
     releaseCandidateContractCheck.checkReleaseCandidateContract();

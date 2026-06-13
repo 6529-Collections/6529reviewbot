@@ -111,6 +111,10 @@ Deferred release gates, operator evidence sections, dogfood items, or
 production cutover items are allowed, but release notes must name the risk and
 follow-up owner.
 
+Run the production cutover checker after changing cutover readiness behavior,
+deferral semantics, or public cutover Markdown because release-candidate
+bundles can include those counts and deferrals.
+
 ## Public-Safe Output
 
 The bundle is suitable for public PRs, issues, releases, and durable manager
