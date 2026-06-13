@@ -153,6 +153,7 @@ After stabilization:
 - workflow pins reviewed
 - annotated GitHub Action tags pinned to their peeled commit SHA, not the
   tag-object SHA
+- `actions/checkout` steps set `persist-credentials: false`
 - reusable workflow caller-secret mapping reviewed when compatibility workflow
   changes
 - security model reviewed for trust-boundary changes

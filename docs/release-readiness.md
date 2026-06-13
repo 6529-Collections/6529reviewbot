@@ -142,6 +142,8 @@ Ready for community review:
   pinned upload action path cleanly;
 - GitHub Action pins use commit SHAs that belong to the action repository;
   annotated release tags are peeled before pinning;
+- committed `actions/checkout` steps set `persist-credentials: false`, enforced
+  by the workflow action checker;
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
   dry-run mode, with job-health alert evaluation available once job and
   run-control ledgers are enabled in the scheduled job;

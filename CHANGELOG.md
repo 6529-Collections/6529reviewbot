@@ -229,6 +229,8 @@ stabilized.
   until that verifier path accepts the pinned upload action cleanly.
 - `actions/checkout` pins now use the peeled `v6.0.3` commit SHA instead of
   the annotated tag object SHA.
+- `npm run check:workflow-actions` now requires `actions/checkout` steps to
+  set `persist-credentials: false`; CI and Dependency Review now do so.
 - v0 release gate renderer can merge an operator-owned status/evidence file.
 - Release checks validate that machine-readable v0 gates match the numbered
   required-gates list in the release plan.

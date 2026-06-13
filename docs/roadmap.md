@@ -433,6 +433,8 @@ Completed in `6529reviewbot`:
   verifier path accepts pinned upload-action refs cleanly.
 - GitHub Action checkout pins use the peeled commit SHA for annotated release
   tags.
+- workflow action checks require `actions/checkout` steps to avoid persisted
+  credentials.
 - documentation link checker for the public docs surface.
 - checklist runbook-link checker for dogfood, security-review, and
   production-cutover JSON checklists.
