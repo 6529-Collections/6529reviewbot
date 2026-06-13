@@ -423,6 +423,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "release-notes-draft-contract",
+          "script": "check:release-notes-draft",
+          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
+          "doc": "docs/release-notes-draft.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "env-template-checks",
           "script": "check:env-templates",
           "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",
@@ -726,6 +733,15 @@
           "doc": "docs/release-candidate.md",
           "privateInputs": "Reads operator-owned private status and evidence files.",
           "publicOutput": "Designed for public PRs, issues, releases, and durable manager memory after operator review."
+        },
+        {
+          "id": "release-notes-draft",
+          "script": "release:notes",
+          "args": "-- -- --candidate-file <release-candidate.json>",
+          "purpose": "Build a public-safe pre-v1 release notes draft from a saved release-candidate JSON bundle and model catalog defaults.",
+          "doc": "docs/release-notes-draft.md",
+          "privateInputs": "Reads a saved release-candidate JSON bundle; keep raw private status files out of this command.",
+          "publicOutput": "Designed as a first draft for public release notes after operator review and TODO completion."
         },
         {
           "id": "full-release-check",

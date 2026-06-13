@@ -396,23 +396,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator drill command PR: merged as PR #217, merge commit `bddb158`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/manager-memory-contract`.
-- Current local changes: updating durable manager context after PR #217 and
-  adding a manager memory contract check that keeps active-context, run-log,
-  latest merged PR evidence, release-check wiring, smoke coverage, release
-  operations map, and public docs synchronized.
+- Manager memory contract PR: merged as PR #218, merge commit `a2e4d39`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-draft`.
+- Current local changes: adding a public-safe `release:notes` draft command
+  and contract check that turn release-candidate evidence and model catalog
+  defaults into pre-v1 release notes with operator-owned `TODO(operator)`
+  fields.
 - Current local validation:
-  - `npm run check` passed with 153 CommonJS files;
-  - `npm run check:docs` passed with 66 files checked;
-  - `npm run check:doc-index` passed with 52 docs indexed;
-  - `npm run check:release-operations` passed with 95 mapped tools;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run release:notes -- -- --json --quiet` passed;
+  - `npm run check` passed with 156 CommonJS files;
+  - `npm run check:docs` passed with 67 files checked;
+  - `npm run check:doc-index` passed with 53 docs indexed;
+  - `npm run check:release-operations` passed with 97 mapped tools;
   - `git diff --check` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #217,
+  - `npm run check:release-notes` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #218,
     and 5 docs checked;
   - `npm test` passed;
-  - `npm run check:public-artifacts` passed with 109 files checked;
-  - `npm run release:check` passed, including manager memory validation and
-    95 mapped release-operation tools.
+  - `npm run check:public-artifacts` passed with 110 files checked;
+  - `npm run release:check` passed, including release notes draft contract
+    validation and 97 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -961,7 +967,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the manager memory contract check.
+2. Publish and merge the release notes draft command and contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

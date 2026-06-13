@@ -319,6 +319,10 @@ release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 deferrals, known gaps, compatibility, and validation.
+`npm run check:release-notes-draft` is included in `npm run release:check` and
+keeps the public-safe release notes draft aligned with release-candidate
+summaries, model defaults, TODO markers, redaction, CLI flags, operations map
+entries, and docs.
 Use [Release Operations Map](release-operations-map.md) or
 `npm run release:operations` when choosing the next public check, private
 status overlay, or release-candidate command.
@@ -455,6 +459,10 @@ weekly Dependabot coverage for npm and GitHub Actions dependencies.
 keeps the command/evidence-boundary map aligned with package scripts and docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the GitHub Release template aligned with v0 release evidence expectations.
+`npm run check:release-notes-draft` is included in `npm run release:check` and
+verifies the public-safe release notes draft keeps release-candidate summaries,
+model defaults, TODO markers, redaction, CLI flags, operations map entries, and
+docs aligned.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

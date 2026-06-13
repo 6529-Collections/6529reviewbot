@@ -61,6 +61,8 @@ be linked here before they are considered release-ready.
 - [v0 Release Plan](v0-release-plan.md): first public dogfood tag criteria.
 - [Release Candidate Bundle](release-candidate.md): public-safe readiness
   artifact.
+- [Release Notes Draft](release-notes-draft.md): public-safe pre-v1 release
+  notes draft from release-candidate evidence.
 - [Release Notes Template](release-notes-template.md): pre-v1 release notes
   shape.
 - [Release Operations Map](release-operations-map.md): command and evidence

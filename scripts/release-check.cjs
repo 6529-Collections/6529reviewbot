@@ -82,6 +82,7 @@ runNode("scripts/check-release-gate-parity.cjs");
 runNode("scripts/check-v0-gates-contract.cjs");
 runNode("scripts/check-release-candidate-contract.cjs");
 runNode("scripts/check-release-notes-template.cjs");
+runNode("scripts/check-release-notes-draft-contract.cjs");
 runNode("scripts/check-release-operations-map.cjs");
 runNode("scripts/check-self-dogfood-replay.cjs");
 runNode("scripts/smoke-test.cjs");
@@ -91,6 +92,7 @@ runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.exam
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.dogfood.example.json", "--quiet"]);
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/operator-workspace.cjs", ["--dir", operatorWorkspaceDir, "--quiet"]);
+runNode("bin/release-notes-draft.cjs", ["--json", "--quiet"]);
 runNode("bin/dogfood-target.cjs", ["--mode", "command-only", "--require-ready", "--quiet"]);
 runNode("bin/dogfood-target.cjs", ["--mode", "limited-initial", "--require-ready", "--quiet"]);
 runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet"]);

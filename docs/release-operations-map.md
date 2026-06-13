@@ -166,6 +166,12 @@ deferral semantics, Markdown redaction, source invariants, and docs aligned.
 `npm run check:release-candidate` keeps release-candidate bundle redaction,
 private workspace path markers, CLI defaults, source invariants, and docs
 aligned.
+`npm run check:release-notes-draft` keeps the release notes draft command's
+release-candidate summaries, model defaults, TODO markers, redaction, CLI
+flags, operations map entries, and docs aligned.
+`npm run release:notes -- -- --candidate-file <release-candidate.json>`
+builds a public-safe pre-v1 release notes draft from reviewed release-candidate
+evidence.
 
 The local quality gate command inventory is:
 
@@ -224,6 +230,7 @@ The local quality gate command inventory is:
 - `npm run check:production-cutover`
 - `npm run check:security-review-status`
 - `npm run check:release-candidate`
+- `npm run check:release-notes-draft`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`

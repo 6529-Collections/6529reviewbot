@@ -129,6 +129,12 @@ After stabilization:
 - `npm run check:release-notes` confirms the pre-v1 release notes template
   still names required evidence, known gaps, deferrals, compatibility, and
   validation fields
+- `npm run release:notes` drafts public-safe pre-v1 release notes from a
+  release-candidate JSON bundle and model catalog defaults, with
+  `TODO(operator)` markers for private evidence
+- `npm run check:release-notes-draft` confirms the release notes draft command
+  keeps release-candidate summaries, model defaults, redaction, TODO markers,
+  CLI flags, and docs synchronized
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:install-guide` confirms the installation guide contract keeps

@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a release notes draft command and contract check for public-safe pre-v1
+  release notes generated from release-candidate evidence and model catalog
+  defaults.
 - Added a manager memory contract check so active context, run-log state,
   release checks, smoke tests, and public docs stay synchronized during the
   autonomous release workstream.

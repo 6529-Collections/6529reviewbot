@@ -411,6 +411,9 @@ Completed in `6529reviewbot`:
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production cutover status, deferrals,
   known gaps, compatibility, and validation fields;
+- release notes draft command for turning release-candidate bundle evidence
+  and model catalog defaults into a public-safe pre-v1 draft with operator TODO
+  markers;
 - release-candidate private workspace path redaction for JSON and Markdown
   bundles;
 - operator workspace bootstrap for private release-gate, dogfood,
@@ -538,6 +541,8 @@ Completed in `6529reviewbot`:
   dogfood readiness, promotion, and go-live rehearsals.
 - manager memory contract check for active context, run-log state, latest
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
+- release notes draft command and contract check for public-safe pre-v1 notes
+  generated from release-candidate bundle evidence and model catalog defaults.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
