@@ -2292,3 +2292,26 @@
   - `npm run release:check` passed and kept 20 v0 release gates plus the
     release operations map valid;
   - `npm run check` passed with 95 CommonJS files.
+- Merged `6529reviewbot` PR #158 as `a8e80e8`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/docs-index-check` increment:
+  - add `docs/README.md` as the canonical public documentation index;
+  - add `scripts/check-doc-index.cjs`, `npm run check:doc-index`, and
+    release-check wiring so every `docs/*.md` file must be linked from the
+    index;
+  - add the docs index check to the release operations map;
+  - link the docs index from the root README and update changelog, roadmap, and
+    manager memory.
+- Initial validation for `codex/docs-index-check`:
+  - `npm run check:doc-index` passed with 50 docs indexed;
+  - `npm run check:docs` passed with 64 files checked.
+- Local validation for `codex/docs-index-check`:
+  - `npm run check:doc-index` passed with 50 docs indexed;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:release-operations` passed with 38 mapped tools;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 96 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including the docs index gate and 20 v0
+    release gates.

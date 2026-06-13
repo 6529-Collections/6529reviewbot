@@ -24,6 +24,13 @@
           "publicOutput": "Safe after reviewing any failure paths."
         },
         {
+          "id": "documentation-index",
+          "script": "check:doc-index",
+          "purpose": "Verify every tracked docs Markdown file is linked from the canonical docs index.",
+          "doc": "docs/README.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",
