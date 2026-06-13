@@ -384,11 +384,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alerting runbook contract PR: merged as PR #211, merge commit `486cb47`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-pricing-runbook-contract`.
-- Current local changes: adding a model pricing runbook contract check that
-  keeps source-checked price evidence, stale/zero-price overrides, apply
-  behavior, estimation semantics, release checks, smoke tests, and docs
-  synchronized.
+- Model pricing runbook contract PR: merged as PR #212, merge commit
+  `813f20c`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/budget-policies-runbook-contract`.
+- Current local changes: adding a budget policies runbook contract check that
+  keeps policy-file shape, scope semantics, dry-run/apply behavior, central DB
+  caps, fail-closed admission precedence, review requirements, release checks,
+  smoke tests, and docs synchronized.
 
 ## Key Decisions
 
@@ -893,6 +895,10 @@ merged PRs.
   shape, source-checked evidence, stale-source overrides, zero-rate overrides,
   apply behavior, and token-class estimation semantics machine-checked so
   operator-maintained pricing does not drift from budget evidence.
+- Central budget policies are a live spend-control boundary. Keep policy-file
+  shape, canonical scopes, dry-run/apply behavior, fail-closed admission reads,
+  central DB cap precedence, and review notes machine-checked so public
+  operator docs cannot drift from production admission behavior.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -916,7 +922,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the model pricing runbook contract check.
+2. Publish and merge the budget policies runbook contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

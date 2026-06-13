@@ -10,6 +10,11 @@ config caps:
 - the production server loads enabled DB rows before budget admission, so these
   caps stop work before run-control claims, worker dispatch, or provider calls.
 
+Run `npm run check:budget-policies-runbook` after editing this page or related
+operator guidance. The budget policies runbook contract keeps policy-file
+shape, scope semantics, dry-run/apply behavior, admission precedence, and review
+requirements synchronized.
+
 ## Policy File
 
 Start from:

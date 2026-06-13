@@ -3469,3 +3469,25 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including model pricing runbook validation
     and 88 mapped release-operation tools.
+- Merged `6529reviewbot` PR #212 as `813f20c`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/budget-policies-runbook-contract` increment:
+  - add `scripts/check-budget-policies-runbook-contract.cjs` and
+    `npm run check:budget-policies-runbook`;
+  - validate budget policy section order, policy-file shape, canonical scopes,
+    ledger constraint refresh guidance, dry-run/apply commands, redacted notes,
+    fail-closed admission behavior, central DB cap precedence, and review
+    requirements;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/budget-policies-runbook-contract` so far:
+  - `npm run check:budget-policies-runbook` passed with 5 runbook cases and 9
+    docs checked;
+  - `npm run check:release-operations` passed with 89 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check` passed with 146 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including budget policies runbook
+    validation and 89 mapped release-operation tools.

@@ -26,6 +26,7 @@ const budgetLedger = require("../src/budget-ledger.cjs");
 const budgetPolicies = require("../src/budget-policies.cjs");
 const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
 const budgetScopesCheck = require("./check-budget-scopes.cjs");
+const budgetPoliciesRunbookContractCheck = require("./check-budget-policies-runbook-contract.cjs");
 const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodTarget = require("../src/dogfood-target.cjs");
@@ -5315,7 +5316,7 @@ appServer.handleGitHubWebhook({
         docTexts: {
           "docs/alerting.md": "# Alerting\n",
         },
-    }),
+      }),
     /alerting runbook contract check found/
   );
   const modelPricingRunbookContractResult =
@@ -5330,6 +5331,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /model pricing runbook contract check found/
+  );
+  const budgetPoliciesRunbookContractResult =
+    budgetPoliciesRunbookContractCheck.checkBudgetPoliciesRunbookContract();
+  assert.equal(budgetPoliciesRunbookContractResult.runbookCases, 5);
+  assert.throws(
+    () =>
+      budgetPoliciesRunbookContractCheck.checkBudgetPoliciesRunbookContract({
+        quiet: true,
+        docTexts: {
+          "docs/budget-policies.md": "# Budget Policies\n",
+        },
+      }),
+    /budget policies runbook contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

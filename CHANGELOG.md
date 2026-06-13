@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a budget policies runbook contract release check for central DB caps,
+  dry-run/apply behavior, fail-closed admission precedence, and review
+  requirements.
 - Added a model pricing runbook contract release check for source-checked price
   evidence, stale/zero-price overrides, apply behavior, and estimation
   semantics.

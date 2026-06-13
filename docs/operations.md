@@ -70,6 +70,10 @@ Review central budget policies without touching AWS:
 npm run budget-policies -- -- --file config/budget-policies.example.json
 ```
 
+Run `npm run check:budget-policies-runbook` after editing budget-policies
+guidance so dry-run/apply commands, central DB cap semantics, admission
+precedence, and review requirements stay synchronized.
+
 Apply reviewed central budget policies from a configured operator environment:
 
 ```bash

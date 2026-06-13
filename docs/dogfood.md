@@ -149,6 +149,10 @@ npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>
 npm run budget-policies -- -- --file <reviewed-budget-policy-file.json> --apply
 ```
 
+Run `npm run check:budget-policies-runbook` after changing budget policy
+guidance or examples so dogfood caps, dry-run/apply behavior, and fail-closed
+admission notes stay synchronized.
+
 Start with global, target-repo, requestor, provider, model, and review-kind
 caps. The dogfood example is a starting point, not a live policy. Replace
 placeholder requestors and adjust caps in an operator-owned file before
