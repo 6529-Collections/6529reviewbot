@@ -155,6 +155,7 @@ npm run check:admission-policy
 npm run check:repository-config-boundary
 npm run check:worker-adapter-contract
 npm run check:admin-auth
+npm run check:usage-api-routes
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes

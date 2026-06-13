@@ -266,6 +266,9 @@ admin requests to:
 GET /api/admin/usage/summary?days=30
 GET /api/admin/usage/events/recent?days=7&limit=50
 GET /api/admin/budget/policies
+GET /api/admin/budget/status
+GET /api/admin/model-prices/status
+GET /api/admin/alerts/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 GET /api/admin/status?profile=server

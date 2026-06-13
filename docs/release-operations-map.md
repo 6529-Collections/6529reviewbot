@@ -45,6 +45,8 @@ template, and worker docs aligned.
 `npm run check:admin-auth` keeps private admin auth modes, shared-secret
 behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public
 env templates aligned.
+`npm run check:usage-api-routes` keeps usage/admin API paths, server defaults,
+OpenAPI paths, 6529.io client methods, env templates, and docs aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:providers` keeps supported provider constants, preflight key
@@ -74,6 +76,7 @@ The local quality gate command inventory is:
 - `npm run check:repository-config-boundary`
 - `npm run check:worker-adapter-contract`
 - `npm run check:admin-auth`
+- `npm run check:usage-api-routes`
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`

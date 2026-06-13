@@ -2783,3 +2783,27 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including admin auth contract validation
     and 56 mapped release-operation tools.
+- Merged `6529reviewbot` PR #182 as `447cc8f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/usage-api-route-contract` increment:
+  - add `scripts/check-usage-api-routes.cjs` and
+    `npm run check:usage-api-routes`;
+  - validate usage/admin API path constants, default settings, route handling,
+    OpenAPI paths/security, 6529.io client methods, `.env.example`, 6529.io env
+    template paths, and public docs;
+  - update admin integration, deployment, install, and GitHub App docs to list
+    budget status, model-price status, and alert status endpoints alongside
+    existing admin usage, job, run-claim, and runtime-status routes;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/usage-api-route-contract`:
+  - `npm run check:usage-api-routes` passed with 10 routes, 10 client methods,
+    and 8 docs/templates checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 57 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 115 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including usage-api route validation and
+    57 mapped release-operation tools.
