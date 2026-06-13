@@ -22,6 +22,17 @@ npm run dogfood:target -- -- --mode command-only --require-ready
 The default config is
 `templates/dogfood-command-only-config.yml`.
 
+Run the dogfood target contract check after changing the target command,
+packet format, mode inference, external config path handling, Markdown
+redaction, source invariants, or this runbook:
+
+```bash
+npm run check:dogfood-target
+```
+
+The check keeps public examples synchronized and verifies that external target
+config paths render with the `[external-config]` marker.
+
 ## Limited Initial Reviews
 
 After webhook delivery, budget admission, run-control, usage rows, and alerts

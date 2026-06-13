@@ -3077,3 +3077,27 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dogfood readiness validation and
     70 mapped release-operation tools.
+- Merged `6529reviewbot` PR #195 as `37a472e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-target-contract` increment:
+  - add `scripts/check-dogfood-target-contract.cjs` and
+    `npm run check:dogfood-target`;
+  - harden dogfood target public Markdown so packet headers, table cells,
+    checklist items, and external config basenames pass through public-text
+    redaction;
+  - validate CLI parsing, target packet modes, mode mismatch failures,
+    external config path markers, token/AWS redaction, source invariants, and
+    docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/dogfood-target-contract`:
+  - `npm run check:dogfood-target` passed with 3 CLI cases, 4 packet cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 71 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 129 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including dogfood target validation and
+    71 mapped release-operation tools.

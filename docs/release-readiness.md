@@ -386,6 +386,9 @@ diagnostics, and docs stay aligned.
 verifies saved webhook replay stays dry-run by default, requires explicit
 dispatch for worker queueing, signs payloads locally, avoids raw payload echo,
 and keeps replay docs aligned.
+`npm run check:dogfood-target` is included in `npm run release:check` and the
+dogfood target checker verifies target packet modes, external config path
+redaction, Markdown sanitization, source invariants, and docs stay aligned.
 `npm run check:workflow-permissions` is included in `npm run release:check`
 and verifies committed workflow permission blocks stay explicit and
 least-privilege.

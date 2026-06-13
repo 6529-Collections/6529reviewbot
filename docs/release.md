@@ -194,6 +194,9 @@ After stabilization:
 - `npm run check:webhook-replay` confirms saved webhook replay stays dry-run by
   default, explicit before dispatch, locally signed, payload-safe, and
   documented
+- `npm run check:dogfood-target` confirms the dogfood target packet contract
+  stays synchronized with mode inference, external config path markers,
+  Markdown redaction, and docs
 - `npm run check:dogfood-readiness` confirms the dogfood readiness report
   contract stays synchronized with static defaults, workspace path markers,
   preflight state, Markdown redaction, and docs
