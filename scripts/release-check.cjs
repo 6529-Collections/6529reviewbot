@@ -44,6 +44,7 @@ runNode("scripts/check-dogfood-readiness-contract.cjs");
 runNode("scripts/check-dogfood-promotion-contract.cjs");
 runNode("scripts/check-dogfood-go-live-contract.cjs");
 runNode("scripts/check-operator-workspace-contract.cjs");
+runNode("scripts/check-operator-drill-contract.cjs");
 runNode("scripts/check-operator-evidence-contract.cjs");
 runNode("scripts/check-production-cutover-contract.cjs");
 runNode("scripts/check-security-review-status-contract.cjs");
@@ -112,6 +113,7 @@ runNode("bin/dogfood-go-live.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/operator-drill.cjs", ["--skip-self-dogfood-replay", "--json", "--quiet"]);
 runNode("bin/dogfood-status.cjs", ["--json", "--quiet"]);
 runNode("bin/dogfood-status.cjs", [
   "--status-file",

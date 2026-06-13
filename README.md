@@ -184,6 +184,7 @@ npm run check:dogfood-readiness
 npm run check:dogfood-promotion
 npm run check:dogfood-go-live
 npm run check:operator-workspace
+npm run check:operator-drill
 npm run check:operator-evidence
 npm run check:production-cutover
 npm run check:security-review-status
@@ -212,6 +213,12 @@ Run the full release gate:
 
 ```bash
 npm run release:check
+```
+
+Run a public-safe release and dogfood rehearsal:
+
+```bash
+npm run operator:drill
 ```
 
 Validate central runtime configuration without network calls:
@@ -704,6 +711,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Release readiness](docs/release-readiness.md)
 - [Release operations map](docs/release-operations-map.md)
 - [Operator workspace](docs/operator-workspace.md)
+- [Operator Drill](docs/operator-drill.md)
 - [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
 

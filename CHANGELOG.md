@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added an operator drill command and contract check for public-safe rehearsal
+  of release-candidate, dogfood readiness, promotion, and go-live summaries.
 - Added a security model contract release check for first-principles trust
   boundaries, manual checklist coverage, workflow secret mapping, fail-closed
   controls, and implementation anchors.
