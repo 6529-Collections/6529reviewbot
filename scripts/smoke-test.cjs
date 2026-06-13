@@ -60,6 +60,7 @@ const githubAppRoutesContractCheck = require("./check-github-app-routes-contract
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
 const configurationReferenceContractCheck = require("./check-configuration-reference-contract.cjs");
+const managerMemoryContractCheck = require("./check-manager-memory.cjs");
 const awsIamTemplatesCheck = require("./check-aws-iam-templates.cjs");
 const securityModelContractCheck = require("./check-security-model-contract.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
@@ -5233,6 +5234,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /deployment runbook contract check found/
+  );
+  const managerMemoryContractResult = managerMemoryContractCheck.checkManagerMemoryContract();
+  assert.ok(managerMemoryContractResult.latestPr >= 217);
+  assert.equal(managerMemoryContractResult.docs, 5);
+  await assert.throws(
+    () =>
+      managerMemoryContractCheck.checkManagerMemoryContract({
+        quiet: true,
+        texts: {
+          "_manager/roadmap-execution/active-context.md": "# Active Context\n",
+        },
+      }),
+    /manager memory contract check found/
   );
   const configurationReferenceContractResult =
     configurationReferenceContractCheck.checkConfigurationReferenceContract();

@@ -20,6 +20,9 @@ included in `npm run release:check`.
 The canonical documentation index is [Docs Index](README.md), and
 `npm run check:doc-index` fails release checks when a public docs page is not
 linked there.
+`npm run check:manager-memory` keeps durable manager memory core sections,
+latest merged PR state, validation status, release-check wiring, smoke tests,
+and public docs synchronized.
 `npm run check:governance` keeps the public MIT license, community files, issue
 templates, and README governance links present.
 `npm run check:install-guide` keeps the conservative central App dogfood
@@ -169,6 +172,7 @@ The local quality gate command inventory is:
 - `npm run check`
 - `npm run check:docs`
 - `npm run check:doc-index`
+- `npm run check:manager-memory`
 - `npm run check:governance`
 - `npm run check:install-guide`
 - `npm run check:deployment-runbook`

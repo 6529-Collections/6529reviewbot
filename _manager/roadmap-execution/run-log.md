@@ -3580,3 +3580,26 @@
   - `npm run check:public-artifacts` passed with 108 files checked;
   - `npm run release:check` passed, including operator drill contract
     validation and 94 mapped release-operation tools.
+- Merged `6529reviewbot` PR #217 as `bddb158`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/manager-memory-contract` increment:
+  - add `scripts/check-manager-memory.cjs` and
+    `npm run check:manager-memory`;
+  - validate durable manager memory core sections, latest merged PR agreement
+    between run-log and active-context, non-pending shipped validation state,
+    source wiring, release operations map, and public docs;
+  - wire the check into release checks, smoke tests, README, docs index,
+    release operations map, release readiness, roadmap, changelog, and manager
+    memory.
+- Local validation for `codex/manager-memory-contract` so far:
+  - `npm run check` passed with 153 CommonJS files;
+  - `npm run check:docs` passed with 66 files checked;
+  - `npm run check:doc-index` passed with 52 docs indexed;
+  - `npm run check:release-operations` passed with 95 mapped tools;
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #217,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 109 files checked;
+  - `npm run release:check` passed, including manager memory validation and
+    95 mapped release-operation tools.

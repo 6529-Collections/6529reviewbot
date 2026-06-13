@@ -86,6 +86,8 @@ be linked here before they are considered release-ready.
   security checklist.
 - [Security Review Status](security-review-status.md): private manual-review
   status overlay.
+- [Manager Memory](manager-memory.md): durable autonomous workstream state and
+  release-check contract.
 
 ## Operations And Support
 
