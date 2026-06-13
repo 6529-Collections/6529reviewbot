@@ -330,6 +330,11 @@ guard aligned with required fields, deferral handling, public-safety
 redaction, CLI flags, operations map entries, and docs. Run
 `npm run release:notes:check -- -- --file <release-notes.md>` on completed
 release notes before publishing a tag or GitHub Release.
+`npm run check:release-tag-plan` is included in `npm run release:check` and
+keeps the release tag plan aligned with clean-main readiness, completed release
+notes, dry-run operator commands, release operations map entries, and docs. Run
+`npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
+before creating the annotated tag.
 Use [Release Operations Map](release-operations-map.md) or
 `npm run release:operations` when choosing the next public check, private
 status overlay, or release-candidate command.
@@ -473,6 +478,9 @@ docs aligned.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and verifies completed release notes fail publication
 when required fields, deferral decisions, or public-safety checks are missing.
+`npm run check:release-tag-plan` is included in `npm run release:check` and
+verifies the release tag plan remains a dry-run tag plan that requires clean,
+synced `main` and completed release notes before rendering operator commands.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

@@ -417,6 +417,8 @@ Completed in `6529reviewbot`:
 - release notes publication guard for rejecting unfinished markers, missing
   evidence fields, incomplete deferrals, and public-safety leaks before tags or
   GitHub Releases;
+- release tag plan command for checking clean synced `main`, completed release
+  notes, and final operator tag commands without creating tags;
 - release-candidate private workspace path redaction for JSON and Markdown
   bundles;
 - operator workspace bootstrap for private release-gate, dogfood,
@@ -549,6 +551,8 @@ Completed in `6529reviewbot`:
   generated from release-candidate bundle evidence and model catalog defaults.
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
+- release tag plan command and contract check for completed release notes,
+  clean-main readiness, and dry-run tag commands.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
