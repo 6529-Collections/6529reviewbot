@@ -103,7 +103,8 @@ Ready for community review:
   self-dogfood with trusted maintainer comment commands only;
 - synthetic self-dogfood replay check for proving that the committed config
   skips automatic PR-open jobs and admits the trusted maintainer command-only
-  command matrix without dispatching workers;
+  command matrix without dispatching workers, while denying untrusted public
+  commands before budget or queue work;
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;

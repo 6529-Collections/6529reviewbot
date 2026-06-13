@@ -257,10 +257,12 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - Release notes contract check PR: merged as PR #148, merge commit `be9b620`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/self-dogfood-command-matrix`.
+- Self-dogfood command-matrix PR: merged as PR #149, merge commit `8547783`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/self-dogfood-untrusted-replay`.
 - Current local changes: extending `npm run check:self-dogfood-replay` so the
-  self-dogfood config proves the command-only maintainer command matrix, not
-  only one security command, before live delivery.
+  self-dogfood config also proves an untrusted public command is denied at
+  admission before budget or queue work.
 
 ## Key Decisions
 
@@ -572,7 +574,8 @@ merged PRs.
 - Self-dogfood should be replayable before live App delivery. Synthetic
   payloads can prove the committed config skips automatic PR-open jobs and
   admits the trusted maintainer command matrix through dry-run queueing without
-  exposing private webhook payloads.
+  exposing private webhook payloads. It should also prove untrusted public
+  commands deny before budget or queue work.
 - Pre-v1 release notes are part of the public release contract. They should be
   machine-checked for tested configuration, release-candidate evidence,
   deferrals, known gaps, compatibility, and validation fields before tagging.
@@ -589,7 +592,8 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the self-dogfood command-matrix replay check.
+2. Validate, publish, and merge the self-dogfood untrusted-command replay
+   check.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

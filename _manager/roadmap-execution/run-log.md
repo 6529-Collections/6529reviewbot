@@ -2133,3 +2133,20 @@
   - `npm run release:check` passed and ran the 8-case self-dogfood replay
     gate;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #149 as `8547783` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/self-dogfood-untrusted-replay` increment:
+  - extend `npm run check:self-dogfood-replay` to replay an untrusted public
+    command with read permission;
+  - assert admission denies with `untrusted_actor`;
+  - assert budget, queue, and job summaries are absent so no spend path starts;
+  - update dogfood, release-readiness, release, roadmap, changelog, and
+    manager memory.
+- Local validation for `codex/self-dogfood-untrusted-replay`:
+  - one-off webhook replay with `--actor-permission read` returned admission
+    denial before budget or queue work;
+  - `npm run check:self-dogfood-replay` passed with the untrusted denial case;
+  - `npm run release:check` passed and ran the trusted-command plus
+    untrusted-denial self-dogfood replay gate;
+  - `git diff --check` passed.

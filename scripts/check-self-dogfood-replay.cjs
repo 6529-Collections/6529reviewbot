@@ -36,8 +36,11 @@ async function main() {
   );
 
   const checkedCommands = await checkCommandMatrix();
+  await checkUntrustedCommandDenied();
 
-  console.log(`self dogfood replay ok (${checkedCommands} command cases checked)`);
+  console.log(
+    `self dogfood replay ok (${checkedCommands} trusted command cases checked; untrusted command denied)`
+  );
 }
 
 async function checkCommandMatrix() {
@@ -81,6 +84,28 @@ function assertCommentReplay(commentReplay, commandCase) {
   }
 }
 
+async function checkUntrustedCommandDenied() {
+  const replayResult = await replay("templates/self-dogfood-comment-command.payload.json", {
+    eventName: "issue_comment",
+    deliveryId: "self-dogfood-untrusted-command",
+    actorPermission: "read",
+  });
+  assert.equal(replayResult.statusCode, 200);
+  assert.equal(replayResult.body.enqueued, false);
+  assert.equal(replayResult.body.configuration.status, "loaded");
+  assert.equal(replayResult.body.event.trigger, "comment");
+  assert.deepEqual(replayResult.body.event.reviewKinds, ["security"]);
+  assert.equal(replayResult.body.admission.allowed, false);
+  assert.equal(replayResult.body.admission.code, "untrusted_actor");
+  assert.equal(hasOwn(replayResult.body, "budget"), false);
+  assert.equal(hasOwn(replayResult.body, "queue"), false);
+  assert.equal(hasOwn(replayResult.body, "jobs"), false);
+}
+
+function hasOwn(object, key) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
+
 function writeCommandPayload(tempDir, commandCase, index) {
   const payload = JSON.parse(
     fs.readFileSync(
@@ -90,7 +115,10 @@ function writeCommandPayload(tempDir, commandCase, index) {
   );
   payload.comment.id = 6529100 + index;
   payload.comment.body = commandCase.body;
-  const payloadPath = path.join(tempDir, `${String(index + 1).padStart(2, "0")}.json`);
+  const payloadPath = path.join(
+    tempDir,
+    `${String(index + 1).padStart(2, "0")}.json`
+  );
   fs.writeFileSync(payloadPath, `${JSON.stringify(payload, null, 2)}\n`);
   return payloadPath;
 }
@@ -108,7 +136,7 @@ async function replay(payloadPath, options = {}) {
     eventName: options.eventName,
     deliveryId: options.deliveryId,
     webhookSecret: "self-dogfood-replay-secret",
-    actorPermission: "write",
+    actorPermission: options.actorPermission || "write",
     repositoryConfigPath,
     assumeEmptyBudget: true,
     estimatedCostUsd: 0.25,
