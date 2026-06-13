@@ -78,9 +78,11 @@ function checkDefaultDraft(findings) {
     "openrouter:explicit required",
     "Release candidate bundle:",
     "Production deployment plan:",
+    "Dashboard deployment plan:",
     "TODO(operator)",
     "`npm run release:check`",
     "`npm run production:deployment-plan",
+    "`npm run dashboard:deployment-plan",
     "`npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -159,6 +161,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectReleaseCandidateBundle",
       "loadModelCatalog",
       "TODO(operator)",
+      "dashboard:deployment-plan",
       "publicText",
     ],
     "bin/release-notes-draft.cjs": [

@@ -568,7 +568,7 @@ Completed in `6529reviewbot`:
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - release notes draft command and contract check for public-safe pre-v1 notes
   generated from release-candidate bundle evidence, production deployment plan
-  evidence, and model catalog defaults.
+  evidence, dashboard deployment plan evidence, and model catalog defaults.
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
 - release tag plan command and contract check for completed release notes,
