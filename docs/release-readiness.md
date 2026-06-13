@@ -245,7 +245,11 @@ first traffic:
 ```bash
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
+
+Use the silent npm form when copying dogfood readiness evidence from a command
+that includes private workspace paths.
 
 Use [Dogfood Status](dogfood-status.md) as the private evidence overlay after
 the first live command-only trigger:

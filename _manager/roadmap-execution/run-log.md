@@ -1991,3 +1991,32 @@
   - `npm test` passed;
   - `npm run check:docs` passed;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #143 as `59a8c2e` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/dogfood-readiness-silent-capture` increment:
+  - document `npm --silent run dogfood:readiness` for public evidence capture
+    from commands that contain private operator workspace paths;
+  - add matching `bin/dogfood-readiness.cjs --help` examples;
+  - update README, dogfood, operations, release-readiness, operator workspace,
+    changelog, and manager memory;
+  - initial leak check before edits showed direct Node output and
+    `npm --silent run dogfood:readiness` output did not contain the private
+    workspace path, while normal `npm run` echoed the command path before the
+    script ran.
+- Local validation for `codex/dogfood-readiness-silent-capture`:
+  - direct Node `dogfood-readiness --operator-workspace <temp-dir>` Markdown
+    output did not contain the private workspace path;
+  - `npm --silent run dogfood:readiness -- -- --operator-workspace <temp-dir>`
+    Markdown output did not contain the private workspace path;
+  - `npm --silent run dogfood:readiness -- -- --operator-workspace <temp-dir> --json`
+    JSON output did not contain the private workspace path;
+  - normal `npm run dogfood:readiness -- -- --operator-workspace <temp-dir>`
+    echoed the private path before script output, confirming the documented
+    capture risk;
+  - `npm test` passed;
+  - `npm run check` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

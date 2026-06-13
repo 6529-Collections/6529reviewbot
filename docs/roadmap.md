@@ -258,6 +258,8 @@ Build the operator experience:
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
+- public-safe operator evidence capture patterns, including silent npm output
+  for commands that include private paths;
 - support process for adopters.
 - public-safe operator evidence templates for release, dogfood, and production
   deployment proof.
