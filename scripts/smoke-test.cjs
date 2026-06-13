@@ -1741,6 +1741,21 @@ const candidateBundleWithCutoverMarkdown =
   releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithCutover);
 assert.match(candidateBundleWithCutoverMarkdown, /production cutover: not ready/);
 assert.match(candidateBundleWithCutoverMarkdown, /missing cutover status ids: none/);
+const candidateBundleWithDogfood = releaseCandidate.collectReleaseCandidateBundle({
+  env: preflightEnv,
+  gateStatusFile: "config/v0-release-status.example.json",
+  dogfoodStatusFile: "config/dogfood-status.example.json",
+  now: new Date("2026-06-12T00:00:00.000Z"),
+});
+assert.equal(candidateBundleWithDogfood.readiness.dogfood.complete, 1);
+assert.equal(candidateBundleWithDogfood.readiness.dogfood.deferred, 4);
+assert.equal(candidateBundleWithDogfood.readiness.dogfood.pending, 18);
+assert.deepEqual(candidateBundleWithDogfood.readiness.dogfood.missingStatusIds, []);
+assert.equal(candidateBundleWithDogfood.ready, false);
+const candidateBundleWithDogfoodMarkdown =
+  releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithDogfood);
+assert.match(candidateBundleWithDogfoodMarkdown, /dogfood: not ready/);
+assert.match(candidateBundleWithDogfoodMarkdown, /missing dogfood status ids: none/);
 assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(
@@ -1769,6 +1784,10 @@ assert.deepEqual(
     "status.json",
     "--operator-evidence-file",
     "evidence.json",
+    "--dogfood-file",
+    "dogfood.json",
+    "--dogfood-status-file",
+    "dogfood-status.json",
     "--cutover-file",
     "cutover.json",
     "--cutover-status-file",
@@ -1784,6 +1803,8 @@ assert.deepEqual(
   {
     cutoverChecklistFile: "cutover.json",
     cutoverStatusFile: "cutover-status.json",
+    dogfoodChecklistFile: "dogfood.json",
+    dogfoodStatusFile: "dogfood-status.json",
     gateStatusFile: "status.json",
     gatesFile: "config/v0-release-gates.json",
     includeGitStatus: true,

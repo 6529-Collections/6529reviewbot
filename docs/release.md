@@ -48,6 +48,9 @@ After stabilization:
   into issues, PRs, release notes, or durable manager memory
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight`
   reviewed as the public-safe release evidence bundle
+- `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file> --strict-preflight`
+  reviewed when the release decision also covers command-only or limited
+  initial-review dogfood evidence
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file> --strict-preflight`
   reviewed when the release decision also covers live dogfood or production
   traffic
