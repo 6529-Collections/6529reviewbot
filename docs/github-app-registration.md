@@ -246,6 +246,7 @@ Private key rotation:
 
    ```bash
    npm run github-app:token -- -- --installation-id <installation-id>
+   npm run check:github-app-auth
    ```
 
 5. Confirm repository config loading and actor permission resolution still
@@ -254,9 +255,15 @@ Private key rotation:
 
    ```bash
    npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+   npm run check:github-app-auth
    ```
 
 7. Delete the old private key from GitHub App settings and the secret store.
+
+Run `npm run check:github-app-auth` after changing private-key handling,
+installation-token minting, profile routing, or GitHub Actions token output.
+The installation token contract verifies env parsing, JWT shape, token
+caching, CLI profiles, output masking, and docs.
 
 Provider keys, AWS access, and admin-auth secrets rotate through their own
 runbooks. Do not combine rotations unless an incident requires broad

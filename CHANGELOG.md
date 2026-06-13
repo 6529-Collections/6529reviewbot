@@ -166,6 +166,9 @@ stabilized.
 - Added a release-candidate contract release check that validates public bundle
   redaction, private workspace path markers, CLI defaults, source invariants,
   and docs.
+- Added a GitHub App auth contract release check that validates env parsing,
+  JWT shape, installation-token caching, CLI profiles, GitHub Actions token
+  output masking, source invariants, and docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

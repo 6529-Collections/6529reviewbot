@@ -184,6 +184,7 @@ npm run check:alert-notifier-modes
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:github-app-manifest
+npm run check:github-app-auth
 npm run check:preflight
 npm run check:preflight-contract
 npm run check:release-gates
@@ -371,6 +372,7 @@ environment:
 ```bash
 npm run github-app:token -- -- --profile main --installation-id <installation-id>
 npm run github-app:token -- -- --profile worker-dispatch --installation-id <dispatch-installation-id>
+npm run check:github-app-auth
 ```
 
 Print the Aurora ledger schema without touching AWS:

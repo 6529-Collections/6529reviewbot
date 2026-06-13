@@ -366,11 +366,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - V0 release-gates contract PR: merged as PR #202, merge commit `16aa63f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/github-app-manifest-contract`.
-- Current local changes: adding a GitHub App manifest contract check that
-  keeps target App permissions/events, the no-Actions-write boundary,
-  registration form rendering, private manifest conversion behavior, redacted
-  summaries, source invariants, release checks, smoke tests, and docs
+- GitHub App manifest contract PR: merged as PR #203, merge commit `260ead4`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/github-app-auth-contract`.
+- Current local changes: adding a GitHub App auth contract check that keeps env
+  parsing, JWT shape, installation-token caching, CLI profiles, GitHub Actions
+  token output masking, source invariants, release checks, smoke tests, and docs
   synchronized.
 
 ## Key Decisions
@@ -840,6 +841,11 @@ merged PRs.
   dispatch-only App or explicitly reviewed fallback credential. Manifest
   conversion summaries must never expose generated credentials, manifest codes,
   private keys, AWS identifiers, or unsafe output paths.
+- Short-lived installation tokens are a credential boundary. Keep main and
+  worker-dispatch profiles, JWT TTL/refresh-buffer behavior, token caching,
+  installation id env fallback, and GitHub Actions output masking
+  machine-checked so target repo access and central dispatch credentials do not
+  drift.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -863,7 +869,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the GitHub App manifest contract check.
+2. Publish and merge the GitHub App auth contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
