@@ -119,6 +119,8 @@ stabilized.
 - Added an admin-snapshot contract release check that validates private
   operator snapshot names, default policy, warning posture, redaction behavior,
   CLI flags, and docs.
+- Added a support-bundle contract release check that validates safe env keys,
+  presence-only secret keys, local path redaction, CLI flags, and docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

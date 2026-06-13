@@ -2828,3 +2828,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including admin snapshot contract
     validation and 58 mapped release-operation tools.
+- Merged `6529reviewbot` PR #184 as `9b020a6`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/support-bundle-contract` increment:
+  - add `scripts/check-support-bundle-contract.cjs` and
+    `npm run check:support-bundle`;
+  - validate support-bundle safe env keys, presence-only secret keys, secret
+    placeholder output, local absolute path redaction, git-status redaction,
+    CLI flags, and support docs;
+  - tighten `src/support-bundle.cjs` so preflight/support text redacts local
+    absolute paths as well as secret-shaped values;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/support-bundle-contract`:
+  - `npm run check:support-bundle` passed with 17 safe keys, 21 presence keys,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 59 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 117 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including support bundle contract
+    validation and 59 mapped release-operation tools.
