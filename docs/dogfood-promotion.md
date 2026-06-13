@@ -10,7 +10,8 @@ separately:
 - central repository config, budget policy, and model catalog validation from
   `dogfood:readiness`;
 - synthetic self-dogfood replay for PR-open skip, trusted maintainer command
-  admission, and untrusted public command denial;
+  admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
+  public command denial;
 - private operator workspace parsing when supplied;
 - no-network runtime preflight when supplied.
 
@@ -98,7 +99,8 @@ evidence is what operators fill in after live dogfood starts.
 - `dogfood:readiness` checks static dogfood inputs and optional private
   workspace/preflight posture.
 - `check:self-dogfood-replay` proves the committed self-dogfood config behaves
-  safely before live delivery.
+  safely before live delivery, and rehearses a deliberate two-lane command plus
+  max-fanout rejection with temporary local config.
 - `dogfood:promotion` composes those checks into the final pre-traffic packet.
 - `dogfood:go-live` cross-checks the promotion packet against release
   candidate, production cutover, and operator workspace evidence.

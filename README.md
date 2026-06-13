@@ -353,6 +353,11 @@ npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --s
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
+`check:self-dogfood-replay` uses synthetic payloads and dry-run queueing to
+prove command-only PR-open skip, trusted command admission, deliberate
+multi-lane fanout, max-fanout rejection, and untrusted command denial before
+live dogfood traffic.
+
 Use `dogfood:promotion` as the final pre-traffic go/no-go packet. Use
 `dogfood:go-live` as the final composed view when release-candidate,
 promotion, production-cutover, and operator-workspace evidence should agree in

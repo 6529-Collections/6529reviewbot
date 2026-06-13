@@ -3632,3 +3632,29 @@
   - `npm run check:public-artifacts` passed with 110 files checked;
   - `npm run release:check` passed, including release notes draft contract
     validation and 97 mapped release-operation tools.
+- Merged `6529reviewbot` PR #219 as `3603d55`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/self-dogfood-lane-guard` increment:
+  - strengthen `scripts/check-self-dogfood-replay.cjs` so the synthetic
+    replay gate covers deliberate two-lane Anthropic/OpenAI fanout, distinct
+    job ids and run keys, central max-fanout rejection, the trusted command
+    matrix, command-only PR-open skip, and untrusted command denial;
+  - keep the committed self-dogfood config conservative while using temporary
+    local config for deliberate multi-lane rehearsal;
+  - synchronize dogfood, review-job, release-readiness, release,
+    release-operations, roadmap, README, changelog, smoke fixture, and durable
+    manager memory docs.
+- Local validation for `codex/self-dogfood-lane-guard` so far:
+  - `npm run check:self-dogfood-replay` passed with 8 trusted command cases,
+    2 multi-lane jobs, the max-fanout guard, and untrusted command denial;
+  - `npm run check:docs` passed with 67 files checked;
+  - `npm run check:release-operations` passed with 97 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #219,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 156 CommonJS files;
+  - `npm run check:doc-index` passed with 53 docs indexed;
+  - `npm run check:public-artifacts` passed with 110 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including the strengthened
+    self-dogfood replay gate and 97 mapped release-operation tools.
