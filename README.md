@@ -150,6 +150,7 @@ Run local checks:
 ```bash
 npm run check
 npm run check:docs
+npm run check:install-guide
 npm run check:comment-commands
 npm run check:review-workflows
 npm run check:review-context-boundary

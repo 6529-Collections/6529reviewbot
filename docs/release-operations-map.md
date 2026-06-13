@@ -22,6 +22,9 @@ The canonical documentation index is [Docs Index](README.md), and
 linked there.
 `npm run check:governance` keeps the public MIT license, community files, issue
 templates, and README governance links present.
+`npm run check:install-guide` keeps the conservative central App dogfood
+installation path, GitHub App validation commands, runtime defaults,
+command-only target posture, and rollback controls synchronized.
 `npm run check:dependabot` keeps weekly npm and GitHub Actions dependency
 update coverage present.
 `npm run check:workflow-permissions` keeps committed workflow and template
@@ -132,6 +135,7 @@ The local quality gate command inventory is:
 - `npm run check:docs`
 - `npm run check:doc-index`
 - `npm run check:governance`
+- `npm run check:install-guide`
 - `npm run check:dependabot`
 - `npm run check:container-image`
 - `npm run check:comment-commands`

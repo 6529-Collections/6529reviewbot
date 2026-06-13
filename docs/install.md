@@ -13,6 +13,7 @@ paths are verified.
 ```bash
 npm install
 npm run release:check
+npm run check:install-guide
 npm run preflight
 ```
 
@@ -44,6 +45,8 @@ Validate the rendered manifest:
 ```bash
 npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
 npm run check:github-app-manifest
+npm run check:github-app-auth
+npm run check:github-app-routes
 ```
 
 When using GitHub's manifest flow, render a local registration form:
@@ -64,6 +67,9 @@ npm run github-app:convert -- -- --code <code> --output <private-json-path>
 
 The redirect page intentionally shows only operator guidance. It does not echo
 the code value or exchange credentials on the public App server.
+`npm run check:install-guide` keeps this conservative dogfood installation
+path synchronized with the GitHub App validation commands, runtime defaults,
+target-repo posture, and rollback controls.
 
 Minimum recommended permissions:
 

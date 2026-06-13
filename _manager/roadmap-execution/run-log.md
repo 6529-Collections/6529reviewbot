@@ -3320,3 +3320,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including GitHub App route validation and
     81 mapped release-operation tools.
+- Merged `6529reviewbot` PR #205 as `7f6f10b`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/install-guide-contract` increment:
+  - add `scripts/check-install-guide-contract.cjs` and
+    `npm run check:install-guide`;
+  - validate installation guide section order, required setup commands, GitHub
+    App manifest/auth/route validation commands, conservative central runtime
+    defaults, command-only target posture, rollback controls, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/install-guide-contract`:
+  - `npm run check:install-guide` passed with 6 guide cases and 6 docs
+    checked;
+  - `npm run check:release-operations` passed with 82 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 139 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including install guide validation and 82
+    mapped release-operation tools.

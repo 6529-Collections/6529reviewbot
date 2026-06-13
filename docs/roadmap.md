@@ -557,6 +557,9 @@ Completed in `6529reviewbot`:
 - source-check freshness guard for model price apply and optional preflight,
   with explicit override for accepted stale evidence.
 - installation and onboarding guide for conservative central App dogfood.
+- installation guide contract for the conservative dogfood onboarding path,
+  GitHub App validation commands, runtime defaults, target-repo posture, and
+  rollback controls.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.

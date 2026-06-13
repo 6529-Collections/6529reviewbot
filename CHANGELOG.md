@@ -172,6 +172,9 @@ stabilized.
 - Added a GitHub App browser handoff route contract release check that
   validates setup, callback, and manifest-complete routes stay GET-only,
   public-safe, non-work-triggering, and free of echoed codes or credentials.
+- Added an installation guide contract release check that validates the
+  conservative dogfood onboarding path, GitHub App validation commands,
+  runtime defaults, command-only target posture, and rollback controls.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.
