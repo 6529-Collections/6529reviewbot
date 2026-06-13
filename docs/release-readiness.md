@@ -118,6 +118,8 @@ Ready for community review:
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
+- comment-command contract checker that keeps trigger docs synchronized with
+  the parser and review-kind constants;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;

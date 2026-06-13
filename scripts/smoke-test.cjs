@@ -68,6 +68,7 @@ const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
+const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
@@ -2796,7 +2797,13 @@ assert.deepEqual(githubWebhook.parseReviewCommand("@6529bot review all").reviewK
   "i18n",
   "security",
 ]);
+assert.equal(githubWebhook.parseReviewCommand("/6529bot help").reviewKinds.length, 0);
 assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
+assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 12);
+assert.throws(
+  () => commentCommandsCheck.checkCommentCommands({ quiet: true, text: "# Comment Commands\n" }),
+  /comment command docs check found/
+);
 assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
 assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");
 assert.equal(replayWebhook.normalizePayloadBody(Buffer.from(`\uFEFF${webhookBody}`))[0], 123);

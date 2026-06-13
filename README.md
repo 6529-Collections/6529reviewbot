@@ -147,6 +147,7 @@ Run local checks:
 ```bash
 npm run check
 npm run check:docs
+npm run check:comment-commands
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes

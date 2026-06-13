@@ -2476,3 +2476,22 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including workflow action pin and checkout
     credential validation.
+- Merged `6529reviewbot` PR #168 as `cd17974`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/comment-command-contract` increment:
+  - add `scripts/check-comment-commands.cjs` and `npm run check:comment-commands`;
+  - validate documented command examples against `parseReviewCommand()` and
+    exported review-kind constants;
+  - wire the check into `npm run release:check`, the release operations map,
+    smoke tests, and public release docs.
+- Local validation for `codex/comment-command-contract`:
+  - `npm run check:comment-commands` passed with 12 command examples and 5
+    review kinds checked;
+  - `npm run check:release-operations` passed with 43 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 101 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including comment-command contract
+    validation and 43 mapped tools.

@@ -52,6 +52,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "comment-command-contract",
+          "script": "check:comment-commands",
+          "purpose": "Verify public comment-command docs stay synchronized with the parser and review-kind constants.",
+          "doc": "docs/comment-commands.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

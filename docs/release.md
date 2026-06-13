@@ -120,6 +120,8 @@ After stabilization:
 - `npm run check:container-image` confirms the central App server Dockerfile
   and `.dockerignore` keep the image runtime-only, non-root, health-checked,
   and free of private repo artifacts
+- `npm run check:comment-commands` confirms the public comment-command docs
+  stay synchronized with the parser and review-kind constants
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
