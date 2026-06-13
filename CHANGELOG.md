@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added alert delivery plan guidance to generated operator workspaces and
+  operator drill next commands.
 - Added an alert delivery plan command and contract check for dry-run
   production alert routing handoff across webhook/SNS/SES mode, private
   channel evidence, alert dry-run/status checks, cutover evidence, and release

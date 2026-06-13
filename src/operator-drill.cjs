@@ -239,6 +239,10 @@ function operatorDrillNextCommands() {
       command: "npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready",
     },
     {
+      label: "alert delivery plan",
+      command: "npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready",
+    },
+    {
       label: "dogfood promotion",
       command: "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
     },

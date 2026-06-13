@@ -53,6 +53,13 @@ exposing the public Open Data or private admin dashboard routes:
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready
 ```
 
+Review the alert delivery handoff against the same workspace before enabling
+webhook, SNS, or SES routing from the operator environment:
+
+```bash
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+```
+
 Build a public-safe candidate bundle from the private files:
 
 ```bash

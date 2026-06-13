@@ -429,28 +429,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard release/cutover contract gates PR: merged as PR #234, merge commit `e85f434`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/alert-delivery-plan`.
-- Current local changes: adding a dry-run alert delivery plan command,
-  contract check, release-operations entries, docs, and smoke coverage so
-  production alert routing has a reviewed operator handoff before webhook,
-  SNS, or SES delivery is enabled.
+- Alert delivery plan PR: merged as PR #235, merge commit `e63001f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-alert-delivery-guidance`.
+- Current local changes: adding the alert delivery plan to generated operator
+  workspace guidance and `operator:drill` next commands so production alert
+  routing handoff commands stay in the same private operator flow as
+  production deployment, dashboard deployment, release-candidate, promotion,
+  and go-live gates.
 - Current local validation:
-  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 7 docs
-    checked;
-  - `npm run check:release-operations` passed with 7 phases and 109 tools;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and
+    7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #234,
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #235,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
-  - `node bin/alert-delivery-plan.cjs --json --quiet` passed;
-  - `node bin/alert-delivery-plan.cjs --bot-origin https://reviewbot.example.com --operator-workspace operator-workspace --notify-mode ses --alert-channel operator-email --release 0.2.0 --require-ready --json --quiet`
-    passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including alert delivery plan contract
-    validation for 5 plan cases and 7 docs checked.
+  - `npm run release:check` passed, including operator drill contract
+    validation for 8 next commands and alert delivery handoff guidance.
 
 ## Key Decisions
 

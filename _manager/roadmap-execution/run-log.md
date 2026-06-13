@@ -4052,3 +4052,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including alert delivery plan contract
     validation for 5 plan cases and 7 docs checked.
+- Merged `6529reviewbot` PR #235 as `e63001f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-alert-delivery-guidance` increment:
+  - add `alerts:delivery-plan` to generated private operator workspace README
+    guidance and public-safe workspace summary starting commands;
+  - add `alerts:delivery-plan` to `operator:drill` next commands after the
+    dashboard deployment handoff and before final dogfood promotion/go-live
+    gates;
+  - update operator workspace/drill contracts, smoke command counts, release
+    docs, roadmap, changelog, and durable manager memory so alert routing
+    handoff commands stay in the same private operator flow.
+- Local validation for `codex/operator-alert-delivery-guidance` so far:
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and
+    7 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #235,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator drill contract
+    validation for 8 next commands and alert delivery handoff guidance.

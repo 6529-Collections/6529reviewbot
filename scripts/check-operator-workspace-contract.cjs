@@ -182,8 +182,11 @@ function checkWorkspaceLifecycle(findings) {
   for (const snippet of [
     "npm run production:deployment-plan",
     "npm run dashboard:deployment-plan",
+    "npm run alerts:delivery-plan",
     "--frontend-origin <6529-io-origin>",
     "--auth-check-url <6529-auth-check-url>",
+    "--notify-mode <webhook|sns|ses>",
+    "--alert-channel <operator-alert-channel>",
     "--operator-workspace .",
     "--release v0.1.0",
     "--require-ready",
@@ -254,6 +257,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "publicLine",
     "production:deployment-plan",
     "dashboard:deployment-plan",
+    "alerts:delivery-plan",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -279,6 +283,7 @@ function checkDocs(docTexts, findings) {
       "npm run check:operator-workspace",
       "npm run production:deployment-plan",
       "npm run dashboard:deployment-plan",
+      "npm run alerts:delivery-plan",
       "operator workspace contract check",
       "[operator-workspace]",
     ],

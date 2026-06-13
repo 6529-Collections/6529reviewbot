@@ -33,8 +33,8 @@ After stabilization:
   dogfood promotion, or go-live `--require-ready` commands
 - `npm run check:operator-drill` confirms the operator drill contract keeps
   temporary workspace cleanup, private path redaction, release-candidate,
-  dogfood readiness, promotion, go-live summaries, production deployment plan
-  handoff, next commands, and docs synchronized
+  dogfood readiness, production deployment, dashboard deployment, alert
+  delivery, promotion, go-live summaries, next commands, and docs synchronized
 - `npm run release:candidate -- -- --operator-workspace <private-workspace-dir>`
   reviewed as the public-safe workspace bundle
 - `npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet`
