@@ -96,6 +96,7 @@ const supportBundle = require("../src/support-bundle.cjs");
 const supportBundleCli = require("../bin/support-bundle.cjs");
 const usageApi = require("../src/usage-api.cjs");
 const usageApiClient = require("../src/usage-api-client.cjs");
+const usageApiRoutesCheck = require("./check-usage-api-routes.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 const workerAdapter = require("../src/worker-adapter.cjs");
@@ -259,6 +260,21 @@ assert.throws(
       },
     }),
   /admin auth contract check found/
+);
+assert.deepEqual(
+  usageApiRoutesCheck.routeContracts.map((contract) => contract.path),
+  [
+    "/api/public/usage/summary",
+    "/api/admin/usage/summary",
+    "/api/admin/usage/events/recent",
+    "/api/admin/budget/policies",
+    "/api/admin/budget/status",
+    "/api/admin/model-prices/status",
+    "/api/admin/alerts/status",
+    "/api/admin/jobs/recent",
+    "/api/admin/run-claims/recent",
+    "/api/admin/status",
+  ]
 );
 assert.throws(
   () =>
@@ -4843,6 +4859,18 @@ appServer.handleGitHubWebhook({
       headers: usageApiClientFetchRequest.options.headers,
     }, hmacAuthSettings).allowed,
     true
+  );
+  const usageApiRoutesResult = await usageApiRoutesCheck.checkUsageApiRoutes();
+  assert.equal(usageApiRoutesResult.routes, 10);
+  await assert.rejects(
+    () =>
+      usageApiRoutesCheck.checkUsageApiRoutes({
+        quiet: true,
+        docTexts: {
+          "docs/usage-api.md": "# Usage API\n",
+        },
+      }),
+    /usage api route contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

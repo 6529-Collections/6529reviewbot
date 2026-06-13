@@ -108,6 +108,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "usage-api-route-contract",
+          "script": "check:usage-api-routes",
+          "purpose": "Verify usage/admin API routes, server defaults, OpenAPI paths, 6529.io client methods, env templates, and docs stay synchronized.",
+          "doc": "docs/usage-api.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",

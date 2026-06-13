@@ -113,6 +113,9 @@ stabilized.
 - Added an admin-auth contract release check that validates private admin auth
   modes, shared-secret behavior, HMAC headers, TTL and role checks, 6529.io
   bridge docs, and public env templates.
+- Added a usage-api route contract release check that validates usage/admin API
+  paths, server defaults, OpenAPI paths, 6529.io client methods, env templates,
+  and docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

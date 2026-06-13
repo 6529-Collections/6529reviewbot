@@ -84,6 +84,26 @@ repository.
 
 ## Recommended Page Calls
 
+The public 6529.io transparency page should call:
+
+```text
+GET /api/public/usage/summary?days=30
+```
+
+The private admin page should call the bot through trusted server-side 6529.io
+code using:
+
+```text
+GET /api/admin/usage/summary?days=30
+GET /api/admin/usage/events/recent?days=7&limit=50
+GET /api/admin/budget/status
+GET /api/admin/model-prices/status
+GET /api/admin/alerts/status
+GET /api/admin/jobs/recent?status=dispatch_failed&limit=10
+GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=10
+GET /api/admin/status?profile=server
+```
+
 For the first private admin page, use these client methods:
 
 ```text
@@ -92,8 +112,8 @@ client.recentUsageEvents({ days: 7, limit: 50 })
 client.budgetStatus()
 client.modelPriceStatus()
 client.alertStatus()
-client.jobEvents({ status: "dispatch_failed", limit: 50 })
-client.runClaims({ active: true, staleMinutes: 120, limit: 50 })
+client.jobEvents({ status: "dispatch_failed", limit: 10 })
+client.runClaims({ active: true, staleMinutes: 120, limit: 10 })
 client.runtimeStatus({ profile: "server" })
 client.runtimeStatus({ profile: "worker" })
 ```

@@ -438,6 +438,8 @@ Completed in `6529reviewbot`:
 - admin-auth contract checks that keep the 6529.io private admin auth bridge
   modes, HMAC headers, TTL and role checks, shared-secret fallback, docs, and
   public env templates synchronized.
+- usage-api route checks that keep usage/admin API paths, server defaults,
+  OpenAPI paths, 6529.io client methods, env templates, and docs synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

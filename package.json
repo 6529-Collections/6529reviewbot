@@ -65,6 +65,7 @@
     "check:repository-config-boundary": "node scripts/check-repository-config-boundary.cjs",
     "check:worker-adapter-contract": "node scripts/check-worker-adapter-contract.cjs",
     "check:admin-auth": "node scripts/check-admin-auth-contract.cjs",
+    "check:usage-api-routes": "node scripts/check-usage-api-routes.cjs",
     "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
     "check:run-control-scopes": "node scripts/check-run-control-scopes.cjs",
     "check:alert-dimensions": "node scripts/check-alert-dimensions.cjs",

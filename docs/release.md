@@ -142,6 +142,9 @@ After stabilization:
 - `npm run check:admin-auth` confirms private admin auth modes, shared-secret
   behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public
   env templates stay synchronized
+- `npm run check:usage-api-routes` confirms usage/admin API paths, server
+  defaults, OpenAPI paths, 6529.io client methods, env templates, and docs stay
+  synchronized
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

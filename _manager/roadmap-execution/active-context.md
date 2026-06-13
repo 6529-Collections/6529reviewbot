@@ -324,10 +324,12 @@ merged PRs.
   `7fdc7ad`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Worker adapter contract PR: merged as PR #181, merge commit `752f792`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-auth-contract`.
-- Current local changes: adding an admin-auth contract check that keeps private
-  admin auth modes, shared-secret behavior, HMAC headers, TTL and role checks,
-  6529.io bridge docs, and public env templates synchronized.
+- Admin auth contract PR: merged as PR #182, merge commit `447cc8f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/usage-api-route-contract`.
+- Current local changes: adding a usage-api route contract check that keeps
+  usage/admin API paths, server defaults, OpenAPI paths, 6529.io client
+  methods, env templates, and docs synchronized.
 
 ## Key Decisions
 
@@ -731,6 +733,10 @@ merged PRs.
   TTL limits, docs, and public env templates should be machine-checked
   together so the dashboard cannot drift into browser-side secrets or stale
   authorization assumptions.
+- The usage/admin API path list is another release-sensitive boundary. Server
+  route defaults, OpenAPI, the 6529.io server-side client, env templates, and
+  deployment docs should move together so dashboard routes do not silently
+  lose an endpoint or bypass admin signing.
 
 ## Constraints
 
@@ -744,7 +750,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the admin-auth contract check.
+2. Publish and merge the usage-api route contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
