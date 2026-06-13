@@ -310,10 +310,12 @@ merged PRs.
   `88cc326`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Budget-scope contract PR: merged as PR #174, merge commit `f0d6101`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/run-control-scope-contract`.
-- Current local changes: adding a run-control scope contract check that keeps
-  concurrency scope constants, env parsing, claim SQL, public docs, env
-  examples, and release operations synchronized with budget scopes.
+- Run-control scope contract PR: merged as PR #175, merge commit `2199e02`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/alert-dimension-contract`.
+- Current local changes: adding an alert-dimension contract check that keeps
+  scheduled spend-spike dimensions, alert defaults, env parsing, public docs,
+  env examples, and release operations synchronized.
 
 ## Key Decisions
 
@@ -498,6 +500,10 @@ merged PRs.
 - Run-control concurrency scope vocabulary should stay aligned with budget
   scopes where practical, because these are the two pre-provider guardrails
   operators tune during dogfood and incident response.
+- Spend-spike alert dimensions intentionally use stable recurring dimensions
+  (`global`, `repo`, `requestor`, `provider`, `model`, and `review_kind`);
+  high-cardinality `pr` and aggregate `org` coverage should remain explicit
+  through budget-utilization policies or private incident evidence.
 - Conservative dogfood budget policies have been applied to the live isolated
   ledger and aggregate scope counts were verified. Keep live resource
   identifiers and operator-owned policy files outside the public repo.
@@ -718,7 +724,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the run-control scope contract check.
+2. Validate, publish, and merge the alert-dimension contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

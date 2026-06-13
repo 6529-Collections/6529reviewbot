@@ -154,6 +154,7 @@ npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes
 npm run check:run-control-scopes
+npm run check:alert-dimensions
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes
@@ -529,8 +530,9 @@ Scheduled operator alerts:
 
 ```text
 REVIEWBOT_ALERTS_ENABLED=false
-REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
+REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns|ses
 REVIEWBOT_ALERTS_BUDGET_WARNING_PERCENT=80
+REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo,requestor,provider,model,review_kind
 REVIEWBOT_ALERTS_SPIKE_MULTIPLIER=3
 REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=false
 REVIEWBOT_ALERTS_JOB_FAILURE_THRESHOLD=1

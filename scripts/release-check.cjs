@@ -30,6 +30,7 @@ runNode("scripts/check-provider-contract.cjs");
 runNode("scripts/check-review-bin-entrypoints.cjs");
 runNode("scripts/check-budget-scopes.cjs");
 runNode("scripts/check-run-control-scopes.cjs");
+runNode("scripts/check-alert-dimensions.cjs");
 runNode("scripts/check-checklist-runbooks.cjs");
 runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-env-templates.cjs");

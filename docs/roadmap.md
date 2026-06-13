@@ -432,6 +432,8 @@ Completed in `6529reviewbot`:
   constraints, public docs, and dogfood examples synchronized.
 - run-control scope checks that keep concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples.
+- alert-dimension checks that keep scheduled spend-spike dimensions
+  synchronized across alert defaults, env parsing, docs, and env examples.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

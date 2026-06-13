@@ -62,6 +62,7 @@
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
     "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
     "check:run-control-scopes": "node scripts/check-run-control-scopes.cjs",
+    "check:alert-dimensions": "node scripts/check-alert-dimensions.cjs",
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",

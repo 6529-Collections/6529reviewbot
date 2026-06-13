@@ -12,6 +12,7 @@ const adminAuth = require("../src/admin-auth.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
 const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
+const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
 const alertStatus = require("../src/alert-status.cjs");
 const appServer = require("../src/app-server.cjs");
@@ -143,6 +144,24 @@ assert.throws(
       },
     }),
   /run-control scope check found/
+);
+assert.equal(alertDimensionsCheck.checkAlertDimensions().dimensions, 6);
+assert.deepEqual(
+  alertDimensionsCheck.expectedSpikeDimensions,
+  ["global", "repo", "requestor", "provider", "model", "review_kind"]
+);
+assert.throws(
+  () =>
+    alertDimensionsCheck.checkAlertDimensions({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        ".env.example": "REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo\n",
+        "docs/alerting.md": "# Alerting\n",
+        "docs/configuration.md": "# Configuration\n",
+      },
+    }),
+  /alert dimension check found/
 );
 assert.throws(
   () =>
