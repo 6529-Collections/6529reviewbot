@@ -227,6 +227,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "release-candidate-contract",
+          "script": "check:release-candidate",
+          "purpose": "Verify release-candidate bundle redaction, private workspace path markers, CLI flags, source invariants, and public release docs stay synchronized.",
+          "doc": "docs/release-candidate.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "env-template-checks",
           "script": "check:env-templates",
           "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",

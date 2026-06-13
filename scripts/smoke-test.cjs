@@ -88,6 +88,7 @@ const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
 const reviewContextBoundaryCheck = require("./check-review-context-boundary.cjs");
 const reviewWorkflowKindsCheck = require("./check-review-workflow-kinds.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
+const releaseCandidateContractCheck = require("./check-release-candidate-contract.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const repositoryConfigBoundaryCheck = require("./check-repository-config-boundary.cjs");
 const reviewJob = require("../src/review-job.cjs");
@@ -4974,6 +4975,20 @@ appServer.handleGitHubWebhook({
   assert.equal(usageApiRoutesResult.routes, 10);
   const webhookReplayResult = await webhookReplayCheck.checkWebhookReplayContract();
   assert.equal(webhookReplayResult.replayCases, 3);
+  const releaseCandidateContractResult =
+    releaseCandidateContractCheck.checkReleaseCandidateContract();
+  assert.equal(releaseCandidateContractResult.redactionCases, 7);
+  assert.equal(releaseCandidateContractResult.pathCases, 3);
+  assert.throws(
+    () =>
+      releaseCandidateContractCheck.checkReleaseCandidateContract({
+        quiet: true,
+        docTexts: {
+          "docs/release-candidate.md": "# Release Candidate\n",
+        },
+      }),
+    /release candidate contract check found/
+  );
   await assert.rejects(
     () =>
       webhookReplayCheck.checkWebhookReplayContract({

@@ -342,10 +342,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Ledger-privacy contract PR: merged as PR #190, merge commit `913fba2`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/webhook-replay-contract`.
-- Current local changes: adding a webhook replay contract check that keeps
-  saved-payload diagnostics dry-run by default, explicit before dispatch,
-  locally signed, payload-safe, and documented.
+- Webhook-replay contract PR: merged as PR #191, merge commit `ed12d82`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-candidate-contract`.
+- Current local changes: adding a release-candidate contract check that keeps
+  public bundle redaction, private workspace path markers, CLI defaults,
+  source invariants, and docs synchronized.
 
 ## Key Decisions
 
@@ -781,6 +783,9 @@ merged PRs.
 - Webhook replay is an operator diagnostic boundary. Saved payloads should be
   signed locally, dry-run by default, explicit before worker dispatch, and
   summarized without echoing raw payload fields.
+- Release-candidate bundles are public artifacts. Keep common secret-shaped
+  strings, AWS identifiers, private operator workspace paths, external private
+  paths, and CLI defaults covered by no-network contract checks.
 
 ## Constraints
 
@@ -794,7 +799,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the webhook-replay contract check.
+2. Publish and merge the release-candidate contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

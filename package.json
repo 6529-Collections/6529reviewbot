@@ -84,6 +84,7 @@
     "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:preflight-contract": "node scripts/check-preflight-contract.cjs",
     "check:release-gates": "node scripts/check-release-gate-parity.cjs",
+    "check:release-candidate": "node scripts/check-release-candidate-contract.cjs",
     "check:release-notes": "node scripts/check-release-notes-template.cjs",
     "check:release-operations": "node scripts/check-release-operations-map.cjs",
     "check:self-dogfood-replay": "node scripts/check-self-dogfood-replay.cjs",

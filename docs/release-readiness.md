@@ -94,6 +94,9 @@ Ready for community review:
   CLI flags, redacted diagnostics, and docs synchronized;
 - webhook replay checker that keeps saved webhook replay dry-run by default,
   explicit before dispatch, locally signed, payload-safe, and documented;
+- release-candidate checker that keeps public bundle redaction, private
+  workspace path markers, CLI defaults, source invariants, and docs
+  synchronized;
 - public usage summaries enforce repo/org allowlists before repo names are
   disclosed, even when data comes from a custom loader;
 - incident response runbook for spend, secret, provider, webhook, ledger, and

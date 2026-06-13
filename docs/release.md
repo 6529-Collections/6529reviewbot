@@ -194,6 +194,9 @@ After stabilization:
 - `npm run check:webhook-replay` confirms saved webhook replay stays dry-run by
   default, explicit before dispatch, locally signed, payload-safe, and
   documented
+- `npm run check:release-candidate` confirms the public-safe
+  release-candidate bundle contract stays synchronized with redaction,
+  workspace path markers, CLI defaults, and docs
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run github-app:convert -- -- --code <manifest-code> --output <private-json-path>`
   when using GitHub's manifest flow for the release App
