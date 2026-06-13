@@ -2516,3 +2516,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including review workflow kind validation
     and 44 mapped release-operation tools.
+- Merged `6529reviewbot` PR #170 as `1dc523f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/model-default-contract` increment:
+  - add `scripts/check-model-defaults.cjs` and `npm run check:model-defaults`;
+  - derive the dogfood env-template lane expectation from
+    `config/model-catalog.json`;
+  - validate model-catalog defaults against reusable workflow fallbacks,
+    README/config provider-default docs, model-catalog docs, and conservative
+    starter lanes;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/model-default-contract`:
+  - `npm run check:model-defaults` passed with 3 providers and 4 lane configs
+    checked;
+  - `npm run check:env-templates` passed with 3 files checked;
+  - `npm run check:release-operations` passed with 45 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 103 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including model default validation and 45
+    mapped release-operation tools.

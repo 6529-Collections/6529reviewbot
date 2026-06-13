@@ -66,6 +66,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "model-default-contract",
+          "script": "check:model-defaults",
+          "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",
+          "doc": "docs/model-catalog.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

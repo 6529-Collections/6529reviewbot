@@ -62,6 +62,7 @@ const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
+const modelDefaultsCheck = require("./check-model-defaults.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
 const modelPrices = require("../src/model-prices.cjs");
@@ -130,6 +131,23 @@ assert.equal(envTemplatesCheck.isSensitiveTemplateKey("REVIEWBOT_GITHUB_APP_TOKE
 const catalog = modelCatalog.loadModelCatalog();
 assert.equal(catalog.providers.anthropic.defaultModel, "claude-opus-4-8");
 assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
+assert.equal(modelDefaultsCheck.checkModelDefaults().providers, 3);
+assert.equal(modelDefaultsCheck.anthropicDefaultLane(catalog), "anthropic:claude-opus-4-8");
+assert.equal(
+  modelDefaultsCheck.workflowEnvFallback(
+    "REVIEW_DEFAULT_ANTHROPIC_MODEL: ${{ vars.REVIEW_DEFAULT_ANTHROPIC_MODEL || 'claude-next' }}",
+    "REVIEW_DEFAULT_ANTHROPIC_MODEL"
+  ),
+  "claude-next"
+);
+assert.throws(
+  () =>
+    modelDefaultsCheck.checkModelDefaults({
+      quiet: true,
+      workflowText: "name: bad\non: {}\n",
+    }),
+  /model default check found/
+);
 assert.equal(
   modelCatalog.defaultModelForProvider("anthropic", {
     REVIEW_DEFAULT_ANTHROPIC_MODEL: "claude-opus-next",

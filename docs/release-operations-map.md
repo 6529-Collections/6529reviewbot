@@ -28,6 +28,8 @@ update coverage present.
 permission blocks explicit and least-privilege.
 `npm run check:review-workflows` keeps review-kind constants, worker bins,
 workflow dispatch choices, reusable defaults, and workflow routing aligned.
+`npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
+fallbacks, provider-default docs, and conservative starter lanes aligned.
 
 The local quality gate command inventory is:
 
@@ -39,6 +41,7 @@ The local quality gate command inventory is:
 - `npm run check:container-image`
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
+- `npm run check:model-defaults`
 - `npm run check:public-artifacts`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`

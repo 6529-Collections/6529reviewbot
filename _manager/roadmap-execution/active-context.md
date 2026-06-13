@@ -300,10 +300,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Comment-command contract PR: merged as PR #169, merge commit `13d06f5`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/review-workflow-kind-contract`.
-- Current local changes: adding a review-workflow kind contract check that
-  keeps review-kind constants, worker bins, workflow dispatch choices,
-  reusable workflow defaults, and workflow routing synchronized.
+- Review workflow kind contract PR: merged as PR #170, merge commit
+  `1dc523f`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-default-contract`.
+- Current local changes: adding a model-default contract check that keeps
+  model-catalog defaults, reusable workflow fallbacks, provider-default docs,
+  and conservative starter lanes synchronized.
 
 ## Key Decisions
 
@@ -680,6 +682,9 @@ merged PRs.
   worker bin map so adding, removing, or renaming a review mode cannot silently
   leave central dispatch, reusable workflow defaults, or workflow routing
   stale.
+- Model defaults should be checked against `config/model-catalog.json` so the
+  Opus 4.8 default and later model updates have a single reviewed source of
+  truth plus explicit, release-checked public surfaces.
 
 ## Constraints
 
@@ -693,7 +698,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the review-workflow kind contract check.
+2. Validate, publish, and merge the model-default contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

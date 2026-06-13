@@ -5,6 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { parseEnvTemplate } = require("./check-6529-io-env-template.cjs");
+const { loadModelCatalog } = require("../src/model-catalog.cjs");
 
 const root = path.resolve(__dirname, "..");
 const DEFAULT_ENV_TEMPLATES = [
@@ -24,22 +25,6 @@ const SENSITIVE_KEY_SUFFIXES = [
   "_TOKEN",
   "_WEBHOOK_URL",
 ];
-const REQUIRED_VALUES = {
-  "templates/dogfood-central-env.example": {
-    REVIEWBOT_BUDGET_MODE: "enforce",
-    REVIEWBOT_ENABLED: "true",
-    REVIEWBOT_PUBLIC_REPO_MODE: "trusted",
-    REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
-    REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8",
-    REVIEWBOT_WORKER_ADAPTER: "noop",
-    REVIEW_USAGE_ENABLED: "true",
-  },
-  "templates/6529-io-reviewbot-env.example": {
-    REVIEWBOT_USAGE_API_ADMIN_ROLES: "reviewbot-admin",
-    REVIEWBOT_USAGE_API_ADMIN_TTL_SECONDS: "300",
-  },
-};
-
 function main() {
   try {
     const result = checkEnvTemplates();
@@ -52,16 +37,18 @@ function main() {
 
 function checkEnvTemplates(options = {}) {
   const files = options.files || DEFAULT_ENV_TEMPLATES;
+  const requiredValues = options.requiredValues || requiredTemplateValues(options.catalog);
   const checked = [];
   for (const file of files) {
-    checked.push(checkEnvTemplate(file));
+    checked.push(checkEnvTemplate(file, { requiredValues }));
   }
   return { files: checked };
 }
 
-function checkEnvTemplate(file) {
+function checkEnvTemplate(file, options = {}) {
   const absolutePath = path.resolve(root, file);
   const relativePath = relative(absolutePath);
+  const requiredValues = options.requiredValues || requiredTemplateValues(options.catalog);
   const values = parseEnvTemplate(fs.readFileSync(absolutePath, "utf8"));
   for (const [key, value] of Object.entries(values)) {
     if (/[\u0000-\u001f\u007f]/.test(value)) {
@@ -71,7 +58,7 @@ function checkEnvTemplate(file) {
       throw new Error(`${relativePath}:${key} must stay blank in public env templates.`);
     }
   }
-  for (const [key, expected] of Object.entries(REQUIRED_VALUES[relativePath] || {})) {
+  for (const [key, expected] of Object.entries(requiredValues[relativePath] || {})) {
     if (values[key] !== expected) {
       throw new Error(`${relativePath}:${key} must be '${expected}'.`);
     }
@@ -80,6 +67,24 @@ function checkEnvTemplate(file) {
     file: relativePath,
     keyCount: Object.keys(values).length,
     blankSensitiveKeyCount: Object.keys(values).filter(isSensitiveTemplateKey).length,
+  };
+}
+
+function requiredTemplateValues(catalog = loadModelCatalog()) {
+  return {
+    "templates/dogfood-central-env.example": {
+      REVIEWBOT_BUDGET_MODE: "enforce",
+      REVIEWBOT_ENABLED: "true",
+      REVIEWBOT_PUBLIC_REPO_MODE: "trusted",
+      REVIEWBOT_REPOSITORY_CONFIG_SOURCE: "github",
+      REVIEWBOT_REVIEW_LANES: `anthropic:${catalog.providers.anthropic.defaultModel}`,
+      REVIEWBOT_WORKER_ADAPTER: "noop",
+      REVIEW_USAGE_ENABLED: "true",
+    },
+    "templates/6529-io-reviewbot-env.example": {
+      REVIEWBOT_USAGE_API_ADMIN_ROLES: "reviewbot-admin",
+      REVIEWBOT_USAGE_API_ADMIN_TTL_SECONDS: "300",
+    },
   };
 }
 
@@ -100,4 +105,5 @@ module.exports = {
   checkEnvTemplate,
   checkEnvTemplates,
   isSensitiveTemplateKey,
+  requiredTemplateValues,
 };
