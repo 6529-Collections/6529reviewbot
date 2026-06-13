@@ -46,8 +46,15 @@ docker build \
 ```
 
 For production, publish the reviewed image to an operator-owned registry such
-as ECR. Keep the digest, builder identity, source commit, and vulnerability
-scan result in the private operator evidence record.
+as ECR. Keep the image digest, builder identity, source commit, and
+vulnerability scan result in the private operator evidence record.
+Use [Container Publish Plan](container-publish-plan.md) to produce the dry-run
+build, push, digest capture, vulnerability scan, and evidence commands before
+running live registry operations:
+
+```bash
+npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready
+```
 
 ## Runtime Configuration
 
@@ -156,6 +163,7 @@ Before allowing GitHub webhook traffic:
 
 ```bash
 npm run check:container-image
+npm run check:container-publish-plan
 npm run preflight -- -- --strict
 ```
 

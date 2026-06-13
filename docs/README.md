@@ -37,6 +37,8 @@ be linked here before they are considered release-ready.
 - [Deployment](deployment.md): production App, worker, AWS, and 6529.io wiring.
 - [Container Deployment](container-deployment.md): central App server image and
   runtime boundaries.
+- [Container Publish Plan](container-publish-plan.md): dry-run build, push,
+  vulnerability scan, and private evidence guidance.
 
 ## Policy, Spend, And Reporting
 

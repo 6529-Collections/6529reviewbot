@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a container publish plan guard and contract check for dry-run
+  build/push/scan/evidence commands before operator-owned registry work.
 - Added a release tag plan guard and contract check for clean-main,
   completed-notes, dry-run tag planning before operator-created releases.
 - Added a release notes publication guard and contract check for completed

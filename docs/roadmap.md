@@ -528,6 +528,8 @@ Completed in `6529reviewbot`:
   runtime-only secret injection guidance.
 - container-image contract checks for the Dockerfile and `.dockerignore`
   runtime boundary.
+- container publish plan command for dry-run operator-owned registry build,
+  push, vulnerability scan, and private image evidence steps.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -638,6 +640,7 @@ In progress in `6529reviewbot`:
 
 - production deployment execution support, dogfood operations, release
   evidence collection, and dashboard wiring.
+- container publish plan support for operator-owned registry evidence.
 
 In progress outside this repository:
 

@@ -112,6 +112,7 @@ const preflightCli = require("../bin/preflight.cjs");
 const preflightContractCheck = require("./check-preflight-contract.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
+const containerPublishPlanContractCheck = require("./check-container-publish-plan-contract.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
 const reviewContextBoundaryCheck = require("./check-review-context-boundary.cjs");
@@ -1864,6 +1865,20 @@ assert.equal(
   0
 );
 assert.equal(containerImageCheck.checkContainerImage().runtimeCopies, 6);
+const containerPublishPlanContractResult =
+  containerPublishPlanContractCheck.checkContainerPublishPlanContract();
+assert.equal(containerPublishPlanContractResult.planCases, 5);
+assert.equal(containerPublishPlanContractResult.docs, 6);
+assert.throws(
+  () =>
+    containerPublishPlanContractCheck.checkContainerPublishPlanContract({
+      quiet: true,
+      docTexts: {
+        "docs/container-publish-plan.md": "# Container Publish Plan\n",
+      },
+    }),
+  /container publish plan contract check found/
+);
 assert.match(
   containerImageCheck
     .checkDockerfile(
