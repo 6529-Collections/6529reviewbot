@@ -1,5 +1,10 @@
 # Operations Runbook
 
+Run `npm run check:operations-runbook` after changing this document. The
+operations runbook contract keeps routine checks and triage paths for replay,
+spend, ledgers, workers, dashboards, and bot comments aligned with release
+checks.
+
 ## Routine Checks
 
 Run locally:

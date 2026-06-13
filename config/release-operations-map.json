@@ -52,6 +52,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "operations-runbook-contract",
+          "script": "check:operations-runbook",
+          "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",
+          "doc": "docs/operations.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "dependabot-config",
           "script": "check:dependabot",
           "purpose": "Verify weekly Dependabot coverage for npm and GitHub Actions dependencies.",

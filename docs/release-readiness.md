@@ -175,6 +175,9 @@ Ready for community review:
 - `npm run check:deployment-runbook` keeps [Production Deployment](deployment.md)
   synchronized with GitHub App registration, central runtime, worker, 6529.io
   wiring, verification, and rollback guidance;
+- `npm run check:operations-runbook` keeps [Operations Runbook](operations.md)
+  synchronized with routine checks and triage paths for replay, spend, ledgers,
+  workers, dashboards, and bot comments;
 - repository-owned container packaging for the central App server with
   non-root runtime, health check, and runtime-only secret injection guidance;
 - container-image contract checker for the Dockerfile and `.dockerignore`

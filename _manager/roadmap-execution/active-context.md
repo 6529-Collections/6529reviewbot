@@ -374,11 +374,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Installation guide contract PR: merged as PR #206, merge commit `38b73a5`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/deployment-runbook-contract`.
-- Current local changes: adding a deployment runbook contract check that keeps
-  production GitHub App registration, central runtime, worker dispatch,
-  6529.io wiring, verification, rollback guidance, release checks, smoke
-  tests, and docs
+- Deployment runbook contract PR: merged as PR #207, merge commit `ed65603`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operations-runbook-contract`.
+- Current local changes: adding an operations runbook contract check that keeps
+  routine checks and triage paths for replay, spend, ledgers, workers,
+  dashboards, bot comments, release checks, smoke tests, and docs
   synchronized.
 
 ## Key Decisions
@@ -865,6 +866,9 @@ merged PRs.
   Keep GitHub App registration, central runtime, worker dispatch, 6529.io
   wiring, verification, and rollback in one checked path so production changes
   do not drift into partial docs.
+- The operations runbook is the day-two companion to deployment. Keep routine
+  checks and incident triage paths release-checked so operators have one
+  public-safe index before diving into private evidence.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -888,7 +892,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the deployment runbook contract check.
+2. Publish and merge the operations runbook contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

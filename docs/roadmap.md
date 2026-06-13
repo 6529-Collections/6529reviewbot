@@ -563,6 +563,8 @@ Completed in `6529reviewbot`:
 - deployment runbook contract for production central App server registration,
   runtime configuration, worker dispatch, 6529.io wiring, verification, and
   rollback guidance.
+- operations runbook contract for routine checks and triage paths covering
+  replay, spend, ledgers, workers, dashboards, and bot comments.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.
