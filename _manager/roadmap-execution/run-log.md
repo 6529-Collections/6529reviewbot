@@ -2647,3 +2647,23 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including alert dimension validation and
     50 mapped release-operation tools.
+- Merged `6529reviewbot` PR #176 as `9716bc6`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/alert-notifier-mode-contract` increment:
+  - add `scripts/check-alert-notifier-modes.cjs` and
+    `npm run check:alert-notifier-modes`;
+  - validate alert delivery modes against notifier constants, env parsing,
+    README, alerting docs, configuration docs, and `.env.example`;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/alert-notifier-mode-contract`:
+  - `npm run check:alert-notifier-modes` passed with 5 modes and 3 docs
+    checked;
+  - `npm run check:release-operations` passed with 51 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 109 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including alert notifier mode validation
+    and 51 mapped release-operation tools.

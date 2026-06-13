@@ -312,10 +312,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Run-control scope contract PR: merged as PR #175, merge commit `2199e02`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/alert-dimension-contract`.
-- Current local changes: adding an alert-dimension contract check that keeps
-  scheduled spend-spike dimensions, alert defaults, env parsing, public docs,
-  env examples, and release operations synchronized.
+- Alert-dimension contract PR: merged as PR #176, merge commit `9716bc6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/alert-notifier-mode-contract`.
+- Current local changes: adding an alert notifier mode contract check that
+  keeps scheduled alert delivery modes, notifier constants, env parsing,
+  public docs, env examples, and release operations synchronized.
 
 ## Key Decisions
 
@@ -504,6 +506,9 @@ merged PRs.
   (`global`, `repo`, `requestor`, `provider`, `model`, and `review_kind`);
   high-cardinality `pr` and aggregate `org` coverage should remain explicit
   through budget-utilization policies or private incident evidence.
+- Scheduled alert delivery modes are an operator-facing contract; the code,
+  README, alerting docs, configuration docs, and env example should all agree
+  on `none`, `stdout`, `webhook`, `sns`, and `ses`.
 - Conservative dogfood budget policies have been applied to the live isolated
   ledger and aggregate scope counts were verified. Keep live resource
   identifiers and operator-owned policy files outside the public repo.
@@ -724,7 +729,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the alert-dimension contract check.
+2. Validate, publish, and merge the alert notifier mode contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

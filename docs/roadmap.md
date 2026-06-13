@@ -434,6 +434,8 @@ Completed in `6529reviewbot`:
   budget scopes, env parsing, claim SQL, docs, and env examples.
 - alert-dimension checks that keep scheduled spend-spike dimensions
   synchronized across alert defaults, env parsing, docs, and env examples.
+- alert notifier mode checks that keep scheduled delivery modes synchronized
+  across notifier constants, env parsing, docs, and env examples.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.
