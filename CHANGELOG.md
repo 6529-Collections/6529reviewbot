@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added the production deployment plan handoff to operator drill next commands.
 - Added production deployment plan guidance to generated operator workspaces.
 - Added a production deployment plan guard and contract check for dry-run
   operator handoff across GitHub App registration, container publish,

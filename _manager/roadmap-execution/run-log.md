@@ -3788,3 +3788,26 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator workspace contract
     validation and 105 mapped release-operation tools.
+- Merged `6529reviewbot` PR #225 as `fa1155f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-drill-deployment-plan` increment:
+  - add `production:deployment-plan` to `operator:drill` next commands;
+  - update [Operator Drill](../../docs/operator-drill.md), release process,
+    release operations map, release readiness, roadmap, and changelog so the
+    public-safe drill includes the deployment handoff before final live gates;
+  - strengthen `npm run check:operator-drill` and smoke-test command counts so
+    the deployment plan handoff cannot drift out of the drill.
+- Local validation for `codex/operator-drill-deployment-plan` so far:
+  - `npm run check:operator-drill` passed with 2 drill cases, 6 commands, and
+    7 docs checked.
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:docs` passed with 71 files checked;
+  - `npm run check:doc-index` passed with 57 docs indexed;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #225,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check:public-artifacts` passed with 114 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator drill contract
+    validation and 105 mapped release-operation tools.

@@ -231,6 +231,10 @@ function operatorDrillNextCommands() {
       command: "npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready --out <public-bundle-file.md> --quiet",
     },
     {
+      label: "production deployment plan",
+      command: "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready",
+    },
+    {
       label: "dogfood promotion",
       command: "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
     },
