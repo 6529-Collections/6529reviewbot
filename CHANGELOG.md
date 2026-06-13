@@ -110,6 +110,9 @@ stabilized.
 - Added a worker-adapter contract release check that validates worker modes,
   dispatch fields, local worker env, diagnostic redaction, workflow template
   inputs, and worker docs.
+- Added an admin-auth contract release check that validates private admin auth
+  modes, shared-secret behavior, HMAC headers, TTL and role checks, 6529.io
+  bridge docs, and public env templates.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

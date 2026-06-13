@@ -378,6 +378,9 @@ loading.
 `npm run release:check` and verifies worker adapter modes, GitHub dispatch
 fields, local worker env, redacted diagnostics, workflow template inputs, and
 worker docs stay synchronized.
+`npm run check:admin-auth` is included in `npm run release:check` and verifies
+private admin auth modes, shared-secret behavior, HMAC headers, TTL and role
+checks, 6529.io bridge docs, and public env templates stay synchronized.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

@@ -435,6 +435,9 @@ Completed in `6529reviewbot`:
 - worker-adapter contract checks that keep worker modes, dispatch fields,
   local worker environment, redacted diagnostics, the workflow template, and
   worker docs synchronized.
+- admin-auth contract checks that keep the 6529.io private admin auth bridge
+  modes, HMAC headers, TTL and role checks, shared-secret fallback, docs, and
+  public env templates synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

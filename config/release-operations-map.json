@@ -101,6 +101,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "admin-auth-contract",
+          "script": "check:admin-auth",
+          "purpose": "Verify private admin auth modes, shared-secret behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public env templates stay synchronized.",
+          "doc": "docs/admin-auth-bridge.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",
