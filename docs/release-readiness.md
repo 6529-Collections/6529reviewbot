@@ -174,6 +174,8 @@ local and manual gates.
 
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
+`npm run check:release-gates` is included in `npm run release:check` and
+verifies both gate count parity and v0 gate evidence references.
 Use [Release Operations Map](release-operations-map.md) or
 `npm run release:operations` when choosing the next public check, private
 status overlay, or release-candidate command.
