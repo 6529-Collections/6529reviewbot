@@ -63,6 +63,11 @@ stabilized.
 - Release operations map CLI and checker index recurring release commands and
   evidence boundaries, and fail release checks when mapped scripts or docs
   drift.
+- Checklist runbook validation now fails release checks when public dogfood,
+  security-review, or production-cutover checklist items point at missing
+  runbook docs.
+- Review comment format documentation now covers the visible comment shape,
+  hidden metadata marker, and budget-skip comment contract.
 - Operator workspace bootstrap creates private release status and evidence
   skeletons in one operator-owned directory, with check mode for validating the
   workspace as a set.

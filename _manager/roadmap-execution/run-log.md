@@ -1937,3 +1937,20 @@
   - `npm run check:release-operations` passed;
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #140 as `f0aaea9` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/checklist-runbook-links` increment:
+  - add missing `docs/review-comment-format.md` for the public comment,
+    hidden metadata, and budget-skip contract;
+  - add `npm run check:checklist-runbooks` to validate runbook links in
+    dogfood, security-review, and production-cutover JSON checklists;
+  - include the new checker in `npm run release:check`;
+  - update README, review-workflows, release docs, release-readiness, roadmap,
+    changelog, and manager memory.
+- Local validation for `codex/checklist-runbook-links`:
+  - `npm run check:checklist-runbooks` passed with 85 links in 3 files;
+  - `npm run check:docs` passed;
+  - `npm run check` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed.

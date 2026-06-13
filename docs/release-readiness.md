@@ -256,6 +256,9 @@ npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --requ
 `npm run check:docs` is included in `npm run release:check` and verifies local
 Markdown links across tracked and non-ignored untracked repository docs before
 release.
+`npm run check:checklist-runbooks` is included in `npm run release:check` and
+verifies that dogfood, security-review, and production-cutover checklist
+runbooks point at existing public repo files.
 `npm run check:6529-io-env` is included in `npm run release:check` and verifies
 that the public-safe 6529.io dashboard environment template keeps placeholder
 secrets blank and references only reviewed OpenAPI usage/admin paths.

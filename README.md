@@ -87,6 +87,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Repository Config](docs/repository-config.md): target repo policy file.
 - [Comment Commands](docs/comment-commands.md): PR comment trigger contract.
 - [Review Jobs](docs/review-jobs.md): fanout and provider/model lanes.
+- [Review Comment Format](docs/review-comment-format.md): visible comment,
+  hidden metadata, and budget-skip format.
 - [Reusable Workflow](docs/reusable-workflow.md): compatibility path and
   caller-secret boundary.
 - [Run Control](docs/run-control.md): dedupe and concurrency claims.
@@ -574,6 +576,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Provider setup](docs/provider-setup.md)
 - [Repository config](docs/repository-config.md)
 - [Review jobs](docs/review-jobs.md)
+- [Review comment format](docs/review-comment-format.md)
 - [Reusable workflow](docs/reusable-workflow.md)
 - [Run control](docs/run-control.md)
 - [Support](docs/support.md)

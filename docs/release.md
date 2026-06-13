@@ -98,6 +98,8 @@ After stabilization:
   the numbered required-gates list
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
+- `npm run check:checklist-runbooks` confirms dogfood, security-review, and
+  production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
 - `npm run check:public-artifacts` passes before publishing release notes or
   public operator evidence, including the tracked root `.env.example`

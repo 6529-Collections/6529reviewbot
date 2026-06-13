@@ -238,11 +238,12 @@ merged PRs.
   `14f0015`; CI and Dependency Review completed successfully before merge.
 - Release-candidate operator-workspace PR: merged as PR #139, merge commit
   `b215432`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/dogfood-readiness-workspace`.
-- Current local changes: adding `--operator-workspace` to
-  `dogfood:readiness` so pre-traffic dogfood checks can include a redacted
-  private operator workspace parse check without requiring every post-traffic
-  evidence item to be complete.
+- Dogfood readiness operator-workspace PR: merged as PR #140, merge commit
+  `f0aaea9`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/checklist-runbook-links`.
+- Current local changes: adding the missing review comment format runbook and
+  a release-check gate that validates dogfood, security-review, and
+  production-cutover checklist runbook links.
 
 ## Key Decisions
 
@@ -532,6 +533,9 @@ merged PRs.
   from "all private evidence is complete." The first is useful before first
   traffic; the second is available through explicit stricter gates for
   expansion or release decisions.
+- Public checklist runbook references should be machine-checked like Markdown
+  links and release operations map docs; release-critical JSON should not be
+  allowed to point at missing runbooks.
 
 ## Constraints
 
@@ -545,8 +549,8 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge dogfood readiness operator-workspace
-   integration.
+2. Validate, publish, and merge checklist runbook-link validation and review
+   comment format docs.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
