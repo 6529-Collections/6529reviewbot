@@ -445,6 +445,9 @@ Completed in `6529reviewbot`:
   synchronized.
 - support-bundle checks that keep safe env keys, presence-only secret keys,
   local path redaction, CLI flags, and support docs synchronized.
+- diagnostics-redaction checks that keep shared token, alert webhook, AWS
+  access-key id, private-key, error-line, and diagnostic-tail redaction
+  behavior synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

@@ -37,6 +37,7 @@ const dogfoodGoLive = require("../src/dogfood-go-live.cjs");
 const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodStatus = require("../src/dogfood-status.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
+const diagnosticsRedactionCheck = require("./check-diagnostics-redaction.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -293,6 +294,17 @@ assert.equal(supportBundleContractCheck.requiredSafeEnvKeys.includes("REVIEWBOT_
 assert.equal(
   supportBundleContractCheck.requiredPresenceEnvKeys.includes("REVIEWBOT_ADMIN_AUTH_HMAC_SECRET"),
   true
+);
+assert.equal(diagnosticsRedactionCheck.checkDiagnosticsRedaction().fixtures, 8);
+assert.throws(
+  () =>
+    diagnosticsRedactionCheck.checkDiagnosticsRedaction({
+      quiet: true,
+      docTexts: {
+        "docs/support.md": "# Support\n",
+      },
+    }),
+  /diagnostics redaction check found/
 );
 assert.throws(
   () =>

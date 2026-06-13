@@ -158,6 +158,7 @@ npm run check:admin-auth
 npm run check:usage-api-routes
 npm run check:admin-snapshot
 npm run check:support-bundle
+npm run check:diagnostics-redaction
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes

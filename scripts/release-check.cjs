@@ -36,6 +36,7 @@ runNode("scripts/check-admin-auth-contract.cjs");
 runNode("scripts/check-usage-api-routes.cjs");
 runNode("scripts/check-admin-snapshot-contract.cjs");
 runNode("scripts/check-support-bundle-contract.cjs");
+runNode("scripts/check-diagnostics-redaction.cjs");
 runNode("scripts/check-budget-scopes.cjs");
 runNode("scripts/check-run-control-scopes.cjs");
 runNode("scripts/check-alert-dimensions.cjs");

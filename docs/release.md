@@ -151,6 +151,9 @@ After stabilization:
 - `npm run check:support-bundle` confirms sanitized support-bundle safe env
   keys, presence-only secret keys, local path redaction, CLI flags, and docs
   stay synchronized
+- `npm run check:diagnostics-redaction` confirms shared diagnostic redaction
+  for tokens, alert webhooks, AWS access-key ids, private keys, error lines,
+  and diagnostic tails
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes
