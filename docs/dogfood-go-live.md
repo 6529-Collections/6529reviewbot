@@ -47,7 +47,8 @@ For the final go/no-go check, require readiness:
 npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
-`--require-ready` fails unless every go-live gate is ready:
+`--require-ready` requires `--strict-preflight` and fails unless every
+go-live gate is ready:
 
 - the private operator workspace exists and all overlay summaries are ready;
 - the release-candidate bundle is ready;

@@ -113,7 +113,8 @@ Ready for community review:
   parsing, and preflight into one final pre-traffic go/no-go report;
 - dogfood go-live packet command for cross-checking release-candidate,
   promotion, production-cutover, and operator-workspace evidence before
-  command-only live dogfood traffic;
+  command-only live dogfood traffic, with `--require-ready` requiring strict
+  preflight;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;

@@ -126,6 +126,11 @@ function collectDogfoodGoLivePacket(options = {}) {
 }
 
 function assertDogfoodGoLiveReady(packet) {
+  if (!packet.inputs.strictPreflight || !packet.inputs.dogfoodPromotion.preflight) {
+    throw new Error(
+      "dogfood go-live packet requires strict preflight before it can be marked ready."
+    );
+  }
   if (!packet.ready) {
     const failing = packet.gates
       .filter((gate) => gate.status !== "ok")

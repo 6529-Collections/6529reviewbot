@@ -377,7 +377,7 @@ Completed in `6529reviewbot`:
   into one final pre-traffic go/no-go report.
 - dogfood go-live packet for cross-checking release-candidate, promotion,
   production-cutover, and operator-workspace evidence before command-only live
-  dogfood traffic.
+  dogfood traffic, with strict preflight required for the final ready gate.
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
 - command-only `.github/6529bot.yml` config in this repository for eventual
