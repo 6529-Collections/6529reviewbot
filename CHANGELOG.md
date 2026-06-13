@@ -40,6 +40,9 @@ stabilized.
   runtime-only secret injection guidance.
 - v0 release gate status files now fail the final `--require-ready` check when
   private evidence omits any current public release gate.
+- v0 release gate contract checker verifies status readiness, missing-id
+  handling, complete-gate evidence requirements, deferral semantics, public
+  Markdown redaction, source invariants, and docs.
 - Release-candidate bundle CLI combines release-gate status, operator evidence,
   git metadata, and no-network preflight into one public-safe readiness
   summary.

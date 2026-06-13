@@ -63,6 +63,7 @@ const releaseOperationsMap = require("../src/release-operations-map.cjs");
 const releaseOperationsMapCli = require("../bin/release-operations-map.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
+const v0GatesContractCheck = require("./check-v0-gates-contract.cjs");
 const securityReviewStatus = require("../src/security-review-status.cjs");
 const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const securityReviewStatusContractCheck = require("./check-security-review-status-contract.cjs");
@@ -5109,6 +5110,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /security review status contract check found/
+  );
+  const v0GatesContractResult = v0GatesContractCheck.checkV0GatesContract();
+  assert.equal(v0GatesContractResult.cliCases, 3);
+  assert.equal(v0GatesContractResult.statusCases, 6);
+  assert.throws(
+    () =>
+      v0GatesContractCheck.checkV0GatesContract({
+        quiet: true,
+        docTexts: {
+          "docs/v0-release-plan.md": "# v0 Release Plan\n",
+        },
+      }),
+    /v0 release gates contract check found/
   );
   const releaseCandidateContractResult =
     releaseCandidateContractCheck.checkReleaseCandidateContract();

@@ -184,6 +184,7 @@ Before tagging, require that the status file has no pending or blocked gates:
 
 ```bash
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
+npm run check:v0-gates
 ```
 
 `--require-ready` also verifies that the status file lists every gate in the
@@ -191,10 +192,16 @@ current canonical gate list. If a new public gate is added, regenerate the
 private status file with `--init-status` or add the new gate before tagging.
 
 Gate status notes and evidence rendered by the CLI redact common secret-shaped
-values, including JSON output. That is a guardrail for accidental
-copy/paste, not permission to store live secrets, full account ids, private
-repository names, raw payloads, or unredacted deployment evidence in public
-status files.
+values, AWS account ids, and AWS ARNs, including JSON output. That is a
+guardrail for accidental copy/paste, not permission to store live secrets,
+full account ids, private repository names, raw payloads, or unredacted
+deployment evidence in public status files.
+
+The v0 release gate contract check verifies status readiness semantics,
+missing-gate handling, complete-gate evidence requirements, deferral and
+blocked notes, public Markdown redaction, source invariants, and this release
+plan. Run it after changing the gate renderer, status schema, CLI flags, or
+release docs.
 
 For broader deployment evidence, keep a private structured evidence file and
 render a public-safe summary with:

@@ -5,6 +5,10 @@ const { redactSensitiveText } = require("./diagnostics.cjs");
 
 const RELEASE_GATE_STATUSES = ["pending", "complete", "deferred", "blocked"];
 const RELEASE_GATE_TEXT_MAX_CHARS = 1000;
+const PUBLIC_REDACTION_PATTERNS = [
+  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
+  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
+];
 
 function loadReleaseGates(filePath = "config/v0-release-gates.json") {
   return validateReleaseGates(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
@@ -19,7 +23,7 @@ function validateReleaseGates(document, source = "release gates") {
   if (document.version !== 1) {
     throw new Error(`${source} version must be 1.`);
   }
-  const release = stringField(document.release, `${source}.release`);
+  const release = releaseGateText(document.release, `${source}.release`);
   const description = releaseGateText(document.description, `${source}.description`);
   if (!Array.isArray(document.gates) || document.gates.length === 0) {
     throw new Error(`${source}.gates must be a non-empty array.`);
@@ -52,7 +56,7 @@ function validateReleaseGateStatus(document, source = "release gate status") {
   if (document.version !== 1) {
     throw new Error(`${source} version must be 1.`);
   }
-  const release = optionalString(document.release);
+  const release = optionalReleaseGateText(document.release);
   assertObject(document.gates, `${source}.gates`);
   const gates = {};
   for (const [rawId, rawStatus] of Object.entries(document.gates)) {
@@ -257,7 +261,7 @@ function stringField(value, source) {
 }
 
 function releaseGateText(value, source, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
-  return redactSensitiveText(stringField(value, source)).slice(0, maxChars);
+  return publicReleaseGateText(stringField(value, source), maxChars);
 }
 
 function optionalString(value) {
@@ -266,7 +270,17 @@ function optionalString(value) {
 
 function optionalReleaseGateText(value, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
   const text = optionalString(value);
-  return text ? redactSensitiveText(text).slice(0, maxChars) : "";
+  return text ? publicReleaseGateText(text, maxChars) : "";
+}
+
+function publicReleaseGateText(value, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
+  let text = redactSensitiveText(value);
+  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
+    text = text.replace(pattern, replacement);
+  }
+  return text
+    .slice(0, maxChars)
+    .replace(/\r?\n/g, " ");
 }
 
 function enumField(value, allowed, source) {

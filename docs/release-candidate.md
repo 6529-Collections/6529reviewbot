@@ -10,6 +10,9 @@ status, optional production cutover status, and the same preflight checks used
 by the runtime.
 It does not replace `npm run release:check`, CI, Dependency Review, OpenSSF
 Scorecard, or private operator evidence.
+Run the v0 release gate checker after changing release-gate status readiness,
+missing-id handling, deferral semantics, or public gate Markdown because the
+bundle can include release-gate counts and missing status ids.
 It also does not replace the [Production Cutover](production-cutover.md)
 checklist, which is the go/no-go layer for live dogfood or production traffic.
 It can include [Dogfood Status](dogfood-status.md) when the release decision

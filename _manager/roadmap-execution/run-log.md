@@ -3215,3 +3215,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including operator evidence validation
     and 76 mapped release-operation tools.
+- Merged `6529reviewbot` PR #201 as `f955f83`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/v0-release-gates-contract` increment:
+  - add `scripts/check-v0-gates-contract.cjs` and
+    `npm run check:v0-gates`;
+  - harden release-gate public Markdown so release labels, descriptions,
+    titles, evidence, status evidence, and notes redact AWS identifiers and
+    flatten embedded newlines;
+  - validate CLI parsing, pending skeletons, complete readiness, deferral
+    semantics, required evidence rules, unknown status ids, Markdown
+    redaction, source invariants, and docs;
+  - add the existing `check:release-gates` parity command to the release
+    operations map;
+  - wire the new contract into release checks, smoke tests, release operations
+    map, public docs, changelog, and manager memory.
+- Local validation for `codex/v0-release-gates-contract`:
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:release-operations` passed with 78 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 135 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including v0 release gates validation and
+    78 mapped release-operation tools.
