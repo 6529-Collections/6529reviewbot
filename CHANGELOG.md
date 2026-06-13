@@ -80,6 +80,8 @@ stabilized.
   when capturing public bundles from private paths.
 - Dogfood readiness docs and CLI help now recommend `npm --silent run` when
   capturing public evidence from commands that include private workspace paths.
+- Dogfood target packet CLI validates target-repo config PR posture before
+  command-only or limited-initial dogfood rollout.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.

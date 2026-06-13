@@ -97,6 +97,8 @@ Ready for community review:
 - sanitized support bundle and support playbook;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
+- dogfood target packet command for validating the target-repo config PR
+  posture before opening or updating a target repository PR;
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;
@@ -162,6 +164,8 @@ Before announcing broad community use:
 9. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
+   Run [Dogfood Target Packet](dogfood-target.md) before opening the target
+   repository config PR.
    Run [Dogfood Readiness](dogfood-readiness.md) before the first command-only
    trigger.
 10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
@@ -243,6 +247,8 @@ Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:
 
 ```bash
+npm run dogfood:target
+npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready

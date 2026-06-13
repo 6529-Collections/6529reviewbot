@@ -46,9 +46,15 @@ cp /path/to/6529reviewbot/templates/dogfood-repository-config.yml .github/6529bo
 Validate the file from this repository before opening the target-repo PR:
 
 ```bash
+npm run dogfood:target
+npm run dogfood:target -- -- --mode limited-initial --require-ready
 npm run validate:repo-config -- templates/dogfood-command-only-config.yml
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
+
+`dogfood:target` renders a public-safe target PR checklist and validates that
+the config is still in a conservative dogfood posture. See
+[Dogfood Target Packet](dogfood-target.md).
 
 Before first traffic, run the dogfood readiness summary. It validates the
 target repository config templates, dogfood budget policy file, and model

@@ -148,6 +148,14 @@
       "boundary": "Repository configs and public examples live here. Real dogfood status files, exact run keys, private payloads, and detailed operator evidence stay private.",
       "tools": [
         {
+          "id": "dogfood-target",
+          "script": "dogfood:target",
+          "args": "-- -- --mode command-only --require-ready",
+          "purpose": "Validate the target repository config PR posture and render a public-safe PR checklist before opening the target repo PR.",
+          "doc": "docs/dogfood-target.md",
+          "publicOutput": "Safe when the repository name is intentionally public; external config paths are redacted."
+        },
+        {
           "id": "dogfood-readiness",
           "script": "dogfood:readiness",
           "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",

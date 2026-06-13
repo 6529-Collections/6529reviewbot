@@ -79,6 +79,8 @@ After stabilization:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
   passes before broad community traffic unless release notes intentionally mark
   the release as dogfood-only and name every cutover deferral
+- `npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready`
+  passes before opening or updating the target repository config PR
 - `npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
   passes before first live dogfood traffic, using the operator-reviewed target
   repo config, budget policy, and private workspace when they differ from the

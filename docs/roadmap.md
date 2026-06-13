@@ -367,6 +367,8 @@ Completed in `6529reviewbot`:
 - dogfood readiness command for validating target config, central budget
   policy, model catalog, optional no-network preflight, and private operator
   workspace parsing before first traffic.
+- dogfood target packet command for validating the target-repo config PR before
+  a command-only or limited-initial rollout.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

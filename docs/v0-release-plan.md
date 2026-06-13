@@ -115,7 +115,8 @@ Do not create the `v0` tag until all of these are true:
 7. The 6529.io private admin surface is wired to the HMAC auth bridge or
    explicitly deferred behind operator-only APIs.
 8. Dogfood repository configuration has been merged into at least one trusted
-   6529 repository and tested in command-only mode.
+   6529 repository and tested in command-only mode. Use
+   `npm run dogfood:target` before opening the target repository config PR.
 9. `npm run ledger:schema -- -- --apply` has been run in the target Aurora
    database, or release notes explicitly mark ledger setup as manual.
 10. Central budget policy rows have been reviewed and applied with
