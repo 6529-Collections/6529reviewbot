@@ -56,6 +56,7 @@
     "check:dependabot": "node scripts/check-dependabot-config.cjs",
     "check:container-image": "node scripts/check-container-image.cjs",
     "check:comment-commands": "node scripts/check-comment-commands.cjs",
+    "check:review-workflows": "node scripts/check-review-workflow-kinds.cjs",
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",

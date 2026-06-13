@@ -274,10 +274,36 @@ merged PRs.
   `a606361`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Strict go-live preflight PR: merged as PR #156, merge commit `34d07a8`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-workspace-go-live-guide`.
-- Current local changes: adding dogfood promotion and go-live commands to the
-  generated private operator workspace README and public operator-workspace
-  docs.
+- Operator workspace go-live guide PR: merged as PR #157, merge commit
+  `39b849e`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Go-live docs sweep PR: merged as PR #158, merge commit `a8e80e8`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Docs index check PR: merged as PR #159, merge commit `fb47240`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Public governance check PR: merged as PR #160, merge commit `bb77877`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Workflow permissions check PR: merged as PR #161, merge commit `d2c2f6b`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Roadmap current-state sweep PR: merged as PR #162, merge commit `1dda26e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Dependabot config check PR: merged as PR #163, merge commit `8cabc02`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Issue template governance PR: merged as PR #164, merge commit `d296410`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Container image contract PR: merged as PR #165, merge commit `1f6dcb7`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Container release contract PR: merged as PR #166, merge commit `c00b89e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Release operations docs sync PR: merged as PR #167, merge commit
+  `d958b9f`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Checkout credential guard PR: merged as PR #168, merge commit `cd17974`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Comment-command contract PR: merged as PR #169, merge commit `13d06f5`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/review-workflow-kind-contract`.
+- Current local changes: adding a review-workflow kind contract check that
+  keeps review-kind constants, worker bins, workflow dispatch choices,
+  reusable workflow defaults, and workflow routing synchronized.
 
 ## Key Decisions
 
@@ -650,6 +676,10 @@ merged PRs.
 - Public comment-command docs should be checked against the parser and
   review-kind constants so maintainers can trust the documented `/6529bot`
   trigger syntax.
+- Review-kind workflow wiring should be checked against the App constants and
+  worker bin map so adding, removing, or renaming a review mode cannot silently
+  leave central dispatch, reusable workflow defaults, or workflow routing
+  stale.
 
 ## Constraints
 
@@ -663,7 +693,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the comment-command contract check.
+2. Validate, publish, and merge the review-workflow kind contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

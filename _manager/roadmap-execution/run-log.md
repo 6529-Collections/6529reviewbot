@@ -2495,3 +2495,24 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including comment-command contract
     validation and 43 mapped tools.
+- Merged `6529reviewbot` PR #169 as `13d06f5`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/review-workflow-kind-contract` increment:
+  - add `scripts/check-review-workflow-kinds.cjs` and
+    `npm run check:review-workflows`;
+  - validate review-kind constants against worker bins, central dispatch
+    workflow options, reusable workflow defaults, and reusable workflow shell
+    routing;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/review-workflow-kind-contract`:
+  - `npm run check:review-workflows` passed with 2 dispatch workflows and 5
+    review kinds checked;
+  - `npm run check:release-operations` passed with 44 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 102 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including review workflow kind validation
+    and 44 mapped release-operation tools.

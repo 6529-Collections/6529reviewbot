@@ -262,6 +262,9 @@ Build the operator experience:
 - Dependabot config checks for weekly npm and GitHub Actions update coverage;
 - workflow-permission checks that keep committed workflows and templates on
   explicit least-privilege permission maps;
+- review-workflow kind checks that keep App constants, worker bins, workflow
+  dispatch choices, reusable defaults, and routing aligned as review modes
+  evolve;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;
@@ -407,6 +410,9 @@ Completed in `6529reviewbot`:
   untrusted public command denial before budget or queue work.
 - comment-command contract checks that keep trigger docs synchronized with the
   parser and review-kind constants.
+- review-workflow kind checks that keep review-kind constants, worker bins,
+  workflow dispatch choices, reusable workflow defaults, and workflow routing
+  synchronized.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

@@ -71,6 +71,7 @@ const preflightCli = require("../bin/preflight.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
+const reviewWorkflowKindsCheck = require("./check-review-workflow-kinds.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
@@ -2803,6 +2804,22 @@ assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 12);
 assert.throws(
   () => commentCommandsCheck.checkCommentCommands({ quiet: true, text: "# Comment Commands\n" }),
   /comment command docs check found/
+);
+assert.equal(reviewWorkflowKindsCheck.checkReviewWorkflowKinds().reviewKinds, 5);
+assert.deepEqual(
+  reviewWorkflowKindsCheck.fallbackJsonArrayForVariable(
+    "vars.REVIEW_BOT_INITIAL_KINDS || '[\"general\",\"security\"]'",
+    "REVIEW_BOT_INITIAL_KINDS"
+  ),
+  ["general", "security"]
+);
+assert.throws(
+  () =>
+    reviewWorkflowKindsCheck.checkReviewWorkflowKinds({
+      quiet: true,
+      reusableWorkflowText: "missing workflow review-kind defaults",
+    }),
+  /review workflow kind check found/
 );
 assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
 assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");
