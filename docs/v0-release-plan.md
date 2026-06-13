@@ -136,7 +136,8 @@ Do not create the `v0` tag until all of these are true:
     environment, or every warning is accepted in release notes.
 17. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.
 18. `docs/security-review-checklist.md` has been completed for the release
-    candidate.
+    candidate and tracked with
+    `npm run security:review -- -- --status-file <operator-security-status-file>`.
 19. `CHANGELOG.md`, `README.md`, release notes, templates, and deployment docs
     match the tagged behavior.
 

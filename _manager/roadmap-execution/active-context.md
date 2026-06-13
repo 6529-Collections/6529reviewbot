@@ -224,9 +224,12 @@ merged PRs.
   `1a7915a`; CI and Dependency Review completed successfully before merge.
 - Release-candidate dogfood status PR: merged as PR #132, merge commit
   `5aa39b1`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/check-env-templates`.
-- Current local changes: adding public env template validation for
-  `.env.example`, dogfood central env, and 6529.io env templates.
+- Public env template validation PR: merged as PR #133, merge commit
+  `559c449`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/security-review-status`.
+- Current local changes: adding security review checklist/status tooling so
+  operators can track private manual-review evidence before dogfood expansion
+  or public pre-v1 tags.
 
 ## Key Decisions
 
@@ -494,6 +497,9 @@ merged PRs.
 - Public env templates should be machine-checked for syntax, duplicate keys,
   blank secret placeholders, and conservative defaults; live runtime posture is
   still covered by preflight from a private operator environment.
+- Manual security review should have a private status overlay like dogfood and
+  production cutover so release notes can include public-safe readiness counts
+  without copying reviewer-private evidence into the public repository.
 
 ## Constraints
 
@@ -507,7 +513,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge public env template validation.
+2. Validate, publish, and merge security review status tooling.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

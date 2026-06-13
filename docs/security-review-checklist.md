@@ -137,6 +137,8 @@ Target deployment:
 - `npm run validate:api-contract` when public or admin API contracts changed.
 - `npm run preflight -- -- --strict` in the release candidate environment, or a
   documented acceptance of each warning.
+- `npm run security:review -- -- --status-file <operator-security-status-file> --summary`
+  reviewed, with the real status file kept in the private operator workspace.
 - Completed [Operator Evidence Template](operator-evidence-template.md) with
   public-safe redactions.
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`

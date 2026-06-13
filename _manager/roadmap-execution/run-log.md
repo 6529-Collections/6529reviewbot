@@ -1792,3 +1792,22 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #133 as `559c449` after CI and Dependency Review
+  passed.
+- Started `codex/security-review-status` increment:
+  - add a canonical security review checklist and public example status file;
+  - add `npm run security:review` for Markdown/JSON rendering, private status
+    overlays, status skeleton initialization, and `--require-ready` checks;
+  - wire the example into smoke tests and release checks;
+  - add security review follow-up commands to the release-candidate bundle;
+  - update README, security review docs, release docs, readiness, v0 plan,
+    roadmap, changelog, and manager memory.
+- Local validation for `codex/security-review-status`:
+  - `npm run security:review -- -- --json --quiet` passed;
+  - `npm run security:review -- -- --status-file config/security-review-status.example.json --summary --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
