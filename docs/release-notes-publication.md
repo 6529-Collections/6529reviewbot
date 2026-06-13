@@ -40,6 +40,8 @@ The publication guard verifies:
 - tested configuration fields are filled;
 - known-gap fields are filled;
 - validation fields are filled;
+- production deployment plan evidence is filled before tag or GitHub Release
+  publication;
 - deferrals either include Gate, Risk accepted, Follow-up owner,
   Follow-up trigger/date, and Public-safe evidence, or the section states
   `No accepted deferrals`;

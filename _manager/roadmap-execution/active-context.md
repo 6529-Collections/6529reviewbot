@@ -412,25 +412,32 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator workspace deployment-plan guidance PR: merged as PR #225, merge commit `fa1155f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-drill-deployment-plan`.
-- Current local changes: adding the production deployment plan handoff command
-  to `operator:drill` next commands, the operator drill contract, and public
-  release/operator docs so the public-safe drill points operators at the
-  dry-run deployment handoff before final live gates.
+- Operator drill deployment-plan guidance PR: merged as PR #226, merge commit `28a549b`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-deployment-plan-evidence`.
+- Current local changes: adding production deployment plan evidence to the
+  release notes draft, release notes template, release notes publication guard,
+  contract checks, public release docs, changelog, and durable manager memory
+  so pre-v1 tags and GitHub Releases cannot omit the reviewed deployment
+  handoff evidence.
 - Current local validation:
-  - `npm run check:operator-drill` passed with 2 drill cases, 6 commands, and
-    7 docs checked;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check:release-notes` passed;
   - `npm run check` passed with 168 CommonJS files;
   - `npm run check:docs` passed with 71 files checked;
   - `npm run check:doc-index` passed with 57 docs indexed;
   - `npm run check:release-operations` passed with 105 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #225,
-    and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check:public-artifacts` passed with 114 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #226,
+    and 5 docs checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator drill contract
-    validation and 105 mapped release-operation tools.
+  - `npm run release:check` passed, including release notes draft,
+    publication, and template validation for production deployment plan
+    evidence.
 
 ## Key Decisions
 
