@@ -374,6 +374,10 @@ aligned.
 `npm run release:check` and verifies repository config remains a narrowing
 layer for lanes, max jobs, admission, budget caps, default cost, and base-ref
 loading.
+`npm run check:worker-adapter-contract` is included in
+`npm run release:check` and verifies worker adapter modes, GitHub dispatch
+fields, local worker env, redacted diagnostics, workflow template inputs, and
+worker docs stay synchronized.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

@@ -136,6 +136,9 @@ After stabilization:
 - `npm run check:repository-config-boundary` confirms repository config remains
   a narrowing layer for lanes, max jobs, admission, budget caps, default cost,
   and base-ref loading
+- `npm run check:worker-adapter-contract` confirms worker adapter modes,
+  GitHub dispatch fields, local worker env, redacted diagnostics, workflow
+  template inputs, and worker docs stay synchronized
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

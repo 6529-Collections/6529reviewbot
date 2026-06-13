@@ -94,6 +94,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "worker-adapter-contract",
+          "script": "check:worker-adapter-contract",
+          "purpose": "Verify worker adapter modes, GitHub dispatch fields, local worker env, redacted diagnostics, workflow template inputs, and worker docs stay synchronized.",
+          "doc": "docs/worker-adapters.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",

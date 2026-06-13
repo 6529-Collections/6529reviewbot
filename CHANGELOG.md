@@ -107,6 +107,9 @@ stabilized.
 - Added a repository-config boundary release check that validates target repo
   config remains a narrowing layer for lanes, max jobs, admission, budget caps,
   default cost, and base-ref loading.
+- Added a worker-adapter contract release check that validates worker modes,
+  dispatch fields, local worker env, diagnostic redaction, workflow template
+  inputs, and worker docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

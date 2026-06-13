@@ -2740,3 +2740,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including repository config boundary
     validation and 54 mapped release-operation tools.
+- Merged `6529reviewbot` PR #180 as `7fdc7ad`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/worker-adapter-contract` increment:
+  - add `scripts/check-worker-adapter-contract.cjs` and
+    `npm run check:worker-adapter-contract`;
+  - validate worker modes, GitHub dispatch modes, default policy, API/CLI
+    dispatch selection, local worker env keys, GitHub workflow dispatch fields,
+    local worker output redaction, and the review-job workflow template;
+  - validate worker docs keep bot-owned secrets, target-repo secret isolation,
+    no-output-by-default behavior, and diagnostic redaction explicit;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/worker-adapter-contract`:
+  - `npm run check:worker-adapter-contract` passed with 3 worker modes, 12
+    dispatch fields, and 4 docs/templates checked;
+  - `npm run check:release-operations` passed with 55 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 113 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including worker adapter contract
+    validation and 55 mapped release-operation tools.

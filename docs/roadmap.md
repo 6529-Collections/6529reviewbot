@@ -432,6 +432,9 @@ Completed in `6529reviewbot`:
 - repository-config boundary checks that keep target repository config a
   narrowing layer for provider/model lanes, max jobs, admission, budget caps,
   default cost, and base-ref loading.
+- worker-adapter contract checks that keep worker modes, dispatch fields,
+  local worker environment, redacted diagnostics, the workflow template, and
+  worker docs synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog
