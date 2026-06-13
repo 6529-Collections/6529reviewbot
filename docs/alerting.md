@@ -40,7 +40,7 @@ testing configuration and validating Aurora connectivity.
 
 ```text
 REVIEWBOT_ALERTS_ENABLED=false
-REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns
+REVIEWBOT_ALERTS_NOTIFY_MODE=none|stdout|webhook|sns|ses
 REVIEWBOT_ALERTS_NOTIFY_FAIL_CLOSED=false
 REVIEWBOT_ALERTS_WEBHOOK_URL=
 REVIEWBOT_ALERTS_WEBHOOK_TIMEOUT_MS=10000
@@ -48,6 +48,11 @@ REVIEWBOT_ALERTS_SNS_TOPIC_ARN=
 REVIEWBOT_ALERTS_SNS_REGION=
 REVIEWBOT_ALERTS_SNS_SUBJECT="6529bot spend alert"
 REVIEWBOT_ALERTS_SNS_TIMEOUT_MS=10000
+REVIEWBOT_ALERTS_SES_FROM=
+REVIEWBOT_ALERTS_SES_TO=
+REVIEWBOT_ALERTS_SES_REGION=
+REVIEWBOT_ALERTS_SES_SUBJECT="6529bot operator alert"
+REVIEWBOT_ALERTS_SES_TIMEOUT_MS=10000
 ```
 
 Budget utilization thresholds:
@@ -117,14 +122,19 @@ tools.
 the AWS CLI. This is the simplest AWS-native path for email or downstream
 Lambda routing.
 
+`ses` sends the same sanitized JSON payload as a plain-text email through
+AWS SES v2 using the AWS CLI. `REVIEWBOT_ALERTS_SES_TO` is a comma-separated
+recipient list. Keep sender identity verification, sandbox exit status, and
+recipient policy in the private operator runbook.
+
 ## Scheduled Workflow
 
 This repository includes `.github/workflows/spend-alerts.yml` for central
 scheduled alerts. It is scheduled hourly but the job is dormant unless
 `REVIEWBOT_ALERTS_ENABLED=true` is set in repository variables. When enabled,
 it assumes the configured AWS role through OIDC, reads the isolated usage,
-job-event, and run-claim tables as configured, and sends alerts through SNS or
-the configured webhook.
+job-event, and run-claim tables as configured, and sends alerts through SNS,
+SES, or the configured webhook.
 
 Keep `templates/spend-alert-workflow.yml` aligned with the installed workflow
 when changing alert behavior.
@@ -144,9 +154,10 @@ ledger with `--force` and notification delivery disabled:
 - notification delivery stayed in `dry_run` mode.
 
 This verifies the read/evaluation path. Before broad release, route scheduled
-operator alerts to an operator-owned SNS topic, webhook, or equivalent private
-channel, enable job-health alerts after the job ledger is live, and record that
-delivery evidence in the private operator runbook.
+operator alerts to an operator-owned SNS topic, SES sender/recipient list,
+webhook, or equivalent private channel, enable job-health alerts after the job
+ledger is live, and record that delivery evidence in the private operator
+runbook.
 
 ## Alert Payload
 

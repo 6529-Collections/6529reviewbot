@@ -59,7 +59,7 @@ The first `v0` tag can include:
 - usage-write cost estimation from active provider/model price rows;
 - 6529.io admin auth bridge contract;
 - scheduled operator alert checks for spend and job health with stdout,
-  webhook, and SNS delivery modes;
+  webhook, SNS, and SES email delivery modes;
 - reviewed GitHub App manifest template for repeatable App registration;
 - GitHub App manifest renderer for production-host validation before App
   creation;
@@ -68,7 +68,7 @@ The first `v0` tag can include:
   post-registration checks, rotation, and rollback;
 - installed central worker and dormant-by-default alert workflows plus a local
   action-ref pinning guard;
-- example AWS IAM/OIDC templates for central Data API and SNS access;
+- example AWS IAM/OIDC templates for central Data API, SNS, and SES access;
 - no-network production preflight command;
 - incident response runbook;
 - sanitized support bundle and support playbook;

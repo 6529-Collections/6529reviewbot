@@ -81,6 +81,8 @@ stabilized.
   sanitize custom loader diagnostics before returning JSON to 6529.io.
 - Scheduled alert payloads now redact common secret-shaped strings and unsafe
   custom keys before dry-run, stdout, webhook, or SNS output.
+- Scheduled operator alerts support SES email delivery through the same
+  sanitized payload boundary used by stdout, webhook, and SNS.
 - Repository config load reasons are bounded and redacted before webhook or
   admin summaries expose invalid or unavailable config diagnostics.
 - Live provider calls fail closed when the provider returns empty visible

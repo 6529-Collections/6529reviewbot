@@ -31,6 +31,7 @@ const {
 } = require("./job-ledger.cjs");
 const { ledgerSchemaStatements } = require("./ledger-schema.cjs");
 const { loadModelCatalog } = require("./model-catalog.cjs");
+const { jobHealthAlertPolicyFromEnv } = require("./job-health-alerts.cjs");
 const { repositoryConfigPolicyFromEnv } = require("./repository-config.cjs");
 const { reviewJobPolicyFromEnv } = require("./review-job.cjs");
 const { runControlLedgerSettingsFromEnv } = require("./run-control-ledger.cjs");
@@ -347,18 +348,26 @@ function runPreflight(options = {}) {
 
   check(result, "alerts", () => {
     const policy = spendAlertPolicyFromEnv(env);
+    const jobHealthPolicy = jobHealthAlertPolicyFromEnv(env);
     const notifier = alertNotifierSettingsFromEnv(env);
-    if (!policy.enabled) {
+    const enabled = policy.enabled || jobHealthPolicy.enabled;
+    if (!enabled) {
       addWarning(result, "alerts", "Scheduled spend alerts are disabled.");
     }
-    if (policy.enabled && notifier.mode === "webhook" && !notifier.webhookUrl) {
+    if (enabled && notifier.mode === "webhook" && !notifier.webhookUrl) {
       throw new Error("REVIEWBOT_ALERTS_WEBHOOK_URL is required for webhook alerts.");
     }
-    if (policy.enabled && notifier.mode === "sns" && !notifier.snsTopicArn) {
+    if (enabled && notifier.mode === "sns" && !notifier.snsTopicArn) {
       throw new Error("REVIEWBOT_ALERTS_SNS_TOPIC_ARN is required for SNS alerts.");
     }
+    if (enabled && notifier.mode === "ses" && !notifier.sesFrom) {
+      throw new Error("REVIEWBOT_ALERTS_SES_FROM is required for SES alerts.");
+    }
+    if (enabled && notifier.mode === "ses" && notifier.sesTo.length === 0) {
+      throw new Error("REVIEWBOT_ALERTS_SES_TO is required for SES alerts.");
+    }
     return {
-      enabled: policy.enabled,
+      enabled,
       notifyMode: notifier.mode,
       spikeDimensions: policy.spikeDimensions,
     };

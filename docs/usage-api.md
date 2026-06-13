@@ -312,16 +312,22 @@ dashboards:
       "snsTopicConfigured": true,
       "snsRegion": "us-east-1",
       "snsSubjectConfigured": true,
-      "snsTimeoutMs": 10000
+      "snsTimeoutMs": 10000,
+      "sesFromConfigured": true,
+      "sesRecipientCount": 2,
+      "sesRegion": "us-east-1",
+      "sesSubjectConfigured": true,
+      "sesTimeoutMs": 10000
     }
   }
 }
 ```
 
 The response reports delivery posture and secret presence only. It does not
-return webhook URLs, SNS topic ARNs, AWS account ids, provider keys, or alert
-payloads. Use it for private warning banners and setup diagnostics; use the
-scheduled alert workflow for actual delivery.
+return webhook URLs, SNS topic ARNs, SES sender or recipient addresses, AWS
+account ids, provider keys, or alert payloads. Use it for private warning
+banners and setup diagnostics; use the scheduled alert workflow for actual
+delivery.
 
 ## Runtime Status
 

@@ -58,6 +58,11 @@ function alertStatusFromEnv(env = process.env) {
       snsRegion: safeText(notifier.snsRegion, 120),
       snsSubjectConfigured: Boolean(notifier.snsSubject),
       snsTimeoutMs: notifier.snsTimeoutMs,
+      sesFromConfigured: Boolean(notifier.sesFrom),
+      sesRecipientCount: notifier.sesTo.length,
+      sesRegion: safeText(notifier.sesRegion, 120),
+      sesSubjectConfigured: Boolean(notifier.sesSubject),
+      sesTimeoutMs: notifier.sesTimeoutMs,
     },
   };
 }

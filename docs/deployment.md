@@ -139,9 +139,9 @@ the image digest and vulnerability scan in the private operator evidence
 record. See [container-deployment.md](container-deployment.md).
 
 Use [AWS IAM Templates](../infra/aws/README.md) as the starting point for
-GitHub Actions OIDC trust and least-privilege Data API/SNS policies. Replace
-all placeholders, scope trust to the bot repository or protected environment,
-and record the reviewed policy ARNs in the operator runbook.
+GitHub Actions OIDC trust and least-privilege Data API/SNS/SES policies.
+Replace all placeholders, scope trust to the bot repository or protected
+environment, and record the reviewed policy ARNs in the operator runbook.
 
 ## Central GitHub Actions Worker
 
@@ -172,7 +172,8 @@ REVIEW_USAGE_DB_SCHEMA
 
 `REVIEW_USAGE_AWS_ROLE_ARN` is assumed through GitHub Actions OIDC by the
 central worker and alert templates. The role should be scoped to the bot
-repository or protected environment and to the reviewed Aurora/SNS resources.
+repository or protected environment and to the reviewed Aurora/SNS/SES
+resources.
 
 Required repository variables when durable run-control claims should be closed
 by the worker:

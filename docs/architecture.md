@@ -165,7 +165,8 @@ as `runtime_disabled` lifecycle events when the job ledger is enabled.
 `src/scheduled-spend-check.cjs` reads the same Aurora usage ledger, job ledger,
 run-control claim table, and budget policy table as the usage/admin APIs. It
 evaluates spend and job-health alerts without calling model providers, then
-delivers through `stdout`, a webhook, or SNS via `src/alert-notifier.cjs`.
+delivers through `stdout`, a webhook, SNS, or SES email via
+`src/alert-notifier.cjs`.
 
 Scheduled checks should run from central bot infrastructure. Target
 repositories should not receive AWS usage-ledger credentials or notification

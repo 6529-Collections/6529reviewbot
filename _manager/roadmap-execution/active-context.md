@@ -207,10 +207,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Production cutover checklist PR: merged as PR #125, merge commit `0d9a91d`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-candidate-cutover-summary`
-- Current local changes: adding optional production cutover status summaries to
-  the release-candidate bundle so operators can review tag/no-tag readiness and
-  live-traffic go/no-go posture from one public-safe artifact.
+- Release-candidate cutover summary PR: merged as PR #126, merge commit
+  `ad77def`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/ses-alert-notifier`
+- Current local changes: adding AWS SES email as a first-class scheduled alert
+  delivery mode alongside stdout, webhook, and SNS, using the existing
+  sanitized alert payload and AWS CLI execution boundary.
 
 ## Key Decisions
 
@@ -459,6 +461,10 @@ merged PRs.
   when the decision covers live dogfood or production traffic. Default
   tag/no-tag behavior remains unchanged unless a cutover status file is
   provided.
+- SES alert delivery should use the same sanitized alert payload boundary as
+  stdout, webhook, and SNS. Sender and recipient addresses are operational
+  routing details: admin status and support bundles report presence/counts, not
+  full addresses.
 
 ## Constraints
 
@@ -470,8 +476,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship release-candidate cutover summary integration and merge it if checks
-   stay green.
+1. Ship SES alert notifier support and merge it if checks stay green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

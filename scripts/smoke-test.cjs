@@ -2906,6 +2906,8 @@ const alertStatusSummary = alertStatus.alertStatusFromEnv({
   REVIEWBOT_ALERTS_ENABLED: "true",
   REVIEWBOT_ALERTS_NOTIFY_MODE: "sns",
   REVIEWBOT_ALERTS_SNS_TOPIC_ARN: "arn:aws:sns:us-east-1:123456789012:reviewbot-alerts",
+  REVIEWBOT_ALERTS_SES_FROM: "ops@example.test",
+  REVIEWBOT_ALERTS_SES_TO: "admin@example.test, security@example.test",
   REVIEWBOT_ALERTS_WEBHOOK_URL:
     "https://hooks.example.test/services/github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
   REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED: "true",
@@ -2919,8 +2921,11 @@ assert.equal(alertStatusSummary.schedule.lookbackDays, 40);
 assert.equal(alertStatusSummary.schedule.maxEvents, 123);
 assert.equal(alertStatusSummary.notifier.mode, "sns");
 assert.equal(alertStatusSummary.notifier.snsTopicConfigured, true);
+assert.equal(alertStatusSummary.notifier.sesFromConfigured, true);
+assert.equal(alertStatusSummary.notifier.sesRecipientCount, 2);
 assert.equal(alertStatusSummary.notifier.webhookConfigured, true);
 assert.equal(JSON.stringify(alertStatusSummary).includes("123456789012"), false);
+assert.equal(JSON.stringify(alertStatusSummary).includes("ops@example"), false);
 assert.equal(JSON.stringify(alertStatusSummary).includes("github_pat_abcdefghijklmnopqrstuvwxyz"), false);
 const generatedJobHealthAlerts = jobHealthAlerts.evaluateJobHealthAlerts({
   now: alertNow,
@@ -4538,6 +4543,59 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(customSnsNotification.delivered, true);
   assert.equal(customSnsShell, false);
+  let sesSendOptions = null;
+  let sesContentJson = "";
+  let sesDestinationJson = "";
+  const sesNotification = await alertNotifier.sendAlerts([unsafeAlert], {
+    settings: alertNotifier.alertNotifierSettingsFromEnv({
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "ses",
+      REVIEWBOT_ALERTS_SES_FROM: "ops@example.test",
+      REVIEWBOT_ALERTS_SES_TO: "admin@example.test, security@example.test",
+      REVIEWBOT_ALERTS_SES_TIMEOUT_MS: "4321",
+    }),
+    now: alertNow,
+    execFileSync: (bin, args, options) => {
+      assert.equal(bin, "aws");
+      assert.equal(args.includes("sesv2"), true);
+      assert.equal(args.includes("send-email"), true);
+      const destinationArg = args[args.indexOf("--destination") + 1];
+      const contentArg = args[args.indexOf("--content") + 1];
+      sesDestinationJson = fs.readFileSync(destinationArg.replace(/^file:\/\//, ""), "utf8");
+      sesContentJson = fs.readFileSync(contentArg.replace(/^file:\/\//, ""), "utf8");
+      sesSendOptions = options;
+      return "{}";
+    },
+  });
+  assert.equal(sesNotification.delivered, true);
+  assert.equal(sesSendOptions.timeout, 4321);
+  assert.match(sesDestinationJson, /admin@example\.test/);
+  assert.match(sesContentJson, /sk-\[redacted\]/);
+  assert.equal(sesContentJson.includes("sk-proj-abcdefghijkl"), false);
+  const missingSesPreflight = preflight.runPreflight({
+    env: {
+      ...preflightEnv,
+      REVIEWBOT_ALERTS_ENABLED: "true",
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "ses",
+    },
+    strict: false,
+  });
+  assert.equal(
+    missingSesPreflight.errors.some((error) => /REVIEWBOT_ALERTS_SES_FROM/.test(error.message)),
+    true
+  );
+  const missingSesRecipientsPreflight = preflight.runPreflight({
+    env: {
+      ...preflightEnv,
+      REVIEWBOT_ALERTS_ENABLED: "true",
+      REVIEWBOT_ALERTS_NOTIFY_MODE: "ses",
+      REVIEWBOT_ALERTS_SES_FROM: "ops@example.test",
+    },
+    strict: false,
+  });
+  assert.equal(
+    missingSesRecipientsPreflight.errors.some((error) => /REVIEWBOT_ALERTS_SES_TO/.test(error.message)),
+    true
+  );
   const bestEffortNotification = await alertNotifier.sendAlerts(generatedAlerts.slice(0, 1), {
     settings: alertNotifier.alertNotifierSettingsFromEnv({
       REVIEWBOT_ALERTS_NOTIFY_MODE: "webhook",

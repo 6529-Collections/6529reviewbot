@@ -80,7 +80,7 @@ Budget-policy row count:
 ```text
 OIDC trust reviewed from infra/aws templates:
 Data API identity policy reviewed:
-SNS/alert policy reviewed:
+SNS/SES alert policy reviewed:
 Provider keys stored only in bot-owned secret store:
 GitHub App credentials stored only in bot-owned secret store:
 6529.io admin HMAC secret stored only in server-side 6529 infrastructure:
