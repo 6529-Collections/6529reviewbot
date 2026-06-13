@@ -451,8 +451,9 @@ Completed in `6529reviewbot`:
 - command-only `.github/6529bot.yml` config in this repository for eventual
   self-dogfood once the production App is installed.
 - synthetic self-dogfood replay check proving command-only PR-open skip and
-  trusted maintainer command-matrix admission without worker dispatch, plus
-  untrusted public command denial before budget or queue work.
+  trusted maintainer command-matrix admission without worker dispatch,
+  deliberate multi-lane fanout, max-fanout rejection, and untrusted public
+  command denial before spend.
 - comment-command contract checks that keep trigger docs synchronized with the
   parser and review-kind constants.
 - review-workflow kind checks that keep review-kind constants, worker bins,

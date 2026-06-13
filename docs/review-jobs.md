@@ -91,6 +91,11 @@ REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
 The app denies a delivery that would create more jobs than this limit. This is
 a pre-provider guardrail.
 
+`npm run check:self-dogfood-replay` exercises this guard through the webhook
+replay path: a deliberate two-lane command creates distinct jobs and run keys,
+while the same command with a lower central max-jobs cap fails before budget
+admission or queue dispatch.
+
 ## Budget Admission
 
 Budget admission runs per job, not once per webhook delivery. This matters

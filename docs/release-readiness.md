@@ -118,9 +118,10 @@ Ready for community review:
 - command-only `.github/6529bot.yml` config in this repository for eventual
   self-dogfood with trusted maintainer comment commands only;
 - synthetic self-dogfood replay check for proving that the committed config
-  skips automatic PR-open jobs and admits the trusted maintainer command-only
-  command matrix without dispatching workers, while denying untrusted public
-  commands before budget or queue work;
+  skips automatic PR-open jobs, admits the trusted maintainer command-only
+  command matrix without dispatching workers, rehearses deliberate multi-lane
+  fanout and max-fanout rejection, and denies untrusted public commands before
+  spend;
 - dogfood readiness summary command for validating repository configs, central
   budget policy, model catalog, and optional no-network preflight before first
   traffic;

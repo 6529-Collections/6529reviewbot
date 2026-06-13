@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Strengthened the synthetic self-dogfood replay gate to prove deliberate
+  multi-lane review fanout, distinct run keys, and max-fanout rejection before
+  dogfood traffic.
 - Added a release notes draft command and contract check for public-safe pre-v1
   release notes generated from release-candidate evidence and model catalog
   defaults.

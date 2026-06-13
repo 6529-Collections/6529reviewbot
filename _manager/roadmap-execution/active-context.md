@@ -398,27 +398,28 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Manager memory contract PR: merged as PR #218, merge commit `a2e4d39`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-draft`.
-- Current local changes: adding a public-safe `release:notes` draft command
-  and contract check that turn release-candidate evidence and model catalog
-  defaults into pre-v1 release notes with operator-owned `TODO(operator)`
-  fields.
+- Release notes draft command PR: merged as PR #219, merge commit `3603d55`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/self-dogfood-lane-guard`.
+- Current local changes: strengthening the synthetic self-dogfood replay gate
+  so it proves command-only PR-open skip, the trusted maintainer command
+  matrix, deliberate two-lane Anthropic/OpenAI fanout, distinct job ids and run
+  keys, central max-fanout rejection, and untrusted command denial without
+  dispatching workers or calling providers.
 - Current local validation:
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run release:notes -- -- --json --quiet` passed;
-  - `npm run check` passed with 156 CommonJS files;
+  - `npm run check:self-dogfood-replay` passed with 8 trusted command cases,
+    2 multi-lane jobs, the max-fanout guard, and untrusted command denial;
   - `npm run check:docs` passed with 67 files checked;
-  - `npm run check:doc-index` passed with 53 docs indexed;
   - `npm run check:release-operations` passed with 97 mapped tools;
-  - `git diff --check` passed;
-  - `npm run check:release-notes` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #218,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #219,
     and 5 docs checked;
-  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 156 CommonJS files;
+  - `npm run check:doc-index` passed with 53 docs indexed;
   - `npm run check:public-artifacts` passed with 110 files checked;
-  - `npm run release:check` passed, including release notes draft contract
-    validation and 97 mapped release-operation tools.
+  - `npm test` passed;
+  - `npm run release:check` passed, including the strengthened self-dogfood
+    replay gate and 97 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -954,6 +955,9 @@ merged PRs.
 - Dogfood readiness is the static input gate for promotion. Keep default
   repository configs, model catalog, dogfood budget policy, optional preflight,
   and operator workspace redaction covered by a no-network contract.
+- Self-dogfood replay should cover both conservative committed config behavior
+  and deliberate temporary multi-lane fanout so same-review multi-model support
+  stays tested without enabling multi-lane dogfood by default.
 
 ## Constraints
 
@@ -967,7 +971,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the release notes draft command and contract check.
+2. Publish and merge the self-dogfood lane/fanout guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

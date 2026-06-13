@@ -573,7 +573,7 @@
         {
           "id": "self-dogfood-replay",
           "script": "check:self-dogfood-replay",
-          "purpose": "Replay synthetic self-dogfood payloads through the App pipeline to prove command-only behavior without dispatching workers.",
+          "purpose": "Replay synthetic self-dogfood payloads through the App pipeline to prove command-only behavior, deliberate multi-lane fanout, max-fanout rejection, and untrusted command denial without dispatching workers.",
           "doc": "docs/dogfood.md",
           "publicOutput": "Safe; uses synthetic public payload templates and dry-run queueing only."
         },

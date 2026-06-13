@@ -49,8 +49,11 @@ npm run check:self-dogfood-replay
 The check uses public payload templates in `templates/` and dry-run queueing to
 prove that the self config creates no automatic PR-open jobs while admitting a
 trusted maintainer command matrix for default, explicit single-kind, and
-two-kind mention commands. It also proves that an untrusted public command is
-denied at admission before budget or queue work.
+two-kind mention commands. It also rehearses an explicit two-lane
+Anthropic/OpenAI command so the same review kind produces distinct jobs and
+run keys, verifies the central max-fanout guard rejects an oversized lane
+matrix before budget or queue work, and proves that an untrusted public command
+is denied at admission.
 
 Move to limited initial PR reviews after webhook delivery, admission, budget,
 usage, and alerts are verified:
@@ -245,6 +248,9 @@ Fast rollback options, from narrowest to broadest:
   budget policy.
 - Dogfood promotion passes with the private operator workspace, preflight, and
   self-dogfood replay gates included.
+- Synthetic self-dogfood replay proves command-only PR-open skip, trusted
+  command admission, deliberate multi-lane fanout, max-fanout rejection, and
+  untrusted command denial.
 - Webhook delivery succeeds and invalid signatures fail.
 - Target repo config is loaded from the base ref.
 - Public repo untrusted actors cannot trigger spend.

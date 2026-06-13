@@ -1037,7 +1037,7 @@ assert.deepEqual(
 );
 const promotionReplayRunner = () => ({
   status: 0,
-  stdout: "self dogfood replay ok (8 trusted command cases checked; untrusted command denied)\n",
+  stdout: "self dogfood replay ok (8 trusted command cases checked; 2 multi-lane jobs checked; max-fanout guard checked; untrusted command denied)\n",
   stderr: "",
 });
 const dogfoodPromotionPublicPacket = dogfoodPromotion.collectDogfoodPromotionPacket({

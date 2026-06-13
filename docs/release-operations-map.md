@@ -149,6 +149,10 @@ invariants, and docs aligned.
 `npm run check:dogfood-go-live` keeps the final dogfood traffic packet's
 strict-preflight gate, private workspace markers, Markdown redaction, source
 invariants, and docs aligned.
+`npm run check:self-dogfood-replay` replays public-safe self-dogfood payloads
+through the App pipeline to prove command-only PR-open skip, trusted command
+admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
+command denial without dispatching workers.
 `npm run check:operator-workspace` keeps operator workspace creation,
 check-mode readiness failures, private path redaction, Markdown sanitization,
 source invariants, and docs aligned.

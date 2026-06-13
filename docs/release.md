@@ -96,7 +96,8 @@ After stabilization:
   passes before opening or updating the target repository config PR
 - `npm run check:self-dogfood-replay`
   passes before using this repository as the first command-only dogfood target,
-  including the trusted maintainer command matrix and untrusted command denial
+  including the trusted maintainer command matrix, deliberate multi-lane fanout,
+  max-fanout rejection, and untrusted command denial
 - `npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
   passes before first live dogfood traffic, using the operator-reviewed target
   repo config, budget policy, and private workspace when they differ from the
