@@ -122,6 +122,9 @@ Ready for community review:
   promotion, production-cutover, and operator-workspace evidence before
   command-only live dogfood traffic, with `--require-ready` requiring strict
   preflight;
+- dogfood go-live checker that keeps the final traffic gate's strict-preflight
+  requirement, workspace path markers, Markdown redaction, source invariants,
+  and docs synchronized;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;

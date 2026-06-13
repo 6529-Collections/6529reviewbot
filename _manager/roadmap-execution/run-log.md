@@ -3005,3 +3005,26 @@
   - `npm test` passed;
   - `npm run release:check` passed, including release-candidate validation and
     67 mapped release-operation tools.
+- Merged `6529reviewbot` PR #192 as `063f925`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-go-live-contract` increment:
+  - add `scripts/check-dogfood-go-live-contract.cjs` and
+    `npm run check:dogfood-go-live`;
+  - harden dogfood go-live Markdown table cells so they pass through the
+    release-candidate public-text redaction path;
+  - validate CLI readiness gating, strict-preflight enforcement, temporary
+    operator workspace path redaction, nested promotion workspace markers,
+    go-live gate ids, Markdown redaction, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/dogfood-go-live-contract`:
+  - `npm run check:dogfood-go-live` passed with 4 CLI cases, 4 packet cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 68 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 126 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including dogfood go-live validation and
+    68 mapped release-operation tools.

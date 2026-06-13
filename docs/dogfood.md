@@ -178,6 +178,9 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
   before enabling command-only live traffic when release-candidate, promotion,
   cutover, and operator-workspace evidence should agree in one public-safe
   summary.
+- Run `npm run check:dogfood-go-live` after changing the go-live command,
+  packet format, strict-preflight behavior, workspace handling, or docs; the
+  dogfood go-live checker keeps that final traffic gate synchronized.
 - Switch the worker adapter to the chosen live worker.
 - Trigger one review with a maintainer comment, such as `/6529bot general`.
 - Confirm the PR comment is posted by `6529bot`.

@@ -227,6 +227,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "dogfood-go-live-contract",
+          "script": "check:dogfood-go-live",
+          "purpose": "Verify dogfood go-live packet readiness gating, strict-preflight enforcement, workspace path redaction, Markdown sanitization, source invariants, and public docs stay synchronized.",
+          "doc": "docs/dogfood-go-live.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "release-candidate-contract",
           "script": "check:release-candidate",
           "purpose": "Verify release-candidate bundle redaction, private workspace path markers, CLI flags, source invariants, and public release docs stay synchronized.",

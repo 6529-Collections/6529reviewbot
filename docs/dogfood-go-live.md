@@ -80,3 +80,19 @@ npm run dogfood:go-live -- -- \
 
 Keep those source files private. Public release notes should copy only the
 redacted go-live packet, the release-candidate bundle, or summary counts.
+
+## Contract Check
+
+Run the dogfood go-live contract check after changing go-live packet
+formatting, readiness gating, operator workspace handling, preflight behavior,
+or release/dogfood docs:
+
+```bash
+npm run check:dogfood-go-live
+```
+
+The dogfood go-live contract check verifies that `--require-ready` requires
+`--strict-preflight`, that private workspace paths stay summarized as
+`[operator-workspace]`, that the Markdown table cells redact common secret and
+AWS identifier shapes, and that the public docs stay synchronized with the
+traffic gate.
