@@ -234,11 +234,12 @@ merged PRs.
   and Dependency Review completed successfully before merge.
 - Operator workspace bootstrap PR: merged as PR #137, merge commit `00d4737`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/operator-workspace-check`.
-- Current local changes: adding operator workspace check mode so private
-  release-gate, dogfood, security-review, production-cutover, and
-  operator-evidence overlays can be validated as one set before tag/no-tag or
-  traffic expansion decisions.
+- Operator workspace check-mode PR: merged as PR #138, merge commit
+  `14f0015`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-candidate-workspace`.
+- Current local changes: adding `--operator-workspace` to
+  `release:candidate` so the public-safe bundle can read the standard private
+  workspace files without five repeated file flags.
 
 ## Key Decisions
 
@@ -521,6 +522,9 @@ merged PRs.
 - Operator workspace readiness should be checkable as a set, not only through
   separate per-overlay commands, so final release and traffic decisions have a
   single private workspace sanity check.
+- Release-candidate bundling should accept the standard operator workspace
+  directory as a first-class input while keeping explicit per-file overrides
+  available for unusual operator layouts.
 
 ## Constraints
 
@@ -534,7 +538,8 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge operator workspace check-mode integration.
+2. Validate, publish, and merge release-candidate operator-workspace
+   integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

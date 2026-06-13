@@ -3,14 +3,16 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
 const { safeErrorLine } = require("../src/diagnostics.cjs");
 const {
   collectReleaseCandidateBundle,
   formatReleaseCandidateBundleMarkdown,
 } = require("../src/release-candidate.cjs");
+const { DEFAULT_OPERATOR_WORKSPACE_FILES } = require("../src/operator-workspace.cjs");
 
 function main(argv = process.argv.slice(2), options = {}) {
-  const args = parseArgs(argv);
+  const args = applyOperatorWorkspaceDefaults(parseArgs(argv));
   const bundle = collectReleaseCandidateBundle({
     ...options,
     gateStatusFile: args.gateStatusFile,
@@ -51,6 +53,7 @@ function parseArgs(argv) {
     securityReviewStatusFile: "",
     includeGitStatus: false,
     json: false,
+    operatorWorkspaceDir: "",
     operatorEvidenceFile: "config/production-evidence.example.json",
     out: "",
     preflightProfile: "server",
@@ -95,6 +98,11 @@ function parseArgs(argv) {
     }
     if (arg === "--operator-evidence-file" || arg === "--evidence-file") {
       result.operatorEvidenceFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--operator-workspace" || arg === "--operator-workspace-dir") {
+      result.operatorWorkspaceDir = requiredValue(argv, index, arg);
       index += 1;
       continue;
     }
@@ -147,6 +155,29 @@ function parseArgs(argv) {
   return result;
 }
 
+function applyOperatorWorkspaceDefaults(args) {
+  if (!args.operatorWorkspaceDir) {
+    return args;
+  }
+  const directory = args.operatorWorkspaceDir;
+  return {
+    ...args,
+    gateStatusFile:
+      args.gateStatusFile || path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus),
+    operatorEvidenceFile:
+      args.operatorEvidenceFile === "config/production-evidence.example.json"
+        ? path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence)
+        : args.operatorEvidenceFile,
+    dogfoodStatusFile:
+      args.dogfoodStatusFile || path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.dogfoodStatus),
+    securityReviewStatusFile:
+      args.securityReviewStatusFile ||
+      path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus),
+    cutoverStatusFile:
+      args.cutoverStatusFile || path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus),
+  };
+}
+
 function requiredValue(argv, index, arg) {
   const value = argv[index + 1];
   if (!value || value.startsWith("--")) {
@@ -172,12 +203,14 @@ Usage:
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
+  npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 
 Options:
   --gate-file <path>              Release gates JSON file. Default: config/v0-release-gates.json
   --status-file <path>            Optional release gate status/evidence JSON file.
   --operator-evidence-file <path> Operator evidence JSON file. Default: config/production-evidence.example.json
+  --operator-workspace <path>     Use standard private workspace files from npm run operator:workspace.
   --dogfood-file <path>            Dogfood checklist JSON file. Default: config/dogfood-checklist.json
   --dogfood-status-file <path>     Optional dogfood status/evidence JSON file.
   --security-review-file <path>    Security review checklist JSON file. Default: config/security-review-checklist.json
@@ -205,6 +238,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  applyOperatorWorkspaceDefaults,
   main,
   parseArgs,
 };

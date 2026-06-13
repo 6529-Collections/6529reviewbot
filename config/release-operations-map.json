@@ -279,8 +279,8 @@
         {
           "id": "release-candidate-bundle",
           "script": "release:candidate",
-          "args": "-- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file> --security-review-status-file <operator-security-status-file> --cutover-status-file <operator-cutover-status-file> --strict-preflight --require-ready",
-          "purpose": "Build the public-safe release-readiness bundle from gates, evidence, dogfood, security review, cutover, git metadata, and preflight.",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "purpose": "Build the public-safe release-readiness bundle from a private operator workspace, git metadata, and preflight.",
           "doc": "docs/release-candidate.md",
           "privateInputs": "Reads operator-owned private status and evidence files.",
           "publicOutput": "Designed for public PRs, issues, releases, and durable manager memory after operator review."

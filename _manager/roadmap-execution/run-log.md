@@ -1893,3 +1893,25 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #138 as `14f0015` after CI and Dependency Review
+  passed. CodeRabbit added generated release notes to the PR body and did not
+  create review threads before merge.
+- Started `codex/release-candidate-workspace` increment:
+  - add `--operator-workspace` to `npm run release:candidate`;
+  - map standard private workspace files to release gates, operator evidence,
+    dogfood status, security-review status, and production cutover status;
+  - keep explicit per-file flags as overrides for unusual operator layouts;
+  - update release-candidate docs, operator workspace docs, README, release
+    readiness, release process, release operations map, smoke tests, and
+    manager memory.
+- Local validation for `codex/release-candidate-workspace`:
+  - `npm run operator:workspace -- -- --dir <temp-dir> --quiet` passed;
+  - `npm run release:candidate -- -- --operator-workspace <temp-dir> --json --quiet`
+    passed;
+  - `npm run release:candidate -- -- --operator-workspace <temp-dir> --require-ready --quiet`
+    failed as expected on pending release gates;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

@@ -1572,6 +1572,10 @@ assert.equal(workspace.ready, false);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "operator-evidence.json")), true);
 assert.match(
+  fs.readFileSync(path.join(operatorWorkspaceDir, "README.md"), "utf8"),
+  /npm run release:candidate -- -- --operator-workspace \. --strict-preflight/
+);
+assert.match(
   operatorWorkspace.renderOperatorWorkspaceSummaryMarkdown(workspace),
   /Created private release-operator evidence skeletons/
 );
@@ -1971,6 +1975,21 @@ const candidateBundleWithSecurityReviewMarkdown =
   releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleWithSecurityReview);
 assert.match(candidateBundleWithSecurityReviewMarkdown, /security review: not ready/);
 assert.match(candidateBundleWithSecurityReviewMarkdown, /missing security review status ids: none/);
+const candidateBundleFromWorkspace = releaseCandidateCli.main([
+  "--operator-workspace",
+  operatorWorkspaceDir,
+  "--json",
+  "--quiet",
+], {
+  env: preflightEnv,
+  now: new Date("2026-06-12T00:00:00.000Z"),
+});
+assert.equal(candidateBundleFromWorkspace.ready, false);
+assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 19);
+assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
+assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
+assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 29);
+assert.deepEqual(candidateBundleFromWorkspace.readiness.dogfood.missingStatusIds, []);
 assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(
@@ -1999,6 +2018,8 @@ assert.deepEqual(
     "status.json",
     "--operator-evidence-file",
     "evidence.json",
+    "--operator-workspace",
+    "workspace",
     "--dogfood-file",
     "dogfood.json",
     "--dogfood-status-file",
@@ -2029,6 +2050,7 @@ assert.deepEqual(
     includeGitStatus: true,
     json: true,
     operatorEvidenceFile: "evidence.json",
+    operatorWorkspaceDir: "workspace",
     out: "bundle.json",
     preflightProfile: "worker",
     quiet: true,
@@ -2038,6 +2060,50 @@ assert.deepEqual(
     strictPreflight: true,
   }
 );
+const releaseCandidateWorkspaceDefaults = releaseCandidateCli.applyOperatorWorkspaceDefaults(
+  releaseCandidateCli.parseArgs(["--operator-workspace", "workspace"])
+);
+assert.equal(
+  releaseCandidateWorkspaceDefaults.gateStatusFile,
+  path.join("workspace", "v0-release-status.json")
+);
+assert.equal(
+  releaseCandidateWorkspaceDefaults.operatorEvidenceFile,
+  path.join("workspace", "operator-evidence.json")
+);
+assert.equal(
+  releaseCandidateWorkspaceDefaults.dogfoodStatusFile,
+  path.join("workspace", "dogfood-status.json")
+);
+assert.equal(
+  releaseCandidateWorkspaceDefaults.securityReviewStatusFile,
+  path.join("workspace", "security-review-status.json")
+);
+assert.equal(
+  releaseCandidateWorkspaceDefaults.cutoverStatusFile,
+  path.join("workspace", "production-cutover-status.json")
+);
+const releaseCandidateWorkspaceOverrides = releaseCandidateCli.applyOperatorWorkspaceDefaults(
+  releaseCandidateCli.parseArgs([
+    "--operator-workspace",
+    "workspace",
+    "--status-file",
+    "status.json",
+    "--operator-evidence-file",
+    "evidence.json",
+    "--dogfood-status-file",
+    "dogfood-status.json",
+    "--security-review-status-file",
+    "security-status.json",
+    "--cutover-status-file",
+    "cutover-status.json",
+  ])
+);
+assert.equal(releaseCandidateWorkspaceOverrides.gateStatusFile, "status.json");
+assert.equal(releaseCandidateWorkspaceOverrides.operatorEvidenceFile, "evidence.json");
+assert.equal(releaseCandidateWorkspaceOverrides.dogfoodStatusFile, "dogfood-status.json");
+assert.equal(releaseCandidateWorkspaceOverrides.securityReviewStatusFile, "security-status.json");
+assert.equal(releaseCandidateWorkspaceOverrides.cutoverStatusFile, "cutover-status.json");
 assert.equal(
   releaseCandidateCli.main(["--json", "--quiet"], {
     env: preflightEnv,

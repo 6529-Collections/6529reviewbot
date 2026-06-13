@@ -28,6 +28,8 @@ After stabilization:
   and operator-evidence overlays
 - `npm run operator:workspace -- -- --dir <private-workspace-dir> --check`
   reviewed before final release-candidate bundling
+- `npm run release:candidate -- -- --operator-workspace <private-workspace-dir>`
+  reviewed as the public-safe workspace bundle
 - [Release candidate bundle](release-candidate.md) rendered from the private
   release-gate status and operator evidence files
 - [Production cutover checklist](production-cutover.md) reviewed before live
