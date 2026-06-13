@@ -57,6 +57,7 @@ repositories.
 - Model pricing status:
 - Model price source freshness policy:
 - Alert delivery:
+- Alert delivery plan:
 - Empty provider output fail-closed evidence:
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
@@ -128,6 +129,7 @@ before updating.
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:
 - `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`:
 - `npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready`:
+- `npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready`:
 - `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
 - `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`:
