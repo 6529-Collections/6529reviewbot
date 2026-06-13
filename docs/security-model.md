@@ -174,6 +174,8 @@ The preferred `6529.io` bridge is a short-lived HMAC assertion signed by
 server-side 6529 infrastructure after the existing 6529 auth system has
 verified the human operator. The HMAC secret must not be exposed to browser
 JavaScript, public repo variables, or logs.
+`src/usage-api-client.cjs` is a server-side helper for this bridge; do not use
+it from browser bundles or any runtime where the HMAC secret would be exposed.
 
 ### Alerting Safety
 

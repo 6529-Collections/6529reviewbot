@@ -382,6 +382,10 @@ REVIEWBOT_USAGE_API_MAX_ITEMS=50
 REVIEWBOT_USAGE_API_MAX_EVENTS=5000
 REVIEWBOT_USAGE_API_PUBLIC_REPOS=
 REVIEWBOT_USAGE_API_PUBLIC_ORGS=
+REVIEWBOT_USAGE_API_BASE_URL=
+REVIEWBOT_USAGE_API_CLIENT_TIMEOUT_MS=10000
+REVIEWBOT_USAGE_API_ADMIN_ACTOR=6529.io
+REVIEWBOT_USAGE_API_ADMIN_ROLES=reviewbot-admin
 ```
 
 Admin endpoints still fail closed unless the server injects an admin
@@ -401,6 +405,11 @@ unbounded table scan.
 `REVIEWBOT_USAGE_API_PUBLIC_REPOS` and `REVIEWBOT_USAGE_API_PUBLIC_ORGS`
 control which repo names may appear on public summaries. Any repo that does not
 match those allowlists is collapsed into the public `private` bucket.
+
+`REVIEWBOT_USAGE_API_BASE_URL` and `REVIEWBOT_USAGE_API_ADMIN_*` are for
+trusted server-side clients such as the private 6529.io admin page. Do not
+expose the matching HMAC secret to browser JavaScript. See
+[6529.io Admin Integration](6529-io-admin-integration.md).
 
 ## Admin Auth Bridge
 

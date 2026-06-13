@@ -58,6 +58,7 @@ const spendAlerts = require("../src/spend-alerts.cjs");
 const supportBundle = require("../src/support-bundle.cjs");
 const supportBundleCli = require("../bin/support-bundle.cjs");
 const usageApi = require("../src/usage-api.cjs");
+const usageApiClient = require("../src/usage-api-client.cjs");
 const usageApiLedger = require("../src/usage-api-ledger.cjs");
 const usageLedger = require("../src/usage-ledger.cjs");
 const workerAdapter = require("../src/worker-adapter.cjs");
@@ -3206,6 +3207,98 @@ assert.equal(adminAuth.authorizeAdminRequest({
   url: adminUsageUrl,
   headers: new Headers(signedAdminHeaders),
 }, hmacAuthSettings).allowed, true);
+const usageApiClientSettings = usageApiClient.usageApiClientSettingsFromEnv({
+  REVIEWBOT_USAGE_API_BASE_URL: "https://reviewbot.example.com",
+  REVIEWBOT_USAGE_API_CLIENT_TIMEOUT_MS: "1234",
+  REVIEWBOT_USAGE_API_ADMIN_ACTOR: "6529.io-admin",
+  REVIEWBOT_USAGE_API_ADMIN_ROLES: "reviewbot-admin,admin",
+  REVIEWBOT_ADMIN_AUTH_MODE: "hmac",
+  REVIEWBOT_ADMIN_AUTH_HMAC_SECRET: "hmac-secret",
+  REVIEWBOT_ADMIN_AUTH_REQUIRED_ROLES: "reviewbot-admin",
+});
+assert.equal(usageApiClientSettings.baseUrl, "https://reviewbot.example.com");
+assert.equal(usageApiClientSettings.timeoutMs, 1234);
+assert.deepEqual(usageApiClientSettings.roles, ["reviewbot-admin", "admin"]);
+const builtUsageApiUrl = usageApiClient.buildUsageApiUrl(
+  "https://reviewbot.example.com/base/",
+  "/api/admin/jobs/recent",
+  { status: "dispatch_failed", limit: 2 }
+);
+assert.equal(
+  String(builtUsageApiUrl),
+  "https://reviewbot.example.com/api/admin/jobs/recent?status=dispatch_failed&limit=2"
+);
+assert.throws(
+  () => usageApiClient.buildUsageApiUrl("https://reviewbot.example.com", "https://evil.test/api"),
+  /path must be an absolute path/
+);
+const usageApiClientHeaders = usageApiClient.createAdminUsageApiHeaders({
+  method: "GET",
+  url: adminUsageUrl,
+  actor: "operator",
+  roles: ["reviewbot-admin"],
+  expiresAt: String(Math.floor(Date.now() / 1000) + 120),
+}, hmacAuthSettings);
+assert.equal(usageApiClientHeaders["x-6529-admin-user"], "operator");
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: usageApiClientHeaders,
+}, hmacAuthSettings).allowed, true);
+const minimalUsageApiClientHeaders = usageApiClient.createAdminUsageApiHeaders({
+  method: "GET",
+  url: adminUsageUrl,
+  actor: "operator",
+}, {
+  hmacSecret: "hmac-secret",
+});
+assert.equal(adminAuth.authorizeAdminRequest({
+  method: "GET",
+  url: adminUsageUrl,
+  headers: minimalUsageApiClientHeaders,
+}, hmacAuthSettings).allowed, true);
+let usageApiClientFetchRequest = null;
+const usageApiClientRequestPromise = usageApiClient
+  .createUsageApiClient({
+    settings: usageApiClientSettings,
+    fetchImpl: async (url, options = {}) => {
+      usageApiClientFetchRequest = { url: String(url), options };
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ ok: true, kind: "model_price_status" }),
+      };
+    },
+  })
+  .modelPriceStatus({
+    actor: "operator",
+    roles: ["reviewbot-admin"],
+    expiresAt: String(Math.floor(Date.now() / 1000) + 120),
+  });
+const usageApiClientFailurePromise = usageApiClient
+  .requestUsageApiJson({
+    baseUrl: "https://reviewbot.example.com",
+    path: "/api/admin/status",
+    admin: true,
+    actor: "operator",
+    roles: ["reviewbot-admin"],
+    expiresAt: String(Math.floor(Date.now() / 1000) + 120),
+    adminAuth: hmacAuthSettings,
+    fetchImpl: async () => ({
+      ok: false,
+      status: 503,
+      text: async () =>
+        JSON.stringify({
+          ok: false,
+          error:
+            "loader failed with Bearer abcdefghijklmnopqrstuvwxyz123456 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+        }),
+    }),
+  })
+  .then(
+    () => null,
+    (error) => error
+  );
 assert.equal(adminAuth.authorizeAdminRequest({
   method: "GET",
   url: adminUsageUrl,
@@ -3387,6 +3480,29 @@ appServer.handleGitHubWebhook({
   const serverAlertStatus = await serverAlertStatusPromise;
   assert.equal(serverAlertStatus.status.spend.enabled, true);
   assert.equal(serverAlertStatus.status.notifier.mode, "none");
+  const usageApiClientResult = await usageApiClientRequestPromise;
+  assert.equal(usageApiClientResult.kind, "model_price_status");
+  assert.equal(
+    usageApiClientFetchRequest.url,
+    "https://reviewbot.example.com/api/admin/model-prices/status"
+  );
+  assert.equal(
+    usageApiClientFetchRequest.options.headers["x-6529-admin-user"],
+    "operator"
+  );
+  assert.equal(
+    adminAuth.authorizeAdminRequest({
+      method: "GET",
+      url: new URL(usageApiClientFetchRequest.url),
+      headers: usageApiClientFetchRequest.options.headers,
+    }, hmacAuthSettings).allowed,
+    true
+  );
+  const usageApiClientFailure = await usageApiClientFailurePromise;
+  assert(usageApiClientFailure instanceof Error);
+  assert.match(usageApiClientFailure.message, /Bearer \[redacted\]/);
+  assert.match(usageApiClientFailure.message, /sk-\[redacted\]/);
+  assert.equal(usageApiClientFailure.message.includes("sk-proj-"), false);
   const serverAppDispatchResult = await serverAppDispatchPromise;
   assert.equal(serverAppDispatchResult.accepted, true);
   assert.equal(serverAppDispatchResult.jobs[0].dispatchMode, "api");

@@ -199,11 +199,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin alert-status API PR: merged as PR #121, merge commit `103d4b8`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-model-price-status`
-- Current local changes: adding an admin-only model-price status endpoint and
-  Aurora reader so private 6529.io dashboards can show active price rows,
-  token-class rate coverage, and source freshness without exposing operator
-  notes or full source URLs.
+- Admin model-price status API PR: merged as PR #122, merge commit `34f1ef9`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-api-client-contract`
+- Current local changes: adding a server-side usage API client helper and
+  integration docs so 6529.io can call bot-owned public/admin endpoints with
+  HMAC assertions, timeouts, path validation, and redacted API errors.
 
 ## Key Decisions
 
@@ -427,6 +428,9 @@ merged PRs.
   active price-row freshness and token-class coverage. They should not read
   Aurora directly or depend on public commits containing current provider
   prices.
+- 6529.io should call bot-owned admin APIs from trusted server-side code using
+  the HMAC bridge contract and a tested client/helper, not ad hoc browser-side
+  signing or direct Aurora reads.
 - Production evidence should be structured enough to validate required
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
@@ -448,8 +452,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the admin model-price status API increment and merge it if checks stay
-   green.
+1. Ship the 6529.io admin API client/contract increment and merge it if checks
+   stay green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

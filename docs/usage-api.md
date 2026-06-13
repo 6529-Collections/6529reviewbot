@@ -70,6 +70,8 @@ separate human-login system.
 The preferred mode is a short-lived HMAC assertion signed by trusted `6529.io`
 server-side infrastructure. See
 [admin-auth-bridge.md](admin-auth-bridge.md).
+For a server-side client pattern, see
+[6529.io Admin Integration](6529-io-admin-integration.md).
 
 ## Usage Events
 
