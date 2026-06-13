@@ -577,6 +577,9 @@ assert.deepEqual(
     "budgets.json",
     "--model-catalog-file",
     "catalog.json",
+    "--operator-workspace",
+    "workspace",
+    "--require-operator-workspace-ready",
     "--strict-preflight",
     "--json",
     "--quiet",
@@ -587,8 +590,10 @@ assert.deepEqual(
     includePreflight: true,
     json: true,
     modelCatalogFile: "catalog.json",
+    operatorWorkspaceDir: "workspace",
     preflightProfile: "server",
     quiet: true,
+    requireOperatorWorkspaceReady: true,
     repositoryConfigFiles: ["one.yml", "two.yml"],
     requireReady: true,
     strictPreflight: true,
@@ -1586,6 +1591,33 @@ assert.equal(
 const checkedWorkspace = operatorWorkspace.checkOperatorWorkspace({ directory: operatorWorkspaceDir });
 assert.equal(checkedWorkspace.ready, false);
 assert.equal(checkedWorkspace.summaries.securityReview.pending, 33);
+const dogfoodWorkspaceReport = dogfoodReadiness.collectDogfoodReadiness({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  operatorWorkspaceDir,
+});
+assert.equal(dogfoodWorkspaceReport.ready, true);
+assert.equal(dogfoodWorkspaceReport.checks.operatorWorkspace.status, "ok");
+assert.equal(dogfoodWorkspaceReport.checks.operatorWorkspace.ready, false);
+assert.equal(dogfoodWorkspaceReport.checks.operatorWorkspace.directory, "[operator-workspace]");
+assert.equal(JSON.stringify(dogfoodWorkspaceReport).includes(operatorWorkspaceDir), false);
+const dogfoodWorkspaceMarkdown = dogfoodReadiness.formatDogfoodReadinessMarkdown(dogfoodWorkspaceReport);
+assert.match(dogfoodWorkspaceMarkdown, /Operator Workspace/);
+assert.match(dogfoodWorkspaceMarkdown, /dogfood: not ready/);
+const dogfoodWorkspaceReadyReport = dogfoodReadiness.collectDogfoodReadiness({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  operatorWorkspaceDir,
+  requireOperatorWorkspaceReady: true,
+});
+assert.equal(dogfoodWorkspaceReadyReport.ready, false);
+assert.equal(dogfoodWorkspaceReadyReport.checks.operatorWorkspace.status, "error");
+assert.equal(JSON.stringify(dogfoodWorkspaceReadyReport).includes(operatorWorkspaceDir), false);
+const dogfoodMissingWorkspaceReport = dogfoodReadiness.collectDogfoodReadiness({
+  now: new Date("2026-06-13T00:00:00.000Z"),
+  operatorWorkspaceDir: path.join(operatorWorkspaceDir, "missing"),
+});
+assert.equal(dogfoodMissingWorkspaceReport.ready, false);
+assert.equal(dogfoodMissingWorkspaceReport.checks.operatorWorkspace.status, "error");
+assert.equal(JSON.stringify(dogfoodMissingWorkspaceReport).includes(operatorWorkspaceDir), false);
 assert.throws(
   () => operatorWorkspace.checkOperatorWorkspace({ directory: operatorWorkspaceDir, requireReady: true }),
   /release gates are not ready/

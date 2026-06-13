@@ -236,10 +236,13 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - Operator workspace check-mode PR: merged as PR #138, merge commit
   `14f0015`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/release-candidate-workspace`.
+- Release-candidate operator-workspace PR: merged as PR #139, merge commit
+  `b215432`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/dogfood-readiness-workspace`.
 - Current local changes: adding `--operator-workspace` to
-  `release:candidate` so the public-safe bundle can read the standard private
-  workspace files without five repeated file flags.
+  `dogfood:readiness` so pre-traffic dogfood checks can include a redacted
+  private operator workspace parse check without requiring every post-traffic
+  evidence item to be complete.
 
 ## Key Decisions
 
@@ -525,6 +528,10 @@ merged PRs.
 - Release-candidate bundling should accept the standard operator workspace
   directory as a first-class input while keeping explicit per-file overrides
   available for unusual operator layouts.
+- Dogfood readiness should distinguish "private workspace exists and parses"
+  from "all private evidence is complete." The first is useful before first
+  traffic; the second is available through explicit stricter gates for
+  expansion or release decisions.
 
 ## Constraints
 
@@ -538,7 +545,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge release-candidate operator-workspace
+2. Validate, publish, and merge dogfood readiness operator-workspace
    integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

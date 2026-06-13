@@ -250,6 +250,7 @@ Validate dogfood inputs before first traffic:
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
+npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Track private dogfood execution evidence:

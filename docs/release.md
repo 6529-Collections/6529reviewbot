@@ -77,9 +77,10 @@ After stabilization:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
   passes before broad community traffic unless release notes intentionally mark
   the release as dogfood-only and name every cutover deferral
-- `npm run dogfood:readiness -- -- --strict-preflight --require-ready` passes
-  before first live dogfood traffic, using the operator-reviewed target repo
-  config and budget policy when they differ from the public examples
+- `npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+  passes before first live dogfood traffic, using the operator-reviewed target
+  repo config, budget policy, and private workspace when they differ from the
+  public examples
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary`
   reviewed after command-only and limited initial-review dogfood runs
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready`

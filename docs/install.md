@@ -310,6 +310,7 @@ Validate the full dogfood input set before the first command trigger:
 npm run dogfood:readiness -- -- \
   --repository-config <target-repo>/.github/6529bot.yml \
   --budget-policy-file <reviewed-budget-policy-file.json> \
+  --operator-workspace <private-workspace-dir> \
   --strict-preflight \
   --require-ready
 ```

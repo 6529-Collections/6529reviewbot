@@ -359,8 +359,8 @@ Completed in `6529reviewbot`:
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - dogfood readiness command for validating target config, central budget
-  policy, model catalog, and optional no-network preflight before first
-  traffic.
+  policy, model catalog, optional no-network preflight, and private operator
+  workspace parsing before first traffic.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

@@ -9,10 +9,11 @@ The command validates the public dogfood inputs operators edit most often:
 - central dogfood budget policy file;
 - model catalog defaults.
 
-It is public-safe by default. The report includes counts, modes, review kinds,
-provider/model lanes, and readiness status. It does not print raw private
-budget scope values, secrets, AWS identifiers, provider responses, prompts, or
-target repository payloads.
+It can also include a private operator workspace parse check when the run is
+being prepared from the release workspace. The report includes counts, modes,
+review kinds, provider/model lanes, and readiness status. It does not print raw
+private budget scope values, operator workspace paths, secrets, AWS
+identifiers, provider responses, prompts, or target repository payloads.
 
 ## Static Check
 
@@ -25,13 +26,34 @@ npm run dogfood:readiness
 Render machine-readable output:
 
 ```bash
-npm run dogfood:readiness -- --json
+npm run dogfood:readiness -- -- --json
 ```
 
 Use `--require-ready` when this is part of a release or cutover gate:
 
 ```bash
-npm run dogfood:readiness -- --json --quiet --require-ready
+npm run dogfood:readiness -- -- --json --quiet --require-ready
+```
+
+## Operator Workspace
+
+When a private workspace has been created with `npm run operator:workspace`,
+include it before first traffic:
+
+```bash
+npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
+```
+
+This checks that the private release-gate, dogfood, security-review,
+production-cutover, and operator-evidence files exist and parse. Pending
+evidence items are summarized but do not make the pre-traffic readiness check
+fail.
+
+For expansion or final release gates where every private checklist must be
+complete, add the stricter workspace flag:
+
+```bash
+npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --require-operator-workspace-ready --require-ready
 ```
 
 ## Custom Inputs

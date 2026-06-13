@@ -100,6 +100,7 @@ Validate the dogfood input set before first command-only traffic:
 ```bash
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
+npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Replay a saved webhook payload without dispatching workers:

@@ -4,6 +4,10 @@ const path = require("path");
 const { loadBudgetPolicyFile } = require("./budget-policies.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { loadModelCatalog } = require("./model-catalog.cjs");
+const {
+  checkOperatorWorkspace,
+  publicOperatorWorkspaceSummary,
+} = require("./operator-workspace.cjs");
 const { runPreflight } = require("./preflight.cjs");
 const { parseRepositoryConfigText } = require("./repository-config.cjs");
 const fs = require("fs");
@@ -31,10 +35,19 @@ function collectDogfoodReadiness(options = {}) {
   const modelCatalogFile = options.modelCatalogFile || DEFAULT_MODEL_CATALOG_FILE;
   const includePreflight = Boolean(options.includePreflight);
   const strictPreflight = Boolean(options.strictPreflight);
+  const operatorWorkspaceDir = options.operatorWorkspaceDir || "";
+  const requireOperatorWorkspaceReady = Boolean(options.requireOperatorWorkspaceReady);
 
   const repositoryConfigs = collectRepositoryConfigs(repositoryConfigFiles, root);
   const budgetPolicies = collectBudgetPolicies(budgetPolicyFile, root);
   const modelCatalog = collectModelCatalog(modelCatalogFile, root);
+  const operatorWorkspace = operatorWorkspaceDir
+    ? collectOperatorWorkspace({
+        directory: operatorWorkspaceDir,
+        requireReady: requireOperatorWorkspaceReady,
+        root,
+      })
+    : null;
   const preflight = includePreflight
     ? collectPreflight({
         env: options.env || process.env,
@@ -48,6 +61,9 @@ function collectDogfoodReadiness(options = {}) {
     repositoryConfigs.status === "ok" &&
     budgetPolicies.status === "ok" &&
     modelCatalog.status === "ok" &&
+    (!operatorWorkspace ||
+      (operatorWorkspace.status === "ok" &&
+        (!requireOperatorWorkspaceReady || operatorWorkspace.ready))) &&
     (!preflight || preflight.ok);
 
   return {
@@ -66,11 +82,18 @@ function collectDogfoodReadiness(options = {}) {
             strict: strictPreflight,
           }
         : null,
+      operatorWorkspace: operatorWorkspaceDir
+        ? {
+            directory: "[operator-workspace]",
+            requireReady: requireOperatorWorkspaceReady,
+          }
+        : null,
     },
     checks: {
       repositoryConfigs,
       budgetPolicies,
       modelCatalog,
+      operatorWorkspace,
       preflight,
     },
   };
@@ -205,6 +228,38 @@ function collectPreflight(input) {
   };
 }
 
+function collectOperatorWorkspace(input) {
+  const directory = path.resolve(input.directory);
+  try {
+    const workspace = checkOperatorWorkspace({
+      directory,
+      dogfoodChecklistFile: path.resolve(input.root, "config/dogfood-checklist.json"),
+      productionCutoverChecklistFile: path.resolve(input.root, "config/production-cutover-checklist.json"),
+      releaseGatesFile: path.resolve(input.root, "config/v0-release-gates.json"),
+      requireReady: Boolean(input.requireReady),
+      securityReviewChecklistFile: path.resolve(input.root, "config/security-review-checklist.json"),
+    });
+    const summary = publicOperatorWorkspaceSummary(workspace);
+    return {
+      status: "ok",
+      ready: Boolean(summary.ready),
+      directory: summary.directory,
+      files: summary.files,
+      summaries: summary.summaries,
+      errors: [],
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      ready: false,
+      directory: "[operator-workspace]",
+      files: [],
+      summaries: {},
+      errors: [operatorWorkspaceError(error, directory, input.root)],
+    };
+  }
+}
+
 function formatDogfoodReadinessMarkdown(report) {
   const lines = [
     "# 6529bot Dogfood Readiness",
@@ -229,6 +284,13 @@ function formatDogfoodReadinessMarkdown(report) {
       report.inputs.preflight
         ? `${publicText(report.inputs.preflight.profile)}${
             report.inputs.preflight.strict ? " strict" : ""
+          }`
+        : "not included"
+    }`,
+    `- operator workspace: ${
+      report.inputs.operatorWorkspace
+        ? `${report.inputs.operatorWorkspace.directory}${
+            report.inputs.operatorWorkspace.requireReady ? " require-ready" : ""
           }`
         : "not included"
     }`,
@@ -284,6 +346,29 @@ function formatDogfoodReadinessMarkdown(report) {
     }
   }
 
+  if (report.checks.operatorWorkspace) {
+    lines.push(
+      "",
+      "## Operator Workspace",
+      "",
+      operatorWorkspaceLine(report.checks.operatorWorkspace)
+    );
+    if (report.checks.operatorWorkspace.errors.length) {
+      lines.push("", "Operator workspace errors:");
+      for (const error of report.checks.operatorWorkspace.errors) {
+        lines.push(`- ${publicText(error)}`);
+      }
+    } else {
+      lines.push(
+        `- release gates: ${checklistLine(report.checks.operatorWorkspace.summaries.releaseGates)}`,
+        `- dogfood: ${checklistLine(report.checks.operatorWorkspace.summaries.dogfood)}`,
+        `- security review: ${checklistLine(report.checks.operatorWorkspace.summaries.securityReview)}`,
+        `- production cutover: ${checklistLine(report.checks.operatorWorkspace.summaries.productionCutover)}`,
+        `- operator evidence: ${checklistLine(report.checks.operatorWorkspace.summaries.operatorEvidence)}`
+      );
+    }
+  }
+
   return `${lines.join("\n")}\n`;
 }
 
@@ -328,6 +413,32 @@ function preflightLine(summary) {
   ].join(" ");
 }
 
+function operatorWorkspaceLine(summary) {
+  if (summary.status !== "ok") {
+    return `- error: ${summary.errors
+      .map((error) => publicText(error))
+      .join("; ")}`;
+  }
+  return [
+    `- ${summary.ready ? "ready" : "not ready"}:`,
+    `${summary.files.length} private workspace files parsed`,
+  ].join(" ");
+}
+
+function checklistLine(summary = {}) {
+  return [
+    summary.ready ? "ready" : "not ready",
+    `${count(summary.complete)} complete`,
+    `${count(summary.pending)} pending`,
+    `${count(summary.blocked)} blocked`,
+    `${count(summary.deferred)} deferred`,
+  ].join(", ");
+}
+
+function count(value) {
+  return Number.isFinite(value) ? value : 0;
+}
+
 function safeMessages(messages) {
   return (messages || []).map((item) => ({
     name: publicText(item.name),
@@ -358,10 +469,17 @@ function publicText(value, maxChars = DOGFOOD_TEXT_MAX_CHARS) {
   return text.slice(0, maxChars);
 }
 
+function operatorWorkspaceError(error, directory, root) {
+  let message = safeErrorLine(error).split(directory).join("[operator-workspace]");
+  message = message.split(path.resolve(root)).join("[repo-root]");
+  return publicText(message);
+}
+
 module.exports = {
   DEFAULT_BUDGET_POLICY_FILE,
   DEFAULT_MODEL_CATALOG_FILE,
   DEFAULT_REPOSITORY_CONFIG_FILES,
+  collectOperatorWorkspace,
   collectDogfoodReadiness,
   formatDogfoodReadinessMarkdown,
   publicText,
