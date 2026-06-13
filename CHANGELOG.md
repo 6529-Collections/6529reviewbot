@@ -66,6 +66,8 @@ stabilized.
 - Operator workspace bootstrap creates private release status and evidence
   skeletons in one operator-owned directory, with check mode for validating the
   workspace as a set.
+- Release-candidate bundles can read standard private operator workspace files
+  with one `--operator-workspace` flag.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.

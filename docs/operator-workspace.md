@@ -42,6 +42,13 @@ npm run operator:evidence -- -- --file <private-workspace-dir>/operator-evidence
 Build a public-safe candidate bundle from the private files:
 
 ```bash
+npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
+```
+
+Equivalent explicit file flags are still available for non-standard private
+workspace layouts:
+
+```bash
 npm run release:candidate -- -- --status-file <private-workspace-dir>/v0-release-status.json --operator-evidence-file <private-workspace-dir>/operator-evidence.json --dogfood-status-file <private-workspace-dir>/dogfood-status.json --security-review-status-file <private-workspace-dir>/security-review-status.json --cutover-status-file <private-workspace-dir>/production-cutover-status.json --strict-preflight
 ```
 

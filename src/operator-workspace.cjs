@@ -332,7 +332,7 @@ npm run dogfood:status -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.do
 npm run security:review -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus} --summary
 npm run production:cutover -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus} --summary
 npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary
-npm run release:candidate -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus} --operator-evidence-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --dogfood-status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.dogfoodStatus} --security-review-status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus} --cutover-status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus} --strict-preflight
+npm run release:candidate -- -- --operator-workspace . --strict-preflight
 \`\`\`
 
 Copy only redacted summaries or release-candidate output into public PRs,

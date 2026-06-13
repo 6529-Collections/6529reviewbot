@@ -37,6 +37,13 @@ Render from private operator files:
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
 ```
 
+Render from a private operator workspace created by
+`npm run operator:workspace`:
+
+```bash
+npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
+```
+
 Include dogfood status in the same public-safe bundle:
 
 ```bash
@@ -65,6 +72,10 @@ When `--dogfood-status-file`, `--security-review-status-file`, or
 `--cutover-status-file` is provided, `--require-ready` also fails unless that
 status lists every current checklist item and no provided dogfood, security
 review, or cutover item is pending or blocked.
+When `--operator-workspace` is provided, the bundle reads the standard
+workspace files for release gates, operator evidence, dogfood status,
+security-review status, and production cutover status. Explicit file flags can
+still override individual workspace paths.
 
 Write the bundle to a file:
 
