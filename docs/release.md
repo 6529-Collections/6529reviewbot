@@ -91,6 +91,10 @@ After stabilization:
 - `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
   passes as the final composed pre-traffic go/no-go packet before command-only
   live dogfood traffic
+- `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+  passes as the final cross-check that release-candidate, promotion,
+  production-cutover, and operator-workspace evidence all agree before
+  command-only live dogfood traffic
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary`
   reviewed after command-only and limited initial-review dogfood runs
 - `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready`

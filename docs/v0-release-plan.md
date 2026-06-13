@@ -75,6 +75,8 @@ The first `v0` tag can include:
 - install and onboarding guide;
 - operator evidence template for redacted deployment proof;
 - operator workspace bootstrap for private status and evidence skeletons;
+- dogfood go-live packet for cross-checking release, promotion, cutover, and
+  operator-workspace evidence before command-only live traffic;
 - dogfood templates, deployment docs, release checks, and security-review
   checklists;
 - release operations map for deciding which public check, private evidence

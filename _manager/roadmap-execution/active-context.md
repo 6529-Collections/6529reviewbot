@@ -266,11 +266,12 @@ merged PRs.
   and OpenSSF Scorecard completed successfully.
 - Cutover dogfood-promotion gate PR: merged as PR #152, merge commit
   `c4af667`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/v0-dogfood-promotion-gate`.
-- Current local changes: adding the dogfood promotion packet to the canonical
-  v0 release gates, example status/evidence overlays, release docs, smoke
-  expectations, and manager memory so a v0 tag cannot skip the final
-  pre-traffic go/no-go packet.
+- v0 dogfood-promotion release gate PR: merged as PR #153, merge commit
+  `8d1079b`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dogfood-go-live-packet`.
+- Current local changes: adding `npm run dogfood:go-live` as a public-safe
+  cross-check over release-candidate, dogfood promotion, production cutover,
+  and operator-workspace evidence before command-only live dogfood traffic.
 
 ## Key Decisions
 
@@ -597,6 +598,9 @@ merged PRs.
 - Production cutover status must account for dogfood promotion explicitly.
   Release and cutover bundles should fail stale private status overlays that do
   not include the promotion packet gate.
+- The final command-only dogfood traffic decision should have one operator
+  cross-check that proves the release-candidate bundle, promotion packet,
+  cutover status, and workspace overlays agree.
 
 ## Constraints
 
@@ -610,7 +614,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the v0 dogfood-promotion release gate.
+2. Validate, publish, and merge the dogfood go-live packet.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

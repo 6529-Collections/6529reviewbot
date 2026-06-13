@@ -374,6 +374,9 @@ Completed in `6529reviewbot`:
 - dogfood promotion packet for composing target config readiness, central
   dogfood inputs, self-dogfood replay, private workspace parsing, and preflight
   into one final pre-traffic go/no-go report.
+- dogfood go-live packet for cross-checking release-candidate, promotion,
+  production-cutover, and operator-workspace evidence before command-only live
+  dogfood traffic.
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
 - command-only `.github/6529bot.yml` config in this repository for eventual

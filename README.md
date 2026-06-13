@@ -114,6 +114,8 @@ AGENTS.md                    Instructions for coding agents working here
   validation before first traffic.
 - [Dogfood Promotion Packet](docs/dogfood-promotion.md): final public-safe
   go/no-go packet before live dogfood traffic.
+- [Dogfood Go-Live Packet](docs/dogfood-go-live.md): final public-safe
+  release, promotion, cutover, and operator-workspace cross-check.
 - [Dogfood Status](docs/dogfood-status.md): private status overlay for
   command-only and limited initial-review dogfood evidence.
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
@@ -269,14 +271,17 @@ npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Use `dogfood:promotion` as the final pre-traffic go/no-go packet. Use
-`npm --silent run` when copying promotion or readiness output from commands
-that include private workspace paths; normal `npm run` can echo the command
-line before the redacted report.
+`dogfood:go-live` as the final composed view when release-candidate,
+promotion, production-cutover, and operator-workspace evidence should agree in
+one place. Use `npm --silent run` when copying promotion, go-live, or readiness
+output from commands that include private workspace paths; normal `npm run`
+can echo the command line before the redacted report.
 
 Track private dogfood execution evidence:
 

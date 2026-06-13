@@ -98,6 +98,9 @@ stabilized.
 - Dogfood promotion packet CLI composes target config readiness, central
   dogfood inputs, synthetic self-dogfood replay, private workspace parsing,
   and preflight into one final pre-traffic go/no-go report.
+- Dogfood go-live packet CLI cross-checks release-candidate, promotion,
+  production-cutover, and operator-workspace evidence before command-only live
+  dogfood traffic.
 - v0 release gates now require the dogfood promotion packet before first live
   dogfood traffic.
 - Production cutover checklist now requires the dogfood promotion packet before
