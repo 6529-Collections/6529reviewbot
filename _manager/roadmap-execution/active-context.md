@@ -408,26 +408,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Container publish plan guard PR: merged as PR #223, merge commit `ad99205`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-deployment-plan`.
-- Current local changes: adding a dry-run production deployment plan guard
-  that composes GitHub App registration, container publish, operator
-  workspace, strict preflight, admin snapshot, production cutover, and dogfood
-  promotion/go-live handoff commands without creating Apps, converting
-  manifest codes, deploying services, running checks, or sending traffic.
+- Production deployment plan guard PR: merged as PR #224, merge commit `e88a7d3`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-workspace-deployment-plan`.
+- Current local changes: adding the production deployment plan handoff command
+  to generated private operator workspace README guidance, public operator
+  workspace docs, and the operator workspace contract so deployment handoff,
+  release evidence, cutover, promotion, and go-live commands stay together.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 4 plan cases and 6
-    docs checked;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
   - `npm run check` passed with 168 CommonJS files;
   - `npm run check:docs` passed with 71 files checked;
   - `npm run check:doc-index` passed with 57 docs indexed;
   - `npm run check:release-operations` passed with 105 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #223,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #224,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check:public-artifacts` passed with 114 files checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including production deployment plan
-    contract validation and 105 mapped release-operation tools.
+  - `npm run release:check` passed, including operator workspace contract
+    validation and 105 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -994,7 +995,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the production deployment plan guard.
+2. Publish and merge the operator workspace deployment-plan guidance.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

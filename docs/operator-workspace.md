@@ -39,6 +39,13 @@ npm run production:cutover -- -- --status-file <private-workspace-dir>/productio
 npm run operator:evidence -- -- --file <private-workspace-dir>/operator-evidence.json --summary
 ```
 
+Review the production deployment handoff against the same workspace before
+running live App, registry, runtime, cutover, or dogfood actions:
+
+```bash
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+```
+
 Build a public-safe candidate bundle from the private files:
 
 ```bash
