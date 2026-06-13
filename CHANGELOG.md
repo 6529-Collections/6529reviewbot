@@ -98,6 +98,8 @@ stabilized.
 - Dogfood promotion packet CLI composes target config readiness, central
   dogfood inputs, synthetic self-dogfood replay, private workspace parsing,
   and preflight into one final pre-traffic go/no-go report.
+- Production cutover checklist now requires the dogfood promotion packet before
+  first live dogfood traffic.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.

@@ -188,6 +188,12 @@
           "runbook": "docs/dogfood.md"
         },
         {
+          "id": "dogfood-promotion-packet",
+          "title": "Dogfood promotion packet passes with target config, self-dogfood replay, operator workspace, and preflight gates included.",
+          "evidence": "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "runbook": "docs/dogfood-promotion.md"
+        },
+        {
           "id": "command-only-review",
           "title": "Maintainer-triggered command-only review runs with budget, job, usage, and run-control evidence.",
           "evidence": "public-safe bot comment and private ledger summaries",

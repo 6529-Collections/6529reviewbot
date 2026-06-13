@@ -261,11 +261,13 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - Self-dogfood untrusted-command replay PR: merged as PR #150, merge commit
   `d6348c8`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/dogfood-promotion-packet`.
-- Current local changes: adding `npm run dogfood:promotion` as a public-safe
-  final pre-traffic packet that composes target config readiness, central
-  dogfood inputs, synthetic self-dogfood replay, private operator workspace
-  parsing, and no-network preflight.
+- Dogfood promotion packet PR: merged as PR #151, merge commit `35da128`;
+  CI and Dependency Review completed successfully before merge; post-merge CI
+  and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/cutover-dogfood-promotion-gate`.
+- Current local changes: adding the dogfood promotion packet to the canonical
+  production cutover checklist and example status overlay so live dogfood
+  go/no-go evidence cannot skip it.
 
 ## Key Decisions
 
@@ -586,6 +588,9 @@ merged PRs.
   should stay public-safe, but a real traffic decision should include the
   private operator workspace and no-network preflight instead of relying only
   on separate static checks.
+- Production cutover status must account for dogfood promotion explicitly.
+  Release and cutover bundles should fail stale private status overlays that do
+  not include the promotion packet gate.
 
 ## Constraints
 
@@ -599,7 +604,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the dogfood promotion packet.
+2. Validate, publish, and merge the cutover dogfood-promotion gate.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

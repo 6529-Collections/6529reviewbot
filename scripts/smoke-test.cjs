@@ -1596,7 +1596,7 @@ assert.equal(productionEvidenceSummary.pending, 8);
 assert.equal(productionEvidenceSummary.deferred, 1);
 assert.match(
   operatorEvidence.renderOperatorEvidenceSummaryMarkdown(productionEvidenceExample),
-  /Production cutover summary: 2\/29 complete/
+  /Production cutover summary: 2\/30 complete/
 );
 const sensitiveOperatorEvidence = operatorEvidence.validateOperatorEvidence({
   version: 1,
@@ -1852,7 +1852,7 @@ assert.equal(productionCutoverChecklist.release, "v0.1.0");
 assert.equal(productionCutoverChecklist.phases.length, 7);
 assert.equal(
   productionCutoverChecklist.phases.flatMap((phase) => phase.items).length,
-  29
+  30
 );
 const productionCutoverStatus = productionCutover.loadProductionCutoverStatus(
   "config/production-cutover-status.example.json"
@@ -1870,7 +1870,7 @@ const productionCutoverSummary = productionCutover.summarizeProductionCutover(pr
 assert.equal(productionCutoverSummary.ready, false);
 assert.equal(productionCutoverSummary.complete, 2);
 assert.equal(productionCutoverSummary.deferred, 2);
-assert.equal(productionCutoverSummary.pending, 25);
+assert.equal(productionCutoverSummary.pending, 26);
 assert.match(
   productionCutover.renderProductionCutoverMarkdown(productionCutoverWithStatus),
   /Production Cutover/
@@ -2136,7 +2136,7 @@ const candidateBundleWithCutover = releaseCandidate.collectReleaseCandidateBundl
 });
 assert.equal(candidateBundleWithCutover.readiness.productionCutover.complete, 2);
 assert.equal(candidateBundleWithCutover.readiness.productionCutover.deferred, 2);
-assert.equal(candidateBundleWithCutover.readiness.productionCutover.pending, 25);
+assert.equal(candidateBundleWithCutover.readiness.productionCutover.pending, 26);
 assert.deepEqual(candidateBundleWithCutover.readiness.productionCutover.missingStatusIds, []);
 assert.equal(candidateBundleWithCutover.ready, false);
 const candidateBundleWithCutoverMarkdown =
@@ -2185,7 +2185,7 @@ assert.equal(candidateBundleFromWorkspace.ready, false);
 assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 19);
 assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
 assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
-assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 29);
+assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 30);
 assert.deepEqual(candidateBundleFromWorkspace.readiness.dogfood.missingStatusIds, []);
 assert.equal(JSON.stringify(candidateBundleFromWorkspace).includes(operatorWorkspaceDir), false);
 assert.equal(candidateBundleFromWorkspace.inputs.releaseGateStatusFile, "[operator-workspace]/v0-release-status.json");

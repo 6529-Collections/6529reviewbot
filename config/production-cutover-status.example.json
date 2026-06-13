@@ -98,6 +98,10 @@
       "status": "pending",
       "notes": "Validate the dogfood target repository config from reviewed base-ref content."
     },
+    "dogfood-promotion-packet": {
+      "status": "pending",
+      "notes": "Run the promotion packet from the private operator environment immediately before live traffic."
+    },
     "command-only-review": {
       "status": "pending",
       "notes": "Run maintainer-triggered command-only dogfood first."
