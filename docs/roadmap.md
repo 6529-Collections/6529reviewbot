@@ -261,6 +261,8 @@ Build the operator experience:
 - support process for adopters.
 - public-safe operator evidence templates for release, dogfood, and production
   deployment proof.
+- production cutover checklist and private status overlay for go/no-go
+  readiness before live dogfood traffic.
 
 ### 9. Community Release
 
@@ -326,6 +328,8 @@ Completed in `6529reviewbot`:
 - server-side 6529.io usage API client helper for signed admin calls and
   redacted API failures;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
+- production cutover checklist and validator for reviewed live-traffic
+  go/no-go decisions;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

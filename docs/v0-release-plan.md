@@ -201,6 +201,19 @@ npm run release:candidate -- -- --status-file <operator-status-file> --operator-
 If any gate is intentionally skipped, the release notes must say so plainly and
 describe the risk.
 
+Before enabling live dogfood traffic from a release candidate, bootstrap and
+review the production cutover status file:
+
+```bash
+npm run production:cutover -- -- --init-status <operator-cutover-status-file>
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
+```
+
+`--require-ready` is the broad-traffic cutover gate. Dogfood-only releases may
+defer items, but release notes must name the risk and follow-up owner for each
+deferral.
+
 ## Tagging Procedure
 
 Use this procedure from a clean checkout after all gates pass:

@@ -203,11 +203,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - 6529.io admin API client PR: merged as PR #123, merge commit `d76a02e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-snapshot-client`
-- Current local changes: adding an admin snapshot CLI that uses the server-side
-  client paths and reduces private admin endpoint responses into counts,
-  posture flags, and redacted errors for dashboard bring-up and release
-  evidence.
+- Admin snapshot CLI PR: merged as PR #124, merge commit `ddf81f1`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/production-cutover-checklist`
+- Current local changes: adding a production cutover checklist artifact and
+  validator so operators can track go/no-go readiness from registration,
+  secret custody, deployment, dashboards, alerts, dogfood, rollback, and release
+  evidence without committing private deployment details.
 
 ## Key Decisions
 
@@ -447,6 +449,11 @@ merged PRs.
 - npm script examples that pass flags should use
   `npm run <script> -- -- --flag` so flags survive npm argument forwarding
   consistently.
+- Production cutover readiness should be tracked as a public canonical
+  checklist plus a private operator status/evidence overlay. Public summaries
+  can include counts and redacted notes; live App ids, account ids, ARNs,
+  secret names, private repo names, raw payloads, prompts, provider responses,
+  and detailed admin snapshots stay outside this repository.
 
 ## Constraints
 
@@ -458,7 +465,8 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the admin snapshot CLI increment and merge it if checks stay green.
+1. Ship the production cutover checklist increment and merge it if checks stay
+   green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

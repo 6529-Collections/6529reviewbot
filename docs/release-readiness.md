@@ -78,6 +78,8 @@ Ready for community review:
 - 6529.io admin auth bridge contract;
 - server-side 6529.io usage API client helper for signed admin endpoint calls;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
+- production cutover checklist and validator for go/no-go tracking before live
+  dogfood traffic;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, and SNS delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe
@@ -184,6 +186,16 @@ ids, operator-evidence readiness, and preflight:
 ```bash
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
+```
+
+Use [Production Cutover](production-cutover.md) when moving from release
+readiness to live dogfood traffic. The public checklist stays in this repo; the
+real status file stays in the private operator workspace:
+
+```bash
+npm run production:cutover -- -- --init-status <operator-cutover-status-file>
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
 ```
 
 `npm run check:docs` is included in `npm run release:check` and verifies local

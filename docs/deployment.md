@@ -13,6 +13,8 @@ For release or dogfood evidence, use
 [operator-evidence-template.md](operator-evidence-template.md). Keep
 unredacted account ids, ARNs, secrets, private repository names, webhook
 payloads, and provider responses in the private operator runbook.
+Use [production-cutover.md](production-cutover.md) as the ordered go/no-go
+checklist before enabling live dogfood traffic.
 
 ## GitHub App Registration
 
@@ -257,6 +259,10 @@ or GitHub App private keys.
 
 ## Verification Checklist
 
+- `npm run production:cutover -- -- --init-status <operator-cutover-status-file>`
+  has bootstrapped the private cutover status file for the current checklist.
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`
+  has been reviewed before live dogfood traffic.
 - `GET /healthz` succeeds.
 - `npm run preflight` passes, or every warning is understood.
 - [GitHub App Registration Packet](github-app-registration.md) acceptance
@@ -300,6 +306,9 @@ or GitHub App private keys.
 - Public and admin usage API responses match the 6529.io visibility contract.
 - Operator alerts run from the central bot environment, including spend,
   failed-job, and stale-claim checks when enabled.
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
+  passes before broad community traffic unless release notes explicitly call
+  the release dogfood-only and name any deferrals.
 
 ## Rollback
 

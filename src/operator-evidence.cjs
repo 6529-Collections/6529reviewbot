@@ -72,6 +72,9 @@ function validateSummary(value, source) {
     releaseGateStatusFile: optionalEvidenceText(value.releaseGateStatusFile),
     releaseGateSummary: optionalEvidenceText(value.releaseGateSummary),
     releaseGateReadyCheck: optionalEvidenceText(value.releaseGateReadyCheck),
+    productionCutoverStatusFile: optionalEvidenceText(value.productionCutoverStatusFile),
+    productionCutoverSummary: optionalEvidenceText(value.productionCutoverSummary),
+    productionCutoverReadyCheck: optionalEvidenceText(value.productionCutoverReadyCheck),
   };
 }
 
@@ -149,6 +152,15 @@ function renderOperatorEvidenceSummaryMarkdown(document) {
   }
   if (evidence.summary.releaseGateReadyCheck) {
     lines.push(`Release gate ready check: ${publicEvidenceText(evidence.summary.releaseGateReadyCheck)}`);
+  }
+  if (evidence.summary.productionCutoverStatusFile) {
+    lines.push(`Production cutover status file: ${publicEvidenceText(evidence.summary.productionCutoverStatusFile)}`);
+  }
+  if (evidence.summary.productionCutoverSummary) {
+    lines.push(`Production cutover summary: ${publicEvidenceText(evidence.summary.productionCutoverSummary)}`);
+  }
+  if (evidence.summary.productionCutoverReadyCheck) {
+    lines.push(`Production cutover ready check: ${publicEvidenceText(evidence.summary.productionCutoverReadyCheck)}`);
   }
   lines.push("");
   lines.push("## Sections");

@@ -41,6 +41,8 @@ const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
+const productionCutover = require("../src/production-cutover.cjs");
+const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
@@ -1285,6 +1287,10 @@ const productionEvidenceSummary = operatorEvidence.summarizeOperatorEvidence(pro
 assert.equal(productionEvidenceSummary.ready, false);
 assert.equal(productionEvidenceSummary.pending, 8);
 assert.equal(productionEvidenceSummary.deferred, 1);
+assert.match(
+  operatorEvidence.renderOperatorEvidenceSummaryMarkdown(productionEvidenceExample),
+  /Production cutover summary: 2\/29 complete/
+);
 const sensitiveOperatorEvidence = operatorEvidence.validateOperatorEvidence({
   version: 1,
   release: "v0.1.0",
@@ -1401,6 +1407,165 @@ assert.deepEqual(
     json: true,
     quiet: true,
     requireReady: true,
+    summary: true,
+  }
+);
+const productionCutoverChecklist = productionCutover.loadProductionCutoverChecklist(
+  "config/production-cutover-checklist.json"
+);
+assert.equal(productionCutoverChecklist.release, "v0.1.0");
+assert.equal(productionCutoverChecklist.phases.length, 7);
+assert.equal(
+  productionCutoverChecklist.phases.flatMap((phase) => phase.items).length,
+  29
+);
+const productionCutoverStatus = productionCutover.loadProductionCutoverStatus(
+  "config/production-cutover-status.example.json"
+);
+const productionCutoverWithStatus = productionCutover.mergeProductionCutoverStatus(
+  productionCutoverChecklist,
+  productionCutoverStatus,
+  { requireComplete: true }
+);
+assert.equal(productionCutover.missingProductionCutoverStatusIds(
+  productionCutoverChecklist,
+  productionCutoverStatus
+).length, 0);
+const productionCutoverSummary = productionCutover.summarizeProductionCutover(productionCutoverWithStatus);
+assert.equal(productionCutoverSummary.ready, false);
+assert.equal(productionCutoverSummary.complete, 2);
+assert.equal(productionCutoverSummary.deferred, 2);
+assert.equal(productionCutoverSummary.pending, 25);
+assert.match(
+  productionCutover.renderProductionCutoverMarkdown(productionCutoverWithStatus),
+  /Production Cutover/
+);
+assert.match(
+  productionCutover.renderProductionCutoverSummaryMarkdown(productionCutoverWithStatus),
+  /Ready to cut over: no/
+);
+const sensitiveCutoverStatus = productionCutover.validateProductionCutoverStatus({
+  version: 1,
+  release: "v0.1.0",
+  items: {
+    "reviewed-commit": {
+      status: "complete",
+      evidence:
+        "private github_pat_abcdefghijklmnopqrstuvwxyz1234567890 arn:aws:rds:us-east-1:123456789012:cluster:reviewbot account 123456789012",
+    },
+  },
+});
+const sensitiveCutoverMarkdown = productionCutover.renderProductionCutoverMarkdown(
+  productionCutover.mergeProductionCutoverStatus(productionCutoverChecklist, sensitiveCutoverStatus)
+);
+assert.equal(sensitiveCutoverMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
+assert.equal(sensitiveCutoverMarkdown.includes("123456789012"), false);
+assert.equal(sensitiveCutoverMarkdown.includes("arn:aws:rds"), false);
+assert.match(sensitiveCutoverMarkdown, /github_pat_\[redacted\]/);
+assert.match(sensitiveCutoverMarkdown, /arn:aws:\[redacted\]/);
+assert.match(sensitiveCutoverMarkdown, /\[redacted-aws-account-id\]/);
+const readyCutoverStatus = productionCutover.validateProductionCutoverStatus({
+  version: 1,
+  release: "v0.1.0",
+  items: Object.fromEntries(
+    productionCutoverChecklist.phases.flatMap((phase) =>
+      phase.items.map((item) => [
+        item.id,
+        {
+          status: "complete",
+          evidence: `public-safe completion evidence for ${item.id}`,
+        },
+      ])
+    )
+  ),
+});
+const readyCutover = productionCutover.mergeProductionCutoverStatus(
+  productionCutoverChecklist,
+  readyCutoverStatus,
+  { requireComplete: true }
+);
+assert.equal(productionCutover.assertProductionCutoverReady(readyCutover).ready, true);
+assert.throws(
+  () => productionCutover.assertProductionCutoverReady(productionCutoverWithStatus),
+  /production cutover is not ready/
+);
+assert.throws(
+  () =>
+    productionCutover.mergeProductionCutoverStatus(productionCutoverChecklist, {
+      version: 1,
+      release: "v0.1.0",
+      items: {},
+    }, { requireComplete: true }),
+  /production cutover status is missing/
+);
+assert.throws(
+  () =>
+    productionCutover.validateProductionCutoverStatus({
+      version: 1,
+      items: {
+        "reviewed-commit": {
+          status: "complete",
+        },
+      },
+    }),
+  /evidence/
+);
+assert.throws(
+  () =>
+    productionCutover.validateProductionCutoverStatus({
+      version: 1,
+      items: {
+        "reviewed-commit": {
+          status: "blocked",
+        },
+      },
+    }),
+  /notes/
+);
+const cutoverSkeletonPath = path.join(os.tmpdir(), `6529-cutover-${Date.now()}.json`);
+productionCutover.writeProductionCutoverStatusFile(
+  cutoverSkeletonPath,
+  productionCutover.createProductionCutoverStatusSkeleton(productionCutoverChecklist)
+);
+assert.equal(
+  productionCutover.loadProductionCutoverStatus(cutoverSkeletonPath).items["reviewed-commit"].status,
+  "pending"
+);
+assert.throws(
+  () => productionCutover.writeProductionCutoverStatusFile(
+    cutoverSkeletonPath,
+    productionCutover.createProductionCutoverStatusSkeleton(productionCutoverChecklist)
+  ),
+  /already exists/
+);
+productionCutover.writeProductionCutoverStatusFile(
+  cutoverSkeletonPath,
+  productionCutover.createProductionCutoverStatusSkeleton(productionCutoverChecklist),
+  { force: true }
+);
+assert.deepEqual(
+  productionCutoverCli.parseArgs([
+    "--",
+    "--file",
+    "cutover.json",
+    "--status-file",
+    "status.json",
+    "--json",
+    "--quiet",
+    "--summary",
+    "--require-ready",
+    "--init-status",
+    "new-status.json",
+    "--force",
+  ]),
+  {
+    file: "cutover.json",
+    force: true,
+    initStatusFile: "new-status.json",
+    json: true,
+    quiet: true,
+    requireReady: true,
+    statusFile: "status.json",
     summary: true,
   }
 );

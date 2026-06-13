@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "items": {
+    "reviewed-commit": {
+      "status": "complete",
+      "evidence": "Example only: reviewed commit recorded as example-commit-or-tag."
+    },
+    "local-release-check": {
+      "status": "complete",
+      "evidence": "Example only: npm run release:check passed in the public example workspace."
+    },
+    "remote-checks-reviewed": {
+      "status": "pending",
+      "notes": "Review CI, Dependency Review, and OpenSSF Scorecard on the final cutover commit."
+    },
+    "release-candidate-bundle": {
+      "status": "pending",
+      "notes": "Render from the private release-gate status and operator evidence files during cutover."
+    },
+    "manifest-rendered": {
+      "status": "pending",
+      "notes": "Render the production-host manifest immediately before App registration."
+    },
+    "app-created": {
+      "status": "pending",
+      "notes": "Create or verify the production 6529bot App in the operator GitHub account."
+    },
+    "app-credentials-stored": {
+      "status": "pending",
+      "notes": "Move generated credentials directly into the bot runtime secret store."
+    },
+    "installation-scope-reviewed": {
+      "status": "pending",
+      "notes": "Start with selected repositories for dogfood."
+    },
+    "aws-iam-reviewed": {
+      "status": "pending",
+      "notes": "Review least-privilege policy artifacts in the private operator workspace."
+    },
+    "ledger-schema-applied": {
+      "status": "pending",
+      "notes": "Apply the schema from the operator environment."
+    },
+    "budget-policies-applied": {
+      "status": "pending",
+      "notes": "Apply reviewed central budget policies or document conservative environment caps."
+    },
+    "model-prices-applied": {
+      "status": "deferred",
+      "notes": "Example only: a dogfood-only release may keep conservative default estimates until provider price rows are reviewed."
+    },
+    "runtime-secrets-present": {
+      "status": "pending",
+      "notes": "Record presence checks only, never secret values."
+    },
+    "container-image-reviewed": {
+      "status": "deferred",
+      "notes": "Example only: direct Node dogfood may defer container image evidence."
+    },
+    "server-deployed-noop": {
+      "status": "pending",
+      "notes": "Deploy noop mode before enabling worker dispatch."
+    },
+    "preflight-strict": {
+      "status": "pending",
+      "notes": "Run strict preflight from the release-candidate environment."
+    },
+    "webhook-acceptance": {
+      "status": "pending",
+      "notes": "Verify invalid signatures, ping, and dry-run replay."
+    },
+    "worker-enabled-conservative": {
+      "status": "pending",
+      "notes": "Enable worker traffic only after noop verification."
+    },
+    "run-control-enforced": {
+      "status": "pending",
+      "notes": "Enable durable run-control claims or explicitly defer enforcement."
+    },
+    "public-dashboard-wired": {
+      "status": "pending",
+      "notes": "Deploy the public dashboard or explicitly defer it in release notes."
+    },
+    "admin-bridge-wired": {
+      "status": "pending",
+      "notes": "Wire private admin routes through server-side HMAC signing."
+    },
+    "admin-snapshot-reviewed": {
+      "status": "pending",
+      "notes": "Run the private admin snapshot before exposing admin dashboards."
+    },
+    "alerts-deliver": {
+      "status": "pending",
+      "notes": "Verify alert dry-runs and one operator-owned delivery channel."
+    },
+    "repo-config-validated": {
+      "status": "pending",
+      "notes": "Validate the dogfood target repository config from reviewed base-ref content."
+    },
+    "command-only-review": {
+      "status": "pending",
+      "notes": "Run maintainer-triggered command-only dogfood first."
+    },
+    "limited-initial-review": {
+      "status": "pending",
+      "notes": "Enable limited initial-review dogfood only after command-only evidence is healthy."
+    },
+    "rollback-tested": {
+      "status": "pending",
+      "notes": "Exercise no-spend rollback controls before live dogfood traffic."
+    },
+    "security-review-complete": {
+      "status": "pending",
+      "notes": "Complete the manual security review checklist for the cutover commit."
+    },
+    "release-decision-recorded": {
+      "status": "pending",
+      "notes": "Record approve, approve with follow-up, defer, or block."
+    }
+  }
+}

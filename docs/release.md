@@ -22,6 +22,8 @@ After stabilization:
   linked from the private operator runbook
 - [Release candidate bundle](release-candidate.md) rendered from the private
   release-gate status and operator evidence files
+- [Production cutover checklist](production-cutover.md) reviewed before live
+  dogfood or production traffic
 - `npm run operator:evidence -- -- --file <private-evidence-file> --summary`
   reviewed before copying deployment evidence into public release notes
 - `npm run operator:evidence -- -- --file <private-evidence-file> --require-ready`
@@ -49,7 +51,14 @@ After stabilization:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`
   passes before tagging unless release notes intentionally mark the release as
   dogfood-only or local-only
-- `npm run admin:snapshot -- --base-url <production-bot-origin> --require-ok`
+- `npm run production:cutover -- -- --init-status <operator-cutover-status-file>`
+  used when starting a new production cutover pass
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`
+  reviewed before enabling live dogfood traffic
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
+  passes before broad community traffic unless release notes intentionally mark
+  the release as dogfood-only and name every cutover deferral
+- `npm run admin:snapshot -- -- --base-url <production-bot-origin> --require-ok`
   passes from a private operator environment when validating the 6529.io admin
   surface; keep the detailed snapshot private unless release notes only copy
   public-safe counts

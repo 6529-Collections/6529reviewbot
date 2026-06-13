@@ -43,6 +43,8 @@ stabilized.
 - Release-candidate bundle CLI combines release-gate status, operator evidence,
   git metadata, and no-network preflight into one public-safe readiness
   summary.
+- Production cutover CLI validates and renders a public-safe go/no-go checklist
+  plus private status overlay before live dogfood traffic.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.
