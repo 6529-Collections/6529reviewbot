@@ -268,10 +268,12 @@ merged PRs.
   `c4af667`; post-merge CI and OpenSSF Scorecard completed successfully.
 - v0 dogfood-promotion release gate PR: merged as PR #153, merge commit
   `8d1079b`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-go-live-packet`.
-- Current local changes: adding `npm run dogfood:go-live` as a public-safe
-  cross-check over release-candidate, dogfood promotion, production cutover,
-  and operator-workspace evidence before command-only live dogfood traffic.
+- Dogfood go-live packet PR: merged as PR #154, merge commit `ffcb471`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-go-live-evidence`.
+- Current local changes: tightening the release notes template and checker so
+  pre-v1 release notes must name dogfood promotion, dogfood go-live, and
+  production cutover evidence.
 
 ## Key Decisions
 
@@ -591,6 +593,9 @@ merged PRs.
 - Pre-v1 release notes are part of the public release contract. They should be
   machine-checked for tested configuration, release-candidate evidence,
   deferrals, known gaps, compatibility, and validation fields before tagging.
+- Release notes should also name the dogfood promotion packet, dogfood go-live
+  packet, and production cutover status whenever a release can lead to live
+  dogfood traffic.
 - Live dogfood promotion should have one composed go/no-go packet. The packet
   should stay public-safe, but a real traffic decision should include the
   private operator workspace and no-network preflight instead of relying only
@@ -614,7 +619,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the dogfood go-live packet.
+2. Validate, publish, and merge release-notes go-live evidence hardening.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
