@@ -257,6 +257,9 @@ Build the operator experience:
   default, explicit before dispatch, locally signed, and payload-safe;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
+- support runbook checks that keep the public support process and incident
+  response playbook aligned with reporting, containment, recovery, and
+  public-follow-up boundaries;
 - canonical docs index coverage so public runbooks and reference docs remain
   discoverable as the repo grows;
 - public-governance checks for MIT license metadata, community files, issue
@@ -569,6 +572,8 @@ Completed in `6529reviewbot`:
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.
 - incident response runbook for operator containment and recovery.
+- support runbooks contract for public support, maintainer triage, private
+  escalation, incident containment, recovery, and sanitized public follow-up.
 - operator evidence template for public-safe deployment proof.
 
 In progress in `6529reviewbot`:

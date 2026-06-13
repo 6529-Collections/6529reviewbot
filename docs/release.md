@@ -172,6 +172,9 @@ After stabilization:
 - `npm run check:support-bundle` confirms sanitized support-bundle safe env
   keys, presence-only secret keys, local path redaction, CLI flags, and docs
   stay synchronized
+- `npm run check:support-runbooks` confirms the support and incident playbooks
+  keep public/private reporting boundaries, maintainer triage, containment,
+  recovery, and public follow-up guidance synchronized
 - `npm run check:diagnostics-redaction` confirms shared diagnostic redaction
   for tokens, alert webhooks, AWS access-key ids, private keys, error lines,
   and diagnostic tails

@@ -84,6 +84,7 @@
     "check:usage-api-routes": "node scripts/check-usage-api-routes.cjs",
     "check:admin-snapshot": "node scripts/check-admin-snapshot-contract.cjs",
     "check:support-bundle": "node scripts/check-support-bundle-contract.cjs",
+    "check:support-runbooks": "node scripts/check-support-runbooks-contract.cjs",
     "check:diagnostics-redaction": "node scripts/check-diagnostics-redaction.cjs",
     "check:budget-scopes": "node scripts/check-budget-scopes.cjs",
     "check:run-control-scopes": "node scripts/check-run-control-scopes.cjs",

@@ -3,6 +3,10 @@
 This playbook explains how maintainers and community users should ask for help
 without exposing secrets, private repository data, or provider account details.
 
+Run `npm run check:support-runbooks` after edits. The support runbooks contract
+keeps public support, bundle, triage, escalation, and incident-response
+hand-off guidance synchronized with release checks.
+
 ## Public Support
 
 Use public GitHub issues for:

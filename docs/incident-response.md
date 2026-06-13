@@ -8,6 +8,10 @@ Do not paste provider keys, GitHub App private keys, webhook secrets, AWS
 credentials, raw private repository payloads, or private PR data into public
 issues, PRs, release notes, or chat exports.
 
+Run `npm run check:support-runbooks` after edits. The support runbooks contract
+keeps incident severity, containment, recovery, evidence, and public follow-up
+guidance synchronized with the support playbook.
+
 ## Severity
 
 ```text
