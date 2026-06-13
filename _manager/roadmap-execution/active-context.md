@@ -647,6 +647,9 @@ merged PRs.
 - `actions/checkout` steps should set `persist-credentials: false` everywhere,
   not only in high-risk workflows, so workflow tokens are not retained in local
   git config after checkout.
+- Public comment-command docs should be checked against the parser and
+  review-kind constants so maintainers can trust the documented `/6529bot`
+  trigger syntax.
 
 ## Constraints
 
@@ -660,7 +663,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the checkout credential guard.
+2. Validate, publish, and merge the comment-command contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

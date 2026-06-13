@@ -35,6 +35,7 @@ The local quality gate command inventory is:
 - `npm run check:governance`
 - `npm run check:dependabot`
 - `npm run check:container-image`
+- `npm run check:comment-commands`
 - `npm run check:public-artifacts`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`

@@ -405,6 +405,8 @@ Completed in `6529reviewbot`:
 - synthetic self-dogfood replay check proving command-only PR-open skip and
   trusted maintainer command-matrix admission without worker dispatch, plus
   untrusted public command denial before budget or queue work.
+- comment-command contract checks that keep trigger docs synchronized with the
+  parser and review-kind constants.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.
