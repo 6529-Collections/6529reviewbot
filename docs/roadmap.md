@@ -342,6 +342,8 @@ Completed in `6529reviewbot`:
   manual-review evidence rollups;
 - release operations map for recurring checks, private evidence overlays, and
   release-bundle commands with explicit public/private output boundaries;
+- operator workspace bootstrap for private release-gate, dogfood,
+  security-review, production-cutover, and operator-evidence skeletons;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

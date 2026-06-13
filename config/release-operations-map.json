@@ -120,6 +120,15 @@
           "doc": "docs/operator-evidence-template.md",
           "privateInputs": "Private evidence may contain deployment details and internal evidence links.",
           "publicOutput": "Only the redacted summary is intended for public release notes."
+        },
+        {
+          "id": "operator-workspace",
+          "script": "operator:workspace",
+          "args": "-- -- --dir <private-workspace-dir>",
+          "purpose": "Create the private release-gate, dogfood, security-review, cutover, and operator-evidence skeleton files in one workspace.",
+          "doc": "docs/operator-workspace.md",
+          "privateInputs": "Writes operator-owned private status and evidence files.",
+          "publicOutput": "Share only the public-safe summary, CLI counts, or release-candidate bundle output."
         }
       ]
     },

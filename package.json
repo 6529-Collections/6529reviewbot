@@ -39,6 +39,7 @@
     "security:review": "node bin/security-review-status.cjs",
     "production:cutover": "node bin/production-cutover.cjs",
     "operator:evidence": "node bin/operator-evidence.cjs",
+    "operator:workspace": "node bin/operator-workspace.cjs",
     "release:candidate": "node bin/release-candidate.cjs",
     "release:operations": "node bin/release-operations-map.cjs",
     "v0:gates": "node bin/v0-gates.cjs",

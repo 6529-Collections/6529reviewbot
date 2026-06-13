@@ -49,6 +49,8 @@ const securityReviewStatus = require("../src/security-review-status.cjs");
 const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
+const operatorWorkspace = require("../src/operator-workspace.cjs");
+const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
 const productionCutover = require("../src/production-cutover.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
@@ -1543,6 +1545,85 @@ assert.deepEqual(
     quiet: true,
     requireReady: true,
     summary: true,
+  }
+);
+const operatorEvidenceSkeleton = operatorEvidence.createOperatorEvidenceSkeleton({
+  commit: "abc123",
+  date: "2026-06-12",
+  environment: "dogfood",
+  operator: "maintainer",
+  privateEvidenceLocation: "private runbook",
+});
+assert.equal(operatorEvidence.summarizeOperatorEvidence(operatorEvidenceSkeleton).pending, 9);
+const operatorWorkspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-operator-workspace-"));
+const workspace = operatorWorkspace.createOperatorWorkspace({
+  commit: "abc123",
+  date: "2026-06-12",
+  directory: operatorWorkspaceDir,
+  environment: "dogfood",
+  operator: "maintainer",
+  privateEvidenceLocation: "private runbook",
+  repoRoot: path.resolve(__dirname, ".."),
+});
+assert.equal(workspace.files.length, 6);
+assert.equal(workspace.summaries.releaseGates.pending, 19);
+assert.equal(workspace.summaries.operatorEvidence.pending, 9);
+assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
+assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "operator-evidence.json")), true);
+assert.match(
+  operatorWorkspace.renderOperatorWorkspaceSummaryMarkdown(workspace),
+  /Created private release-operator evidence skeletons/
+);
+assert.equal(
+  operatorWorkspace.publicOperatorWorkspaceSummary(workspace).directory,
+  "[operator-workspace]"
+);
+assert.throws(
+  () =>
+    operatorWorkspace.createOperatorWorkspace({
+      directory: path.resolve(__dirname, "..", "tmp", "operator-workspace"),
+      repoRoot: path.resolve(__dirname, ".."),
+    }),
+  /outside the public repository/
+);
+assert.deepEqual(
+  operatorWorkspaceCli.parseArgs([
+    "--",
+    "--dir",
+    "private",
+    "--operator",
+    "maintainer",
+    "--environment",
+    "dogfood",
+    "--commit",
+    "abc123",
+    "--date",
+    "2026-06-12",
+    "--private-evidence-location",
+    "runbook",
+    "--public-summary-location",
+    "release PR",
+    "--release",
+    "v0.1.0",
+    "--force",
+    "--json",
+    "--show-paths",
+    "--quiet",
+  ]),
+  {
+    allowRepoDir: false,
+    commit: "abc123",
+    date: "2026-06-12",
+    directory: "private",
+    environment: "dogfood",
+    force: true,
+    json: true,
+    operator: "maintainer",
+    privateEvidenceLocation: "runbook",
+    publicSummaryLocation: "release PR",
+    quiet: true,
+    release: "v0.1.0",
+    showPaths: true,
   }
 );
 const productionCutoverChecklist = productionCutover.loadProductionCutoverChecklist(

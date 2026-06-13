@@ -1849,3 +1849,24 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #136 as `cfd807d` after CI and Dependency Review
+  passed. CodeRabbit added generated release notes to the PR body and did not
+  create review threads before merge.
+- Started `codex/operator-workspace-bootstrap` increment:
+  - add `npm run operator:workspace` to create private release-gate,
+    dogfood, security-review, production-cutover, and operator-evidence
+    skeleton files in one operator-owned directory;
+  - refuse public-repo output directories by default;
+  - add operator evidence skeleton/write helpers;
+  - update README, operations, release, readiness, v0 plan, roadmap,
+    changelog, release operations map, smoke tests, and manager memory.
+- Local validation for `codex/operator-workspace-bootstrap`:
+  - `npm run operator:workspace -- -- --dir <temp-dir> --json` passed and
+    created the expected six private workspace files outside the repo;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run check:release-operations` passed;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

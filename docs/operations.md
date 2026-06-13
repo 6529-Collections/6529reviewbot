@@ -9,6 +9,13 @@ npm run check
 npm test
 ```
 
+Create a private release operator workspace before collecting dogfood,
+security-review, cutover, or release-gate evidence:
+
+```bash
+npm run operator:workspace -- -- --dir <private-workspace-dir>
+```
+
 Validate the configured runtime without network calls:
 
 ```bash
