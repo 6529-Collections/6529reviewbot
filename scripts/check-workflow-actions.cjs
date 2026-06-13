@@ -56,6 +56,7 @@ function checkWorkflowFile(absolutePath) {
         file: relativePath,
         jobName,
         stepIndex: index + 1,
+        step,
         uses: step.uses,
       });
     });
@@ -77,6 +78,18 @@ function validateStepActionRef(context) {
   if (!pinnedShaPattern.test(ref)) {
     failures.push(
       `${formatContext(context)} must pin '${uses}' by a 40-character commit SHA.`
+    );
+  }
+  if (uses.startsWith("actions/checkout@")) {
+    validateCheckoutStep(context);
+  }
+}
+
+function validateCheckoutStep(context) {
+  const persistCredentials = context.step.with?.["persist-credentials"];
+  if (persistCredentials !== false && persistCredentials !== "false") {
+    failures.push(
+      `${formatContext(context)} using actions/checkout must set persist-credentials: false.`
     );
   }
 }

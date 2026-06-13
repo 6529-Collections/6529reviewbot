@@ -2458,3 +2458,21 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including release-operations doc-sync
     validation and 42 mapped tools.
+- Merged `6529reviewbot` PR #167 as `d958b9f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/checkout-credential-guard` increment:
+  - set `persist-credentials: false` on CI and Dependency Review checkout steps;
+  - extend `check:workflow-actions` to require persisted credentials disabled
+    for all `actions/checkout` steps;
+  - document the workflow token-retention guard in release and security docs.
+- Local validation for `codex/checkout-credential-guard`:
+  - `npm run check:workflow-actions` passed with 24 step uses checked;
+  - `npm run check:workflow-permissions` passed with 10 permission blocks
+    checked;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 100 CommonJS files;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including workflow action pin and checkout
+    credential validation.

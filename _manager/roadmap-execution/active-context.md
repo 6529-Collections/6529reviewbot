@@ -644,6 +644,9 @@ merged PRs.
 - Release-operations documentation should be checked against the
   machine-readable local quality command inventory so new checks do not become
   hidden in public operator docs.
+- `actions/checkout` steps should set `persist-credentials: false` everywhere,
+  not only in high-risk workflows, so workflow tokens are not retained in local
+  git config after checkout.
 
 ## Constraints
 
@@ -657,7 +660,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the release operations doc-sync guard.
+2. Validate, publish, and merge the checkout credential guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
