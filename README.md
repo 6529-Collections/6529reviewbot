@@ -250,6 +250,9 @@ The apply path also rejects stale or future-dated `sourceCheckedAt` evidence by
 default. Recheck provider pricing or record an explicit release acceptance
 before using `--allow-stale-source`.
 
+The admin usage API exposes active price-row posture for private dashboards at
+`GET /api/admin/model-prices/status`.
+
 Preview central budget policy SQL without touching AWS:
 
 ```bash

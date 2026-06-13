@@ -186,6 +186,35 @@
         }
       }
     },
+    "/api/admin/model-prices/status": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Active model price posture",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active model price posture",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelPriceStatusResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/alerts/status": {
       "get": {
         "tags": ["Admin"],
@@ -807,6 +836,159 @@
           },
           "overBudget": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceStatusResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "generatedAt", "status"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "model_price_status"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ModelPriceStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceStatus": {
+        "type": "object",
+        "required": ["policy", "summary", "prices"],
+        "properties": {
+          "policy": {
+            "$ref": "#/components/schemas/ModelPriceStatusPolicy"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ModelPriceStatusSummary"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelPriceStatusPrice"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceStatusPolicy": {
+        "type": "object",
+        "required": ["maxSourceAgeDays"],
+        "properties": {
+          "maxSourceAgeDays": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceStatusSummary": {
+        "type": "object",
+        "required": ["activeRows", "providerCount", "providerModelCount", "staleRows", "futureRows", "missingSourceRows", "invalidSourceRows", "incompleteRows"],
+        "properties": {
+          "activeRows": {
+            "type": "integer"
+          },
+          "providerCount": {
+            "type": "integer"
+          },
+          "providerModelCount": {
+            "type": "integer"
+          },
+          "staleRows": {
+            "type": "integer"
+          },
+          "futureRows": {
+            "type": "integer"
+          },
+          "missingSourceRows": {
+            "type": "integer"
+          },
+          "invalidSourceRows": {
+            "type": "integer"
+          },
+          "incompleteRows": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceStatusPrice": {
+        "type": "object",
+        "required": ["provider", "model", "currency", "rates", "missingRates", "effectiveFrom", "effectiveTo", "sourceCheckedAt", "sourceAgeDays", "sourceStatus", "sourceHost", "hasSourceUrl"],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "rates": {
+            "$ref": "#/components/schemas/ModelPriceRates"
+          },
+          "missingRates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["inputUsdPerMillion", "cachedInputUsdPerMillion", "outputUsdPerMillion", "reasoningUsdPerMillion"]
+            }
+          },
+          "effectiveFrom": {
+            "type": "string"
+          },
+          "effectiveTo": {
+            "type": "string"
+          },
+          "sourceCheckedAt": {
+            "type": "string"
+          },
+          "sourceAgeDays": {
+            "type": ["integer", "null"]
+          },
+          "sourceStatus": {
+            "type": "string",
+            "enum": ["fresh", "stale", "future", "missing", "invalid"]
+          },
+          "sourceHost": {
+            "type": "string"
+          },
+          "hasSourceUrl": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModelPriceRates": {
+        "type": "object",
+        "required": ["inputUsdPerMillion", "cachedInputUsdPerMillion", "outputUsdPerMillion", "reasoningUsdPerMillion"],
+        "properties": {
+          "inputUsdPerMillion": {
+            "type": ["number", "null"]
+          },
+          "cachedInputUsdPerMillion": {
+            "type": ["number", "null"]
+          },
+          "outputUsdPerMillion": {
+            "type": ["number", "null"]
+          },
+          "reasoningUsdPerMillion": {
+            "type": ["number", "null"]
           }
         },
         "additionalProperties": false

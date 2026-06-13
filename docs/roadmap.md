@@ -136,6 +136,7 @@ Recommended split:
   - requester-level spend;
   - private repo detail;
   - budget policies;
+  - active model-price freshness and token-class coverage;
   - alert recipients and thresholds;
   - runtime configuration warnings;
   - pause/disable controls for org, repo, provider, model, and review kind;
@@ -311,6 +312,8 @@ Completed in `6529reviewbot`:
   for private 6529.io operator surfaces;
 - admin budget-status API for private budget utilization dashboards without
   direct Aurora access from 6529.io;
+- admin model-price status API for private active price-row and source
+  freshness dashboards without direct Aurora access from 6529.io;
 - admin alert-status API for private alert threshold and notifier posture
   dashboards without exposing delivery secrets;
 - admin runtime status is backed by no-network preflight checks;

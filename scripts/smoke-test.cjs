@@ -41,6 +41,7 @@ const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
+const modelPriceStatus = require("../src/model-price-status.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
@@ -157,6 +158,85 @@ assert.equal(
   modelPrices.modelPriceFromRecord(modelPriceRecord).sourceCheckedAt,
   "2026-06-12 12:00:00+00"
 );
+const modelPriceStatusRow = modelPriceStatus.modelPriceStatusRecordToPrice(
+  modelPriceRecord.slice(0, 11),
+  {
+    now: "2026-06-20T12:00:00.000Z",
+    maxSourceAgeDays: 30,
+  }
+);
+assert.equal(modelPriceStatusRow.provider, "anthropic");
+assert.equal(modelPriceStatusRow.rates.outputUsdPerMillion, 2);
+assert.equal(modelPriceStatusRow.sourceHost, "example.com");
+assert.equal(modelPriceStatusRow.sourceStatus, "fresh");
+assert.equal(modelPriceStatusRow.sourceAgeDays, 8);
+assert.equal(modelPriceStatusRow.hasSourceUrl, true);
+assert.equal(Object.prototype.hasOwnProperty.call(modelPriceStatusRow, "notes"), false);
+assert.equal(Object.prototype.hasOwnProperty.call(modelPriceStatusRow, "sourceUrl"), false);
+assert.deepEqual(
+  modelPriceStatus.modelPriceSourceFreshness("2026-07-20T12:00:00.000Z", {
+    now: "2026-06-20T12:00:00.000Z",
+  }).status,
+  "future"
+);
+assert.equal(
+  modelPriceStatus.modelPriceSourceFreshness("2026-05-01T12:00:00.000Z", {
+    now: "2026-06-20T12:00:00.000Z",
+    maxSourceAgeDays: 30,
+  }).status,
+  "stale"
+);
+const modelPriceStatusSummary = modelPriceStatus.summarizeModelPriceStatus([
+  modelPriceStatusRow,
+  modelPriceStatus.modelPriceStatusRecordToPrice([
+    { stringValue: "openai" },
+    { stringValue: "gpt-5.5" },
+    { stringValue: "1" },
+    { isNull: true },
+    { isNull: true },
+    { isNull: true },
+    { stringValue: "USD" },
+    { stringValue: "2026-06-12 00:00:00+00" },
+    { isNull: true },
+    { stringValue: "https://platform.openai.com/docs/pricing" },
+    { stringValue: "2026-05-01 12:00:00+00" },
+  ], {
+    now: "2026-06-20T12:00:00.000Z",
+    maxSourceAgeDays: 30,
+  }),
+], {
+  maxSourceAgeDays: 30,
+});
+assert.equal(modelPriceStatusSummary.summary.activeRows, 2);
+assert.equal(modelPriceStatusSummary.summary.providerCount, 2);
+assert.equal(modelPriceStatusSummary.summary.staleRows, 1);
+assert.equal(modelPriceStatusSummary.summary.incompleteRows, 1);
+const modelPriceStatusQuery = modelPriceStatus.buildModelPriceStatusQuery("reviewbot");
+assert.match(modelPriceStatusQuery.sql, /ai_model_prices/);
+assert.match(modelPriceStatusQuery.sql, /effective_from <= now\(\)/);
+assert.deepEqual(modelPriceStatusQuery.parameters, []);
+let modelPriceStatusSql = "";
+const readPriceStatus = modelPriceStatus.readModelPriceStatus({
+  enabled: true,
+  region: "us-east-1",
+  resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  database: "reviewbot",
+  schema: "reviewbot",
+}, {
+  executeStatement: (settings, sql, parameters, options) => {
+    modelPriceStatusSql = sql;
+    assert.equal(settings.schema, "reviewbot");
+    assert.equal(options.tempPrefix, "6529-model-price-status-");
+    assert.deepEqual(parameters, []);
+    return { records: [modelPriceRecord.slice(0, 11)] };
+  },
+  now: "2026-06-20T12:00:00.000Z",
+  maxSourceAgeDays: 30,
+});
+assert.match(modelPriceStatusSql, /ai_model_prices/);
+assert.equal(readPriceStatus.summary.activeRows, 1);
+assert.equal(readPriceStatus.prices[0].sourceHost, "example.com");
 assert.equal(
   modelPrices.estimateUsageCostUsd(
     { inputTokens: 1000, cachedInputTokens: 250, outputTokens: 500, reasoningTokens: 100 },
@@ -2080,6 +2160,17 @@ const serverRunClaimReaderOptions = serverCli.createServerOptionsFromEnv({
   REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED: "true",
 });
 assert.equal(typeof serverRunClaimReaderOptions.loadRunClaims, "function");
+const serverUsageReaderOptions = serverCli.createServerOptionsFromEnv({
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "true",
+  REVIEW_USAGE_AWS_REGION: "us-east-1",
+  REVIEW_USAGE_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  REVIEW_USAGE_DB_SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  REVIEW_USAGE_DB_NAME: "reviewbot",
+  REVIEW_USAGE_DB_SCHEMA: "reviewbot",
+  REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS: "14",
+});
+assert.equal(typeof serverUsageReaderOptions.loadModelPriceStatus, "function");
 let serverDispatchRequest = null;
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
@@ -3458,6 +3549,27 @@ appServer.handleGitHubWebhook({
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.daily.percentUsed, 85);
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.weekly.overBudget, true);
   assert.equal(adminBudgetStatusRouteResult.body.policies[0].utilization.monthly.remainingUsd, null);
+  const adminModelPriceStatusRouteUrl = new URL("http://localhost/api/admin/model-prices/status");
+  const adminModelPriceStatusRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/model-prices/status",
+    headers: signedAdminHeadersFor(adminModelPriceStatusRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadModelPriceStatus: async () => ({
+      status: modelPriceStatusSummary,
+    }),
+  });
+  assert.equal(adminModelPriceStatusRouteResult.statusCode, 200);
+  assert.equal(adminModelPriceStatusRouteResult.body.kind, "model_price_status");
+  assert.equal(adminModelPriceStatusRouteResult.body.status.summary.staleRows, 1);
+  assert.equal(
+    adminModelPriceStatusRouteResult.body.status.prices[0].sourceHost,
+    "example.com"
+  );
+  assert.equal(JSON.stringify(adminModelPriceStatusRouteResult.body).includes("sourceUrl"), false);
+  assert.equal(JSON.stringify(adminModelPriceStatusRouteResult.body).includes("notes"), false);
   const adminAlertStatusRouteUrl = new URL("http://localhost/api/admin/alerts/status");
   const adminAlertStatusRouteResult = await appServer.handleHttpRequest({
     method: "GET",
@@ -3676,6 +3788,28 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(missingBudgetStatus.statusCode, 503);
   assert.match(missingBudgetStatus.body.error, /budget status/i);
+  const adminModelPriceStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/model-prices/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+    loadModelPriceStatus: async () => ({ status: modelPriceStatusSummary }),
+  });
+  assert.equal(adminModelPriceStatus.statusCode, 200);
+  assert.equal(adminModelPriceStatus.body.kind, "model_price_status");
+  assert.equal(adminModelPriceStatus.body.status.summary.providerModelCount, 2);
+  const missingModelPriceStatus = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: new URL("http://localhost/api/admin/model-prices/status"),
+    headers: {},
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: async () => ({ allowed: true }),
+  });
+  assert.equal(missingModelPriceStatus.statusCode, 503);
+  assert.match(missingModelPriceStatus.body.error, /model price status/i);
   const adminAlertStatus = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/admin/alerts/status"),

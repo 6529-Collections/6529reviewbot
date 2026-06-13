@@ -142,6 +142,11 @@ Provider pages and APIs are the source of truth. If pricing cannot be verified,
 leave the row unapplied and keep budget admission on conservative default
 estimates.
 
+Private operator dashboards can inspect active price-row coverage and
+source-evidence freshness through `GET /api/admin/model-prices/status`. The
+endpoint returns rates, source hosts, and freshness posture, but not operator
+notes or full source URLs. See [Usage API](usage-api.md).
+
 ## Estimation Behavior
 
 At usage-write time the runner selects the active row where:

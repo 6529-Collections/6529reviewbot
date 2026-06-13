@@ -197,11 +197,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin budget-status API PR: merged as PR #120, merge commit `ebedc1e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-alert-status`
-- Current local changes: adding an admin-only alert-status endpoint and
-  public-safe alert posture helper so private 6529.io dashboards can show
-  alert thresholds, schedule caps, and notifier presence without exposing
-  webhook URLs, SNS topic ARNs, or alert payloads.
+- Admin alert-status API PR: merged as PR #121, merge commit `103d4b8`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-model-price-status`
+- Current local changes: adding an admin-only model-price status endpoint and
+  Aurora reader so private 6529.io dashboards can show active price rows,
+  token-class rate coverage, and source freshness without exposing operator
+  notes or full source URLs.
 
 ## Key Decisions
 
@@ -421,6 +423,10 @@ merged PRs.
 - Private admin dashboards should use bot-owned alert-status APIs for alert
   threshold, schedule, and notifier posture. They should never receive alert
   webhook URLs, SNS topic ARNs, provider keys, or alert payload bodies.
+- Private admin dashboards should use bot-owned model-price status APIs for
+  active price-row freshness and token-class coverage. They should not read
+  Aurora directly or depend on public commits containing current provider
+  prices.
 - Production evidence should be structured enough to validate required
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
@@ -442,7 +448,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the admin alert-status API increment and merge it if checks stay
+1. Ship the admin model-price status API increment and merge it if checks stay
    green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
@@ -460,7 +466,8 @@ merged PRs.
   custom loader forgets to mark the event private.
 - Provider pricing rows still need operator verification against current
   provider docs before dogfood release; missing/partial price rows leave usage
-  estimates empty.
+  estimates empty. The admin model-price status API should make this visible
+  to private dashboards, but it does not replace operator source review.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
 - The GitHub App manifest still needs production-host rendering and actual App
@@ -484,5 +491,5 @@ merged PRs.
 - Frontend PR #2605 is open and verified locally; all checks are green, but
   merge is still blocked by required human review.
 - Private admin UI still needs production wiring to the usage, budget-status,
-  alert-status, job-events, run-claims, and runtime-status endpoints through
-  the 6529.io auth bridge.
+  model-price status, alert-status, job-events, run-claims, and runtime-status
+  endpoints through the 6529.io auth bridge.
