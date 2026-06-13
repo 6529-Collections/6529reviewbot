@@ -74,6 +74,7 @@ const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
+const providerAdapterCheck = require("./check-provider-adapters.cjs");
 const providerContractCheck = require("./check-provider-contract.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
@@ -386,6 +387,23 @@ assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
 assert.equal(modelDefaultsCheck.checkModelDefaults().providers, 3);
 assert.equal(modelDefaultsCheck.anthropicDefaultLane(catalog), "anthropic:claude-opus-4-8");
 assert.equal(providerContractCheck.checkProviderContract().providers, 3);
+assert.equal(providerAdapterCheck.checkProviderAdapters().providers, 3);
+assert.throws(
+  () =>
+    providerAdapterCheck.checkProviderAdapters({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        "docs/configuration.md": "# Configuration\n",
+        "docs/provider-setup.md": "# Provider Setup\n",
+        "docs/model-catalog.md": "# Model Catalog\n",
+        "docs/review-jobs.md": "# Review Jobs\n",
+        "docs/release-operations-map.md": "# Release Operations Map\n",
+        "docs/release-readiness.md": "# Release Readiness\n",
+      },
+    }),
+  /provider adapter check found/
+);
 assert.equal(
   providerContractCheck.humanProviderList(modelCatalog.PROVIDERS),
   "anthropic, openai, or openrouter"

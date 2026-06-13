@@ -47,6 +47,7 @@ When a provider changes model names or 6529 policy chooses a new default:
    ```bash
    npm run validate:model-catalog
    npm run check:model-defaults
+   npm run check:provider-adapters
    npm run release:check
    ```
 

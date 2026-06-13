@@ -27,7 +27,9 @@ For every enabled provider:
 5. add or verify the model in `config/model-catalog.json`;
 6. apply reviewed price rows with `npm run model-prices -- -- --file <file>
    --apply`, including fresh `sourceCheckedAt` evidence for the provider docs;
-7. run `npm run preflight -- -- --strict` from the release candidate
+7. run `npm run check:provider-adapters` after changing provider request,
+   usage, error, or model-option behavior;
+8. run `npm run preflight -- -- --strict` from the release candidate
    environment.
 
 Do not put provider keys in:

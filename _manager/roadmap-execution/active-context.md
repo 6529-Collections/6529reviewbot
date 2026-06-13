@@ -336,10 +336,12 @@ merged PRs.
   `cc98f88`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Preflight contract PR: merged as PR #187, merge commit `7e4aa6d`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/review-context-boundary-contract`.
-- Current local changes: adding a review-context boundary contract check that
-  keeps path safety, trusted metadata handling, prompt hygiene, hard caps, and
-  source-boundary docs synchronized.
+- Review-context boundary contract PR: merged as PR #188, merge commit
+  `9744c6b`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/provider-adapter-contract`.
+- Current local changes: adding a provider-adapter contract check that keeps
+  Anthropic, OpenAI, and OpenRouter request shapes, option gating, usage
+  normalization, error redaction, and docs synchronized.
 
 ## Key Decisions
 
@@ -766,6 +768,9 @@ merged PRs.
 - Review context is a core untrusted-input boundary. Path safety, trusted
   hidden metadata, prompt hygiene, and hard model-call caps should be
   machine-checked independently of broad smoke coverage.
+- Provider adapters are billing and output boundaries. Request shapes, model
+  option gates, usage normalization, timeout fields, and provider error
+  redaction should be machine-checked across Anthropic, OpenAI, and OpenRouter.
 
 ## Constraints
 
@@ -779,7 +784,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the review-context boundary contract check.
+2. Publish and merge the provider-adapter contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

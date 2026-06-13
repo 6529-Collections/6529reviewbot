@@ -163,6 +163,9 @@ After stabilization:
 - `npm run check:providers` confirms supported provider constants stay
   synchronized with model catalog providers, preflight key requirements,
   workflow dispatch choices, and provider docs
+- `npm run check:provider-adapters` confirms Anthropic, OpenAI, and OpenRouter
+  request shapes, option gating, usage normalization, error redaction, and docs
+  stay synchronized
 - `npm run check:budget-scopes` confirms canonical budget scopes stay
   synchronized with central policy validation, ledger schema constraints,
   public docs, and dogfood examples

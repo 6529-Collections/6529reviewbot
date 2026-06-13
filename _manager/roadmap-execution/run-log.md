@@ -2917,3 +2917,25 @@
   - `npm test` passed;
   - `npm run release:check` passed, including review-context boundary
     validation and 63 mapped release-operation tools.
+- Merged `6529reviewbot` PR #188 as `9744c6b`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/provider-adapter-contract` increment:
+  - add `scripts/check-provider-adapters.cjs` and
+    `npm run check:provider-adapters`;
+  - validate Anthropic, OpenAI, and OpenRouter adapter routing, request
+    endpoints, token cap fields, OpenAI option gating, OpenRouter usage
+    accounting, provider usage normalization, empty-output fail-closed
+    behavior, and redacted provider error summaries;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/provider-adapter-contract`:
+  - `npm run check:provider-adapters` passed with 3 providers, 17 source
+    snippets, and 7 docs checked;
+  - `npm run check:release-operations` passed with 64 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 121 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including provider-adapter validation and
+    64 mapped release-operation tools.

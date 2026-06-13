@@ -157,6 +157,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "provider-adapter-contract",
+          "script": "check:provider-adapters",
+          "purpose": "Verify Anthropic, OpenAI, and OpenRouter adapter request shapes, option gating, usage normalization, error redaction, and provider docs stay synchronized.",
+          "doc": "docs/provider-setup.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "budget-scope-contract",
           "script": "check:budget-scopes",
           "purpose": "Verify canonical budget scopes stay synchronized with central policy validation, ledger schema constraints, public docs, and dogfood examples.",

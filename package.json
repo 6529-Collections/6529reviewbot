@@ -60,6 +60,7 @@
     "check:review-context-boundary": "node scripts/check-review-context-boundary.cjs",
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
     "check:providers": "node scripts/check-provider-contract.cjs",
+    "check:provider-adapters": "node scripts/check-provider-adapters.cjs",
     "check:review-bins": "node scripts/check-review-bin-entrypoints.cjs",
     "check:review-comment-format": "node scripts/check-review-comment-format.cjs",
     "check:admission-policy": "node scripts/check-admission-policy.cjs",

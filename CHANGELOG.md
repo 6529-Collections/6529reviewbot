@@ -136,6 +136,9 @@ stabilized.
 - Added a provider-contract release check that validates supported provider
   constants against model catalog providers, preflight key requirements,
   workflow dispatch options, and provider docs.
+- Added a provider-adapter release check that validates Anthropic, OpenAI, and
+  OpenRouter request shapes, option gating, usage normalization, error
+  redaction, and docs.
 - Added a budget-scope release check that validates canonical budget scopes
   across central policy validation, ledger schema constraints, public docs, and
   dogfood examples.
