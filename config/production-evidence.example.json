@@ -12,7 +12,7 @@
     "releaseGateSummary": "0/20 complete, example file only",
     "releaseGateReadyCheck": "not run for example evidence",
     "productionCutoverStatusFile": "private production cutover status JSON",
-    "productionCutoverSummary": "2/30 complete, example file only",
+    "productionCutoverSummary": "2/31 complete, example file only",
     "productionCutoverReadyCheck": "not run for example evidence"
   },
   "sections": {
@@ -42,7 +42,7 @@
     },
     "6529-io-surfaces": {
       "status": "pending",
-      "notes": "Wire public and private 6529.io surfaces or explicitly defer them."
+      "notes": "Render the dashboard deployment plan, then wire public and private 6529.io surfaces or explicitly defer them."
     },
     "dogfood-evidence": {
       "status": "pending",

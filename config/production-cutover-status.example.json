@@ -78,6 +78,10 @@
       "status": "pending",
       "notes": "Enable durable run-control claims or explicitly defer enforcement."
     },
+    "dashboard-deployment-plan-reviewed": {
+      "status": "pending",
+      "notes": "Render and review the dashboard deployment plan before exposing public or private 6529.io dashboard routes."
+    },
     "public-dashboard-wired": {
       "status": "pending",
       "notes": "Deploy the public dashboard or explicitly defer it in release notes."

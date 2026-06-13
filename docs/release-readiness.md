@@ -91,7 +91,8 @@ Ready for community review:
 - server-side 6529.io usage API client helper for signed admin endpoint calls;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for go/no-go tracking before live
-  dogfood traffic, including the dogfood promotion packet gate;
+  dogfood traffic, including the dogfood promotion packet gate and dashboard
+  deployment plan evidence before 6529.io route exposure;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, SNS, and SES email delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe
@@ -237,6 +238,8 @@ Ready for community review:
 - dashboard deployment plan for a dry-run 6529.io handoff across public and
   private dashboard env, bot public disclosure settings, HMAC admin auth,
   route verification, cutover evidence, and release notes;
+- production cutover checklist evidence now requires the dashboard deployment
+  plan before public or private 6529.io dashboard routes are exposed;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
@@ -437,7 +440,8 @@ npm run check:production-cutover
 
 The production cutover contract keeps checklist/status readiness, complete
 evidence requirements, deferred item semantics, public Markdown redaction, and
-docs synchronized.
+docs synchronized, including the dashboard deployment-plan evidence gate before
+6529.io dashboard exposure.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:

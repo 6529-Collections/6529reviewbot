@@ -423,23 +423,32 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator workspace dashboard-plan guidance PR: merged as PR #231, merge commit `7525aa0`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-drill-dashboard-plan`.
-- Current local changes: adding the dashboard deployment plan handoff to
-  `operator:drill` next commands, operator-drill contract checks, smoke-test
-  command counts, and public operator-drill/release docs.
+- Operator drill dashboard-plan guidance PR: merged as PR #232, merge commit `22b501c`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dashboard-gates-evidence`.
+- Current local changes: adding dashboard deployment-plan evidence to v0
+  dashboard gates and production cutover before public/private 6529.io
+  dashboard exposure, plus syncing status examples, smoke counts, operator
+  evidence templates, release docs, roadmap, changelog, and manager memory.
 - Current local validation:
-  - `npm run check:operator-drill` passed with 2 drill cases, 7 commands, and
-    7 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
   - `npm run check:docs` passed with 72 files checked;
   - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #231,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #232,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 115 files checked;
-  - `npm run check` passed with 171 CommonJS files;
   - `git diff --check` passed;
+  - `npm run check` passed with 171 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator drill contract
-    validation for 7 next commands and dashboard deployment handoff guidance.
+  - `npm run release:check` passed, including production cutover validation
+    for 31 items and dashboard deployment-plan evidence gates.
 
 ## Key Decisions
 
@@ -998,6 +1007,9 @@ merged PRs.
   and auth-check URL inputs, but the operator still deploys 6529.io, creates
   secrets, verifies wallet allowlists, checks the HMAC bridge, and records
   dashboard evidence explicitly.
+- Dashboard route exposure should now flow through the v0 gates and production
+  cutover checklist via explicit dashboard deployment-plan evidence, not only
+  via separate dashboard runbook prose.
 
 ## Constraints
 
@@ -1010,11 +1022,13 @@ merged PRs.
 ## Next Actions
 
 1. Keep frontend public/private dashboard PRs current after merge by tracking
-   production deployment/configuration evidence in the central roadmap.
+   production deployment/configuration evidence in the central roadmap and
+   cutover gates.
 2. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 3. Prepare production deployment/configuration evidence for the merged
-   6529.io dashboard routes.
+   6529.io dashboard routes through the dashboard deployment-plan and cutover
+   status flow.
 4. Keep conservative dogfood rollout evidence ready for a trusted target repo.
 
 ## Open Risks

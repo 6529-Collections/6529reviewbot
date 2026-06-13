@@ -76,6 +76,8 @@ The first `v0` tag can include:
 - operator evidence template for redacted deployment proof;
 - operator workspace bootstrap for private status/evidence skeletons and final
   promotion/go-live command guidance;
+- dashboard deployment plan handoff for reviewed 6529.io public/private
+  route exposure evidence;
 - dogfood go-live packet for cross-checking release, promotion, cutover, and
   operator-workspace evidence before command-only live traffic;
 - dogfood templates, deployment docs, release checks, and security-review
@@ -114,10 +116,12 @@ Do not create the `v0` tag until all of these are true:
    are configured only in bot-owned infrastructure.
 5. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
    `infra/aws` or equivalent least-privilege documents.
-6. The 6529.io public usage dashboard is merged, deployed, and wired to the
-   public usage API or explicitly deferred in the release notes.
-7. The 6529.io private admin surface is wired to the HMAC auth bridge or
-   explicitly deferred behind operator-only APIs.
+6. The 6529.io public usage dashboard is merged, deployed, wired to the
+   public usage API, and covered by reviewed dashboard deployment plan evidence
+   or explicitly deferred in the release notes.
+7. The 6529.io private admin surface is wired to the HMAC auth bridge and
+   covered by reviewed dashboard deployment plan evidence or explicitly
+   deferred behind operator-only APIs.
 8. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode. Use
    `npm run dogfood:target` before opening the target repository config PR.
@@ -237,6 +241,10 @@ npm run production:cutover -- -- --init-status <operator-cutover-status-file>
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
 ```
+
+The 6529.io cutover phase includes
+`dashboard-deployment-plan-reviewed`, so the dashboard deployment plan should
+be rendered and recorded before dashboard route exposure is marked complete.
 
 `--require-ready` is the broad-traffic cutover gate. Dogfood-only releases may
 defer items, but release notes must name the risk and follow-up owner for each

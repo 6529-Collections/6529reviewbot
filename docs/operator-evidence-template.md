@@ -140,6 +140,8 @@ Stale-claim alert threshold reviewed:
 ## 6529.io Surfaces
 
 ```text
+Dashboard deployment plan command:
+Dashboard deployment plan reviewed:
 Public dashboard route:
 Public dashboard API target:
 Private admin route:

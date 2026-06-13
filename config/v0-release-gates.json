@@ -30,13 +30,13 @@
     },
     {
       "id": "public-dashboard",
-      "title": "6529.io public usage dashboard is merged, deployed, and wired to the public usage API, or explicitly deferred.",
-      "evidence": "docs/usage-api.md"
+      "title": "6529.io public usage dashboard is merged, deployed, wired to the public usage API, and covered by reviewed dashboard deployment plan evidence, or explicitly deferred.",
+      "evidence": "docs/dashboard-deployment-plan.md"
     },
     {
       "id": "admin-surface",
-      "title": "6529.io private admin surface is wired to the HMAC auth bridge, or explicitly deferred behind operator-only APIs.",
-      "evidence": "docs/admin-auth-bridge.md"
+      "title": "6529.io private admin surface is wired to the HMAC auth bridge and covered by reviewed dashboard deployment plan evidence, or explicitly deferred behind operator-only APIs.",
+      "evidence": "docs/dashboard-deployment-plan.md"
     },
     {
       "id": "dogfood-config",
