@@ -38,6 +38,9 @@ Private evidence location:
 Release gate status file:
 Release gate summary:
 Release gate ready check:
+Production cutover status file:
+Production cutover summary:
+Production cutover ready check:
 ```
 
 ## GitHub App

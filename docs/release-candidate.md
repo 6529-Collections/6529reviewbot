@@ -8,6 +8,8 @@ optional private release-gate status, optional private operator evidence, git
 metadata, package metadata, and the same preflight checks used by the runtime.
 It does not replace `npm run release:check`, CI, Dependency Review, OpenSSF
 Scorecard, or private operator evidence.
+It also does not replace the [Production Cutover](production-cutover.md)
+checklist, which is the go/no-go layer for live dogfood or production traffic.
 
 ## Command
 

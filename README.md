@@ -96,6 +96,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
 - [Container Deployment](docs/container-deployment.md): runtime image,
   secret injection, and container verification.
+- [Production Cutover](docs/production-cutover.md): go/no-go checklist and
+  private status overlay for moving to live dogfood traffic.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
   worker evidence.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
@@ -173,6 +175,16 @@ evidence, git metadata, and no-network preflight:
 npm run release:candidate
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
+```
+
+Track production cutover readiness from the public checklist plus private
+operator status:
+
+```bash
+npm run production:cutover
+npm run production:cutover -- -- --init-status <operator-cutover-status-file>
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
+npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
 ```
 
 Print a prompt for a target PR without calling a model:
@@ -275,7 +287,7 @@ npm run support:bundle
 Collect a private admin API posture snapshot:
 
 ```bash
-npm run admin:snapshot -- --base-url https://reviewbot.example.com
+npm run admin:snapshot -- -- --base-url https://reviewbot.example.com
 ```
 
 Replay a saved GitHub webhook payload without dispatching workers:

@@ -108,8 +108,8 @@ or unredacted exception stacks.
 Operators can exercise the same client paths from a private environment:
 
 ```bash
-npm run admin:snapshot -- --base-url https://reviewbot.example.com
-npm run admin:snapshot -- --json --require-ok
+npm run admin:snapshot -- -- --base-url https://reviewbot.example.com
+npm run admin:snapshot -- -- --json --require-ok
 ```
 
 The snapshot command reduces endpoint responses into counts and posture flags.

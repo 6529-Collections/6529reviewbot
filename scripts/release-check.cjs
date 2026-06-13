@@ -33,6 +33,14 @@ runNode("bin/operator-evidence.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/production-cutover.cjs", ["--json", "--quiet"]);
+runNode("bin/production-cutover.cjs", [
+  "--status-file",
+  "config/production-cutover-status.example.json",
+  "--summary",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", ["--json", "--quiet"]);
 runNode("bin/v0-gates.cjs", [

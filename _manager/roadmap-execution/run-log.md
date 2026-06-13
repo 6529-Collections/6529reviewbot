@@ -1610,3 +1610,24 @@
   - `npm run check:docs` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #124 as `ddf81f1` after CI and Dependency Review
+  passed; the normal protected merge path allowed the merge while CodeRabbit
+  remained in its processing placeholder with no review threads.
+- Rechecked the post-merge main workflows:
+  - workflow `CI`, run `27451191556`, completed successfully;
+  - workflow `OpenSSF Scorecard`, run `27451191558`, completed successfully.
+- Local clean-main validation after PR #124 merge:
+  - `npm run release:check` passed.
+- Started `codex/production-cutover-checklist` increment:
+  - add a public-safe production cutover checklist artifact that enumerates
+    operator go/no-go steps without live resource identifiers;
+  - add a validator/renderer so cutover evidence can be summarized in PRs,
+    release notes, or private operator runbooks without drifting from docs;
+  - wire the check into release validation and align README, deployment,
+    release, readiness, roadmap, changelog, and manager memory.
+- Local validation for `codex/production-cutover-checklist`:
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run production:cutover -- -- --status-file config/production-cutover-status.example.json --summary` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

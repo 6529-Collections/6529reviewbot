@@ -119,6 +119,8 @@ Target deployment:
   change, and `npm run validate:api-contract` passes.
 - Preflight, admin runtime status, and support bundles report secret presence
   or missing configuration only, never secret values.
+- Production cutover status and summaries use public-safe language before any
+  lines are copied into release notes, issues, PRs, or durable manager memory.
 - `npm run check:public-artifacts` passes for public docs, configs, templates,
   workflows, and durable manager memory before publishing release evidence.
 - Alerting paths do not include secrets or raw prompts in messages.
@@ -137,6 +139,8 @@ Target deployment:
   documented acceptance of each warning.
 - Completed [Operator Evidence Template](operator-evidence-template.md) with
   public-safe redactions.
+- `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`
+  reviewed before live dogfood traffic.
 - CI passed on the release PR or tag.
 - Dependency Review passed.
 - OpenSSF Scorecard completed and findings were reviewed.

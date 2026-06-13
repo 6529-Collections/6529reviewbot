@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "release": "v0.1.0",
+  "description": "Public-safe production cutover checklist for moving 6529bot from reviewed source to controlled live dogfood traffic.",
+  "phases": [
+    {
+      "id": "release-baseline",
+      "title": "Release Baseline",
+      "objective": "Start from a reviewed commit, clean release checks, and private operator evidence before creating or changing live infrastructure.",
+      "items": [
+        {
+          "id": "reviewed-commit",
+          "title": "Cutover source commit or tag is reviewed, merged, and recorded in private operator evidence.",
+          "evidence": "git rev-parse HEAD plus the release PR or tag decision",
+          "runbook": "docs/release.md"
+        },
+        {
+          "id": "local-release-check",
+          "title": "npm run release:check passes from a clean checkout.",
+          "evidence": "release check output captured in private operator evidence",
+          "runbook": "docs/release.md"
+        },
+        {
+          "id": "remote-checks-reviewed",
+          "title": "GitHub CI, Dependency Review, and OpenSSF Scorecard for the cutover commit are reviewed.",
+          "evidence": "public check run links or public-safe check summaries",
+          "runbook": "docs/release-readiness.md"
+        },
+        {
+          "id": "release-candidate-bundle",
+          "title": "Release candidate bundle is rendered from current private release-gate status and operator evidence.",
+          "evidence": "npm run release:candidate with private status and evidence files",
+          "runbook": "docs/release-candidate.md"
+        }
+      ]
+    },
+    {
+      "id": "github-app",
+      "title": "GitHub App Registration",
+      "objective": "Create or update the production 6529bot GitHub App without copying generated credentials into public artifacts.",
+      "items": [
+        {
+          "id": "manifest-rendered",
+          "title": "GitHub App manifest is rendered for the production host and reviewed before registration.",
+          "evidence": "npm run github-app:manifest -- -- --host <production-bot-origin> --quiet",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "app-created",
+          "title": "Production GitHub App named 6529bot is created or verified with documented permissions and events.",
+          "evidence": "public-safe registration packet summary",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "app-credentials-stored",
+          "title": "Generated App id, private key, client secret, and webhook secret are stored only in the bot runtime secret store.",
+          "evidence": "secret presence evidence, not secret values",
+          "runbook": "docs/github-app-registration.md"
+        },
+        {
+          "id": "installation-scope-reviewed",
+          "title": "GitHub App installation scope starts with selected trusted repositories for dogfood.",
+          "evidence": "selected-repository installation summary without private repository details",
+          "runbook": "docs/install.md"
+        }
+      ]
+    },
+    {
+      "id": "aws-ledger-and-secrets",
+      "title": "AWS Ledger And Secrets",
+      "objective": "Prepare isolated spend, job, run-control, price, budget, and alert infrastructure before model calls.",
+      "items": [
+        {
+          "id": "aws-iam-reviewed",
+          "title": "AWS IAM/OIDC trust and identity policies are reviewed from least-privilege templates or equivalent private policy artifacts.",
+          "evidence": "policy review summary without live account ids or ARNs",
+          "runbook": "infra/aws/README.md"
+        },
+        {
+          "id": "ledger-schema-applied",
+          "title": "Aurora ledger schema is applied and re-apply safe in the production ledger.",
+          "evidence": "npm run ledger:schema -- -- --apply plus base table and managed view counts",
+          "runbook": "docs/aws-usage-ledger.md"
+        },
+        {
+          "id": "budget-policies-applied",
+          "title": "Central budget policies are reviewed and applied, or the release explicitly keeps conservative environment caps.",
+          "evidence": "npm run budget-policies dry-run and apply summaries",
+          "runbook": "docs/budget-policies.md"
+        },
+        {
+          "id": "model-prices-applied",
+          "title": "Model price rows are source-reviewed, fresh under policy, and applied, or conservative default estimates are accepted.",
+          "evidence": "npm run model-prices dry-run and apply summaries",
+          "runbook": "docs/model-pricing.md"
+        },
+        {
+          "id": "runtime-secrets-present",
+          "title": "Provider, GitHub App, AWS, alert, worker-dispatch, and admin-auth secrets are present only in bot-owned server-side stores.",
+          "evidence": "secret presence summary, not secret values",
+          "runbook": "docs/security-model.md"
+        }
+      ]
+    },
+    {
+      "id": "server-and-worker",
+      "title": "Server And Worker",
+      "objective": "Deploy the central App server and enable worker traffic in deliberately small steps.",
+      "items": [
+        {
+          "id": "container-image-reviewed",
+          "title": "Container image, when used, is built from the reviewed commit, scanned, and recorded by digest.",
+          "evidence": "image digest, builder identity, and scan summary kept in private evidence",
+          "runbook": "docs/container-deployment.md"
+        },
+        {
+          "id": "server-deployed-noop",
+          "title": "Central App server is deployed first with REVIEWBOT_WORKER_ADAPTER=noop.",
+          "evidence": "deployment summary and /healthz result",
+          "runbook": "docs/deployment.md"
+        },
+        {
+          "id": "preflight-strict",
+          "title": "npm run preflight -- -- --strict passes in the release-candidate environment, or every warning is accepted in release notes.",
+          "evidence": "strict preflight output summary",
+          "runbook": "docs/configuration.md"
+        },
+        {
+          "id": "webhook-acceptance",
+          "title": "Invalid webhook signatures fail, GitHub App ping succeeds, and a saved pull_request delivery replays in dry-run mode.",
+          "evidence": "public-safe webhook acceptance summary",
+          "runbook": "docs/deployment.md"
+        },
+        {
+          "id": "worker-enabled-conservative",
+          "title": "Worker path is enabled only after noop verification, with conservative capacity and command-only dogfood.",
+          "evidence": "worker adapter, capacity, and command-only config summary",
+          "runbook": "docs/worker-capacity.md"
+        },
+        {
+          "id": "run-control-enforced",
+          "title": "Run-control claims are enforced with conservative caps, or enforcement is explicitly deferred for dogfood-only release notes.",
+          "evidence": "run-control mode, ledger, and cap summary",
+          "runbook": "docs/run-control.md"
+        }
+      ]
+    },
+    {
+      "id": "6529-io-and-alerts",
+      "title": "6529.io And Alerts",
+      "objective": "Wire human visibility through 6529.io and scheduled operator alerts without browser access to bot secrets or Aurora.",
+      "items": [
+        {
+          "id": "public-dashboard-wired",
+          "title": "6529.io public transparency route is merged, deployed, and wired to the public usage summary API, or explicitly deferred.",
+          "evidence": "route, API target, and deployment summary",
+          "runbook": "docs/usage-api.md"
+        },
+        {
+          "id": "admin-bridge-wired",
+          "title": "6529.io private admin surface calls bot-owned admin APIs through server-side HMAC signing.",
+          "evidence": "admin route and auth-bridge summary without HMAC secrets",
+          "runbook": "docs/6529-io-admin-integration.md"
+        },
+        {
+          "id": "admin-snapshot-reviewed",
+          "title": "Private admin snapshot command is run and reviewed before exposing admin dashboards to operators.",
+          "evidence": "npm run admin:snapshot -- -- --base-url <production-bot-origin> --require-ok",
+          "runbook": "docs/6529-io-admin-integration.md"
+        },
+        {
+          "id": "alerts-deliver",
+          "title": "Scheduled spend, failed-job, and stale-claim alerts deliver to an operator-owned private channel.",
+          "evidence": "alert dry-run and delivery summary without webhook URLs or SNS ARNs",
+          "runbook": "docs/alerting.md"
+        }
+      ]
+    },
+    {
+      "id": "dogfood",
+      "title": "Dogfood",
+      "objective": "Prove command-only and limited initial review behavior on trusted repositories before broad community use.",
+      "items": [
+        {
+          "id": "repo-config-validated",
+          "title": "Dogfood target repository config is merged from reviewed base-ref content and validates locally.",
+          "evidence": "npm run validate:repo-config for the dogfood repository config",
+          "runbook": "docs/dogfood.md"
+        },
+        {
+          "id": "command-only-review",
+          "title": "Maintainer-triggered command-only review runs with budget, job, usage, and run-control evidence.",
+          "evidence": "public-safe bot comment and private ledger summaries",
+          "runbook": "docs/comment-commands.md"
+        },
+        {
+          "id": "limited-initial-review",
+          "title": "Limited initial PR review is enabled only after command-only dogfood is healthy.",
+          "evidence": "initial-review run summary, cost summary, and rollback verification",
+          "runbook": "docs/dogfood.md"
+        }
+      ]
+    },
+    {
+      "id": "rollback-and-decision",
+      "title": "Rollback And Decision",
+      "objective": "Confirm operators can stop spend quickly and make a clear tag/no-tag decision.",
+      "items": [
+        {
+          "id": "rollback-tested",
+          "title": "Rollback controls are tested: noop worker, disabled public repo mode, disabled repo config, App uninstall, and provider-key disablement.",
+          "evidence": "rollback exercise summary without live identifiers",
+          "runbook": "docs/deployment.md"
+        },
+        {
+          "id": "security-review-complete",
+          "title": "Manual security review checklist is completed for the cutover commit.",
+          "evidence": "security-review checklist summary",
+          "runbook": "docs/security-review-checklist.md"
+        },
+        {
+          "id": "release-decision-recorded",
+          "title": "Operator release decision is recorded as approve, approve with follow-up, defer, or block.",
+          "evidence": "release decision entry in private operator evidence and public-safe release notes",
+          "runbook": "docs/operator-evidence-template.md"
+        }
+      ]
+    }
+  ]
+}
