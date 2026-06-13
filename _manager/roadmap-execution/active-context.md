@@ -621,6 +621,9 @@ merged PRs.
   traffic gate.
 - Public docs need a canonical index with machine-checked coverage so release
   and operator guidance cannot become hidden as the documentation set grows.
+- Public MIT/community governance files should be machine-checked, not only
+  manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
+  template, and license entry points stay present for community release.
 
 ## Constraints
 
@@ -634,7 +637,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the docs index coverage check.
+2. Validate, publish, and merge the public governance release check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

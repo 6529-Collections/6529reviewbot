@@ -20,6 +20,8 @@ included in `npm run release:check`.
 The canonical documentation index is [Docs Index](README.md), and
 `npm run check:doc-index` fails release checks when a public docs page is not
 linked there.
+`npm run check:governance` keeps the public MIT license, community files, issue
+templates, and README governance links present.
 
 ## How To Read It
 

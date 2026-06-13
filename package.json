@@ -52,6 +52,7 @@
     "github-app:token": "node bin/github-app-installation-token.cjs",
     "check:docs": "node scripts/check-doc-links.cjs",
     "check:doc-index": "node scripts/check-doc-index.cjs",
+    "check:governance": "node scripts/check-public-governance.cjs",
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",
