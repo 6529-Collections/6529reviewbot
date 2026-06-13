@@ -168,6 +168,7 @@ npm run check:providers
 npm run check:provider-adapters
 npm run check:ledger-privacy
 npm run check:webhook-replay
+npm run check:dogfood-promotion
 npm run check:dogfood-go-live
 npm run check:budget-scopes
 npm run check:run-control-scopes

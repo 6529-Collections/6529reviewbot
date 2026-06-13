@@ -33,6 +33,7 @@ const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const dogfoodPromotion = require("../src/dogfood-promotion.cjs");
 const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
+const dogfoodPromotionContractCheck = require("./check-dogfood-promotion-contract.cjs");
 const dogfoodGoLive = require("../src/dogfood-go-live.cjs");
 const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodGoLiveContractCheck = require("./check-dogfood-go-live-contract.cjs");
@@ -4976,6 +4977,20 @@ appServer.handleGitHubWebhook({
   assert.equal(usageApiRoutesResult.routes, 10);
   const webhookReplayResult = await webhookReplayCheck.checkWebhookReplayContract();
   assert.equal(webhookReplayResult.replayCases, 3);
+  const dogfoodPromotionContractResult =
+    dogfoodPromotionContractCheck.checkDogfoodPromotionContract();
+  assert.equal(dogfoodPromotionContractResult.cliCases, 4);
+  assert.equal(dogfoodPromotionContractResult.packetCases, 4);
+  assert.throws(
+    () =>
+      dogfoodPromotionContractCheck.checkDogfoodPromotionContract({
+        quiet: true,
+        docTexts: {
+          "docs/dogfood-promotion.md": "# Dogfood Promotion\n",
+        },
+      }),
+    /dogfood promotion contract check found/
+  );
   const dogfoodGoLiveContractResult =
     dogfoodGoLiveContractCheck.checkDogfoodGoLiveContract();
   assert.equal(dogfoodGoLiveContractResult.cliCases, 4);

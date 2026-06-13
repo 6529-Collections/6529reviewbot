@@ -3028,3 +3028,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dogfood go-live validation and
     68 mapped release-operation tools.
+- Merged `6529reviewbot` PR #193 as `01e0cd5`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-promotion-contract` increment:
+  - add `scripts/check-dogfood-promotion-contract.cjs` and
+    `npm run check:dogfood-promotion`;
+  - harden dogfood promotion public-text redaction for AWS ARNs/account ids
+    and pass Markdown table cells through the shared promotion public-text
+    path;
+  - require `--strict-preflight` whenever `--require-ready` is used on the
+    promotion CLI;
+  - validate CLI readiness gating, temporary operator workspace path
+    redaction, promotion gate ids, strict preflight input state, Markdown
+    redaction, source invariants, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/dogfood-promotion-contract`:
+  - `npm run check:dogfood-promotion` passed with 4 CLI cases, 4 packet cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 69 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 127 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including dogfood promotion validation and
+    69 mapped release-operation tools.

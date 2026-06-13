@@ -118,6 +118,9 @@ Ready for community review:
 - dogfood promotion packet command for composing target config readiness,
   central dogfood inputs, synthetic self-dogfood replay, private workspace
   parsing, and preflight into one final pre-traffic go/no-go report;
+- dogfood promotion checker that keeps the pre-traffic gate's strict-preflight
+  requirement, workspace path markers, Markdown redaction, source invariants,
+  and docs synchronized;
 - dogfood go-live packet command for cross-checking release-candidate,
   promotion, production-cutover, and operator-workspace evidence before
   command-only live dogfood traffic, with `--require-ready` requiring strict

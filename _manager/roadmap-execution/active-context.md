@@ -346,9 +346,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release-candidate contract PR: merged as PR #192, merge commit `063f925`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-go-live-contract`.
-- Current local changes: adding a dogfood go-live contract check that keeps the
-  final traffic gate's strict-preflight requirement, private workspace path
+- Dogfood go-live contract PR: merged as PR #193, merge commit `01e0cd5`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dogfood-promotion-contract`.
+- Current local changes: adding a dogfood promotion contract check that keeps
+  the pre-traffic gate's strict-preflight requirement, private workspace path
   markers, Markdown redaction, source invariants, and docs synchronized.
 
 ## Key Decisions
@@ -792,6 +794,9 @@ merged PRs.
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
   packet data.
+- Dogfood promotion feeds the final traffic gate. Keep strict preflight
+  mandatory for `--require-ready`, keep private workspace paths summarized, and
+  redact AWS identifiers and token-shaped strings in packet Markdown.
 
 ## Constraints
 
@@ -805,7 +810,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the dogfood go-live contract check.
+2. Publish and merge the dogfood promotion contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
