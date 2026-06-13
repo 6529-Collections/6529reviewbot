@@ -49,6 +49,10 @@ After stabilization:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`
   passes before tagging unless release notes intentionally mark the release as
   dogfood-only or local-only
+- `npm run admin:snapshot -- --base-url <production-bot-origin> --require-ok`
+  passes from a private operator environment when validating the 6529.io admin
+  surface; keep the detailed snapshot private unless release notes only copy
+  public-safe counts
 - `npm run release:check`
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list

@@ -136,6 +136,7 @@ Public dashboard API target:
 Private admin route:
 Admin HMAC bridge wired server-side:
 Browser has no bot admin secret/provider key/AWS credential access:
+Admin snapshot command result:
 ```
 
 ## Dogfood Evidence

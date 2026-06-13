@@ -156,6 +156,8 @@ or authorized admin data.
 The `6529.io` server-side integration should use the tested usage API client
 helper in this repo or an equivalent implementation of the same HMAC contract,
 not ad hoc browser-side signing.
+Private dashboard bring-up and release evidence can use the admin snapshot CLI
+to verify endpoint posture without printing raw private rows.
 
 Alerts should not depend on anyone opening the dashboard. Scheduled checks
 should run independently and send warnings through SNS/SES or the chosen 6529
@@ -323,6 +325,7 @@ Completed in `6529reviewbot`:
 - admin runtime status is backed by no-network preflight checks;
 - server-side 6529.io usage API client helper for signed admin calls and
   redacted API failures;
+- admin snapshot CLI for private dashboard bring-up and release evidence;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

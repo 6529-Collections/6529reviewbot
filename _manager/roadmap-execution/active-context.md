@@ -201,10 +201,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin model-price status API PR: merged as PR #122, merge commit `34f1ef9`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-api-client-contract`
-- Current local changes: adding a server-side usage API client helper and
-  integration docs so 6529.io can call bot-owned public/admin endpoints with
-  HMAC assertions, timeouts, path validation, and redacted API errors.
+- 6529.io admin API client PR: merged as PR #123, merge commit `d76a02e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-snapshot-client`
+- Current local changes: adding an admin snapshot CLI that uses the server-side
+  client paths and reduces private admin endpoint responses into counts,
+  posture flags, and redacted errors for dashboard bring-up and release
+  evidence.
 
 ## Key Decisions
 
@@ -431,6 +434,9 @@ merged PRs.
 - 6529.io should call bot-owned admin APIs from trusted server-side code using
   the HMAC bridge contract and a tested client/helper, not ad hoc browser-side
   signing or direct Aurora reads.
+- Admin dashboard bring-up and release evidence should have a snapshot command
+  that checks endpoint posture without printing raw private usage rows, budget
+  scope values, prompts, diffs, webhook payloads, or credentials.
 - Production evidence should be structured enough to validate required
   operator sections while keeping the real evidence file private; any rendered
   summary or JSON intended for public notes must redact token-shaped values,
@@ -452,8 +458,7 @@ merged PRs.
 
 ## Next Actions
 
-1. Ship the 6529.io admin API client/contract increment and merge it if checks
-   stay green.
+1. Ship the admin snapshot CLI increment and merge it if checks stay green.
 2. Continue dogfood target-repo PRs once required human review completes.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.

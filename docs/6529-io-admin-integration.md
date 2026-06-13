@@ -102,3 +102,19 @@ The private admin page should show warnings when:
 Warnings should link to the relevant runbook in this repo. They should not
 display raw provider responses, prompts, diffs, webhook payloads, credentials,
 or unredacted exception stacks.
+
+## Operator Snapshot
+
+Operators can exercise the same client paths from a private environment:
+
+```bash
+npm run admin:snapshot -- --base-url https://reviewbot.example.com
+npm run admin:snapshot -- --json --require-ok
+```
+
+The snapshot command reduces endpoint responses into counts and posture flags.
+It does not print raw usage events, private repo names, budget scope values,
+provider responses, prompts, diffs, webhook payloads, or credentials. Use it
+for private dashboard bring-up, release evidence, and quick incident checks.
+`--require-ok` exits non-zero when any endpoint is unavailable or any warning
+posture is present.
