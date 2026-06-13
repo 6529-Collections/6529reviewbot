@@ -337,7 +337,7 @@ Completed in `6529reviewbot`:
   redacted API failures;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for reviewed live-traffic
-  go/no-go decisions;
+  go/no-go decisions, including the dogfood promotion packet gate;
 - optional release-candidate cutover status summaries for one public-safe
   tag-readiness and traffic-readiness artifact;
 - optional release-candidate dogfood status summaries for public-safe

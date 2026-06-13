@@ -296,6 +296,8 @@ or GitHub App private keys.
   deferred.
 - Repository config loads from the base ref.
 - Public repo untrusted actors are denied before budget or queue work.
+- `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+  passes before first live dogfood traffic.
 - `REVIEW_USAGE_ENABLED=true` is configured before budget caps are enforced
   against ledger spend.
 - Enabled `reviewbot.ai_review_budget_policies` rows deny over-budget jobs

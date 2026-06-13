@@ -12,7 +12,7 @@
     "releaseGateSummary": "0/19 complete, example file only",
     "releaseGateReadyCheck": "not run for example evidence",
     "productionCutoverStatusFile": "private production cutover status JSON",
-    "productionCutoverSummary": "2/29 complete, example file only",
+    "productionCutoverSummary": "2/30 complete, example file only",
     "productionCutoverReadyCheck": "not run for example evidence"
   },
   "sections": {

@@ -2171,3 +2171,22 @@
   - `npm run check:public-artifacts` passed with 105 files checked;
   - `npm run release:check` passed and ran the dogfood promotion packet;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #151 as `35da128` after CI and Dependency Review
+  passed; post-merge CI and OpenSSF Scorecard completed successfully.
+- Started `codex/cutover-dogfood-promotion-gate` increment:
+  - add `dogfood-promotion-packet` to the canonical production cutover
+    checklist;
+  - add matching example status overlay coverage;
+  - update production evidence counts, smoke expectations, deployment docs,
+    production cutover docs, release readiness, roadmap, changelog, and manager
+    memory.
+- Local validation for `codex/cutover-dogfood-promotion-gate`:
+  - `node bin/production-cutover.cjs --json --quiet` passed;
+  - `node bin/production-cutover.cjs --status-file config/production-cutover-status.example.json --summary --json --quiet` passed;
+  - `npm run check:checklist-runbooks` passed with 86 links in 3 files;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed with 105 files checked;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

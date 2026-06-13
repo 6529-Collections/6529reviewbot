@@ -82,7 +82,7 @@ Ready for community review:
 - server-side 6529.io usage API client helper for signed admin endpoint calls;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for go/no-go tracking before live
-  dogfood traffic;
+  dogfood traffic, including the dogfood promotion packet gate;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, SNS, and SES email delivery;
 - scheduled alert payloads redact common secret-shaped strings and unsafe

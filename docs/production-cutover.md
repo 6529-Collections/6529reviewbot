@@ -65,7 +65,8 @@ The checklist tracks these phases:
   webhook acceptance, conservative worker enablement, and run-control posture;
 - 6529.io and alerts: public dashboard, private admin HMAC bridge, admin
   snapshot, and operator alert delivery;
-- dogfood: target repo config, command-only review, and limited initial review;
+- dogfood: target repo config, promotion packet, command-only review, and
+  limited initial review;
 - rollback and decision: spend-stop controls, manual security review, and
   explicit release decision.
 
