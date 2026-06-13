@@ -186,6 +186,10 @@ Before moving beyond command-only dogfood:
 - set alert thresholds below the hard budget caps so operators have time to
   react.
 
+Run `npm run check:alerting-runbook` after editing alerting guidance so the
+scheduled runner, private notification routing, dogfood verification, and
+payload privacy stay aligned with this capacity gate.
+
 ## Evidence To Capture
 
 Public-safe evidence:

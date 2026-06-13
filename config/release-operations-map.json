@@ -234,6 +234,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "alerting-runbook-contract",
+          "script": "check:alerting-runbook",
+          "purpose": "Verify the scheduled alert runner keeps no-provider behavior, private delivery routing, dogfood evidence, payload privacy, and central-workflow posture synchronized.",
+          "doc": "docs/alerting.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

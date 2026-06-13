@@ -90,6 +90,9 @@ parsing, claim SQL, docs, and env examples aligned.
 env parsing, docs, and env examples aligned.
 `npm run check:alert-notifier-modes` keeps scheduled alert delivery modes, env
 parsing, docs, and env examples aligned.
+`npm run check:alerting-runbook` keeps the scheduled alert runner's
+no-provider behavior, private delivery routing, dogfood evidence, payload
+privacy, and central-workflow posture aligned.
 `npm run check:github-app-manifest` keeps the target GitHub App
 permissions/events, no-Actions-write boundary, private manifest conversion,
 redacted summaries, and docs aligned.

@@ -169,6 +169,9 @@ Ready for community review:
   synchronized across alert defaults, env parsing, docs, and env examples;
 - alert notifier mode checker that keeps scheduled alert delivery modes
   synchronized across notifier constants, env parsing, docs, and env examples;
+- `npm run check:alerting-runbook` keeps [Alerting](alerting.md)
+  synchronized with runner behavior, private delivery routing, dogfood
+  evidence, payload privacy, and central scheduled workflow posture;
 - installation and onboarding guide for conservative central App dogfood;
 - `npm run check:install-guide` keeps [Installation And Onboarding](install.md)
   synchronized with the conservative dogfood path, GitHub App validation
@@ -510,6 +513,9 @@ examples stay aligned.
 `npm run check:alert-notifier-modes` is included in `npm run release:check`
 and verifies scheduled alert delivery modes, env parsing, docs, and env
 examples stay aligned.
+`npm run check:alerting-runbook` is included in `npm run release:check` and
+verifies the scheduled alert runner, private notification routing, dogfood
+evidence, payload privacy, and central workflow posture stay aligned.
 `npm run check:operator-workspace` is included in `npm run release:check` and
 verifies operator workspace creation, check-mode readiness failures, private
 path redaction, Markdown sanitization, source invariants, and docs stay

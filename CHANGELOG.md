@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added an alerting runbook contract release check for scheduled alert runner
+  posture, private notification routing, dogfood evidence, and alert payload
+  privacy.
 - Added a worker capacity contract release check for starting caps, scale-up
   rules, backpressure controls, stuck-job triage, provider limits, alert
   evidence, and release blockers.

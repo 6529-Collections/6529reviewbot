@@ -13,6 +13,11 @@ The alerting surface covers:
 - stale active run-control claims that can indicate worker crashes, queue
   pressure, or claim-status update failures.
 
+Run `npm run check:alerting-runbook` after edits. The alerting runbook contract
+keeps runner behavior, configuration, delivery modes, scheduled workflow
+posture, dogfood verification, payload privacy, and public docs synchronized
+with release checks.
+
 ## Runner
 
 Run locally or from a central workflow:

@@ -3426,3 +3426,24 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including worker capacity validation and
     86 mapped release-operation tools.
+- Merged `6529reviewbot` PR #210 as `73ebbc8`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/alerting-runbook-contract` increment:
+  - add `scripts/check-alerting-runbook-contract.cjs` and
+    `npm run check:alerting-runbook`;
+  - validate alerting section order, no-provider runner behavior,
+    configuration, notification modes, scheduled workflow posture, dogfood
+    verification, alert payload privacy, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/alerting-runbook-contract` so far:
+  - `npm run check:alerting-runbook` passed with 7 runbook cases and 8 docs
+    checked;
+  - `npm run check:release-operations` passed with 87 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check` passed with 144 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including alerting runbook validation and
+    87 mapped release-operation tools.

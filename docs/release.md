@@ -205,6 +205,9 @@ After stabilization:
 - `npm run check:alert-notifier-modes` confirms scheduled alert delivery modes
   stay synchronized across notifier constants, env parsing, docs, and env
   examples
+- `npm run check:alerting-runbook` confirms the scheduled alert runner keeps
+  no-provider behavior, private delivery routing, dogfood evidence, payload
+  privacy, and central-workflow posture synchronized
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
