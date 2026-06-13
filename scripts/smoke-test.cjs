@@ -60,6 +60,7 @@ const githubAppRoutesContractCheck = require("./check-github-app-routes-contract
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
 const configurationReferenceContractCheck = require("./check-configuration-reference-contract.cjs");
+const awsIamTemplatesCheck = require("./check-aws-iam-templates.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
@@ -5229,6 +5230,28 @@ appServer.handleGitHubWebhook({
         },
       }),
     /configuration reference contract check found/
+  );
+  const awsIamTemplatesResult = awsIamTemplatesCheck.checkAwsIamTemplates();
+  assert.equal(awsIamTemplatesResult.templates, 3);
+  await assert.throws(
+    () =>
+      awsIamTemplatesCheck.checkAwsIamTemplates({
+        quiet: true,
+        jsonTexts: {
+          "infra/aws/usage-ledger-data-api-policy.example.json": JSON.stringify({
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Sid: "TooBroad",
+                Effect: "Allow",
+                Action: ["rds-data:*"],
+                Resource: "*",
+              },
+            ],
+          }),
+        },
+      }),
+    /aws iam template check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

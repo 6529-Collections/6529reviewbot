@@ -388,11 +388,13 @@ merged PRs.
   `813f20c`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Budget policies runbook contract PR: merged as PR #213, merge commit
   `9eb65c7`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/configuration-reference-contract`.
-- Current local changes: adding a configuration reference contract check that
-  keeps central App env, provider defaults, budget controls, worker dispatch,
-  usage/admin APIs, admin auth, alerting, review limits, env templates, source
-  parser anchors, release checks, smoke tests, and docs synchronized.
+- Configuration reference contract PR: merged as PR #214, merge commit
+  `3d39f79`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/aws-iam-template-contract`.
+- Current local changes: adding an AWS IAM/OIDC template contract check that
+  keeps trust policies, identity-policy actions, placeholder-only resources,
+  bot-repository trust boundaries, production cutover links, release checks,
+  smoke tests, and docs synchronized.
 
 ## Key Decisions
 
@@ -905,6 +907,10 @@ merged PRs.
   App env, provider defaults, budget controls, worker dispatch, usage/admin
   APIs, admin auth, alerting, review limits, env templates, and parser anchors
   machine-checked so deployment docs cannot drift from live settings.
+- AWS IAM/OIDC templates are least-privilege release artifacts. Keep them
+  placeholder-only, scoped to bot-owned repositories or protected
+  environments, limited to exact Data API, secret-read, SNS, and SES actions,
+  and linked from production cutover evidence.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -928,7 +934,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the configuration reference contract check.
+2. Publish and merge the AWS IAM/OIDC template contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

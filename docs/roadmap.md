@@ -589,6 +589,8 @@ Completed in `6529reviewbot`:
 - configuration reference contract for runtime configuration, env templates,
   provider defaults, budget controls, worker dispatch, usage/admin APIs,
   admin auth, alerting, review limits, and source parser anchors.
+- AWS IAM/OIDC template checks for least-privilege Data API, SNS, SES, and
+  bot-repository trust examples.
 - operations runbook contract for routine checks and triage paths covering
   replay, spend, ledgers, workers, dashboards, and bot comments.
 - sanitized support bundle and support playbook.

@@ -134,6 +134,9 @@ After stabilization:
   keeps central App env, provider defaults, budget controls, worker dispatch,
   usage/admin APIs, admin auth, alerting, review limits, env templates, and
   source parser anchors synchronized
+- `npm run check:aws-iam-templates` confirms AWS IAM/OIDC examples stay
+  least-privilege, placeholder-only, scoped to the bot repository or protected
+  environment, and linked from production cutover evidence
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized
