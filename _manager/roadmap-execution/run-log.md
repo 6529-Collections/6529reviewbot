@@ -2401,3 +2401,21 @@
   - `npm test` passed;
   - `npm run release:check` passed, including issue-template governance
     validation and 20 v0 release gates.
+- Merged `6529reviewbot` PR #164 as `d296410`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/container-image-contract` increment:
+  - add `scripts/check-container-image.cjs` and `npm run check:container-image`;
+  - wire the check into `npm run release:check` and the release operations map;
+  - document that the Dockerfile and `.dockerignore` runtime boundary is
+    statically enforced before container deployment evidence.
+- Local validation for `codex/container-image-contract`:
+  - `npm run check:container-image` passed with 6 runtime copy rules and 15
+    ignore entries checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 42 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check` passed with 100 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including container-image contract
+    validation and 20 v0 release gates.

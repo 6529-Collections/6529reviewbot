@@ -409,6 +409,8 @@ Completed in `6529reviewbot`:
 - production server entrypoint wiring for the configured worker adapter.
 - repository-owned container packaging for the central App server with
   runtime-only secret injection guidance.
+- container-image contract checks for the Dockerfile and `.dockerignore`
+  runtime boundary.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.

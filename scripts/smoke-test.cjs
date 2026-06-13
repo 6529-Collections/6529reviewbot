@@ -68,6 +68,7 @@ const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
+const containerImageCheck = require("./check-container-image.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
@@ -1504,6 +1505,19 @@ assert.equal(
 assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "checkout D:\\repos\\6529reviewbot\n").length,
   0
+);
+assert.equal(containerImageCheck.checkContainerImage().runtimeCopies, 6);
+assert.match(
+  containerImageCheck
+    .checkDockerfile(
+      "FROM node:22-bookworm-slim AS runtime\nCOPY . .\nCMD [\"node\", \"bin/server.cjs\"]\n"
+    )
+    .join("\n"),
+  /COPY \./
+);
+assert.match(
+  containerImageCheck.checkDockerignore(".git\n.env\n!docs\n").join("\n"),
+  /re-include/
 );
 const gates = releaseGates.loadReleaseGates("config/v0-release-gates.json");
 assert.equal(gates.release, "v0.1.0");

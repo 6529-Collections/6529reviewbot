@@ -89,6 +89,8 @@ stabilized.
   GitHub Actions permission blocks.
 - Added a Dependabot release check for weekly npm and GitHub Actions dependency
   update coverage.
+- Added a container-image release check for the central App server Dockerfile
+  and `.dockerignore` runtime boundary.
 - Strengthened the public-governance check to verify issue templates keep
   secret/private-data warnings, support-bundle guidance, disabled blank issues,
   and private security-report routing.
