@@ -38,6 +38,8 @@ requirements, workflow dispatch choices, and provider docs aligned.
 schema constraints, public docs, and dogfood examples aligned.
 `npm run check:run-control-scopes` keeps run-control concurrency scopes, env
 parsing, claim SQL, docs, and env examples aligned.
+`npm run check:alert-dimensions` keeps scheduled spend-spike alert dimensions,
+env parsing, docs, and env examples aligned.
 
 The local quality gate command inventory is:
 
@@ -54,6 +56,7 @@ The local quality gate command inventory is:
 - `npm run check:providers`
 - `npm run check:budget-scopes`
 - `npm run check:run-control-scopes`
+- `npm run check:alert-dimensions`
 - `npm run check:public-artifacts`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`

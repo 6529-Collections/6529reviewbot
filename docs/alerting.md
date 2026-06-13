@@ -73,6 +73,11 @@ REVIEWBOT_ALERTS_SPIKE_DIMENSIONS=global,repo,requestor,provider,model,review_ki
 REVIEWBOT_ALERTS_SPIKE_ALERT_ON_NEW_SPEND=true
 ```
 
+Spike dimensions intentionally exclude `org` and `pr`: org is already covered
+by budget-utilization alerts through central budget policies, and PR-level
+spike detection is high-cardinality incident evidence rather than a stable
+default alert dimension.
+
 Job-health thresholds:
 
 ```text

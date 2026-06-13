@@ -101,6 +101,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "alert-dimension-contract",
+          "script": "check:alert-dimensions",
+          "purpose": "Verify scheduled spend-spike alert dimensions stay synchronized across alert defaults, env parsing, docs, and env examples.",
+          "doc": "docs/alerting.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

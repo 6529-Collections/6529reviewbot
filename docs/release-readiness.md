@@ -134,6 +134,8 @@ Ready for community review:
   constraints, public docs, and dogfood examples synchronized;
 - run-control scope checker that keeps concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples;
+- alert-dimension checker that keeps scheduled spend-spike dimensions
+  synchronized across alert defaults, env parsing, docs, and env examples;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -370,6 +372,9 @@ constraints, public docs, and dogfood examples stay aligned.
 `npm run check:run-control-scopes` is included in `npm run release:check` and
 verifies run-control concurrency scopes, env parsing, claim SQL, docs, and env
 examples stay aligned with the budget scope vocabulary.
+`npm run check:alert-dimensions` is included in `npm run release:check` and
+verifies scheduled spend-spike alert dimensions, env parsing, docs, and env
+examples stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

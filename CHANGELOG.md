@@ -109,6 +109,8 @@ stabilized.
   dogfood examples.
 - Added a run-control scope release check that validates concurrency scopes
   against budget scopes, env parsing, claim SQL, docs, and env examples.
+- Added an alert-dimension release check that validates scheduled spend-spike
+  dimensions across alert defaults, env parsing, docs, and env examples.
 - Updated the v0 release gate and release notes contract to require explicit
   container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep
