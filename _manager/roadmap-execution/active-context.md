@@ -218,11 +218,13 @@ merged PRs.
   post-merge CI and Dependency Review completed successfully.
 - Dogfood readiness check PR: merged as PR #129, merge commit `81b1e08`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/6529-io-env-template`
-- Current local changes: adding a public-safe 6529.io dashboard environment
-  template, a checker that keeps secret placeholders blank, and release-check
-  validation that every configured dashboard path remains in the OpenAPI
-  usage/admin API contract.
+- 6529.io env template check PR: merged as PR #130, merge commit `5015b66`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/dogfood-status-checklist`.
+- Current local changes: adding dogfood execution checklist/status tooling so
+  operators can track command-only, limited initial-review, visibility, alert,
+  and rollback evidence in a private status overlay; also hardening docs and
+  public-artifact checks so untracked public files are scanned before staging.
 
 ## Key Decisions
 
@@ -479,6 +481,11 @@ merged PRs.
   machine-checked. It may name env vars and placeholder API paths, but live
   origins, wallet allowlists, auth-check URLs, HMAC secrets, and production
   routing details remain in the private 6529.io deployment configuration.
+- Dogfood readiness and dogfood status answer different questions:
+  readiness checks input files before traffic; status tracks private evidence
+  after command-only and limited initial-review traffic starts.
+- Local public-surface checks should include non-ignored untracked files so new
+  docs/config examples are checked before they are staged.
 
 ## Constraints
 
@@ -492,7 +499,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the 6529.io env-template contract check.
+2. Validate, publish, and merge the dogfood status checklist/tooling.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

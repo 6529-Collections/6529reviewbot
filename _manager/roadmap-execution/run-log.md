@@ -1734,3 +1734,25 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #130 as `5015b66` after CI and Dependency Review
+  passed.
+- Started `codex/dogfood-status-checklist` increment:
+  - add a canonical dogfood execution checklist and public example status
+    file;
+  - add `npm run dogfood:status` for Markdown/JSON rendering, private status
+    overlays, status skeleton initialization, and `--require-ready` checks;
+  - wire the example into smoke tests and release checks;
+  - harden docs link and public artifact checks to include non-ignored
+    untracked files before staging;
+  - update README, dogfood, install, release, readiness, v0 plan, roadmap,
+    changelog, and manager memory.
+- Local validation for `codex/dogfood-status-checklist`:
+  - `npm run dogfood:status -- -- --json --quiet` passed;
+  - `npm run dogfood:status -- -- --status-file config/dogfood-status.example.json --summary --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed and checked the new untracked docs file;
+  - `npm run check:public-artifacts` passed and checked the new untracked
+    public config/docs files;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

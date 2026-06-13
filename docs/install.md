@@ -297,6 +297,13 @@ Validate the config before opening the target repo PR:
 npm run validate:repo-config -- <target-repo>/.github/6529bot.yml
 ```
 
+Track the live dogfood run in a private operator status file:
+
+```bash
+npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
+npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
+```
+
 Validate the full dogfood input set before the first command trigger:
 
 ```bash

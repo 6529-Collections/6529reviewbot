@@ -353,6 +353,8 @@ Completed in `6529reviewbot`:
 - dogfood readiness command for validating target config, central budget
   policy, model catalog, and optional no-network preflight before first
   traffic.
+- dogfood execution status checklist and CLI for private command-only,
+  limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.
 - production server entrypoint wiring for the configured worker adapter.
 - repository-owned container packaging for the central App server with
@@ -428,5 +430,5 @@ In progress outside this repository:
 Next implementation focus:
 
 - dogfood on a target repo with conservative limits;
-- production GitHub App deployment, reviewed container/runtime evidence, and
-  6529.io production environment wiring.
+- production GitHub App deployment, reviewed container/runtime evidence,
+  production alert routing, and 6529.io production environment wiring.

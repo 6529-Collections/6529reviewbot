@@ -128,7 +128,8 @@ Do not create the `v0` tag until all of these are true:
    built-in ledger-backed claimer or explicitly deferred in release notes with
    the worker adapter kept conservative.
 13. A limited initial-review dogfood run has completed with conservative budget
-   caps, visible comments, and ledgered usage.
+   caps, visible comments, and ledgered usage, tracked with
+   `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file>`.
 14. Scheduled operator alerts route to an operator-owned channel.
 15. `npm run release:check` passes from a clean `main`.
 16. `npm run preflight -- -- --strict` passes in the release candidate

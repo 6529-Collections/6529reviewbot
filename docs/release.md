@@ -64,6 +64,10 @@ After stabilization:
 - `npm run dogfood:readiness -- -- --strict-preflight --require-ready` passes
   before first live dogfood traffic, using the operator-reviewed target repo
   config and budget policy when they differ from the public examples
+- `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary`
+  reviewed after command-only and limited initial-review dogfood runs
+- `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --require-ready`
+  passes before expanding dogfood, unless release notes name every deferral
 - `npm run admin:snapshot -- -- --base-url <production-bot-origin> --require-ok`
   passes from a private operator environment when validating the 6529.io admin
   surface; keep the detailed snapshot private unless release notes only copy

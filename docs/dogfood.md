@@ -67,6 +67,17 @@ npm run dogfood:readiness -- -- --strict-preflight --require-ready
 See [Dogfood Readiness](dogfood-readiness.md) for custom target-repo config and
 private budget policy inputs.
 
+When live dogfood starts, track the actual run with the private status overlay:
+
+```bash
+npm run dogfood:status -- -- --init-status <operator-dogfood-status-file>
+npm run dogfood:status -- -- --status-file <operator-dogfood-status-file> --summary
+```
+
+Keep target repository details, raw payloads, prompts, diffs, ledger rows,
+alert destinations, and live infrastructure details in the private operator
+workspace. See [Dogfood Status](dogfood-status.md).
+
 For a target repository checkout, point the validator at that repo's file:
 
 ```bash

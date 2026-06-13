@@ -23,6 +23,8 @@ const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
+const dogfoodStatus = require("../src/dogfood-status.cjs");
+const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -579,6 +581,74 @@ assert.deepEqual(
     repositoryConfigFiles: ["one.yml", "two.yml"],
     requireReady: true,
     strictPreflight: true,
+  }
+);
+const dogfoodChecklist = dogfoodStatus.loadDogfoodChecklist("config/dogfood-checklist.json");
+assert.equal(dogfoodChecklist.release, "v0.1.0");
+assert.equal(dogfoodChecklist.phases.length, 5);
+assert.equal(dogfoodChecklist.phases.flatMap((phase) => phase.items).length, 23);
+const dogfoodExampleStatus = dogfoodStatus.loadDogfoodStatus("config/dogfood-status.example.json");
+const dogfoodWithStatus = dogfoodStatus.mergeDogfoodStatus(dogfoodChecklist, dogfoodExampleStatus, {
+  requireComplete: true,
+});
+const dogfoodSummary = dogfoodStatus.summarizeDogfood(dogfoodWithStatus);
+assert.equal(dogfoodSummary.ready, false);
+assert.equal(dogfoodSummary.complete, 1);
+assert.equal(dogfoodSummary.deferred, 4);
+assert.equal(dogfoodSummary.pending, 18);
+assert.equal(dogfoodStatus.missingDogfoodStatusIds(dogfoodChecklist, dogfoodExampleStatus).length, 0);
+assert.match(dogfoodStatus.renderDogfoodMarkdown(dogfoodWithStatus), /Dogfood Execution/);
+assert.match(dogfoodStatus.renderDogfoodSummaryMarkdown(dogfoodWithStatus), /Ready for next dogfood step: no/);
+const readyDogfoodStatus = dogfoodStatus.validateDogfoodStatus({
+  version: 1,
+  release: "v0.1.0",
+  items: Object.fromEntries(
+    dogfoodChecklist.phases.flatMap((phase) =>
+      phase.items.map((item) => [
+        item.id,
+        {
+          status: "complete",
+          evidence: `public-safe dogfood evidence for ${item.id}`,
+        },
+      ])
+    )
+  ),
+});
+assert.equal(
+  dogfoodStatus.assertDogfoodReady(dogfoodStatus.mergeDogfoodStatus(dogfoodChecklist, readyDogfoodStatus)).ready,
+  true
+);
+assert.throws(() => dogfoodStatus.assertDogfoodReady(dogfoodWithStatus), /dogfood execution is not ready/);
+const dogfoodSkeletonPath = path.join(os.tmpdir(), `6529-dogfood-${Date.now()}.json`);
+dogfoodStatus.writeDogfoodStatusFile(
+  dogfoodSkeletonPath,
+  dogfoodStatus.createDogfoodStatusSkeleton(dogfoodChecklist)
+);
+assert.equal(dogfoodStatus.loadDogfoodStatus(dogfoodSkeletonPath).items["reviewed-bot-commit"].status, "pending");
+assert.deepEqual(
+  dogfoodStatusCli.parseArgs([
+    "--",
+    "--file",
+    "dogfood.json",
+    "--status-file",
+    "status.json",
+    "--json",
+    "--quiet",
+    "--summary",
+    "--require-ready",
+    "--init-status",
+    "new-status.json",
+    "--force",
+  ]),
+  {
+    file: "dogfood.json",
+    force: true,
+    initStatusFile: "new-status.json",
+    json: true,
+    quiet: true,
+    requireReady: true,
+    statusFile: "status.json",
+    summary: true,
   }
 );
 

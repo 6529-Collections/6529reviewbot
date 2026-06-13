@@ -64,6 +64,7 @@ release-candidate behavior.
 
 - `dogfood:readiness` answers whether the dogfood input files are internally
   consistent before first traffic.
+- `dogfood:status` tracks the private evidence overlay after traffic starts.
 - `release:candidate` summarizes broader tag/no-tag readiness.
 - `production:cutover` tracks the live go/no-go checklist and private status
   overlay.
