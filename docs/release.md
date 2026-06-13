@@ -30,6 +30,8 @@ After stabilization:
   reviewed before final release-candidate bundling
 - `npm run release:candidate -- -- --operator-workspace <private-workspace-dir>`
   reviewed as the public-safe workspace bundle
+- `npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet`
+  used when capturing public release-candidate output from private paths
 - [Release candidate bundle](release-candidate.md) rendered from the private
   release-gate status and operator evidence files
 - [Production cutover checklist](production-cutover.md) reviewed before live

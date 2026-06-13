@@ -42,6 +42,7 @@ Render from a private operator workspace created by
 
 ```bash
 npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
+npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir>
 ```
 
 Include dogfood status in the same public-safe bundle:
@@ -81,7 +82,15 @@ Write the bundle to a file:
 
 ```bash
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --out <public-bundle-file.md>
+npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
 ```
+
+Use `npm --silent run` or `--out <public-bundle-file.md> --quiet` when a
+command includes private file paths and the rendered output will be copied into
+public PRs, issues, release notes, or durable manager memory. Normal `npm run`
+prints the invoked command before the script output, which can include private
+operator paths even when the release-candidate bundle itself redacts those
+paths.
 
 ## Ready Criteria
 

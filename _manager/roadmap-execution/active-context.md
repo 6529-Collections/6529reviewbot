@@ -242,10 +242,13 @@ merged PRs.
   `f0aaea9`; CI and Dependency Review completed successfully before merge.
 - Checklist runbook-link PR: merged as PR #141, merge commit `5f613fb`; CI
   and Dependency Review completed successfully before merge.
-- Current branch: `codex/release-gate-evidence-links`.
-- Current local changes: strengthening `check:release-gates` so v0 release
-  gate evidence fields must point at existing public repo paths or existing
-  package scripts.
+- Release-gate evidence-link PR: merged as PR #142, merge commit `4fa25c6`;
+  CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-candidate-workspace-redaction`.
+- Current local changes: redacting private operator workspace paths from
+  `release:candidate --operator-workspace` JSON and Markdown bundle inputs,
+  and documenting `npm --silent run` / `--out --quiet` for public bundle
+  capture from private paths.
 
 ## Key Decisions
 
@@ -540,6 +543,9 @@ merged PRs.
   allowed to point at missing runbooks.
 - v0 release gate evidence references are part of the public release contract
   and should be validated alongside gate count parity.
+- Public-safe release-candidate bundles must redact private operator workspace
+  paths in both JSON and Markdown. Docs should account for npm's own command
+  echo when operators copy terminal output.
 
 ## Constraints
 
@@ -553,7 +559,8 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge v0 release-gate evidence-reference validation.
+2. Validate, publish, and merge release-candidate operator-workspace path
+   redaction.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

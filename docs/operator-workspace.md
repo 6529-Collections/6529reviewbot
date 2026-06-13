@@ -43,6 +43,7 @@ Build a public-safe candidate bundle from the private files:
 
 ```bash
 npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
+npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
 ```
 
 Equivalent explicit file flags are still available for non-standard private
