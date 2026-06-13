@@ -41,6 +41,8 @@ const runReviewJobCli = require("../bin/run-review-job.cjs");
 const serverCli = require("../bin/server.cjs");
 const releaseCandidate = require("../src/release-candidate.cjs");
 const releaseCandidateCli = require("../bin/release-candidate.cjs");
+const releaseOperationsMap = require("../src/release-operations-map.cjs");
+const releaseOperationsMapCli = require("../bin/release-operations-map.cjs");
 const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
 const securityReviewStatus = require("../src/security-review-status.cjs");
@@ -59,6 +61,7 @@ const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
+const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -1943,6 +1946,62 @@ assert.equal(
   }).release,
   "v0.1.0"
 );
+const operationsMap = releaseOperationsMap.loadReleaseOperationsMap();
+const operationsSummary = releaseOperationsMap.summarizeReleaseOperationsMap(operationsMap);
+assert.equal(operationsSummary.phaseCount >= 6, true);
+assert.equal(operationsSummary.toolCount >= 20, true);
+const operationsMarkdown = releaseOperationsMap.renderReleaseOperationsMapMarkdown(operationsMap, {
+  phase: "release-candidate",
+});
+assert.match(operationsMarkdown, /Release candidate and tagging/);
+assert.match(operationsMarkdown, /npm run release:candidate/);
+assert.throws(
+  () =>
+    releaseOperationsMap.validateReleaseOperationsMap({
+      version: 1,
+      title: "bad map",
+      description: "bad args",
+      phases: [{
+        id: "bad-phase",
+        title: "Bad Phase",
+        when: "Never.",
+        boundary: "Public.",
+        tools: [{
+          id: "bad-tool",
+          script: "release:check",
+          args: "--json",
+          purpose: "Bad argument style.",
+          doc: "README.md",
+          publicOutput: "No.",
+        }],
+      }],
+    }),
+  /npm flag-forwarding/
+);
+assert.deepEqual(
+  releaseOperationsMapCli.parseArgs([
+    "--",
+    "--file",
+    "ops.json",
+    "--phase",
+    "dogfood",
+    "--summary",
+    "--json",
+    "--quiet",
+  ]),
+  {
+    file: "ops.json",
+    json: true,
+    phase: "dogfood",
+    quiet: true,
+    summary: true,
+  }
+);
+assert.equal(
+  releaseOperationsMapCli.main(["--summary", "--json", "--quiet"]).summary.toolCount,
+  operationsSummary.toolCount
+);
+assert.equal(releaseOperationsMapCheck.checkReleaseOperationsMap().toolCount, operationsSummary.toolCount);
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
   host: "https://reviewbot.example.com/",
 });

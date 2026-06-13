@@ -1,0 +1,311 @@
+{
+  "version": 1,
+  "title": "6529reviewbot release operations map",
+  "description": "Public-safe map of the recurring checks, private operator evidence overlays, and release bundle commands used while preparing dogfood, production cutover, and community releases.",
+  "phases": [
+    {
+      "id": "local-quality",
+      "title": "Local quality gates",
+      "when": "Run on every bot change before opening or updating a pull request.",
+      "boundary": "Public-safe. These commands should not require provider keys, AWS credentials, GitHub App secrets, private payloads, or live deployment identifiers.",
+      "tools": [
+        {
+          "id": "syntax-and-static-checks",
+          "script": "check",
+          "purpose": "Validate CommonJS syntax, package metadata, repository config examples, and newline hygiene.",
+          "doc": "README.md",
+          "publicOutput": "Safe to paste when no local paths from failures are included."
+        },
+        {
+          "id": "documentation-links",
+          "script": "check:docs",
+          "purpose": "Verify local Markdown links across tracked and non-ignored untracked docs.",
+          "doc": "docs/release-readiness.md",
+          "publicOutput": "Safe after reviewing any failure paths."
+        },
+        {
+          "id": "public-artifact-scan",
+          "script": "check:public-artifacts",
+          "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",
+          "doc": "docs/release-readiness.md",
+          "publicOutput": "Safe; findings redact the matched value."
+        },
+        {
+          "id": "env-template-checks",
+          "script": "check:env-templates",
+          "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",
+          "doc": "docs/configuration.md",
+          "publicOutput": "Safe."
+        },
+        {
+          "id": "workflow-action-pins",
+          "script": "check:workflow-actions",
+          "purpose": "Confirm committed workflow actions are pinned to reviewed commit SHAs.",
+          "doc": "docs/release.md",
+          "publicOutput": "Safe."
+        },
+        {
+          "id": "api-contract-validation",
+          "script": "validate:api-contract",
+          "purpose": "Validate the public/admin usage API OpenAPI contract consumed by 6529.io.",
+          "doc": "docs/usage-api.md",
+          "publicOutput": "Safe."
+        }
+      ]
+    },
+    {
+      "id": "operator-inputs",
+      "title": "Operator input preparation",
+      "when": "Run before live dogfood or production traffic, from an operator environment when private files or credentials are involved.",
+      "boundary": "Public repo carries templates and validators only. Live credentials, App ids, account ids, ARNs, private status files, and exact deployment targets stay outside the repo.",
+      "tools": [
+        {
+          "id": "preflight",
+          "script": "preflight",
+          "args": "-- -- --strict",
+          "purpose": "Check central runtime configuration shape without network calls.",
+          "doc": "docs/configuration.md",
+          "privateInputs": "Reads the current operator environment when run outside public examples.",
+          "publicOutput": "Share summaries only after reviewing warnings for private deployment details."
+        },
+        {
+          "id": "github-app-manifest",
+          "script": "github-app:manifest",
+          "args": "-- -- --host <production-bot-origin> --quiet",
+          "purpose": "Render and validate production-hosted GitHub App manifest settings without generating secrets.",
+          "doc": "docs/github-app-registration.md",
+          "privateInputs": "Production bot origin may be rollout-sensitive.",
+          "publicOutput": "Safe when hostnames are intended to be public."
+        },
+        {
+          "id": "github-app-conversion",
+          "script": "github-app:convert",
+          "args": "-- -- --code <manifest-code> --output <private-json-path>",
+          "purpose": "Exchange GitHub's one-hour manifest code and write generated credentials only to a private path.",
+          "doc": "docs/github-app-registration.md",
+          "privateInputs": "Manifest code, App id, client secret, webhook secret, and private key are private.",
+          "publicOutput": "Do not publish raw output paths or generated credential files."
+        },
+        {
+          "id": "ledger-schema",
+          "script": "ledger:schema",
+          "purpose": "Render Aurora ledger schema SQL; add --apply only from the operator environment.",
+          "doc": "docs/aws-usage-ledger.md",
+          "privateInputs": "Apply mode needs live AWS Data API settings.",
+          "publicOutput": "Schema text is public; apply evidence should be summarized."
+        },
+        {
+          "id": "budget-policies",
+          "script": "budget-policies",
+          "args": "-- -- --file <reviewed-budget-policy-file.json>",
+          "purpose": "Validate central budget policy rows before optional operator apply.",
+          "doc": "docs/budget-policies.md",
+          "privateInputs": "Real policy notes, requestor scopes, and rollout caps may be private.",
+          "publicOutput": "Share counts and high-level caps only when intended."
+        },
+        {
+          "id": "model-prices",
+          "script": "model-prices",
+          "args": "-- -- --file <reviewed-model-price-file.json>",
+          "purpose": "Validate provider/model price rows, source URLs, and source-checked freshness before optional apply.",
+          "doc": "docs/model-pricing.md",
+          "privateInputs": "Reviewed price files can include operator notes.",
+          "publicOutput": "Share provider/model coverage and freshness status, not private notes."
+        },
+        {
+          "id": "operator-evidence",
+          "script": "operator:evidence",
+          "args": "-- -- --file <private-evidence-file> --summary",
+          "purpose": "Validate structured deployment evidence and render a redacted public summary.",
+          "doc": "docs/operator-evidence-template.md",
+          "privateInputs": "Private evidence may contain deployment details and internal evidence links.",
+          "publicOutput": "Only the redacted summary is intended for public release notes."
+        }
+      ]
+    },
+    {
+      "id": "dogfood",
+      "title": "Dogfood execution",
+      "when": "Use for command-only and limited initial-review rollout on trusted repositories.",
+      "boundary": "Repository configs and public examples live here. Real dogfood status files, exact run keys, private payloads, and detailed operator evidence stay private.",
+      "tools": [
+        {
+          "id": "dogfood-readiness",
+          "script": "dogfood:readiness",
+          "args": "-- -- --strict-preflight --require-ready",
+          "purpose": "Check dogfood input files, model catalog, budget policy, repository config, and optional preflight before first traffic.",
+          "doc": "docs/dogfood-readiness.md",
+          "publicOutput": "Safe after reviewing preflight diagnostics."
+        },
+        {
+          "id": "dogfood-status-init",
+          "script": "dogfood:status",
+          "args": "-- -- --init-status <operator-dogfood-status-file>",
+          "purpose": "Create the private status skeleton for command-only and limited initial-review dogfood evidence.",
+          "doc": "docs/dogfood-status.md",
+          "privateInputs": "Writes an operator-owned private status file.",
+          "publicOutput": "Do not publish the raw private file."
+        },
+        {
+          "id": "dogfood-status-ready",
+          "script": "dogfood:status",
+          "args": "-- -- --status-file <operator-dogfood-status-file> --require-ready",
+          "purpose": "Fail expansion when current dogfood evidence is missing, pending, or blocked.",
+          "doc": "docs/dogfood-status.md",
+          "privateInputs": "Reads an operator-owned private status file.",
+          "publicOutput": "Share public-safe counts or release-candidate bundle output."
+        },
+        {
+          "id": "webhook-replay",
+          "script": "webhook:replay",
+          "args": "-- -- --payload <private-payload.json> --actor-permission write --assume-empty-budget",
+          "purpose": "Replay a saved GitHub webhook payload without dispatching workers.",
+          "doc": "docs/operations.md",
+          "privateInputs": "Payloads can include target repo metadata and user-controlled text.",
+          "publicOutput": "Share sanitized summaries only."
+        }
+      ]
+    },
+    {
+      "id": "security-review",
+      "title": "Manual security review",
+      "when": "Run before broad community use, and again whenever trust boundaries, credentials, cost controls, ledger writes, provider calls, or admin APIs change.",
+      "boundary": "The public checklist is committed. Reviewer notes, private payload examples, and exact deployment details remain in the private status overlay.",
+      "tools": [
+        {
+          "id": "security-review-init",
+          "script": "security:review",
+          "args": "-- -- --init-status <operator-security-status-file>",
+          "purpose": "Create a private status skeleton for manual security review evidence.",
+          "doc": "docs/security-review-status.md",
+          "privateInputs": "Writes an operator-owned private status file.",
+          "publicOutput": "Do not publish the raw private file."
+        },
+        {
+          "id": "security-review-ready",
+          "script": "security:review",
+          "args": "-- -- --status-file <operator-security-status-file> --require-ready",
+          "purpose": "Fail release prep when current manual security review evidence is missing, pending, or blocked.",
+          "doc": "docs/security-review-status.md",
+          "privateInputs": "Reads an operator-owned private status file.",
+          "publicOutput": "Share public-safe counts or release-candidate bundle output."
+        },
+        {
+          "id": "security-checklist",
+          "script": "review:security",
+          "purpose": "Render or run the crypto/security analysis prompt path for a target PR when local provider/GitHub settings are configured.",
+          "doc": "docs/security-review-checklist.md",
+          "privateInputs": "Live runs can include PR diffs, source context, provider responses, and token usage.",
+          "publicOutput": "Only bot comments and redacted summaries should be public."
+        }
+      ]
+    },
+    {
+      "id": "production-cutover",
+      "title": "Production cutover",
+      "when": "Use when enabling live dogfood or broader production traffic.",
+      "boundary": "The public checklist defines what must be proven. The private status overlay owns exact deployment targets, App ids, AWS identifiers, alert routing, and admin snapshots.",
+      "tools": [
+        {
+          "id": "cutover-init",
+          "script": "production:cutover",
+          "args": "-- -- --init-status <operator-cutover-status-file>",
+          "purpose": "Create the private status skeleton for production cutover evidence.",
+          "doc": "docs/production-cutover.md",
+          "privateInputs": "Writes an operator-owned private status file.",
+          "publicOutput": "Do not publish the raw private file."
+        },
+        {
+          "id": "cutover-ready",
+          "script": "production:cutover",
+          "args": "-- -- --status-file <operator-cutover-status-file> --require-ready",
+          "purpose": "Fail broad traffic expansion when current cutover evidence is missing, pending, or blocked.",
+          "doc": "docs/production-cutover.md",
+          "privateInputs": "Reads an operator-owned private status file.",
+          "publicOutput": "Share public-safe counts or release-candidate bundle output."
+        },
+        {
+          "id": "admin-snapshot",
+          "script": "admin:snapshot",
+          "args": "-- -- --base-url <production-bot-origin> --require-ok",
+          "purpose": "Check private admin API posture through the 6529.io auth bridge without exposing raw private rows.",
+          "doc": "docs/6529-io-admin-integration.md",
+          "privateInputs": "Requires private admin origin and auth bridge settings.",
+          "publicOutput": "Share endpoint counts and pass/fail posture only."
+        },
+        {
+          "id": "operator-alerts",
+          "script": "alerts:operator",
+          "purpose": "Run scheduled budget and worker-health alert evaluation from the configured operator environment.",
+          "doc": "docs/alerting.md",
+          "privateInputs": "Reads live ledger data and alert delivery settings when enabled.",
+          "publicOutput": "Share redacted alert posture, not raw delivery targets or payloads."
+        }
+      ]
+    },
+    {
+      "id": "release-candidate",
+      "title": "Release candidate and tagging",
+      "when": "Use for release PRs, tag/no-tag decisions, and public release notes.",
+      "boundary": "The release-candidate command produces a public-safe bundle. Source evidence files remain private unless an operator intentionally publishes redacted excerpts.",
+      "tools": [
+        {
+          "id": "v0-gates",
+          "script": "v0:gates",
+          "args": "-- -- --status-file <operator-status-file> --require-ready",
+          "purpose": "Validate the current v0 release-gate status overlay.",
+          "doc": "docs/v0-release-plan.md",
+          "privateInputs": "Reads an operator-owned private gate status file.",
+          "publicOutput": "Share public-safe counts or release-candidate bundle output."
+        },
+        {
+          "id": "release-candidate-bundle",
+          "script": "release:candidate",
+          "args": "-- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file> --security-review-status-file <operator-security-status-file> --cutover-status-file <operator-cutover-status-file> --strict-preflight --require-ready",
+          "purpose": "Build the public-safe release-readiness bundle from gates, evidence, dogfood, security review, cutover, git metadata, and preflight.",
+          "doc": "docs/release-candidate.md",
+          "privateInputs": "Reads operator-owned private status and evidence files.",
+          "publicOutput": "Designed for public PRs, issues, releases, and durable manager memory after operator review."
+        },
+        {
+          "id": "full-release-check",
+          "script": "release:check",
+          "purpose": "Run the repository release gate used by CI before merging release-sensitive changes.",
+          "doc": "docs/release.md",
+          "publicOutput": "Safe when failure diagnostics do not include private local details."
+        },
+        {
+          "id": "release-operations-map",
+          "script": "release:operations",
+          "purpose": "Render this operations map for a quick command and evidence-boundary index.",
+          "doc": "docs/release-operations-map.md",
+          "publicOutput": "Safe."
+        }
+      ]
+    },
+    {
+      "id": "support-and-incidents",
+      "title": "Support and incident response",
+      "when": "Use when an operator, maintainer, or community reporter needs triage evidence.",
+      "boundary": "Support artifacts are sanitized, but reports still need human review before public posting. Incident details can be sensitive even after redaction.",
+      "tools": [
+        {
+          "id": "support-bundle",
+          "script": "support:bundle",
+          "purpose": "Collect sanitized repository/runtime diagnostics for support triage.",
+          "doc": "docs/support.md",
+          "privateInputs": "Can read local git/runtime posture.",
+          "publicOutput": "Review before posting because paths and feature posture may still be sensitive."
+        },
+        {
+          "id": "incident-playbooks",
+          "script": "preflight",
+          "purpose": "Use preflight together with incident runbooks for containment and recovery posture checks.",
+          "doc": "docs/incident-response.md",
+          "privateInputs": "Reads the current operator environment when configured.",
+          "publicOutput": "Share only redacted summaries."
+        }
+      ]
+    }
+  ]
+}

@@ -17,6 +17,9 @@ After stabilization:
 ## Release Checklist
 
 - [Release readiness](release-readiness.md) reviewed
+- [Release operations map](release-operations-map.md) reviewed when deciding
+  which public check, private evidence overlay, or release-bundle command is
+  next
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook
@@ -85,6 +88,8 @@ After stabilization:
   blank secret placeholders, and conservative dogfood defaults
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list
+- `npm run check:release-operations` confirms the release operations map only
+  references existing package scripts and public documentation paths
 - `npm run check:docs` passes before publishing docs-heavy release notes
 - `npm run check:public-artifacts` passes before publishing release notes or
   public operator evidence, including the tracked root `.env.example`

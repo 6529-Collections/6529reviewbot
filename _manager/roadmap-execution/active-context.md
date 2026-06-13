@@ -228,11 +228,12 @@ merged PRs.
   `559c449`; CI and Dependency Review completed successfully before merge.
 - Security review status PR: merged as PR #134, merge commit `5884263`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/release-candidate-security-status`.
-- Current local changes: adding optional security-review status summaries to
-  the release-candidate bundle so tag/no-tag evidence can include manual
-  security-review posture alongside release gates, operator evidence, dogfood
-  status, cutover status, preflight, and git metadata.
+- Release-candidate security-review status PR: merged as PR #135, merge commit
+  `a74dbeb`; CI and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-operations-map`.
+- Current local changes: adding a machine-readable release operations map,
+  render command, and checker so public release docs have one maintained index
+  for recurring commands, private status overlays, and evidence boundaries.
 
 ## Key Decisions
 
@@ -506,6 +507,9 @@ merged PRs.
 - Release-candidate bundles should include security-review status when the
   release decision depends on a completed manual security review, but the
   private security status file remains operator-owned.
+- The release operations map should be the public-safe "what do I run next"
+  index for release operators. It may name commands, docs, and evidence
+  boundaries, but source status/evidence files remain private operator inputs.
 
 ## Constraints
 
@@ -519,8 +523,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge release-candidate security-review status
-   integration.
+2. Validate, publish, and merge release operations map integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
