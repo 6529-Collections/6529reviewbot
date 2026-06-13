@@ -7,6 +7,10 @@ Use [Release Notes Draft](release-notes-draft.md) or `npm run release:notes`
 to create the first public-safe draft from release-candidate evidence, then
 complete every `TODO(operator)` field from private operator evidence before
 publishing.
+Use [Release Notes Publication](release-notes-publication.md) or
+`npm run release:notes:check -- -- --file <release-notes.md>` on the completed
+Markdown before publishing. If no risks are accepted, the deferrals section can
+state `No accepted deferrals`.
 
 ```markdown
 # 6529reviewbot v0.x.x

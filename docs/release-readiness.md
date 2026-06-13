@@ -324,6 +324,12 @@ deferrals, known gaps, compatibility, and validation.
 keeps the public-safe release notes draft aligned with release-candidate
 summaries, model defaults, TODO markers, redaction, CLI flags, operations map
 entries, and docs.
+`npm run check:release-notes-publication` is included in
+`npm run release:check` and keeps the completed release notes publication
+guard aligned with required fields, deferral handling, public-safety
+redaction, CLI flags, operations map entries, and docs. Run
+`npm run release:notes:check -- -- --file <release-notes.md>` on completed
+release notes before publishing a tag or GitHub Release.
 Use [Release Operations Map](release-operations-map.md) or
 `npm run release:operations` when choosing the next public check, private
 status overlay, or release-candidate command.
@@ -464,6 +470,9 @@ the GitHub Release template aligned with v0 release evidence expectations.
 verifies the public-safe release notes draft keeps release-candidate summaries,
 model defaults, TODO markers, redaction, CLI flags, operations map entries, and
 docs aligned.
+`npm run check:release-notes-publication` is included in
+`npm run release:check` and verifies completed release notes fail publication
+when required fields, deferral decisions, or public-safety checks are missing.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

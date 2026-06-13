@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a release notes publication guard and contract check for completed
+  release notes before pre-v1 tags or GitHub Releases.
 - Strengthened the synthetic self-dogfood replay gate to prove deliberate
   multi-lane review fanout, distinct run keys, and max-fanout rejection before
   dogfood traffic.

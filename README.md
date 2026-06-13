@@ -128,6 +128,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   overlay for manual security review evidence.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
+- [Release Notes Publication](docs/release-notes-publication.md): completed
+  release notes guard before tags or GitHub Releases.
 - [Release Candidate Bundle](docs/release-candidate.md): public-safe
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and
@@ -208,6 +210,7 @@ npm run check:v0-gates
 npm run check:release-candidate
 npm run check:release-notes
 npm run check:release-notes-draft
+npm run check:release-notes-publication
 npm run check:self-dogfood-replay
 npm test
 npm run check:workflow-actions
@@ -217,6 +220,13 @@ Run the full release gate:
 
 ```bash
 npm run release:check
+```
+
+Check completed release notes before publishing a tag or GitHub Release:
+
+```bash
+npm run release:notes:check -- -- --file <release-notes.md>
+npm run check:release-notes-publication
 ```
 
 Run a public-safe release and dogfood rehearsal:

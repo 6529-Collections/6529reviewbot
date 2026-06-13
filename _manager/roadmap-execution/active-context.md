@@ -400,26 +400,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes draft command PR: merged as PR #219, merge commit `3603d55`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/self-dogfood-lane-guard`.
-- Current local changes: strengthening the synthetic self-dogfood replay gate
-  so it proves command-only PR-open skip, the trusted maintainer command
-  matrix, deliberate two-lane Anthropic/OpenAI fanout, distinct job ids and run
-  keys, central max-fanout rejection, and untrusted command denial without
-  dispatching workers or calling providers.
+- Self-dogfood lane/fanout guard PR: merged as PR #220, merge commit `c5b498c`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-publish-guard`.
+- Current local changes: adding a release notes publication guard so completed
+  pre-v1 release notes fail before publication when `TODO(operator)` markers,
+  missing evidence fields, incomplete deferrals, secret-shaped values, raw AWS
+  identifiers, or local absolute paths remain.
 - Current local validation:
-  - `npm run check:self-dogfood-replay` passed with 8 trusted command cases,
-    2 multi-lane jobs, the max-fanout guard, and untrusted command denial;
-  - `npm run check:docs` passed with 67 files checked;
-  - `npm run check:release-operations` passed with 97 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #219,
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check` passed with 159 CommonJS files;
+  - `npm run check:docs` passed with 68 files checked;
+  - `npm run check:doc-index` passed with 54 docs indexed;
+  - `npm run check:release-operations` passed with 99 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #220,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run check` passed with 156 CommonJS files;
-  - `npm run check:doc-index` passed with 53 docs indexed;
-  - `npm run check:public-artifacts` passed with 110 files checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including the strengthened self-dogfood
-    replay gate and 97 mapped release-operation tools.
+  - `npm run check:public-artifacts` passed with 111 files checked;
+  - `npm run release:check` passed, including release notes publication
+    contract validation and 99 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -958,6 +959,10 @@ merged PRs.
 - Self-dogfood replay should cover both conservative committed config behavior
   and deliberate temporary multi-lane fanout so same-review multi-model support
   stays tested without enabling multi-lane dogfood by default.
+- Release notes drafts and publication checks are intentionally separate:
+  drafts should preserve `TODO(operator)` markers for private facts, while the
+  publication guard should fail until those markers and public-safety risks are
+  gone.
 
 ## Constraints
 
@@ -971,7 +976,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the self-dogfood lane/fanout guard.
+2. Publish and merge the release notes publication guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

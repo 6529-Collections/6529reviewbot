@@ -8,7 +8,10 @@ The draft intentionally leaves operator-owned facts as `TODO(operator)`:
 production App deployment, dashboard status, alert delivery, provider pricing,
 dogfood repositories, manual security review, CI links, and accepted
 deferrals. Complete those fields from the private operator workspace before
-creating a GitHub Release.
+creating a GitHub Release. Before publishing, run
+[Release Notes Publication](release-notes-publication.md) or
+`npm run release:notes:check -- -- --file <release-notes.md>` to reject
+unfinished markers and obvious private-data leaks.
 
 ## Commands
 
