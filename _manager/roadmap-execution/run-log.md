@@ -2246,3 +2246,21 @@
   - `git diff --check` passed;
   - `npm run release:check` passed;
   - `npm run check` passed with 95 CommonJS files.
+- Merged `6529reviewbot` PR #155 as `a606361`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/go-live-require-strict-preflight` increment:
+  - make `dogfood:go-live --require-ready` reject missing strict preflight or
+    skipped preflight;
+  - make the programmatic ready assertion fail closed unless strict preflight
+    was included;
+  - update go-live docs, changelog, release-readiness, roadmap, smoke tests,
+    and manager memory.
+- Local validation for `codex/go-live-require-strict-preflight`:
+  - `npm test` passed;
+  - `node bin/dogfood-go-live.cjs --require-ready --quiet` failed as expected
+    without `--strict-preflight`;
+  - `npm run check:docs` passed with 63 files checked;
+  - `npm run check:public-artifacts` passed with 106 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 95 CommonJS files;
+  - `npm run release:check` passed.

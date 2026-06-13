@@ -780,7 +780,7 @@ assert.match(
 );
 assert.throws(
   () => dogfoodGoLive.assertDogfoodGoLiveReady(dogfoodGoLivePublicPacket),
-  /operator-workspace/
+  /strict preflight/
 );
 const dogfoodGoLiveWorkspacePacket = dogfoodGoLive.collectDogfoodGoLivePacket({
   env: promotionPreflightEnv,
@@ -846,6 +846,14 @@ assert.deepEqual(
     strictPreflight: true,
     targetRepository: "6529-Collections/example",
   }
+);
+assert.throws(
+  () => dogfoodGoLiveCli.parseArgs(["--require-ready"]),
+  /requires --strict-preflight/
+);
+assert.throws(
+  () => dogfoodGoLiveCli.parseArgs(["--strict-preflight", "--skip-preflight", "--require-ready"]),
+  /cannot be used with --skip-preflight/
 );
 assert.equal(dogfoodGoLiveCli.main(["--skip-self-dogfood-replay", "--quiet"]).ready, false);
 const dogfoodChecklist = dogfoodStatus.loadDogfoodChecklist("config/dogfood-checklist.json");
