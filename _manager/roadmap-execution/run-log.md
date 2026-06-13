@@ -2264,3 +2264,16 @@
   - `git diff --check` passed;
   - `npm run check` passed with 95 CommonJS files;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #156 as `34d07a8`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-workspace-go-live-guide` increment:
+  - add dogfood promotion and go-live commands to the generated private
+    operator workspace README;
+  - update public operator-workspace docs, v0 plan, roadmap, changelog, smoke
+    tests, and manager memory.
+- Local validation for `codex/operator-workspace-go-live-guide`:
+  - `npm test` passed;
+  - `npm run check:docs` passed with 63 files checked;
+  - `npm run check:public-artifacts` passed with 106 files checked;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

@@ -1838,6 +1838,10 @@ assert.match(
   /npm run release:candidate -- -- --operator-workspace \. --strict-preflight/
 );
 assert.match(
+  fs.readFileSync(path.join(operatorWorkspaceDir, "README.md"), "utf8"),
+  /npm --silent run dogfood:go-live -- -- --operator-workspace \. --strict-preflight --require-ready/
+);
+assert.match(
   operatorWorkspace.renderOperatorWorkspaceSummaryMarkdown(workspace),
   /Created private release-operator evidence skeletons/
 );

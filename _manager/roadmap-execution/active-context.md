@@ -272,9 +272,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release-notes go-live evidence PR: merged as PR #155, merge commit
   `a606361`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/go-live-require-strict-preflight`.
-- Current local changes: making `dogfood:go-live --require-ready` fail closed
-  unless strict preflight is included.
+- Strict go-live preflight PR: merged as PR #156, merge commit `34d07a8`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-workspace-go-live-guide`.
+- Current local changes: adding dogfood promotion and go-live commands to the
+  generated private operator workspace README and public operator-workspace
+  docs.
 
 ## Key Decisions
 
@@ -609,6 +612,9 @@ merged PRs.
   cutover status, and workspace overlays agree.
 - `dogfood:go-live --require-ready` should require strict preflight so the
   final traffic gate cannot silently accept runtime warnings.
+- The generated private operator workspace README should include the final
+  promotion and go-live packet commands so operators do not have to reconstruct
+  the sequence from separate docs.
 
 ## Constraints
 
@@ -622,7 +628,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge strict go-live preflight enforcement.
+2. Validate, publish, and merge operator workspace go-live guidance.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
