@@ -276,6 +276,10 @@ Check:
 - `GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50`;
 - worker workflow status, runner capacity, and provider keys.
 
+Run `npm run check:alerting-runbook` after editing alerting guidance so the
+scheduled runner, notification modes, dogfood evidence, and alert payload
+privacy contract stay synchronized.
+
 If job-health alerts fire, preserve private run keys and workflow URLs in the
 operator evidence record, then apply the backpressure controls in
 [Worker Capacity And Backpressure](worker-capacity.md).

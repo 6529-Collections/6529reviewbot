@@ -16,6 +16,7 @@ const adminSnapshotContractCheck = require("./check-admin-snapshot-contract.cjs"
 const admissionPolicyCheck = require("./check-admission-policy.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
+const alertingRunbookContractCheck = require("./check-alerting-runbook-contract.cjs");
 const alertNotifierModesCheck = require("./check-alert-notifier-modes.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
 const alertStatus = require("../src/alert-status.cjs");
@@ -5300,8 +5301,21 @@ appServer.handleGitHubWebhook({
         docTexts: {
           "docs/worker-capacity.md": "# Worker Capacity\n",
         },
-      }),
+    }),
     /worker capacity contract check found/
+  );
+  const alertingRunbookContractResult =
+    alertingRunbookContractCheck.checkAlertingRunbookContract();
+  assert.equal(alertingRunbookContractResult.runbookCases, 7);
+  assert.throws(
+    () =>
+      alertingRunbookContractCheck.checkAlertingRunbookContract({
+        quiet: true,
+        docTexts: {
+          "docs/alerting.md": "# Alerting\n",
+        },
+      }),
+    /alerting runbook contract check found/
   );
   const usageApiClientFailure = await usageApiClientFailurePromise;
   assert(usageApiClientFailure instanceof Error);

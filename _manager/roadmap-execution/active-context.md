@@ -380,10 +380,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Support runbooks contract PR: merged as PR #209, merge commit `c8bfea4`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/worker-capacity-contract`.
-- Current local changes: adding a worker capacity contract check that keeps
-  starting caps, scale-up rules, backpressure controls, stuck-job triage,
-  provider limits, alert evidence, release blockers, release checks, smoke
+- Worker capacity contract PR: merged as PR #210, merge commit `73ebbc8`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/alerting-runbook-contract`.
+- Current local changes: adding an alerting runbook contract check that keeps
+  scheduled alert runner posture, no-provider behavior, private notification
+  routing, dogfood evidence, alert payload privacy, release checks, smoke
   tests, and docs synchronized.
 
 ## Key Decisions
@@ -881,6 +883,10 @@ merged PRs.
   boundary. Keep starting caps, scale-up rules, narrow rollback controls,
   stuck-job triage, provider limits, alert evidence, and release blockers
   machine-checked before live dogfood traffic scales.
+- Scheduled operator alerts are the off-dashboard warning path. Keep their
+  no-provider boundary, central workflow posture, private notification routing,
+  dogfood evidence, and payload privacy machine-checked so warnings do not
+  drift into unsafe or target-repo-owned operations.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -904,7 +910,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the worker capacity contract check.
+2. Publish and merge the alerting runbook contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

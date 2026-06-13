@@ -254,6 +254,9 @@ Build the operator experience:
   kind;
 - alerting for failed review jobs, ledger write failures, budget exhaustion,
   provider errors, and unusual spend spikes;
+- alerting runbook contract checks that keep the scheduled operator alerts
+  no-provider boundary, private routing, dogfood evidence, payload privacy,
+  and central workflow posture aligned;
 - replay tooling for webhook events, starting with dry-run saved-payload
   replay;
 - webhook replay checks that keep saved-payload diagnostics dry-run by
@@ -416,6 +419,8 @@ Completed in `6529reviewbot`:
 - 6529.io admin auth bridge contract;
 - alerting and scheduled operator checks for spend and job health, with
   stdout, webhook, SNS, and SES email delivery.
+- alerting runbook contract for scheduled runner posture, notification routing,
+  dogfood evidence, and alert payload privacy.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - dogfood readiness command for validating target config, central budget
