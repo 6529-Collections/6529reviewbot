@@ -132,6 +132,10 @@ Run a no-network configuration preflight before starting the server:
 npm run preflight
 ```
 
+For source changes that touch runtime configuration, also run
+`npm run check:preflight` and `npm run check:preflight-contract` before
+publishing the deployment PR.
+
 The repository-owned `Dockerfile` can run the central App server in a
 container image. Build and deploy it only from a reviewed commit, inject
 GitHub App, provider, AWS, alert, and admin-auth secrets at runtime, and keep

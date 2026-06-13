@@ -124,6 +124,9 @@ stabilized.
 - Added a diagnostics-redaction contract release check that validates shared
   token, alert webhook, AWS access-key id, private-key, error-line, and
   diagnostic-tail redaction behavior.
+- Added a preflight contract release check that validates no-network preflight
+  check order, strict/profile behavior, CLI flags, redacted diagnostics, and
+  docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

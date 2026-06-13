@@ -332,10 +332,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Support bundle contract PR: merged as PR #185, merge commit `7e03837`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/diagnostics-redaction-contract`.
-- Current local changes: adding a diagnostics-redaction contract check that
-  keeps shared token, alert webhook, AWS access-key id, private-key,
-  error-line, and diagnostic-tail redaction behavior synchronized.
+- Diagnostics redaction contract PR: merged as PR #186, merge commit
+  `cc98f88`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/preflight-contract`.
+- Current local changes: adding a preflight contract check that keeps
+  no-network preflight check order, strict/profile behavior, CLI flags,
+  redacted diagnostics, and docs synchronized.
 
 ## Key Decisions
 
@@ -756,6 +758,9 @@ merged PRs.
   admin APIs, alerting, release evidence, and GitHub App helpers. Keep the
   common bearer, GitHub token, provider key, alert webhook, AWS access-key id,
   private-key, safe-error-line, and diagnostic-tail behavior machine-checked.
+- Runtime preflight is a deployment gate and an admin-status input. Keep check
+  order, strict/profile behavior, CLI flags, redacted diagnostics, and docs
+  machine-checked so operator evidence stays stable as config parsers evolve.
 
 ## Constraints
 
@@ -769,7 +774,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the diagnostics-redaction contract check.
+2. Publish and merge the preflight contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

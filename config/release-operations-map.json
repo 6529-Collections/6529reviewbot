@@ -185,6 +185,20 @@
           "publicOutput": "Safe; findings redact the matched value."
         },
         {
+          "id": "preflight-fixtures",
+          "script": "check:preflight",
+          "purpose": "Run deterministic no-network preflight fixtures for central App server and worker runtime postures.",
+          "doc": "docs/configuration.md",
+          "publicOutput": "Safe."
+        },
+        {
+          "id": "preflight-contract",
+          "script": "check:preflight-contract",
+          "purpose": "Verify no-network preflight check order, strict/profile behavior, CLI flags, redacted diagnostics, and docs stay synchronized.",
+          "doc": "docs/configuration.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "env-template-checks",
           "script": "check:env-templates",
           "purpose": "Validate public env templates for syntax, duplicate keys, blank secret placeholders, and conservative dogfood defaults.",

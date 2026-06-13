@@ -361,6 +361,9 @@ central App server and worker postures. It is included in
 `npm run release:check` so parser drift or missing required settings are caught
 before maintainers rely on a live environment.
 
+`npm run check:preflight-contract` keeps the preflight check order, strict and
+profile behavior, CLI flags, redacted diagnostics, and public docs synchronized.
+
 Public env examples are checked separately with:
 
 ```bash

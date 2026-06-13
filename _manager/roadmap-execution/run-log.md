@@ -2872,3 +2872,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including diagnostics redaction validation
     and 60 mapped release-operation tools.
+- Merged `6529reviewbot` PR #186 as `cc98f88`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/preflight-contract` increment:
+  - add `scripts/check-preflight-contract.cjs` and
+    `npm run check:preflight-contract`;
+  - validate no-network preflight check order, strict/profile behavior,
+    formatted output, model-price path omission, redacted diagnostics, CLI
+    flags, parse errors, and public docs;
+  - make both preflight fixtures and the new preflight contract visible in the
+    release operations map;
+  - wire the check into release checks, smoke tests, public docs, changelog,
+    roadmap, and manager memory.
+- Local validation for `codex/preflight-contract`:
+  - `npm run check:preflight-contract` passed with 18 checks and 6 docs
+    checked;
+  - `npm run check:release-operations` passed with 62 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 119 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including preflight contract validation
+    and 62 mapped release-operation tools.

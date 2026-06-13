@@ -448,6 +448,9 @@ Completed in `6529reviewbot`:
 - diagnostics-redaction checks that keep shared token, alert webhook, AWS
   access-key id, private-key, error-line, and diagnostic-tail redaction
   behavior synchronized.
+- preflight contract checks that keep no-network preflight check order,
+  strict/profile behavior, CLI flags, redacted diagnostics, and docs
+  synchronized.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog
@@ -536,6 +539,7 @@ Completed in `6529reviewbot`:
 - installation and onboarding guide for conservative central App dogfood.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
+- preflight contract checks for no-network runtime validation behavior.
 - incident response runbook for operator containment and recovery.
 - operator evidence template for public-safe deployment proof.
 
