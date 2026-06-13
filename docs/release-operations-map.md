@@ -54,6 +54,11 @@ The operator workspace owns:
 When in doubt, publish the `release:candidate` bundle or a CLI summary count,
 not the source evidence file.
 
+When a command includes private file paths and the output is intended for
+public copy/paste, prefer `npm --silent run ...` or `--out <public-file>
+--quiet`. Normal `npm run` may print the invoked command before script output,
+including private operator paths that the script output itself redacts.
+
 ## Maintenance
 
 Update [config/release-operations-map.json](../config/release-operations-map.json)

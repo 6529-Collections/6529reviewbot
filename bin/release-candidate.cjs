@@ -26,6 +26,10 @@ function main(argv = process.argv.slice(2), options = {}) {
     includeGitStatus: args.includeGitStatus,
     operatorEvidenceFile: args.operatorEvidenceFile,
     preflightProfile: args.preflightProfile,
+    privatePathRoots: [
+      ...(options.privatePathRoots || []),
+      ...(args.operatorWorkspaceDir ? [args.operatorWorkspaceDir] : []),
+    ],
     requireReady: args.requireReady,
     strictPreflight: args.strictPreflight,
   });
@@ -204,6 +208,7 @@ Usage:
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
   npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
+  npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 
 Options:

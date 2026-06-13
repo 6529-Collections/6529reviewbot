@@ -67,6 +67,9 @@ function collectReleaseCandidateBundle(options = {}) {
   const securityReviewChecklistFile =
     options.securityReviewChecklistFile || "config/security-review-checklist.json";
   const securityReviewStatusFile = options.securityReviewStatusFile || "";
+  const publicPathOptions = {
+    privatePathRoots: (options.privatePathRoots || []).map((item) => path.resolve(item)),
+  };
 
   const gates = loadReleaseGates(gatesFile);
   const gateStatus = gateStatusFile ? loadReleaseGateStatus(gateStatusFile) : null;
@@ -116,15 +119,23 @@ function collectReleaseCandidateBundle(options = {}) {
     },
     git: gitInfo(options),
     inputs: {
-      releaseGatesFile: publicPath(gatesFile, root),
-      releaseGateStatusFile: gateStatusFile ? publicPath(gateStatusFile, root) : "",
-      operatorEvidenceFile: publicPath(operatorEvidenceFile, root),
-      dogfoodChecklistFile: dogfood ? publicPath(dogfoodChecklistFile, root) : "",
-      dogfoodStatusFile: dogfoodStatusFile ? publicPath(dogfoodStatusFile, root) : "",
-      securityReviewChecklistFile: securityReview ? publicPath(securityReviewChecklistFile, root) : "",
-      securityReviewStatusFile: securityReviewStatusFile ? publicPath(securityReviewStatusFile, root) : "",
-      productionCutoverChecklistFile: cutover ? publicPath(cutoverChecklistFile, root) : "",
-      productionCutoverStatusFile: cutoverStatusFile ? publicPath(cutoverStatusFile, root) : "",
+      releaseGatesFile: publicPath(gatesFile, root, publicPathOptions),
+      releaseGateStatusFile: gateStatusFile ? publicPath(gateStatusFile, root, publicPathOptions) : "",
+      operatorEvidenceFile: publicPath(operatorEvidenceFile, root, publicPathOptions),
+      dogfoodChecklistFile: dogfood ? publicPath(dogfoodChecklistFile, root, publicPathOptions) : "",
+      dogfoodStatusFile: dogfoodStatusFile ? publicPath(dogfoodStatusFile, root, publicPathOptions) : "",
+      securityReviewChecklistFile: securityReview
+        ? publicPath(securityReviewChecklistFile, root, publicPathOptions)
+        : "",
+      securityReviewStatusFile: securityReviewStatusFile
+        ? publicPath(securityReviewStatusFile, root, publicPathOptions)
+        : "",
+      productionCutoverChecklistFile: cutover
+        ? publicPath(cutoverChecklistFile, root, publicPathOptions)
+        : "",
+      productionCutoverStatusFile: cutoverStatusFile
+        ? publicPath(cutoverStatusFile, root, publicPathOptions)
+        : "",
       preflightProfile: preflight.profile,
       strictPreflight: preflight.strict,
     },
@@ -507,13 +518,27 @@ function gitBin() {
   return "git";
 }
 
-function publicPath(filePath, root) {
+function publicPath(filePath, root, options = {}) {
   const resolved = path.resolve(root, filePath);
+  for (const privateRoot of options.privatePathRoots || []) {
+    if (isInside(privateRoot, resolved)) {
+      const relativeToPrivateRoot = path.relative(privateRoot, resolved);
+      const suffix = relativeToPrivateRoot
+        ? `/${relativeToPrivateRoot.split(path.sep).join("/")}`
+        : "";
+      return `[operator-workspace]${suffix}`;
+    }
+  }
   const relative = path.relative(root, resolved);
   if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
     return "[external-path-set]";
   }
   return publicText(relative.split(path.sep).join("/"));
+}
+
+function isInside(parent, child) {
+  const relative = path.relative(parent, child);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
 function publicText(value, maxChars = RELEASE_CANDIDATE_TEXT_MAX_CHARS) {
@@ -528,5 +553,6 @@ module.exports = {
   collectReleaseCandidateBundle,
   formatReleaseCandidateBundleMarkdown,
   preflightSummary,
+  publicPath,
   publicText,
 };

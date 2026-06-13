@@ -1969,3 +1969,25 @@
   - `npm run check` passed;
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #142 as `4fa25c6` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/release-candidate-workspace-redaction` increment:
+  - fix `npm run release:candidate -- -- --operator-workspace <dir>` bundle
+    inputs so JSON and Markdown output redact private operator workspace paths;
+  - preserve useful file names as `[operator-workspace]/<file>`;
+  - update release-candidate docs, operator workspace docs, release docs,
+    release-readiness, v0 release plan, release operations docs, README,
+    changelog, roadmap, smoke tests, and manager memory;
+  - document `npm --silent run` and `--out <public-file> --quiet` for public
+    bundle capture from commands containing private paths.
+- Local validation for `codex/release-candidate-workspace-redaction`:
+  - direct Node `release:candidate --operator-workspace <temp-dir>` Markdown
+    output did not contain the private workspace path;
+  - direct Node `release:candidate --operator-workspace <temp-dir> --json`
+    output did not contain the private workspace path;
+  - `npm --silent run release:candidate -- -- --operator-workspace <temp-dir> --quiet`
+    output did not contain the private workspace path;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run release:check` passed.

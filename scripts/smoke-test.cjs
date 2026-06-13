@@ -2022,6 +2022,22 @@ assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
 assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
 assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 29);
 assert.deepEqual(candidateBundleFromWorkspace.readiness.dogfood.missingStatusIds, []);
+assert.equal(JSON.stringify(candidateBundleFromWorkspace).includes(operatorWorkspaceDir), false);
+assert.equal(candidateBundleFromWorkspace.inputs.releaseGateStatusFile, "[operator-workspace]/v0-release-status.json");
+assert.equal(candidateBundleFromWorkspace.inputs.operatorEvidenceFile, "[operator-workspace]/operator-evidence.json");
+assert.equal(candidateBundleFromWorkspace.inputs.dogfoodStatusFile, "[operator-workspace]/dogfood-status.json");
+assert.equal(
+  candidateBundleFromWorkspace.inputs.securityReviewStatusFile,
+  "[operator-workspace]/security-review-status.json"
+);
+assert.equal(
+  candidateBundleFromWorkspace.inputs.productionCutoverStatusFile,
+  "[operator-workspace]/production-cutover-status.json"
+);
+assert.equal(
+  releaseCandidate.formatReleaseCandidateBundleMarkdown(candidateBundleFromWorkspace).includes(operatorWorkspaceDir),
+  false
+);
 assert.equal(JSON.stringify(candidateBundle).includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.equal(candidateBundleMarkdown.includes("abcdefghijklmnopqrstuvwxyz"), false);
 assert.match(

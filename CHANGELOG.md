@@ -75,6 +75,9 @@ stabilized.
   workspace as a set.
 - Release-candidate bundles can read standard private operator workspace files
   with one `--operator-workspace` flag.
+- Release-candidate bundles redact private operator workspace paths in JSON and
+  Markdown output, and docs now recommend `npm --silent run` or `--out --quiet`
+  when capturing public bundles from private paths.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.
