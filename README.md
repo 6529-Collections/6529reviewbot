@@ -112,6 +112,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 - [Release Candidate Bundle](docs/release-candidate.md): public-safe
   release-readiness summary command.
+- [Release Operations Map](docs/release-operations-map.md): command and
+  evidence-boundary index for release operators.
 - [Operator Evidence Template](docs/operator-evidence-template.md): redacted
   release/deployment proof format.
 
@@ -184,6 +186,14 @@ npm run release:candidate -- -- --status-file <operator-status-file> --operator-
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
+```
+
+Render the release operations map when deciding what to run next:
+
+```bash
+npm run release:operations
+npm run release:operations -- -- --phase release-candidate
+npm run check:release-operations
 ```
 
 Track production cutover readiness from the public checklist plus private
@@ -573,6 +583,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Incident response](docs/incident-response.md)
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
+- [Release operations map](docs/release-operations-map.md)
 - [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
 

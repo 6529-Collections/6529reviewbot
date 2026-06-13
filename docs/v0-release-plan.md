@@ -75,7 +75,9 @@ The first `v0` tag can include:
 - install and onboarding guide;
 - operator evidence template for redacted deployment proof;
 - dogfood templates, deployment docs, release checks, and security-review
-  checklists.
+  checklists;
+- release operations map for deciding which public check, private evidence
+  overlay, or release-candidate command applies at each stage.
 
 ## Not Included In v0
 
@@ -132,6 +134,8 @@ Do not create the `v0` tag until all of these are true:
    `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file>`.
 14. Scheduled operator alerts route to an operator-owned channel.
 15. `npm run release:check` passes from a clean `main`.
+    The release check includes `npm run check:release-operations` so the
+    operations map cannot reference stale scripts or missing docs.
 16. `npm run preflight -- -- --strict` passes in the release candidate
     environment, or every warning is accepted in release notes.
 17. GitHub CI, Dependency Review, and OpenSSF Scorecard have been reviewed.

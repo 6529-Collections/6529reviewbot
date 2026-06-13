@@ -174,6 +174,9 @@ local and manual gates.
 
 Use [v0 Release Plan](v0-release-plan.md) and `npm run v0:gates` for the exact
 pre-v1 tagging gates and public release note expectations.
+Use [Release Operations Map](release-operations-map.md) or
+`npm run release:operations` when choosing the next public check, private
+status overlay, or release-candidate command.
 Use `npm run v0:gates -- -- --init-status <operator-status-file>` to create a
 private pending status skeleton for the current gate list.
 Use `npm run v0:gates -- -- --status-file <operator-status-file> --summary`
@@ -250,6 +253,8 @@ secrets blank and references only reviewed OpenAPI usage/admin paths.
 `npm run check:env-templates` is included in `npm run release:check` and checks
 all public env templates for valid syntax, duplicate keys, nonblank secret
 placeholders, and conservative dogfood defaults.
+`npm run check:release-operations` is included in `npm run release:check` and
+keeps the command/evidence-boundary map aligned with package scripts and docs.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

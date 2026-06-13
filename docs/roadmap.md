@@ -340,6 +340,8 @@ Completed in `6529reviewbot`:
   command-only and limited-initial evidence rollups;
 - optional release-candidate security-review status summaries for public-safe
   manual-review evidence rollups;
+- release operations map for recurring checks, private evidence overlays, and
+  release-bundle commands with explicit public/private output boundaries;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

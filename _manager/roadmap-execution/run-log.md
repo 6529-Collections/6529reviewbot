@@ -1830,3 +1830,22 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #135 as `a74dbeb` after CI and Dependency Review
+  passed.
+- Started `codex/release-operations-map` increment:
+  - add a public-safe release operations map under `config/`;
+  - add `npm run release:operations` to render the map as Markdown or JSON;
+  - add `npm run check:release-operations` and include it in release checks;
+  - update README, release docs, readiness docs, v0 plan, roadmap, changelog,
+    smoke tests, and manager memory.
+- Local validation for `codex/release-operations-map`:
+  - `npm run release:operations -- -- --phase release-candidate` passed and
+    rendered repo-compatible npm flag-forwarding examples;
+  - `npm run release:operations -- -- --summary --json` passed;
+  - `npm run check:release-operations` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.
