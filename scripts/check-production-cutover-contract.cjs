@@ -30,6 +30,7 @@ function checkProductionCutoverContract(options = {}) {
   const findings = [];
   checkCliContract(findings);
   checkStatusContract(findings);
+  checkChecklistConfig(findings);
   checkMarkdownRedaction(findings);
   checkSourceInvariants(options.sourceTexts || {}, findings);
   checkDocs(options.docTexts || {}, findings);
@@ -48,6 +49,61 @@ function checkProductionCutoverContract(options = {}) {
     statusCases: 5,
     docs: targetDocs.length,
   };
+}
+
+function checkChecklistConfig(findings) {
+  const checklist = productionCutover.loadProductionCutoverChecklist(
+    path.join(root, "config/production-cutover-checklist.json")
+  );
+  const ioPhase = checklist.phases.find((phase) => phase.id === "6529-io-and-alerts");
+  if (!ioPhase) {
+    findings.push("production cutover checklist must include the 6529-io-and-alerts phase.");
+    return;
+  }
+  const itemIds = ioPhase.items.map((item) => item.id);
+  const dashboardPlanIndex = itemIds.indexOf("dashboard-deployment-plan-reviewed");
+  const publicDashboardIndex = itemIds.indexOf("public-dashboard-wired");
+  const adminBridgeIndex = itemIds.indexOf("admin-bridge-wired");
+  if (dashboardPlanIndex === -1) {
+    findings.push("6529.io cutover phase must include dashboard-deployment-plan-reviewed.");
+    return;
+  }
+  if (publicDashboardIndex === -1) {
+    findings.push("6529.io cutover phase must include public-dashboard-wired.");
+  } else if (dashboardPlanIndex > publicDashboardIndex) {
+    findings.push("dashboard-deployment-plan-reviewed must come before public-dashboard-wired.");
+  }
+  if (adminBridgeIndex === -1) {
+    findings.push("6529.io cutover phase must include admin-bridge-wired.");
+  } else if (dashboardPlanIndex > adminBridgeIndex) {
+    findings.push("dashboard-deployment-plan-reviewed must come before admin-bridge-wired.");
+  }
+  const dashboardPlan = ioPhase.items[dashboardPlanIndex];
+  for (const snippet of [
+    "explicit 6529.io origin",
+    "bot origin",
+    "private workspace",
+    "auth-check URL",
+  ]) {
+    if (!dashboardPlan.title.includes(snippet)) {
+      findings.push(`dashboard-deployment-plan-reviewed title must include '${snippet}'.`);
+    }
+  }
+  for (const snippet of [
+    "npm run dashboard:deployment-plan",
+    "--frontend-origin <6529-io-origin>",
+    "--bot-origin <production-bot-origin>",
+    "--operator-workspace <private-workspace-dir>",
+    "--auth-check-url <6529-auth-check-url>",
+    "--require-ready",
+  ]) {
+    if (!dashboardPlan.evidence.includes(snippet)) {
+      findings.push(`dashboard-deployment-plan-reviewed evidence must include '${snippet}'.`);
+    }
+  }
+  if (dashboardPlan.runbook !== "docs/dashboard-deployment-plan.md") {
+    findings.push("dashboard-deployment-plan-reviewed runbook must be docs/dashboard-deployment-plan.md.");
+  }
 }
 
 function checkCliContract(findings) {

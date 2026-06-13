@@ -425,30 +425,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator drill dashboard-plan guidance PR: merged as PR #232, merge commit `22b501c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-gates-evidence`.
-- Current local changes: adding dashboard deployment-plan evidence to v0
-  dashboard gates and production cutover before public/private 6529.io
-  dashboard exposure, plus syncing status examples, smoke counts, operator
-  evidence templates, release docs, roadmap, changelog, and manager memory.
+- Dashboard release/cutover evidence gates PR: merged as PR #233, merge commit `2d2698e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dashboard-gates-contract`.
+- Current local changes: strengthening v0 release-gate and production-cutover
+  contract checks so dashboard deployment-plan evidence targets and ordering
+  cannot drift after the new dashboard exposure gate.
 - Current local validation:
   - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
     docs checked;
   - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
     and 6 docs checked;
-  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
-    cases, and 6 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
-    docs checked;
   - `npm run check:docs` passed with 72 files checked;
   - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #232,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #233,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 115 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 171 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including production cutover validation
-    for 31 items and dashboard deployment-plan evidence gates.
+  - `npm run release:check` passed, including v0 gate and production cutover
+    contract validation for dashboard deployment-plan evidence drift.
 
 ## Key Decisions
 
