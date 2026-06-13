@@ -127,6 +127,11 @@ Ready for community review:
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
   placeholders, and conservative dogfood defaults;
+- canonical docs index checker so every public docs page stays discoverable;
+- public governance checker for MIT/community files and README governance
+  links;
+- workflow permission checker for explicit least-privilege GitHub Actions
+  permission maps;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
 - OpenSSF Scorecard keeps workflow-level permissions read-only, scopes
   `id-token: write` to the Scorecard job for result publishing, and leaves
