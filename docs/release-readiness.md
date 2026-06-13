@@ -43,6 +43,8 @@ Ready for community review:
 - reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
+- public-safe 6529.io dashboard environment template validated against the
+  OpenAPI usage/admin API contract;
 - admin recent usage-events API for private raw usage triage without direct
   Aurora browser access;
 - admin budget-status API for current daily, weekly, and monthly policy
@@ -215,6 +217,9 @@ npm run dogfood:readiness -- -- --strict-preflight --require-ready
 
 `npm run check:docs` is included in `npm run release:check` and verifies local
 Markdown links across repository docs before release.
+`npm run check:6529-io-env` is included in `npm run release:check` and verifies
+that the public-safe 6529.io dashboard environment template keeps placeholder
+secrets blank and references only reviewed OpenAPI usage/admin paths.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans public docs, configs, templates, workflows, and durable manager memory
 for live-looking credentials or cloud identifiers before release.

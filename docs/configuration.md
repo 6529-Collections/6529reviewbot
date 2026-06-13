@@ -411,6 +411,10 @@ trusted server-side clients such as the private 6529.io admin page. Do not
 expose the matching HMAC secret to browser JavaScript. See
 [6529.io Admin Integration](6529-io-admin-integration.md).
 
+The public-safe 6529.io frontend env-name template lives at
+`templates/6529-io-reviewbot-env.example` and is checked by
+`npm run check:6529-io-env`.
+
 ## Admin Auth Bridge
 
 ```text

@@ -103,6 +103,8 @@ stabilized.
 - Public usage summaries now enforce repo/org allowlists before showing repo
   names, even when custom loaders provide non-private public repo events.
 - Validated OpenAPI contract for 6529.io usage/admin API integration.
+- Public-safe 6529.io dashboard environment template with release-check
+  validation against the OpenAPI contract.
 - Admin-only recent usage-events API for private raw usage diagnostics.
 - Admin-only budget-status API for current daily, weekly, and monthly budget
   utilization diagnostics.

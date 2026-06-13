@@ -16,6 +16,7 @@ const repoConfigTemplates = [
 
 runNode("scripts/check.cjs");
 runNode("scripts/check-doc-links.cjs");
+runNode("scripts/check-6529-io-env-template.cjs");
 runNode("scripts/check-workflow-actions.cjs");
 runNode("scripts/check-public-artifacts.cjs");
 runNode("scripts/check-preflight-fixtures.cjs");

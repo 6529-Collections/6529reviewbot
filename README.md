@@ -289,6 +289,12 @@ Validate the dashboard/admin API contract:
 npm run validate:api-contract
 ```
 
+Validate the public-safe 6529.io dashboard env template:
+
+```bash
+npm run check:6529-io-env
+```
+
 Generate a sanitized support bundle:
 
 ```bash
