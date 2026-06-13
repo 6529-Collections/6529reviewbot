@@ -55,6 +55,7 @@ const githubAppInstallationToken = require("../bin/github-app-installation-token
 const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs");
 const githubAppRoutesContractCheck = require("./check-github-app-routes-contract.cjs");
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
+const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5195,6 +5196,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /install guide contract check found/
+  );
+  const deploymentRunbookContractResult =
+    deploymentRunbookContractCheck.checkDeploymentRunbookContract();
+  assert.equal(deploymentRunbookContractResult.runbookCases, 7);
+  await assert.throws(
+    () =>
+      deploymentRunbookContractCheck.checkDeploymentRunbookContract({
+        quiet: true,
+        docTexts: {
+          "docs/deployment.md": "# Deployment\n",
+        },
+      }),
+    /deployment runbook contract check found/
   );
   await assert.rejects(
     () =>

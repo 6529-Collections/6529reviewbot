@@ -175,6 +175,9 @@ stabilized.
 - Added an installation guide contract release check that validates the
   conservative dogfood onboarding path, GitHub App validation commands,
   runtime defaults, command-only target posture, and rollback controls.
+- Added a deployment runbook contract release check that validates production
+  GitHub App registration, central runtime, worker, 6529.io wiring,
+  verification, and rollback guidance.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

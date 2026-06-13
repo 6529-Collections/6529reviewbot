@@ -45,6 +45,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "deployment-runbook-contract",
+          "script": "check:deployment-runbook",
+          "purpose": "Verify the production deployment runbook keeps GitHub App registration, central runtime, worker, 6529.io wiring, verification, and rollback guidance synchronized.",
+          "doc": "docs/deployment.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "dependabot-config",
           "script": "check:dependabot",
           "purpose": "Verify weekly Dependabot coverage for npm and GitHub Actions dependencies.",

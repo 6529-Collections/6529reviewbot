@@ -54,6 +54,7 @@
     "check:doc-index": "node scripts/check-doc-index.cjs",
     "check:governance": "node scripts/check-public-governance.cjs",
     "check:install-guide": "node scripts/check-install-guide-contract.cjs",
+    "check:deployment-runbook": "node scripts/check-deployment-runbook-contract.cjs",
     "check:dependabot": "node scripts/check-dependabot-config.cjs",
     "check:container-image": "node scripts/check-container-image.cjs",
     "check:comment-commands": "node scripts/check-comment-commands.cjs",
