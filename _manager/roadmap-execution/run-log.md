@@ -3894,3 +3894,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dashboard deployment plan
     contract validation and 107 mapped release-operation tools.
+- Merged `6529reviewbot` PR #229 as `a259f83`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dashboard-release-evidence` increment:
+  - add dashboard deployment plan evidence to release notes draft output,
+    release notes template, and release notes publication checks;
+  - update release notes draft/publication/template contracts so the
+    dashboard handoff cannot disappear from release evidence;
+  - update release-readiness docs, roadmap, changelog, and durable manager
+    memory to keep dashboard deployment evidence in the public release story.
+- Local validation for `codex/dashboard-release-evidence` so far:
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:docs` passed with 72 files checked;
+  - `npm run check:doc-index` passed with 58 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #229,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check` passed with 171 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including release notes draft,
+    publication, and template validation for dashboard deployment plan
+    evidence.

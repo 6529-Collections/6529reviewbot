@@ -417,24 +417,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard merge roadmap sync PR: merged as PR #228, merge commit `f5b0a5f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-deployment-plan`.
-- Current local changes: adding a dry-run 6529.io dashboard deployment plan,
-  CLI, contract check, release-operation wiring, and docs so production
-  dashboard configuration has an explicit operator handoff.
+- Dashboard deployment plan PR: merged as PR #229, merge commit `a259f83`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dashboard-release-evidence`.
+- Current local changes: adding dashboard deployment plan evidence to release
+  notes draft generation, release notes template, publication checks, and
+  public roadmap/readiness docs.
 - Current local validation:
-  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
-    docs checked;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
+  - `npm run check:release-notes` passed;
   - `npm run check:docs` passed with 72 files checked;
   - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:release-operations` passed with 107 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #228,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #229,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 115 files checked;
   - `npm run check` passed with 171 CommonJS files;
   - `git diff --check` passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including dashboard deployment plan
-    contract validation and 107 mapped release-operation tools.
+  - `npm run release:check` passed, including release notes draft,
+    publication, and template validation for dashboard deployment plan
+    evidence.
 
 ## Key Decisions
 

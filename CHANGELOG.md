@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added dashboard deployment plan evidence to release notes draft, template,
+  and publication checks.
 - Added a dashboard deployment plan guard and contract check for dry-run
   6529.io dashboard handoff across frontend env, bot public disclosure, HMAC
   admin auth, route verification, cutover evidence, and release notes.
