@@ -80,6 +80,7 @@ const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const reviewBinEntrypointsCheck = require("./check-review-bin-entrypoints.cjs");
+const runControlScopesCheck = require("./check-run-control-scopes.cjs");
 const runControl = require("../src/run-control.cjs");
 const runControlLedger = require("../src/run-control-ledger.cjs");
 const runtimeControl = require("../src/runtime-control.cjs");
@@ -124,6 +125,24 @@ assert.throws(
       },
     }),
   /budget scope check found/
+);
+assert.equal(runControlScopesCheck.checkRunControlScopes().scopes, 8);
+assert.equal(
+  runControlScopesCheck.runControlEnvName("review_kind"),
+  "REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT"
+);
+assert.throws(
+  () =>
+    runControlScopesCheck.checkRunControlScopes({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        ".env.example": "REVIEWBOT_RUN_CONTROL_GLOBAL_MAX_CONCURRENT=\n",
+        "docs/run-control.md": "# Run Control\n",
+        "docs/configuration.md": "# Configuration\n",
+      },
+    }),
+  /run-control scope check found/
 );
 assert.throws(
   () =>

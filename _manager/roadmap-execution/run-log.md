@@ -2602,3 +2602,26 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including budget scope validation and 48
     mapped release-operation tools.
+- Merged `6529reviewbot` PR #174 as `f0d6101`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/run-control-scope-contract` increment:
+  - add `scripts/check-run-control-scopes.cjs` and
+    `npm run check:run-control-scopes`;
+  - validate run-control concurrency scopes against budget scopes, env parsing,
+    subject-to-scope mapping, Aurora run-claim cap parameters, active-count
+    SQL clauses, public docs, and env examples;
+  - expand the README run-control env block so it names all supported
+    concurrency scopes;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/run-control-scope-contract`:
+  - `npm run check:run-control-scopes` passed with 8 scopes and 4 docs/env
+    files checked;
+  - `npm run check:release-operations` passed with 49 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 107 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including run-control scope validation and
+    49 mapped release-operation tools.

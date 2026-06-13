@@ -36,6 +36,8 @@ fallbacks, provider-default docs, and conservative starter lanes aligned.
 requirements, workflow dispatch choices, and provider docs aligned.
 `npm run check:budget-scopes` keeps central budget scope validation, ledger
 schema constraints, public docs, and dogfood examples aligned.
+`npm run check:run-control-scopes` keeps run-control concurrency scopes, env
+parsing, claim SQL, docs, and env examples aligned.
 
 The local quality gate command inventory is:
 
@@ -51,6 +53,7 @@ The local quality gate command inventory is:
 - `npm run check:model-defaults`
 - `npm run check:providers`
 - `npm run check:budget-scopes`
+- `npm run check:run-control-scopes`
 - `npm run check:public-artifacts`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`

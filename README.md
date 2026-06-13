@@ -153,6 +153,7 @@ npm run check:review-bins
 npm run check:model-defaults
 npm run check:providers
 npm run check:budget-scopes
+npm run check:run-control-scopes
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes
@@ -465,9 +466,14 @@ Run control:
 ```text
 REVIEWBOT_RUN_CONTROL_MODE=off|warn|enforce
 REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=false
+REVIEWBOT_RUN_CONTROL_GLOBAL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_ORG_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_REPO_MAX_CONCURRENT=
-REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
 REVIEWBOT_RUN_CONTROL_REQUESTOR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PR_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_PROVIDER_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=
+REVIEWBOT_RUN_CONTROL_REVIEW_KIND_MAX_CONCURRENT=
 ```
 
 Webhook replay diagnostics:

@@ -107,6 +107,8 @@ stabilized.
 - Added a budget-scope release check that validates canonical budget scopes
   across central policy validation, ledger schema constraints, public docs, and
   dogfood examples.
+- Added a run-control scope release check that validates concurrency scopes
+  against budget scopes, env parsing, claim SQL, docs, and env examples.
 - Updated the v0 release gate and release notes contract to require explicit
   container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep

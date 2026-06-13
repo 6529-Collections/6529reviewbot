@@ -136,6 +136,9 @@ After stabilization:
 - `npm run check:budget-scopes` confirms canonical budget scopes stay
   synchronized with central policy validation, ledger schema constraints,
   public docs, and dogfood examples
+- `npm run check:run-control-scopes` confirms run-control concurrency scopes
+  stay synchronized with budget scopes, env parsing, claim SQL, docs, and env
+  examples
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes

@@ -132,6 +132,8 @@ Ready for community review:
   provider docs synchronized;
 - budget-scope checker that keeps central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized;
+- run-control scope checker that keeps concurrency scopes synchronized with
+  budget scopes, env parsing, claim SQL, docs, and env examples;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -365,6 +367,9 @@ requirements, workflow dispatch choices, and provider docs stay aligned.
 `npm run check:budget-scopes` is included in `npm run release:check` and
 verifies canonical budget scopes, central policy validation, ledger schema
 constraints, public docs, and dogfood examples stay aligned.
+`npm run check:run-control-scopes` is included in `npm run release:check` and
+verifies run-control concurrency scopes, env parsing, claim SQL, docs, and env
+examples stay aligned with the budget scope vocabulary.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a
