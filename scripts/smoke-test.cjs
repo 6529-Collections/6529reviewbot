@@ -81,6 +81,7 @@ const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
 const reviewWorkflowKindsCheck = require("./check-review-workflow-kinds.cjs");
 const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
+const repositoryConfigBoundaryCheck = require("./check-repository-config-boundary.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const reviewBinEntrypointsCheck = require("./check-review-bin-entrypoints.cjs");
@@ -208,6 +209,26 @@ assert.throws(
       },
     }),
   /admission policy check found/
+);
+assert.equal(repositoryConfigBoundaryCheck.checkRepositoryConfigBoundary().configPaths, 6);
+assert.deepEqual(repositoryConfigBoundaryCheck.expectedConfigPaths, [
+  ".github/6529bot.yml",
+  ".github/6529bot.yaml",
+  ".github/6529bot.json",
+  ".6529reviewbot.yml",
+  ".6529reviewbot.yaml",
+  ".6529reviewbot.json",
+]);
+assert.throws(
+  () =>
+    repositoryConfigBoundaryCheck.checkRepositoryConfigBoundary({
+      quiet: true,
+      docTexts: {
+        "docs/repository-config.md": "# Repository Config\n",
+        "docs/architecture.md": "# Architecture\n",
+      },
+    }),
+  /repository config boundary check found/
 );
 assert.throws(
   () =>

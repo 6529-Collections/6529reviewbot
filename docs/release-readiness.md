@@ -370,6 +370,10 @@ format docs.
 verifies trusted-actor admission defaults, repo visibility modes, draft
 handling, trusted permission levels, public examples, and admission docs stay
 aligned.
+`npm run check:repository-config-boundary` is included in
+`npm run release:check` and verifies repository config remains a narrowing
+layer for lanes, max jobs, admission, budget caps, default cost, and base-ref
+loading.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

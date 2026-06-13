@@ -429,6 +429,9 @@ Completed in `6529reviewbot`:
 - admission-policy checks that keep trusted-actor defaults, repo visibility
   modes, draft handling, trusted permission levels, public examples, and
   admission docs synchronized.
+- repository-config boundary checks that keep target repository config a
+  narrowing layer for provider/model lanes, max jobs, admission, budget caps,
+  default cost, and base-ref loading.
 - model-default checks that keep the catalog, reusable workflow fallbacks,
   provider-default docs, and conservative starter lanes synchronized.
 - provider-contract checks that keep provider constants, model catalog

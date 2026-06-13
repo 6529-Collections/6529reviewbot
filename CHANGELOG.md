@@ -104,6 +104,9 @@ stabilized.
 - Added an admission-policy release check that validates trusted-actor
   defaults, repo visibility modes, draft handling, trusted permission levels,
   public examples, and admission docs.
+- Added a repository-config boundary release check that validates target repo
+  config remains a narrowing layer for lanes, max jobs, admission, budget caps,
+  default cost, and base-ref loading.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

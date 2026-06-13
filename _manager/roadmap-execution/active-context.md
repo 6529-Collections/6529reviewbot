@@ -318,11 +318,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Review comment format contract PR: merged as PR #178, merge commit
   `a6755bf`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admission-policy-contract`.
-- Current local changes: adding an admission-policy contract check that keeps
-  trusted-actor defaults, repo visibility modes, draft handling, trusted
-  permission levels, public examples, admission docs, smoke tests, and release
-  operations synchronized.
+- Admission policy contract PR: merged as PR #179, merge commit `be83540`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/repository-config-boundary-contract`.
+- Current local changes: adding a repository-config boundary contract check
+  that proves target repo config remains a narrowing layer for provider/model
+  lanes, max jobs, admission, budget caps, default cost, and base-ref loading.
 
 ## Key Decisions
 
