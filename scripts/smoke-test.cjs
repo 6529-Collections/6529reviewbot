@@ -68,6 +68,7 @@ const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const operatorWorkspace = require("../src/operator-workspace.cjs");
 const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
+const operatorWorkspaceContractCheck = require("./check-operator-workspace-contract.cjs");
 const productionCutover = require("../src/production-cutover.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
@@ -5034,6 +5035,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /dogfood go-live contract check found/
+  );
+  const operatorWorkspaceContractResult =
+    operatorWorkspaceContractCheck.checkOperatorWorkspaceContract();
+  assert.equal(operatorWorkspaceContractResult.cliCases, 4);
+  assert.equal(operatorWorkspaceContractResult.workspaceCases, 4);
+  assert.throws(
+    () =>
+      operatorWorkspaceContractCheck.checkOperatorWorkspaceContract({
+        quiet: true,
+        docTexts: {
+          "docs/operator-workspace.md": "# Operator Workspace\n",
+        },
+      }),
+    /operator workspace contract check found/
   );
   const releaseCandidateContractResult =
     releaseCandidateContractCheck.checkReleaseCandidateContract();

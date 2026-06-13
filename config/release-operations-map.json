@@ -255,6 +255,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "operator-workspace-contract",
+          "script": "check:operator-workspace",
+          "purpose": "Verify operator workspace creation, check-mode readiness failures, private path redaction, Markdown sanitization, source invariants, and public docs stay synchronized.",
+          "doc": "docs/operator-workspace.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "release-candidate-contract",
           "script": "check:release-candidate",
           "purpose": "Verify release-candidate bundle redaction, private workspace path markers, CLI flags, source invariants, and public release docs stay synchronized.",

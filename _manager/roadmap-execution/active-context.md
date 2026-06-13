@@ -352,10 +352,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dogfood readiness contract PR: merged as PR #195, merge commit `37a472e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-target-contract`.
-- Current local changes: adding a dogfood target contract check that keeps
-  target packet modes, external config path markers, Markdown redaction,
-  source invariants, and docs synchronized.
+- Dogfood target contract PR: merged as PR #196, merge commit `2184d5f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-workspace-contract`.
+- Current local changes: adding an operator-workspace contract check that keeps
+  workspace creation, check-mode readiness failures, private path markers,
+  Markdown redaction, source invariants, and docs synchronized.
 
 ## Key Decisions
 
@@ -797,6 +799,9 @@ merged PRs.
 - Dogfood target packets are the first target-repo PR gate. Keep mode
   inference, external config path markers, token/AWS redaction, and public docs
   covered by no-network contract checks.
+- Operator workspace files are private evidence inputs. Keep skeleton creation,
+  check-mode readiness failures, generated README guidance, private path
+  markers, and public-summary redaction covered by no-network contract checks.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -820,7 +825,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the dogfood target contract check.
+2. Publish and merge the operator-workspace contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

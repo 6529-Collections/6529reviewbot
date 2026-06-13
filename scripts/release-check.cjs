@@ -35,6 +35,7 @@ runNode("scripts/check-dogfood-target-contract.cjs");
 runNode("scripts/check-dogfood-readiness-contract.cjs");
 runNode("scripts/check-dogfood-promotion-contract.cjs");
 runNode("scripts/check-dogfood-go-live-contract.cjs");
+runNode("scripts/check-operator-workspace-contract.cjs");
 runNode("scripts/check-review-bin-entrypoints.cjs");
 runNode("scripts/check-review-comment-format.cjs");
 runNode("scripts/check-admission-policy.cjs");
