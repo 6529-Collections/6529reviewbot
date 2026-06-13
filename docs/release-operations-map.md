@@ -74,6 +74,9 @@ tokens, alert webhooks, AWS access-key ids, private keys, error lines, and
 diagnostic tails aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
+`npm run check:model-pricing-runbook` keeps model pricing guidance aligned
+across price-file shape, source-checked evidence, stale/zero overrides, apply
+behavior, and estimation semantics.
 `npm run check:providers` keeps supported provider constants, preflight key
 requirements, workflow dispatch choices, and provider docs aligned.
 `npm run check:provider-adapters` keeps Anthropic, OpenAI, and OpenRouter

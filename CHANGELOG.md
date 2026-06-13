@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a model pricing runbook contract release check for source-checked price
+  evidence, stale/zero-price overrides, apply behavior, and estimation
+  semantics.
 - Added an alerting runbook contract release check for scheduled alert runner
   posture, private notification routing, dogfood evidence, and alert payload
   privacy.

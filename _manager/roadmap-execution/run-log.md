@@ -3447,3 +3447,25 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including alerting runbook validation and
     87 mapped release-operation tools.
+- Merged `6529reviewbot` PR #211 as `486cb47`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/model-pricing-runbook-contract` increment:
+  - add `scripts/check-model-pricing-runbook-contract.cjs` and
+    `npm run check:model-pricing-runbook`;
+  - validate model-pricing section order, price-file shape, source URLs,
+    source-checked timestamps, stale-source and zero-price overrides,
+    dry-run/apply behavior, review requirements, estimation semantics, and
+    docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/model-pricing-runbook-contract` so far:
+  - `npm run check:model-pricing-runbook` passed with 5 runbook cases and 8
+    docs checked;
+  - `npm run check:release-operations` passed with 88 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check` passed with 145 CommonJS files;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including model pricing runbook validation
+    and 88 mapped release-operation tools.

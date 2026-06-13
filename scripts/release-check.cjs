@@ -30,6 +30,7 @@ runNode("scripts/check-comment-commands.cjs");
 runNode("scripts/check-review-workflow-kinds.cjs");
 runNode("scripts/check-review-context-boundary.cjs");
 runNode("scripts/check-model-defaults.cjs");
+runNode("scripts/check-model-pricing-runbook-contract.cjs");
 runNode("scripts/check-provider-contract.cjs");
 runNode("scripts/check-provider-adapters.cjs");
 runNode("scripts/check-ledger-privacy-contract.cjs");

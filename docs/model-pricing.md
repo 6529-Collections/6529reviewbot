@@ -12,6 +12,11 @@ return direct dollar cost. It records `estimated_cost_usd` only when the active
 provider/model price row covers every applicable token class reported by the
 provider.
 
+Run `npm run check:model-pricing-runbook` after edits. The model pricing
+runbook contract keeps price-file shape, dry-run/apply guidance, stale-source
+and zero-rate overrides, review requirements, estimation behavior, and public
+docs synchronized with release checks.
+
 ## Price File
 
 Start from:

@@ -91,6 +91,9 @@ npm run model-prices -- -- --file <reviewed-model-price-file.json> --apply
 The apply path rejects stale or future-dated source checks and zero-rate rows
 by default. Record explicit operator evidence before using
 `--allow-stale-source` or `--allow-zero-price`.
+Run `npm run check:model-pricing-runbook` after editing model-pricing guidance
+so source-checked evidence, zero-rate overrides, apply behavior, and cost
+estimation semantics stay synchronized.
 
 Run a dry operator-alert pass:
 
