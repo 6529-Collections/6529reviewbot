@@ -56,6 +56,7 @@ const githubAppAuthContractCheck = require("./check-github-app-auth-contract.cjs
 const githubAppRoutesContractCheck = require("./check-github-app-routes-contract.cjs");
 const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
+const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
 const jobLedger = require("../src/job-ledger.cjs");
 const ledgerSchema = require("../src/ledger-schema.cjs");
@@ -5209,6 +5210,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /deployment runbook contract check found/
+  );
+  const operationsRunbookContractResult =
+    operationsRunbookContractCheck.checkOperationsRunbookContract();
+  assert.equal(operationsRunbookContractResult.runbookCases, 7);
+  await assert.throws(
+    () =>
+      operationsRunbookContractCheck.checkOperationsRunbookContract({
+        quiet: true,
+        docTexts: {
+          "docs/operations.md": "# Operations\n",
+        },
+      }),
+    /operations runbook contract check found/
   );
   await assert.rejects(
     () =>

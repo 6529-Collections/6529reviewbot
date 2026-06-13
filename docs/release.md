@@ -130,6 +130,9 @@ After stabilization:
 - `npm run check:deployment-runbook` confirms the deployment runbook contract
   keeps GitHub App registration, central runtime, worker, 6529.io wiring,
   verification, and rollback guidance synchronized
+- `npm run check:operations-runbook` confirms the operations runbook contract
+  keeps routine checks and triage paths for replay, spend, ledgers, workers,
+  dashboards, and bot comments synchronized
 - `npm run check:dependabot` confirms weekly npm and GitHub Actions dependency
   update coverage is still configured
 - `npm run check:container-image` confirms the central App server Dockerfile

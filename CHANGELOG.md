@@ -178,6 +178,9 @@ stabilized.
 - Added a deployment runbook contract release check that validates production
   GitHub App registration, central runtime, worker, 6529.io wiring,
   verification, and rollback guidance.
+- Added an operations runbook contract release check that validates routine
+  checks and triage paths for replay, spend, ledgers, workers, dashboards, and
+  bot comments.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

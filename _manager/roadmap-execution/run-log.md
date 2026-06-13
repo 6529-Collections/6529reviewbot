@@ -3362,3 +3362,24 @@
   - `npm test` passed;
   - `npm run release:check` passed, including deployment runbook validation
     and 83 mapped release-operation tools.
+- Merged `6529reviewbot` PR #207 as `ed65603`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operations-runbook-contract` increment:
+  - add `scripts/check-operations-runbook-contract.cjs` and
+    `npm run check:operations-runbook`;
+  - validate operations runbook section order, routine checks, dogfood and
+    replay paths, spend/budget triage, worker/ledger triage, dashboard and bot
+    comment triage, and docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/operations-runbook-contract`:
+  - `npm run check:operations-runbook` passed with 7 runbook cases and 6 docs
+    checked;
+  - `npm run check:release-operations` passed with 84 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 141 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operations runbook validation
+    and 84 mapped release-operation tools.
