@@ -78,6 +78,7 @@ const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
+const reviewBinEntrypointsCheck = require("./check-review-bin-entrypoints.cjs");
 const runControl = require("../src/run-control.cjs");
 const runControlLedger = require("../src/run-control-ledger.cjs");
 const runtimeControl = require("../src/runtime-control.cjs");
@@ -105,6 +106,15 @@ assert.equal(settings.provider, "anthropic");
 assert.equal(settings.model, "claude-opus-4-8");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
+assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 5);
+assert.throws(
+  () =>
+    reviewBinEntrypointsCheck.checkReviewBinEntrypoints({
+      quiet: true,
+      binTexts: { "general-pr-review.cjs": "wrong kind" },
+    }),
+  /review bin entrypoint check found/
+);
 const providerTextResult = reviewBot.requireProviderReviewText(
   { text: "\n**Verdict**: Good to merge\n", usage: { totalTokens: 12 } },
   settings

@@ -304,10 +304,12 @@ merged PRs.
   `1dc523f`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Model default contract PR: merged as PR #171, merge commit `6f68660`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/provider-contract-check`.
-- Current local changes: adding a provider contract check that keeps supported
-  provider constants, model catalog providers, preflight key requirements,
-  workflow dispatch choices, and provider docs synchronized.
+- Provider contract PR: merged as PR #172, merge commit `48d69aa`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/review-bin-contract`.
+- Current local changes: adding a review-bin entrypoint contract check that
+  keeps review-kind prompt configs, CLI entrypoints, package scripts, and
+  review workflow docs synchronized.
 
 ## Key Decisions
 
@@ -690,6 +692,9 @@ merged PRs.
 - Supported provider lists should be checked against `PROVIDERS` so Anthropic,
   OpenAI, OpenRouter, and any future provider cannot drift across workflow
   dispatch choices, preflight key requirements, docs, and runtime validation.
+- Review-mode entrypoints should be checked against `REVIEW_KINDS`,
+  `REVIEW_KIND_CONFIGS`, and `REVIEW_KIND_BINS` so adding or renaming a review
+  mode cannot leave prompts, package scripts, docs, or CLI bins stale.
 
 ## Constraints
 
@@ -703,7 +708,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the provider contract check.
+2. Validate, publish, and merge the review-bin entrypoint contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

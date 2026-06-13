@@ -125,6 +125,8 @@ After stabilization:
 - `npm run check:review-workflows` confirms review-kind constants stay
   synchronized with worker bins, workflow dispatch choices, reusable workflow
   defaults, and workflow routing
+- `npm run check:review-bins` confirms review-kind prompt configs, bin
+  entrypoints, package scripts, and review workflow docs stay synchronized
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes
