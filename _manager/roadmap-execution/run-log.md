@@ -1774,3 +1774,21 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #132 as `5aa39b1` after CI and Dependency Review
+  passed.
+- Started `codex/check-env-templates` increment:
+  - add `npm run check:env-templates`;
+  - validate `.env.example`, `templates/dogfood-central-env.example`, and
+    `templates/6529-io-reviewbot-env.example` for syntax, duplicate keys,
+    blank secret placeholders, and conservative dogfood defaults;
+  - wire the check into smoke tests and release checks;
+  - update README, configuration, release, readiness, roadmap, changelog, and
+    manager memory.
+- Local validation for `codex/check-env-templates`:
+  - `npm run check:env-templates` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run check` passed;
+  - `npm run release:check` passed;
+  - `git diff --check` passed.

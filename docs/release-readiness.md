@@ -110,6 +110,8 @@ Ready for community review:
   non-root runtime, health check, and runtime-only secret injection guidance;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
+- public env template checker for syntax, duplicate keys, blank secret
+  placeholders, and conservative dogfood defaults;
 - CI runs `npm run release:check` on pull requests and pushes to `main`;
 - OpenSSF Scorecard keeps workflow-level permissions read-only, scopes
   `id-token: write` to the Scorecard job for result publishing, and leaves
@@ -233,6 +235,9 @@ release.
 `npm run check:6529-io-env` is included in `npm run release:check` and verifies
 that the public-safe 6529.io dashboard environment template keeps placeholder
 secrets blank and references only reviewed OpenAPI usage/admin paths.
+`npm run check:env-templates` is included in `npm run release:check` and checks
+all public env templates for valid syntax, duplicate keys, nonblank secret
+placeholders, and conservative dogfood defaults.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

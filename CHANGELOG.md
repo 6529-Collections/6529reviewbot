@@ -61,6 +61,9 @@ stabilized.
 - Documentation link checks and public artifact scanning now include
   non-ignored untracked files during local runs, so new docs/config examples
   are checked before staging.
+- Env template validation now checks public env examples for duplicate or
+  malformed keys, nonblank secret placeholders, and conservative dogfood
+  defaults before release.
 - GitHub Actions worker dispatch supports `auto`, native API, and `gh`
   compatibility modes, with API mode failing closed when the dispatch token is
   missing.

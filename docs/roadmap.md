@@ -383,6 +383,8 @@ Completed in `6529reviewbot`:
 - documentation link checker for the public docs surface.
 - public artifact leak scanner for docs, examples, workflows, and durable
   manager memory.
+- public env template checker for syntax, duplicate keys, blank secret
+  placeholders, and conservative dogfood defaults.
 - machine-readable v0 release gates and checklist renderer.
 - v0 release gate readiness summaries and tag/no-tag enforcement for
   operator-owned status files.
