@@ -96,6 +96,8 @@ stabilized.
 - Added a review-workflow kind release check that validates review-kind
   constants against worker bins, central workflow dispatch options, reusable
   workflow defaults, and workflow routing.
+- Added a review-bin entrypoint release check that validates review-kind prompt
+  configs, CLI entrypoints, package scripts, and review workflow docs.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.

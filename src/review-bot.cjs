@@ -1396,6 +1396,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  REVIEW_KIND_CONFIGS: KIND_CONFIGS,
   main,
   readSettings,
   reviewLane,

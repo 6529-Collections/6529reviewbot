@@ -66,6 +66,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "review-bin-entrypoint-contract",
+          "script": "check:review-bins",
+          "purpose": "Verify review-kind prompt configs, bin entrypoints, package scripts, and review workflow docs stay synchronized.",
+          "doc": "docs/review-workflows.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",

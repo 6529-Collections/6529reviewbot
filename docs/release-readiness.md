@@ -123,6 +123,8 @@ Ready for community review:
 - review-workflow kind checker that keeps review-kind constants, worker bins,
   workflow dispatch choices, reusable workflow defaults, and workflow routing
   synchronized;
+- review-bin entrypoint checker that keeps review-kind prompt configs, CLI
+  entrypoints, package scripts, and review workflow docs synchronized;
 - model-default checker that keeps the model catalog, reusable workflow
   fallbacks, provider-default docs, and conservative starter lanes synchronized;
 - provider contract checker that keeps supported provider constants, model
@@ -349,6 +351,9 @@ least-privilege.
 `npm run check:review-workflows` is included in `npm run release:check` and
 verifies review-kind constants, worker bins, central workflow dispatch
 options, reusable workflow defaults, and workflow routing stay aligned.
+`npm run check:review-bins` is included in `npm run release:check` and
+verifies review-kind prompt configs, CLI entrypoints, package scripts, and
+review workflow docs stay aligned.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.
