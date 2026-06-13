@@ -9,6 +9,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const adminAuth = require("../src/admin-auth.cjs");
+const adminAuthContractCheck = require("./check-admin-auth-contract.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
 const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
 const admissionPolicyCheck = require("./check-admission-policy.cjs");
@@ -244,6 +245,20 @@ assert.throws(
       },
     }),
   /worker adapter contract check found/
+);
+assert.equal(adminAuthContractCheck.checkAdminAuthContract().modes, 3);
+assert.deepEqual(adminAuthContractCheck.expectedAuthModes, ["disabled", "shared_secret", "hmac"]);
+assert.throws(
+  () =>
+    adminAuthContractCheck.checkAdminAuthContract({
+      quiet: true,
+      docTexts: {
+        "docs/admin-auth-bridge.md": "# Admin Auth\n",
+        "docs/6529-io-admin-integration.md": "# Integration\n",
+        "docs/configuration.md": "# Configuration\n",
+      },
+    }),
+  /admin auth contract check found/
 );
 assert.throws(
   () =>

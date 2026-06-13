@@ -2763,3 +2763,23 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including worker adapter contract
     validation and 55 mapped release-operation tools.
+- Merged `6529reviewbot` PR #181 as `752f792`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/admin-auth-contract` increment:
+  - add `scripts/check-admin-auth-contract.cjs` and `npm run check:admin-auth`;
+  - validate admin auth modes, shared-secret behavior, HMAC assertion headers,
+    canonical payload shape, TTL and role enforcement, invalid actor rejection,
+    6529.io bridge docs, configuration docs, and public env templates;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/admin-auth-contract`:
+  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and 5
+    docs/templates checked;
+  - `npm run check:release-operations` passed with 56 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 114 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including admin auth contract validation
+    and 56 mapped release-operation tools.

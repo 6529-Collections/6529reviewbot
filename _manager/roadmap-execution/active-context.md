@@ -322,10 +322,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Repository config boundary contract PR: merged as PR #180, merge commit
   `7fdc7ad`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/worker-adapter-contract`.
-- Current local changes: adding a worker-adapter contract check that keeps
-  adapter modes, GitHub dispatch fields, local worker environment, redacted
-  diagnostics, workflow template inputs, and worker docs synchronized.
+- Worker adapter contract PR: merged as PR #181, merge commit `752f792`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-auth-contract`.
+- Current local changes: adding an admin-auth contract check that keeps private
+  admin auth modes, shared-secret behavior, HMAC headers, TTL and role checks,
+  6529.io bridge docs, and public env templates synchronized.
 
 ## Key Decisions
 
@@ -724,6 +726,11 @@ merged PRs.
 - Review-mode entrypoints should be checked against `REVIEW_KINDS`,
   `REVIEW_KIND_CONFIGS`, and `REVIEW_KIND_BINS` so adding or renaming a review
   mode cannot leave prompts, package scripts, docs, or CLI bins stale.
+- Private admin auth is a release-sensitive trust boundary between 6529.io and
+  the bot. HMAC assertion headers, shared-secret compatibility, role checks,
+  TTL limits, docs, and public env templates should be machine-checked
+  together so the dashboard cannot drift into browser-side secrets or stale
+  authorization assumptions.
 
 ## Constraints
 
@@ -737,7 +744,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the alert notifier mode contract check.
+2. Publish and merge the admin-auth contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
