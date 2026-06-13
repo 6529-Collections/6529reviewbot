@@ -53,6 +53,7 @@ traffic:
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --quiet
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 Equivalent explicit file flags are still available for non-standard private
@@ -82,9 +83,10 @@ deployment details once filled in:
 - admin snapshot details;
 - reviewer notes and release decision evidence.
 
-Copy the redacted `release:candidate` output or individual CLI summaries into
-public PRs, issues, releases, or durable manager memory. Do not copy the raw
-workspace files unless they have been reviewed and intentionally redacted.
+Copy the redacted `release:candidate` output, `dogfood:promotion` packet,
+`dogfood:go-live` packet, or individual CLI summaries into public PRs, issues,
+releases, or durable manager memory. Do not copy the raw workspace files unless
+they have been reviewed and intentionally redacted.
 When the command line contains a private workspace path, prefer
 `npm --silent run` or a command-specific `--out <public-file> --quiet` option
 before copying terminal output into public artifacts.

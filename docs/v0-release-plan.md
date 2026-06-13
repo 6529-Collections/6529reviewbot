@@ -74,7 +74,8 @@ The first `v0` tag can include:
 - sanitized support bundle and support playbook;
 - install and onboarding guide;
 - operator evidence template for redacted deployment proof;
-- operator workspace bootstrap for private status and evidence skeletons;
+- operator workspace bootstrap for private status/evidence skeletons and final
+  promotion/go-live command guidance;
 - dogfood go-live packet for cross-checking release, promotion, cutover, and
   operator-workspace evidence before command-only live traffic;
 - dogfood templates, deployment docs, release checks, and security-review

@@ -333,10 +333,12 @@ npm run security:review -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.s
 npm run production:cutover -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus} --summary
 npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary
 npm run release:candidate -- -- --operator-workspace . --strict-preflight
+npm --silent run dogfood:promotion -- -- --operator-workspace . --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace . --strict-preflight --require-ready
 \`\`\`
 
-Copy only redacted summaries or release-candidate output into public PRs,
-issues, releases, or durable manager memory.
+Copy only redacted summaries, release-candidate output, promotion packets, or
+go-live packets into public PRs, issues, releases, or durable manager memory.
 `;
 }
 
