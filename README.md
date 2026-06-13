@@ -77,6 +77,8 @@ AGENTS.md                    Instructions for coding agents working here
 
 ## Documentation Map
 
+The full canonical documentation index is [docs/README.md](docs/README.md).
+
 - [Architecture](docs/architecture.md): system boundaries and trust model.
 - [Installation](docs/install.md): central App setup and target repo onboarding.
 - [Configuration](docs/configuration.md): central runtime settings.
@@ -590,6 +592,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 
 ## Documentation
 
+- [Docs index](docs/README.md)
 - [Architecture](docs/architecture.md)
 - [Configuration](docs/configuration.md)
 - [Production deployment](docs/deployment.md)

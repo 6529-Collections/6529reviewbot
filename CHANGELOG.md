@@ -81,6 +81,8 @@ stabilized.
 - Operator docs and the PR template now keep the dogfood go-live packet in the
   release, promotion, production cutover, and evidence-review path before live
   dogfood traffic.
+- Added a canonical `docs/README.md` documentation index plus release and
+  operations-map checks that fail when tracked docs are missing from the index.
 - Release notes template validation keeps pre-v1 release notes explicit about
   tested configuration, dogfood promotion/go-live evidence, production cutover,
   deferrals, known gaps, compatibility, and validation.

@@ -255,6 +255,8 @@ Build the operator experience:
   replay;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
+- canonical docs index coverage so public runbooks and reference docs remain
+  discoverable as the repo grows;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;

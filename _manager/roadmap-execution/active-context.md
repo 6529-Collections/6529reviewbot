@@ -619,6 +619,8 @@ merged PRs.
   the same evidence chain as release-candidate bundles, dogfood promotion, and
   production cutover so future release changes do not drift from the final
   traffic gate.
+- Public docs need a canonical index with machine-checked coverage so release
+  and operator guidance cannot become hidden as the documentation set grows.
 
 ## Constraints
 
@@ -632,7 +634,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the go-live documentation sweep.
+2. Validate, publish, and merge the docs index coverage check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

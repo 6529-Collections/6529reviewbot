@@ -17,6 +17,9 @@ The source of truth is
 `npm run check:release-operations` validates that every mapped command exists
 in `package.json` and that every linked document is present. The check is
 included in `npm run release:check`.
+The canonical documentation index is [Docs Index](README.md), and
+`npm run check:doc-index` fails release checks when a public docs page is not
+linked there.
 
 ## How To Read It
 
