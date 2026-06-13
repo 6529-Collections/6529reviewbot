@@ -17,6 +17,7 @@ for (const file of files) {
 JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 
 for (const file of [
+  ".github/6529bot.yml",
   "templates/repository-config.yml",
   "templates/dogfood-command-only-config.yml",
   "templates/dogfood-repository-config.yml",

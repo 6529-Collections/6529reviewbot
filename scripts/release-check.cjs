@@ -10,6 +10,7 @@ const YAML = require("yaml");
 
 const root = path.resolve(__dirname, "..");
 const repoConfigTemplates = [
+  ".github/6529bot.yml",
   "templates/dogfood-command-only-config.yml",
   "templates/dogfood-repository-config.yml",
   "templates/repository-config.yml",

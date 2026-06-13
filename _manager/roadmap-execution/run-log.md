@@ -2048,3 +2048,27 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #145 as `d0ad359` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/self-dogfood-config` increment:
+  - add `.github/6529bot.yml` in command-only mode for the bot repository
+    itself;
+  - keep automatic initial and follow-up reviews disabled;
+  - require trusted public-repo actors, draft skips, one Anthropic Opus lane,
+    low max jobs per delivery, and enforced daily repo/requestor/PR/review-kind
+    caps;
+  - include the new config in `npm run check` and `npm run release:check`
+    repository-config validation;
+  - update README, dogfood docs, release-readiness, roadmap, changelog, and
+    manager memory.
+- Local validation for `codex/self-dogfood-config`:
+  - `npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready`
+    passed and reported command-only self-dogfood ready;
+  - `npm run validate:repo-config -- .github/6529bot.yml` passed;
+  - `npm test` passed;
+  - `npm run check` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed and validated `.github/6529bot.yml`;
+  - `git diff --check` passed.

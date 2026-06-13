@@ -53,6 +53,11 @@ adapters, usage APIs, admin auth bridge, and scheduled operator alerts are
 present, but production deployment, dogfooding, and release tags are still
 pending.
 
+The repository includes a command-only `.github/6529bot.yml` dogfood config.
+It enables trusted maintainer comment commands only; automatic initial and
+follow-up reviews stay disabled until the production App, worker path, budget
+ledger, run-control, alerts, and private dogfood status evidence are ready.
+
 For the current release gates, see
 [docs/release-readiness.md](docs/release-readiness.md).
 For the first pre-v1 tag boundary, see
