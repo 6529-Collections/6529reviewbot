@@ -36,6 +36,7 @@ repositories.
 - GitHub Actions dispatch mode:
 - GitHub Actions dispatch token source:
 - App server runtime:
+- Container image contract check:
 - Container image digest, if used:
 - GitHub App permissions/events:
 - Providers/models:
@@ -110,6 +111,7 @@ before updating.
 ## Validation
 
 - `npm run release:check`:
+- `npm run check:container-image`:
 - `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:

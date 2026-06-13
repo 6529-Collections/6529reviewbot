@@ -2419,3 +2419,20 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including container-image contract
     validation and 20 v0 release gates.
+- Merged `6529reviewbot` PR #165 as `1f6dcb7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/container-release-contract` increment:
+  - update the v0 container-image gate to require `npm run check:container-image`;
+  - add container-image contract-check fields to the release notes template;
+  - extend release-notes template validation so future release notes keep that
+    evidence line.
+- Local validation for `codex/container-release-contract`:
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-gates` passed with 20 gates and 20 evidence refs;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 100 CommonJS files;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including container-image contract
+    validation and 20 v0 release gates.

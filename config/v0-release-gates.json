@@ -15,7 +15,7 @@
     },
     {
       "id": "container-image",
-      "title": "Container image, when used, is built from a reviewed commit, scanned, and recorded by digest in private operator evidence.",
+      "title": "Container image, when used, passes the repository container-image contract check, is built from a reviewed commit, scanned, and recorded by digest in private operator evidence.",
       "evidence": "docs/container-deployment.md"
     },
     {

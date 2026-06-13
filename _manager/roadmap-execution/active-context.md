@@ -638,6 +638,9 @@ merged PRs.
 - The container image boundary should be machine-checked so Dockerfile and
   `.dockerignore` edits cannot silently copy private repo artifacts, run as
   root, or drop the health check.
+- v0 release gates and release notes should explicitly call out
+  `npm run check:container-image` so container deployment evidence includes
+  both source-contract validation and operator-owned image evidence.
 
 ## Constraints
 
@@ -651,7 +654,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the container-image contract check.
+2. Validate, publish, and merge the container release-contract follow-up.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

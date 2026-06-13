@@ -46,6 +46,7 @@ const requiredTestedConfigurationFields = [
   "GitHub Actions dispatch mode:",
   "GitHub Actions dispatch token source:",
   "App server runtime:",
+  "Container image contract check:",
   "Container image digest, if used:",
   "GitHub App permissions/events:",
   "Providers/models:",
@@ -81,6 +82,7 @@ const requiredKnownGapFields = [
 ];
 const requiredValidationFields = [
   "`npm run release:check`:",
+  "`npm run check:container-image`:",
   "`npm run v0:gates`:",
   "`npm run preflight -- -- --strict`:",
   "`npm run release:candidate",
