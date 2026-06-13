@@ -61,6 +61,9 @@ After stabilization:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
   passes before broad community traffic unless release notes intentionally mark
   the release as dogfood-only and name every cutover deferral
+- `npm run dogfood:readiness -- -- --strict-preflight --require-ready` passes
+  before first live dogfood traffic, using the operator-reviewed target repo
+  config and budget policy when they differ from the public examples
 - `npm run admin:snapshot -- -- --base-url <production-bot-origin> --require-ok`
   passes from a private operator environment when validating the 6529.io admin
   surface; keep the detailed snapshot private unless release notes only copy

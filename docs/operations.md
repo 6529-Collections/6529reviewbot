@@ -87,6 +87,13 @@ Validate target repo config before rollout:
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
+Validate the dogfood input set before first command-only traffic:
+
+```bash
+npm run dogfood:readiness
+npm run dogfood:readiness -- -- --preflight
+```
+
 Replay a saved webhook payload without dispatching workers:
 
 ```bash

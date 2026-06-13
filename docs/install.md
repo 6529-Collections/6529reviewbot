@@ -280,6 +280,16 @@ Validate the config before opening the target repo PR:
 npm run validate:repo-config -- <target-repo>/.github/6529bot.yml
 ```
 
+Validate the full dogfood input set before the first command trigger:
+
+```bash
+npm run dogfood:readiness -- -- \
+  --repository-config <target-repo>/.github/6529bot.yml \
+  --budget-policy-file <reviewed-budget-policy-file.json> \
+  --strict-preflight \
+  --require-ready
+```
+
 After the config merges, trigger a trusted maintainer command:
 
 ```text

@@ -101,6 +101,8 @@ AGENTS.md                    Instructions for coding agents working here
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
   worker evidence.
 - [Dogfood Runbook](docs/dogfood.md): safe phased rollout.
+- [Dogfood Readiness](docs/dogfood-readiness.md): public-safe dogfood input
+  validation before first traffic.
 - [Incident Response](docs/incident-response.md): containment and recovery runbooks.
 - [Release Readiness](docs/release-readiness.md): current gates and gaps.
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
@@ -213,6 +215,14 @@ Validate a target repository config before opening its PR:
 
 ```bash
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
+```
+
+Validate dogfood inputs before first traffic:
+
+```bash
+npm run dogfood:readiness
+npm run dogfood:readiness -- -- --preflight
+npm run dogfood:readiness -- -- --strict-preflight --require-ready
 ```
 
 Validate the GitHub App manifest template:
@@ -499,6 +509,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Production deployment](docs/deployment.md)
 - [Container deployment](docs/container-deployment.md)
 - [Dogfood runbook](docs/dogfood.md)
+- [Dogfood readiness](docs/dogfood-readiness.md)
 - [GitHub App](docs/github-app.md)
 - [GitHub App registration](docs/github-app-registration.md)
 - [Model pricing](docs/model-pricing.md)

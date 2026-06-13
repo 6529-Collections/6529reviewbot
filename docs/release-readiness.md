@@ -95,6 +95,9 @@ Ready for community review:
 - sanitized support bundle and support playbook;
 - dogfood runbook, conservative config templates, and repository config
   validation tooling;
+- dogfood readiness summary command for validating repository configs, central
+  budget policy, model catalog, and optional no-network preflight before first
+  traffic;
 - documented maintainer comment-command contract;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
@@ -150,6 +153,8 @@ Before announcing broad community use:
 9. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
+   Run [Dogfood Readiness](dogfood-readiness.md) before the first command-only
+   trigger.
 10. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
 11. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 12. Update README, changelog, release notes, install docs, and example configs.
@@ -198,6 +203,14 @@ real status file stays in the private operator workspace:
 npm run production:cutover -- -- --init-status <operator-cutover-status-file>
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready
+```
+
+Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
+first traffic:
+
+```bash
+npm run dogfood:readiness
+npm run dogfood:readiness -- -- --strict-preflight --require-ready
 ```
 
 `npm run check:docs` is included in `npm run release:check` and verifies local
