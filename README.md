@@ -142,6 +142,7 @@ Run local checks:
 npm run check
 npm run check:docs
 npm run check:public-artifacts
+npm run check:release-notes
 npm run check:self-dogfood-replay
 npm test
 npm run check:workflow-actions

@@ -314,6 +314,13 @@
           "purpose": "Render this operations map for a quick command and evidence-boundary index.",
           "doc": "docs/release-operations-map.md",
           "publicOutput": "Safe."
+        },
+        {
+          "id": "release-notes-contract",
+          "script": "check:release-notes",
+          "purpose": "Validate that the release notes template still names the required gates, evidence, deferrals, compatibility, and validation fields for pre-v1 releases.",
+          "doc": "docs/release-notes-template.md",
+          "publicOutput": "Safe."
         }
       ]
     },

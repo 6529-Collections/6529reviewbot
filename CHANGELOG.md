@@ -78,6 +78,8 @@ stabilized.
 - Release-candidate bundles redact private operator workspace paths in JSON and
   Markdown output, and docs now recommend `npm --silent run` or `--out --quiet`
   when capturing public bundles from private paths.
+- Release notes template validation keeps pre-v1 release notes explicit about
+  tested configuration, deferrals, known gaps, compatibility, and validation.
 - Dogfood readiness docs and CLI help now recommend `npm --silent run` when
   capturing public evidence from commands that include private workspace paths.
 - Dogfood target packet CLI validates target-repo config PR posture before

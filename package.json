@@ -55,6 +55,7 @@
     "check:public-artifacts": "node scripts/check-public-artifacts.cjs",
     "check:preflight": "node scripts/check-preflight-fixtures.cjs",
     "check:release-gates": "node scripts/check-release-gate-parity.cjs",
+    "check:release-notes": "node scripts/check-release-notes-template.cjs",
     "check:release-operations": "node scripts/check-release-operations-map.cjs",
     "check:self-dogfood-replay": "node scripts/check-self-dogfood-replay.cjs",
     "check:workflow-actions": "node scripts/check-workflow-actions.cjs",

@@ -102,6 +102,9 @@ After stabilization:
   blank secret placeholders, and conservative dogfood defaults
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
   the numbered required-gates list and that evidence paths or commands resolve
+- `npm run check:release-notes` confirms the pre-v1 release notes template
+  still names required evidence, known gaps, deferrals, compatibility, and
+  validation fields
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
