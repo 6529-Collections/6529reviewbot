@@ -2581,3 +2581,24 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including review bin entrypoint validation
     and 47 mapped release-operation tools.
+- Merged `6529reviewbot` PR #173 as `88cc326`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/budget-scope-contract` increment:
+  - add `scripts/check-budget-scopes.cjs` and
+    `npm run check:budget-scopes`;
+  - validate canonical budget scopes against central policy validation,
+    rendered ledger schema constraints, requester-to-requestor normalization,
+    public docs, and the conservative dogfood policy example;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/budget-scope-contract`:
+  - `npm run check:budget-scopes` passed with 8 scopes and 7 dogfood example
+    scopes checked;
+  - `npm run check:release-operations` passed with 48 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 106 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including budget scope validation and 48
+    mapped release-operation tools.

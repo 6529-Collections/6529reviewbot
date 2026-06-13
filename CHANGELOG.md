@@ -104,6 +104,9 @@ stabilized.
 - Added a provider-contract release check that validates supported provider
   constants against model catalog providers, preflight key requirements,
   workflow dispatch options, and provider docs.
+- Added a budget-scope release check that validates canonical budget scopes
+  across central policy validation, ledger schema constraints, public docs, and
+  dogfood examples.
 - Updated the v0 release gate and release notes contract to require explicit
   container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep

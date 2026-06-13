@@ -19,6 +19,7 @@ const budgetAdmission = require("../src/budget-admission.cjs");
 const budgetLedger = require("../src/budget-ledger.cjs");
 const budgetPolicies = require("../src/budget-policies.cjs");
 const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
+const budgetScopesCheck = require("./check-budget-scopes.cjs");
 const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodTarget = require("../src/dogfood-target.cjs");
@@ -107,6 +108,23 @@ assert.equal(settings.model, "claude-opus-4-8");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 5);
+assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
+assert.deepEqual(
+  budgetScopesCheck.dogfoodExampleScopes,
+  ["global", "org", "repo", "requestor", "provider", "model", "review_kind"]
+);
+assert.throws(
+  () =>
+    budgetScopesCheck.checkBudgetScopes({
+      quiet: true,
+      docTexts: {
+        "docs/budget-policies.md": "# Budget Policies\n\nSupported scopes:\n\n- `global`\n",
+        "docs/budget-admission.md": "# Budget Admission\n\nSupported scopes:\n\n- `global`\n",
+        "docs/aws-usage-ledger.md": "# AWS Usage Ledger\n",
+      },
+    }),
+  /budget scope check found/
+);
 assert.throws(
   () =>
     reviewBinEntrypointsCheck.checkReviewBinEntrypoints({

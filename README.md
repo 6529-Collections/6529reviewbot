@@ -152,6 +152,7 @@ npm run check:review-workflows
 npm run check:review-bins
 npm run check:model-defaults
 npm run check:providers
+npm run check:budget-scopes
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes

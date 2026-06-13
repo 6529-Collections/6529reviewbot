@@ -87,6 +87,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "budget-scope-contract",
+          "script": "check:budget-scopes",
+          "purpose": "Verify canonical budget scopes stay synchronized with central policy validation, ledger schema constraints, public docs, and dogfood examples.",
+          "doc": "docs/budget-policies.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

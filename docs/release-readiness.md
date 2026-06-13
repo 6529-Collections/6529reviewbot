@@ -130,6 +130,8 @@ Ready for community review:
 - provider contract checker that keeps supported provider constants, model
   catalog providers, preflight key requirements, workflow dispatch choices, and
   provider docs synchronized;
+- budget-scope checker that keeps central policy validation, ledger schema
+  constraints, public docs, and dogfood examples synchronized;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -360,6 +362,9 @@ provider-default docs, and conservative starter lanes stay aligned.
 `npm run check:providers` is included in `npm run release:check` and verifies
 supported provider constants, model catalog providers, preflight key
 requirements, workflow dispatch choices, and provider docs stay aligned.
+`npm run check:budget-scopes` is included in `npm run release:check` and
+verifies canonical budget scopes, central policy validation, ledger schema
+constraints, public docs, and dogfood examples stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a
