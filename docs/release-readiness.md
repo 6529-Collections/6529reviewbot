@@ -120,6 +120,9 @@ Ready for community review:
 - documented maintainer comment-command contract;
 - comment-command contract checker that keeps trigger docs synchronized with
   the parser and review-kind constants;
+- review-workflow kind checker that keeps review-kind constants, worker bins,
+  workflow dispatch choices, reusable workflow defaults, and workflow routing
+  synchronized;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -338,6 +341,9 @@ identifiers before release.
 `npm run check:workflow-permissions` is included in `npm run release:check`
 and verifies committed workflow permission blocks stay explicit and
 least-privilege.
+`npm run check:review-workflows` is included in `npm run release:check` and
+verifies review-kind constants, worker bins, central workflow dispatch
+options, reusable workflow defaults, and workflow routing stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

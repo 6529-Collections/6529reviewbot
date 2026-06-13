@@ -59,6 +59,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "review-workflow-kind-contract",
+          "script": "check:review-workflows",
+          "purpose": "Verify review-kind constants stay synchronized with worker bins, central workflow dispatch options, reusable workflow defaults, and shell routing.",
+          "doc": "docs/review-workflows.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

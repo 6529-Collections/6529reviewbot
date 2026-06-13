@@ -93,6 +93,9 @@ stabilized.
   and `.dockerignore` runtime boundary.
 - Added a comment-command release check that validates the public trigger docs
   against the parser and review-kind constants.
+- Added a review-workflow kind release check that validates review-kind
+  constants against worker bins, central workflow dispatch options, reusable
+  workflow defaults, and workflow routing.
 - Updated the v0 release gate and release notes contract to require explicit
   container-image contract-check evidence when an App server image is used.
 - Strengthened the public-governance check to verify issue templates keep
