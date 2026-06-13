@@ -104,6 +104,10 @@ function requireValue(args, index, name) {
 function printUsage() {
   console.log(`Usage: node bin/dogfood-readiness.cjs [options]
 
+Examples:
+  npm run dogfood:readiness
+  npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
+
 Options:
   --repository-config <file>   Repository config file to validate. Repeatable.
   --budget-policy-file <file>  Dogfood budget policy file.
@@ -117,6 +121,8 @@ Options:
   --json                       Print JSON instead of Markdown.
   --quiet                      Do not print output.
   --require-ready              Exit non-zero unless all included checks are ready.
+
+Use npm --silent run when copying output from commands that include private paths.
 `);
 }
 

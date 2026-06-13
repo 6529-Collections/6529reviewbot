@@ -63,10 +63,12 @@ From a private operator environment, include no-network runtime preflight:
 ```bash
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
 See [Dogfood Readiness](dogfood-readiness.md) for custom target-repo config and
-private budget policy inputs.
+private budget policy inputs. Use `npm --silent run` before copying output from
+commands that include private workspace paths into public notes.
 
 When live dogfood starts, track the actual run with the private status overlay:
 

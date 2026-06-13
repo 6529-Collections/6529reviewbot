@@ -78,6 +78,8 @@ stabilized.
 - Release-candidate bundles redact private operator workspace paths in JSON and
   Markdown output, and docs now recommend `npm --silent run` or `--out --quiet`
   when capturing public bundles from private paths.
+- Dogfood readiness docs and CLI help now recommend `npm --silent run` when
+  capturing public evidence from commands that include private workspace paths.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.

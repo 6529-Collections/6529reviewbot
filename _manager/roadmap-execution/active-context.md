@@ -244,11 +244,13 @@ merged PRs.
   and Dependency Review completed successfully before merge.
 - Release-gate evidence-link PR: merged as PR #142, merge commit `4fa25c6`;
   CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/release-candidate-workspace-redaction`.
-- Current local changes: redacting private operator workspace paths from
-  `release:candidate --operator-workspace` JSON and Markdown bundle inputs,
-  and documenting `npm --silent run` / `--out --quiet` for public bundle
-  capture from private paths.
+- Release-candidate operator-workspace redaction PR: merged as PR #143, merge
+  commit `59a8c2e`; CI and Dependency Review completed successfully before
+  merge.
+- Current branch: `codex/dogfood-readiness-silent-capture`.
+- Current local changes: documenting `npm --silent run dogfood:readiness`
+  capture for public evidence generated from commands that include private
+  operator workspace paths, plus matching CLI help.
 
 ## Key Decisions
 
@@ -546,6 +548,10 @@ merged PRs.
 - Public-safe release-candidate bundles must redact private operator workspace
   paths in both JSON and Markdown. Docs should account for npm's own command
   echo when operators copy terminal output.
+- Dogfood readiness reports also need command-line capture guidance. The
+  script's own output is redacted, but normal `npm run` can echo private
+  workspace paths before the script starts, so public evidence examples should
+  prefer `npm --silent run` when private paths are present.
 
 ## Constraints
 
@@ -559,8 +565,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge release-candidate operator-workspace path
-   redaction.
+2. Validate, publish, and merge dogfood readiness silent-capture documentation.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

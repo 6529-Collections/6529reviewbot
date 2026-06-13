@@ -254,7 +254,12 @@ npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
+
+Use `npm --silent run` when copying dogfood readiness output from commands that
+include private workspace paths; normal `npm run` can echo the command line
+before the redacted report.
 
 Track private dogfood execution evidence:
 

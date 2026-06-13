@@ -46,6 +46,14 @@ npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
 ```
 
+Validate dogfood readiness against the same private workspace before first
+traffic:
+
+```bash
+npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --quiet
+```
+
 Equivalent explicit file flags are still available for non-standard private
 workspace layouts:
 
@@ -76,3 +84,6 @@ deployment details once filled in:
 Copy the redacted `release:candidate` output or individual CLI summaries into
 public PRs, issues, releases, or durable manager memory. Do not copy the raw
 workspace files unless they have been reviewed and intentionally redacted.
+When the command line contains a private workspace path, prefer
+`npm --silent run` or a command-specific `--out <public-file> --quiet` option
+before copying terminal output into public artifacts.

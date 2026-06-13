@@ -49,11 +49,24 @@ production-cutover, and operator-evidence files exist and parse. Pending
 evidence items are summarized but do not make the pre-traffic readiness check
 fail.
 
+When copying the report into a public PR, issue, release note, or manager
+memory entry, use silent npm output so npm does not echo the private workspace
+path before the command's redacted report:
+
+```bash
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --json
+```
+
+The command output redacts operator workspace paths, but a normal `npm run`
+invocation can still print the full command line before the script starts.
+
 For expansion or final release gates where every private checklist must be
 complete, add the stricter workspace flag:
 
 ```bash
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --require-operator-workspace-ready --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --require-operator-workspace-ready --require-ready
 ```
 
 ## Custom Inputs
