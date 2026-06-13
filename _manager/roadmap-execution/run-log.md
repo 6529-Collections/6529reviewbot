@@ -2072,3 +2072,30 @@
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed and validated `.github/6529bot.yml`;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #146 as `4125cff` after CI and Dependency Review
+  passed. CodeRabbit added a release-note summary and did not create review
+  threads before merge.
+- Started `codex/self-dogfood-replay-check` increment:
+  - add synthetic public payload fixtures for a self-dogfood PR-open event and
+    trusted maintainer `/6529bot security` comment command;
+  - add `npm run check:self-dogfood-replay` to replay both payloads through
+    the App pipeline in dry-run mode;
+  - assert the PR-open event creates no jobs under the command-only config;
+  - assert the trusted comment command admits one dry-run security job without
+    dispatching workers;
+  - include the check in `npm run release:check`, release operations map,
+    README, dogfood, operations, release-readiness, release, roadmap,
+    changelog, and manager memory.
+- Local validation for `codex/self-dogfood-replay-check`:
+  - `npm run check:self-dogfood-replay` passed;
+  - replay check proved self-dogfood PR-open creates no jobs under the
+    command-only config;
+  - replay check proved trusted maintainer `/6529bot security` creates one
+    dry-run Anthropic Opus security job without worker dispatch;
+  - `npm test` passed;
+  - `npm run check` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:release-operations` passed with 34 tools;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed and ran the self-dogfood replay gate;
+  - `git diff --check` passed.

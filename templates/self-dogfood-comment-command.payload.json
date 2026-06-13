@@ -1,0 +1,31 @@
+{
+  "action": "created",
+  "repository": {
+    "id": 6529001,
+    "full_name": "6529-Collections/6529reviewbot",
+    "private": false,
+    "default_branch": "main"
+  },
+  "installation": {
+    "id": 6529002
+  },
+  "sender": {
+    "login": "trusted-maintainer"
+  },
+  "issue": {
+    "number": 146,
+    "pull_request": {
+      "url": "https://api.github.com/repos/6529-Collections/6529reviewbot/pulls/146"
+    },
+    "user": {
+      "login": "trusted-maintainer"
+    }
+  },
+  "comment": {
+    "id": 6529003,
+    "body": "/6529bot security",
+    "user": {
+      "login": "trusted-maintainer"
+    }
+  }
+}

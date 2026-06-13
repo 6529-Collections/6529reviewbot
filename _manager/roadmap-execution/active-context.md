@@ -251,10 +251,13 @@ merged PRs.
   `a64c022`; CI and Dependency Review completed successfully before merge.
 - Dogfood target packet PR: merged as PR #145, merge commit `d0ad359`; CI and
   Dependency Review completed successfully before merge.
-- Current branch: `codex/self-dogfood-config`.
-- Current local changes: adding a command-only `.github/6529bot.yml` for this
-  repository, plus docs and release checks that validate the self-dogfood
-  config before the production App is installed.
+- Self-dogfood config PR: merged as PR #146, merge commit `4125cff`; CI and
+  Dependency Review completed successfully before merge.
+- Current branch: `codex/self-dogfood-replay-check`.
+- Current local changes: adding synthetic self-dogfood webhook payload
+  fixtures and `npm run check:self-dogfood-replay` to prove command-only
+  PR-open skips and trusted maintainer comment-command dry runs before live
+  delivery.
 
 ## Key Decisions
 
@@ -563,6 +566,10 @@ merged PRs.
   enable trusted maintainer comment commands only, leaving automatic initial
   and follow-up reviews disabled until production App, worker, budget, ledger,
   run-control, alert, and private dogfood status evidence is ready.
+- Self-dogfood should be replayable before live App delivery. Synthetic
+  payloads can prove the committed config skips automatic PR-open jobs and
+  admits trusted maintainer comment commands through dry-run queueing without
+  exposing private webhook payloads.
 
 ## Constraints
 
@@ -576,7 +583,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the self-dogfood command-only config.
+2. Validate, publish, and merge the self-dogfood replay check.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

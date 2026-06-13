@@ -142,6 +142,7 @@ Run local checks:
 npm run check
 npm run check:docs
 npm run check:public-artifacts
+npm run check:self-dogfood-replay
 npm test
 npm run check:workflow-actions
 ```
@@ -259,6 +260,7 @@ Validate dogfood inputs before first traffic:
 ```bash
 npm run dogfood:target
 npm run dogfood:target -- -- --mode limited-initial --require-ready
+npm run check:self-dogfood-replay
 npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready

@@ -1,0 +1,34 @@
+{
+  "action": "opened",
+  "repository": {
+    "id": 6529001,
+    "full_name": "6529-Collections/6529reviewbot",
+    "private": false,
+    "default_branch": "main"
+  },
+  "installation": {
+    "id": 6529002
+  },
+  "sender": {
+    "login": "trusted-maintainer"
+  },
+  "pull_request": {
+    "number": 146,
+    "user": {
+      "login": "trusted-maintainer"
+    },
+    "head": {
+      "sha": "1111111111111111111111111111111111111111",
+      "repo": {
+        "full_name": "6529-Collections/6529reviewbot"
+      }
+    },
+    "base": {
+      "sha": "2222222222222222222222222222222222222222",
+      "repo": {
+        "full_name": "6529-Collections/6529reviewbot"
+      }
+    },
+    "draft": false
+  }
+}

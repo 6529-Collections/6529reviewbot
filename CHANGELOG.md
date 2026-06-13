@@ -84,6 +84,8 @@ stabilized.
   command-only or limited-initial dogfood rollout.
 - Added a command-only `.github/6529bot.yml` config so this repository can be
   used as a first trusted-maintainer dogfood target after App installation.
+- Added synthetic self-dogfood replay fixtures and check coverage for the
+  command-only PR-open skip and trusted maintainer comment-command path.
 - Dogfood readiness can include a redacted private operator workspace parse
   check before first live traffic, with an optional stricter evidence-ready
   mode for expansion gates.

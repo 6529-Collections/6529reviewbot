@@ -156,6 +156,13 @@
           "publicOutput": "Safe when the repository name is intentionally public; external config paths are redacted."
         },
         {
+          "id": "self-dogfood-replay",
+          "script": "check:self-dogfood-replay",
+          "purpose": "Replay synthetic self-dogfood payloads through the App pipeline to prove command-only behavior without dispatching workers.",
+          "doc": "docs/dogfood.md",
+          "publicOutput": "Safe; uses synthetic public payload templates and dry-run queueing only."
+        },
+        {
           "id": "dogfood-readiness",
           "script": "dogfood:readiness",
           "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",

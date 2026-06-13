@@ -94,6 +94,7 @@ Validate target repo config before rollout:
 ```bash
 npm run dogfood:target
 npm run dogfood:target -- -- --mode limited-initial --require-ready
+npm run check:self-dogfood-replay
 npm run validate:repo-config -- templates/dogfood-repository-config.yml
 ```
 
@@ -113,6 +114,7 @@ output can echo the full command line before the script runs.
 Replay a saved webhook payload without dispatching workers:
 
 ```bash
+npm run check:self-dogfood-replay
 npm run webhook:replay -- -- \
   --payload payload.json \
   --actor-permission write \
