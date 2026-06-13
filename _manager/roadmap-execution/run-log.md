@@ -2315,3 +2315,20 @@
   - `npm test` passed;
   - `npm run release:check` passed, including the docs index gate and 20 v0
     release gates.
+- Merged `6529reviewbot` PR #159 as `fb47240`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/public-governance-check` increment:
+  - add `scripts/check-public-governance.cjs` and `npm run check:governance`;
+  - wire the governance check into `npm run release:check` and the release
+    operations map;
+  - make the root README community and governance entry points explicit.
+- Local validation for `codex/public-governance-check`:
+  - `npm run check:governance` passed with 13 files checked;
+  - `npm run check:release-operations` passed with 39 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 97 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including docs index, public governance,
+    and 20 v0 release gates.

@@ -257,6 +257,8 @@ Build the operator experience:
 - release tags and changelog discipline;
 - canonical docs index coverage so public runbooks and reference docs remain
   discoverable as the repo grows;
+- public-governance checks for MIT license metadata, community files, issue
+  templates, and README governance links;
 - v0 release notes and compatibility warnings;
 - rollback instructions;
 - incident runbooks;

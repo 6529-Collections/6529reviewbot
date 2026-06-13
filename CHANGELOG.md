@@ -83,6 +83,8 @@ stabilized.
   dogfood traffic.
 - Added a canonical `docs/README.md` documentation index plus release and
   operations-map checks that fail when tracked docs are missing from the index.
+- Added a public-governance release check for MIT license metadata, community
+  files, issue templates, and root README governance links.
 - Release notes template validation keeps pre-v1 release notes explicit about
   tested configuration, dogfood promotion/go-live evidence, production cutover,
   deferrals, known gaps, compatibility, and validation.

@@ -636,10 +636,12 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
 
-## Contributing
+## Community And Governance
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). This project uses the MIT license and
-expects signed-off commits when that is required by the target 6529 repository.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
+[SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and
+[GOVERNANCE.md](GOVERNANCE.md). This project uses the MIT license and expects
+signed-off commits when that is required by the target 6529 repository.
 
 ## License
 
