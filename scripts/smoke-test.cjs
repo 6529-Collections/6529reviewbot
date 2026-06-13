@@ -61,6 +61,7 @@ const installGuideContractCheck = require("./check-install-guide-contract.cjs");
 const deploymentRunbookContractCheck = require("./check-deployment-runbook-contract.cjs");
 const configurationReferenceContractCheck = require("./check-configuration-reference-contract.cjs");
 const awsIamTemplatesCheck = require("./check-aws-iam-templates.cjs");
+const securityModelContractCheck = require("./check-security-model-contract.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
@@ -5252,6 +5253,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /aws iam template check found/
+  );
+  const securityModelContractResult =
+    securityModelContractCheck.checkSecurityModelContract();
+  assert.equal(securityModelContractResult.controls, 17);
+  assert.equal(securityModelContractResult.sourceFiles, 12);
+  await assert.throws(
+    () =>
+      securityModelContractCheck.checkSecurityModelContract({
+        quiet: true,
+        docTexts: {
+          "docs/security-model.md": "# Security Model\n",
+        },
+      }),
+    /security model contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

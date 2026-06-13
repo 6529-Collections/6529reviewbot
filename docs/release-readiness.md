@@ -198,6 +198,10 @@ Ready for community review:
 - `npm run check:aws-iam-templates` keeps AWS IAM/OIDC examples least-privilege,
   placeholder-only, scoped to the bot repository or protected environment, and
   linked from production cutover evidence;
+- `npm run check:security-model` keeps the security model and checklist
+  synchronized with first-principles trust boundaries, prompt/path/metadata
+  safety, fail-closed controls, diagnostic redaction, admin/AWS/alert
+  boundaries, and source anchors;
 - `npm run check:operations-runbook` keeps [Operations Runbook](operations.md)
   synchronized with routine checks and triage paths for replay, spend, ledgers,
   workers, dashboards, and bot comments;
@@ -467,6 +471,11 @@ options, reusable workflow defaults, and workflow routing stay aligned.
 `npm run release:check` and verifies review context path safety, trusted
 metadata handling, prompt hygiene, hard caps, and source-boundary docs stay
 aligned.
+`npm run check:security-model` is included in `npm run release:check` and
+verifies the security model and checklist stay synchronized with
+first-principles trust boundaries, prompt/path/metadata safety, fail-closed
+controls, diagnostic redaction, admin/AWS/alert boundaries, and source
+anchors.
 `npm run check:review-bins` is included in `npm run release:check` and
 verifies review-kind prompt configs, CLI entrypoints, package scripts, and
 review workflow docs stay aligned.
