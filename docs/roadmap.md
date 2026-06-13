@@ -374,7 +374,7 @@ Completed in `6529reviewbot`:
 - command-only `.github/6529bot.yml` config in this repository for eventual
   self-dogfood once the production App is installed.
 - synthetic self-dogfood replay check proving command-only PR-open skip and
-  trusted maintainer comment-command admission without worker dispatch.
+  trusted maintainer command-matrix admission without worker dispatch.
 - dogfood execution status checklist and CLI for private command-only,
   limited-initial, visibility, alert, and rollback evidence.
 - production deployment runbook and central worker installation-token flow.

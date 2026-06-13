@@ -2116,3 +2116,20 @@
   - `npm run check:release-operations` passed with 35 tools;
   - `npm run release:check` passed and ran the release notes template gate;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #148 as `be9b620` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/self-dogfood-command-matrix` increment:
+  - extend `npm run check:self-dogfood-replay` from one comment-command case
+    to an eight-case trusted maintainer command matrix;
+  - generate per-command synthetic issue-comment payloads under ignored `tmp/`
+    during the check and delete them afterwards;
+  - keep the PR-open replay proving automatic jobs stay disabled under the
+    self command-only config;
+  - update dogfood, release-readiness, release, roadmap, changelog, and
+    manager memory.
+- Local validation for `codex/self-dogfood-command-matrix`:
+  - `npm run check:self-dogfood-replay` passed for 8 command cases;
+  - `npm run release:check` passed and ran the 8-case self-dogfood replay
+    gate;
+  - `git diff --check` passed.
