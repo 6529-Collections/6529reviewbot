@@ -3101,3 +3101,27 @@
   - `npm test` passed;
   - `npm run release:check` passed, including dogfood target validation and
     71 mapped release-operation tools.
+- Merged `6529reviewbot` PR #196 as `2184d5f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-workspace-contract` increment:
+  - add `scripts/check-operator-workspace-contract.cjs` and
+    `npm run check:operator-workspace`;
+  - harden operator workspace public summaries so release labels, default file
+    names, and descriptions pass through public-text redaction before Markdown
+    rendering;
+  - validate CLI parsing, workspace creation, check-mode readiness failures,
+    public summary path redaction, token/AWS redaction, source invariants, and
+    docs;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/operator-workspace-contract`:
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:release-operations` passed with 72 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 130 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator workspace validation
+    and 72 mapped release-operation tools.

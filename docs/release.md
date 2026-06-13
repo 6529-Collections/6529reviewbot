@@ -206,6 +206,9 @@ After stabilization:
 - `npm run check:dogfood-go-live` confirms the dogfood go-live packet contract
   stays synchronized with strict-preflight readiness, workspace path markers,
   Markdown redaction, and docs
+- `npm run check:operator-workspace` confirms the operator workspace contract
+  stays synchronized with creation/check behavior, private path markers,
+  Markdown redaction, and docs
 - `npm run check:release-candidate` confirms the public-safe
   release-candidate bundle contract stays synchronized with redaction,
   workspace path markers, CLI defaults, and docs

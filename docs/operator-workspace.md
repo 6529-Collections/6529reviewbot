@@ -72,6 +72,18 @@ npm run operator:workspace -- -- --dir <private-workspace-dir> --check --require
 
 Use `--require-ready` only when making the final tag/no-tag decision.
 
+Run the operator workspace contract check after changing workspace creation,
+check-mode readiness behavior, generated README guidance, public summary
+redaction, source invariants, or this runbook:
+
+```bash
+npm run check:operator-workspace
+```
+
+The operator workspace contract check verifies default summaries use
+`[operator-workspace]` instead of private paths and that public Markdown
+redacts token-shaped strings and AWS identifiers.
+
 ## Public Boundary
 
 The generated files are private operator artifacts. They can contain live

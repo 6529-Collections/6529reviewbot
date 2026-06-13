@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { redactSensitiveText } = require("./diagnostics.cjs");
 const {
   createDogfoodStatusSkeleton,
   assertDogfoodReady,
@@ -54,6 +55,11 @@ const DEFAULT_OPERATOR_WORKSPACE_FILES = {
   releaseGateStatus: "v0-release-status.json",
   securityReviewStatus: "security-review-status.json",
 };
+const OPERATOR_WORKSPACE_TEXT_MAX_CHARS = 1000;
+const PUBLIC_REDACTION_PATTERNS = [
+  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
+  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
+];
 
 function createOperatorWorkspace(options = {}) {
   if (!options.directory) {
@@ -153,13 +159,13 @@ function createOperatorWorkspace(options = {}) {
 
 function publicOperatorWorkspaceSummary(workspace, options = {}) {
   return {
-    release: workspace.release,
+    release: publicLine(workspace.release),
     ready: workspace.ready,
     directory: options.showPaths ? workspace.directory : "[operator-workspace]",
     files: workspace.files.map((file) => ({
       id: file.id,
-      file: options.showPaths ? file.path : path.basename(file.path),
-      description: file.description,
+      file: options.showPaths ? file.path : publicLine(path.basename(file.path), 200),
+      description: publicLine(file.description),
     })),
     summaries: workspace.summaries,
   };
@@ -279,6 +285,18 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   return `${lines.join("\n")}\n`;
 }
 
+function publicText(value, maxChars = OPERATOR_WORKSPACE_TEXT_MAX_CHARS) {
+  let text = redactSensitiveText(String(value || ""));
+  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
+    text = text.replace(pattern, replacement);
+  }
+  return text.slice(0, maxChars);
+}
+
+function publicLine(value, maxChars = OPERATOR_WORKSPACE_TEXT_MAX_CHARS) {
+  return publicText(value, maxChars).replace(/\r?\n/g, " ");
+}
+
 function operatorWorkspaceReady(workspace) {
   return Object.values(workspace.summaries).every((summary) => summary.ready);
 }
@@ -394,6 +412,8 @@ module.exports = {
   createOperatorWorkspace,
   operatorWorkspaceReady,
   privateWorkspaceReadme,
+  publicLine,
   publicOperatorWorkspaceSummary,
+  publicText,
   renderOperatorWorkspaceSummaryMarkdown,
 };

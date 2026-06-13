@@ -283,7 +283,12 @@ status and evidence skeletons in one operator-owned directory:
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
 npm run operator:workspace -- -- --dir <private-workspace-dir> --check
+npm run check:operator-workspace
 ```
+
+The operator workspace contract keeps generated skeletons, check-mode
+readiness failures, private path markers, generated README guidance, public
+summary redaction, and docs synchronized.
 
 Use [Security Review Status](security-review-status.md) to track manual
 security review evidence in a private status file:
@@ -457,6 +462,10 @@ examples stay aligned.
 `npm run check:alert-notifier-modes` is included in `npm run release:check`
 and verifies scheduled alert delivery modes, env parsing, docs, and env
 examples stay aligned.
+`npm run check:operator-workspace` is included in `npm run release:check` and
+verifies operator workspace creation, check-mode readiness failures, private
+path redaction, Markdown sanitization, source invariants, and docs stay
+aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

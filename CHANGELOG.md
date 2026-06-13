@@ -145,6 +145,9 @@ stabilized.
 - Added a dogfood go-live contract release check that validates strict
   preflight readiness, private workspace path markers, Markdown redaction,
   source invariants, and docs.
+- Added an operator-workspace contract release check that validates workspace
+  creation, check-mode readiness failures, private path markers, Markdown
+  redaction, source invariants, and docs.
 - Added a release-candidate contract release check that validates public bundle
   redaction, private workspace path markers, CLI defaults, source invariants,
   and docs.

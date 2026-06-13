@@ -15,7 +15,11 @@ security-review, cutover, or release-gate evidence:
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
 npm run operator:workspace -- -- --dir <private-workspace-dir> --check
+npm run check:operator-workspace
 ```
+
+Run the operator workspace checker when changing workspace skeletons,
+generated README guidance, private path redaction, or operator-workspace docs.
 
 Validate the configured runtime without network calls:
 
