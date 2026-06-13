@@ -2851,3 +2851,24 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including support bundle contract
     validation and 59 mapped release-operation tools.
+- Merged `6529reviewbot` PR #185 as `7e03837`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/diagnostics-redaction-contract` increment:
+  - add `scripts/check-diagnostics-redaction.cjs` and
+    `npm run check:diagnostics-redaction`;
+  - validate shared diagnostics redaction for bearer tokens, AWS access-key
+    ids, GitHub fine-grained/classic tokens, provider keys, Slack/Discord alert
+    webhooks, private keys, safe single-line errors, and diagnostic tails;
+  - wire the check into release checks, smoke tests, release operations map,
+    public docs, changelog, and manager memory.
+- Local validation for `codex/diagnostics-redaction-contract`:
+  - `npm run check:diagnostics-redaction` passed with 8 fixtures and 6 docs
+    checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 60 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run check` passed with 118 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including diagnostics redaction validation
+    and 60 mapped release-operation tools.

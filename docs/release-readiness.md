@@ -390,6 +390,9 @@ redaction behavior, CLI flags, and docs stay synchronized.
 `npm run check:support-bundle` is included in `npm run release:check` and
 verifies sanitized support-bundle safe env keys, presence-only secret keys,
 local path redaction, CLI flags, and docs stay synchronized.
+`npm run check:diagnostics-redaction` is included in `npm run release:check`
+and verifies shared diagnostic redaction for tokens, alert webhooks, AWS
+access-key ids, private keys, error lines, and diagnostic tails.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

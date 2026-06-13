@@ -129,6 +129,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "diagnostics-redaction-contract",
+          "script": "check:diagnostics-redaction",
+          "purpose": "Verify shared diagnostic redaction for bearer tokens, GitHub tokens, provider keys, alert webhooks, AWS access-key ids, private keys, error lines, and diagnostic tails.",
+          "doc": "docs/security-review-checklist.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "model-default-contract",
           "script": "check:model-defaults",
           "purpose": "Verify model-catalog defaults stay synchronized with reusable workflow fallbacks, provider-default docs, and conservative starter lanes.",

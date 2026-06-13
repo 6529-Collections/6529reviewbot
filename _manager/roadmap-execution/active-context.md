@@ -330,10 +330,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin snapshot contract PR: merged as PR #184, merge commit `9b020a6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/support-bundle-contract`.
-- Current local changes: adding a support-bundle contract check and tightening
-  support output local-path redaction so safe env values, presence-only secret
-  keys, local path handling, CLI flags, and docs stay synchronized.
+- Support bundle contract PR: merged as PR #185, merge commit `7e03837`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/diagnostics-redaction-contract`.
+- Current local changes: adding a diagnostics-redaction contract check that
+  keeps shared token, alert webhook, AWS access-key id, private-key,
+  error-line, and diagnostic-tail redaction behavior synchronized.
 
 ## Key Decisions
 
@@ -750,6 +752,10 @@ merged PRs.
   common secret-shaped strings and local absolute paths, and still be reviewed
   before public posting because file names and runtime posture can be
   sensitive.
+- Shared diagnostics redaction is a foundation for workers, support bundles,
+  admin APIs, alerting, release evidence, and GitHub App helpers. Keep the
+  common bearer, GitHub token, provider key, alert webhook, AWS access-key id,
+  private-key, safe-error-line, and diagnostic-tail behavior machine-checked.
 
 ## Constraints
 
@@ -763,7 +769,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the support-bundle contract check.
+2. Publish and merge the diagnostics-redaction contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

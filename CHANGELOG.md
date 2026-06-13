@@ -121,6 +121,9 @@ stabilized.
   CLI flags, and docs.
 - Added a support-bundle contract release check that validates safe env keys,
   presence-only secret keys, local path redaction, CLI flags, and docs.
+- Added a diagnostics-redaction contract release check that validates shared
+  token, alert webhook, AWS access-key id, private-key, error-line, and
+  diagnostic-tail redaction behavior.
 - Added a model-default release check that validates model-catalog defaults
   against reusable workflow fallbacks, provider-default docs, and conservative
   starter lanes.
