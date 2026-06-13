@@ -100,6 +100,9 @@ invariants, and docs aligned.
 `npm run check:operator-workspace` keeps operator workspace creation,
 check-mode readiness failures, private path redaction, Markdown sanitization,
 source invariants, and docs aligned.
+`npm run check:operator-evidence` keeps operator evidence sections,
+readiness semantics, public-summary redaction, source invariants, and docs
+aligned.
 `npm run check:production-cutover` keeps production cutover checklist/status
 readiness, deferral semantics, Markdown redaction, source invariants, and docs
 aligned.
@@ -148,6 +151,7 @@ The local quality gate command inventory is:
 - `npm run check:dogfood-promotion`
 - `npm run check:dogfood-go-live`
 - `npm run check:operator-workspace`
+- `npm run check:operator-evidence`
 - `npm run check:production-cutover`
 - `npm run check:security-review-status`
 - `npm run check:release-candidate`

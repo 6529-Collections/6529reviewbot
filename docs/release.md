@@ -41,6 +41,9 @@ After stabilization:
 - `npm run operator:evidence -- -- --file <private-evidence-file> --require-ready`
   passes before tagging unless release notes intentionally mark the release as
   dogfood-only or local-only
+- `npm run check:operator-evidence` confirms the operator evidence contract
+  stays synchronized with section readiness, required evidence, deferral
+  semantics, public-summary redaction, and docs
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when
@@ -212,6 +215,9 @@ After stabilization:
 - `npm run check:operator-workspace` confirms the operator workspace contract
   stays synchronized with creation/check behavior, private path markers,
   Markdown redaction, and docs
+- `npm run check:operator-evidence` confirms the operator evidence contract
+  stays synchronized with section readiness, required evidence, deferral
+  semantics, public-summary redaction, and docs
 - `npm run check:production-cutover` confirms the production cutover contract
   stays synchronized with checklist/status readiness, deferral semantics,
   Markdown redaction, and docs

@@ -360,10 +360,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Security-review-status contract PR: merged as PR #199, merge commit
   `f5615ac`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-status-contract`.
-- Current local changes: adding a dogfood-status contract check that keeps
-  dogfood execution status readiness, missing-id checks, deferral semantics,
-  Markdown redaction, source invariants, and docs synchronized.
+- Dogfood-status contract PR: merged as PR #200, merge commit `b6bf6d6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-evidence-contract`.
+- Current local changes: adding an operator-evidence contract check that keeps
+  evidence section readiness, required evidence, deferral semantics, public
+  summary redaction, source invariants, release checks, smoke tests, and docs
+  synchronized.
 
 ## Key Decisions
 
@@ -818,6 +821,11 @@ merged PRs.
 - Security review status is a manual-release evidence overlay. Keep complete
   evidence requirements, deferred-item semantics, pending/blocked failures, and
   public Markdown redaction covered by no-network contract checks.
+- Operator evidence is private release proof for App setup, AWS ledger,
+  runtime, budget, worker, 6529.io, dogfood, and release decisions. Keep
+  complete-section evidence requirements, deferred/blocked notes, pending and
+  blocked failures, and public-summary redaction covered by no-network
+  contract checks.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -841,7 +849,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the dogfood-status contract check.
+2. Publish and merge the operator-evidence contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

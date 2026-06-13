@@ -17,6 +17,7 @@ the real file private, and validate or render a redacted public summary with:
 ```bash
 npm run operator:evidence -- -- --file <private-evidence-file> --summary
 npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
+npm run check:operator-evidence
 ```
 
 The command validates that every required production section is present and
@@ -25,6 +26,11 @@ explain the risk in `notes`. The summary renderer redacts common token shapes,
 AWS account ids, and AWS ARNs, but operators should still write public-safe
 summaries before copying output into issues, PRs, release notes, or durable
 manager memory.
+
+The operator evidence contract check verifies section readiness semantics,
+complete-section evidence requirements, deferred and blocked notes, public
+Markdown redaction, source invariants, and this template. Run it after changing
+the evidence schema, renderer, CLI flags, or release docs.
 
 ## Header
 

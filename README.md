@@ -174,6 +174,7 @@ npm run check:dogfood-readiness
 npm run check:dogfood-promotion
 npm run check:dogfood-go-live
 npm run check:operator-workspace
+npm run check:operator-evidence
 npm run check:production-cutover
 npm run check:security-review-status
 npm run check:budget-scopes
@@ -232,6 +233,7 @@ summary:
 npm run operator:evidence -- -- --file config/production-evidence.example.json
 npm run operator:evidence -- -- --file <private-evidence-file> --summary
 npm run operator:evidence -- -- --file <private-evidence-file> --require-ready
+npm run check:operator-evidence
 ```
 
 Build a public-safe release candidate bundle from release gates, operator
