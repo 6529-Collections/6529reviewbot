@@ -181,6 +181,9 @@ function checkWorkspaceLifecycle(findings) {
   const readme = fs.readFileSync(path.join(tempDir, "README.md"), "utf8");
   for (const snippet of [
     "npm run production:deployment-plan",
+    "npm run dashboard:deployment-plan",
+    "--frontend-origin <6529-io-origin>",
+    "--auth-check-url <6529-auth-check-url>",
     "--operator-workspace .",
     "--release v0.1.0",
     "--require-ready",
@@ -250,6 +253,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "privateWorkspaceReadme",
     "publicLine",
     "production:deployment-plan",
+    "dashboard:deployment-plan",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -274,6 +278,7 @@ function checkDocs(docTexts, findings) {
     "docs/operator-workspace.md": [
       "npm run check:operator-workspace",
       "npm run production:deployment-plan",
+      "npm run dashboard:deployment-plan",
       "operator workspace contract check",
       "[operator-workspace]",
     ],

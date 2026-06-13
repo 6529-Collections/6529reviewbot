@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added dashboard deployment plan guidance to generated operator workspaces.
 - Added dashboard deployment plan evidence to release notes draft, template,
   and publication checks.
 - Added a dashboard deployment plan guard and contract check for dry-run

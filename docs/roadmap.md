@@ -545,8 +545,8 @@ Completed in `6529reviewbot`:
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.
 - generated operator workspace guidance now includes the production deployment
-  plan command so release evidence and deployment handoff commands stay
-  together in the private operator flow.
+  plan and dashboard deployment plan commands so release evidence and
+  deployment handoff commands stay together in the private operator flow.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
