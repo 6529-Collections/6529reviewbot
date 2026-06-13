@@ -174,6 +174,7 @@ npm run check:dogfood-promotion
 npm run check:dogfood-go-live
 npm run check:operator-workspace
 npm run check:production-cutover
+npm run check:security-review-status
 npm run check:budget-scopes
 npm run check:run-control-scopes
 npm run check:alert-dimensions

@@ -297,7 +297,12 @@ security review evidence in a private status file:
 npm run security:review -- -- --init-status <operator-security-status-file>
 npm run security:review -- -- --status-file <operator-security-status-file> --summary
 npm run security:review -- -- --status-file <operator-security-status-file> --require-ready
+npm run check:security-review-status
 ```
+
+The security review status contract keeps readiness behavior, complete
+evidence requirements, deferred item semantics, public Markdown redaction, and
+docs synchronized.
 Use `npm run operator:evidence -- -- --file <private-evidence-file> --summary` to
 validate a structured private evidence file and render a redacted public
 summary. `operator:evidence --require-ready` is useful for the evidence file
@@ -474,6 +479,9 @@ aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, deferral semantics,
 Markdown redaction, source invariants, and docs stay aligned.
+`npm run check:security-review-status` is included in `npm run release:check`
+and verifies security review status readiness, deferral semantics, Markdown
+redaction, source invariants, and docs stay aligned.
 
 Use the repository pull request template as the routine contributor gate for
 changes that affect behavior, security, cost, or API contracts. It is not a

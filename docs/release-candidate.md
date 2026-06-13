@@ -16,6 +16,9 @@ It can include [Dogfood Status](dogfood-status.md) when the release decision
 depends on command-only or limited initial-review dogfood evidence.
 It can include [Security Review Status](security-review-status.md) when the
 release decision depends on a private manual security review status file.
+Run the security review status checker after changing manual review readiness
+behavior, deferral semantics, or public security-review Markdown because
+release-candidate bundles can include those counts and deferrals.
 
 ## Command
 

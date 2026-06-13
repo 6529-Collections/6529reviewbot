@@ -66,6 +66,18 @@ npm run security:review -- -- --status-file <operator-security-status-file> --re
 `deferred` items are allowed only when the status includes notes. Release notes
 must name the deferral, risk, and follow-up owner.
 
+Run the security review status contract check after changing the status
+schema, readiness behavior, deferral handling, Markdown redaction, source
+invariants, or this runbook:
+
+```bash
+npm run check:security-review-status
+```
+
+The security review status contract check verifies pending skeletons, complete
+and deferred readiness semantics, required evidence rules, public Markdown
+redaction, and docs stay synchronized.
+
 ## Evidence Boundary
 
 Status evidence may include:

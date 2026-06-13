@@ -64,6 +64,7 @@ const releaseGates = require("../src/release-gates.cjs");
 const releaseGatesCli = require("../bin/v0-gates.cjs");
 const securityReviewStatus = require("../src/security-review-status.cjs");
 const securityReviewStatusCli = require("../bin/security-review-status.cjs");
+const securityReviewStatusContractCheck = require("./check-security-review-status-contract.cjs");
 const operatorEvidence = require("../src/operator-evidence.cjs");
 const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const operatorWorkspace = require("../src/operator-workspace.cjs");
@@ -5064,6 +5065,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /production cutover contract check found/
+  );
+  const securityReviewStatusContractResult =
+    securityReviewStatusContractCheck.checkSecurityReviewStatusContract();
+  assert.equal(securityReviewStatusContractResult.cliCases, 3);
+  assert.equal(securityReviewStatusContractResult.statusCases, 5);
+  assert.throws(
+    () =>
+      securityReviewStatusContractCheck.checkSecurityReviewStatusContract({
+        quiet: true,
+        docTexts: {
+          "docs/security-review-status.md": "# Security Review Status\n",
+        },
+      }),
+    /security review status contract check found/
   );
   const releaseCandidateContractResult =
     releaseCandidateContractCheck.checkReleaseCandidateContract();
