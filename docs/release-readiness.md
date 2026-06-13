@@ -137,6 +137,9 @@ Ready for community review:
 - provider adapter checker that keeps Anthropic, OpenAI, and OpenRouter
   request shapes, option gating, usage normalization, error redaction, and docs
   synchronized;
+- ledger privacy checker that keeps usage, job, and run-control metadata
+  normalization, usage API event visibility, schema omissions, and docs
+  synchronized;
 - budget-scope checker that keeps central policy validation, ledger schema
   constraints, public docs, and dogfood examples synchronized;
 - run-control scope checker that keeps concurrency scopes synchronized with
@@ -418,6 +421,9 @@ requirements, workflow dispatch choices, and provider docs stay aligned.
 `npm run check:provider-adapters` is included in `npm run release:check` and
 verifies Anthropic, OpenAI, and OpenRouter request shapes, option gating,
 usage normalization, error redaction, and docs stay aligned.
+`npm run check:ledger-privacy` is included in `npm run release:check` and
+verifies usage, job, and run-control ledger metadata normalization, usage API
+event visibility, schema omissions, and docs stay aligned.
 `npm run check:budget-scopes` is included in `npm run release:check` and
 verifies canonical budget scopes, central policy validation, ledger schema
 constraints, public docs, and dogfood examples stay aligned.

@@ -15,7 +15,8 @@ const {
   longParam,
   stringParam,
 } = require("./data-api.cjs");
-const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
+const { safeErrorLine } = require("./diagnostics.cjs");
+const { normalizeLedgerMetadata } = require("./ledger-metadata.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 function runControlLedgerSettingsFromEnv(env = process.env) {
@@ -447,18 +448,7 @@ function isTerminalClaimStatus(status) {
 }
 
 function safeMetadata(metadata = {}) {
-  const result = {};
-  for (const [key, value] of Object.entries(metadata || {})) {
-    if (value === undefined || value === null) {
-      continue;
-    }
-    if (typeof value === "string") {
-      result[key] = redactSensitiveText(value).slice(0, 1000);
-    } else if (typeof value === "number" || typeof value === "boolean") {
-      result[key] = value;
-    }
-  }
-  return result;
+  return normalizeLedgerMetadata(metadata, { includeNull: false, maxStringChars: 1000 });
 }
 
 function parseBool(value) {

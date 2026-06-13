@@ -166,6 +166,9 @@ After stabilization:
 - `npm run check:provider-adapters` confirms Anthropic, OpenAI, and OpenRouter
   request shapes, option gating, usage normalization, error redaction, and docs
   stay synchronized
+- `npm run check:ledger-privacy` confirms usage, job, and run-control ledger
+  metadata normalization, usage API event visibility, schema omissions, and
+  docs stay synchronized
 - `npm run check:budget-scopes` confirms canonical budget scopes stay
   synchronized with central policy validation, ledger schema constraints,
   public docs, and dogfood examples

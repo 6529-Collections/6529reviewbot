@@ -97,6 +97,12 @@ Provider requests are bounded by:
 
 ### Diagnostic Safety
 
+Ledger metadata is treated as untrusted operational input. Usage, job, and
+run-control ledgers normalize custom metadata before persistence: only safe
+scalar fields are retained, strings are bounded and redacted, nested values are
+dropped, and prompt/diff/provider-payload/webhook-payload/worker-output and
+credential-shaped keys are rejected.
+
 Worker stdout and stderr are omitted from adapter results by default. When an
 operator explicitly opts into diagnostic tails, the adapter redacts common
 token, alert-webhook, AWS access-key id, and private-key shapes before

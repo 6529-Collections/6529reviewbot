@@ -164,6 +164,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "ledger-privacy-contract",
+          "script": "check:ledger-privacy",
+          "purpose": "Verify usage, job, and run-control ledgers normalize custom metadata before persistence and that usage API/schema boundaries do not expose prompts, diffs, provider payloads, webhook payloads, credentials, or provider request identifiers.",
+          "doc": "docs/aws-usage-ledger.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "budget-scope-contract",
           "script": "check:budget-scopes",
           "purpose": "Verify canonical budget scopes stay synchronized with central policy validation, ledger schema constraints, public docs, and dogfood examples.",

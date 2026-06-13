@@ -69,6 +69,7 @@ const productionCutoverCli = require("../bin/production-cutover.cjs");
 const docsLinkCheck = require("./check-doc-links.cjs");
 const envTemplateCheck = require("./check-6529-io-env-template.cjs");
 const envTemplatesCheck = require("./check-env-templates.cjs");
+const ledgerPrivacyCheck = require("./check-ledger-privacy-contract.cjs");
 const modelDefaultsCheck = require("./check-model-defaults.cjs");
 const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
@@ -388,6 +389,24 @@ assert.equal(modelDefaultsCheck.checkModelDefaults().providers, 3);
 assert.equal(modelDefaultsCheck.anthropicDefaultLane(catalog), "anthropic:claude-opus-4-8");
 assert.equal(providerContractCheck.checkProviderContract().providers, 3);
 assert.equal(providerAdapterCheck.checkProviderAdapters().providers, 3);
+assert.equal(ledgerPrivacyCheck.checkLedgerPrivacyContract().ledgers, 3);
+assert.throws(
+  () =>
+    ledgerPrivacyCheck.checkLedgerPrivacyContract({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        "docs/architecture.md": "# Architecture\n",
+        "docs/aws-usage-ledger.md": "# AWS Usage Ledger\n",
+        "docs/job-ledger.md": "# Job Ledger\n",
+        "docs/security-model.md": "# Security Model\n",
+        "docs/usage-api.md": "# Usage API\n",
+        "docs/release-operations-map.md": "# Release Operations Map\n",
+        "docs/release-readiness.md": "# Release Readiness\n",
+      },
+    }),
+  /ledger privacy contract check found/
+);
 assert.throws(
   () =>
     providerAdapterCheck.checkProviderAdapters({

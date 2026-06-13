@@ -139,6 +139,9 @@ stabilized.
 - Added a provider-adapter release check that validates Anthropic, OpenAI, and
   OpenRouter request shapes, option gating, usage normalization, error
   redaction, and docs.
+- Added shared ledger metadata normalization plus a ledger-privacy release
+  check for usage, job, and run-control metadata, usage API event visibility,
+  schema omissions, and docs.
 - Added a budget-scope release check that validates canonical budget scopes
   across central policy validation, ledger schema constraints, public docs, and
   dogfood examples.

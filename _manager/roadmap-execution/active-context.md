@@ -338,10 +338,13 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Review-context boundary contract PR: merged as PR #188, merge commit
   `9744c6b`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/provider-adapter-contract`.
-- Current local changes: adding a provider-adapter contract check that keeps
-  Anthropic, OpenAI, and OpenRouter request shapes, option gating, usage
-  normalization, error redaction, and docs synchronized.
+- Provider-adapter contract PR: merged as PR #189, merge commit `24990af`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/ledger-privacy-contract`.
+- Current local changes: adding shared ledger metadata normalization and a
+  ledger-privacy contract check that keeps usage, job, and run-control
+  metadata writes, usage API event visibility, schema omissions, and docs
+  synchronized.
 
 ## Key Decisions
 
@@ -771,6 +774,9 @@ merged PRs.
 - Provider adapters are billing and output boundaries. Request shapes, model
   option gates, usage normalization, timeout fields, and provider error
   redaction should be machine-checked across Anthropic, OpenAI, and OpenRouter.
+- Ledger metadata is a durable privacy boundary. Usage, job, and run-control
+  ledgers should normalize custom metadata before persistence and the usage API
+  should avoid exposing provider request identifiers or private raw rows.
 
 ## Constraints
 
@@ -784,7 +790,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the provider-adapter contract check.
+2. Publish and merge the ledger-privacy contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
