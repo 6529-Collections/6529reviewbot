@@ -2190,3 +2190,21 @@
   - `npm run check` passed;
   - `npm run release:check` passed;
   - `git diff --check` passed.
+- Merged `6529reviewbot` PR #152 as `c4af667` after CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/v0-dogfood-promotion-gate` increment:
+  - add the dogfood promotion packet as a canonical v0 release gate;
+  - update the v0 prose gate list, sample status/evidence overlays, smoke
+    expectations, release-readiness docs, roadmap, changelog, and manager
+    memory;
+  - keep the release-gate parity checker enforcing the 20-gate public
+    contract.
+- Local validation for `codex/v0-dogfood-promotion-gate`:
+  - `npm run check:release-gates` passed with 20 gates and 20 evidence refs;
+  - `npm run v0:gates -- -- --status-file config/v0-release-status.example.json --summary --json --quiet` passed;
+  - `npm test` passed;
+  - `npm run check:docs` passed;
+  - `npm run check:public-artifacts` passed with 105 files checked;
+  - `npm run check` passed;
+  - `npm run release:check` passed and reported 20 v0 release gates;
+  - `git diff --check` passed.

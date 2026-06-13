@@ -267,6 +267,8 @@ Build the operator experience:
   readiness before live dogfood traffic.
 - release-candidate bundles that can include production cutover status when
   the release decision also covers live dogfood or production traffic.
+- dogfood promotion packet required by both v0 release gates and production
+  cutover before first live dogfood traffic.
 
 ### 9. Community Release
 
@@ -412,7 +414,8 @@ Completed in `6529reviewbot`:
   manager memory.
 - public env template checker for syntax, duplicate keys, blank secret
   placeholders, and conservative dogfood defaults.
-- machine-readable v0 release gates and checklist renderer.
+- machine-readable v0 release gates and checklist renderer, including the
+  dogfood promotion packet before first live dogfood traffic.
 - v0 release gate readiness summaries and tag/no-tag enforcement for
   operator-owned status files.
 - v0 release gate evidence-reference validation for public paths and npm

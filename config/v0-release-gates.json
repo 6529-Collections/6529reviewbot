@@ -44,6 +44,11 @@
       "evidence": "docs/dogfood.md"
     },
     {
+      "id": "dogfood-promotion",
+      "title": "Dogfood promotion packet has passed from the private operator environment before first live dogfood traffic.",
+      "evidence": "docs/dogfood-promotion.md"
+    },
+    {
       "id": "ledger-schema",
       "title": "Aurora ledger schema has been applied, or release notes mark ledger setup as manual.",
       "evidence": "npm run ledger:schema -- -- --apply"

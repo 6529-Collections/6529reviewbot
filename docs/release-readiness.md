@@ -133,7 +133,8 @@ Ready for community review:
 - spend-alert read/evaluation path dogfooded against the isolated ledger in
   dry-run mode, with job-health alert evaluation available once job and
   run-control ledgers are enabled in the scheduled job;
-- machine-readable v0 release gates with optional status/evidence rendering;
+- machine-readable v0 release gates with optional status/evidence rendering,
+  including the dogfood promotion packet before first live dogfood traffic;
 - release notes template validation for required pre-v1 evidence, deferrals,
   known gaps, compatibility, and validation fields;
 - structured operator evidence validation and redacted public-summary rendering

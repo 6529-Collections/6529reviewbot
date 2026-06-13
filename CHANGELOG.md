@@ -98,6 +98,8 @@ stabilized.
 - Dogfood promotion packet CLI composes target config readiness, central
   dogfood inputs, synthetic self-dogfood replay, private workspace parsing,
   and preflight into one final pre-traffic go/no-go report.
+- v0 release gates now require the dogfood promotion packet before first live
+  dogfood traffic.
 - Production cutover checklist now requires the dogfood promotion packet before
   first live dogfood traffic.
 - npm script examples now use the repo-compatible

@@ -10,6 +10,10 @@
       "status": "deferred",
       "notes": "Example only: defer applied price rows and freshness evidence when the release keeps conservative default estimates."
     },
+    "dogfood-promotion": {
+      "status": "pending",
+      "notes": "Example only: run the dogfood promotion packet from the private operator environment before live dogfood traffic."
+    },
     "github-app": {
       "status": "pending",
       "notes": "Example only: create the production 6529bot App before broad release."

@@ -1736,7 +1736,7 @@ const workspace = operatorWorkspace.createOperatorWorkspace({
   repoRoot: path.resolve(__dirname, ".."),
 });
 assert.equal(workspace.files.length, 6);
-assert.equal(workspace.summaries.releaseGates.pending, 19);
+assert.equal(workspace.summaries.releaseGates.pending, 20);
 assert.equal(workspace.summaries.operatorEvidence.pending, 9);
 assert.equal(workspace.ready, false);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
@@ -2182,7 +2182,7 @@ const candidateBundleFromWorkspace = releaseCandidateCli.main([
   now: new Date("2026-06-12T00:00:00.000Z"),
 });
 assert.equal(candidateBundleFromWorkspace.ready, false);
-assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 19);
+assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 20);
 assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
 assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
 assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 30);

@@ -264,10 +264,13 @@ merged PRs.
 - Dogfood promotion packet PR: merged as PR #151, merge commit `35da128`;
   CI and Dependency Review completed successfully before merge; post-merge CI
   and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/cutover-dogfood-promotion-gate`.
+- Cutover dogfood-promotion gate PR: merged as PR #152, merge commit
+  `c4af667`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/v0-dogfood-promotion-gate`.
 - Current local changes: adding the dogfood promotion packet to the canonical
-  production cutover checklist and example status overlay so live dogfood
-  go/no-go evidence cannot skip it.
+  v0 release gates, example status/evidence overlays, release docs, smoke
+  expectations, and manager memory so a v0 tag cannot skip the final
+  pre-traffic go/no-go packet.
 
 ## Key Decisions
 
@@ -323,6 +326,9 @@ merged PRs.
   target repository data.
 - v0 release gates should exist both as prose and as a renderable checklist so
   release candidates are easy to audit.
+- The dogfood promotion packet is required by production cutover and should
+  also be a v0 release gate, because the first public tag should not be easier
+  to pass than the first live dogfood traffic decision.
 - Recent job lifecycle diagnostics should be available through the private
   admin API, not through public transparency endpoints or direct browser access
   to Aurora.
@@ -604,7 +610,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the cutover dogfood-promotion gate.
+2. Validate, publish, and merge the v0 dogfood-promotion release gate.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
