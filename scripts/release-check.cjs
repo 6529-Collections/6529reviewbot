@@ -30,6 +30,7 @@ runNode("scripts/check-security-model-contract.cjs");
 runNode("scripts/check-operations-runbook-contract.cjs");
 runNode("scripts/check-dependabot-config.cjs");
 runNode("scripts/check-container-image.cjs");
+runNode("scripts/check-container-publish-plan-contract.cjs");
 runNode("scripts/check-comment-commands.cjs");
 runNode("scripts/check-review-workflow-kinds.cjs");
 runNode("scripts/check-review-context-boundary.cjs");

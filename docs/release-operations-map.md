@@ -47,6 +47,9 @@ checks and triage paths for replay, spend, ledgers, workers, dashboards, and
 bot comments synchronized.
 `npm run check:dependabot` keeps weekly npm and GitHub Actions dependency
 update coverage present.
+`npm run check:container-publish-plan` keeps the dry-run container publish
+plan aligned with clean-main readiness, image-contract checks, build/push/scan
+commands, and private evidence guidance.
 `npm run check:workflow-permissions` keeps committed workflow and template
 permission blocks explicit and least-privilege.
 `npm run check:review-workflows` keeps review-kind constants, worker bins,
@@ -202,6 +205,7 @@ The local quality gate command inventory is:
 - `npm run check:operations-runbook`
 - `npm run check:dependabot`
 - `npm run check:container-image`
+- `npm run check:container-publish-plan`
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
 - `npm run check:review-context-boundary`
@@ -257,6 +261,9 @@ The local quality gate command inventory is:
 - Local quality gates are public-safe and should run before each PR update.
 - Operator input preparation is where private credentials, live environment
   variables, and reviewed budget/model-price files enter the process.
+- `container:publish-plan` belongs to operator input preparation because live
+  registry names, image digests, builder identities, and scan evidence can be
+  private until release notes intentionally publish a summary.
 - Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
   public-safe rehearsal before final release-candidate, dogfood promotion, and
   go-live `--require-ready` commands.

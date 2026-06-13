@@ -224,6 +224,8 @@ Ready for community review:
   non-root runtime, health check, and runtime-only secret injection guidance;
 - container-image contract checker for the Dockerfile and `.dockerignore`
   runtime boundary;
+- container publish plan for dry-run build, push, vulnerability scan, and
+  private evidence commands before operator-owned registry work;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
@@ -481,6 +483,10 @@ when required fields, deferral decisions, or public-safety checks are missing.
 `npm run check:release-tag-plan` is included in `npm run release:check` and
 verifies the release tag plan remains a dry-run tag plan that requires clean,
 synced `main` and completed release notes before rendering operator commands.
+`npm run check:container-publish-plan` is included in `npm run release:check`
+and verifies the container publish plan remains dry-run, checks clean synced
+`main`, runs the image contract, and renders build, push, vulnerability scan,
+and private evidence guidance for an operator-owned registry.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

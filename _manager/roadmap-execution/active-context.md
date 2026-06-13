@@ -404,25 +404,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes publication guard PR: merged as PR #221, merge commit `f0d4a7b`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-tag-plan`.
-- Current local changes: adding a dry-run release tag plan guard that checks
-  clean synced `main`, completed release notes, release version normalization,
-  and final operator tag/GitHub Release commands without creating tags or
-  releases.
+- Release tag plan guard PR: merged as PR #222, merge commit `1a4f3a5`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/container-publish-plan`.
+- Current local changes: adding a dry-run container publish plan guard that
+  checks clean synced `main`, the container-image contract, release version
+  normalization, and final operator build/push/digest/scan/evidence commands
+  without building, pushing, scanning, or publishing images.
 - Current local validation:
-  - `npm run check:release-tag-plan` passed with 4 plan cases and 6 docs
-    checked;
-  - `npm run check` passed with 162 CommonJS files;
-  - `npm run check:docs` passed with 69 files checked;
-  - `npm run check:doc-index` passed with 55 docs indexed;
-  - `npm run check:release-operations` passed with 101 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #221,
+  - `npm run check:container-publish-plan` passed with 5 plan cases and 6
+    docs checked;
+  - `npm run check` passed with 165 CommonJS files;
+  - `npm run check:docs` passed with 70 files checked;
+  - `npm run check:doc-index` passed with 56 docs indexed;
+  - `npm run check:release-operations` passed with 103 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #222,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run check:public-artifacts` passed with 112 files checked;
+  - `npm run check:public-artifacts` passed with 113 files checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including release tag plan contract
-    validation and 101 mapped release-operation tools.
+  - `npm run release:check` passed, including container publish plan contract
+    validation and 103 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -968,6 +970,9 @@ merged PRs.
 - Release tag planning is intentionally dry-run only: the guard can fail on
   dirty or unsynced `main` and unfinished notes, but the operator still creates
   the annotated tag and GitHub Release explicitly.
+- Container publish planning is intentionally dry-run only: the guard can fail
+  on dirty or unsynced `main` and container-image contract drift, but the
+  operator still builds, pushes, scans, and records image evidence explicitly.
 
 ## Constraints
 
@@ -981,7 +986,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the release tag plan guard.
+2. Publish and merge the container publish plan guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

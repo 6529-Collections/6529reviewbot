@@ -173,6 +173,12 @@ After stabilization:
 - `npm run check:container-image` confirms the central App server Dockerfile
   and `.dockerignore` keep the image runtime-only, non-root, health-checked,
   and free of private repo artifacts
+- `npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready`
+  builds the dry-run build, push, digest capture, vulnerability scan, and
+  private evidence plan before operator-owned registry work
+- `npm run check:container-publish-plan` confirms the container publish plan
+  stays dry-run and synchronized with release docs, smoke tests, and the
+  release operations map
 - `npm run check:comment-commands` confirms the public comment-command docs
   stay synchronized with the parser and review-kind constants
 - `npm run check:review-workflows` confirms review-kind constants stay
@@ -312,6 +318,8 @@ After stabilization:
 - [Container deployment](container-deployment.md) reviewed when shipping the
   App server image; image digest, builder identity, and vulnerability scan are
   captured in private operator evidence
+- [Container Publish Plan](container-publish-plan.md) run before operator-owned
+  registry publish and vulnerability scan work
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`
 - GitHub CI runs `npm run release:check` on the release PR

@@ -108,6 +108,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
 - [Container Deployment](docs/container-deployment.md): runtime image,
   secret injection, and container verification.
+- [Container Publish Plan](docs/container-publish-plan.md): dry-run
+  build/push/scan/evidence steps for operator-owned registries.
 - [Production Cutover](docs/production-cutover.md): go/no-go checklist and
   private status overlay for moving to live dogfood traffic.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
@@ -201,6 +203,7 @@ npm run check:alert-dimensions
 npm run check:alert-notifier-modes
 npm run check:alerting-runbook
 npm run check:container-image
+npm run check:container-publish-plan
 npm run check:public-artifacts
 npm run check:github-app-manifest
 npm run check:github-app-auth
@@ -237,6 +240,13 @@ Build a dry-run release tag plan after completed notes pass:
 ```bash
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
 npm run check:release-tag-plan
+```
+
+Build a dry-run container publish plan before operator-owned registry work:
+
+```bash
+npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready
+npm run check:container-publish-plan
 ```
 
 Run a public-safe release and dogfood rehearsal:
@@ -709,6 +719,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Configuration](docs/configuration.md)
 - [Production deployment](docs/deployment.md)
 - [Container deployment](docs/container-deployment.md)
+- [Container publish plan](docs/container-publish-plan.md)
 - [Dogfood runbook](docs/dogfood.md)
 - [Dogfood readiness](docs/dogfood-readiness.md)
 - [Dogfood promotion packet](docs/dogfood-promotion.md)

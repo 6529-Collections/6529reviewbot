@@ -3708,3 +3708,30 @@
   - `npm test` passed;
   - `npm run release:check` passed, including release tag plan contract
     validation and 101 mapped release-operation tools.
+- Merged `6529reviewbot` PR #222 as `1a4f3a5`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/container-publish-plan` increment:
+  - add `src/container-publish-plan.cjs`, `bin/container-publish-plan.cjs`,
+    and `npm run container:publish-plan` as a dry-run container publish
+    planner;
+  - add `scripts/check-container-publish-plan-contract.cjs` and
+    `npm run check:container-publish-plan`;
+  - require clean synced `main`, the container-image contract, release version
+    normalization, and image-reference validation before printing final
+    operator build/push/digest/scan/evidence commands;
+  - keep image build, push, vulnerability scan, and evidence recording as
+    explicit operator actions.
+- Local validation for `codex/container-publish-plan` so far:
+  - `npm run check:container-publish-plan` passed with 5 plan cases and 6
+    docs checked;
+  - `npm run check` passed with 165 CommonJS files;
+  - `npm run check:docs` passed with 70 files checked;
+  - `npm run check:doc-index` passed with 56 docs indexed;
+  - `npm run check:release-operations` passed with 103 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #222,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check:public-artifacts` passed with 113 files checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including container publish plan contract
+    validation and 103 mapped release-operation tools.

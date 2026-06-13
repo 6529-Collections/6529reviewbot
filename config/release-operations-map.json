@@ -101,6 +101,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "container-publish-plan-contract",
+          "script": "check:container-publish-plan",
+          "purpose": "Verify the dry-run container publish plan keeps clean-main, image contract, build/push/scan command, and private evidence guidance synchronized.",
+          "doc": "docs/container-publish-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "comment-command-contract",
           "script": "check:comment-commands",
           "purpose": "Verify public comment-command docs stay synchronized with the parser and review-kind constants.",
@@ -567,6 +574,15 @@
           "doc": "docs/operator-drill.md",
           "privateInputs": "Reads or writes operator-owned private workspace skeleton files.",
           "publicOutput": "Share the public-safe report after reviewing command lines for private paths; prefer npm --silent run or --out with --quiet."
+        },
+        {
+          "id": "container-publish-plan",
+          "script": "container:publish-plan",
+          "args": "-- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready",
+          "purpose": "Build the dry-run central App container publish plan before an operator builds, pushes, scans, and records image evidence.",
+          "doc": "docs/container-publish-plan.md",
+          "privateInputs": "Reads local git state and may include an operator-owned registry or image repository in command output.",
+          "publicOutput": "Review before public sharing because command lines can include private registry names or deployment timing."
         }
       ]
     },
