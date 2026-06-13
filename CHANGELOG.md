@@ -89,6 +89,9 @@ stabilized.
   GitHub Actions permission blocks.
 - Added a Dependabot release check for weekly npm and GitHub Actions dependency
   update coverage.
+- Strengthened the public-governance check to verify issue templates keep
+  secret/private-data warnings, support-bundle guidance, disabled blank issues,
+  and private security-report routing.
 - Refreshed the public roadmap to distinguish completed bot implementation
   work from remaining operator-owned deployment and dogfood evidence.
 - Release notes template validation keeps pre-v1 release notes explicit about

@@ -2385,3 +2385,19 @@
   - `npm test` passed;
   - `npm run release:check` passed, including Dependabot config validation and
     20 v0 release gates.
+- Merged `6529reviewbot` PR #163 as `8cabc02`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/issue-template-governance` increment:
+  - add a private-data warning to the feature request template;
+  - extend `check:governance` so it validates issue-template safety prompts,
+    support-bundle guidance, disabled blank issues, and security-policy
+    routing.
+- Local validation for `codex/issue-template-governance`:
+  - `npm run check:governance` passed with 13 files checked;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 99 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including issue-template governance
+    validation and 20 v0 release gates.

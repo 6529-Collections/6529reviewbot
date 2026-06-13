@@ -258,7 +258,7 @@ Build the operator experience:
 - canonical docs index coverage so public runbooks and reference docs remain
   discoverable as the repo grows;
 - public-governance checks for MIT license metadata, community files, issue
-  templates, and README governance links;
+  templates, issue-template safety prompts, and README governance links;
 - Dependabot config checks for weekly npm and GitHub Actions update coverage;
 - workflow-permission checks that keep committed workflows and templates on
   explicit least-privilege permission maps;

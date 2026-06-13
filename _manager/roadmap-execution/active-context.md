@@ -632,6 +632,9 @@ merged PRs.
   dogfood evidence work.
 - Dependency maintenance should be release-checked so weekly npm and
   GitHub Actions Dependabot coverage cannot be removed silently.
+- Public issue templates should be part of governance validation so reporters
+  are consistently warned away from secrets, private payloads, and public
+  vulnerability disclosure.
 
 ## Constraints
 
@@ -645,7 +648,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the Dependabot config release check.
+2. Validate, publish, and merge the issue-template governance hardening.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
