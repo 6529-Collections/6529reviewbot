@@ -56,6 +56,9 @@ provider-secret mapping instead of inheriting every caller secret.
   worker, or both.
 - Keep worker capacity and backpressure policy explicit before live dogfood
   traffic scales.
+- Keep the worker capacity contract release-checked so starting caps,
+  backpressure controls, provider limits, alert evidence, and scale-up
+  blockers stay aligned before live traffic grows.
 - Define the event flow for PR open, synchronize, reopen, ready-for-review, and
   comment commands.
 - Keep the reusable workflow as a compatibility/development path only if it
@@ -407,6 +410,8 @@ Completed in `6529reviewbot`:
 - native GitHub Actions workflow-dispatch API support with short-lived App
   installation tokens and `gh` CLI fallback for compatibility;
 - worker capacity and backpressure runbook for conservative live scaling;
+- worker capacity contract for starting caps, backpressure controls,
+  stuck-job triage, provider limits, alert evidence, and release blockers;
 - reusable workflow compatibility docs and explicit provider-secret mapping;
 - 6529.io admin auth bridge contract;
 - alerting and scheduled operator checks for spend and job health, with

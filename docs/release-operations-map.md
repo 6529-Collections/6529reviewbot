@@ -54,6 +54,9 @@ base-ref loading.
 `npm run check:worker-adapter-contract` keeps worker adapter modes, GitHub
 dispatch fields, local worker environment, redacted diagnostics, the workflow
 template, and worker docs aligned.
+`npm run check:worker-capacity` keeps worker capacity and backpressure
+guidance aligned across starting caps, scale-up rules, stuck-job triage,
+provider limits, alert evidence, and release blockers.
 `npm run check:admin-auth` keeps private admin auth modes, shared-secret
 behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public
 env templates aligned.

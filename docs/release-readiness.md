@@ -161,6 +161,10 @@ Ready for community review:
   constraints, public docs, and dogfood examples synchronized;
 - run-control scope checker that keeps concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples;
+- `npm run check:worker-capacity` keeps [Worker Capacity](worker-capacity.md)
+  synchronized with starting caps, scale-up rules, backpressure controls,
+  stuck-job triage, provider limits, alert evidence, and release-decision
+  blockers;
 - alert-dimension checker that keeps scheduled spend-spike dimensions
   synchronized across alert defaults, env parsing, docs, and env examples;
 - alert notifier mode checker that keeps scheduled alert delivery modes
@@ -463,6 +467,10 @@ loading.
 `npm run release:check` and verifies worker adapter modes, GitHub dispatch
 fields, local worker env, redacted diagnostics, workflow template inputs, and
 worker docs stay synchronized.
+`npm run check:worker-capacity` is included in `npm run release:check` and
+verifies worker capacity and backpressure guidance for starting caps,
+scale-up rules, stuck-job triage, provider limits, alert evidence, and
+release blockers.
 `npm run check:admin-auth` is included in `npm run release:check` and verifies
 private admin auth modes, shared-secret behavior, HMAC headers, TTL and role
 checks, 6529.io bridge docs, and public env templates stay synchronized.

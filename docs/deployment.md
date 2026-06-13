@@ -131,6 +131,9 @@ Start with `noop` worker mode for the first webhook pass. Switch to
 repository config loading, admission, budget, and usage paths are clean.
 Use [worker-capacity.md](worker-capacity.md) before enabling live worker
 traffic beyond command-only dogfood.
+Run `npm run check:worker-capacity` after editing worker capacity and
+backpressure guidance so deployment docs stay aligned with the scale-up and
+release-decision contract.
 Keep run control `off` until the durable claim table is applied. Then set
 `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` and move to `enforce` with
 conservative repo, PR, and requestor concurrency caps.

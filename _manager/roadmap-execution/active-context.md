@@ -378,10 +378,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operations runbook contract PR: merged as PR #208, merge commit `9fd46fc`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/support-runbooks-contract`.
-- Current local changes: adding a support runbooks contract check that keeps
-  public support guidance, maintainer triage, private escalation, incident
-  containment, recovery, sanitized public follow-up, release checks, smoke
+- Support runbooks contract PR: merged as PR #209, merge commit `c8bfea4`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/worker-capacity-contract`.
+- Current local changes: adding a worker capacity contract check that keeps
+  starting caps, scale-up rules, backpressure controls, stuck-job triage,
+  provider limits, alert evidence, release blockers, release checks, smoke
   tests, and docs synchronized.
 
 ## Key Decisions
@@ -875,6 +877,10 @@ merged PRs.
   reporting boundaries, support bundle guidance, maintainer triage, escalation,
   containment, recovery, and sanitized public follow-up release-checked so
   community support does not drift into unsafe evidence handling.
+- Worker capacity and backpressure policy is a live-spend and reliability
+  boundary. Keep starting caps, scale-up rules, narrow rollback controls,
+  stuck-job triage, provider limits, alert evidence, and release blockers
+  machine-checked before live dogfood traffic scales.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -898,7 +904,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the support runbooks contract check.
+2. Publish and merge the worker capacity contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

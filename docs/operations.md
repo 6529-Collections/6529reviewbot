@@ -149,6 +149,9 @@ secret boundaries, health checks, and rollback.
 
 For worker queue pressure, provider rate limits, stuck jobs, or scale-up
 decisions, use [Worker Capacity And Backpressure](worker-capacity.md).
+Run `npm run check:worker-capacity` after editing worker-capacity guidance so
+starting caps, backpressure controls, stuck-job triage, provider limits,
+alerts, and release-decision blockers stay synchronized.
 
 Private operator dashboards can call:
 

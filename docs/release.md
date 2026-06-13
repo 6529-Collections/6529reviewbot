@@ -160,6 +160,9 @@ After stabilization:
 - `npm run check:worker-adapter-contract` confirms worker adapter modes,
   GitHub dispatch fields, local worker env, redacted diagnostics, workflow
   template inputs, and worker docs stay synchronized
+- `npm run check:worker-capacity` confirms worker capacity and backpressure
+  guidance keeps starting caps, scale-up rules, stuck-job triage, provider
+  limits, alert evidence, and release blockers synchronized
 - `npm run check:admin-auth` confirms private admin auth modes, shared-secret
   behavior, HMAC headers, TTL and role checks, 6529.io bridge docs, and public
   env templates stay synchronized

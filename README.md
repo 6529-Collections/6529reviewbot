@@ -161,6 +161,7 @@ npm run check:review-comment-format
 npm run check:admission-policy
 npm run check:repository-config-boundary
 npm run check:worker-adapter-contract
+npm run check:worker-capacity
 npm run check:admin-auth
 npm run check:usage-api-routes
 npm run check:admin-snapshot
