@@ -2539,3 +2539,24 @@
   - `git diff --check` passed;
   - `npm run release:check` passed, including model default validation and 45
     mapped release-operation tools.
+- Merged `6529reviewbot` PR #171 as `6f68660`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/provider-contract-check` increment:
+  - add `scripts/check-provider-contract.cjs` and `npm run check:providers`;
+  - export preflight provider key requirements for contract validation;
+  - make `src/review-bot.cjs` use the shared `PROVIDERS` constant for provider
+    validation instead of an inline provider list;
+  - validate provider constants against model catalog providers, preflight key
+    requirements, central dispatch workflow options, provider docs, release
+    checks, smoke tests, release operations map, changelog, and manager memory.
+- Local validation for `codex/provider-contract-check`:
+  - `npm run check:providers` passed with 3 providers and 2 dispatch workflows
+    checked;
+  - `npm run check:release-operations` passed with 46 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm test` passed;
+  - `npm run check` passed with 104 CommonJS files;
+  - `git diff --check` passed;
+  - `npm run release:check` passed, including provider contract validation and
+    46 mapped release-operation tools.

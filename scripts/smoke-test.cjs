@@ -67,6 +67,7 @@ const modelCatalog = require("../src/model-catalog.cjs");
 const modelPriceStatus = require("../src/model-price-status.cjs");
 const modelPrices = require("../src/model-prices.cjs");
 const modelPricesCli = require("../bin/apply-model-prices.cjs");
+const providerContractCheck = require("./check-provider-contract.cjs");
 const preflight = require("../src/preflight.cjs");
 const preflightCli = require("../bin/preflight.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
@@ -133,6 +134,23 @@ assert.equal(catalog.providers.anthropic.defaultModel, "claude-opus-4-8");
 assert.equal(modelCatalog.defaultModelForProvider("openrouter"), "");
 assert.equal(modelDefaultsCheck.checkModelDefaults().providers, 3);
 assert.equal(modelDefaultsCheck.anthropicDefaultLane(catalog), "anthropic:claude-opus-4-8");
+assert.equal(providerContractCheck.checkProviderContract().providers, 3);
+assert.equal(
+  providerContractCheck.humanProviderList(modelCatalog.PROVIDERS),
+  "anthropic, openai, or openrouter"
+);
+assert.equal(
+  providerContractCheck.backtickProviderList(modelCatalog.PROVIDERS),
+  "`anthropic`, `openai`, or `openrouter`"
+);
+assert.throws(
+  () =>
+    providerContractCheck.checkProviderContract({
+      quiet: true,
+      providerKeys: { anthropic: "ANTHROPIC_API_KEY" },
+    }),
+  /provider contract check found/
+);
 assert.equal(
   modelDefaultsCheck.workflowEnvFallback(
     "REVIEW_DEFAULT_ANTHROPIC_MODEL: ${{ vars.REVIEW_DEFAULT_ANTHROPIC_MODEL || 'claude-next' }}",

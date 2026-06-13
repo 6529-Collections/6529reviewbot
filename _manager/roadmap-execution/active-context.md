@@ -302,10 +302,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Review workflow kind contract PR: merged as PR #170, merge commit
   `1dc523f`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-default-contract`.
-- Current local changes: adding a model-default contract check that keeps
-  model-catalog defaults, reusable workflow fallbacks, provider-default docs,
-  and conservative starter lanes synchronized.
+- Model default contract PR: merged as PR #171, merge commit `6f68660`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/provider-contract-check`.
+- Current local changes: adding a provider contract check that keeps supported
+  provider constants, model catalog providers, preflight key requirements,
+  workflow dispatch choices, and provider docs synchronized.
 
 ## Key Decisions
 
@@ -685,6 +687,9 @@ merged PRs.
 - Model defaults should be checked against `config/model-catalog.json` so the
   Opus 4.8 default and later model updates have a single reviewed source of
   truth plus explicit, release-checked public surfaces.
+- Supported provider lists should be checked against `PROVIDERS` so Anthropic,
+  OpenAI, OpenRouter, and any future provider cannot drift across workflow
+  dispatch choices, preflight key requirements, docs, and runtime validation.
 
 ## Constraints
 
@@ -698,7 +703,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge the model-default contract check.
+2. Validate, publish, and merge the provider contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

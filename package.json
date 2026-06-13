@@ -58,6 +58,7 @@
     "check:comment-commands": "node scripts/check-comment-commands.cjs",
     "check:review-workflows": "node scripts/check-review-workflow-kinds.cjs",
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
+    "check:providers": "node scripts/check-provider-contract.cjs",
     "check:checklist-runbooks": "node scripts/check-checklist-runbooks.cjs",
     "check:6529-io-env": "node scripts/check-6529-io-env-template.cjs",
     "check:env-templates": "node scripts/check-env-templates.cjs",

@@ -150,6 +150,7 @@ npm run check:docs
 npm run check:comment-commands
 npm run check:review-workflows
 npm run check:model-defaults
+npm run check:providers
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes
