@@ -35,6 +35,10 @@ and source parser anchors.
 `npm run check:aws-iam-templates` keeps AWS IAM/OIDC examples least-privilege,
 placeholder-only, scoped to the bot repository or protected environment, and
 linked from production cutover evidence.
+`npm run check:security-model` keeps the security model and checklist aligned
+with first-principles trust boundaries, prompt/path/metadata safety,
+fail-closed controls, diagnostic redaction, admin/AWS/alert boundaries, and
+source anchors.
 `npm run check:operations-runbook` keeps the operations runbook's routine
 checks and triage paths for replay, spend, ledgers, workers, dashboards, and
 bot comments synchronized.
@@ -167,6 +171,7 @@ The local quality gate command inventory is:
 - `npm run check:deployment-runbook`
 - `npm run check:configuration-reference`
 - `npm run check:aws-iam-templates`
+- `npm run check:security-model`
 - `npm run check:operations-runbook`
 - `npm run check:dependabot`
 - `npm run check:container-image`

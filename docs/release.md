@@ -137,6 +137,10 @@ After stabilization:
 - `npm run check:aws-iam-templates` confirms AWS IAM/OIDC examples stay
   least-privilege, placeholder-only, scoped to the bot repository or protected
   environment, and linked from production cutover evidence
+- `npm run check:security-model` confirms the security model and checklist
+  stay synchronized with first-principles trust boundaries, prompt/path/
+  metadata safety, fail-closed controls, diagnostic redaction, admin/AWS/alert
+  boundaries, and source anchors
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized

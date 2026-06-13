@@ -154,6 +154,7 @@ npm run check:install-guide
 npm run check:deployment-runbook
 npm run check:configuration-reference
 npm run check:aws-iam-templates
+npm run check:security-model
 npm run check:operations-runbook
 npm run check:comment-commands
 npm run check:review-workflows
@@ -647,6 +648,8 @@ input. In particular:
   symlinks;
 - `npm run check:review-context-boundary` keeps path safety, trusted metadata,
   prompt hygiene, and context caps synchronized with docs;
+- `npm run check:security-model` keeps the first-principles security model,
+  manual review checklist, and source anchors synchronized;
 - provider errors are sanitized before logging;
 - empty provider responses fail closed instead of becoming no-finding comments;
 - worker, dispatch, ledger, alert, preflight, and repository-config diagnostics
@@ -655,7 +658,7 @@ input. In particular:
 - provider requests have explicit timeout and token/context caps;
 - AWS access uses OIDC and least-privilege Data API permissions.
 
-See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.md).
+See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 
 ## Documentation
 
@@ -680,6 +683,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Reusable workflow](docs/reusable-workflow.md)
 - [Run control](docs/run-control.md)
 - [Support](docs/support.md)
+- [Security Model](docs/security-model.md)
 - [Security review status](docs/security-review-status.md)
 - [Worker adapters](docs/worker-adapters.md)
 - [Worker capacity](docs/worker-capacity.md)

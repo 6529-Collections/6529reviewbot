@@ -66,6 +66,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "security-model-contract",
+          "script": "check:security-model",
+          "purpose": "Verify the security model and checklist keep first-principles trust boundaries, prompt/path/metadata safety, fail-closed controls, diagnostic redaction, admin/AWS/alert boundaries, and source anchors synchronized.",
+          "doc": "docs/security-model.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "operations-runbook-contract",
           "script": "check:operations-runbook",
           "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",

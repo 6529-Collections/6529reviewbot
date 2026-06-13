@@ -1,5 +1,11 @@
 # Security Model
 
+Run `npm run check:security-model` after editing this file, the security review
+checklist, workflow templates, or source code that touches trust boundaries.
+The security model contract keeps first-principles risks, controls, checklist
+items, workflow secret boundaries, and source anchors synchronized with the
+release gate.
+
 ## Primary Risks
 
 The main risks are:

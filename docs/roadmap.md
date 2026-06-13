@@ -278,6 +278,9 @@ Build the operator experience:
   evolve;
 - review-context boundary checks that keep path safety, trusted metadata,
   prompt hygiene, and hard caps aligned with the security model;
+- security model contract checks that keep first-principles trust boundaries,
+  manual checklist prompts, workflow secret mapping, fail-closed controls, and
+  source anchors aligned;
 - review-bin entrypoint checks that keep prompt configs, CLI entrypoints,
   package scripts, and review workflow docs aligned as review modes evolve;
 - model-default checks that keep catalog defaults, reusable workflow fallbacks,
@@ -523,6 +526,9 @@ Completed in `6529reviewbot`:
 - installed central worker and dormant-by-default alert workflows with
   action-ref validation.
 - repeatable release check script and manual security review checklist.
+- security model contract check for first-principles trust boundaries,
+  checklist coverage, workflow secret mapping, fail-closed controls, and
+  implementation anchors.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result

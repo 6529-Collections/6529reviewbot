@@ -4,6 +4,11 @@ Use this checklist before a dogfood expansion, a public pre-v1 tag, or a change
 that touches provider calls, GitHub permissions, AWS access, prompt
 construction, hidden metadata, budget admission, or run control.
 
+Run `npm run check:security-model` after editing this checklist or related
+trust-boundary code. The security model contract keeps the manual checklist,
+security model, workflow secret boundaries, and implementation anchors aligned
+with the release gate.
+
 ## Scope
 
 Record:

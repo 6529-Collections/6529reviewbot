@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a security model contract release check for first-principles trust
+  boundaries, manual checklist coverage, workflow secret mapping, fail-closed
+  controls, and implementation anchors.
 - Added an AWS IAM/OIDC template contract release check for least-privilege
   placeholder examples, exact allowed actions, and production cutover links.
 - Added a configuration reference contract release check for runtime env docs,

@@ -390,11 +390,24 @@ merged PRs.
   `9eb65c7`; post-merge CI and OpenSSF Scorecard completed successfully.
 - Configuration reference contract PR: merged as PR #214, merge commit
   `3d39f79`; post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/aws-iam-template-contract`.
-- Current local changes: adding an AWS IAM/OIDC template contract check that
-  keeps trust policies, identity-policy actions, placeholder-only resources,
-  bot-repository trust boundaries, production cutover links, release checks,
-  smoke tests, and docs synchronized.
+- AWS IAM/OIDC template contract PR: merged as PR #215, merge commit
+  `0562b56`; post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/security-model-contract`.
+- Current local changes: adding a security model contract check that keeps
+  first-principles risks, controls, manual checklist items, workflow secret
+  boundaries, source anchors, release checks, smoke tests, and docs
+  synchronized.
+- Current local validation:
+  - `npm run check:security-model` passed with 17 controls, 30 checklist
+    items, 12 source files, and 7 docs checked;
+  - `npm run check:release-operations` passed with 92 mapped tools;
+  - `npm run check:docs` passed with 64 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 149 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 107 files checked;
+  - `npm run release:check` passed, including security model contract
+    validation and 92 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -911,6 +924,11 @@ merged PRs.
   placeholder-only, scoped to bot-owned repositories or protected
   environments, limited to exact Data API, secret-read, SNS, and SES actions,
   and linked from production cutover evidence.
+- The security model is a first-principles release artifact. Keep target-code
+  execution, webhook authenticity, trusted admission, base-ref config, budget
+  ordering, run-control claims, path safety, metadata trust, prompt hygiene,
+  diagnostic redaction, admin access, AWS access, and alert payload boundaries
+  machine-checked against source anchors.
 - Dogfood go-live is the final traffic gate. Keep strict preflight mandatory
   for `--require-ready`, keep private operator workspace paths summarized, and
   sanitize Markdown gate cells even when a future caller passes unsanitized
@@ -934,7 +952,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the AWS IAM/OIDC template contract check.
+2. Publish and merge the security model contract check.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 
