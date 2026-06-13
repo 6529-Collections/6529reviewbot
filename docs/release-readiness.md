@@ -136,6 +136,8 @@ Ready for community review:
   budget scopes, env parsing, claim SQL, docs, and env examples;
 - alert-dimension checker that keeps scheduled spend-spike dimensions
   synchronized across alert defaults, env parsing, docs, and env examples;
+- alert notifier mode checker that keeps scheduled alert delivery modes
+  synchronized across notifier constants, env parsing, docs, and env examples;
 - installation and onboarding guide for conservative central App dogfood;
 - production deployment runbook and installed central worker workflow that
   mints short-lived GitHub App installation tokens;
@@ -374,6 +376,9 @@ verifies run-control concurrency scopes, env parsing, claim SQL, docs, and env
 examples stay aligned with the budget scope vocabulary.
 `npm run check:alert-dimensions` is included in `npm run release:check` and
 verifies scheduled spend-spike alert dimensions, env parsing, docs, and env
+examples stay aligned.
+`npm run check:alert-notifier-modes` is included in `npm run release:check`
+and verifies scheduled alert delivery modes, env parsing, docs, and env
 examples stay aligned.
 
 Use the repository pull request template as the routine contributor gate for

@@ -108,6 +108,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "alert-notifier-mode-contract",
+          "script": "check:alert-notifier-modes",
+          "purpose": "Verify scheduled alert delivery modes stay synchronized across notifier constants, env parsing, docs, and env examples.",
+          "doc": "docs/alerting.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",

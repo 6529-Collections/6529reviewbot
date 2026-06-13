@@ -155,6 +155,7 @@ npm run check:providers
 npm run check:budget-scopes
 npm run check:run-control-scopes
 npm run check:alert-dimensions
+npm run check:alert-notifier-modes
 npm run check:container-image
 npm run check:public-artifacts
 npm run check:release-notes

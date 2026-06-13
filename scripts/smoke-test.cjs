@@ -13,6 +13,7 @@ const adminSnapshot = require("../src/admin-snapshot.cjs");
 const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
 const admissionPolicy = require("../src/admission-policy.cjs");
 const alertDimensionsCheck = require("./check-alert-dimensions.cjs");
+const alertNotifierModesCheck = require("./check-alert-notifier-modes.cjs");
 const alertNotifier = require("../src/alert-notifier.cjs");
 const alertStatus = require("../src/alert-status.cjs");
 const appServer = require("../src/app-server.cjs");
@@ -162,6 +163,24 @@ assert.throws(
       },
     }),
   /alert dimension check found/
+);
+assert.equal(alertNotifierModesCheck.checkAlertNotifierModes().modes, 5);
+assert.deepEqual(
+  alertNotifierModesCheck.expectedNotifyModes,
+  ["none", "stdout", "webhook", "sns", "ses"]
+);
+assert.throws(
+  () =>
+    alertNotifierModesCheck.checkAlertNotifierModes({
+      quiet: true,
+      docTexts: {
+        "README.md": "# 6529reviewbot\n",
+        "docs/alerting.md": "# Alerting\n`none`\n",
+        "docs/configuration.md": "# Configuration\n",
+      },
+      envExampleText: "REVIEWBOT_ALERTS_NOTIFY_MODE=stdout\n",
+    }),
+  /alert notifier mode check found/
 );
 assert.throws(
   () =>

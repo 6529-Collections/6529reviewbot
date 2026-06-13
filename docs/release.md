@@ -142,6 +142,9 @@ After stabilization:
 - `npm run check:alert-dimensions` confirms scheduled spend-spike alert
   dimensions stay synchronized across alert defaults, env parsing, docs, and
   env examples
+- `npm run check:alert-notifier-modes` confirms scheduled alert delivery modes
+  stay synchronized across notifier constants, env parsing, docs, and env
+  examples
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes
