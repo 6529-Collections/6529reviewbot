@@ -115,6 +115,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   preflight, cutover, and dogfood gates.
 - [Dashboard Deployment Plan](docs/dashboard-deployment-plan.md): dry-run
   6529.io public/private dashboard configuration and verification handoff.
+- [Alert Delivery Plan](docs/alert-delivery-plan.md): dry-run production
+  alert routing handoff for webhook, SNS, or SES delivery.
 - [Production Cutover](docs/production-cutover.md): go/no-go checklist and
   private status overlay for moving to live dogfood traffic.
 - [Worker Capacity](docs/worker-capacity.md): scaling, backpressure, and
@@ -207,6 +209,7 @@ npm run check:run-control-scopes
 npm run check:alert-dimensions
 npm run check:alert-notifier-modes
 npm run check:alerting-runbook
+npm run check:alert-delivery-plan
 npm run check:container-image
 npm run check:container-publish-plan
 npm run check:production-deployment-plan
@@ -270,6 +273,14 @@ Open Data and private admin routes to production:
 ```bash
 npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
 npm run check:dashboard-deployment-plan
+```
+
+Build a dry-run production alert delivery plan before enabling webhook, SNS,
+or SES routing from the operator environment:
+
+```bash
+npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+npm run check:alert-delivery-plan
 ```
 
 Run a public-safe release and dogfood rehearsal:
@@ -768,6 +779,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Admin auth bridge](docs/admin-auth-bridge.md)
 - [6529.io admin integration](docs/6529-io-admin-integration.md)
 - [Alerting and scheduled operator checks](docs/alerting.md)
+- [Alert Delivery Plan](docs/alert-delivery-plan.md)
 - [Admission policy](docs/admission-policy.md)
 - [Budget admission](docs/budget-admission.md)
 - [Review workflows](docs/review-workflows.md)

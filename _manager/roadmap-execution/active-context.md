@@ -427,25 +427,30 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard release/cutover evidence gates PR: merged as PR #233, merge commit `2d2698e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-gates-contract`.
-- Current local changes: strengthening v0 release-gate and production-cutover
-  contract checks so dashboard deployment-plan evidence targets and ordering
-  cannot drift after the new dashboard exposure gate.
+- Dashboard release/cutover contract gates PR: merged as PR #234, merge commit `e85f434`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/alert-delivery-plan`.
+- Current local changes: adding a dry-run alert delivery plan command,
+  contract check, release-operations entries, docs, and smoke coverage so
+  production alert routing has a reviewed operator handoff before webhook,
+  SNS, or SES delivery is enabled.
 - Current local validation:
-  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
-    docs checked;
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
-    and 6 docs checked;
-  - `npm run check:docs` passed with 72 files checked;
-  - `npm run check:doc-index` passed with 58 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #233,
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 7 docs
+    checked;
+  - `npm run check:release-operations` passed with 7 phases and 109 tools;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #234,
     and 5 docs checked;
-  - `npm run check:public-artifacts` passed with 115 files checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
   - `git diff --check` passed;
-  - `npm run check` passed with 171 CommonJS files;
+  - `npm run check` passed with 174 CommonJS files;
+  - `node bin/alert-delivery-plan.cjs --json --quiet` passed;
+  - `node bin/alert-delivery-plan.cjs --bot-origin https://reviewbot.example.com --operator-workspace operator-workspace --notify-mode ses --alert-channel operator-email --release 0.2.0 --require-ready --json --quiet`
+    passed;
   - `npm test` passed;
-  - `npm run release:check` passed, including v0 gate and production cutover
-    contract validation for dashboard deployment-plan evidence drift.
+  - `npm run release:check` passed, including alert delivery plan contract
+    validation for 5 plan cases and 7 docs checked.
 
 ## Key Decisions
 
@@ -1007,6 +1012,10 @@ merged PRs.
 - Dashboard route exposure should now flow through the v0 gates and production
   cutover checklist via explicit dashboard deployment-plan evidence, not only
   via separate dashboard runbook prose.
+- Alert delivery planning is intentionally dry-run only: the guard can require
+  explicit production bot origin, private workspace, delivery mode, and
+  channel label inputs, but the operator still configures live webhook/SNS/SES
+  delivery and records production evidence explicitly.
 
 ## Constraints
 
@@ -1026,7 +1035,9 @@ merged PRs.
 3. Prepare production deployment/configuration evidence for the merged
    6529.io dashboard routes through the dashboard deployment-plan and cutover
    status flow.
-4. Keep conservative dogfood rollout evidence ready for a trusted target repo.
+4. Prepare production alert routing evidence through the alert delivery plan
+   before enabling webhook, SNS, or SES delivery.
+5. Keep conservative dogfood rollout evidence ready for a trusted target repo.
 
 ## Open Risks
 

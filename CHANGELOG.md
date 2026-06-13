@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Added an alert delivery plan command and contract check for dry-run
+  production alert routing handoff across webhook/SNS/SES mode, private
+  channel evidence, alert dry-run/status checks, cutover evidence, and release
+  notes.
 - Strengthened the v0 gate and production cutover contract checks to pin
   dashboard deployment-plan evidence targets and ordering.
 - Added dashboard deployment-plan evidence to v0 dashboard gates and production

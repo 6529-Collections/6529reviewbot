@@ -290,6 +290,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "alert-delivery-plan-contract",
+          "script": "check:alert-delivery-plan",
+          "purpose": "Verify the dry-run production alert delivery plan keeps reviewed delivery mode, private channel label, dry-run alert evaluation, admin status verification, cutover evidence, and release notes synchronized.",
+          "doc": "docs/alert-delivery-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "public-artifact-scan",
           "script": "check:public-artifacts",
           "purpose": "Scan public docs, config, workflows, templates, and manager memory for live-looking secrets or cloud identifiers.",
@@ -615,6 +622,15 @@
           "doc": "docs/dashboard-deployment-plan.md",
           "privateInputs": "Reads operator-supplied frontend origins, bot origins, auth-check URLs, and private workspace paths from command-line inputs.",
           "publicOutput": "Review before public sharing because command lines can include private deployment origins, auth endpoint names, wallet-config context, and workspace paths."
+        },
+        {
+          "id": "alert-delivery-plan",
+          "script": "alerts:delivery-plan",
+          "args": "-- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready",
+          "purpose": "Build the dry-run production alert routing handoff plan across delivery mode configuration, private channel evidence, dry-run alert evaluation, admin status verification, cutover evidence, and release notes.",
+          "doc": "docs/alert-delivery-plan.md",
+          "privateInputs": "Reads operator-supplied production origins, private workspace paths, notification modes, and private alert channel labels from command-line inputs.",
+          "publicOutput": "Review before public sharing because command lines can include private deployment origins, operator channel labels, alert destinations, and workspace paths."
         }
       ]
     },
