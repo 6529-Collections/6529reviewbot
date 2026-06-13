@@ -170,7 +170,7 @@ function formatDogfoodGoLiveMarkdown(packet) {
 
   for (const gate of packet.gates) {
     lines.push(
-      `| ${markdownCell(gate.title)} | ${gate.status} | ${markdownCell(
+      `| ${markdownCell(gate.title)} | ${markdownCell(gate.status)} | ${markdownCell(
         gate.detail
       )} |`
     );
@@ -368,7 +368,7 @@ function gate(id, title, status, detail) {
 }
 
 function markdownCell(value) {
-  return String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+  return publicText(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
 
 module.exports = {
