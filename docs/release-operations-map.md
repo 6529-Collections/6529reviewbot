@@ -176,11 +176,16 @@ flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` keeps the completed release-notes
 publication guard aligned with required fields, deferral handling,
 public-safety redaction, release-check wiring, smoke tests, and docs.
+`npm run check:release-tag-plan` keeps the release tag plan aligned with
+clean-main readiness, completed release notes, dry-run operator commands,
+release-check wiring, smoke tests, and docs.
 `npm run release:notes -- -- --candidate-file <release-candidate.json>`
 builds a public-safe pre-v1 release notes draft from reviewed release-candidate
 evidence.
 `npm run release:notes:check -- -- --file <release-notes.md>` checks completed
 release notes before publishing a tag or GitHub Release.
+`npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
+builds the final dry-run tag plan after completed release notes pass.
 
 The local quality gate command inventory is:
 
@@ -241,6 +246,7 @@ The local quality gate command inventory is:
 - `npm run check:release-candidate`
 - `npm run check:release-notes-draft`
 - `npm run check:release-notes-publication`
+- `npm run check:release-tag-plan`
 - `npm run check:env-templates`
 - `npm run check:workflow-actions`
 - `npm run check:workflow-permissions`

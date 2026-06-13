@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a release tag plan guard and contract check for clean-main,
+  completed-notes, dry-run tag planning before operator-created releases.
 - Added a release notes publication guard and contract check for completed
   release notes before pre-v1 tags or GitHub Releases.
 - Strengthened the synthetic self-dogfood replay gate to prove deliberate

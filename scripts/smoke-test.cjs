@@ -80,6 +80,7 @@ const releaseGatesCli = require("../bin/v0-gates.cjs");
 const v0GatesContractCheck = require("./check-v0-gates-contract.cjs");
 const releaseNotesDraftContractCheck = require("./check-release-notes-draft-contract.cjs");
 const releaseNotesPublicationContractCheck = require("./check-release-notes-publication-contract.cjs");
+const releaseTagPlanContractCheck = require("./check-release-tag-plan-contract.cjs");
 const securityReviewStatus = require("../src/security-review-status.cjs");
 const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const securityReviewStatusContractCheck = require("./check-security-review-status-contract.cjs");
@@ -5197,6 +5198,20 @@ appServer.handleGitHubWebhook({
         },
       }),
     /release notes publication contract check found/
+  );
+  const releaseTagPlanContractResult =
+    releaseTagPlanContractCheck.checkReleaseTagPlanContract();
+  assert.equal(releaseTagPlanContractResult.planCases, 4);
+  assert.equal(releaseTagPlanContractResult.docs, 6);
+  assert.throws(
+    () =>
+      releaseTagPlanContractCheck.checkReleaseTagPlanContract({
+        quiet: true,
+        docTexts: {
+          "docs/release-tag-plan.md": "# Release Tag Plan\n",
+        },
+      }),
+    /release tag plan contract check found/
   );
   const githubAppManifestContractResult =
     await githubAppManifestContractCheck.checkGitHubAppManifestContract();

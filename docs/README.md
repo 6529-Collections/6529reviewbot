@@ -65,6 +65,8 @@ be linked here before they are considered release-ready.
   notes draft from release-candidate evidence.
 - [Release Notes Publication](release-notes-publication.md): completed release
   notes guard before publishing a tag or GitHub Release.
+- [Release Tag Plan](release-tag-plan.md): dry-run clean-main and completed
+  release-notes check before operator tagging.
 - [Release Notes Template](release-notes-template.md): pre-v1 release notes
   shape.
 - [Release Operations Map](release-operations-map.md): command and evidence

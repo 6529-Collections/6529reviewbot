@@ -130,6 +130,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 - [Release Notes Publication](docs/release-notes-publication.md): completed
   release notes guard before tags or GitHub Releases.
+- [Release Tag Plan](docs/release-tag-plan.md): dry-run clean-main and
+  completed-notes check before operator tagging.
 - [Release Candidate Bundle](docs/release-candidate.md): public-safe
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and
@@ -211,6 +213,7 @@ npm run check:release-candidate
 npm run check:release-notes
 npm run check:release-notes-draft
 npm run check:release-notes-publication
+npm run check:release-tag-plan
 npm run check:self-dogfood-replay
 npm test
 npm run check:workflow-actions
@@ -227,6 +230,13 @@ Check completed release notes before publishing a tag or GitHub Release:
 ```bash
 npm run release:notes:check -- -- --file <release-notes.md>
 npm run check:release-notes-publication
+```
+
+Build a dry-run release tag plan after completed notes pass:
+
+```bash
+npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
+npm run check:release-tag-plan
 ```
 
 Run a public-safe release and dogfood rehearsal:
@@ -736,6 +746,7 @@ See [SECURITY.md](SECURITY.md) and [Security Model](docs/security-model.md).
 - [Release readiness](docs/release-readiness.md)
 - [Release operations map](docs/release-operations-map.md)
 - [Release notes draft](docs/release-notes-draft.md)
+- [Release tag plan](docs/release-tag-plan.md)
 - [Operator workspace](docs/operator-workspace.md)
 - [Operator Drill](docs/operator-drill.md)
 - [Operator evidence template](docs/operator-evidence-template.md)

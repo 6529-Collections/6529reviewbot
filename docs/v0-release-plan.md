@@ -254,7 +254,12 @@ git status --short
 npm run release:check
 npm run v0:gates -- -- --status-file <operator-status-file> --require-ready
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready --out <public-bundle-file.md> --quiet
+npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
 ```
+
+The release tag plan is a dry-run tag plan. It checks clean synced `main` and
+completed release notes, then prints the operator commands; it does not create
+the tag or GitHub Release.
 
 Then review remote checks and create an annotated tag:
 

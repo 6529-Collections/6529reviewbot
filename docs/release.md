@@ -141,6 +141,11 @@ After stabilization:
 - `npm run check:release-notes-publication` confirms the publication guard
   rejects unfinished TODO markers, missing evidence fields, incomplete
   deferrals, and public-safety leaks
+- `npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
+  builds the final dry-run tag plan from clean `main` and completed release
+  notes; it does not create tags
+- `npm run check:release-tag-plan` confirms the release tag plan stays dry-run
+  and synchronized with the release operations map, smoke tests, and public docs
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:install-guide` confirms the installation guide contract keeps
@@ -251,6 +256,8 @@ After stabilization:
   public operator evidence, including the tracked root `.env.example`
 - `npm run release:notes:check -- -- --file <release-notes.md>` passes before
   publishing a GitHub Release or announcing a release tag
+- `npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
+  passes before creating the annotated tag
 - `npm run check:preflight` passes against the synthetic central App server
   and worker fixtures
 - `npm run check:preflight-contract` confirms the preflight check order,
@@ -375,3 +382,5 @@ Every pre-v1 release should say:
 
 Use [Release Notes Template](release-notes-template.md) as the starting point
 for GitHub Releases.
+Use [Release Tag Plan](release-tag-plan.md) after completed release notes pass
+and before creating the annotated tag.
