@@ -66,6 +66,8 @@ stabilized.
 - Checklist runbook validation now fails release checks when public dogfood,
   security-review, or production-cutover checklist items point at missing
   runbook docs.
+- Release-gate parity validation now also verifies that v0 gate evidence paths
+  exist or that evidence commands reference package scripts.
 - Review comment format documentation now covers the visible comment shape,
   hidden metadata marker, and budget-skip comment contract.
 - Operator workspace bootstrap creates private release status and evidence

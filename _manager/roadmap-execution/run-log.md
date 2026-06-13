@@ -1954,3 +1954,18 @@
   - `npm run check` passed;
   - `npm run check:public-artifacts` passed;
   - `npm run release:check` passed.
+- Merged `6529reviewbot` PR #141 as `5f613fb` after CI and Dependency Review
+  passed. CodeRabbit only had a processing placeholder and did not create
+  review threads before merge.
+- Started `codex/release-gate-evidence-links` increment:
+  - strengthen `npm run check:release-gates` so v0 release gate evidence
+    references must resolve to public repo paths or existing package scripts;
+  - keep the existing gate-count parity check;
+  - update release docs, release-readiness, roadmap, changelog, and manager
+    memory.
+- Local validation for `codex/release-gate-evidence-links`:
+  - `npm run check:release-gates` passed with 19 gates and 19 evidence refs;
+  - `npm run check:docs` passed;
+  - `npm run check` passed;
+  - `npm run check:public-artifacts` passed;
+  - `npm run release:check` passed.

@@ -95,7 +95,7 @@ After stabilization:
 - `npm run check:env-templates` confirms public env examples have valid syntax,
   blank secret placeholders, and conservative dogfood defaults
 - `npm run check:release-gates` confirms the machine-readable v0 gates match
-  the numbered required-gates list
+  the numbered required-gates list and that evidence paths or commands resolve
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and

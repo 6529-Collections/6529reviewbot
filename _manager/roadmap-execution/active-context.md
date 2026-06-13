@@ -240,10 +240,12 @@ merged PRs.
   `b215432`; CI and Dependency Review completed successfully before merge.
 - Dogfood readiness operator-workspace PR: merged as PR #140, merge commit
   `f0aaea9`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/checklist-runbook-links`.
-- Current local changes: adding the missing review comment format runbook and
-  a release-check gate that validates dogfood, security-review, and
-  production-cutover checklist runbook links.
+- Checklist runbook-link PR: merged as PR #141, merge commit `5f613fb`; CI
+  and Dependency Review completed successfully before merge.
+- Current branch: `codex/release-gate-evidence-links`.
+- Current local changes: strengthening `check:release-gates` so v0 release
+  gate evidence fields must point at existing public repo paths or existing
+  package scripts.
 
 ## Key Decisions
 
@@ -536,6 +538,8 @@ merged PRs.
 - Public checklist runbook references should be machine-checked like Markdown
   links and release operations map docs; release-critical JSON should not be
   allowed to point at missing runbooks.
+- v0 release gate evidence references are part of the public release contract
+  and should be validated alongside gate count parity.
 
 ## Constraints
 
@@ -549,8 +553,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge checklist runbook-link validation and review
-   comment format docs.
+2. Validate, publish, and merge v0 release-gate evidence-reference validation.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 
