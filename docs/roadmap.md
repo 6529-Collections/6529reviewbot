@@ -315,6 +315,9 @@ Build the operator experience:
 - dogfood go-live packet included in operator docs and PR review prompts so
   release-candidate, promotion, cutover, and workspace evidence stay aligned
   before live dogfood traffic.
+- operator drill command that rehearses release-candidate, dogfood readiness,
+  promotion, and go-live summaries against a temporary or private workspace
+  before an operator runs the final ready gates.
 
 ### 9. Community Release
 
@@ -529,6 +532,8 @@ Completed in `6529reviewbot`:
 - security model contract check for first-principles trust boundaries,
   checklist coverage, workflow secret mapping, fail-closed controls, and
   implementation anchors.
+- operator drill command and contract check for public-safe release-candidate,
+  dogfood readiness, promotion, and go-live rehearsals.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
@@ -599,6 +604,8 @@ Completed in `6529reviewbot`:
   bot-repository trust examples.
 - operations runbook contract for routine checks and triage paths covering
   replay, spend, ledgers, workers, dashboards, and bot comments.
+- operator drill contract for release-candidate, dogfood readiness, promotion,
+  and go-live rehearsal behavior.
 - sanitized support bundle and support playbook.
 - no-network production preflight checks.
 - preflight contract checks for no-network runtime validation behavior.

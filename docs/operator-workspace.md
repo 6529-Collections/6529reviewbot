@@ -46,6 +46,14 @@ npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
 ```
 
+Run [Operator Drill](operator-drill.md) with `npm run operator:drill` when rehearsing the release-candidate,
+dogfood readiness, promotion, and go-live sequence before filling final
+evidence:
+
+```bash
+npm --silent run operator:drill -- -- --dir <private-workspace-dir>
+```
+
 Validate dogfood readiness against the same private workspace before first
 traffic:
 

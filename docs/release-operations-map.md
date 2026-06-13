@@ -149,6 +149,9 @@ invariants, and docs aligned.
 `npm run check:operator-workspace` keeps operator workspace creation,
 check-mode readiness failures, private path redaction, Markdown sanitization,
 source invariants, and docs aligned.
+`npm run check:operator-drill` keeps the operator drill's temporary workspace
+cleanup, private path redaction, release-candidate, dogfood readiness,
+promotion, go-live summaries, next commands, and docs aligned.
 `npm run check:operator-evidence` keeps operator evidence sections,
 readiness semantics, public-summary redaction, source invariants, and docs
 aligned.
@@ -212,6 +215,7 @@ The local quality gate command inventory is:
 - `npm run check:dogfood-promotion`
 - `npm run check:dogfood-go-live`
 - `npm run check:operator-workspace`
+- `npm run check:operator-drill`
 - `npm run check:operator-evidence`
 - `npm run check:production-cutover`
 - `npm run check:security-review-status`
@@ -226,6 +230,9 @@ The local quality gate command inventory is:
 - Local quality gates are public-safe and should run before each PR update.
 - Operator input preparation is where private credentials, live environment
   variables, and reviewed budget/model-price files enter the process.
+- Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
+  public-safe rehearsal before final release-candidate, dogfood promotion, and
+  go-live `--require-ready` commands.
 - Dogfood, security review, and production cutover each use a public checklist
   plus a private status overlay. The raw overlay files stay in the operator
   workspace.

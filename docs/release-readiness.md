@@ -140,6 +140,13 @@ Ready for community review:
 - dogfood go-live checker that keeps the final traffic gate's strict-preflight
   requirement, workspace path markers, Markdown redaction, source invariants,
   and docs synchronized;
+- operator drill command for rehearsing the release-candidate, dogfood
+  readiness, promotion, and go-live sequence against a temporary or private
+  operator workspace without calling GitHub, AWS, or model providers;
+- `npm run check:operator-drill` keeps [Operator Drill](operator-drill.md)
+  synchronized with temporary workspace cleanup, private path redaction,
+  release-candidate, dogfood readiness, promotion, go-live summaries, next
+  commands, and docs;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;
@@ -552,6 +559,10 @@ evidence, payload privacy, and central workflow posture stay aligned.
 verifies operator workspace creation, check-mode readiness failures, private
 path redaction, Markdown sanitization, source invariants, and docs stay
 aligned.
+`npm run check:operator-drill` is included in `npm run release:check` and
+verifies the public-safe operator drill keeps temporary workspace cleanup,
+private path redaction, release-candidate, dogfood readiness, promotion,
+go-live summaries, next commands, and docs aligned.
 `npm run check:operator-evidence` is included in `npm run release:check` and
 verifies operator evidence sections, readiness semantics, public-summary
 redaction, source invariants, and docs stay aligned.

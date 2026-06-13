@@ -3555,3 +3555,28 @@
   - `npm run check:public-artifacts` passed with 107 files checked;
   - `npm run release:check` passed, including security model contract
     validation and 92 mapped release-operation tools.
+- Merged `6529reviewbot` PR #216 as `d8df404`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-drill` increment:
+  - add `src/operator-drill.cjs`, `bin/operator-drill.cjs`, and
+    `npm run operator:drill`;
+  - add `scripts/check-operator-drill-contract.cjs` and
+    `npm run check:operator-drill`;
+  - rehearse release-candidate, dogfood readiness, promotion, and go-live
+    summaries against temporary or private operator workspaces without GitHub,
+    AWS, or provider calls;
+  - wire the command and check into release checks, smoke tests, release
+    operations map, public docs, changelog, roadmap, and manager memory.
+- Local validation for `codex/operator-drill` so far:
+  - `npm run check:operator-drill` passed with 2 drill cases, 5 commands,
+    and 7 docs checked;
+  - `npm run check:doc-index` passed with 51 docs indexed;
+  - `npm run check:docs` passed with 65 files checked;
+  - `npm run check:release-operations` passed with 94 mapped tools;
+  - `npm run operator:drill -- -- --json --quiet` passed;
+  - `npm run check` passed with 152 CommonJS files;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 108 files checked;
+  - `npm run release:check` passed, including operator drill contract
+    validation and 94 mapped release-operation tools.

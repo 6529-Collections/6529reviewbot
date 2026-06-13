@@ -67,6 +67,8 @@ be linked here before they are considered release-ready.
   boundary index.
 - [Operator Workspace](operator-workspace.md): private release evidence
   workspace.
+- [Operator Drill](operator-drill.md): public-safe release and dogfood
+  rehearsal command for operator workspaces.
 - [Operator Evidence Template](operator-evidence-template.md): redacted
   evidence summary shape.
 - [Production Cutover](production-cutover.md): go/no-go checklist and private
