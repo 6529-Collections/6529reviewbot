@@ -115,6 +115,8 @@ After stabilization:
   validation fields
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
+- `npm run check:dependabot` confirms weekly npm and GitHub Actions dependency
+  update coverage is still configured
 - `npm run check:checklist-runbooks` confirms dogfood, security-review, and
   production-cutover checklist runbooks point at existing public repo files
 - `npm run check:docs` passes before publishing docs-heavy release notes

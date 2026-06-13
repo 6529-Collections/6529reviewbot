@@ -87,6 +87,8 @@ stabilized.
   files, issue templates, and root README governance links.
 - Added a workflow-permissions release check for explicit least-privilege
   GitHub Actions permission blocks.
+- Added a Dependabot release check for weekly npm and GitHub Actions dependency
+  update coverage.
 - Refreshed the public roadmap to distinguish completed bot implementation
   work from remaining operator-owned deployment and dogfood evidence.
 - Release notes template validation keeps pre-v1 release notes explicit about
