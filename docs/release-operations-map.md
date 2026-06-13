@@ -50,6 +50,10 @@ update coverage present.
 `npm run check:container-publish-plan` keeps the dry-run container publish
 plan aligned with clean-main readiness, image-contract checks, build/push/scan
 commands, and private evidence guidance.
+`npm run check:production-deployment-plan` keeps the dry-run production
+deployment plan aligned with explicit operator inputs, App registration,
+container publish, operator workspace, preflight, admin snapshot, cutover, and
+dogfood handoff commands.
 `npm run check:workflow-permissions` keeps committed workflow and template
 permission blocks explicit and least-privilege.
 `npm run check:review-workflows` keeps review-kind constants, worker bins,
@@ -206,6 +210,7 @@ The local quality gate command inventory is:
 - `npm run check:dependabot`
 - `npm run check:container-image`
 - `npm run check:container-publish-plan`
+- `npm run check:production-deployment-plan`
 - `npm run check:comment-commands`
 - `npm run check:review-workflows`
 - `npm run check:review-context-boundary`
@@ -264,6 +269,10 @@ The local quality gate command inventory is:
 - `container:publish-plan` belongs to operator input preparation because live
   registry names, image digests, builder identities, and scan evidence can be
   private until release notes intentionally publish a summary.
+- `production:deployment-plan` belongs to operator input preparation because
+  production origins, registry names, private workspace paths, and exact
+  traffic timing can remain private until a reviewed release artifact publishes
+  a summary.
 - Use `npm run operator:drill -- -- --dir <private-workspace-dir>` as the
   public-safe rehearsal before final release-candidate, dogfood promotion, and
   go-live `--require-ready` commands.

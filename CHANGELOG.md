@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a production deployment plan guard and contract check for dry-run
+  operator handoff across GitHub App registration, container publish,
+  operator workspace, preflight, admin snapshot, cutover, and dogfood gates.
 - Added a container publish plan guard and contract check for dry-run
   build/push/scan/evidence commands before operator-owned registry work.
 - Added a release tag plan guard and contract check for clean-main,

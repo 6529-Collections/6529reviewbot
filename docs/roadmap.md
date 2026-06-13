@@ -318,6 +318,9 @@ Build the operator experience:
 - operator drill command that rehearses release-candidate, dogfood readiness,
   promotion, and go-live summaries against a temporary or private workspace
   before an operator runs the final ready gates.
+- production deployment plan command that builds a dry-run operator handoff
+  across GitHub App registration, container publish, operator workspace,
+  strict preflight, admin snapshot, cutover, and dogfood gates.
 - manager memory contract that keeps durable manager memory synchronized with
   the latest shipped PR, release-check wiring, smoke coverage, and public docs.
 
@@ -530,6 +533,9 @@ Completed in `6529reviewbot`:
   runtime boundary.
 - container publish plan command for dry-run operator-owned registry build,
   push, vulnerability scan, and private image evidence steps.
+- production deployment plan command for dry-run operator handoff across App
+  registration, image publish, workspace, preflight, admin snapshot, cutover,
+  and dogfood gates.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -640,7 +646,6 @@ In progress in `6529reviewbot`:
 
 - production deployment execution support, dogfood operations, release
   evidence collection, and dashboard wiring.
-- container publish plan support for operator-owned registry evidence.
 
 In progress outside this repository:
 

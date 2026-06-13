@@ -8,6 +8,14 @@ For an ordered first-install path, start with
 [install.md](install.md), then return here for production details.
 For containerized deployment, use
 [container-deployment.md](container-deployment.md) with this runbook.
+For the ordered dry-run operator handoff across App registration, image
+publish, workspace checks, preflight, cutover, and dogfood gates, use the
+[production deployment plan](production-deployment-plan.md):
+
+```bash
+npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+```
+
 Run `npm run check:deployment-runbook` after changing this document. The
 deployment runbook contract keeps GitHub App registration, central runtime,
 worker dispatch, 6529.io wiring, verification, and rollback guidance aligned
@@ -292,6 +300,9 @@ or GitHub App private keys.
 
 ## Verification Checklist
 
+- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`
+  has been reviewed as the production deployment plan before running live
+  operator steps.
 - `npm run production:cutover -- -- --init-status <operator-cutover-status-file>`
   has bootstrapped the private cutover status file for the current checklist.
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary`

@@ -406,25 +406,28 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release tag plan guard PR: merged as PR #222, merge commit `1a4f3a5`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/container-publish-plan`.
-- Current local changes: adding a dry-run container publish plan guard that
-  checks clean synced `main`, the container-image contract, release version
-  normalization, and final operator build/push/digest/scan/evidence commands
-  without building, pushing, scanning, or publishing images.
+- Container publish plan guard PR: merged as PR #223, merge commit `ad99205`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/production-deployment-plan`.
+- Current local changes: adding a dry-run production deployment plan guard
+  that composes GitHub App registration, container publish, operator
+  workspace, strict preflight, admin snapshot, production cutover, and dogfood
+  promotion/go-live handoff commands without creating Apps, converting
+  manifest codes, deploying services, running checks, or sending traffic.
 - Current local validation:
-  - `npm run check:container-publish-plan` passed with 5 plan cases and 6
+  - `npm run check:production-deployment-plan` passed with 4 plan cases and 6
     docs checked;
-  - `npm run check` passed with 165 CommonJS files;
-  - `npm run check:docs` passed with 70 files checked;
-  - `npm run check:doc-index` passed with 56 docs indexed;
-  - `npm run check:release-operations` passed with 103 mapped tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #222,
+  - `npm run check` passed with 168 CommonJS files;
+  - `npm run check:docs` passed with 71 files checked;
+  - `npm run check:doc-index` passed with 57 docs indexed;
+  - `npm run check:release-operations` passed with 105 mapped tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #223,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run check:public-artifacts` passed with 113 files checked;
+  - `npm run check:public-artifacts` passed with 114 files checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including container publish plan contract
-    validation and 103 mapped release-operation tools.
+  - `npm run release:check` passed, including production deployment plan
+    contract validation and 105 mapped release-operation tools.
 
 ## Key Decisions
 
@@ -973,6 +976,11 @@ merged PRs.
 - Container publish planning is intentionally dry-run only: the guard can fail
   on dirty or unsynced `main` and container-image contract drift, but the
   operator still builds, pushes, scans, and records image evidence explicitly.
+- Production deployment planning is intentionally dry-run only: the guard can
+  require explicit production origin, operator image repository, and private
+  workspace inputs, but the operator still creates the App, converts manifest
+  codes, deploys services, runs live checks, and enables dogfood traffic
+  explicitly.
 
 ## Constraints
 
@@ -986,7 +994,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Publish and merge the container publish plan guard.
+2. Publish and merge the production deployment plan guard.
 3. Continue hardening release and dogfood runbooks, checks, and operator
    guardrails in focused PRs.
 

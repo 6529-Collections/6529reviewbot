@@ -416,6 +416,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "production-deployment-plan-contract",
+          "script": "check:production-deployment-plan",
+          "purpose": "Verify the dry-run production deployment plan keeps GitHub App, container publish, operator workspace, preflight, admin snapshot, cutover, and dogfood commands synchronized.",
+          "doc": "docs/production-deployment-plan.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "security-review-status-contract",
           "script": "check:security-review-status",
           "purpose": "Verify security review status readiness, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
@@ -583,6 +590,15 @@
           "doc": "docs/container-publish-plan.md",
           "privateInputs": "Reads local git state and may include an operator-owned registry or image repository in command output.",
           "publicOutput": "Review before public sharing because command lines can include private registry names or deployment timing."
+        },
+        {
+          "id": "production-deployment-plan",
+          "script": "production:deployment-plan",
+          "args": "-- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready",
+          "purpose": "Build the dry-run production deployment handoff plan across GitHub App registration, container publish, operator workspace, preflight, admin snapshot, cutover, and dogfood gates.",
+          "doc": "docs/production-deployment-plan.md",
+          "privateInputs": "Reads operator-supplied origins, registry names, and private workspace paths from command-line inputs.",
+          "publicOutput": "Review before public sharing because command lines can include private deployment origins, registry names, and workspace paths."
         }
       ]
     },
