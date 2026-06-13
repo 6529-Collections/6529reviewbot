@@ -230,10 +230,12 @@ merged PRs.
   CI and Dependency Review completed successfully before merge.
 - Release-candidate security-review status PR: merged as PR #135, merge commit
   `a74dbeb`; CI and Dependency Review completed successfully before merge.
-- Current branch: `codex/release-operations-map`.
-- Current local changes: adding a machine-readable release operations map,
-  render command, and checker so public release docs have one maintained index
-  for recurring commands, private status overlays, and evidence boundaries.
+- Release operations map PR: merged as PR #136, merge commit `cfd807d`; CI
+  and Dependency Review completed successfully before merge.
+- Current branch: `codex/operator-workspace-bootstrap`.
+- Current local changes: adding a private operator workspace bootstrap command
+  that creates release-gate, dogfood, security-review, production-cutover, and
+  operator-evidence skeleton files in one non-repo directory.
 
 ## Key Decisions
 
@@ -510,6 +512,9 @@ merged PRs.
 - The release operations map should be the public-safe "what do I run next"
   index for release operators. It may name commands, docs, and evidence
   boundaries, but source status/evidence files remain private operator inputs.
+- Private release work should start from an operator-owned workspace outside
+  the public repository so status overlays and evidence files are harder to
+  commit accidentally.
 
 ## Constraints
 
@@ -523,7 +528,7 @@ merged PRs.
 
 1. Keep frontend public/private dashboard PRs current while they wait for
    required human review.
-2. Validate, publish, and merge release operations map integration.
+2. Validate, publish, and merge operator workspace bootstrap integration.
 3. Keep release docs, runbooks, and manager memory aligned after each merged
    slice.
 

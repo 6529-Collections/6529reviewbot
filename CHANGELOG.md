@@ -63,6 +63,8 @@ stabilized.
 - Release operations map CLI and checker index recurring release commands and
   evidence boundaries, and fail release checks when mapped scripts or docs
   drift.
+- Operator workspace bootstrap creates private release status and evidence
+  skeletons in one operator-owned directory.
 - npm script examples now use the repo-compatible
   `npm run <script> -- -- --flag` form when passing CLI options.
 - Public artifact leak scanning now includes the tracked root `.env.example`.

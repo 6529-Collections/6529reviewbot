@@ -190,6 +190,13 @@ when evidence contains live deployment details.
 Use [Operator Evidence Template](operator-evidence-template.md) to capture
 deployment evidence without leaking live account ids, ARNs, secrets, private
 repository names, webhook payloads, prompts, or provider responses.
+Use [Operator Workspace](operator-workspace.md) to create all current private
+status and evidence skeletons in one operator-owned directory:
+
+```bash
+npm run operator:workspace -- -- --dir <private-workspace-dir>
+```
+
 Use [Security Review Status](security-review-status.md) to track manual
 security review evidence in a private status file:
 

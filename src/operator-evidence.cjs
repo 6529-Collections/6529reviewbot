@@ -126,6 +126,62 @@ function assertOperatorEvidenceReady(document) {
   return summary;
 }
 
+function createOperatorEvidenceSkeleton(options = {}) {
+  const release = evidenceText(options.release || "v0.1.0", "operator evidence skeleton release");
+  const date = evidenceText(options.date || "YYYY-MM-DD", "operator evidence skeleton date");
+  const operator = evidenceText(options.operator || "operator-name", "operator evidence skeleton operator");
+  const commit = evidenceText(options.commit || "commit-or-tag", "operator evidence skeleton commit");
+  const environment = evidenceText(
+    options.environment || "dogfood-or-production",
+    "operator evidence skeleton environment"
+  );
+  const privateEvidenceLocation = evidenceText(
+    options.privateEvidenceLocation || "private operator runbook location",
+    "operator evidence skeleton privateEvidenceLocation"
+  );
+  return validateOperatorEvidence({
+    version: 1,
+    release,
+    summary: {
+      date,
+      operator,
+      commit,
+      environment,
+      publicSummaryLocation: optionalEvidenceText(options.publicSummaryLocation || ""),
+      privateEvidenceLocation,
+      releaseGateStatusFile: optionalEvidenceText(options.releaseGateStatusFile || "v0-release-status.json"),
+      releaseGateSummary: "pending",
+      releaseGateReadyCheck: "not run",
+      productionCutoverStatusFile: optionalEvidenceText(
+        options.productionCutoverStatusFile || "production-cutover-status.json"
+      ),
+      productionCutoverSummary: "pending",
+      productionCutoverReadyCheck: "not run",
+    },
+    sections: Object.fromEntries(
+      OPERATOR_EVIDENCE_SECTIONS.map((section) => [
+        section.id,
+        {
+          status: "pending",
+          notes: `Evidence target: ${section.title}.`,
+        },
+      ])
+    ),
+  });
+}
+
+function writeOperatorEvidenceFile(filePath, document, options = {}) {
+  if (!filePath) {
+    throw new Error("operator evidence output path is required.");
+  }
+  if (fs.existsSync(filePath) && !options.force) {
+    throw new Error(`operator evidence file already exists: ${filePath}`);
+  }
+  const evidence = isValidatedOperatorEvidence(document) ? document : validateOperatorEvidence(document);
+  fs.writeFileSync(filePath, `${JSON.stringify(serializableOperatorEvidence(evidence), null, 2)}\n`, "utf8");
+  return evidence;
+}
+
 function renderOperatorEvidenceSummaryMarkdown(document) {
   const evidence = isValidatedOperatorEvidence(document) ? document : validateOperatorEvidence(document);
   const summary = summarizeOperatorEvidence(evidence);
@@ -199,6 +255,25 @@ function publicOperatorEvidenceDocument(document) {
   };
 }
 
+function serializableOperatorEvidence(document) {
+  const evidence = isValidatedOperatorEvidence(document) ? document : validateOperatorEvidence(document);
+  return {
+    version: 1,
+    release: evidence.release,
+    summary: evidence.summary,
+    sections: Object.fromEntries(
+      evidence.sections.map((section) => [
+        section.id,
+        {
+          status: section.status,
+          ...(section.evidence.length ? { evidence: section.evidence } : {}),
+          ...(section.notes ? { notes: section.notes } : {}),
+        },
+      ])
+    ),
+  };
+}
+
 function publicEvidenceText(value) {
   let text = redactSensitiveText(value);
   for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
@@ -251,10 +326,13 @@ module.exports = {
   OPERATOR_EVIDENCE_SECTIONS,
   OPERATOR_EVIDENCE_STATUSES,
   assertOperatorEvidenceReady,
+  createOperatorEvidenceSkeleton,
   loadOperatorEvidence,
   publicEvidenceText,
   publicOperatorEvidenceDocument,
   renderOperatorEvidenceSummaryMarkdown,
+  serializableOperatorEvidence,
   summarizeOperatorEvidence,
   validateOperatorEvidence,
+  writeOperatorEvidenceFile,
 };

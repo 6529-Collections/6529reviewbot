@@ -114,6 +114,8 @@ AGENTS.md                    Instructions for coding agents working here
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and
   evidence-boundary index for release operators.
+- [Operator Workspace](docs/operator-workspace.md): private release evidence
+  skeleton bootstrap.
 - [Operator Evidence Template](docs/operator-evidence-template.md): redacted
   release/deployment proof format.
 
@@ -194,6 +196,13 @@ Render the release operations map when deciding what to run next:
 npm run release:operations
 npm run release:operations -- -- --phase release-candidate
 npm run check:release-operations
+```
+
+Create a private operator workspace with all release status/evidence
+skeletons:
+
+```bash
+npm run operator:workspace -- -- --dir <private-workspace-dir>
 ```
 
 Track production cutover readiness from the public checklist plus private
@@ -584,6 +593,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security-model.md](docs/security-model.
 - [Release process](docs/release.md)
 - [Release readiness](docs/release-readiness.md)
 - [Release operations map](docs/release-operations-map.md)
+- [Operator workspace](docs/operator-workspace.md)
 - [Operator evidence template](docs/operator-evidence-template.md)
 - [Security review checklist](docs/security-review-checklist.md)
 

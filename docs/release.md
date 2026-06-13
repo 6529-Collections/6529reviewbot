@@ -23,6 +23,9 @@ After stabilization:
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook
+- [Operator workspace](operator-workspace.md) created or an equivalent private
+  runbook location exists for release-gate, dogfood, security-review, cutover,
+  and operator-evidence overlays
 - [Release candidate bundle](release-candidate.md) rendered from the private
   release-gate status and operator evidence files
 - [Production cutover checklist](production-cutover.md) reviewed before live
