@@ -89,6 +89,7 @@ From a private operator environment, include no-network runtime preflight:
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm run check:dogfood-promotion
 npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
 ```
 
@@ -178,6 +179,9 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
   before enabling command-only live traffic when release-candidate, promotion,
   cutover, and operator-workspace evidence should agree in one public-safe
   summary.
+- Run `npm run check:dogfood-promotion` after changing the promotion command,
+  packet format, strict-preflight behavior, workspace handling, or docs; the
+  dogfood promotion checker keeps that pre-traffic gate synchronized.
 - Run `npm run check:dogfood-go-live` after changing the go-live command,
   packet format, strict-preflight behavior, workspace handling, or docs; the
   dogfood go-live checker keeps that final traffic gate synchronized.

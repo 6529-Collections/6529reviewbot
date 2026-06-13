@@ -99,6 +99,9 @@ function parseArgs(argv = []) {
   if (options.requireOperatorWorkspaceReady && !options.operatorWorkspaceDir) {
     throw new Error("--require-operator-workspace-ready requires --operator-workspace.");
   }
+  if (options.requireReady && !options.strictPreflight) {
+    throw new Error("--require-ready requires --strict-preflight.");
+  }
   return options;
 }
 

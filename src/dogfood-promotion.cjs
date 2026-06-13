@@ -11,6 +11,10 @@ const {
 const { collectDogfoodReadiness } = require("./dogfood-readiness.cjs");
 
 const DOGFOOD_PROMOTION_TEXT_MAX_CHARS = 1000;
+const PUBLIC_REDACTION_PATTERNS = [
+  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
+  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
+];
 
 function collectDogfoodPromotionPacket(options = {}) {
   const root = path.resolve(options.root || process.cwd());
@@ -148,7 +152,7 @@ function formatDogfoodPromotionMarkdown(packet) {
 
   for (const gate of packet.gates) {
     lines.push(
-      `| ${markdownCell(gate.title)} | ${gate.status} | ${markdownCell(gate.detail)} |`
+      `| ${markdownCell(gate.title)} | ${markdownCell(gate.status)} | ${markdownCell(gate.detail)} |`
     );
   }
 
@@ -367,7 +371,11 @@ function publicInputPath(filePath, root) {
 }
 
 function publicText(value, maxChars = DOGFOOD_PROMOTION_TEXT_MAX_CHARS) {
-  return redactSensitiveText(String(value || "")).slice(0, maxChars);
+  let text = redactSensitiveText(String(value || ""));
+  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
+    text = text.replace(pattern, replacement);
+  }
+  return text.slice(0, maxChars);
 }
 
 function lastLine(output) {
@@ -379,7 +387,7 @@ function lastLine(output) {
 }
 
 function markdownCell(value) {
-  return String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+  return publicText(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
 
 module.exports = {

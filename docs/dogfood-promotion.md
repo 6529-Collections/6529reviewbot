@@ -79,7 +79,8 @@ npm --silent run dogfood:promotion -- -- \
 
 ## Gate Meaning
 
-`--require-ready` fails unless all promotion gates are green:
+`--require-ready` requires `--strict-preflight` and fails unless all
+promotion gates are green:
 
 - target config packet is ready;
 - central dogfood inputs parse;
@@ -107,3 +108,19 @@ Use the promotion packet immediately before enabling live command-only traffic,
 then use the go-live packet when the traffic decision should include all
 release and cutover evidence in one public-safe summary. Record the first run
 in the private dogfood status overlay.
+
+## Contract Check
+
+Run the dogfood promotion contract check after changing promotion packet
+formatting, readiness gating, operator workspace handling, preflight behavior,
+or release/dogfood docs:
+
+```bash
+npm run check:dogfood-promotion
+```
+
+The dogfood promotion contract check verifies that `--require-ready` requires
+`--strict-preflight`, that private workspace paths stay summarized as
+`[operator-workspace]`, that Markdown table cells redact common secret and AWS
+identifier shapes, and that the public docs stay synchronized with the
+pre-traffic gate.
