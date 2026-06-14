@@ -109,9 +109,10 @@ Do not create the `v0` tag until all of these are true:
 2. The central App server and at least one worker path are deployed with a
    reviewed worker capacity policy, or the release notes explicitly mark the
    release as local/dogfood-only.
-3. If the App server is containerized, `npm run check:container-image` passes,
-   and the image was built from a reviewed commit, scanned, and recorded by
-   digest in private operator evidence.
+3. If the App server is containerized, reviewed container publish plan evidence
+   exists for an operator-owned registry, `npm run check:container-image`
+   passes, and the image was built from a reviewed commit, scanned, and
+   recorded by digest in private operator evidence.
 4. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
    are configured only in bot-owned infrastructure.
 5. AWS IAM/OIDC trust and identity policies are reviewed from the templates in

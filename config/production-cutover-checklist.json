@@ -109,9 +109,9 @@
       "items": [
         {
           "id": "container-image-reviewed",
-          "title": "Container image, when used, is built from the reviewed commit, scanned, and recorded by digest.",
-          "evidence": "image digest, builder identity, and scan summary kept in private evidence",
-          "runbook": "docs/container-deployment.md"
+          "title": "Container publish plan is reviewed for an operator-owned registry before any image build or push, then the image is built from the reviewed commit, scanned, and recorded by digest.",
+          "evidence": "npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready plus image digest, builder identity, source commit, and scan summary kept in private evidence",
+          "runbook": "docs/container-publish-plan.md"
         },
         {
           "id": "server-deployed-noop",

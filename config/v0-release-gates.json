@@ -15,8 +15,8 @@
     },
     {
       "id": "container-image",
-      "title": "Container image, when used, passes the repository container-image contract check, is built from a reviewed commit, scanned, and recorded by digest in private operator evidence.",
-      "evidence": "docs/container-deployment.md"
+      "title": "Container image, when used, has reviewed container publish plan evidence for an operator-owned registry, passes the repository container-image contract check, is built from a reviewed commit, scanned, and recorded by digest in private operator evidence.",
+      "evidence": "docs/container-publish-plan.md"
     },
     {
       "id": "secret-boundary",
