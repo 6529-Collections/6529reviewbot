@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Pinned release-candidate contract coverage for public dashboard disclosure
+  and private admin auth operator evidence sections.
 - Added first-class operator evidence sections for public dashboard disclosure
   allowlists and private admin auth-check/wallet allowlist evidence.
 - Required release notes drafts and publication checks to include public

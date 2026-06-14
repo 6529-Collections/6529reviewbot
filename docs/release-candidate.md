@@ -169,5 +169,6 @@ invariants, and the public docs synchronized.
 - production cutover complete/deferred/pending/blocked counts when a cutover
   status file is provided;
 - preflight error and warning summaries;
-- redacted operator evidence sections;
+- redacted operator evidence sections, including the public dashboard
+  disclosure and private admin auth evidence sections when present;
 - the follow-up release commands the operator should run.

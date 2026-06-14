@@ -5140,3 +5140,22 @@
   - `npm run check` passed with 178 CommonJS files;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     new operator evidence dashboard/admin sections exercised.
+- Merged `6529reviewbot` PR #286 as `85b805d`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-candidate-dashboard-evidence-sections` increment:
+  - pin release-candidate contract coverage and docs so public bundles surface
+    the public dashboard disclosure and private admin auth operator evidence
+    sections when present.
+- Local validation for `codex/release-candidate-dashboard-evidence-sections` so far:
+  - `npm run check:release-candidate` passed with 7 redaction cases,
+    3 path cases, and 5 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #286,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    release-candidate dashboard/admin evidence section coverage exercised.
