@@ -233,6 +233,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["operator-owned registry, source commit, digest, and vulnerability scan recorded"],
           },
           {
+            id: "security-intake",
+            status: "complete",
+            title: "Security Intake",
+            notes: "private vulnerability reporting enabled or equivalent intake recorded",
+            evidence: ["SECURITY.md guidance reviewed and triage owner recorded"],
+          },
+          {
             id: "production-deployment-plan",
             status: "complete",
             title: "Production Deployment Plan",
@@ -320,6 +327,8 @@ function checkMarkdownOutput(findings) {
     "[redacted-github-token]",
     "container-publish-plan",
     "reviewed container publish plan evidence",
+    "security-intake",
+    "private vulnerability reporting enabled or equivalent intake recorded",
     "production-deployment-plan",
     "reviewed production deployment plan evidence",
     "worker-dispatch-credentials",

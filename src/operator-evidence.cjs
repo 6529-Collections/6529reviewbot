@@ -10,6 +10,7 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "github-app", title: "GitHub App" },
   { id: "aws-ledger", title: "AWS Ledger" },
   { id: "iam-and-secrets", title: "IAM And Secrets" },
+  { id: "security-intake", title: "Security Intake" },
   { id: "app-server-runtime", title: "App Server Runtime" },
   { id: "container-publish-plan", title: "Container Publish Plan" },
   { id: "production-deployment-plan", title: "Production Deployment Plan" },

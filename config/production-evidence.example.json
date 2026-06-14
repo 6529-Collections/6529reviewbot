@@ -28,6 +28,10 @@
       "status": "pending",
       "notes": "Review least-privilege IAM policies and secret custody before enabling production."
     },
+    "security-intake": {
+      "status": "pending",
+      "notes": "Enable GitHub private vulnerability reporting or record an equivalent private security intake channel before broad community release."
+    },
     "app-server-runtime": {
       "status": "pending",
       "notes": "Deploy the central App server or explicitly mark the release local/dogfood-only."

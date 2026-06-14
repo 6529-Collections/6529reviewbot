@@ -15,9 +15,9 @@ private security channel.
 
 Before broad community release, maintainers should enable GitHub private
 vulnerability reporting for this repository or record an equivalent private
-security intake channel in operator evidence. Public release notes should not
-claim community-release security readiness while private vulnerability intake
-is unknown or explicitly deferred.
+security intake channel in the private `security-intake` operator evidence
+section. Public release notes should not claim community-release security readiness
+while private vulnerability intake is unknown or explicitly deferred.
 
 Useful report details:
 

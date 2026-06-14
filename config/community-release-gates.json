@@ -31,7 +31,7 @@
     },
     {
       "id": "security-intake",
-      "title": "GitHub private vulnerability reporting is enabled for this repository or an equivalent private security intake channel is recorded in operator evidence.",
+      "title": "GitHub private vulnerability reporting is enabled for this repository or an equivalent private security intake channel is recorded in security-intake operator evidence.",
       "evidence": "SECURITY.md"
     },
     {

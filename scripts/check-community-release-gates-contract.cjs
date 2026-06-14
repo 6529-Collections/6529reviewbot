@@ -116,7 +116,7 @@ function checkGateConfig(gates, findings) {
     "secret-boundary": ["Provider keys", "GitHub App secrets", "bot environment"],
     "aws-iam": ["AWS IAM/OIDC", "central bot runtime"],
     "budget-policies": ["central budget policies", "environment and repository caps"],
-    "security-intake": ["private vulnerability reporting", "private security intake"],
+    "security-intake": ["private vulnerability reporting", "private security intake", "security-intake operator evidence"],
     "dashboard-plan": ["dashboard deployment plan", "auth-check URL", "require-ready"],
     "public-dashboard": ["public transparency dashboard", "repo/org disclosure allowlists"],
     "private-admin": ["private admin surface", "6529 auth", "HMAC admin auth bridge"],

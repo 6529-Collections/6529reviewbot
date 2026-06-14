@@ -596,20 +596,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release tag-plan operator evidence PR: merged as PR #317, merge commit `5ac0584`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-pricing-operator-evidence`.
-- Current local changes: add a dedicated `model-pricing` section to structured
-  operator evidence so provider price-source review, catalog coverage,
-  stale/zero-price overrides, apply summaries, and admin price-status checks
-  are tracked separately from central budget-policy evidence.
+- Model pricing operator evidence PR: merged as PR #318, merge commit `178dbba`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/security-intake-operator-evidence`.
+- Current local changes: add a dedicated `security-intake` section to
+  structured operator evidence so GitHub private vulnerability reporting or an
+  equivalent private intake channel is tracked explicitly before broad
+  community-release readiness claims.
 - Current local validation:
+  - `gh run watch 27499087936 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #318 post-merge CI;
+  - `gh run watch 27499087948 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #318 post-merge OpenSSF Scorecard;
+  - `npm run check:community-release-gates` passed with 14 gates, 14 evidence
+    refs, and 9 docs checked;
+  - `npm run check:governance` passed with 13 files checked;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
     cases, and 5 docs checked;
-  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
-    docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #317, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #318, and
     5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
@@ -618,7 +623,7 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    model-pricing operator evidence section exercised.
+    security-intake operator evidence section exercised.
 
 ## Key Decisions
 
@@ -660,6 +665,10 @@ merged PRs.
   separate from central `budget-and-pricing` policy evidence, because
   provider price-source verification and budget-cap approval are different
   release decisions.
+- Private vulnerability intake is now a first-class `security-intake`
+  operator evidence section; public SECURITY.md guidance and community-release
+  gates should not imply the live GitHub/private intake setting is configured
+  until that evidence is complete or explicitly deferred.
 - Model price apply should reject zero-rate placeholders by default; a real
   zero price requires explicit operator intent and provider documentation.
 - Model price apply should reject stale or future-dated source-check evidence
