@@ -584,8 +584,8 @@ Completed in `6529reviewbot`:
 - container publish planning rejects URL-style image repository inputs before
   rendering Docker build and push commands.
 - production deployment plan command for dry-run operator handoff across App
-  registration, image publish, workspace, preflight, admin snapshot, cutover,
-  and dogfood gates.
+  registration, image publish, workspace, worker dispatch credential,
+  preflight, admin snapshot, cutover, and dogfood gates.
 - production deployment planning rejects URL-style image repository inputs
   before rendering operator handoff commands.
 - release checks exercise production deployment, dashboard deployment, and

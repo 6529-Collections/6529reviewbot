@@ -70,6 +70,9 @@ each phase:
   vulnerability scan summary.
 - Operator workspace: release-gate, dogfood, security-review,
   production-cutover, and operator-evidence overlay readiness.
+- Worker dispatch credentials: dispatch-only GitHub App installation or
+  accepted fallback, `Actions: write` scope, token mint smoke result, and
+  credential custody.
 - Runtime preflight: strict preflight result and private admin snapshot
   posture without raw rows or secrets.
 - Cutover and dogfood: go/no-go output, accepted deferrals, rollback posture,
@@ -82,6 +85,17 @@ counts.
 The cutover and dogfood phase prints the final promotion and go-live commands
 with `--model-price-file <reviewed-model-price-file.json>` so the same reviewed
 provider pricing evidence is carried into the last traffic gates.
+
+The worker dispatch credential phase prints the private token-smoke command:
+
+```bash
+npm run github-app:token -- -- --profile worker-dispatch --installation-id <central-repo-installation-id> --github-actions-output
+```
+
+Run it only in the private operator or GitHub Actions context that owns
+`GITHUB_OUTPUT`. Do not paste the minted token into public evidence; record the
+masked smoke result, dispatch-only App installation, scope, and any accepted
+fallback decision.
 
 ## Contract
 

@@ -631,8 +631,9 @@ and private evidence guidance for an operator-owned registry.
 `npm run release:check` and verifies the production deployment plan remains
 dry-run, requires explicit production origin, image repository, and private
 operator workspace inputs in ready mode, and renders the App registration,
-container publish, workspace, preflight, admin snapshot, cutover, and dogfood
-handoff commands without executing live operations.
+container publish, workspace, worker dispatch credential, preflight, admin
+snapshot, cutover, and dogfood handoff commands without executing live
+operations.
 `npm run check:dashboard-deployment-plan` is included in
 `npm run release:check` and verifies the dashboard deployment plan remains
 dry-run, requires explicit 6529.io origin, production bot origin, private

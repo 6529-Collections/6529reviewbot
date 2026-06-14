@@ -100,6 +100,14 @@ function deploymentPhases({ release, host, image, workspace }) {
       evidence: "Keep release-gate, dogfood, security-review, production-cutover, and operator-evidence overlays in the private workspace.",
     },
     {
+      id: "worker-dispatch-credentials",
+      title: "Worker Dispatch Credentials",
+      commands: [
+        "npm run github-app:token -- -- --profile worker-dispatch --installation-id <central-repo-installation-id> --github-actions-output",
+      ],
+      evidence: "Record dispatch-only GitHub App installation evidence or accepted fallback, Actions: write scope, token mint smoke result, and credential custody in private operator evidence.",
+    },
+    {
       id: "runtime-preflight",
       title: "Runtime Preflight",
       commands: [

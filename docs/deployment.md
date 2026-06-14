@@ -279,6 +279,9 @@ Before enabling non-noop worker traffic, record the worker dispatch credential
 posture in private evidence: dispatch-only GitHub App preferred, central bot
 repository `Actions: write` scope confirmed, and any main-App credential reuse
 or `REVIEWBOT_WORKER_GITHUB_TOKEN` fallback explicitly accepted.
+The production deployment plan now renders the private worker-dispatch token
+smoke command so this evidence is part of the same handoff as App
+registration, image publishing, preflight, cutover, and dogfood.
 
 ## 6529.io Wiring
 
