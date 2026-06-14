@@ -162,6 +162,9 @@ function parseArgs(argv = []) {
   if (result.requireReady && (!result.strictPreflight || result.skipPreflight)) {
     throw new Error("--require-ready requires --strict-preflight and cannot be used with --skip-preflight.");
   }
+  if (result.requireReady && !result.modelPriceFile) {
+    throw new Error("--require-ready requires --model-price-file for reviewed model price coverage.");
+  }
   return result;
 }
 
@@ -220,7 +223,7 @@ Options:
   --skip-self-dogfood-replay         Omit synthetic self-dogfood replay.
   --require-operator-workspace-ready Require every workspace overlay to be ready.
   --require-ready                    Exit non-zero unless every go-live gate is ready;
-                                     requires --strict-preflight.
+                                     requires --strict-preflight and --model-price-file.
   --include-git-status               Include sanitized git status in JSON.
   --out <file>                       Write Markdown or JSON to a file.
   --json                             Print JSON instead of Markdown.

@@ -454,7 +454,8 @@ promotion, production-cutover, and operator-workspace evidence should agree in
 one place. Use `npm --silent run` when copying promotion, go-live, or readiness
 output from commands that include private workspace or reviewed model price
 file paths; normal `npm run` can echo the command line before the redacted
-report.
+report. Final promotion and go-live ready mode require `--model-price-file` so
+operator-reviewed price coverage is present before live dogfood traffic.
 
 Before the first live dogfood model call, the private dogfood status overlay
 must include `provider-console-readiness-reviewed` and

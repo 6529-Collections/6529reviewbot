@@ -8,8 +8,7 @@ The packet composes the checks that otherwise live in separate commands:
 - release-candidate readiness from `npm run release:candidate`;
 - target config, central dogfood inputs, self-dogfood replay, operator
   workspace parsing, and preflight from `npm run dogfood:promotion`;
-- optional reviewed model price coverage forwarded through
-  `npm run dogfood:promotion`;
+- reviewed model price coverage forwarded through `npm run dogfood:promotion`;
 - private dogfood, security-review, release-gate, production-cutover, and
   operator-evidence summaries from the standard operator workspace.
 
@@ -51,16 +50,16 @@ For the final go/no-go check, require readiness:
 npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
-`--require-ready` requires `--strict-preflight` and fails unless every
-go-live gate is ready:
+`--require-ready` requires `--strict-preflight` and `--model-price-file`, and
+fails unless every go-live gate is ready:
 
 - the private operator workspace exists and all overlay summaries are ready;
 - dogfood status baseline items `provider-console-readiness-reviewed` and
   `iam-secret-custody-reviewed` are backed by `provider-console-readiness` and
   `iam-and-secrets` operator evidence before first live dogfood model calls;
 - the release-candidate bundle is ready;
-- the dogfood promotion packet is ready, including model price coverage when
-  supplied;
+- the dogfood promotion packet is ready, including reviewed model price
+  coverage;
 - production cutover status is included, complete, and has no missing current
   checklist ids.
 
@@ -108,8 +107,9 @@ npm run check:dogfood-go-live
 ```
 
 The dogfood go-live contract check verifies that `--require-ready` requires
-`--strict-preflight`, that private workspace paths stay summarized as
-`[operator-workspace]`, that nested external model price file paths stay
-summarized as `[external-path-set]`, that the Markdown table cells redact
-common secret and AWS identifier shapes, and that the public docs stay
-synchronized with the traffic gate.
+`--strict-preflight` and `--model-price-file`, that private workspace paths
+stay summarized as `[operator-workspace]`, that nested external model price
+file paths stay summarized as `[external-path-set]`, that ready mode requires
+reviewed model price coverage, that the Markdown table cells redact common
+secret and AWS identifier shapes, and that the public docs stay synchronized
+with the traffic gate.

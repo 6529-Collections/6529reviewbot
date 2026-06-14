@@ -135,6 +135,11 @@ function assertDogfoodGoLiveReady(packet) {
       "dogfood go-live packet requires strict preflight before it can be marked ready."
     );
   }
+  if (!packet.inputs.dogfoodPromotion.modelPriceFile) {
+    throw new Error(
+      "dogfood go-live packet requires reviewed model price coverage before it can be marked ready."
+    );
+  }
   if (!packet.ready) {
     const failing = packet.gates
       .filter((gate) => gate.status !== "ok")

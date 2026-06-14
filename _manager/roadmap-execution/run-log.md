@@ -6239,3 +6239,40 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood handoff contract changes exercised.
+- Merged `6529reviewbot` PR #327 as `c3eaf46`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-ready-model-price-required` increment:
+  - require `dogfood:promotion --require-ready` and
+    `dogfood:go-live --require-ready` to include `--model-price-file`;
+  - make the promotion central-inputs gate fail closed when model price
+    coverage is absent, so final packet readiness cannot pass on catalog
+    defaults alone;
+  - require reviewed model price coverage in promotion and go-live readiness
+    assertions for programmatic callers;
+  - update the operator drill to create a temporary public-safe model price
+    fixture and exercise the ready-mode price gate without calling providers;
+  - update dogfood readiness/promotion/go-live/operator-drill docs, release
+    readiness, release operations map, roadmap, changelog, contracts, smoke
+    tests, and durable manager memory.
+- Local validation for `codex/dogfood-ready-model-price-required` so far:
+  - `gh run watch 27502095869 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #327 post-merge CI;
+  - `gh run watch 27502095881 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #327 post-merge OpenSSF Scorecard;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and
+    7 docs checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #327,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood ready-mode model price requirement exercised.

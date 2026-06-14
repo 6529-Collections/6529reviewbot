@@ -117,6 +117,9 @@ function parseArgs(argv = []) {
   if (options.requireReady && !options.strictPreflight) {
     throw new Error("--require-ready requires --strict-preflight.");
   }
+  if (options.requireReady && !options.modelPriceFile) {
+    throw new Error("--require-ready requires --model-price-file for reviewed model price coverage.");
+  }
   return options;
 }
 
@@ -166,7 +169,8 @@ Options:
   --skip-self-dogfood-replay  Omit the synthetic self-dogfood replay gate.
   --json                      Print JSON instead of Markdown.
   --quiet                     Do not print output.
-  --require-ready             Exit non-zero unless the promotion packet is ready.
+  --require-ready             Exit non-zero unless the promotion packet is ready;
+                              requires --strict-preflight and --model-price-file.
 
 Use npm --silent run when copying output from commands that include private paths.
 `);

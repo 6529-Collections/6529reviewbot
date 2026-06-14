@@ -9,7 +9,7 @@ separately:
 - target repository config posture from `dogfood:target`;
 - central repository config, budget policy, and model catalog validation from
   `dogfood:readiness`;
-- optional reviewed model price coverage from `dogfood:readiness`, so local
+- reviewed model price coverage from `dogfood:readiness`, so ready-mode local
   cost estimates are backed by complete, fresh provider evidence before live
   traffic;
 - synthetic self-dogfood replay for PR-open skip, trusted maintainer command
@@ -56,9 +56,8 @@ output.
 
 ## Private Go/No-Go Check
 
-From the private operator environment, include the operator workspace and
-no-network preflight. When relying on local cost estimates for the launch
-decision, include the reviewed model price file as well:
+From the private operator environment, include the operator workspace,
+reviewed model price file, and no-network preflight:
 
 ```bash
 npm --silent run dogfood:promotion -- -- \
@@ -95,11 +94,11 @@ explicit release evidence.
 
 ## Gate Meaning
 
-`--require-ready` requires `--strict-preflight` and fails unless all
-promotion gates are green:
+`--require-ready` requires `--strict-preflight` and `--model-price-file`, and
+fails unless all promotion gates are green:
 
 - target config packet is ready;
-- central dogfood inputs parse, including model price coverage when supplied;
+- central dogfood inputs parse, including reviewed model price coverage;
 - self-dogfood replay passes;
 - private operator workspace is supplied and parses;
 - no-network preflight is supplied and passes.
@@ -141,8 +140,9 @@ npm run check:dogfood-promotion
 ```
 
 The dogfood promotion contract check verifies that `--require-ready` requires
-`--strict-preflight`, that private workspace paths stay summarized as
-`[operator-workspace]`, that external model price file paths stay summarized
-as `[external-path-set]`, that Markdown table cells redact common secret and
-AWS identifier shapes, and that the public docs stay synchronized with the
+`--strict-preflight` and `--model-price-file`, that private workspace paths
+stay summarized as `[operator-workspace]`, that external model price file paths
+stay summarized as `[external-path-set]`, that ready mode requires reviewed
+model price coverage, that Markdown table cells redact common secret and AWS
+identifier shapes, and that the public docs stay synchronized with the
 pre-traffic gate.

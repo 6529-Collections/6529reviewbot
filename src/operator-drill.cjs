@@ -30,6 +30,7 @@ function runOperatorDrill(options = {}) {
     ? fs.mkdtempSync(path.join(os.tmpdir(), "6529reviewbot-operator-drill-"))
     : path.resolve(options.directory);
   const now = options.now || new Date();
+  const modelPriceFile = writeDrillModelPriceFile(now);
 
   try {
     createOperatorWorkspace({
@@ -65,6 +66,7 @@ function runOperatorDrill(options = {}) {
     const dogfoodReadiness = collectDogfoodReadiness({
       env: options.env || process.env,
       includePreflight: false,
+      modelPriceFile,
       now,
       operatorWorkspaceDir: directory,
       root,
@@ -72,6 +74,7 @@ function runOperatorDrill(options = {}) {
     const dogfoodPromotion = collectDogfoodPromotionPacket({
       env: options.env || process.env,
       includePreflight: false,
+      modelPriceFile,
       now,
       operatorWorkspaceDir: directory,
       root,
@@ -81,6 +84,7 @@ function runOperatorDrill(options = {}) {
       env: options.env || process.env,
       includeGitStatus: Boolean(options.includeGitStatus),
       includePreflight: false,
+      modelPriceFile,
       now,
       operatorWorkspaceDir: directory,
       privatePathRoots: [directory],
@@ -99,10 +103,59 @@ function runOperatorDrill(options = {}) {
       workspace,
     });
   } finally {
+    fs.rmSync(modelPriceFile, { force: true });
     if (temporary) {
       fs.rmSync(directory, { force: true, recursive: true });
     }
   }
+}
+
+function writeDrillModelPriceFile(now) {
+  const timestamp = now instanceof Date ? now : new Date(now);
+  const filePath = path.join(
+    os.tmpdir(),
+    `6529reviewbot-operator-drill-prices-${Date.now()}-${Math.random()
+      .toString(16)
+      .slice(2)}.json`
+  );
+  const sourceCheckedAt = new Date(timestamp.getTime() - 60 * 60 * 1000).toISOString();
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify(
+      {
+        version: 1,
+        currency: "USD",
+        prices: [
+          {
+            provider: "anthropic",
+            model: "claude-opus-4-8",
+            inputUsdPerMillion: 1,
+            cachedInputUsdPerMillion: 0.5,
+            outputUsdPerMillion: 5,
+            reasoningUsdPerMillion: null,
+            effectiveFrom: sourceCheckedAt,
+            sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+            sourceCheckedAt,
+          },
+          {
+            provider: "openai",
+            model: "gpt-5.5",
+            inputUsdPerMillion: 1,
+            cachedInputUsdPerMillion: null,
+            outputUsdPerMillion: 5,
+            reasoningUsdPerMillion: 5,
+            effectiveFrom: sourceCheckedAt,
+            sourceUrl: "https://platform.openai.com/docs/pricing",
+            sourceCheckedAt,
+          },
+        ],
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+  return filePath;
 }
 
 function publicOperatorDrillReport(input) {

@@ -629,6 +629,8 @@ Completed in `6529reviewbot`:
   guidance now names those baseline provider/IAM gates so private operators
   complete them before first live dogfood traffic instead of discovering them
   only in checklist JSON.
+- dogfood promotion and go-live ready mode now require reviewed model price
+  coverage so final live-traffic gates cannot pass on catalog defaults alone.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same

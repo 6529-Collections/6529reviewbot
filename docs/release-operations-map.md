@@ -184,12 +184,13 @@ deferral semantics, Markdown redaction, source invariants, and docs aligned.
 private workspace markers, preflight state, Markdown redaction, source
 invariants, and docs aligned.
 `npm run check:dogfood-promotion` keeps the pre-traffic promotion packet's
-strict-preflight gate, private workspace markers, model price coverage,
-baseline provider/IAM handoff guidance, Markdown redaction, source invariants,
-and docs aligned.
+strict-preflight and model-price-file ready-mode gates, private workspace
+markers, model price coverage, baseline provider/IAM handoff guidance,
+Markdown redaction, source invariants, and docs aligned.
 `npm run check:dogfood-go-live` keeps the final dogfood traffic packet's
-strict-preflight gate, private workspace markers, baseline provider/IAM
-handoff guidance, Markdown redaction, source invariants, and docs aligned.
+strict-preflight and model-price-file ready-mode gates, private workspace
+markers, baseline provider/IAM handoff guidance, Markdown redaction, source
+invariants, and docs aligned.
 `npm run check:self-dogfood-replay` replays public-safe self-dogfood payloads
 through the App pipeline to prove command-only PR-open skip, trusted command
 admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
