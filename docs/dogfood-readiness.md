@@ -9,10 +9,11 @@ The command validates the public dogfood inputs operators edit most often:
 - central dogfood budget policy file;
 - model catalog defaults.
 
-It can also include a private operator workspace parse check when the run is
-being prepared from the release workspace. The report includes counts, modes,
-review kinds, provider/model lanes, and readiness status. It does not print raw
-private budget scope values, operator workspace paths, secrets, AWS
+It can also include model price coverage and a private operator workspace parse
+check when the run is being prepared from the release workspace. The report
+includes counts, modes, review kinds, provider/model lanes, model price
+coverage, and readiness status. It does not print raw private budget scope
+values, model price file paths, operator workspace paths, secrets, AWS
 identifiers, provider responses, prompts, or target repository payloads.
 
 ## Static Check
@@ -83,6 +84,19 @@ npm run dogfood:readiness -- -- \
 
 `--repository-config` is repeatable, so operators can validate command-only and
 limited-initial-review configs in one pass.
+
+Include the reviewed model price file before relying on local cost estimates:
+
+```bash
+npm run dogfood:readiness -- -- --model-price-file <reviewed-model-price-file.json>
+npm run dogfood:readiness -- -- --model-price-file <reviewed-model-price-file.json> --max-model-price-source-age-days 14
+```
+
+The model price coverage check fails readiness when catalog default lanes are
+missing, input or output rates are incomplete, source evidence is stale or
+future-dated, zero-rate placeholders remain, or placeholder source URLs are
+still present. Use `--allow-stale-model-price-source` or
+`--allow-zero-model-price` only with explicit release evidence.
 
 ## Optional Preflight
 

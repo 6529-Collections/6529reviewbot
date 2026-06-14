@@ -42,6 +42,10 @@ function parseArgs(argv = []) {
     includePreflight: false,
     json: false,
     modelCatalogFile: undefined,
+    modelPriceFile: undefined,
+    allowStaleModelPriceSource: false,
+    allowZeroModelPrice: false,
+    maxModelPriceSourceAgeDays: undefined,
     operatorWorkspaceDir: undefined,
     preflightProfile: "server",
     quiet: false,
@@ -62,6 +66,17 @@ function parseArgs(argv = []) {
       options.budgetPolicyFile = requireValue(args, (index += 1), arg);
     } else if (arg === "--model-catalog-file") {
       options.modelCatalogFile = requireValue(args, (index += 1), arg);
+    } else if (arg === "--model-price-file") {
+      options.modelPriceFile = requireValue(args, (index += 1), arg);
+    } else if (arg === "--allow-stale-model-price-source") {
+      options.allowStaleModelPriceSource = true;
+    } else if (arg === "--allow-zero-model-price") {
+      options.allowZeroModelPrice = true;
+    } else if (arg === "--max-model-price-source-age-days") {
+      options.maxModelPriceSourceAgeDays = parseNonNegativeNumber(
+        requireValue(args, (index += 1), arg),
+        arg
+      );
     } else if (arg === "--operator-workspace" || arg === "--operator-workspace-dir") {
       options.operatorWorkspaceDir = requireValue(args, (index += 1), arg);
     } else if (arg === "--require-operator-workspace-ready") {
@@ -93,6 +108,14 @@ function parseArgs(argv = []) {
   return options;
 }
 
+function parseNonNegativeNumber(value, name) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    throw new Error(`${name} must be a non-negative number.`);
+  }
+  return number;
+}
+
 function requireValue(args, index, name) {
   const value = args[index];
   if (!value || value.startsWith("--")) {
@@ -112,6 +135,12 @@ Options:
   --repository-config <file>   Repository config file to validate. Repeatable.
   --budget-policy-file <file>  Dogfood budget policy file.
   --model-catalog-file <file>  Model catalog file.
+  --model-price-file <file>    Reviewed model price file for catalog coverage.
+  --max-model-price-source-age-days <days>
+                               Override model-price source freshness window.
+  --allow-stale-model-price-source
+                               Accept stale model-price source evidence.
+  --allow-zero-model-price     Accept documented zero-rate model prices.
   --operator-workspace <dir>   Include a private operator workspace parse check.
   --require-operator-workspace-ready
                                Require every private workspace checklist to be ready.
