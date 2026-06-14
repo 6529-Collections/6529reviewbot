@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened container and production image repository planning to reject empty
+  path segments before rendering Docker or operator handoff commands.
 - Hardened the production deployment plan to reject image repository inputs
   with URL schemes before rendering operator handoff commands.
 - Hardened the container publish plan to reject image repository inputs with
