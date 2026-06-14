@@ -15,7 +15,11 @@ function collectReleaseTagPlan(options = {}) {
   const releaseNotes = collectReleaseNotesState(options);
   const errors = [];
   const warnings = [];
+  const tagNameError = releaseTagNameError(release);
 
+  if (tagNameError) {
+    errors.push(tagNameError);
+  }
   if (!options.allowNonMain && git.branch !== "main") {
     errors.push(`release tags should be planned from main; current branch is '${git.branch || "unknown"}'.`);
   }
@@ -125,6 +129,20 @@ function releaseFromReleaseNotes(markdown) {
   return match ? normalizeReleaseVersion(match[1]) : "";
 }
 
+function releaseTagNameError(release) {
+  const tag = String(release || "");
+  if (tag.includes("..")) {
+    return `release tag '${tag}' is not Git ref-safe; tag names must not contain consecutive dots.`;
+  }
+  if (tag.endsWith(".")) {
+    return `release tag '${tag}' is not Git ref-safe; tag names must not end with a dot.`;
+  }
+  if (/\.lock$/i.test(tag)) {
+    return `release tag '${tag}' is not Git ref-safe; tag names must not end with .lock.`;
+  }
+  return "";
+}
+
 function publicGitState(git) {
   return {
     branch: String(git.branch || ""),
@@ -228,5 +246,6 @@ module.exports = {
   formatReleaseTagPlanMarkdown,
   parseAheadBehind,
   releaseFromReleaseNotes,
+  releaseTagNameError,
   tagCommands,
 };

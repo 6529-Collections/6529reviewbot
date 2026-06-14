@@ -9,6 +9,7 @@ const {
   collectReleaseTagPlan,
   formatReleaseTagPlanMarkdown,
   parseAheadBehind,
+  releaseTagNameError,
 } = require("../src/release-tag-plan.cjs");
 const tagPlanCli = require("../bin/release-tag-plan.cjs");
 const {
@@ -38,6 +39,7 @@ function checkReleaseTagPlanContract(options = {}) {
   const docTexts = options.docTexts || {};
 
   checkReadyPlan(findings);
+  checkGitRefSafeTagName(findings);
   checkDirtyPlan(findings);
   checkExistingTagPlan(findings);
   checkReleaseNotesFailure(findings);
@@ -57,7 +59,7 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 7,
+    planCases: 8,
     docs: targetDocs.length,
   };
 }
@@ -92,6 +94,38 @@ function checkReadyPlan(findings) {
   const [ahead, behind] = parseAheadBehind("2 3");
   if (ahead !== 2 || behind !== 3) {
     findings.push("release tag plan must parse ahead/behind counts.");
+  }
+}
+
+function checkGitRefSafeTagName(findings) {
+  for (const [tag, expected] of [
+    ["v0..1", "consecutive dots"],
+    ["v0.1.", "end with a dot"],
+    ["v0.1.lock", "end with .lock"],
+  ]) {
+    const error = releaseTagNameError(tag);
+    if (!error.includes(expected)) {
+      findings.push(`release tag name guard must reject ${tag} with '${expected}'.`);
+    }
+  }
+  if (releaseTagNameError("v0.1.0")) {
+    findings.push("release tag name guard must allow ordinary v-prefixed versions.");
+  }
+
+  const plan = collectReleaseTagPlan({
+    release: "v0..1",
+    releaseNotesMarkdown: completeReleaseNotesFixture().replace(
+      "# 6529reviewbot v0.1.0",
+      "# 6529reviewbot v0..1"
+    ),
+    requireReleaseNotes: true,
+    git: cleanMainGit(),
+  });
+  if (plan.ready) {
+    findings.push("Git-ref-unsafe release tags must block release tag readiness.");
+  }
+  if (!plan.errors.some((error) => error.includes("Git ref-safe"))) {
+    findings.push("Git-ref-unsafe release tag errors must explain the ref-safety issue.");
   }
 }
 
@@ -256,6 +290,8 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectReleaseTagPlan",
       "validateReleaseNotesPublication",
       "releaseFromReleaseNotes",
+      "releaseTagNameError",
+      "Git ref-safe",
       "already exists locally",
       "This command does not create tags",
     ],
@@ -293,6 +329,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-tag-plan.md": [
       "npm run release:tag-plan",
       "--require-ready",
+      "Git ref-safe",
       "local tag",
       "release notes title",
       "release-note warnings",

@@ -6,6 +6,8 @@ pre-v1 tag or GitHub Release.
 It checks:
 
 - the requested release version and normalized tag name;
+- that the tag name is Git ref-safe for the constrained release-version
+  format;
 - that the local checkout is on clean, synced `main`;
 - that the planned release tag does not already exist locally;
 - that completed release notes pass the publication guard;
@@ -24,10 +26,10 @@ npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.m
 ```
 
 Use `--require-ready` for the final pre-tag gate. This exits non-zero unless
-the working tree is clean, the branch is `main`, the local branch is neither
-ahead nor behind its upstream, the local tag is absent, and completed release
-notes are supplied, publishable, free of release-note warnings, and titled for
-the planned release:
+the release tag is Git ref-safe, the working tree is clean, the branch is
+`main`, the local branch is neither ahead nor behind its upstream, the local
+tag is absent, and completed release notes are supplied, publishable, free of
+release-note warnings, and titled for the planned release:
 
 ```bash
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
@@ -51,8 +53,9 @@ The maintenance check is:
 npm run check:release-tag-plan
 ```
 
-It verifies the dry-run behavior, clean-main readiness gate, release-notes
-publication integration, release-note warnings in the final gate, CLI flags,
-release operations map entries, smoke-test wiring, and public docs.
+It verifies the dry-run behavior, Git ref-safe tag-name guard, clean-main
+readiness gate, release-notes publication integration, release-note warnings in
+the final gate, CLI flags, release operations map entries, smoke-test wiring,
+and public docs.
 
 The check is included in `npm run release:check`.

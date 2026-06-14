@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release tag planning to reject Git-ref-unsafe tag names before
+  rendering tag commands.
 - Made `release:tag-plan --require-ready` promote release-note recommendation
   warnings to blockers before final tag planning.
 - Expanded release notes publication recommendation warnings for base-ref target
