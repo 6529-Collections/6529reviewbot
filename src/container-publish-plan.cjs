@@ -135,6 +135,9 @@ function normalizeImageRef(value) {
   if (text.split("/").some((segment) => !segment)) {
     throw new Error("container image reference must not contain empty path segments.");
   }
+  if (/[A-Z]/.test(text)) {
+    throw new Error("container image reference repository must be lowercase.");
+  }
   if (!/^[A-Za-z0-9._:/-]+$/.test(text)) {
     throw new Error("container image reference contains unsupported characters.");
   }

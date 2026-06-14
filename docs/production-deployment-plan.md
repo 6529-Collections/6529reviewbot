@@ -37,9 +37,9 @@ operator workspace are supplied:
 npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 ```
 
-Image repository inputs are validated as Docker image repositories without a
-URL scheme, tag, digest, or empty path segments. The release version supplies
-the command tag.
+Image repository inputs are validated as lowercase Docker image repositories
+without a URL scheme, tag, digest, uppercase repository characters, or empty
+path segments. The release version supplies the command tag.
 
 For automation that wants JSON instead of Markdown:
 

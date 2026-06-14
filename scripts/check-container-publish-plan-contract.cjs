@@ -159,6 +159,14 @@ function checkImageValidation(findings) {
       findings.push("container image empty-segment rejection should be explicit.");
     }
   }
+  try {
+    normalizeImageRef("registry.example.com/6529ReviewBot");
+    findings.push("container publish plan must reject image refs with uppercase repository characters.");
+  } catch (error) {
+    if (!String(error.message).includes("lowercase")) {
+      findings.push("container image uppercase rejection should be explicit.");
+    }
+  }
 }
 
 function checkCli(findings) {
@@ -211,6 +219,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "checkContainerImage",
       "URL scheme",
       "empty path segments",
+      "lowercase",
       "This command does not build, push, scan, or publish container images.",
     ],
     "bin/container-publish-plan.cjs": [
@@ -245,6 +254,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "without a URL scheme",
       "empty path segments",
+      "lowercase",
       "does not build, push, scan, or publish container images",
       "npm run check:container-publish-plan",
     ],

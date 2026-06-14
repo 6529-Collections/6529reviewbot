@@ -459,10 +459,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Production image ref scheme guard PR: merged as PR #249, merge commit `b9a1985`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/image-ref-empty-segment-guard`.
+- Image ref empty segment guard PR: merged as PR #250, merge commit `2df3c51`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/image-ref-lowercase-guard`.
 - Current local changes: hardening container publish and production deployment
-  image repository planning so empty path segments are rejected before Docker
-  or operator handoff commands are rendered.
+  image repository planning so uppercase repository characters are rejected
+  before Docker or operator handoff commands are rendered.
 - Current local validation:
   - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
     checked;
@@ -473,7 +475,7 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #249,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #250,
     and 5 docs checked;
   - `npm run release:check` passed, including container publish and production
     deployment plan validation;

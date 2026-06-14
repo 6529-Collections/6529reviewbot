@@ -144,6 +144,14 @@ function checkImageValidation(findings) {
       findings.push("production deployment image empty-segment rejection should be explicit.");
     }
   }
+  try {
+    normalizeImageRef("registry.example.com/6529ReviewBot");
+    findings.push("production deployment plan must reject image refs with uppercase repository characters.");
+  } catch (error) {
+    if (!String(error.message).includes("lowercase")) {
+      findings.push("production deployment image uppercase rejection should be explicit.");
+    }
+  }
 }
 
 function checkWorkspaceValidation(findings) {
@@ -195,6 +203,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "container:publish-plan",
       "URL scheme",
       "empty path segments",
+      "lowercase",
       "This command does not create GitHub Apps",
     ],
     "bin/production-deployment-plan.cjs": [
@@ -229,6 +238,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "without a URL scheme",
       "empty path segments",
+      "lowercase",
       "does not create GitHub Apps",
       "npm run check:production-deployment-plan",
     ],
