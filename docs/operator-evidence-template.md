@@ -184,11 +184,22 @@ Job-health alert dry-run completed:
 Stale-claim alert threshold reviewed:
 ```
 
-## 6529.io Surfaces
+## Dashboard Deployment Plan
 
 ```text
 Dashboard deployment plan command:
 Dashboard deployment plan reviewed:
+6529.io origin reviewed:
+Production bot origin reviewed:
+Private operator workspace reviewed:
+Auth-check URL reviewed:
+Ready-mode JSON captured privately:
+Cutover evidence summary:
+```
+
+## 6529.io Surfaces
+
+```text
 Public dashboard route:
 Public dashboard API target:
 Private admin route:

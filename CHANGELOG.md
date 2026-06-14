@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated dashboard deployment-plan section to structured operator
+  evidence and release-candidate summaries.
 - Added a dedicated alert delivery-plan section to structured operator
   evidence and release-candidate summaries.
 - Added a production deployment-plan review item to the production cutover

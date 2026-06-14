@@ -175,7 +175,7 @@ function dashboardDeploymentPhases({
         `npm run release:candidate -- -- --operator-workspace ${operatorWorkspace} --strict-preflight`,
       ],
       evidence:
-        "Record release-candidate and cutover summaries that mark dashboard production configuration, deployment, HMAC bridge wiring, and operator verification complete or explicitly deferred.",
+        "Record release-candidate and cutover summaries that mark dashboard-deployment-plan and 6529-io-surfaces operator evidence plus dashboard production configuration, deployment, HMAC bridge wiring, and operator verification complete or explicitly deferred.",
     },
     {
       id: "release-notes",
