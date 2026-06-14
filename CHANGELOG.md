@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added contributor guidance for release-sensitive validation, external
+  evidence boundaries, and repository ruleset checks.
 - Added checked repository ruleset guidance for main branch protection,
   required PR checks, release tag protection, and operator-owned live ruleset
   evidence.

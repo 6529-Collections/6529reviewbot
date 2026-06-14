@@ -555,25 +555,23 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - PR template evidence-boundary prompts PR: merged as PR #297, merge commit `5605d2d`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/repository-ruleset-guidance`.
-- Current local changes: add checked repository ruleset guidance for main
-  branch protection, required PR checks, release tag protection, and
-  operator-owned live ruleset evidence.
+- Repository ruleset guidance PR: merged as PR #298, merge commit `b1c7ead`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/contributing-release-validation`.
+- Current local changes: add contributor guidance for release-sensitive
+  validation, external evidence boundaries, and repository ruleset checks.
 - Current local validation:
-  - `gh run watch 27494312624 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge CI;
-  - `gh run watch 27494312625 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge OpenSSF Scorecard;
-  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
-  - `npm run check:release-operations` passed with 7 phases and 113 tools;
-  - `npm run check:docs` passed with 76 files checked;
-  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `gh run watch 27494545238 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge CI;
+  - `gh run watch 27494545243 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge OpenSSF Scorecard;
+  - `npm run check:governance` passed with 13 files checked;
   - `npm run check:public-artifacts` passed with 119 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #297,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #298,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 181 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 181 CommonJS files checked and the
-    repository ruleset guidance exercised.
+    contributor release-validation guidance exercised.
 
 ## Key Decisions
 
