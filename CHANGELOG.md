@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Pinned release-candidate contract coverage for container publish-plan and
+  worker dispatch credential operator evidence sections.
 - Added first-class operator evidence sections for container publish-plan
   evidence and worker dispatch credential evidence.
 - Pinned release-candidate contract coverage for public dashboard disclosure

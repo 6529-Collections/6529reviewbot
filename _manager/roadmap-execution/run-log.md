@@ -5179,3 +5179,22 @@
   - `npm run check` passed with 178 CommonJS files;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     container publish/worker dispatch operator evidence sections exercised.
+- Merged `6529reviewbot` PR #288 as `4b0b4eb`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-candidate-runtime-dispatch-sections` increment:
+  - pin release-candidate contract coverage and docs so public bundles surface
+    the container publish-plan and worker dispatch credential operator evidence
+    sections when present.
+- Local validation for `codex/release-candidate-runtime-dispatch-sections` so far:
+  - `npm run check:release-candidate` passed with 7 redaction cases,
+    3 path cases, and 5 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #288,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    release-candidate runtime/dispatch evidence section coverage exercised.
