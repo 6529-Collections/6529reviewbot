@@ -463,10 +463,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Image ref lowercase guard PR: merged as PR #251, merge commit `6c3155e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/shared-image-ref-validator`.
-- Current local changes: sharing the image repository validator between
-  container publish and production deployment planning so operator command
-  guards stay aligned.
+- Shared image ref validator PR: merged as PR #252, merge commit `9e955a6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/image-ref-registry-port-guard`.
+- Current local changes: hardening shared image repository planning so numeric
+  registry ports are allowed but non-numeric registry port inputs are rejected
+  before commands are rendered.
 - Current local validation:
   - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
     checked;
@@ -477,7 +479,7 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 175 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #251,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #252,
     and 5 docs checked;
   - `npm run release:check` passed with 175 CommonJS files checked;
   - `npm run check:public-artifacts` passed with 116 files checked.

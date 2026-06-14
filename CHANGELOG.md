@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened image repository planning to allow numeric registry ports while
+  rejecting non-numeric registry port inputs before rendering commands.
 - Shared container and production image repository validation to keep dry-run
   command guards consistent across operator handoff paths.
 - Hardened container and production image repository planning to reject

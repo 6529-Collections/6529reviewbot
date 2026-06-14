@@ -38,8 +38,9 @@ npm run production:deployment-plan -- -- --host https://reviewbot.example.com --
 ```
 
 Image repository inputs are validated as lowercase Docker image repositories
-without a URL scheme, tag, digest, uppercase repository characters, or empty
-path segments. The release version supplies the command tag.
+without a URL scheme, tag, digest, non-numeric registry port, uppercase
+repository characters, or empty path segments. The release version supplies
+the command tag.
 
 For automation that wants JSON instead of Markdown:
 

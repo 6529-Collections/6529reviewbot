@@ -9,8 +9,8 @@ It checks:
   `npm run check:container-image`;
 - that the local checkout is on clean, synced `main`;
 - the requested release tag and lowercase image repository shape, without a
-  URL scheme, tag, digest, uppercase repository characters, or empty path
-  segments in the repository input;
+  URL scheme, tag, digest, non-numeric registry port, uppercase repository
+  characters, or empty path segments in the repository input;
 - the build, push, digest capture, vulnerability scan, and private evidence
   steps the operator should run.
 

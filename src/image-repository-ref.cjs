@@ -18,8 +18,16 @@ function normalizeImageRepositoryRef(value, options = {}) {
   if (/:([^/]+)$/.test(text)) {
     throw new Error(options.tagMessage || `${label} must not include a tag.`);
   }
-  if (text.split("/").some((segment) => !segment)) {
+  const segments = text.split("/");
+  if (segments.some((segment) => !segment)) {
     throw new Error(options.emptySegmentMessage || `${label} must not contain empty path segments.`);
+  }
+  const [registrySegment, ...pathSegments] = segments;
+  if (pathSegments.some((segment) => segment.includes(":"))) {
+    throw new Error(options.tagMessage || `${label} must not include a tag.`);
+  }
+  if (registrySegment.includes(":") && !/^[^:]+:[0-9]+$/.test(registrySegment)) {
+    throw new Error(options.portMessage || `${label} registry port must be numeric.`);
   }
   if (/[A-Z]/.test(text)) {
     throw new Error(options.lowercaseMessage || `${label} must be lowercase.`);
