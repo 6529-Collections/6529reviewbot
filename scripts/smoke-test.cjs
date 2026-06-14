@@ -1057,6 +1057,10 @@ assert.deepEqual(
     includePreflight: true,
     json: true,
     modelCatalogFile: "catalog.json",
+    modelPriceFile: undefined,
+    allowStaleModelPriceSource: false,
+    allowZeroModelPrice: false,
+    maxModelPriceSourceAgeDays: undefined,
     operatorWorkspaceDir: "workspace",
     preflightProfile: "server",
     quiet: true,
@@ -1064,6 +1068,32 @@ assert.deepEqual(
     repositoryConfigFiles: ["one.yml", "two.yml"],
     requireReady: true,
     strictPreflight: true,
+  }
+);
+assert.deepEqual(
+  dogfoodReadinessCli.parseArgs([
+    "--model-price-file",
+    "prices.json",
+    "--allow-stale-model-price-source",
+    "--allow-zero-model-price",
+    "--max-model-price-source-age-days",
+    "14",
+  ]),
+  {
+    budgetPolicyFile: undefined,
+    includePreflight: false,
+    json: false,
+    modelCatalogFile: undefined,
+    modelPriceFile: "prices.json",
+    allowStaleModelPriceSource: true,
+    allowZeroModelPrice: true,
+    maxModelPriceSourceAgeDays: 14,
+    operatorWorkspaceDir: undefined,
+    preflightProfile: "server",
+    quiet: false,
+    requireOperatorWorkspaceReady: false,
+    requireReady: false,
+    strictPreflight: false,
   }
 );
 const promotionReplayRunner = () => ({
@@ -5080,8 +5110,8 @@ appServer.handleGitHubWebhook({
   );
   const dogfoodReadinessContractResult =
     dogfoodReadinessContractCheck.checkDogfoodReadinessContract();
-  assert.equal(dogfoodReadinessContractResult.cliCases, 3);
-  assert.equal(dogfoodReadinessContractResult.reportCases, 3);
+  assert.equal(dogfoodReadinessContractResult.cliCases, 4);
+  assert.equal(dogfoodReadinessContractResult.reportCases, 4);
   assert.throws(
     () =>
       dogfoodReadinessContractCheck.checkDogfoodReadinessContract({

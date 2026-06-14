@@ -31,6 +31,7 @@ function checkDogfoodReadinessContract(options = {}) {
   const findings = [];
   checkCliContract(findings);
   checkStaticReport(findings);
+  checkModelPriceReport(findings);
   checkWorkspaceReport(findings);
   checkMarkdownRedaction(findings);
   checkSourceInvariants(options.sourceTexts || {}, findings);
@@ -46,8 +47,8 @@ function checkDogfoodReadinessContract(options = {}) {
   }
 
   return {
-    cliCases: 3,
-    reportCases: 3,
+    cliCases: 4,
+    reportCases: 4,
     docs: readinessDocs.length,
   };
 }
@@ -63,6 +64,12 @@ function checkCliContract(findings) {
     "budget.json",
     "--model-catalog-file",
     "models.json",
+    "--model-price-file",
+    "prices.json",
+    "--allow-stale-model-price-source",
+    "--allow-zero-model-price",
+    "--max-model-price-source-age-days",
+    "45",
     "--operator-workspace",
     "workspace",
     "--require-operator-workspace-ready",
@@ -77,6 +84,10 @@ function checkCliContract(findings) {
       includePreflight: true,
       json: true,
       modelCatalogFile: "models.json",
+      modelPriceFile: "prices.json",
+      allowStaleModelPriceSource: true,
+      allowZeroModelPrice: true,
+      maxModelPriceSourceAgeDays: 45,
       operatorWorkspaceDir: "workspace",
       preflightProfile: "server",
       quiet: true,
@@ -98,6 +109,11 @@ function checkCliContract(findings) {
     "--require-operator-workspace-ready requires --operator-workspace.",
     findings
   );
+  expectError(
+    () => dogfoodReadinessCli.parseArgs(["--max-model-price-source-age-days", "-1"]),
+    "--max-model-price-source-age-days must be a non-negative number.",
+    findings
+  );
 }
 
 function checkStaticReport(findings) {
@@ -114,9 +130,52 @@ function checkStaticReport(findings) {
   if (report.inputs.operatorWorkspace !== null) {
     findings.push("default readiness report must not include operator workspace input.");
   }
+  if (report.inputs.modelPriceFile !== null || report.checks.modelPriceCoverage !== null) {
+    findings.push("default readiness report must not include model price coverage input.");
+  }
   const markdown = dogfoodReadiness.formatDogfoodReadinessMarkdown(report);
   if (!markdown.includes("# 6529bot Dogfood Readiness")) {
     findings.push("dogfood readiness Markdown must keep its heading.");
+  }
+}
+
+function checkModelPriceReport(findings) {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-readiness-prices-"));
+  const priceFile = path.join(tempDir, "model-prices.json");
+  fs.writeFileSync(priceFile, JSON.stringify(freshPriceDocument(), null, 2), "utf8");
+  const report = dogfoodReadiness.collectDogfoodReadiness({
+    modelPriceFile: priceFile,
+    now: new Date("2026-06-13T00:00:00.000Z"),
+    root,
+  });
+  const output = JSON.stringify(report);
+  const markdown = dogfoodReadiness.formatDogfoodReadinessMarkdown(report);
+  if (!report.ready || report.checks.modelPriceCoverage?.ready !== true) {
+    findings.push("fresh model price file should keep dogfood readiness ready.");
+  }
+  if (report.inputs.modelPriceFile?.file !== "[external-path-set]") {
+    findings.push("dogfood readiness must redact external model price file paths.");
+  }
+  if (output.includes(tempDir) || markdown.includes(tempDir)) {
+    findings.push("dogfood readiness output must not include private model price file paths.");
+  }
+  if (!markdown.includes("## Model Price Coverage")) {
+    findings.push("dogfood readiness Markdown must include model price coverage when supplied.");
+  }
+
+  const missing = freshPriceDocument();
+  missing.prices = missing.prices.slice(0, 1);
+  fs.writeFileSync(priceFile, JSON.stringify(missing, null, 2), "utf8");
+  const missingReport = dogfoodReadiness.collectDogfoodReadiness({
+    modelPriceFile: priceFile,
+    now: new Date("2026-06-13T00:00:00.000Z"),
+    root,
+  });
+  if (missingReport.ready) {
+    findings.push("missing model price coverage must make dogfood readiness not ready.");
+  }
+  if (!missingReport.checks.modelPriceCoverage?.missing.includes("openai:gpt-5.5")) {
+    findings.push("missing model price coverage must name the missing catalog default lane.");
   }
 }
 
@@ -187,6 +246,19 @@ function checkMarkdownRedaction(findings) {
         status: "error",
         errors: ["sk-proj-abcdefghijklmnopqrstuvwxyz1234567890"],
       },
+      modelPriceCoverage: {
+        status: "error",
+        ready: false,
+        file: "ghp_abcdefghijklmnopqrstuvwxyz1234567890",
+        covered: 0,
+        required: [],
+        missing: [],
+        incompleteRates: [],
+        zeroRates: [],
+        staleSources: [],
+        placeholderSources: [],
+        errors: ["arn:aws:rds:us-east-1:123456789012:cluster:reviewbot"],
+      },
       preflight: {
         ok: false,
         checks: 0,
@@ -231,6 +303,7 @@ function checkMarkdownRedaction(findings) {
     "arn:aws:[redacted]",
     "[redacted-aws-account-id]",
     "[redacted-github-token]",
+    "Model Price Coverage",
   ]) {
     if (!markdown.includes(expected)) {
       findings.push(`dogfood readiness markdown must include '${expected}'.`);
@@ -247,6 +320,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "[redacted-aws-account-id]",
     "directory: \"[operator-workspace]\"",
     "return \"[external-path-set]\"",
+    "modelPriceCoverage",
+    "modelPriceCatalogCoverage",
     "publicText(report.inputs.operatorWorkspace.directory)",
   ]) {
     if (!sourceText.includes(snippet)) {
@@ -258,6 +333,8 @@ function checkSourceInvariants(sourceTexts, findings) {
   const binText = sourceTexts[binPath] || readText(binPath);
   for (const snippet of [
     "options.requireOperatorWorkspaceReady && !options.operatorWorkspaceDir",
+    "--model-price-file",
+    "--allow-stale-model-price-source",
     "Use npm --silent run when copying output from commands that include private paths.",
   ]) {
     if (!binText.includes(snippet)) {
@@ -284,6 +361,8 @@ function checkDocs(docTexts, findings) {
       "dogfood readiness contract check",
       "[operator-workspace]",
       "[external-path-set]",
+      "--model-price-file",
+      "model price coverage",
     ],
     "docs/release-readiness.md": ["dogfood readiness checker"],
     "docs/release-operations-map.md": ["npm run check:dogfood-readiness"],
@@ -301,6 +380,37 @@ function checkDocs(docTexts, findings) {
       }
     }
   }
+}
+
+function freshPriceDocument() {
+  return {
+    version: 1,
+    currency: "USD",
+    prices: [
+      {
+        provider: "anthropic",
+        model: "claude-opus-4-8",
+        inputUsdPerMillion: 1,
+        cachedInputUsdPerMillion: 0.5,
+        outputUsdPerMillion: 5,
+        reasoningUsdPerMillion: null,
+        effectiveFrom: "2026-06-12T00:00:00.000Z",
+        sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+        sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+      },
+      {
+        provider: "openai",
+        model: "gpt-5.5",
+        inputUsdPerMillion: 1,
+        cachedInputUsdPerMillion: null,
+        outputUsdPerMillion: 5,
+        reasoningUsdPerMillion: 5,
+        effectiveFrom: "2026-06-12T00:00:00.000Z",
+        sourceUrl: "https://platform.openai.com/docs/pricing",
+        sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+      },
+    ],
+  };
 }
 
 function contractEnv(overrides = {}) {

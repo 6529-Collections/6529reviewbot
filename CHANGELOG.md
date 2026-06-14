@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added optional model price coverage to the dogfood readiness report.
 - Added the model price catalog coverage audit to generated operator
   workspace guidance.
 - Added a model price catalog coverage audit so operator-owned price files can

@@ -5,6 +5,10 @@ const { loadBudgetPolicyFile } = require("./budget-policies.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { loadModelCatalog } = require("./model-catalog.cjs");
 const {
+  loadModelPriceFile,
+  modelPriceCatalogCoverage,
+} = require("./model-prices.cjs");
+const {
   checkOperatorWorkspace,
   publicOperatorWorkspaceSummary,
 } = require("./operator-workspace.cjs");
@@ -33,6 +37,7 @@ function collectDogfoodReadiness(options = {}) {
       : DEFAULT_REPOSITORY_CONFIG_FILES;
   const budgetPolicyFile = options.budgetPolicyFile || DEFAULT_BUDGET_POLICY_FILE;
   const modelCatalogFile = options.modelCatalogFile || DEFAULT_MODEL_CATALOG_FILE;
+  const modelPriceFile = options.modelPriceFile || "";
   const includePreflight = Boolean(options.includePreflight);
   const strictPreflight = Boolean(options.strictPreflight);
   const operatorWorkspaceDir = options.operatorWorkspaceDir || "";
@@ -41,6 +46,17 @@ function collectDogfoodReadiness(options = {}) {
   const repositoryConfigs = collectRepositoryConfigs(repositoryConfigFiles, root);
   const budgetPolicies = collectBudgetPolicies(budgetPolicyFile, root);
   const modelCatalog = collectModelCatalog(modelCatalogFile, root);
+  const modelPriceCoverage = modelPriceFile
+    ? collectModelPriceCoverage({
+        allowStaleSource: Boolean(options.allowStaleModelPriceSource),
+        allowZeroPrice: Boolean(options.allowZeroModelPrice),
+        file: modelPriceFile,
+        maxSourceAgeDays: options.maxModelPriceSourceAgeDays,
+        modelCatalogFile,
+        now,
+        root,
+      })
+    : null;
   const operatorWorkspace = operatorWorkspaceDir
     ? collectOperatorWorkspace({
         directory: operatorWorkspaceDir,
@@ -61,6 +77,8 @@ function collectDogfoodReadiness(options = {}) {
     repositoryConfigs.status === "ok" &&
     budgetPolicies.status === "ok" &&
     modelCatalog.status === "ok" &&
+    (!modelPriceCoverage ||
+      (modelPriceCoverage.status === "ok" && modelPriceCoverage.ready)) &&
     (!operatorWorkspace ||
       (operatorWorkspace.status === "ok" &&
         (!requireOperatorWorkspaceReady || operatorWorkspace.ready))) &&
@@ -76,6 +94,14 @@ function collectDogfoodReadiness(options = {}) {
       ),
       budgetPolicyFile: publicPath(budgetPolicyFile, root),
       modelCatalogFile: publicPath(modelCatalogFile, root),
+      modelPriceFile: modelPriceFile
+        ? {
+            file: publicPath(modelPriceFile, root),
+            allowStaleSource: Boolean(options.allowStaleModelPriceSource),
+            allowZeroPrice: Boolean(options.allowZeroModelPrice),
+            maxSourceAgeDays: options.maxModelPriceSourceAgeDays || null,
+          }
+        : null,
       preflight: includePreflight
         ? {
             profile: publicText(options.preflightProfile || "server"),
@@ -93,6 +119,7 @@ function collectDogfoodReadiness(options = {}) {
       repositoryConfigs,
       budgetPolicies,
       modelCatalog,
+      modelPriceCoverage,
       operatorWorkspace,
       preflight,
     },
@@ -215,6 +242,50 @@ function collectModelCatalog(file, root) {
   }
 }
 
+function collectModelPriceCoverage(input) {
+  try {
+    const document = loadModelPriceFile(path.resolve(input.root, input.file));
+    const catalog = loadModelCatalog({
+      path: path.resolve(input.root, input.modelCatalogFile),
+    });
+    const coverage = modelPriceCatalogCoverage(document, catalog, {
+      allowStaleSource: input.allowStaleSource,
+      allowZeroPrice: input.allowZeroPrice,
+      maxSourceAgeDays: input.maxSourceAgeDays,
+      now: input.now,
+    });
+    return {
+      status: "ok",
+      ready: Boolean(coverage.ready),
+      file: publicPath(input.file, input.root),
+      covered: coverage.covered,
+      required: coverage.required.map(priceKey),
+      missing: coverage.missing.map(priceKey),
+      incompleteRates: coverage.incompleteRates.map(priceKey),
+      zeroRates: coverage.zeroRates.map((row) => `${priceKey(row)} ${row.field}`),
+      staleSources: coverage.staleSources.map((row) => publicText(describeSourceIssue(row))),
+      placeholderSources: coverage.placeholderSources.map((row) =>
+        publicText(`${priceKey(row)} ${row.host}`)
+      ),
+      errors: [],
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      ready: false,
+      file: publicPath(input.file, input.root),
+      covered: 0,
+      required: [],
+      missing: [],
+      incompleteRates: [],
+      zeroRates: [],
+      staleSources: [],
+      placeholderSources: [],
+      errors: [publicText(safeErrorLine(error))],
+    };
+  }
+}
+
 function collectPreflight(input) {
   const result = runPreflight(input);
   return {
@@ -280,6 +351,13 @@ function formatDogfoodReadinessMarkdown(report) {
       .join(", ")}`,
     `- budget policy: ${publicText(report.inputs.budgetPolicyFile)}`,
     `- model catalog: ${publicText(report.inputs.modelCatalogFile)}`,
+    `- model price file: ${
+      report.inputs.modelPriceFile
+        ? `${publicText(report.inputs.modelPriceFile.file)}${
+            report.inputs.modelPriceFile.allowStaleSource ? " allow-stale-source" : ""
+          }${report.inputs.modelPriceFile.allowZeroPrice ? " allow-zero-price" : ""}`
+        : "not included"
+    }`,
     `- preflight: ${
       report.inputs.preflight
         ? `${publicText(report.inputs.preflight.profile)}${
@@ -329,6 +407,27 @@ function formatDogfoodReadinessMarkdown(report) {
     "",
     modelCatalogLine(report.checks.modelCatalog)
   );
+
+  if (report.checks.modelPriceCoverage) {
+    lines.push(
+      "",
+      "## Model Price Coverage",
+      "",
+      modelPriceCoverageLine(report.checks.modelPriceCoverage)
+    );
+    for (const label of [
+      ["missing", report.checks.modelPriceCoverage.missing],
+      ["missing input/output rates", report.checks.modelPriceCoverage.incompleteRates],
+      ["zero-rate placeholders", report.checks.modelPriceCoverage.zeroRates],
+      ["stale or future source evidence", report.checks.modelPriceCoverage.staleSources],
+      ["placeholder source URLs", report.checks.modelPriceCoverage.placeholderSources],
+      ["errors", report.checks.modelPriceCoverage.errors],
+    ]) {
+      if (label[1].length) {
+        lines.push(`- ${label[0]}: ${list(label[1])}`);
+      }
+    }
+  }
 
   if (report.checks.preflight) {
     lines.push("", "## Preflight", "", preflightLine(report.checks.preflight));
@@ -404,6 +503,18 @@ function modelCatalogLine(summary) {
   ].join(" ");
 }
 
+function modelPriceCoverageLine(summary) {
+  if (summary.status !== "ok") {
+    return `- error: ${summary.errors
+      .map((error) => publicText(error))
+      .join("; ")}`;
+  }
+  return [
+    `- ${summary.ready ? "ready" : "not ready"}:`,
+    `${summary.covered}/${summary.required.length} catalog default lanes covered`,
+  ].join(" ");
+}
+
 function preflightLine(summary) {
   return [
     `- ${summary.ok ? "ok" : "not ready"}:`,
@@ -469,6 +580,17 @@ function publicText(value, maxChars = DOGFOOD_TEXT_MAX_CHARS) {
   return text.slice(0, maxChars);
 }
 
+function priceKey(price) {
+  return `${publicText(price.provider)}:${publicText(price.model)}`;
+}
+
+function describeSourceIssue(row) {
+  if (row.reason === "future") {
+    return `${priceKey(row)} future sourceCheckedAt`;
+  }
+  return `${priceKey(row)} checked ${row.ageDays} days ago`;
+}
+
 function operatorWorkspaceError(error, directory, root) {
   let message = safeErrorLine(error).split(directory).join("[operator-workspace]");
   message = message.split(path.resolve(root)).join("[repo-root]");
@@ -479,6 +601,7 @@ module.exports = {
   DEFAULT_BUDGET_POLICY_FILE,
   DEFAULT_MODEL_CATALOG_FILE,
   DEFAULT_REPOSITORY_CONFIG_FILES,
+  collectModelPriceCoverage,
   collectOperatorWorkspace,
   collectDogfoodReadiness,
   formatDogfoodReadinessMarkdown,
