@@ -291,9 +291,13 @@ function checkSourceAnchors(sourceTexts, findings) {
       "validateReleaseNotesPublication",
       "releaseFromReleaseNotes",
       "releaseTagNameError",
-      "Git ref-safe",
       "already exists locally",
       "This command does not create tags",
+    ],
+    "src/release-version.cjs": [
+      "normalizeReleaseVersion",
+      "releaseTagNameError",
+      "Git ref-safe",
     ],
     "bin/release-tag-plan.cjs": [
       "npm run release:tag-plan",

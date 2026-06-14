@@ -2,10 +2,13 @@
 
 const childProcess = require("child_process");
 const fs = require("fs");
-const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const {
   validateReleaseNotesPublication,
 } = require("./release-notes-publication.cjs");
+const {
+  normalizeReleaseVersion,
+  releaseTagNameError,
+} = require("./release-version.cjs");
 
 const DRY_RUN_NOTICE = "This command does not create tags or GitHub Releases.";
 
@@ -127,20 +130,6 @@ function collectReleaseNotesState(options = {}) {
 function releaseFromReleaseNotes(markdown) {
   const match = String(markdown || "").match(/^#\s+6529reviewbot\s+([vV]?[0-9][0-9A-Za-z._-]*)\s*$/m);
   return match ? normalizeReleaseVersion(match[1]) : "";
-}
-
-function releaseTagNameError(release) {
-  const tag = String(release || "");
-  if (tag.includes("..")) {
-    return `release tag '${tag}' is not Git ref-safe; tag names must not contain consecutive dots.`;
-  }
-  if (tag.endsWith(".")) {
-    return `release tag '${tag}' is not Git ref-safe; tag names must not end with a dot.`;
-  }
-  if (/\.lock$/i.test(tag)) {
-    return `release tag '${tag}' is not Git ref-safe; tag names must not end with .lock.`;
-  }
-  return "";
 }
 
 function publicGitState(git) {

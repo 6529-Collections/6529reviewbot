@@ -9,6 +9,7 @@ const {
   PROVIDERS,
   loadModelCatalog,
 } = require("./model-catalog.cjs");
+const { normalizeReleaseVersion } = require("./release-version.cjs");
 const packageJson = require("../package.json");
 
 const DEFAULT_RELEASE_STATUS = "pre-v1 dogfood/community-review release.";
@@ -329,14 +330,6 @@ function messageCount(messages) {
 function wholeNumber(value) {
   const number = Number(value);
   return Number.isFinite(number) && number >= 0 ? Math.floor(number) : 0;
-}
-
-function normalizeReleaseVersion(value) {
-  const text = publicText(value || "").trim();
-  if (!/^[vV]?[0-9][0-9A-Za-z._-]*$/.test(text)) {
-    throw new Error("release version must look like v0.1.0.");
-  }
-  return text.startsWith("v") || text.startsWith("V") ? `v${text.slice(1)}` : `v${text}`;
 }
 
 module.exports = {

@@ -1,6 +1,7 @@
 "use strict";
 
 const { redactSensitiveText } = require("./diagnostics.cjs");
+const { releaseTagNameError } = require("./release-version.cjs");
 
 const REQUIRED_HEADINGS = [
   "# 6529reviewbot ",
@@ -157,8 +158,14 @@ function checkRequiredHeadings(text, errors) {
 }
 
 function checkTitle(text, errors) {
-  if (!/^# 6529reviewbot v[0-9][0-9A-Za-z._-]*\s*$/m.test(text)) {
+  const match = text.match(/^# 6529reviewbot (v[0-9][0-9A-Za-z._-]*)\s*$/m);
+  if (!match) {
     errors.push("release notes title must look like '# 6529reviewbot v0.1.0'.");
+    return;
+  }
+  const tagNameError = releaseTagNameError(match[1]);
+  if (tagNameError) {
+    errors.push(`release notes title ${tagNameError}`);
   }
 }
 
