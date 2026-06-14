@@ -133,7 +133,7 @@ function helpText() {
 
 Usage:
   npm run github-app:convert -- -- --code <code> --output C:\\private\\6529bot-app.json
-  npm run github-app:convert -- -- --code https://reviewbot.example.com/github-app/manifest-complete?code=<code> --output /private/6529bot-app.json
+  npm run github-app:convert -- -- --code <production-bot-origin>/github-app/manifest-complete?code=<code> --output /private/6529bot-app.json
 
 Options:
   --code <code|url>       Temporary GitHub manifest conversion code or callback URL.
@@ -156,6 +156,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  helpText,
   main,
   parseArgs,
   resolveToken,

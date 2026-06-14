@@ -513,24 +513,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Ready-gated deployment help examples PR: merged as PR #276, merge commit `11abf7a`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-snapshot-production-origin-docs`.
-- Current local changes: align admin snapshot operator README and 6529.io
-  integration examples with `<production-bot-origin>`, keep the public env
-  template placeholder documented, and contract-check the operator examples.
+- Admin snapshot production-origin docs PR: merged as PR #277, merge commit `cbf46da`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/manifest-convert-help-origin`.
+- Current local changes: align GitHub App manifest conversion help with
+  `<production-bot-origin>` callback URLs, export the help text for contract
+  checks, and pin the no-example-callback-host invariant.
 - Current local validation:
-  - `npm run check:admin-snapshot` passed with 9 checks, 9 CLI flags, and
-    6 docs checked;
-  - `npm run check:6529-io-env` passed;
-  - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #276,
-    and 5 docs checked;
+  - `npm run check:github-app-manifest` passed with 7 manifest cases,
+    6 conversion cases, and 7 docs checked;
   - `git diff --check` passed;
-  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #277,
+    and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    admin snapshot operator-origin docs exercised.
+    GitHub App manifest conversion help anchor exercised.
 
 ## Key Decisions
 
