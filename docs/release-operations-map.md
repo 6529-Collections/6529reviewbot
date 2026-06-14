@@ -28,6 +28,10 @@ templates, and README governance links present.
 `npm run check:codeowners` keeps CODEOWNERS default review ownership,
 high-risk path coverage, repository ruleset guidance, and governance docs
 aligned.
+`npm run check:community-release-gates` keeps
+[config/community-release-gates.json](../config/community-release-gates.json),
+the broad community-release gate renderer, release readiness guidance, and
+release docs aligned.
 `npm run check:repository-rulesets` keeps repository rulesets guidance aligned
 across main branch protection, required PR checks, release tag ruleset
 expectations, dry-run tag planning, and operator-owned live ruleset evidence.

@@ -401,6 +401,19 @@ Before announcing broad community use:
 13. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
 14. Update README, changelog, release notes, install docs, and example configs.
 
+Render the same broad community-release gates as an operator checklist:
+
+```bash
+npm run community:gates
+npm run community:gates -- -- --status-file <operator-status-file> --summary
+npm run community:gates -- -- --status-file <operator-status-file> --require-ready
+```
+
+The checklist source is
+[config/community-release-gates.json](../config/community-release-gates.json).
+`npm run check:community-release-gates` keeps the config, renderer, evidence
+references, this readiness section, release docs, and operations map aligned.
+
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable
 local and manual gates.

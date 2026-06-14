@@ -189,6 +189,10 @@ After stabilization:
 - `npm run check:codeowners` confirms CODEOWNERS default ownership,
   high-risk path coverage, repository ruleset guidance, and governance docs
   stay synchronized
+- `npm run community:gates` renders the broad community-use gate checklist from
+  `config/community-release-gates.json`
+- `npm run check:community-release-gates` confirms the community-release gate
+  config, renderer, release readiness guidance, and release docs stay aligned
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized

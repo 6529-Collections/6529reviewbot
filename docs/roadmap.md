@@ -267,6 +267,8 @@ Build the operator experience:
   and release tag protection before public dogfood tags;
 - CODEOWNERS guidance for default maintainer review ownership and future code
   owner review rules;
+- community-release gate contract so the broad community-use checklist is
+  renderable and checked against release readiness docs;
 - support runbook checks that keep the public support process and incident
   response playbook aligned with reporting, containment, recovery, and
   public-follow-up boundaries;
@@ -675,6 +677,7 @@ Completed in `6529reviewbot`:
   and release tag protection before public dogfood tags.
 - CODEOWNERS guidance for default maintainer review ownership and future code
   owner review rules.
+- community-release gate contract for the broad community-use checklist.
 - workflow permission checker for explicit least-privilege GitHub Actions
   permission maps.
 - machine-readable v0 release gates and checklist renderer, including the
