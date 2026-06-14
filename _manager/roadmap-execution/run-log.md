@@ -4128,3 +4128,29 @@
   - `npm test` passed;
   - `npm run release:check` passed, including production cutover validation
     with 32 checklist items and alert delivery-plan evidence ordering.
+- Merged `6529reviewbot` PR #238 as `b5d8436`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-evidence-alert-plan` increment:
+  - add alert delivery plan command and reviewed fields to the operator
+    evidence template's Worker And Alerts section before destination and
+    dry-run fields;
+  - update `config/production-evidence.example.json` for 32 production cutover
+    items and notes that the alert delivery plan should be rendered before
+    scheduled alert delivery evidence;
+  - update operator evidence contract docs snippets, release-readiness, roadmap,
+    changelog, and durable manager memory so private operator evidence captures
+    the reviewed alert delivery handoff.
+- Local validation for `codex/operator-evidence-alert-plan` so far:
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #238,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including operator evidence validation
+    for alert delivery-plan fields and the production-evidence `2/32`
+    cutover summary.

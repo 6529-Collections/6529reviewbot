@@ -131,6 +131,8 @@ npm run check:workflow-actions passed after installing workflows:
 npm run preflight -- -- --strict result:
 Run-control mode:
 Run-control ledger enabled:
+Alert delivery plan command:
+Alert delivery plan reviewed:
 Operator alert destination:
 Spend alert dry-run completed:
 Job-health alert dry-run completed:

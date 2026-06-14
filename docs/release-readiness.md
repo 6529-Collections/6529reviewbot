@@ -159,6 +159,8 @@ Ready for community review:
   plan, dashboard deployment plan, and alert delivery plan handoffs so private
   release evidence, dashboard evidence, alert evidence, cutover, and dogfood
   gates stay in one operator flow;
+- operator evidence template guidance includes alert delivery plan command and
+  review fields before alert destination and dry-run evidence;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
 - documented maintainer comment-command contract;

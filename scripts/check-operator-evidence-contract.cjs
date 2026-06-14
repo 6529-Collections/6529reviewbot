@@ -269,6 +269,8 @@ function checkDocs(docTexts, findings) {
       "npm run check:operator-evidence",
       "operator evidence contract check",
       "AWS account ids",
+      "Alert delivery plan command",
+      "Alert delivery plan reviewed",
     ],
     "docs/release-readiness.md": ["operator evidence contract"],
     "docs/release-operations-map.md": ["npm run check:operator-evidence"],
