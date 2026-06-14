@@ -55,6 +55,30 @@ function checkChecklistConfig(findings) {
   const checklist = productionCutover.loadProductionCutoverChecklist(
     path.join(root, "config/production-cutover-checklist.json")
   );
+  const dogfoodPhase = checklist.phases.find((phase) => phase.id === "dogfood");
+  if (!dogfoodPhase) {
+    findings.push("production cutover checklist must include the dogfood phase.");
+  } else {
+    const promotionPacket = dogfoodPhase.items.find(
+      (item) => item.id === "dogfood-promotion-packet"
+    );
+    if (!promotionPacket) {
+      findings.push("dogfood phase must include dogfood-promotion-packet.");
+    } else {
+      for (const snippet of [
+        "reviewed model price coverage",
+        "npm --silent run dogfood:promotion",
+        "--operator-workspace <private-workspace-dir>",
+        "--model-price-file <reviewed-model-price-file.json>",
+        "--strict-preflight",
+        "--require-ready",
+      ]) {
+        if (!`${promotionPacket.title} ${promotionPacket.evidence}`.includes(snippet)) {
+          findings.push(`dogfood-promotion-packet must include '${snippet}'.`);
+        }
+      }
+    }
+  }
   const ioPhase = checklist.phases.find((phase) => phase.id === "6529-io-and-alerts");
   if (!ioPhase) {
     findings.push("production cutover checklist must include the 6529-io-and-alerts phase.");

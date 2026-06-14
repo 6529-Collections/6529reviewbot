@@ -86,7 +86,8 @@ function checkDefaultDraft(findings) {
     "`npm run dashboard:deployment-plan",
     "`npm run alerts:delivery-plan",
     "reviewed alert delivery plan evidence",
-    "`npm --silent run dogfood:go-live",
+    "`npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",
+    "`npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",
   ]) {
     if (!markdown.includes(snippet)) {
       findings.push(`default release notes draft must include '${snippet}'.`);
