@@ -4790,3 +4790,23 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 177 CommonJS files checked and the
     10-case release notes publication contract exercised.
+- Merged `6529reviewbot` PR #270 as `9fab5bc`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/model-price-source-https` increment:
+  - require model price source URLs to use HTTPS and document the operator
+    evidence requirement for provider pricing references.
+- Local validation for `codex/model-price-source-https` so far:
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and
+    8 docs checked;
+  - `npm run check:model-price-coverage` passed with 6 coverage cases and
+    8 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 177 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #270,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run release:check` passed with 177 CommonJS files checked and the
+    HTTPS model price source URL guard exercised.

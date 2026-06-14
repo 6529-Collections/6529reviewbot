@@ -55,7 +55,8 @@ timestamps:
 Do not apply zeroes or placeholder prices. The apply path rejects zero-rate
 rows by default because a placeholder zero can silently understate spend.
 Every non-empty price file should be reviewed against current provider
-documentation before use.
+documentation before use. Source URLs must be absolute HTTPS URLs so release
+evidence does not rely on downgradeable provider pricing references.
 
 The apply path also rejects rows whose `sourceCheckedAt` timestamp is older
 than 30 days by default, and rejects future-dated source checks. Use a shorter
@@ -162,9 +163,10 @@ Every pricing update should record:
 - notes about units or caveats.
 
 The CLI enforces a source URL, source-checked timestamp, and at least one price
-field. It also rejects zero-rate rows during apply unless the operator passes
-`--allow-zero-price`, and rejects stale or future-dated source-checked
-timestamps unless the operator passes `--allow-stale-source`.
+field. Source URLs must use HTTPS. It also rejects zero-rate rows during apply
+unless the operator passes `--allow-zero-price`, and rejects stale or
+future-dated source-checked timestamps unless the operator passes
+`--allow-stale-source`.
 Do not put secrets, private account details, provider diagnostics, or private
 PR payloads in `notes`; the redaction guardrail is there for accidental
 token-shaped text, not as a reason to store sensitive data in pricing rows.
