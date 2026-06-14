@@ -22,6 +22,18 @@ const redactionFixtures = [
     forbidden: "AKIAABCDEFGHIJKLMNOP",
   },
   {
+    name: "aws arn",
+    input: "resource arn:aws:rds:us-east-1:123456789012:cluster/reviewbot",
+    expected: "resource arn:aws:[redacted]",
+    forbidden: "123456789012",
+  },
+  {
+    name: "aws account id",
+    input: "account 123456789012 reviewed privately",
+    expected: "account [redacted-aws-account-id] reviewed privately",
+    forbidden: "123456789012",
+  },
+  {
     name: "github fine-grained token",
     input: "token github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
     expected: "token github_pat_[redacted]",
@@ -155,17 +167,17 @@ function checkDocs(docTexts, findings) {
       "does not include secret values",
     ],
     "docs/job-ledger.md": [
-      "redact common bearer, GitHub, provider-key, alert-webhook, AWS access-key id",
+      "redact common bearer, GitHub, provider-key, alert-webhook, AWS access-key id, AWS ARN, AWS account-id",
     ],
     "docs/alerting.md": [
       "redacts common bearer, GitHub, provider-key",
-      "alert-webhook, AWS access-key id",
+      "alert-webhook, AWS access-key id, AWS ARN, AWS account-id",
     ],
     "docs/release-notes-template.md": [
-      "Worker diagnostics redact common token, alert-webhook, AWS access-key id, and private-key shapes",
+      "Worker diagnostics redact common token, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
     ],
     "README.md": [
-      "redact common token, alert-webhook, AWS access-key id, and private-key shapes",
+      "redact common token, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
     ],
   };
   for (const [doc, snippets] of Object.entries(requiredByDoc)) {

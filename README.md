@@ -30,9 +30,10 @@ requests.
   or central GitHub Actions workflows.
 - Fails closed instead of posting a generic review when a live provider returns
   empty visible output.
-- Redacts common token, alert-webhook, AWS access-key id, and private-key
-  shapes from worker, dispatch, ledger, alert, preflight, and repository-config
-  diagnostics before they enter public or operator summaries.
+- Redacts common token, alert-webhook, AWS access-key id, AWS ARN,
+  AWS account-id, and private-key shapes from worker, dispatch, ledger, alert,
+  preflight, and repository-config diagnostics before they enter public or
+  operator summaries.
 - Normalizes usage, job, and run-control ledger metadata before persistence so
   prompts, diffs, provider payloads, webhook payloads, worker output, and
   credential-shaped fields do not become durable audit data.
@@ -795,8 +796,8 @@ input. In particular:
 - provider errors are sanitized before logging;
 - empty provider responses fail closed instead of becoming no-finding comments;
 - worker, dispatch, ledger, alert, preflight, and repository-config diagnostics
-  redact common token, alert-webhook, AWS access-key id, and private-key shapes
-  before they are returned;
+  redact common token, alert-webhook, AWS access-key id, AWS ARN,
+  AWS account-id, and private-key shapes before they are returned;
 - provider requests have explicit timeout and token/context caps;
 - AWS access uses OIDC and least-privilege Data API permissions.
 

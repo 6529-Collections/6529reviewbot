@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added shared diagnostic redaction for AWS ARNs and 12-digit AWS account ids
+  across worker, dispatch, ledger, alert, preflight, and support outputs.
 - Redacted rendered dry-run SQL parameter comments for budget policies and
   model prices across every field, not only normalized notes.
 - Sanitized OpenAI incomplete-response details through the shared provider
