@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Rejected documentation, example, local, or reserved container registries from
+  final container publish and production deployment ready gates.
 - Rejected documentation, example, local, or reserved origin hosts from final
   production deployment, dashboard deployment, and alert delivery ready gates.
 - Rejected placeholder model price source URL hosts before applying pricing

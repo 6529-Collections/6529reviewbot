@@ -5,6 +5,7 @@
 const {
   collectContainerPublishPlan,
   formatContainerPublishPlanMarkdown,
+  isPlaceholderImageRepository,
   normalizeImageRef,
 } = require("../src/container-publish-plan.cjs");
 const containerPublishPlanCli = require("../bin/container-publish-plan.cjs");
@@ -36,6 +37,7 @@ function checkContainerPublishPlanContract(options = {}) {
   checkReadyPlan(findings);
   checkDirtyPlan(findings);
   checkMissingImagePlan(findings);
+  checkPlaceholderImagePlan(findings);
   checkImageValidation(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
@@ -51,7 +53,7 @@ function checkContainerPublishPlanContract(options = {}) {
   }
 
   return {
-    planCases: 5,
+    planCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -59,7 +61,7 @@ function checkContainerPublishPlanContract(options = {}) {
 function checkReadyPlan(findings) {
   const plan = collectContainerPublishPlan({
     release: "0.2.0",
-    image: "registry.example.com/6529reviewbot",
+    image: "ghcr.io/6529-collections/6529reviewbot",
     now: new Date("2026-06-13T00:00:00.000Z"),
     git: cleanMainGit(),
     containerCheckResult: {
@@ -79,12 +81,37 @@ function checkReadyPlan(findings) {
     "This command does not build, push, scan, or publish container images.",
     "npm run check:container-image",
     "docker build --pull",
-    "docker push registry.example.com/6529reviewbot:v0.2.0",
+    "docker push ghcr.io/6529-collections/6529reviewbot:v0.2.0",
     "vulnerability scan",
   ]) {
     if (!markdown.includes(snippet)) {
       findings.push(`ready container publish plan markdown must include '${snippet}'.`);
     }
+  }
+}
+
+function checkPlaceholderImagePlan(findings) {
+  const plan = collectContainerPublishPlan({
+    release: "v0.2.0",
+    image: "registry.example.com/6529reviewbot",
+    requireImage: true,
+    git: cleanMainGit(),
+    containerCheckResult: {
+      runtimeCopies: 6,
+      dockerignoreEntries: 15,
+    },
+  });
+  if (plan.ready) {
+    findings.push("required container publish plans must block documentation/example image registries.");
+  }
+  if (!plan.errors.some((error) => error.includes("documentation, example, local, or reserved registries"))) {
+    findings.push("container placeholder registry errors must explain the reserved-registry requirement.");
+  }
+  if (!isPlaceholderImageRepository("registry.example.com/6529reviewbot")) {
+    findings.push("container publish plan must classify example registries as placeholders.");
+  }
+  if (!isPlaceholderImageRepository("localhost:5000/6529reviewbot")) {
+    findings.push("container publish plan must classify local registries as placeholders.");
   }
 }
 
@@ -200,7 +227,7 @@ function checkCli(findings) {
 
   const plan = containerPublishPlanCli.main([
     "--image",
-    "registry.example.com/6529reviewbot",
+    "ghcr.io/6529-collections/6529reviewbot",
     "--release",
     "v0.2.0",
     "--require-ready",
@@ -236,8 +263,14 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/container-publish-plan.cjs": [
       "collectContainerPublishPlan",
       "checkContainerImage",
+      "isPlaceholderImageRepository",
       "normalizeImageRepositoryRef",
       "This command does not build, push, scan, or publish container images.",
+    ],
+    "src/placeholder-hosts.cjs": [
+      "isPlaceholderImageRepository",
+      "isPlaceholderOrigin",
+      "PLACEHOLDER_HOSTS",
     ],
     "src/image-repository-ref.cjs": [
       "normalizeImageRepositoryRef",
@@ -280,6 +313,7 @@ function checkDocs(docTexts, findings) {
       "empty path segments",
       "registry port",
       "lowercase",
+      "documentation, example, local, or reserved registries",
       "does not build, push, scan, or publish container images",
       "npm run check:container-publish-plan",
     ],

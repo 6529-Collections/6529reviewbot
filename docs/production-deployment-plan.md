@@ -41,8 +41,10 @@ Image repository inputs are validated as lowercase Docker image repositories
 without a URL scheme, tag, digest, non-numeric registry port, uppercase
 repository characters, or empty path segments. The release version supplies
 the command tag. Final `--require-ready` plans reject documentation, example,
-local, or reserved origin hosts such as `reviewbot.example.com`; replace them
-with the production bot origin before using the handoff as release evidence.
+local, or reserved origin hosts such as `reviewbot.example.com`, and
+documentation, example, local, or reserved registries such as
+`registry.example.com`; replace them with the production bot origin and
+operator-owned registry before using the handoff as release evidence.
 
 For automation that wants JSON instead of Markdown:
 

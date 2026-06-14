@@ -505,29 +505,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Model price placeholder apply guard PR: merged as PR #272, merge commit `42323f9`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/reject-placeholder-ready-origins`.
+- Placeholder ready-origin gates PR: merged as PR #273, merge commit `08aa203`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/reject-placeholder-image-repos`.
 - Current local changes: reject documentation, example, local, or reserved
-  origin hosts from final production deployment, dashboard deployment, and
-  alert delivery `--require-ready` gates.
+  container registries from final container publish and production deployment
+  `--require-ready` gates.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 6 plan cases and
+  - `npm run check:container-publish-plan` passed with 6 plan cases and
     6 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
-    7 docs checked;
-  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
-    8 docs checked;
-  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+  - `npm run check:production-deployment-plan` passed with 7 plan cases and
     6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
-  - `npm run check` passed with 177 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #272,
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #273,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run release:check` passed with 177 CommonJS files checked and the
-    placeholder ready-origin gates exercised.
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    placeholder image registry ready gates exercised.
 
 ## Key Decisions
 

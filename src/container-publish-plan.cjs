@@ -4,6 +4,7 @@ const childProcess = require("child_process");
 const fs = require("fs");
 const { safeErrorLine } = require("./diagnostics.cjs");
 const { normalizeImageRepositoryRef } = require("./image-repository-ref.cjs");
+const { isPlaceholderImageRepository } = require("./placeholder-hosts.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const { parseAheadBehind } = require("./release-tag-plan.cjs");
 const { checkContainerImage } = require("../scripts/check-container-image.cjs");
@@ -31,6 +32,13 @@ function collectContainerPublishPlan(options = {}) {
       errors.push(message);
     } else {
       warnings.push(`${message} Pass --image before publishing.`);
+    }
+  } else if (isPlaceholderImageRepository(image)) {
+    const message = "container image reference must not use documentation, example, local, or reserved registries.";
+    if (options.requireImage) {
+      errors.push(message);
+    } else {
+      warnings.push(`${message} Replace it before publishing.`);
     }
   }
   if (git.dirty) {
@@ -232,6 +240,7 @@ module.exports = {
   DRY_RUN_NOTICE,
   collectContainerPublishPlan,
   formatContainerPublishPlanMarkdown,
+  isPlaceholderImageRepository,
   normalizeImageRef,
   publishCommands,
 };
