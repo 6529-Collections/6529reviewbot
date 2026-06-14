@@ -103,11 +103,19 @@ Runtime secrets injected by hosting platform:
 Image contains no committed .env or private evidence files:
 Health check /healthz result:
 Worker adapter:
-GitHub Actions dispatch mode:
-Dispatch App installation id configured:
-Dispatch App limited to central bot repository:
-Target-repository App has no Actions write permission:
-Dispatch token stored only in bot secret store:
+```
+
+## Container Publish Plan
+
+```text
+Container publish plan command:
+Container publish plan reviewed:
+Operator-owned registry reviewed:
+Source commit/tag recorded:
+Builder identity recorded:
+Container image digest recorded:
+Vulnerability scan reviewed:
+Release/cutover evidence summary:
 ```
 
 ## Budget And Pricing
@@ -120,6 +128,19 @@ Model price source-checked timestamps recorded:
 Model price source freshness policy:
 Model prices applied:
 Fail-open/fail-closed behavior accepted:
+```
+
+## Worker Dispatch Credentials
+
+```text
+Worker dispatch mode:
+Dispatch-only GitHub App preferred/reviewed:
+Fallback credential accepted, if used:
+Dispatch App installation id configured:
+Dispatch App limited to central bot repository:
+Target-repository App has no Actions write permission:
+Dispatch token stored only in bot secret store:
+Non-noop worker traffic approved:
 ```
 
 ## Worker And Alerts

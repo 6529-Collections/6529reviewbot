@@ -5159,3 +5159,23 @@
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     release-candidate dashboard/admin evidence section coverage exercised.
+- Merged `6529reviewbot` PR #287 as `d5689e7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-evidence-runtime-dispatch-sections` increment:
+  - add first-class operator evidence sections for container publish-plan
+    evidence and worker dispatch credential evidence.
+- Local validation for `codex/operator-evidence-runtime-dispatch-sections` so far:
+  - `npm run check:operator-evidence` passed with 3 CLI cases,
+    6 evidence cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases,
+    3 path cases, and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #287,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    container publish/worker dispatch operator evidence sections exercised.
