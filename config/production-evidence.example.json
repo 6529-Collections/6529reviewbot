@@ -48,9 +48,13 @@
       "status": "pending",
       "notes": "Review worker dispatch credential posture before enabling non-noop worker traffic."
     },
+    "alert-delivery-plan": {
+      "status": "pending",
+      "notes": "Render and review the alert delivery plan with concrete production bot origin, private workspace, delivery mode, and operator channel before scheduled alert delivery."
+    },
     "worker-and-alerts": {
       "status": "pending",
-      "notes": "Render the alert delivery plan, enable one worker path, and verify scheduled operator alert delivery."
+      "notes": "Enable one worker path and verify scheduled operator alert delivery after the alert delivery plan is reviewed."
     },
     "6529-io-surfaces": {
       "status": "pending",

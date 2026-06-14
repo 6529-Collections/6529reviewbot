@@ -588,27 +588,34 @@ merged PRs.
 - Operator evidence production deployment-plan section PR: merged as PR #313,
   merge commit `18f24a0`; post-merge CI and OpenSSF Scorecard completed
   successfully.
-- Current branch: `codex/cutover-deployment-plan-gate`.
-- Current local changes: add `production-deployment-plan-reviewed` to the
-  production cutover baseline checklist and status example, document the
-  ready-mode handoff command in the cutover runbook, and extend the cutover
-  contract plus smoke counts.
+- Production cutover deployment-plan gate PR: merged as PR #314, merge commit `ac64e60`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/alert-delivery-operator-evidence`.
+- Current local changes: add a dedicated `alert-delivery-plan` section to
+  structured operator evidence, update the public example and operator
+  template, surface it in release-candidate summaries, and keep the
+  operator-evidence, release-candidate, alert-plan, and release-operations
+  contracts checking the new section.
 - Current local validation:
-  - `gh run watch 27497930503 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge CI;
-  - `gh run watch 27497930515 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge OpenSSF Scorecard;
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
-    and 6 docs checked;
-  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `gh run watch 27498195735 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #314 post-merge CI;
+  - `gh run watch 27498195734 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #314 post-merge OpenSSF Scorecard;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 6 plan cases and 8 docs
+    checked;
   - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #313, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #314, and
     5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    production cutover deployment-plan gate exercised.
+    alert delivery-plan operator evidence section exercised.
 
 ## Key Decisions
 
@@ -1173,7 +1180,9 @@ merged PRs.
 - Alert delivery planning is intentionally dry-run only: the guard can require
   explicit production bot origin, private workspace, delivery mode, and
   channel label inputs, but the operator still configures live webhook/SNS/SES
-  delivery and records production evidence explicitly.
+  delivery and records production evidence explicitly. The reviewed handoff is
+  a first-class `alert-delivery-plan` operator evidence section, separate from
+  the later `worker-and-alerts` delivery evidence.
 
 ## Constraints
 

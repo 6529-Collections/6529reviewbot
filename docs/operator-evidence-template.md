@@ -156,6 +156,19 @@ Dispatch token stored only in bot secret store:
 Non-noop worker traffic approved:
 ```
 
+## Alert Delivery Plan
+
+```text
+Alert delivery plan command:
+Alert delivery plan reviewed:
+Production bot origin reviewed:
+Private operator workspace reviewed:
+Alert notify mode reviewed:
+Operator alert destination:
+Ready-mode JSON captured privately:
+Cutover evidence summary:
+```
+
 ## Worker And Alerts
 
 ```text
@@ -165,9 +178,7 @@ npm run check:workflow-actions passed after installing workflows:
 npm run preflight -- -- --strict result:
 Run-control mode:
 Run-control ledger enabled:
-Alert delivery plan command:
-Alert delivery plan reviewed:
-Operator alert destination:
+Alert delivery enabled:
 Spend alert dry-run completed:
 Job-health alert dry-run completed:
 Stale-claim alert threshold reviewed:

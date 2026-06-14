@@ -69,7 +69,8 @@ The plan renders these phases:
 - dry-run and status: `alerts:operator --dry-run --force`, private
   alert-status API posture, and admin snapshot evidence;
 - cutover evidence: `alert-delivery-plan-reviewed` and `alerts-deliver`
-  production cutover status plus worker-and-alerts operator evidence;
+  production cutover status plus alert-delivery-plan and worker-and-alerts
+  operator evidence;
 - release notes: public status summary without private destinations.
 
 ## Related Runbooks
