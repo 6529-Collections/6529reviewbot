@@ -61,6 +61,8 @@ repositories.
 - Empty provider output fail-closed evidence:
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
+- Public dashboard disclosure allowlists:
+- Private admin auth-check/wallet allowlist evidence:
 - Release candidate bundle:
 - Production deployment plan:
 - Dashboard deployment plan:
@@ -83,6 +85,10 @@ are true:
   deferred;
 - provider keys and AWS credentials live only in bot-owned infrastructure;
 - target repo configuration is loaded from the base ref;
+- public dashboard repo/org disclosure uses reviewed allowlists before repo
+  names are exposed;
+- private admin exposure has reviewed auth-check URL and wallet allowlist
+  evidence;
 - scheduled operator alerts have reviewed alert delivery plan evidence and
   route to an operator-owned channel.
 

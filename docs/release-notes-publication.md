@@ -46,6 +46,10 @@ The publication guard verifies:
   publication;
 - dashboard deployment plan evidence is filled before tag or GitHub Release
   publication;
+- public dashboard disclosure allowlist evidence is filled before tag or
+  GitHub Release publication;
+- private admin auth-check URL and wallet allowlist evidence is filled before
+  tag or GitHub Release publication;
 - alert delivery plan evidence is filled before tag or GitHub Release
   publication;
 - accepted model-price overrides either state `none` or name
@@ -65,8 +69,8 @@ The publication guard verifies:
 Warnings remind operators to keep the standard safety language about
 trusted-actor admission, budget enforcement, run-control enforcement,
 bot-owned infrastructure, base-ref target repository configuration,
-operator-owned alert routing, exact tag/commit pinning, and emergency
-rollback.
+public dashboard disclosure allowlists, private admin auth evidence,
+operator-owned alert routing, exact tag/commit pinning, and emergency rollback.
 
 ## Relationship To Drafts
 
