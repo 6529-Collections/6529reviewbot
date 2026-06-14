@@ -46,6 +46,9 @@ The publication guard verifies:
   publication;
 - alert delivery plan evidence is filled before tag or GitHub Release
   publication;
+- accepted model-price overrides either state `none` or name
+  `--allow-stale-source`/`--allow-zero-price` plus accepted risk and operator
+  evidence;
 - every validation field reports passed, ready, reviewed, or accepted evidence
   rather than vague run status;
 - failed, pending, blocked, not-ready, or negated readiness evidence is

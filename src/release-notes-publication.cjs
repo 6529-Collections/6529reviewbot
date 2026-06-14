@@ -102,6 +102,7 @@ function validateReleaseNotesPublication(markdown, options = {}) {
   checkPublicSafeText(text, errors);
   checkSectionFields(text, "## Tested Configuration", "## Safety Requirements", TESTED_CONFIGURATION_FIELDS, errors);
   checkSectionFields(text, "## Known Gaps", "## Deferrals And Accepted Risks", KNOWN_GAP_FIELDS, errors);
+  checkModelPriceOverrideDisclosure(text, errors);
   checkDeferrals(text, errors);
   checkSectionFields(text, "## Validation", "", VALIDATION_FIELDS, errors);
   checkValidationResults(text, errors);
@@ -220,6 +221,32 @@ function checkDeferrals(text, errors) {
     if (!filledValue(value)) {
       errors.push(`deferral field '${label}' must be filled, or state 'No accepted deferrals'.`);
     }
+  }
+}
+
+function checkModelPriceOverrideDisclosure(text, errors) {
+  const section = sectionText(text, "## Known Gaps", "## Deferrals And Accepted Risks");
+  if (!section) {
+    return;
+  }
+  const value = fieldValue(section, "Accepted model-price overrides:");
+  if (!filledValue(value)) {
+    return;
+  }
+  const normalized = normalizeWhitespace(value);
+  if (/\b(?:none|no accepted|no model-price overrides|not used)\b/i.test(normalized)) {
+    return;
+  }
+  if (!/--allow-(?:stale-source|zero-price)\b/.test(normalized)) {
+    errors.push(
+      "Accepted model-price overrides must state none or name --allow-stale-source/--allow-zero-price."
+    );
+  }
+  if (
+    !/\b(?:accepted|risk|approved|deferr(?:al|ed))\b/i.test(normalized) ||
+    !/\b(?:evidence|operator|runbook)\b/i.test(normalized)
+  ) {
+    errors.push("Accepted model-price overrides must name the accepted risk and operator evidence.");
   }
 }
 

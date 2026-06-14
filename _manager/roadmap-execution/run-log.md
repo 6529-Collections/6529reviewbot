@@ -4673,3 +4673,22 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 176 CommonJS files checked and the
     6-case model pricing runbook contract exercised.
+- Merged `6529reviewbot` PR #264 as `350dc5c`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-model-price-overrides` increment:
+  - harden release notes publication checks so accepted model-price overrides
+    must either state none or name the exact override flag, accepted risk, and
+    operator evidence.
+- Local validation for `codex/release-notes-model-price-overrides` so far:
+  - `npm run check:release-notes-publication` passed with 8 publication cases
+    and 7 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 176 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #264,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run release:check` passed with 176 CommonJS files checked and the
+    8-case release notes publication contract exercised.
