@@ -254,6 +254,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["ready-mode alert handoff includes production bot origin, delivery mode, private workspace, and operator channel"],
           },
           {
+            id: "dashboard-deployment-plan",
+            status: "complete",
+            title: "Dashboard Deployment Plan",
+            notes: "reviewed dashboard deployment plan evidence",
+            evidence: ["ready-mode dashboard handoff includes 6529.io origin, bot origin, private workspace, and auth-check URL"],
+          },
+          {
             id: "6529-io-public-disclosure",
             status: "complete",
             title: "6529.io Public Dashboard Disclosure",
@@ -305,6 +312,8 @@ function checkMarkdownOutput(findings) {
     "dispatch credential posture reviewed before non-noop worker traffic",
     "alert-delivery-plan",
     "reviewed alert delivery plan evidence",
+    "dashboard-deployment-plan",
+    "reviewed dashboard deployment plan evidence",
     "6529-io-public-disclosure",
     "reviewed public repo/org disclosure allowlists",
     "6529-io-private-admin-auth",

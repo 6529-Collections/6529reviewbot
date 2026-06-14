@@ -515,8 +515,8 @@ counts, missing status ids, operator-evidence counts, redacted operator
 sections, git metadata, and no-network preflight into one public-safe release
 note artifact. The bundle surfaces first-class operator evidence sections for
 container publish plans, production deployment plans, worker dispatch
-credentials, alert delivery plans, public dashboard disclosure, and private
-admin auth when present.
+credentials, alert delivery plans, dashboard deployment plans, public dashboard
+disclosure, and private admin auth when present.
 The full pre-tag readiness rule is enforced by the bundle's `--require-ready`,
 because that check covers
 gate completeness, missing status ids, operator-evidence readiness, and
@@ -769,8 +769,8 @@ verifies durable manager memory keeps core sections, latest merged PR state,
 validation status, release-check wiring, smoke tests, and docs aligned.
 `npm run check:operator-evidence` is included in `npm run release:check` and
 verifies operator evidence sections, readiness semantics, production deployment
-plan evidence, alert delivery-plan evidence, public-summary redaction, source
-invariants, and docs stay aligned.
+plan evidence, alert delivery-plan evidence, dashboard deployment-plan
+evidence, public-summary redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, production deployment
 plan evidence, container publish-plan evidence, worker dispatch credential

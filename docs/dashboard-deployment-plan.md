@@ -72,9 +72,10 @@ evidence for each phase:
   only allowlisted summaries and the private `/tools/6529bot/admin` page
   requires 6529.io auth before calling admin endpoints.
 - Cutover evidence: update the private production cutover status and
-  release-candidate evidence so dashboard configuration, deployment, HMAC
-  bridge wiring, and operator verification are complete or explicitly
-  deferred.
+  release-candidate evidence so dashboard-deployment-plan and
+  6529-io-surfaces operator evidence plus dashboard configuration,
+  deployment, HMAC bridge wiring, and operator verification are complete or
+  explicitly deferred.
 - Release notes: summarize dashboard status publicly without publishing wallet
   allowlists, internal auth endpoints, HMAC secrets, raw admin rows, or private
   operator paths.

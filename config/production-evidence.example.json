@@ -56,9 +56,13 @@
       "status": "pending",
       "notes": "Enable one worker path and verify scheduled operator alert delivery after the alert delivery plan is reviewed."
     },
+    "dashboard-deployment-plan": {
+      "status": "pending",
+      "notes": "Render and review the dashboard deployment plan with concrete 6529.io origin, production bot origin, private workspace, and auth-check URL before public or private dashboard exposure."
+    },
     "6529-io-surfaces": {
       "status": "pending",
-      "notes": "Render the dashboard deployment plan, then wire public and private 6529.io surfaces or explicitly defer them."
+      "notes": "Wire public and private 6529.io surfaces after the dashboard deployment plan is reviewed, or explicitly defer them."
     },
     "6529-io-public-disclosure": {
       "status": "pending",

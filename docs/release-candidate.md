@@ -179,6 +179,6 @@ invariants, and the public docs synchronized.
 - preflight error and warning summaries;
 - redacted operator evidence sections, including the container publish,
   production deployment plan, worker dispatch credential, alert delivery plan,
-  public dashboard disclosure, and private admin auth evidence sections when
-  present;
+  dashboard deployment plan, public dashboard disclosure, and private admin
+  auth evidence sections when present;
 - the follow-up release commands the operator should run.

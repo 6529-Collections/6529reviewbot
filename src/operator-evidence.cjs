@@ -17,6 +17,7 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "worker-dispatch-credentials", title: "Worker Dispatch Credentials" },
   { id: "alert-delivery-plan", title: "Alert Delivery Plan" },
   { id: "worker-and-alerts", title: "Worker And Alerts" },
+  { id: "dashboard-deployment-plan", title: "Dashboard Deployment Plan" },
   { id: "6529-io-surfaces", title: "6529.io Surfaces" },
   { id: "6529-io-public-disclosure", title: "6529.io Public Dashboard Disclosure" },
   { id: "6529-io-private-admin-auth", title: "6529.io Private Admin Auth" },
