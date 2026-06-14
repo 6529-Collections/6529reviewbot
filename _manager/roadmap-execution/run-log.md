@@ -5648,3 +5648,27 @@
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     release-notes missing-community-status guard exercised.
+- Merged `6529reviewbot` PR #309 as `049a339`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/self-dogfood-config-readiness` increment:
+  - include this repository's command-only `.github/6529bot.yml` self-dogfood
+    config in default dogfood readiness summaries and release-check dogfood
+    target validation, so the actual committed config cannot drift from the
+    reviewed command-only template.
+- Local validation for `codex/self-dogfood-config-readiness`:
+  - `gh run watch 27496872099 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge CI;
+  - `gh run watch 27496872093 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge OpenSSF Scorecard;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 6 docs checked;
+  - `npm run dogfood:readiness -- -- --json --quiet --require-ready` passed;
+  - `npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready --quiet` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #309,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    self-dogfood config readiness path exercised.

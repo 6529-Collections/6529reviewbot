@@ -504,7 +504,8 @@ Completed in `6529reviewbot`:
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
 - command-only `.github/6529bot.yml` config in this repository for eventual
-  self-dogfood once the production App is installed.
+  self-dogfood once the production App is installed, with release checks
+  validating its dogfood target posture.
 - synthetic self-dogfood replay check proving command-only PR-open skip and
   trusted maintainer command-matrix admission without worker dispatch,
   deliberate multi-lane fanout, max-fanout rejection, and untrusted public

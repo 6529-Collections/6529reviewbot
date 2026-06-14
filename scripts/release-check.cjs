@@ -105,6 +105,14 @@ runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.dogf
 runNode("bin/apply-model-prices.cjs", ["--file", "config/model-prices.example.json"]);
 runNode("bin/operator-workspace.cjs", ["--dir", operatorWorkspaceDir, "--quiet"]);
 runNode("bin/release-notes-draft.cjs", ["--json", "--quiet"]);
+runNode("bin/dogfood-target.cjs", [
+  "--repository-config",
+  ".github/6529bot.yml",
+  "--mode",
+  "command-only",
+  "--require-ready",
+  "--quiet",
+]);
 runNode("bin/dogfood-target.cjs", ["--mode", "command-only", "--require-ready", "--quiet"]);
 runNode("bin/dogfood-target.cjs", ["--mode", "limited-initial", "--require-ready", "--quiet"]);
 runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet"]);

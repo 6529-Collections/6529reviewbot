@@ -129,7 +129,8 @@ Ready for community review:
 - dogfood target packet command for validating the target-repo config PR
   posture before opening or updating a target repository PR;
 - command-only `.github/6529bot.yml` config in this repository for eventual
-  self-dogfood with trusted maintainer comment commands only;
+  self-dogfood with trusted maintainer comment commands only, included in
+  dogfood readiness and release-check target validation;
 - synthetic self-dogfood replay check for proving that the committed config
   skips automatic PR-open jobs, admits the trusted maintainer command-only
   command matrix without dispatching workers, rehearses deliberate multi-lane

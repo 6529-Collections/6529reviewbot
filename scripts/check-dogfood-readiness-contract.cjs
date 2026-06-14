@@ -124,8 +124,18 @@ function checkStaticReport(findings) {
   if (report.ready !== true) {
     findings.push("default dogfood readiness report should be ready for public static inputs.");
   }
-  if (report.checks.repositoryConfigs.count !== 2) {
-    findings.push(`default readiness should check 2 repository configs, got ${report.checks.repositoryConfigs.count}.`);
+  if (report.checks.repositoryConfigs.count !== 3) {
+    findings.push(`default readiness should check 3 repository configs, got ${report.checks.repositoryConfigs.count}.`);
+  }
+  const defaultConfigFiles = report.checks.repositoryConfigs.configs.map((config) => config.file);
+  for (const expected of [
+    ".github/6529bot.yml",
+    "templates/dogfood-command-only-config.yml",
+    "templates/dogfood-repository-config.yml",
+  ]) {
+    if (!defaultConfigFiles.includes(expected)) {
+      findings.push(`default readiness should include ${expected}.`);
+    }
   }
   if (report.inputs.operatorWorkspace !== null) {
     findings.push("default readiness report must not include operator workspace input.");
@@ -315,6 +325,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourcePath = "src/dogfood-readiness.cjs";
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
+    ".github/6529bot.yml",
     "PUBLIC_REDACTION_PATTERNS",
     "arn:aws:[redacted]",
     "[redacted-aws-account-id]",
