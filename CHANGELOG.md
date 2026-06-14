@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Synced release readiness and roadmap evidence summaries with the full
+  runtime, dispatch, dashboard, admin auth, and alert evidence set enforced by
+  release notes.
 - Added no-network bare-remote fixture coverage for release tag remote
   availability checks.
 - Hardened release tag planning to check remote tag availability before a

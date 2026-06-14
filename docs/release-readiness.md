@@ -317,9 +317,11 @@ Ready for community review:
 - machine-readable v0 release gates with optional status/evidence rendering,
   including the dogfood promotion packet before first live dogfood traffic;
 - release notes template validation for required pre-v1 evidence, dogfood
-  promotion/go-live packets, production deployment plan evidence, dashboard
-  deployment plan evidence, alert delivery plan evidence, production cutover
-  status, deferrals, known gaps, compatibility, and validation fields;
+  promotion/go-live packets, production deployment plan evidence, worker
+  dispatch credential evidence, container publish-plan evidence, dashboard
+  deployment plan evidence, public dashboard disclosure evidence, private admin
+  auth evidence, alert delivery plan evidence, production cutover status,
+  deferrals, known gaps, compatibility, and validation fields;
 - release tag planning rejects completed release notes whose title version does
   not match the planned release tag;
 - release tag planning rejects locally or remotely existing release tags before

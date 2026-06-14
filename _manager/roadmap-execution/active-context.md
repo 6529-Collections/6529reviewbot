@@ -545,23 +545,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release tag remote collision guard PR: merged as PR #292, merge commit `09d9180`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-tag-remote-fixture-coverage`.
-- Current local changes: add no-network bare-remote fixture coverage so the
-  release tag planner's real `git ls-remote` remote tag lookup is exercised
-  against present and absent tags.
+- Release tag remote fixture coverage PR: merged as PR #293, merge commit `ac14268`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-evidence-wording-sync`.
+- Current local changes: sync release readiness and roadmap evidence summaries
+  with the full runtime, dispatch, dashboard, admin auth, and alert evidence
+  set enforced by release notes.
 - Current local validation:
-  - `npm run check:release-tag-plan` passed with 11 plan cases and
-    6 docs checked;
-  - `npm run check` passed with 178 CommonJS files;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and
+    6 docs checked;
   - `git diff --check` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #292,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #293,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    release tag bare-remote fixture exercised.
+    release-note evidence wording sync exercised.
 
 ## Key Decisions
 
