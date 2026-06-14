@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened the production deployment plan to reject image repository inputs
+  with URL schemes before rendering operator handoff commands.
 - Hardened the container publish plan to reject image repository inputs with
   URL schemes before rendering Docker commands.
 - Hardened the release tag plan to reject locally existing release tags before

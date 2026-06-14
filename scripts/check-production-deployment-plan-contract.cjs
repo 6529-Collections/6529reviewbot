@@ -7,6 +7,7 @@ const path = require("path");
 const {
   collectProductionDeploymentPlan,
   formatProductionDeploymentPlanMarkdown,
+  normalizeImageRef,
   normalizeWorkspace,
   normalizeOrigin,
 } = require("../src/production-deployment-plan.cjs");
@@ -37,6 +38,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
   checkReadyPlan(findings);
   checkMissingInputsPlan(findings);
   checkOriginValidation(findings);
+  checkImageValidation(findings);
   checkWorkspaceValidation(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
@@ -52,7 +54,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
   }
 
   return {
-    planCases: 4,
+    planCases: 5,
     docs: targetDocs.length,
   };
 }
@@ -125,6 +127,17 @@ function checkOriginValidation(findings) {
   }
 }
 
+function checkImageValidation(findings) {
+  try {
+    normalizeImageRef("https://registry.example.com/6529reviewbot");
+    findings.push("production deployment plan must reject image refs that include URL schemes.");
+  } catch (error) {
+    if (!String(error.message).includes("URL scheme")) {
+      findings.push("production deployment image URL scheme rejection should be explicit.");
+    }
+  }
+}
+
 function checkWorkspaceValidation(findings) {
   try {
     normalizeWorkspace("operator workspace");
@@ -172,6 +185,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/production-deployment-plan.cjs": [
       "collectProductionDeploymentPlan",
       "container:publish-plan",
+      "URL scheme",
       "This command does not create GitHub Apps",
     ],
     "bin/production-deployment-plan.cjs": [
@@ -204,6 +218,7 @@ function checkDocs(docTexts, findings) {
     "docs/production-deployment-plan.md": [
       "npm run production:deployment-plan",
       "--require-ready",
+      "without a URL scheme",
       "does not create GitHub Apps",
       "npm run check:production-deployment-plan",
     ],

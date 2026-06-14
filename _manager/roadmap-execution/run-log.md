@@ -4342,3 +4342,22 @@
   - `npm run release:check` passed, including container publish plan
     validation;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #248 as `c610a3e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/production-image-ref-scheme-guard` increment:
+  - harden the production deployment plan so URL-style operator image
+    repository inputs are rejected before operator handoff commands are
+    rendered.
+- Local validation for `codex/production-image-ref-scheme-guard` so far:
+  - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
+    docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #248,
+    and 5 docs checked;
+  - `npm run release:check` passed, including production deployment plan
+    validation with 5 plan cases;
+  - `npm run check:public-artifacts` passed with 116 files checked.
