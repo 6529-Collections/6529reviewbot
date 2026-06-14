@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated `security-intake` section to structured operator evidence
+  so GitHub private vulnerability reporting or an equivalent private intake
+  channel is tracked explicitly before broad community release claims.
 - Added a dedicated `model-pricing` section to structured operator evidence
   so provider price-source review, catalog coverage, stale/zero overrides,
   apply summaries, and admin price-status checks are tracked separately from

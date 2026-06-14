@@ -63,9 +63,10 @@ After stabilization:
 - `npm run check:operator-evidence` confirms the operator evidence contract
   stays synchronized with section readiness, required evidence, deferral
   semantics, public dashboard disclosure evidence, private admin auth
-  evidence, container publish-plan evidence, production deployment-plan
-  evidence, budget policy evidence, model-pricing evidence, worker dispatch
-  credential evidence, public-summary redaction, and docs
+  evidence, container publish-plan evidence, security-intake evidence,
+  production deployment-plan evidence, budget policy evidence, model-pricing
+  evidence, worker dispatch credential evidence, public-summary redaction, and
+  docs
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when

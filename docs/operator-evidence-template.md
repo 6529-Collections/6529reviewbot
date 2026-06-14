@@ -92,6 +92,17 @@ GitHub App credentials stored only in bot-owned secret store:
 6529.io admin HMAC secret stored only in server-side 6529 infrastructure:
 ```
 
+## Security Intake
+
+```text
+GitHub private vulnerability reporting enabled:
+Equivalent private intake channel, if used:
+SECURITY.md reporting guidance reviewed:
+Triage owner or rotation reviewed:
+Initial response expectation reviewed:
+Public release-note summary:
+```
+
 ## App Server Runtime
 
 ```text

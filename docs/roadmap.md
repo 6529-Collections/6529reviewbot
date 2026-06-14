@@ -355,7 +355,7 @@ Before broad community release:
 - cut the first stable release tag;
 - confirm SECURITY.md, support policy, and contribution process are accurate;
 - enable GitHub private vulnerability reporting or record an equivalent
-  private security intake channel in operator evidence;
+  private security intake channel in `security-intake` operator evidence;
 - verify OpenSSF Scorecard and dependency review are clean.
 
 ## Current Implementation Focus
@@ -628,8 +628,8 @@ Completed in `6529reviewbot`:
   evidence and deployment handoff commands stay together in the private
   operator flow.
 - operator evidence template guidance now includes container publish-plan,
-  worker dispatch credential, public dashboard disclosure, private admin
-  auth-check/wallet allowlist, and alert delivery review fields before
+  security intake, worker dispatch credential, public dashboard disclosure,
+  private admin auth-check/wallet allowlist, and alert delivery review fields before
   release evidence can be summarized publicly.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
