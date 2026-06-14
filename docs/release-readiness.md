@@ -502,13 +502,14 @@ npm run dogfood:readiness
 npm run dogfood:promotion
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
 Use [Dogfood Promotion Packet](dogfood-promotion.md) immediately before live
 command-only traffic. Use the silent npm form when copying promotion or
-readiness evidence from a command that includes private workspace paths. Use
+readiness evidence from a command that includes private workspace paths or
+reviewed model price files. Use
 [Dogfood Go-Live Packet](dogfood-go-live.md) as the final composed
 cross-check when release-candidate, promotion, cutover, and operator-workspace
 evidence must agree before traffic.

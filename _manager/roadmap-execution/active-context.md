@@ -479,22 +479,24 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dogfood readiness model-price coverage PR: merged as PR #259, merge commit `71e6349`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-promotion-model-prices`.
+- Dogfood promotion model-price coverage PR: merged as PR #260, merge commit `c8ac598`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dogfood-go-live-model-prices`.
 - Current local changes: forwarding optional model price coverage through the
-  dogfood promotion packet so a reviewed price file can participate in the
-  final pre-traffic central-inputs gate without exposing private paths.
+  dogfood go-live packet so the final traffic gate can pass reviewed pricing
+  evidence into the nested promotion check without exposing private paths.
 - Current local validation:
-  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet
     cases, and 6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 176 CommonJS files;
-  - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #259,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #260,
     and 5 docs checked;
+  - `npm test` passed;
   - `npm run release:check` passed with 176 CommonJS files checked and the
-    model-price dogfood promotion path exercised;
+    model-price dogfood go-live path exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

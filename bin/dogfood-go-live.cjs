@@ -26,6 +26,10 @@ function main(argv = process.argv.slice(2), options = {}) {
     includePreflight: !args.skipPreflight,
     mode: args.mode,
     modelCatalogFile: args.modelCatalogFile,
+    modelPriceFile: args.modelPriceFile,
+    allowStaleModelPriceSource: args.allowStaleModelPriceSource,
+    allowZeroModelPrice: args.allowZeroModelPrice,
+    maxModelPriceSourceAgeDays: args.maxModelPriceSourceAgeDays,
     operatorEvidenceFile: args.operatorEvidenceFile,
     operatorWorkspaceDir: args.operatorWorkspaceDir,
     preflightProfile: args.preflightProfile,
@@ -62,6 +66,10 @@ function parseArgs(argv = []) {
     json: false,
     mode: "command-only",
     modelCatalogFile: "",
+    modelPriceFile: "",
+    allowStaleModelPriceSource: false,
+    allowZeroModelPrice: false,
+    maxModelPriceSourceAgeDays: undefined,
     operatorEvidenceFile: "",
     operatorWorkspaceDir: "",
     out: "",
@@ -114,6 +122,17 @@ function parseArgs(argv = []) {
       result.budgetPolicyFile = requireValue(args, (index += 1), arg);
     } else if (arg === "--model-catalog-file") {
       result.modelCatalogFile = requireValue(args, (index += 1), arg);
+    } else if (arg === "--model-price-file") {
+      result.modelPriceFile = requireValue(args, (index += 1), arg);
+    } else if (arg === "--allow-stale-model-price-source") {
+      result.allowStaleModelPriceSource = true;
+    } else if (arg === "--allow-zero-model-price") {
+      result.allowZeroModelPrice = true;
+    } else if (arg === "--max-model-price-source-age-days") {
+      result.maxModelPriceSourceAgeDays = parseNonNegativeNumber(
+        requireValue(args, (index += 1), arg),
+        arg
+      );
     } else if (arg === "--status-file" || arg === "--gate-status-file") {
       result.gateStatusFile = requireValue(args, (index += 1), arg);
     } else if (arg === "--operator-evidence-file" || arg === "--evidence-file") {
@@ -154,6 +173,14 @@ function requireValue(args, index, name) {
   return value;
 }
 
+function parseNonNegativeNumber(value, name) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) {
+    throw new Error(`${name} must be a non-negative number.`);
+  }
+  return number;
+}
+
 function enumValue(value, allowed, name) {
   if (!allowed.includes(value)) {
     throw new Error(`${name} must be one of: ${allowed.join(", ")}.`);
@@ -166,8 +193,8 @@ function helpText() {
 
 Usage:
   npm run dogfood:go-live
-  npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight
-  npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+  npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight
+  npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 
 Options:
   --operator-workspace <dir>         Read standard private operator workspace files.
@@ -182,6 +209,11 @@ Options:
   --mode <mode>                      command-only, limited-initial, or auto.
   --budget-policy-file <file>        Dogfood budget policy file.
   --model-catalog-file <file>        Model catalog file.
+  --model-price-file <file>          Reviewed model price file for promotion coverage.
+  --max-model-price-source-age-days <days>
+                                     Override model-price source freshness window.
+  --allow-stale-model-price-source   Accept stale model-price source evidence.
+  --allow-zero-model-price           Accept documented zero-rate model prices.
   --profile server|worker            Preflight profile. Default: server.
   --strict-preflight                 Treat preflight warnings as not ready.
   --skip-preflight                   Omit promotion preflight from this packet.

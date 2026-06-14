@@ -193,7 +193,7 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 - Run `npm run check:dogfood-readiness` after changing the readiness command,
   report format, static defaults, workspace handling, or docs; the dogfood
   readiness checker keeps that input gate synchronized.
-- Run `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready`
+- Run `npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`
   before enabling command-only live traffic when release-candidate, promotion,
   cutover, and operator-workspace evidence should agree in one public-safe
   summary.
