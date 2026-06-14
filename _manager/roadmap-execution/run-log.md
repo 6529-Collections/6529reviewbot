@@ -5983,3 +5983,40 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     repository-rulesets operator evidence section exercised.
+- Merged `6529reviewbot` PR #320 as `f697060`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/github-app-evidence-hardening` increment:
+  - harden the existing `github-app` operator evidence guidance so production
+    bot origin review, manifest/manual registration path, private manifest
+    conversion summary, App id/slug custody, webhook ping, selected-repository
+    allowlist/count, and credential rotation ownership are recorded before
+    public release notes claim production GitHub App readiness;
+  - update the GitHub App registration packet, external evidence boundary,
+    release docs, release operations map, roadmap, production example
+    evidence, changelog, and durable manager memory;
+  - keep the operator-evidence, GitHub App manifest, external-boundary, and
+    release-candidate contracts checking this production App evidence surface.
+- Local validation for `codex/github-app-evidence-hardening` so far:
+  - `gh run watch 27499565237 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge CI;
+  - `gh run watch 27499565253 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge OpenSSF Scorecard;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
+    conversion cases, and 7 docs checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:release-candidate` initially caught lost AWS/GitHub-token
+    redaction fixture coverage after replacing the generic deployment fixture;
+    restored those unsafe inputs under the new `github-app` fixture and reran
+    successfully with 7 redaction cases, 3 path cases, and 5 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #320, and
+    5 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    GitHub App production-registration evidence hardening exercised.

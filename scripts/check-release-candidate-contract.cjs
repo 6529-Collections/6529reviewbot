@@ -219,11 +219,16 @@ function checkMarkdownOutput(findings) {
       operatorEvidence: {
         sections: [
           {
-            id: "deployment",
+            id: "github-app",
             status: "pending",
-            title: "AWS account 123456789012 reviewed",
-            notes: "token ghp_abcdefghijklmnopqrstuvwxyz1234567890",
-            evidence: ["arn:aws:rds:us-east-1:123456789012:cluster:reviewbot"],
+            title: "GitHub App",
+            notes:
+              "production bot origin, private conversion summary, App id/slug custody, webhook ping, allowlist, and rotation owner reviewed with token ghp_abcdefghijklmnopqrstuvwxyz1234567890",
+            evidence: [
+              "production-host manifest registration evidence captured privately",
+              "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+              "AWS account 123456789012 reviewed only in private operator evidence",
+            ],
           },
           {
             id: "container-publish-plan",
@@ -332,6 +337,8 @@ function checkMarkdownOutput(findings) {
     "arn:aws:[redacted]",
     "[redacted-aws-account-id]",
     "[redacted-github-token]",
+    "github-app",
+    "production-host manifest registration evidence captured privately",
     "container-publish-plan",
     "reviewed container publish plan evidence",
     "security-intake",

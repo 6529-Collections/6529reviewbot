@@ -466,6 +466,11 @@ function checkDocs(docTexts, findings) {
       "npm run check:github-app-manifest",
       "GitHub App manifest contract check",
       "documentation, example, local, or reserved hosts",
+      "Production bot origin reviewed",
+      "Manifest conversion summary captured privately",
+      "GitHub App id and slug captured privately",
+      "Installation allowlist or selected-repository count reviewed",
+      "Credential rotation owner and cadence reviewed",
       "Actions: write",
     ],
     "docs/github-app.md": [

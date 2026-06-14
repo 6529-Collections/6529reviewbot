@@ -65,11 +65,15 @@ After stabilization:
   stays synchronized with section readiness, required evidence, deferral
   semantics, public dashboard disclosure evidence, private admin auth
   evidence, container publish-plan evidence, security-intake evidence,
-  repository-rulesets evidence, production deployment-plan evidence, budget
-  policy evidence, model-pricing evidence, worker dispatch credential evidence,
-  public-summary redaction, and docs
+  repository-rulesets evidence, GitHub App production registration evidence,
+  production deployment-plan evidence, budget policy evidence, model-pricing
+  evidence, worker dispatch credential evidence, public-summary redaction, and
+  docs
 - [GitHub App registration packet](github-app-registration.md) completed or
-  explicitly deferred in the release notes
+  explicitly deferred in the release notes, with production bot origin,
+  registration path, private manifest conversion summary, App id/slug custody,
+  webhook ping, selected-repository allowlist/count, and rotation ownership
+  recorded in operator evidence before claiming production App readiness
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when
   starting a new release-candidate evidence pass
 - `npm run v0:gates` rendered, or rendered with

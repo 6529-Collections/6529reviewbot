@@ -29,8 +29,11 @@ production evidence.
 The following facts live outside this public repository and must be recorded in
 private operator evidence before they can satisfy release or dogfood gates:
 
-- the production GitHub App exists with reviewed permissions, webhook secret,
-  private key custody, installation ids, and callback/setup URLs;
+- the production GitHub App exists from a reviewed production-host manifest or
+  explicitly reviewed manual equivalent, with private conversion summary,
+  App id/slug custody, reviewed permissions, webhook secret, private key
+  custody, webhook ping evidence, selected-repository allowlist, rotation
+  ownership, installation ids, and callback/setup URLs;
 - central server and worker deployments run the reviewed commit or tag;
 - the container image is built from the reviewed source, published to an
   operator-owned registry, scanned, and recorded by immutable digest;

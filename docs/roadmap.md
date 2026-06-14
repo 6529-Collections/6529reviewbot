@@ -368,6 +368,9 @@ implemented in this repository. The remaining near-term work is release
 execution and dogfood evidence:
 
 1. Create the production GitHub App from the reviewed manifest packet.
+   Record the production bot origin, registration path, private conversion
+   summary, App id/slug custody, webhook ping, selected-repository allowlist,
+   and rotation ownership in operator evidence.
 2. Deploy the central App server and worker path in 6529-owned infrastructure.
 3. Apply and verify operator-owned ledger schema, budget policies, provider
    price rows, alert delivery, and runtime secrets outside this public repo.
@@ -629,9 +632,10 @@ Completed in `6529reviewbot`:
   evidence and deployment handoff commands stay together in the private
   operator flow.
 - operator evidence template guidance now includes container publish-plan,
-  security intake, repository rulesets, worker dispatch credential, public
-  dashboard disclosure, private admin auth-check/wallet allowlist, and alert
-  delivery review fields before release evidence can be summarized publicly.
+  GitHub App production registration, security intake, repository rulesets,
+  worker dispatch credential, public dashboard disclosure, private admin
+  auth-check/wallet allowlist, and alert delivery review fields before release
+  evidence can be summarized publicly.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -641,6 +645,10 @@ Completed in `6529reviewbot`:
   callback redirects.
 - GitHub App registration packet for operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback.
+- GitHub App production evidence fields for production origin review,
+  manifest/manual registration path, private conversion summary, App id/slug
+  custody, webhook ping, selected-repository allowlist/count, and rotation
+  ownership.
 - installed central worker and dormant-by-default alert workflows with
   action-ref validation.
 - repeatable release check script and manual security review checklist.

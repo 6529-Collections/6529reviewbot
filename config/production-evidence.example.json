@@ -18,7 +18,7 @@
   "sections": {
     "github-app": {
       "status": "pending",
-      "notes": "Create the production 6529bot GitHub App before broad release."
+      "notes": "Create or verify the production 6529bot GitHub App from the reviewed production-host manifest, capture the private conversion summary, verify App id/slug custody, webhook ping, selected-repository allowlist, and credential rotation ownership before broad release."
     },
     "aws-ledger": {
       "status": "pending",

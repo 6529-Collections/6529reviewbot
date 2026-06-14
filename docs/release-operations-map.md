@@ -149,8 +149,10 @@ delivery handoff aligned across reviewed webhook/SNS/SES mode, private channel
 label, dry-run alert evaluation, admin status verification, cutover evidence,
 and release-note commands.
 `npm run check:github-app-manifest` keeps the target GitHub App
-permissions/events, no-Actions-write boundary, private manifest conversion,
-redacted summaries, and docs aligned.
+permissions/events, no-Actions-write boundary, production-host manifest
+review, private conversion summary, App id/slug custody, webhook ping,
+selected-repository allowlist/count, rotation ownership, redacted summaries,
+and docs aligned.
 `npm run check:github-app-auth` keeps GitHub App auth env parsing, JWT shape,
 installation-token caching, CLI profiles, GitHub Actions token output masking,
 source invariants, and docs aligned.
@@ -196,12 +198,13 @@ cleanup, private path redaction, release-candidate, dogfood readiness,
 production deployment, dashboard deployment, alert delivery, promotion,
 go-live summaries, next commands, and docs aligned.
 `npm run check:operator-evidence` keeps operator evidence sections,
-readiness semantics, runtime dispatch evidence, container publish evidence,
-security-intake evidence, repository-rulesets evidence, production
-deployment-plan evidence, budget policy evidence, model-pricing evidence,
-alert delivery-plan evidence, dashboard deployment-plan evidence, public
-dashboard disclosure evidence, private admin auth evidence, release tag-plan
-evidence, public-summary redaction, source invariants, and docs aligned.
+readiness semantics, GitHub App production registration evidence, runtime
+dispatch evidence, container publish evidence, security-intake evidence,
+repository-rulesets evidence, production deployment-plan evidence, budget
+policy evidence, model-pricing evidence, alert delivery-plan evidence,
+dashboard deployment-plan evidence, public dashboard disclosure evidence,
+private admin auth evidence, release tag-plan evidence, public-summary
+redaction, source invariants, and docs aligned.
 `npm run check:production-cutover` keeps production cutover checklist/status
 readiness, production deployment plan evidence, deferral semantics, Markdown
 redaction, source invariants, and docs aligned.

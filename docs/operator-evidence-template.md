@@ -53,13 +53,21 @@ Production cutover ready check:
 
 ```text
 App name:
+Production bot origin reviewed:
 Manifest rendered with npm run github-app:manifest:
 GitHub App registration packet completed:
+Registration path: manifest / manual
+Manifest conversion summary captured privately:
+GitHub App id and slug captured privately:
 Permissions match docs/github-app.md:
 Webhook URL set:
 Webhook secret stored in bot secret store:
 Private key stored in bot secret store:
+Webhook ping delivery reviewed:
 Installed repositories:
+Installation allowlist or selected-repository count reviewed:
+Credential rotation owner and cadence reviewed:
+Public release-note summary:
 ```
 
 ## AWS Ledger

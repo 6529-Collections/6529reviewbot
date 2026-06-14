@@ -82,6 +82,10 @@ Ready for community review:
   codes or generated credentials;
 - GitHub App registration packet covering operator roles, credential custody,
   acceptance checks, permission changes, rotation, and rollback;
+- GitHub App operator evidence fields for the production bot origin,
+  manifest/manual registration path, private manifest conversion summary,
+  App id/slug custody, webhook ping, selected-repository allowlist/count, and
+  credential rotation ownership before production App readiness is claimed;
 - dry-run/apply tooling for operator-maintained model price rows;
 - model price rows require provider source URLs and source-checked timestamps;
 - model price apply and production preflight can reject stale or future-dated
@@ -772,10 +776,11 @@ verifies durable manager memory keeps core sections, latest merged PR state,
 validation status, release-check wiring, smoke tests, and docs aligned.
 `npm run check:operator-evidence` is included in `npm run release:check` and
 verifies operator evidence sections, readiness semantics, production deployment
-plan evidence, security-intake evidence, repository-rulesets evidence, budget
-policy evidence, model-pricing evidence, alert delivery-plan evidence,
-dashboard deployment-plan evidence, release tag-plan evidence, public-summary
-redaction, source invariants, and docs stay aligned.
+plan evidence, GitHub App production registration evidence, security-intake
+evidence, repository-rulesets evidence, budget policy evidence, model-pricing
+evidence, alert delivery-plan evidence, dashboard deployment-plan evidence,
+release tag-plan evidence, public-summary redaction, source invariants, and
+docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, production deployment
 plan evidence, container publish-plan evidence, worker dispatch credential
