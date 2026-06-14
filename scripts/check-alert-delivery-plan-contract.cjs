@@ -263,6 +263,7 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/alert-delivery-plan.md": [
       "npm run alerts:delivery-plan",
+      "npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0",
       "--notify-mode",
       "documentation, example, local, or reserved origin hosts",
       "does not send alerts",

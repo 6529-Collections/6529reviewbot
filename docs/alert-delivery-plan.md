@@ -27,7 +27,7 @@ npm run alerts:delivery-plan
 Use explicit inputs for a reviewed production alert handoff:
 
 ```bash
-npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0
 ```
 
 Use `--require-ready` for the final alert delivery handoff gate. This exits

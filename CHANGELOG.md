@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned production deployment, dashboard deployment, and alert delivery
+  runbook input examples with production-origin placeholders.
 - Aligned GitHub App manifest conversion help with the production bot origin
   placeholder instead of documentation/example callback hosts.
 - Aligned admin snapshot operator docs with `<production-bot-origin>` instead
