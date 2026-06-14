@@ -175,9 +175,15 @@
           "runbook": "docs/6529-io-admin-integration.md"
         },
         {
+          "id": "alert-delivery-plan-reviewed",
+          "title": "Alert delivery plan is rendered with explicit production bot origin, private workspace, webhook/SNS/SES notify mode, and operator channel label before scheduled alert delivery.",
+          "evidence": "npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready",
+          "runbook": "docs/alert-delivery-plan.md"
+        },
+        {
           "id": "alerts-deliver",
-          "title": "Scheduled spend, failed-job, and stale-claim alerts deliver to an operator-owned private channel.",
-          "evidence": "alert dry-run and delivery summary without webhook URLs or SNS ARNs",
+          "title": "Scheduled spend, failed-job, and stale-claim alerts deliver to an operator-owned private channel after alert delivery plan review.",
+          "evidence": "alert dry-run and delivery summary without webhook URLs, SNS ARNs, SES addresses, or raw payloads",
           "runbook": "docs/alerting.md"
         }
       ]

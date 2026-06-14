@@ -552,11 +552,13 @@ Completed in `6529reviewbot`:
 - alert delivery plan command for dry-run production alert routing handoff
   across reviewed webhook/SNS/SES mode, private channel label, dry-run alert
   evaluation, admin status verification, cutover evidence, and release notes.
-- production cutover now includes an explicit dashboard deployment-plan
-  evidence item before public/private dashboard route exposure.
+- production cutover now includes explicit dashboard deployment-plan and alert
+  delivery-plan evidence items before public/private dashboard route exposure
+  or scheduled alert delivery.
 - generated operator workspace guidance now includes the production deployment
-  plan and dashboard deployment plan commands so release evidence and
-  deployment handoff commands stay together in the private operator flow.
+  plan, dashboard deployment plan, and alert delivery plan commands so release
+  evidence and deployment handoff commands stay together in the private
+  operator flow.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -671,7 +673,7 @@ In progress in `6529reviewbot`:
 
 - production deployment execution support, dogfood operations, release
   evidence collection, dashboard production configuration, and production
-  alert routing evidence.
+  alert routing execution.
 
 Completed outside this repository:
 

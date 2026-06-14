@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added alert delivery-plan evidence to production cutover before scheduled
+  alert delivery can be marked ready.
 - Added alert delivery plan evidence to release notes draft, template, and
   publication checks.
 - Added alert delivery plan guidance to generated operator workspaces and

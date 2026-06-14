@@ -62,6 +62,8 @@ function checkChecklistConfig(findings) {
   }
   const itemIds = ioPhase.items.map((item) => item.id);
   const dashboardPlanIndex = itemIds.indexOf("dashboard-deployment-plan-reviewed");
+  const alertPlanIndex = itemIds.indexOf("alert-delivery-plan-reviewed");
+  const alertsDeliverIndex = itemIds.indexOf("alerts-deliver");
   const publicDashboardIndex = itemIds.indexOf("public-dashboard-wired");
   const adminBridgeIndex = itemIds.indexOf("admin-bridge-wired");
   if (dashboardPlanIndex === -1) {
@@ -77,6 +79,14 @@ function checkChecklistConfig(findings) {
     findings.push("6529.io cutover phase must include admin-bridge-wired.");
   } else if (dashboardPlanIndex > adminBridgeIndex) {
     findings.push("dashboard-deployment-plan-reviewed must come before admin-bridge-wired.");
+  }
+  if (alertPlanIndex === -1) {
+    findings.push("6529.io cutover phase must include alert-delivery-plan-reviewed.");
+  }
+  if (alertsDeliverIndex === -1) {
+    findings.push("6529.io cutover phase must include alerts-deliver.");
+  } else if (alertPlanIndex > alertsDeliverIndex) {
+    findings.push("alert-delivery-plan-reviewed must come before alerts-deliver.");
   }
   const dashboardPlan = ioPhase.items[dashboardPlanIndex];
   for (const snippet of [
@@ -103,6 +113,34 @@ function checkChecklistConfig(findings) {
   }
   if (dashboardPlan.runbook !== "docs/dashboard-deployment-plan.md") {
     findings.push("dashboard-deployment-plan-reviewed runbook must be docs/dashboard-deployment-plan.md.");
+  }
+  if (alertPlanIndex !== -1) {
+    const alertPlan = ioPhase.items[alertPlanIndex];
+    for (const snippet of [
+      "explicit production bot origin",
+      "private workspace",
+      "webhook/SNS/SES notify mode",
+      "operator channel label",
+    ]) {
+      if (!alertPlan.title.includes(snippet)) {
+        findings.push(`alert-delivery-plan-reviewed title must include '${snippet}'.`);
+      }
+    }
+    for (const snippet of [
+      "npm run alerts:delivery-plan",
+      "--bot-origin <production-bot-origin>",
+      "--operator-workspace <private-workspace-dir>",
+      "--notify-mode <webhook|sns|ses>",
+      "--alert-channel <operator-alert-channel>",
+      "--require-ready",
+    ]) {
+      if (!alertPlan.evidence.includes(snippet)) {
+        findings.push(`alert-delivery-plan-reviewed evidence must include '${snippet}'.`);
+      }
+    }
+    if (alertPlan.runbook !== "docs/alert-delivery-plan.md") {
+      findings.push("alert-delivery-plan-reviewed runbook must be docs/alert-delivery-plan.md.");
+    }
   }
 }
 

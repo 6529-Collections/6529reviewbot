@@ -94,9 +94,13 @@
       "status": "pending",
       "notes": "Run the private admin snapshot before exposing admin dashboards."
     },
+    "alert-delivery-plan-reviewed": {
+      "status": "pending",
+      "notes": "Render and review the alert delivery plan before enabling scheduled operator alert delivery."
+    },
     "alerts-deliver": {
       "status": "pending",
-      "notes": "Verify alert dry-runs and one operator-owned delivery channel."
+      "notes": "Verify alert dry-runs and one operator-owned delivery channel after alert delivery plan review."
     },
     "repo-config-validated": {
       "status": "pending",

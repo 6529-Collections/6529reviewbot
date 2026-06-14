@@ -4103,3 +4103,28 @@
   - `npm test` passed;
   - `npm run release:check` passed, including release notes draft and
     publication contract validation with alert delivery plan evidence.
+- Merged `6529reviewbot` PR #237 as `2701f08`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/alert-delivery-cutover-gate` increment:
+  - add `alert-delivery-plan-reviewed` to the 6529.io and alerts production
+    cutover phase before `alerts-deliver`;
+  - update the public status example, production cutover docs, alert delivery
+    plan docs/generated evidence, production cutover and alert delivery plan
+    contracts, smoke counts, release-readiness, roadmap, changelog, and durable
+    manager memory so scheduled alert delivery cannot be marked ready without
+    reviewed alert delivery-plan evidence.
+- Local validation for `codex/alert-delivery-cutover-gate` so far:
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 7 docs
+    checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #237,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including production cutover validation
+    with 32 checklist items and alert delivery-plan evidence ordering.

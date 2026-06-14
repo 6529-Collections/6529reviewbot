@@ -83,6 +83,7 @@ function checkReadyPlan(findings) {
     "REVIEWBOT_ALERTS_SNS_TOPIC_ARN",
     "npm run alerts:operator -- -- --dry-run --force",
     "/api/admin/alerts/status",
+    "alert-delivery-plan-reviewed",
     "alerts-deliver",
     "npm run release:tag-plan",
   ]) {
