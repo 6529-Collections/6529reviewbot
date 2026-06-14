@@ -630,11 +630,15 @@ merged PRs.
 - Dogfood ready-mode operator workspace PR: merged as PR #329, merge commit `48cc9c6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `48cc9c6`.
-- Current branch: `codex/release-operations-dogfood-command-contract`.
-- Current local changes: make `npm run check:release-operations` parse the
-  final dogfood readiness, promotion, and go-live ready-mode commands through
-  their real CLIs, update release-operations docs/README/release readiness,
-  roadmap, changelog, and carry PR #329 post-merge durable memory forward.
+- Release-operations dogfood command contract PR: merged as PR #330, merge commit `b276ebf`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `b276ebf`.
+- Current branch: `codex/release-operations-production-command-contract`.
+- Current local changes: make `npm run check:release-operations` parse
+  production handoff commands through their real CLIs, add the missing
+  `--worker-dispatch-installation-id` to the production deployment map
+  command, update release-operations docs/README/release readiness, roadmap,
+  changelog, and carry PR #330 post-merge durable memory forward.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -801,6 +805,22 @@ merged PRs.
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     parsed dogfood ready-mode command coverage exercised.
+  - `gh run watch 27503236030 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #330 post-merge CI;
+  - `gh run watch 27503236033 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #330 post-merge OpenSSF Scorecard;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools
+    after adding parsed production handoff command coverage.
+  - `npm run check:production-deployment-plan` passed with 8 plan cases and
+    6 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #330,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    parsed production handoff command coverage exercised.
 
 ## Key Decisions
 
@@ -1174,6 +1194,10 @@ merged PRs.
 - Public release command inventories should parse final ready-mode dogfood
   handoff commands through the real CLIs so operator-facing examples cannot
   drift away from required private inputs.
+- Production handoff command inventories should parse container publish,
+  production deployment, dashboard deployment, and alert delivery commands
+  through the real CLIs so private worker-dispatch, origin, workspace,
+  registry, and notification inputs cannot drift from the final runbooks.
 - Public MIT/community governance files should be machine-checked, not only
   manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
   template, and license entry points stay present for community release.

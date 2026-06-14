@@ -650,11 +650,11 @@
         {
           "id": "production-deployment-plan",
           "script": "production:deployment-plan",
-          "args": "-- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready",
+          "args": "-- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready",
           "purpose": "Build the dry-run production deployment handoff plan across GitHub App registration, container publish, operator workspace, preflight, admin snapshot, cutover, and dogfood gates.",
           "doc": "docs/production-deployment-plan.md",
-          "privateInputs": "Reads operator-supplied origins, registry names, and private workspace paths from command-line inputs.",
-          "publicOutput": "Review before public sharing because command lines can include private deployment origins, registry names, and workspace paths."
+          "privateInputs": "Reads operator-supplied origins, registry names, private workspace paths, and worker-dispatch installation ids from command-line inputs.",
+          "publicOutput": "Review before public sharing because command lines can include private deployment origins, registry names, workspace paths, and worker-dispatch installation ids."
         },
         {
           "id": "dashboard-deployment-plan",

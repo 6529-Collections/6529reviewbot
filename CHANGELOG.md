@@ -12,6 +12,9 @@ stabilized.
   promotion, and go-live ready-mode commands must parse through their real CLIs
   with private workspace, reviewed model price, strict preflight, and
   ready-mode flags.
+- Hardened release operations map validation so production handoff commands
+  parse through their real CLIs, including the worker-dispatch installation id
+  required by the production deployment plan.
 - Required a private operator workspace and reviewed model price coverage for
   final dogfood promotion and go-live ready mode before live dogfood traffic.
 - Added operator handoff guidance for the dogfood provider-console readiness

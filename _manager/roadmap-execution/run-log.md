@@ -6327,3 +6327,29 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     parsed dogfood ready-mode command coverage exercised.
+- Merged `6529reviewbot` PR #330 as `b276ebf`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-operations-production-command-contract` increment:
+  - make `npm run check:release-operations` parse container publish,
+    production deployment, dashboard deployment, and alert delivery map
+    commands through their real CLIs;
+  - add `--worker-dispatch-installation-id <central-repo-installation-id>` to
+    the production deployment map command;
+  - update release-operations docs, README, release readiness, roadmap,
+    changelog, the production deployment contract, and durable manager memory.
+- Local validation for `codex/release-operations-production-command-contract`:
+  - `gh run watch 27503236030 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #330 post-merge CI;
+  - `gh run watch 27503236033 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #330 post-merge OpenSSF Scorecard;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools.
+  - `npm run check:production-deployment-plan` passed with 8 plan cases and
+    6 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #330,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    parsed production handoff command coverage exercised.
