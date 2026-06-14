@@ -438,6 +438,9 @@ Completed in `6529reviewbot`:
 - run-control claim status updates after dispatch attempts and worker
   completion;
 - public and admin usage API contracts;
+- usage aggregate APIs include both total and average cost fields so 6529.io
+  can show total cost per PR and average cost per review run without computing
+  those values in the browser;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - public-safe 6529.io dashboard env-name template validated against the
   OpenAPI usage/admin API contract;
@@ -540,13 +543,12 @@ Completed in `6529reviewbot`:
   dogfood traffic, with strict preflight required for the final ready gate.
 - dogfood target packet command for validating the target-repo config PR before
   a command-only or limited-initial rollout.
-- command-only `.github/6529bot.yml` config in this repository for eventual
-  self-dogfood once the production App is installed, with release checks
-  validating its dogfood target posture.
-- synthetic self-dogfood replay check proving command-only PR-open skip and
-  trusted maintainer command-matrix admission without worker dispatch,
-  deliberate multi-lane fanout, max-fanout rejection, and untrusted public
-  command denial before spend.
+- limited-initial `.github/6529bot.yml` config in this repository for
+  self-dogfood, with release checks auto-detecting its dogfood target posture.
+- synthetic self-dogfood replay check proving trusted PR-open admission for
+  general and security review fanout, trusted maintainer command-matrix
+  admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
+  public command denial before spend.
 - comment-command contract checks that keep trigger docs synchronized with the
   parser and review-kind constants.
 - review-workflow kind checks that keep review-kind constants, worker bins,
@@ -836,12 +838,23 @@ Completed in `6529reviewbot`:
 - support runbooks contract for public support, maintainer triage, private
   escalation, incident containment, recovery, and sanitized public follow-up.
 - operator evidence template for public-safe deployment proof.
+- production App server deployed at `reviewbot.6529.io` in conservative no-op
+  worker mode, with repository config loading, PR author allowlist admission,
+  and real GitHub App webhook delivery returning `200` during the first
+  dogfood watch window.
+- target repository configs merged on `6529-safe-app`, `6529Stream`,
+  `6529seize-frontend`, `6529seize-backend`, and `6529reviewbot` with the
+  conservative `anthropic:claude-opus-4-8` single-lane dogfood posture.
 
 In progress in `6529reviewbot`:
 
-- production deployment execution support, dogfood operations, release
-  evidence collection, dashboard production configuration, and production
-  alert routing execution.
+- GitHub App installation permission acceptance for `actions: write`; until
+  installation tokens show that permission and a fake-ref workflow-dispatch
+  probe no longer returns `403 Resource not accessible by integration`, keep
+  production on the no-op worker adapter.
+- production dogfood operations, no-op delivery observation, release evidence
+  collection, dashboard production configuration, usage-ledger activation, and
+  production alert routing execution.
 
 Completed outside this repository:
 
@@ -852,9 +865,19 @@ Completed outside this repository:
   [6529-Collections/6529seize-frontend#2632](https://github.com/6529-Collections/6529seize-frontend/pull/2632)
   merged into frontend `main` after being rebased from the public dashboard
   branch.
+- Dogfood repository config PRs merged for
+  [6529-safe-app#150](https://github.com/6529-Collections/6529-safe-app/pull/150),
+  [6529Stream#358](https://github.com/6529-Collections/6529Stream/pull/358),
+  [6529seize-frontend#2646](https://github.com/6529-Collections/6529seize-frontend/pull/2646),
+  and
+  [6529seize-backend#1631](https://github.com/6529-Collections/6529seize-backend/pull/1631).
 
 Next implementation focus:
 
-- dogfood on a target repo with conservative limits;
-- production GitHub App deployment, reviewed container/runtime evidence,
-  production alert routing, and 6529.io production environment wiring.
+- accept and verify the GitHub App `actions: write` installation permission;
+- switch production from `noop` to the central `github_actions` worker only
+  after the dispatch probe proves installation-token dispatch works;
+- observe one real allowlisted-author PR delivery end to end before widening
+  traffic, with no synthetic PRs required;
+- enable production usage ledger writes, reviewed model-price rows, alert
+  routing, and 6529.io production environment wiring.
