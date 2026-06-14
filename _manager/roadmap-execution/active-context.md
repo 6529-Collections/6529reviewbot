@@ -473,25 +473,23 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator handoff ready release check PR: merged as PR #256, merge commit `649bcd3`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-price-catalog-coverage`.
-- Current local changes: adding model price catalog coverage checks so
-  operator-owned price files must cover configured default lanes before local
-  estimates are trusted.
+- Model price catalog coverage PR: merged as PR #257, merge commit `3fb5fbd`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-workspace-model-price-coverage`.
+- Current local changes: adding the model price catalog coverage audit to
+  generated operator workspace guidance and pinning it in the operator
+  workspace contract.
 - Current local validation:
-  - `npm run check:model-pricing-runbook` passed with 5 runbook cases and 8
-    docs checked;
-  - `npm run check:model-price-coverage` passed with 6 coverage cases and 8
-    docs checked;
-  - `npm run check:release-operations` passed with 7 phases and 110 tools;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check` passed with 176 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #256,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #257,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run release:check` passed with 176 CommonJS files checked and the
-    model price coverage contract exercised;
+  - `npm run release:check` passed with 176 CommonJS files checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

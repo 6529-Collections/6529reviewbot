@@ -183,6 +183,8 @@ function checkWorkspaceLifecycle(findings) {
     "npm run production:deployment-plan",
     "npm run dashboard:deployment-plan",
     "npm run alerts:delivery-plan",
+    "npm run model-prices",
+    "--require-catalog-coverage",
     "--frontend-origin <6529-io-origin>",
     "--auth-check-url <6529-auth-check-url>",
     "--notify-mode <webhook|sns|ses>",
@@ -258,6 +260,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "production:deployment-plan",
     "dashboard:deployment-plan",
     "alerts:delivery-plan",
+    "model-prices",
+    "--require-catalog-coverage",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -284,6 +288,7 @@ function checkDocs(docTexts, findings) {
       "npm run production:deployment-plan",
       "npm run dashboard:deployment-plan",
       "npm run alerts:delivery-plan",
+      "npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage",
       "operator workspace contract check",
       "[operator-workspace]",
     ],
