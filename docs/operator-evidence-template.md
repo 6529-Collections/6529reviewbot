@@ -152,6 +152,27 @@ Browser has no bot admin secret/provider key/AWS credential access:
 Admin snapshot command result:
 ```
 
+## 6529.io Public Dashboard Disclosure
+
+```text
+Reviewed public repo/org disclosure allowlists:
+Public summaries limited to reviewed allowlists:
+Repository-name exposure checked:
+Fallback for non-allowlisted repositories:
+Public release-note summary:
+```
+
+## 6529.io Private Admin Auth
+
+```text
+Auth-check URL reviewed:
+Wallet allowlist evidence reviewed:
+Server-side HMAC bridge verified:
+Admin role/TTL expectations reviewed:
+Private admin route blocked without 6529.io auth:
+Public release-note summary:
+```
+
 ## Dogfood Evidence
 
 ```text

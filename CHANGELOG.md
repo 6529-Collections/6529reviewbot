@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added first-class operator evidence sections for public dashboard disclosure
+  allowlists and private admin auth-check/wallet allowlist evidence.
 - Required release notes drafts and publication checks to include public
   dashboard disclosure allowlist evidence and private admin auth-check/wallet
   allowlist evidence before pre-v1 notes can be published.

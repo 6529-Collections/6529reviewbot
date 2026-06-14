@@ -529,27 +529,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin dashboard auth release evidence PR: merged as PR #284, merge commit `40b1ffc`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-dashboard-auth-evidence`.
-- Current local changes: require release notes drafts, templates, and
-  publication checks to include public dashboard disclosure allowlist evidence
-  and private admin auth-check/wallet allowlist evidence before pre-v1 release
-  notes can be published.
+- Release notes dashboard/admin evidence PR: merged as PR #285, merge commit `4b3f48c`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-evidence-dashboard-auth-sections`.
+- Current local changes: add first-class operator evidence sections for public
+  dashboard disclosure allowlists and private admin auth-check/wallet allowlist
+  evidence while keeping the existing 6529.io surfaces deployment bucket.
 - Current local validation:
-  - `npm run check:release-notes` passed;
-  - `npm run check:release-notes-draft` passed with 3 draft cases and
-    6 docs checked;
-  - `npm run check:release-notes-publication` passed with 10 publication
-    cases and 7 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases,
+    6 evidence cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases,
+    3 path cases, and 5 docs checked;
+  - `npm test` passed;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #284,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #285,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    release notes dashboard/admin evidence fields exercised.
+    new operator evidence dashboard/admin sections exercised.
 
 ## Key Decisions
 
