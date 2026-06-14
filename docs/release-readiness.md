@@ -167,7 +167,8 @@ Ready for community review:
   release evidence, dashboard evidence, alert evidence, cutover, and dogfood
   gates stay in one operator flow;
 - operator evidence template guidance includes alert delivery plan command,
-  public dashboard disclosure, and private admin auth fields before alert or
+  container publish-plan, worker dispatch credential, public dashboard
+  disclosure, and private admin auth fields before runtime, worker, alert, or
   dashboard evidence can be summarized publicly;
 - dogfood execution status checklist for command-only, limited initial-review,
   visibility, alert, and rollback evidence;
@@ -469,8 +470,9 @@ itself: it fails when production evidence sections remain pending or blocked.
 Run `npm run check:operator-evidence` after changing the evidence schema,
 renderer, or release docs. The operator evidence contract keeps section
 readiness, required evidence, deferred/blocked notes, public dashboard
-disclosure evidence, private admin auth evidence, public-summary redaction,
-and docs synchronized.
+disclosure evidence, private admin auth evidence, container publish-plan
+evidence, worker dispatch credential evidence, public-summary redaction, and
+docs synchronized.
 Use [Release Candidate Bundle](release-candidate.md) to combine release-gate
 counts, missing status ids, operator-evidence counts, redacted operator
 sections, git metadata, and no-network preflight into one public-safe release

@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added first-class operator evidence sections for container publish-plan
+  evidence and worker dispatch credential evidence.
 - Pinned release-candidate contract coverage for public dashboard disclosure
   and private admin auth operator evidence sections.
 - Added first-class operator evidence sections for public dashboard disclosure

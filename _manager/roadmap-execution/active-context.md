@@ -533,23 +533,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator evidence dashboard/admin sections PR: merged as PR #286, merge commit `85b805d`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-candidate-dashboard-evidence-sections`.
-- Current local changes: pin release-candidate contract coverage and docs so
-  public bundles surface the public dashboard disclosure and private admin
-  auth operator evidence sections when present.
+- Release-candidate dashboard evidence sections PR: merged as PR #287, merge commit `d5689e7`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-evidence-runtime-dispatch-sections`.
+- Current local changes: add first-class operator evidence sections for
+  container publish-plan evidence and worker dispatch credential evidence.
 - Current local validation:
+  - `npm run check:operator-evidence` passed with 3 CLI cases,
+    6 evidence cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases,
     3 path cases, and 5 docs checked;
+  - `npm test` passed;
   - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #286,
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #287,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    release-candidate dashboard/admin evidence section coverage exercised.
+    container publish/worker dispatch operator evidence sections exercised.
 
 ## Key Decisions
 

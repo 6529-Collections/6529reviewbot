@@ -32,9 +32,17 @@
       "status": "pending",
       "notes": "Deploy the central App server or explicitly mark the release local/dogfood-only."
     },
+    "container-publish-plan": {
+      "status": "pending",
+      "notes": "Render and review the dry-run container publish plan before treating container image evidence as release-ready."
+    },
     "budget-and-pricing": {
       "status": "deferred",
       "notes": "Example only: defer applied price rows when release notes keep conservative default estimates."
+    },
+    "worker-dispatch-credentials": {
+      "status": "pending",
+      "notes": "Review worker dispatch credential posture before enabling non-noop worker traffic."
     },
     "worker-and-alerts": {
       "status": "pending",
