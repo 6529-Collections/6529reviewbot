@@ -26,7 +26,7 @@
     },
     "iam-and-secrets": {
       "status": "pending",
-      "notes": "Review least-privilege IAM policies and secret custody before enabling production."
+      "notes": "Review OIDC subject/audience scope, bot-repo or protected-environment role trust, Data API cluster/secret resources, database grants, SNS/SES resource scope, runtime secret-store access principals, secret rotation owners, target-repo/browser secret exclusion, and break-glass revoke paths before enabling production."
     },
     "security-intake": {
       "status": "pending",

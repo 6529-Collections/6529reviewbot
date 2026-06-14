@@ -37,8 +37,12 @@ private operator evidence before they can satisfy release or dogfood gates:
 - central server and worker deployments run the reviewed commit or tag;
 - the container image is built from the reviewed source, published to an
   operator-owned registry, scanned, and recorded by immutable digest;
-- AWS IAM/OIDC, Aurora Data API access, ledger schema, budget policies, SNS,
-  and SES settings are applied in the operator-owned account;
+- AWS IAM/OIDC subject/audience scope, bot-repository or protected-environment
+  role trust, Aurora Data API cluster/secret scope, database grants, budget
+  policies, SNS/SES resource scope, runtime secret-store access principals,
+  secret rotation ownership, target-repository/browser secret exclusion, and
+  break-glass revoke paths are applied in the operator-owned account and
+  recorded in `iam-and-secrets` operator evidence;
 - provider keys, model availability, provider quotas, provider-side spend caps
   or credit limits, billing alerts, provider data-retention/training settings
   where available, emergency key disablement paths, and pricing source checks

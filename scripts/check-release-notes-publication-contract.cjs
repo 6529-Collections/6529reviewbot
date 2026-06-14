@@ -301,11 +301,15 @@ function checkSourceAnchors(sourceTexts, findings) {
       "Worker dispatch credential evidence:",
       "Container publish plan evidence:",
       "Provider console readiness evidence:",
+      "IAM and secret custody evidence:",
       "non-noop worker traffic has reviewed dispatch credential evidence",
       "container image evidence has reviewed container publish-plan evidence",
       "provider-console readiness evidence has reviewed model availability",
       "provider-side spend caps or credit limits",
       "emergency key disablement",
+      "IAM and secret custody evidence has reviewed OIDC trust scope",
+      "secret-store access principals",
+      "break-glass revocation paths",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -362,6 +366,7 @@ function checkDocs(docTexts, findings) {
       "Git ref-safe",
       "community-release status evidence is filled",
       "provider console readiness evidence is filled",
+      "IAM and secret custody evidence is filled",
       "passed, ready, reviewed, or accepted evidence",
       "npm run check:release-notes-publication",
     ],
@@ -374,6 +379,7 @@ function checkDocs(docTexts, findings) {
       "Worker dispatch credential evidence:",
       "Container publish plan evidence:",
       "Provider console readiness evidence:",
+      "IAM and secret custody evidence:",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -432,6 +438,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Budget mode and caps: enforce with conservative dogfood caps
 - Run-control mode and caps: enforce with conservative caps
 - Ledger schema status: applied or explicitly manual for dogfood
+- IAM and secret custody evidence: OIDC trust, Data API resource scope, DB grants, secret-store principals, rotation, and break-glass paths reviewed
 - Model pricing status: conservative defaults reviewed
 - Model price source freshness policy: reviewed during release candidate
 - Alert delivery: operator-owned channel verified after reviewed alert delivery plan evidence
@@ -455,7 +462,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider-console readiness evidence has reviewed model availability, quota/rate-limit posture, provider-side spend caps or credit limits, billing alerts, and emergency key disablement, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, broad community-release gates are complete or explicitly deferred before broad community use is announced, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider-console readiness evidence has reviewed model availability, quota/rate-limit posture, provider-side spend caps or credit limits, billing alerts, and emergency key disablement, provider keys and AWS credentials live only in bot-owned infrastructure, IAM and secret custody evidence has reviewed OIDC trust scope, Data API resource scope, database grants, secret-store access principals, target-repo/browser secret exclusion, rotation owners, and break-glass revocation paths, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, broad community-release gates are complete or explicitly deferred before broad community use is announced, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 
@@ -463,6 +470,7 @@ Public repositories should not enable automatic model calls unless trusted-actor
 - 6529.io public dashboard: deployed or explicitly deferred
 - 6529.io private admin UI: deployed or explicitly deferred
 - Dogfood repositories: selected trusted repos only
+- IAM and secret custody: reviewed for central bot infrastructure
 - Provider console readiness: reviewed for dogfood provider lanes
 - Provider pricing/model update process: reviewed for dogfood
 - Accepted model-price overrides: none

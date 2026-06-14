@@ -373,8 +373,8 @@ execution and dogfood evidence:
    and rotation ownership in operator evidence.
 2. Deploy the central App server and worker path in 6529-owned infrastructure.
 3. Apply and verify operator-owned ledger schema, budget policies, provider
-   console readiness, provider price rows, alert delivery, and runtime secrets
-   outside this public repo.
+   console readiness, provider price rows, alert delivery, IAM/OIDC trust,
+   secret-store access, and runtime secrets outside this public repo.
 4. Run the dashboard deployment plan, then deploy and configure the merged
    6529.io public usage dashboard and private admin dashboard.
 5. Install the App on one trusted 6529 target repository in command-only mode.
@@ -451,21 +451,23 @@ Completed in `6529reviewbot`:
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production deployment plan evidence,
   worker dispatch credential evidence, container publish-plan evidence,
-  provider console readiness evidence, dashboard deployment plan evidence,
-  public dashboard disclosure evidence, private admin auth evidence,
-  community-release status evidence, alert delivery plan evidence, production
-  cutover status, deferrals, known gaps, compatibility, and validation fields;
+  provider console readiness evidence, IAM and secret custody evidence,
+  dashboard deployment plan evidence, public dashboard disclosure evidence,
+  private admin auth evidence, community-release status evidence, alert
+  delivery plan evidence, production cutover status, deferrals, known gaps,
+  compatibility, and validation fields;
 - release notes draft command for turning release-candidate bundle evidence
   and model catalog defaults into a public-safe pre-v1 draft with operator TODO
   markers, including production deployment plan evidence, worker dispatch
   credential evidence, container publish-plan evidence, provider console
-  readiness evidence, dashboard deployment plan evidence, public dashboard
-  disclosure evidence, private admin auth evidence, community-release status
-  evidence, and alert delivery plan evidence;
+  readiness evidence, IAM and secret custody evidence, dashboard deployment
+  plan evidence, public dashboard disclosure evidence, private admin auth
+  evidence, community-release status evidence, and alert delivery plan
+  evidence;
 - release notes publication guard for rejecting unfinished markers, missing
-  community-release or other evidence fields, incomplete deferrals, vague or
-  failed validation results, and public-safety leaks before tags or GitHub
-  Releases;
+  community-release, IAM/secret custody, or other evidence fields, incomplete
+  deferrals, vague or failed validation results, and public-safety leaks before
+  tags or GitHub Releases;
 - release tag plan command for checking clean synced `main`, local and remote
   tag availability, completed release notes, and final operator tag commands
   without creating tags;
@@ -635,7 +637,7 @@ Completed in `6529reviewbot`:
   operator flow.
 - operator evidence template guidance now includes container publish-plan,
   GitHub App production registration, security intake, repository rulesets,
-  provider console readiness,
+  IAM and secret custody, provider console readiness,
   worker dispatch credential, public dashboard disclosure, private admin
   auth-check/wallet allowlist, and alert delivery review fields before release
   evidence can be summarized publicly.
@@ -666,9 +668,10 @@ Completed in `6529reviewbot`:
 - release notes draft command and contract check for public-safe pre-v1 notes
   generated from release-candidate bundle evidence, production deployment plan
   evidence, worker dispatch credential evidence, container publish-plan
-  evidence, provider console readiness evidence, dashboard deployment plan
-  evidence, public dashboard disclosure evidence, private admin auth evidence,
-  alert delivery plan evidence, and model catalog defaults.
+  evidence, provider console readiness evidence, IAM and secret custody
+  evidence, dashboard deployment plan evidence, public dashboard disclosure
+  evidence, private admin auth evidence, alert delivery plan evidence, and
+  model catalog defaults.
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
 - release tag plan command and contract check for completed release notes,
@@ -717,6 +720,11 @@ Completed in `6529reviewbot`:
   verified with a synthetic dogfood claim.
 - dry-run/apply model pricing tooling.
 - example AWS IAM/OIDC templates for central Data API, SNS, and SES access.
+- IAM and secret-custody evidence fields for OIDC subject/audience scope,
+  bot-repository or protected-environment role trust, Data API cluster/secret
+  scope, database grants, SNS/SES resource scope, runtime secret-store access
+  principals, target-repo/browser secret exclusion, rotation ownership, and
+  break-glass revoke paths.
 - ledger schema re-apply support for managed daily aggregate views.
 - additive ledger table migrations for older dogfood databases.
 - budget-scope constraint refreshes for older dogfood databases.

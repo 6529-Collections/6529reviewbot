@@ -93,11 +93,22 @@ Budget-policy row count:
 
 ```text
 OIDC trust reviewed from infra/aws templates:
+OIDC subject/audience scope reviewed:
+AWS role scoped to bot repository or protected environment:
 Data API identity policy reviewed:
+Aurora Data API cluster and secret resource scope reviewed:
+Database grants/roles reviewed for table-level least privilege:
 SNS/SES alert policy reviewed:
+SNS topic or SES identity resource scope reviewed:
+Runtime secret store reviewed:
+Secret access principals reviewed:
 Provider keys stored only in bot-owned secret store:
 GitHub App credentials stored only in bot-owned secret store:
 6529.io admin HMAC secret stored only in server-side 6529 infrastructure:
+Target repositories and browser bundles receive no bot secrets:
+Secret rotation owners and cadence reviewed:
+Break-glass revoke/disable path reviewed:
+Public release-note summary:
 ```
 
 ## Security Intake

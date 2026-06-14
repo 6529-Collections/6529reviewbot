@@ -177,7 +177,11 @@ function checkDocs(docTexts, findings) {
       "repo:6529-Collections/6529reviewbot:ref:refs/heads/main",
       "Use database roles/grants for table-level least privilege",
       "Do not copy the secret ARN or AWS role trust into target repositories.",
-      "Record the policy ARNs and review evidence in the release issue or operator runbook",
+      "Confirm the trust policy `aud` condition",
+      "runtime secret-store access principals",
+      "target repositories and browser bundles receive no provider keys",
+      "break-glass revoke/disable",
+      "`iam-and-secrets` operator evidence",
     ],
     "docs/security-model.md": [
       "Start from the example templates in [infra/aws](../infra/aws/README.md)",

@@ -231,6 +231,13 @@ function checkMarkdownOutput(findings) {
             ],
           },
           {
+            id: "iam-and-secrets",
+            status: "complete",
+            title: "IAM And Secrets",
+            notes: "OIDC subject/audience, resource scope, DB grants, secret-store principals, rotation, target-repo/browser exclusion, and break-glass path reviewed",
+            evidence: ["iam-and-secrets operator evidence captured privately"],
+          },
+          {
             id: "container-publish-plan",
             status: "complete",
             title: "Container Publish Plan",
@@ -346,6 +353,8 @@ function checkMarkdownOutput(findings) {
     "[redacted-github-token]",
     "github-app",
     "production-host manifest registration evidence captured privately",
+    "iam-and-secrets",
+    "iam-and-secrets operator evidence captured privately",
     "container-publish-plan",
     "reviewed container publish plan evidence",
     "security-intake",

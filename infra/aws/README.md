@@ -75,9 +75,24 @@ Before a dogfood or release candidate:
 1. Render the final trust and identity policies after placeholder replacement.
 2. Confirm the trust policy `sub` condition matches the workflow identity that
    will assume the role.
-3. Confirm the identity policy resources are the single reviewbot cluster,
+3. Confirm the trust policy `aud` condition is the expected GitHub Actions
+   audience.
+4. Confirm the role is scoped to the bot repository or a reviewed protected
+   environment, not target application repositories.
+5. Confirm the identity policy resources are the single reviewbot cluster,
    secret, and optional SNS topic or SES identity.
-4. Run `npm run preflight -- -- --strict` from the release candidate
+6. Confirm database roles/grants provide table-level least privilege for the
+   runtime path that uses the Data API.
+7. Confirm runtime secret-store access principals are limited to the App
+   server, worker, scheduled alert, 6529.io server-side bridge, and operator
+   roles that actually need each secret.
+8. Confirm target repositories and browser bundles receive no provider keys,
+   GitHub App credentials, AWS credentials, Data API secret ARNs, alert
+   webhook URLs, or 6529.io admin HMAC secrets.
+9. Confirm secret rotation owners, cadence, and break-glass revoke/disable
+   paths are recorded privately.
+10. Run `npm run preflight -- -- --strict` from the release candidate
    environment.
-5. Record the policy ARNs and review evidence in the release issue or operator
-   runbook, not in public files if they identify private infrastructure.
+11. Record policy ARNs, secret-store access summaries, rotation ownership, and
+   review evidence in the private `iam-and-secrets` operator evidence section,
+   not in public files if they identify private infrastructure.
