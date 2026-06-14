@@ -250,12 +250,14 @@ function checkCliContract(findings) {
 function checkDocs(docTexts, findings) {
   const requiredByDoc = {
     "README.md": [
-      "npm run admin:snapshot -- -- --base-url https://reviewbot.example.com",
+      "npm run admin:snapshot -- -- --base-url <production-bot-origin>",
       "Collect a private admin API posture snapshot",
     ],
     "docs/6529-io-admin-integration.md": [
       "## Operator Snapshot",
-      "npm run admin:snapshot -- -- --base-url https://reviewbot.example.com",
+      "REVIEWBOT_USAGE_API_BASE_URL=<production-bot-origin>",
+      "replace the example bot origin before enabling production traffic",
+      "npm run admin:snapshot -- -- --base-url <production-bot-origin>",
       "npm run admin:snapshot -- -- --json --require-ok",
       "does not print raw usage events, private repo names, budget scope values",
       "`--require-ok` exits non-zero when any endpoint is unavailable or any warning posture is present.",
