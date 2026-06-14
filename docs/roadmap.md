@@ -640,6 +640,10 @@ Completed in `6529reviewbot`:
   through the real CLIs so container publish, production deployment, dashboard
   deployment, and alert delivery examples cannot drop required final inputs
   such as the worker-dispatch installation id.
+- release operations map validation now parses status overlay, release
+  candidate bundle, and release tag plan commands through the real CLIs so
+  final gate examples cannot drop required status, workspace, release-note, or
+  ready-mode inputs.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same

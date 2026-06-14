@@ -15,6 +15,9 @@ stabilized.
 - Hardened release operations map validation so production handoff commands
   parse through their real CLIs, including the worker-dispatch installation id
   required by the production deployment plan.
+- Hardened release operations map validation so status overlays, release
+  candidate bundles, and release tag plan commands parse through their real
+  CLIs with ready-mode inputs.
 - Required a private operator workspace and reviewed model price coverage for
   final dogfood promotion and go-live ready mode before live dogfood traffic.
 - Added operator handoff guidance for the dogfood provider-console readiness

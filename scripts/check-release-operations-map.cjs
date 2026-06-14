@@ -10,7 +10,15 @@ const dashboardDeploymentPlanCli = require("../bin/dashboard-deployment-plan.cjs
 const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
+const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
+const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
+const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
 const productionDeploymentPlanCli = require("../bin/production-deployment-plan.cjs");
+const productionCutoverCli = require("../bin/production-cutover.cjs");
+const releaseCandidateCli = require("../bin/release-candidate.cjs");
+const releaseTagPlanCli = require("../bin/release-tag-plan.cjs");
+const securityReviewStatusCli = require("../bin/security-review-status.cjs");
+const v0GatesCli = require("../bin/v0-gates.cjs");
 const {
   DEFAULT_RELEASE_OPERATIONS_MAP_PATH,
   loadReleaseOperationsMap,
@@ -34,6 +42,7 @@ function checkReleaseOperationsMap(options = {}) {
   checkReleaseTagPlanTools(validated);
   checkProductionHandoffCommands(validated);
   checkDogfoodReadyModeCommands(validated);
+  checkStatusAndReleaseGateCommands(validated);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
 }
@@ -174,6 +183,89 @@ function checkDogfoodReadyModeCommands(map) {
   checkParsedCommandExpectations(map, expectations, "dogfood ready-mode");
 }
 
+function checkStatusAndReleaseGateCommands(map) {
+  const expectations = [
+    {
+      id: "operator-workspace-check",
+      script: "operator:workspace",
+      parseArgs: operatorWorkspaceCli.parseArgs,
+      fields: {
+        directory: "<private-workspace-dir>",
+        check: true,
+        requireReady: true,
+      },
+    },
+    {
+      id: "dogfood-target",
+      script: "dogfood:target",
+      parseArgs: dogfoodTargetCli.parseArgs,
+      fields: {
+        mode: "command-only",
+        requireReady: true,
+      },
+    },
+    {
+      id: "dogfood-status-ready",
+      script: "dogfood:status",
+      parseArgs: dogfoodStatusCli.parseArgs,
+      fields: {
+        statusFile: "<operator-dogfood-status-file>",
+        requireReady: true,
+      },
+    },
+    {
+      id: "security-review-ready",
+      script: "security:review",
+      parseArgs: securityReviewStatusCli.parseArgs,
+      fields: {
+        statusFile: "<operator-security-status-file>",
+        requireReady: true,
+      },
+    },
+    {
+      id: "cutover-ready",
+      script: "production:cutover",
+      parseArgs: productionCutoverCli.parseArgs,
+      fields: {
+        statusFile: "<operator-cutover-status-file>",
+        requireReady: true,
+      },
+    },
+    {
+      id: "v0-gates",
+      script: "v0:gates",
+      parseArgs: v0GatesCli.parseArgs,
+      fields: {
+        statusFile: "<operator-status-file>",
+        requireReady: true,
+      },
+    },
+    {
+      id: "release-candidate-bundle",
+      script: "release:candidate",
+      parseArgs: releaseCandidateCli.parseArgs,
+      fields: {
+        operatorWorkspaceDir: "<private-workspace-dir>",
+        strictPreflight: true,
+        requireReady: true,
+      },
+    },
+    {
+      id: "release-tag-plan",
+      script: "release:tag-plan",
+      parseArgs: releaseTagPlanCli.parseArgs,
+      fields: {
+        release: "v0.1.0",
+        releaseNotesFile: "<release-notes.md>",
+        requireReady: true,
+        requireReleaseNotes: true,
+        requireNoWarnings: true,
+      },
+    },
+  ];
+  checkParsedCommandExpectations(map, expectations, "status and release gate");
+}
+
 function checkParsedCommandExpectations(map, expectations, label) {
   const tools = map.phases.flatMap((phase) => phase.tools);
   for (const expectation of expectations) {
@@ -197,7 +289,7 @@ function checkParsedCommandExpectations(map, expectations, label) {
 }
 
 function argvForTool(tool) {
-  return tool.args.split(/\s+/).filter(Boolean);
+  return tool.args.split(/\s+/).filter((item) => item && item !== "--");
 }
 
 function checkReleaseOperationsDoc(map, docFile) {
@@ -232,6 +324,7 @@ module.exports = {
   checkDogfoodReadyModeCommands,
   checkParsedCommandExpectations,
   checkProductionHandoffCommands,
+  checkStatusAndReleaseGateCommands,
   checkReleaseNotesPublicationTools,
   checkReleaseTagPlanTools,
   checkReleaseOperationsDoc,

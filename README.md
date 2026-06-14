@@ -383,10 +383,10 @@ npm run release:operations -- -- --phase release-candidate
 npm run check:release-operations
 ```
 
-The release-operations check also parses final production handoff and dogfood
-ready-mode commands through their real CLIs so the map cannot drift away from
-required private workspace, model price, worker-dispatch, strict preflight,
-and ready-mode flags.
+The release-operations check also parses final production handoff,
+status/release gate, and dogfood ready-mode commands through their real CLIs
+so the map cannot drift away from required private workspace, model price,
+worker-dispatch, status, release-notes, strict preflight, and ready-mode flags.
 
 Create a private operator workspace with community-release, v0, dogfood,
 security-review, production-cutover, and operator-evidence skeletons:
