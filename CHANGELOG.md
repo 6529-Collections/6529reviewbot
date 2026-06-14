@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned release evidence, deployment, and cutover dogfood gate commands with
+  reviewed model price file coverage.
 - Added reviewed model price file flags to generated operator drill and
   workspace dogfood gate commands.
 - Added optional model price coverage to dogfood go-live packets.

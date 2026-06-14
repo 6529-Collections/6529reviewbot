@@ -6,6 +6,7 @@ const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const DEFAULT_HOST = "<production-bot-origin>";
 const DEFAULT_IMAGE = "<operator-registry>/6529reviewbot";
 const DEFAULT_WORKSPACE = "<private-workspace-dir>";
+const REVIEWED_MODEL_PRICE_FILE = "<reviewed-model-price-file.json>";
 const DRY_RUN_NOTICE =
   "This command does not create GitHub Apps, convert manifest codes, deploy services, run checks, or send traffic.";
 
@@ -107,8 +108,8 @@ function deploymentPhases({ release, host, image, workspace }) {
       title: "Cutover And Dogfood",
       commands: [
         `npm run production:cutover -- -- --status-file ${cutoverStatus} --require-ready`,
-        `npm --silent run dogfood:promotion -- -- --operator-workspace ${workspace} --strict-preflight --require-ready`,
-        `npm --silent run dogfood:go-live -- -- --operator-workspace ${workspace} --strict-preflight --require-ready`,
+        `npm --silent run dogfood:promotion -- -- --operator-workspace ${workspace} --model-price-file ${REVIEWED_MODEL_PRICE_FILE} --strict-preflight --require-ready`,
+        `npm --silent run dogfood:go-live -- -- --operator-workspace ${workspace} --model-price-file ${REVIEWED_MODEL_PRICE_FILE} --strict-preflight --require-ready`,
       ],
       evidence: "Record go/no-go output, accepted deferrals, rollback posture, and first dogfood traffic decision.",
     },

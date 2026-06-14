@@ -142,7 +142,7 @@ function printUsage() {
 Examples:
   npm run dogfood:promotion
   npm run dogfood:promotion -- -- --repository 6529-Collections/example
-  npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+  npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 
 Options:
   --repository-config <file>  Target repository config to validate.

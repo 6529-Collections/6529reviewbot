@@ -201,8 +201,8 @@
         },
         {
           "id": "dogfood-promotion-packet",
-          "title": "Dogfood promotion packet passes with target config, self-dogfood replay, operator workspace, and preflight gates included.",
-          "evidence": "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "title": "Dogfood promotion packet passes with target config, self-dogfood replay, operator workspace, reviewed model price coverage, and preflight gates included.",
+          "evidence": "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
           "runbook": "docs/dogfood-promotion.md"
         },
         {

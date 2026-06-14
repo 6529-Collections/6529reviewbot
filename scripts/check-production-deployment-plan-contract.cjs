@@ -81,7 +81,8 @@ function checkReadyPlan(findings) {
     "npm run github-app:manifest",
     "npm run container:publish-plan",
     "npm run admin:snapshot",
-    "npm --silent run dogfood:go-live",
+    "npm --silent run dogfood:promotion -- -- --operator-workspace operator-workspace --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+    "npm --silent run dogfood:go-live -- -- --operator-workspace operator-workspace --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
   ]) {
     if (!markdown.includes(snippet)) {
       findings.push(`ready production deployment plan markdown must include '${snippet}'.`);
@@ -221,6 +222,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectProductionDeploymentPlan",
       "container:publish-plan",
       "normalizeImageRepositoryRef",
+      "<reviewed-model-price-file.json>",
       "This command does not create GitHub Apps",
     ],
     "src/image-repository-ref.cjs": [
@@ -269,15 +271,19 @@ function checkDocs(docTexts, findings) {
       "registry port",
       "lowercase",
       "does not create GitHub Apps",
+      "--model-price-file <reviewed-model-price-file.json>",
       "npm run check:production-deployment-plan",
     ],
     "docs/deployment.md": [
       "npm run production:deployment-plan",
       "production deployment plan",
+      "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+      "npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
     ],
     "docs/release-readiness.md": [
       "production deployment plan",
       "npm run check:production-deployment-plan",
+      "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
     ],
     "docs/roadmap.md": [
       "production deployment plan",

@@ -75,6 +75,10 @@ The private operator workspace owns the raw evidence. Public release notes
 should use redacted summaries, release-candidate bundles, or reviewed status
 counts.
 
+The cutover and dogfood phase prints the final promotion and go-live commands
+with `--model-price-file <reviewed-model-price-file.json>` so the same reviewed
+provider pricing evidence is carried into the last traffic gates.
+
 ## Contract
 
 The maintenance check is:
