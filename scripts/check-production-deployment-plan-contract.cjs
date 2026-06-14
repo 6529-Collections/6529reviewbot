@@ -137,6 +137,14 @@ function checkImageValidation(findings) {
     }
   }
   try {
+    normalizeImageRef("registry.example.com/team:latest/6529reviewbot");
+    findings.push("production deployment plan must reject image refs with tag-like path segments.");
+  } catch (error) {
+    if (!String(error.message).includes("must not include a tag")) {
+      findings.push("production deployment image path-segment tag rejection should be explicit.");
+    }
+  }
+  try {
     normalizeImageRef("registry.example.com//6529reviewbot");
     findings.push("production deployment plan must reject image refs with empty path segments.");
   } catch (error) {

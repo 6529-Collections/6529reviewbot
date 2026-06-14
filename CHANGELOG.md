@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Pinned image repository contracts to reject tag-like colons inside
+  repository path segments before rendering commands.
 - Hardened image repository planning to allow numeric registry ports while
   rejecting non-numeric registry port inputs before rendering commands.
 - Shared container and production image repository validation to keep dry-run
