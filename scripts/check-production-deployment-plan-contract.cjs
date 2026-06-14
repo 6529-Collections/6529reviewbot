@@ -201,10 +201,14 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/production-deployment-plan.cjs": [
       "collectProductionDeploymentPlan",
       "container:publish-plan",
+      "normalizeImageRepositoryRef",
+      "This command does not create GitHub Apps",
+    ],
+    "src/image-repository-ref.cjs": [
+      "normalizeImageRepositoryRef",
       "URL scheme",
       "empty path segments",
       "lowercase",
-      "This command does not create GitHub Apps",
     ],
     "bin/production-deployment-plan.cjs": [
       "npm run production:deployment-plan",

@@ -461,10 +461,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Image ref empty segment guard PR: merged as PR #250, merge commit `2df3c51`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/image-ref-lowercase-guard`.
-- Current local changes: hardening container publish and production deployment
-  image repository planning so uppercase repository characters are rejected
-  before Docker or operator handoff commands are rendered.
+- Image ref lowercase guard PR: merged as PR #251, merge commit `6c3155e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/shared-image-ref-validator`.
+- Current local changes: sharing the image repository validator between
+  container publish and production deployment planning so operator command
+  guards stay aligned.
 - Current local validation:
   - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
     checked;
@@ -473,12 +475,11 @@ merged PRs.
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
-  - `npm run check` passed with 174 CommonJS files;
+  - `npm run check` passed with 175 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #250,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #251,
     and 5 docs checked;
-  - `npm run release:check` passed, including container publish and production
-    deployment plan validation;
+  - `npm run release:check` passed with 175 CommonJS files checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

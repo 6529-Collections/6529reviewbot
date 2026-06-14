@@ -1,5 +1,6 @@
 "use strict";
 
+const { normalizeImageRepositoryRef } = require("./image-repository-ref.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 
 const DEFAULT_HOST = "<production-bot-origin>";
@@ -169,32 +170,11 @@ function normalizeOrigin(value) {
 }
 
 function normalizeImageRef(value) {
-  const text = String(value || "").trim();
-  if (!text) {
-    throw new Error("operator-owned image repository is required.");
-  }
-  if (text === DEFAULT_IMAGE) {
-    return text;
-  }
-  if (/^[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(text)) {
-    throw new Error("operator-owned image repository must not include a URL scheme.");
-  }
-  if (text.includes("@")) {
-    throw new Error("operator-owned image repository must not include a digest.");
-  }
-  if (/:([^/]+)$/.test(text)) {
-    throw new Error("operator-owned image repository must not include a tag.");
-  }
-  if (text.split("/").some((segment) => !segment)) {
-    throw new Error("operator-owned image repository must not contain empty path segments.");
-  }
-  if (/[A-Z]/.test(text)) {
-    throw new Error("operator-owned image repository must be lowercase.");
-  }
-  if (!/^[A-Za-z0-9._:/-]+$/.test(text)) {
-    throw new Error("operator-owned image repository contains unsupported characters.");
-  }
-  return text;
+  return normalizeImageRepositoryRef(value, {
+    defaultValue: DEFAULT_IMAGE,
+    label: "operator-owned image repository",
+    requiredMessage: "operator-owned image repository is required.",
+  });
 }
 
 function normalizeWorkspace(value) {

@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Shared container and production image repository validation to keep dry-run
+  command guards consistent across operator handoff paths.
 - Hardened container and production image repository planning to reject
   uppercase repository characters before rendering commands.
 - Hardened container and production image repository planning to reject empty

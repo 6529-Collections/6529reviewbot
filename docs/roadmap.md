@@ -560,6 +560,8 @@ Completed in `6529reviewbot`:
   Docker or operator handoff commands.
 - image repository planning rejects uppercase repository characters before
   rendering Docker or operator handoff commands.
+- shared image repository validation for container publish and production
+  deployment planning.
 - dashboard deployment plan command for dry-run 6529.io dashboard handoff
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.
