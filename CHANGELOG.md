@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added community-release status evidence to release notes drafts.
 - Added community-release status summaries to release-candidate bundles.
 - Added community-release gate status to private operator workspace skeletons.
 - Added checked broad community-release gate config and checklist rendering.

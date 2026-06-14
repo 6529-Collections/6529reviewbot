@@ -210,8 +210,8 @@ evidence section summaries, CLI defaults, source invariants, and docs aligned.
 `npm run check:release-notes-draft` keeps the release notes draft command's
 release-candidate summaries, model defaults, runtime dispatch evidence,
 container publish evidence, dashboard disclosure evidence, private admin auth
-evidence, alert evidence, TODO markers, redaction, CLI flags, operations map
-entries, and docs aligned.
+evidence, community-release status evidence, alert evidence, TODO markers,
+redaction, CLI flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` keeps the completed release-notes
 publication guard aligned with required fields, deferral handling,
 vague or failed validation evidence, public-safety redaction, release-check

@@ -5545,3 +5545,27 @@
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     release-candidate community-release status path exercised.
+- Merged `6529reviewbot` PR #305 as `aa1dffe`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-community-status` increment:
+  - include optional community-release status evidence in release notes draft
+    summaries, tested-configuration output, safety requirements, accepted-risk
+    deferrals, release note validation commands, template checks, release docs,
+    roadmap, changelog, operations inventory, and contract coverage.
+- Local validation for `codex/release-notes-community-status`:
+  - `gh run watch 27496121953 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #305 post-merge CI;
+  - `gh run watch 27496121961 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #305 post-merge OpenSSF Scorecard;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #305,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    release-notes community-release status path exercised.

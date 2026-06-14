@@ -447,14 +447,15 @@ Completed in `6529reviewbot`:
   dogfood promotion/go-live evidence, production deployment plan evidence,
   worker dispatch credential evidence, container publish-plan evidence,
   dashboard deployment plan evidence, public dashboard disclosure evidence,
-  private admin auth evidence, alert delivery plan evidence, production cutover
-  status, deferrals, known gaps, compatibility, and validation fields;
+  private admin auth evidence, community-release status evidence, alert
+  delivery plan evidence, production cutover status, deferrals, known gaps,
+  compatibility, and validation fields;
 - release notes draft command for turning release-candidate bundle evidence
   and model catalog defaults into a public-safe pre-v1 draft with operator TODO
   markers, including production deployment plan evidence, worker dispatch
   credential evidence, container publish-plan evidence, dashboard deployment
   plan evidence, public dashboard disclosure evidence, private admin auth
-  evidence, and alert delivery plan evidence;
+  evidence, community-release status evidence, and alert delivery plan evidence;
 - release notes publication guard for rejecting unfinished markers, missing
   evidence fields, incomplete deferrals, vague or failed validation results,
   and public-safety leaks before tags or GitHub Releases;
