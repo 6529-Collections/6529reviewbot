@@ -9,6 +9,9 @@ Describe what changed and why.
 - If it changes release, dogfood, cutover, or traffic policy behavior, do the
   release-candidate, dogfood promotion, dogfood go-live, production cutover,
   and release-notes evidence paths still agree?
+- If it claims production, dashboard, alert, dogfood, security-review, or
+  cutover readiness, does it distinguish local validation from operator-owned
+  external evidence per [External Evidence Boundaries](../docs/external-evidence-boundaries.md)?
 - If it changes a public/admin API, is `docs/usage-api.openapi.json` updated?
 
 ## Security Notes
@@ -33,6 +36,8 @@ Describe what changed and why.
 - [ ] `npm test`
 - [ ] `npm run release:check` when release, config, API, security, provider,
       budget, runtime, worker, or docs gates changed
+- [ ] `npm run check:external-evidence-boundaries` when release artifacts,
+      operator evidence, or public readiness language changed
 - [ ] `npm run validate:api-contract` when usage/admin API contracts changed
 - [ ] `npm run preflight -- -- --strict` or documented warnings when deployment
       configuration changed

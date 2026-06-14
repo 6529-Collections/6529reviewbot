@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added PR template governance prompts for external evidence boundaries so
+  release-readiness claims distinguish local validation from operator-owned
+  evidence during review.
 - Added a checked external evidence boundary contract so public release
   artifacts distinguish local validation from operator-owned production,
   dashboard, alert, dogfood, security-review, and cutover evidence.
