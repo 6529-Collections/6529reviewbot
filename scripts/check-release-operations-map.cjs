@@ -24,6 +24,7 @@ function checkReleaseOperationsMap(options = {}) {
     repoRoot: root,
   });
   checkReleaseNotesPublicationTools(validated);
+  checkReleaseTagPlanTools(validated);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
 }
@@ -43,6 +44,17 @@ function checkReleaseNotesPublicationTools(map) {
   }
   if (!publicationTool.purpose.includes("explicit validation evidence")) {
     throw new Error("release-notes-publication purpose must mention explicit validation evidence.");
+  }
+}
+
+function checkReleaseTagPlanTools(map) {
+  const tools = map.phases.flatMap((phase) => phase.tools);
+  const contractTool = tools.find((tool) => tool.id === "release-tag-plan-contract");
+  if (!contractTool) {
+    throw new Error("release operations map must include release-tag-plan-contract.");
+  }
+  if (!contractTool.purpose.includes("release notes title match")) {
+    throw new Error("release-tag-plan-contract purpose must mention release notes title match.");
   }
 }
 
@@ -76,6 +88,7 @@ if (require.main === module) {
 
 module.exports = {
   checkReleaseNotesPublicationTools,
+  checkReleaseTagPlanTools,
   checkReleaseOperationsDoc,
   checkReleaseOperationsMap,
 };

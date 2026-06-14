@@ -290,6 +290,8 @@ Ready for community review:
   promotion/go-live packets, production deployment plan evidence, dashboard
   deployment plan evidence, alert delivery plan evidence, production cutover
   status, deferrals, known gaps, compatibility, and validation fields;
+- release tag planning rejects completed release notes whose title version does
+  not match the planned release tag;
 - release operations map validation that keeps the public command inventory in
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's

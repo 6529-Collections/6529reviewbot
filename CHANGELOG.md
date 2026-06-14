@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened the release tag plan to reject completed release notes whose title
+  version does not match the planned tag.
 - Aligned the release operations map with the stricter release-notes validation
   evidence publication guard.
 - Hardened release notes publication checks to reject vague validation fields

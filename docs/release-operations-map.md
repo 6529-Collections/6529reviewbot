@@ -194,8 +194,8 @@ publication guard aligned with required fields, deferral handling,
 vague or failed validation evidence, public-safety redaction, release-check
 wiring, smoke tests, and docs.
 `npm run check:release-tag-plan` keeps the release tag plan aligned with
-clean-main readiness, completed release notes, dry-run operator commands,
-release-check wiring, smoke tests, and docs.
+clean-main readiness, completed release notes, release notes title matching,
+dry-run operator commands, release-check wiring, smoke tests, and docs.
 `npm run release:notes -- -- --candidate-file <release-candidate.json>`
 builds a public-safe pre-v1 release notes draft from reviewed release-candidate
 evidence.

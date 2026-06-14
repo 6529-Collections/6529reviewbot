@@ -449,23 +449,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes positive validation PR: merged as PR #244, merge commit `65364a3`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-operations-validation-map`.
-- Current local changes: aligning the release operations map and map checker
-  with the stricter release notes publication guard for vague or failed
-  validation evidence.
+- Release operations validation map PR: merged as PR #245, merge commit `007d935`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-tag-notes-version-match`.
+- Current local changes: hardening the release tag plan so completed release
+  notes must have a title version that matches the planned release tag before
+  the dry-run tag commands are marked ready.
 - Current local validation:
+  - `npm run check:release-tag-plan` passed with 5 plan cases and 6 docs
+    checked;
   - `npm run check:release-operations` passed with 7 phases and 109 tools;
-  - `npm run check:release-notes-publication` passed with 7 publication cases
-    and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
-  - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #244,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #245,
     and 5 docs checked;
-  - `npm run release:check` passed, including release operations map validation
-    and release notes publication validation with 7 publication cases;
+  - `npm test` passed;
+  - `npm run release:check` passed, including release tag plan validation with
+    5 plan cases;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions
