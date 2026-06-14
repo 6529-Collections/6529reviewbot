@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added production deployment, dashboard deployment, and alert delivery
+  `--require-ready` dry-run plans to the release check.
 - Added `dogfood:readiness --require-ready` to the release check so the
   release gate exercises the ready-mode dogfood readiness CLI path.
 - Pinned image repository contracts to reject tag-like colons inside

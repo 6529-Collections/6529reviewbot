@@ -4480,3 +4480,29 @@
   - `npm run release:check` passed with 175 CommonJS files checked and the
     dogfood readiness ready-mode release gate exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #255 as `b68d880`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-handoff-ready-release-check` increment:
+  - add production deployment, dashboard deployment, and alert delivery
+    `--require-ready` dry-run plans to the release check so operator handoff
+    ready-mode commands are exercised before releases.
+- Local validation for `codex/operator-handoff-ready-release-check` so far:
+  - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
+    docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
+    checked;
+  - production deployment, dashboard deployment, and alert delivery ready-mode
+    CLI invocations passed with safe example inputs;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 175 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #255,
+    and 5 docs checked;
+  - `npm run release:check` passed with 175 CommonJS files checked and the
+    production deployment, dashboard deployment, and alert delivery ready-mode
+    release gates exercised;
+  - `npm run check:public-artifacts` passed with 116 files checked.

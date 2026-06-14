@@ -205,7 +205,11 @@ function checkSourceAnchors(sourceTexts, findings) {
       "--notify-mode",
       "This command does not send alerts",
     ],
-    "scripts/release-check.cjs": ["scripts/check-alert-delivery-plan-contract.cjs"],
+    "scripts/release-check.cjs": [
+      "scripts/check-alert-delivery-plan-contract.cjs",
+      "bin/alert-delivery-plan.cjs",
+      "--require-ready",
+    ],
     "scripts/smoke-test.cjs": [
       "alertDeliveryPlanContractCheck",
       "alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract",

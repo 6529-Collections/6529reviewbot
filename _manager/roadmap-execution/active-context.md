@@ -469,23 +469,30 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Image ref path colon contract PR: merged as PR #254, merge commit `fbabb88`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dogfood-readiness-release-gate`.
-- Current local changes: adding `dogfood:readiness --require-ready` to the
-  release check so the pre-traffic dogfood readiness ready gate is exercised
-  before releases.
+- Dogfood readiness release gate PR: merged as PR #255, merge commit `b68d880`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-handoff-ready-release-check`.
+- Current local changes: adding production deployment, dashboard deployment,
+  and alert delivery `--require-ready` dry-run plans to the release check.
 - Current local validation:
-  - `npm run check:dogfood-readiness` passed with 3 CLI cases, 3 report cases,
-    and 6 docs checked;
-  - `node bin/dogfood-readiness.cjs --json --quiet --require-ready` passed;
+  - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
+    docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+    docs checked;
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
+    checked;
+  - production deployment, dashboard deployment, and alert delivery ready-mode
+    CLI invocations passed with safe example inputs;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 175 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #254,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #255,
     and 5 docs checked;
   - `npm run release:check` passed with 175 CommonJS files checked and the
-    dogfood readiness ready-mode release gate exercised;
+    production deployment, dashboard deployment, and alert delivery ready-mode
+    release gates exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

@@ -228,7 +228,11 @@ function checkSourceAnchors(sourceTexts, findings) {
       "--auth-check-url",
       "This command does not deploy 6529.io",
     ],
-    "scripts/release-check.cjs": ["scripts/check-dashboard-deployment-plan-contract.cjs"],
+    "scripts/release-check.cjs": [
+      "scripts/check-dashboard-deployment-plan-contract.cjs",
+      "bin/dashboard-deployment-plan.cjs",
+      "--require-ready",
+    ],
     "scripts/smoke-test.cjs": [
       "dashboardDeploymentPlanContractCheck",
       "dashboardDeploymentPlanContractCheck.checkDashboardDeploymentPlanContract",

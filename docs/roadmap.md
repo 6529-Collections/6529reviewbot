@@ -558,6 +558,8 @@ Completed in `6529reviewbot`:
   and dogfood gates.
 - production deployment planning rejects URL-style image repository inputs
   before rendering operator handoff commands.
+- release checks exercise production deployment, dashboard deployment, and
+  alert delivery plans in `--require-ready` dry-run mode.
 - image repository planning rejects empty path segments before rendering
   Docker or operator handoff commands.
 - image repository planning rejects uppercase repository characters before
