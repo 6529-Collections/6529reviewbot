@@ -34,18 +34,20 @@ the production bot origin, operator-owned image repository, and private
 operator workspace are supplied:
 
 ```bash
-npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 ```
 
 Image repository inputs are validated as lowercase Docker image repositories
 without a URL scheme, tag, digest, non-numeric registry port, uppercase
 repository characters, or empty path segments. The release version supplies
-the command tag.
+the command tag. Final `--require-ready` plans reject documentation, example,
+local, or reserved origin hosts such as `reviewbot.example.com`; replace them
+with the production bot origin before using the handoff as release evidence.
 
 For automation that wants JSON instead of Markdown:
 
 ```bash
-npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready --json
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready --json
 ```
 
 The output can include private deployment origins, registry names, and

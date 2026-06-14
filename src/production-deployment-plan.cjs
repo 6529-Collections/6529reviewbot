@@ -9,6 +9,8 @@ const DEFAULT_WORKSPACE = "<private-workspace-dir>";
 const REVIEWED_MODEL_PRICE_FILE = "<reviewed-model-price-file.json>";
 const DRY_RUN_NOTICE =
   "This command does not create GitHub Apps, convert manifest codes, deploy services, run checks, or send traffic.";
+const PLACEHOLDER_HOST_SUFFIXES = [".example", ".example.com", ".invalid", ".localhost", ".test"];
+const PLACEHOLDER_HOSTS = new Set(["0.0.0.0", "127.0.0.1", "::1", "[::1]", "example.com", "localhost"]);
 
 function collectProductionDeploymentPlan(options = {}) {
   const release = normalizeReleaseVersion(options.release || options.version || "v0.1.0");
@@ -21,6 +23,8 @@ function collectProductionDeploymentPlan(options = {}) {
   if (options.requireInputs) {
     if (host === DEFAULT_HOST) {
       errors.push("production bot origin was not supplied.");
+    } else if (isPlaceholderOrigin(host)) {
+      errors.push("production bot origin must not use documentation, example, local, or reserved hosts.");
     }
     if (image === DEFAULT_IMAGE) {
       errors.push("operator-owned image repository was not supplied.");
@@ -170,6 +174,21 @@ function normalizeOrigin(value) {
   return parsed.origin;
 }
 
+function isPlaceholderOrigin(value) {
+  const text = String(value || "").trim();
+  if (!text || /^<[^>]+>$/.test(text)) {
+    return true;
+  }
+  let parsed;
+  try {
+    parsed = new URL(text);
+  } catch (error) {
+    return false;
+  }
+  const host = parsed.hostname.toLowerCase();
+  return PLACEHOLDER_HOSTS.has(host) || PLACEHOLDER_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
 function normalizeImageRef(value) {
   return normalizeImageRepositoryRef(value, {
     defaultValue: DEFAULT_IMAGE,
@@ -200,6 +219,7 @@ module.exports = {
   collectProductionDeploymentPlan,
   deploymentPhases,
   formatProductionDeploymentPlanMarkdown,
+  isPlaceholderOrigin,
   normalizeImageRef,
   normalizeOrigin,
   normalizeWorkspace,

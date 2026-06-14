@@ -1,6 +1,6 @@
 "use strict";
 
-const { normalizeOrigin, normalizeWorkspace } = require("./production-deployment-plan.cjs");
+const { isPlaceholderOrigin, normalizeOrigin, normalizeWorkspace } = require("./production-deployment-plan.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 
 const DEFAULT_FRONTEND_ORIGIN = "<6529-io-origin>";
@@ -42,15 +42,21 @@ function collectDashboardDeploymentPlan(options = {}) {
   if (options.requireInputs) {
     if (frontendOrigin === DEFAULT_FRONTEND_ORIGIN) {
       errors.push("6529.io frontend origin was not supplied.");
+    } else if (isPlaceholderOrigin(frontendOrigin)) {
+      errors.push("6529.io frontend origin must not use documentation, example, local, or reserved hosts.");
     }
     if (botOrigin === DEFAULT_BOT_ORIGIN) {
       errors.push("production bot origin was not supplied.");
+    } else if (isPlaceholderOrigin(botOrigin)) {
+      errors.push("production bot origin must not use documentation, example, local, or reserved hosts.");
     }
     if (operatorWorkspace === DEFAULT_OPERATOR_WORKSPACE) {
       errors.push("private operator workspace was not supplied.");
     }
     if (authCheckUrl === DEFAULT_AUTH_CHECK_URL) {
       errors.push("6529.io auth-check URL was not supplied.");
+    } else if (isPlaceholderOrigin(authCheckUrl)) {
+      errors.push("6529.io auth-check URL must not use documentation, example, local, or reserved hosts.");
     }
   } else {
     if (frontendOrigin === DEFAULT_FRONTEND_ORIGIN) {

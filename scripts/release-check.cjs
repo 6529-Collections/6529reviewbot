@@ -158,7 +158,7 @@ runNode("bin/production-cutover.cjs", [
 ]);
 runNode("bin/production-deployment-plan.cjs", [
   "--host",
-  "https://reviewbot.example.com",
+  "https://reviewbot.6529.io",
   "--image",
   "registry.example.com/6529reviewbot",
   "--operator-workspace",
@@ -174,7 +174,7 @@ runNode("bin/dashboard-deployment-plan.cjs", [
   "--frontend-origin",
   "https://6529.io",
   "--bot-origin",
-  "https://reviewbot.example.com",
+  "https://reviewbot.6529.io",
   "--operator-workspace",
   "operator-workspace",
   "--auth-check-url",
@@ -188,7 +188,7 @@ runNode("bin/dashboard-deployment-plan.cjs", [
 runNode("bin/alert-delivery-plan.cjs", ["--json", "--quiet"]);
 runNode("bin/alert-delivery-plan.cjs", [
   "--bot-origin",
-  "https://reviewbot.example.com",
+  "https://reviewbot.6529.io",
   "--operator-workspace",
   "operator-workspace",
   "--notify-mode",

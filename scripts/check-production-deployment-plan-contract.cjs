@@ -7,6 +7,7 @@ const path = require("path");
 const {
   collectProductionDeploymentPlan,
   formatProductionDeploymentPlanMarkdown,
+  isPlaceholderOrigin,
   normalizeImageRef,
   normalizeWorkspace,
   normalizeOrigin,
@@ -37,6 +38,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
 
   checkReadyPlan(findings);
   checkMissingInputsPlan(findings);
+  checkPlaceholderOriginPlan(findings);
   checkOriginValidation(findings);
   checkImageValidation(findings);
   checkWorkspaceValidation(findings);
@@ -54,7 +56,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
   }
 
   return {
-    planCases: 5,
+    planCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -62,7 +64,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
 function checkReadyPlan(findings) {
   const plan = collectProductionDeploymentPlan({
     release: "0.2.0",
-    host: "https://reviewbot.example.com",
+    host: "https://reviewbot.6529.io",
     image: "registry.example.com/6529reviewbot",
     operatorWorkspace: "operator-workspace",
     requireInputs: true,
@@ -106,6 +108,28 @@ function checkMissingInputsPlan(findings) {
     if (!plan.errors.some((error) => error.includes(snippet))) {
       findings.push(`missing input errors must include '${snippet}'.`);
     }
+  }
+}
+
+function checkPlaceholderOriginPlan(findings) {
+  const plan = collectProductionDeploymentPlan({
+    release: "v0.2.0",
+    host: "https://reviewbot.example.com",
+    image: "registry.example.com/6529reviewbot",
+    operatorWorkspace: "operator-workspace",
+    requireInputs: true,
+  });
+  if (plan.ready) {
+    findings.push("required production deployment plans must block documentation/example origins.");
+  }
+  if (!plan.errors.some((error) => error.includes("documentation, example, local, or reserved hosts"))) {
+    findings.push("placeholder origin errors must explain the reserved-host requirement.");
+  }
+  if (!isPlaceholderOrigin("https://reviewbot.example.com")) {
+    findings.push("production deployment plan must classify example origins as placeholders.");
+  }
+  if (!isPlaceholderOrigin("https://localhost")) {
+    findings.push("production deployment plan must classify local origins as placeholders.");
   }
 }
 
@@ -197,7 +221,7 @@ function checkCli(findings) {
 
   const plan = productionDeploymentPlanCli.main([
     "--host",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--image",
     "registry.example.com/6529reviewbot",
     "--operator-workspace",
@@ -221,6 +245,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/production-deployment-plan.cjs": [
       "collectProductionDeploymentPlan",
       "container:publish-plan",
+      "isPlaceholderOrigin",
       "normalizeImageRepositoryRef",
       "<reviewed-model-price-file.json>",
       "This command does not create GitHub Apps",
@@ -270,6 +295,7 @@ function checkDocs(docTexts, findings) {
       "empty path segments",
       "registry port",
       "lowercase",
+      "documentation, example, local, or reserved origin hosts",
       "does not create GitHub Apps",
       "--model-price-file <reviewed-model-price-file.json>",
       "npm run check:production-deployment-plan",

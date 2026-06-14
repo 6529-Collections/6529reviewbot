@@ -4830,3 +4830,28 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 177 CommonJS files checked and the
     placeholder model price source apply guard exercised.
+- Merged `6529reviewbot` PR #272 as `42323f9`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/reject-placeholder-ready-origins` increment:
+  - reject documentation, example, local, or reserved origin hosts from final
+    production deployment, dashboard deployment, and alert delivery
+    `--require-ready` gates.
+- Local validation for `codex/reject-placeholder-ready-origins` so far:
+  - `npm run check:production-deployment-plan` passed with 6 plan cases and
+    6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
+    7 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
+    8 docs checked;
+  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+    6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 177 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #272,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run release:check` passed with 177 CommonJS files checked and the
+    placeholder ready-origin gates exercised.

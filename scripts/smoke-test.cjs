@@ -5260,7 +5260,7 @@ appServer.handleGitHubWebhook({
   );
   const productionDeploymentPlanContractResult =
     productionDeploymentPlanContractCheck.checkProductionDeploymentPlanContract();
-  assert.equal(productionDeploymentPlanContractResult.planCases, 5);
+  assert.equal(productionDeploymentPlanContractResult.planCases, 6);
   assert.equal(productionDeploymentPlanContractResult.docs, 6);
   assert.throws(
     () =>
@@ -5274,7 +5274,7 @@ appServer.handleGitHubWebhook({
   );
   const dashboardDeploymentPlanContractResult =
     dashboardDeploymentPlanContractCheck.checkDashboardDeploymentPlanContract();
-  assert.equal(dashboardDeploymentPlanContractResult.planCases, 6);
+  assert.equal(dashboardDeploymentPlanContractResult.planCases, 7);
   assert.equal(dashboardDeploymentPlanContractResult.docs, 7);
   assert.throws(
     () =>
@@ -5288,7 +5288,7 @@ appServer.handleGitHubWebhook({
   );
   const alertDeliveryPlanContractResult =
     alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract();
-  assert.equal(alertDeliveryPlanContractResult.planCases, 5);
+  assert.equal(alertDeliveryPlanContractResult.planCases, 6);
   assert.equal(alertDeliveryPlanContractResult.docs, 8);
   assert.throws(
     () =>
@@ -5302,7 +5302,7 @@ appServer.handleGitHubWebhook({
   );
   const readyAlertDeliveryPlan = alertDeliveryPlanCli.main([
     "--bot-origin",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--operator-workspace",
     "operator-workspace",
     "--notify-mode",

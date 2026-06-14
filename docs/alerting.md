@@ -25,7 +25,7 @@ evaluation, admin alert status check, cutover evidence, and release-note
 follow-up without sending alerts or reading live ledgers:
 
 ```bash
-npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
 npm run check:alert-delivery-plan
 ```
 

@@ -39,6 +39,7 @@ function checkDashboardDeploymentPlanContract(options = {}) {
 
   checkReadyPlan(findings);
   checkMissingInputsPlan(findings);
+  checkPlaceholderOriginPlan(findings);
   checkOriginValidation(findings);
   checkAuthCheckUrlValidation(findings);
   checkRouteAndOrgValidation(findings);
@@ -56,7 +57,7 @@ function checkDashboardDeploymentPlanContract(options = {}) {
   }
 
   return {
-    planCases: 6,
+    planCases: 7,
     docs: targetDocs.length,
   };
 }
@@ -65,7 +66,7 @@ function checkReadyPlan(findings) {
   const plan = collectDashboardDeploymentPlan({
     release: "0.2.0",
     frontendOrigin: "https://6529.io",
-    botOrigin: "https://reviewbot.example.com",
+    botOrigin: "https://reviewbot.6529.io",
     operatorWorkspace: "operator-workspace",
     authCheckUrl: "https://6529.io/api/auth/reviewbot",
     publicOrg: "6529-Collections",
@@ -111,6 +112,35 @@ function checkMissingInputsPlan(findings) {
     if (!plan.errors.some((error) => error.includes(snippet))) {
       findings.push(`missing input errors must include '${snippet}'.`);
     }
+  }
+}
+
+function checkPlaceholderOriginPlan(findings) {
+  const plan = collectDashboardDeploymentPlan({
+    release: "v0.2.0",
+    frontendOrigin: "https://6529.io",
+    botOrigin: "https://reviewbot.example.com",
+    operatorWorkspace: "operator-workspace",
+    authCheckUrl: "https://6529.io/api/auth/reviewbot",
+    requireInputs: true,
+  });
+  if (plan.ready) {
+    findings.push("required dashboard deployment plans must block documentation/example bot origins.");
+  }
+  if (!plan.errors.some((error) => error.includes("documentation, example, local, or reserved hosts"))) {
+    findings.push("dashboard placeholder origin errors must explain the reserved-host requirement.");
+  }
+
+  const authPlan = collectDashboardDeploymentPlan({
+    release: "v0.2.0",
+    frontendOrigin: "https://6529.io",
+    botOrigin: "https://reviewbot.6529.io",
+    operatorWorkspace: "operator-workspace",
+    authCheckUrl: "https://auth.example.com/api/auth/reviewbot",
+    requireInputs: true,
+  });
+  if (authPlan.ready) {
+    findings.push("required dashboard deployment plans must block documentation/example auth-check URLs.");
   }
 }
 
@@ -197,7 +227,7 @@ function checkCli(findings) {
     "--frontend-origin",
     "https://6529.io",
     "--bot-origin",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--operator-workspace",
     "operator-workspace",
     "--auth-check-url",
@@ -220,6 +250,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "package.json": ["dashboard:deployment-plan", "check:dashboard-deployment-plan"],
     "src/dashboard-deployment-plan.cjs": [
       "collectDashboardDeploymentPlan",
+      "isPlaceholderOrigin",
       "REVIEWBOT_USAGE_API_PUBLIC_ORGS",
       "This command does not deploy 6529.io",
     ],
@@ -257,6 +288,7 @@ function checkDocs(docTexts, findings) {
     "docs/dashboard-deployment-plan.md": [
       "npm run dashboard:deployment-plan",
       "--auth-check-url",
+      "documentation, example, local, or reserved origin hosts",
       "does not deploy 6529.io",
       "npm run check:dashboard-deployment-plan",
     ],
