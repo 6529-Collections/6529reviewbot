@@ -25,6 +25,24 @@ const redactionFixtures = [
     forbidden: "abcdefghijklmnopqrstuvwxyz123456",
   },
   {
+    name: "basic auth header",
+    input: "Authorization: Basic dXNlcjpwYXNzd29yZDEyMzQ1",
+    expected: "Authorization: Basic [redacted]",
+    forbidden: "dXNlcjpwYXNz",
+  },
+  {
+    name: "api key header",
+    input: "x-api-key: providerkeyabcdefghijklmnop",
+    expected: "x-api-key: [redacted]",
+    forbidden: "providerkey",
+  },
+  {
+    name: "admin signature header",
+    input: "x-6529-admin-signature: sha256=abcdefghijklmnopqrstuvwxyz123456",
+    expected: "x-6529-admin-signature: [redacted]",
+    forbidden: "abcdefghijklmnopqrstuvwxyz123456",
+  },
+  {
     name: "aws access key",
     input: "AWS key AKIAABCDEFGHIJKLMNOP",
     expected: "AWS key [redacted-aws-access-key-id]",
@@ -285,10 +303,10 @@ function checkDocs(docTexts, findings) {
       "alert-webhook, AWS access-key id, AWS ARN, AWS account-id",
     ],
     "docs/release-notes-template.md": [
-      "Worker diagnostics redact common token, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
+      "Worker diagnostics redact common token, sensitive-header, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
     ],
     "README.md": [
-      "redact common token, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
+      "redact common token, sensitive-header, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
     ],
   };
   for (const [doc, snippets] of Object.entries(requiredByDoc)) {

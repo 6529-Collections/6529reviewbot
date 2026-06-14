@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Added sensitive-header redaction for diagnostic text and public artifact
+  scanning so long `x-api-key`, admin-secret, admin-signature, and Basic/Token
+  authorization values are redacted or blocked even when they do not use a
+  provider-specific key prefix.
 - Added bearer-token detection to the public artifact leak scanner so copied
   authorization headers fail release checks before reaching public docs,
   templates, workflows, or manager memory.

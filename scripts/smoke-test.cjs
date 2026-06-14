@@ -361,7 +361,7 @@ assert.equal(
   true
 );
 const diagnosticsRedactionResult = diagnosticsRedactionCheck.checkDiagnosticsRedaction();
-assert.equal(diagnosticsRedactionResult.fixtures, 10);
+assert.equal(diagnosticsRedactionResult.fixtures, 13);
 assert.equal(diagnosticsRedactionResult.publicRendererSources, 9);
 assert.equal(diagnosticsRedactionResult.publicRendererBehaviorCases, 9);
 assert.throws(
@@ -2034,6 +2034,13 @@ assert.equal(
     "Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456\n"
   )[0].rule,
   "bearer_token"
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "x-api-key: providerkeyabcdefghijklmnop\n"
+  )[0].rule,
+  "sensitive_header_value"
 );
 assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwx123456\n")[0].rule,

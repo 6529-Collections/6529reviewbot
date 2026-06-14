@@ -64,6 +64,11 @@ const staticRules = [
     pattern: /\bBearer\s+[A-Za-z0-9._~+/=-]{20,}\b/gi,
   },
   {
+    name: "sensitive_header_value",
+    pattern:
+      /\b(?:Authorization\s*:\s*(?:Basic|Token)\s+|(?:x-api-key|api-key|x-github-token|x-6529-reviewbot-admin-secret|x-6529-admin-signature)\s*[:=]\s*)[A-Za-z0-9._~+/=-]{16,}\b/gi,
+  },
+  {
     name: "aws_access_key_id",
     pattern: /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g,
   },
