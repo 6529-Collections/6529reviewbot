@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned production deployment, dashboard deployment, and alert delivery CLI
+  help examples with placeholder-safe `--require-ready` inputs.
 - Rejected documentation, example, local, or reserved hosts from GitHub App
   manifest rendering.
 - Rejected documentation, example, local, or reserved container registries from

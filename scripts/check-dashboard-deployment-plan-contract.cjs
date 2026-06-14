@@ -243,6 +243,15 @@ function checkCli(findings) {
   if (!plan.ready) {
     findings.push("dashboard deployment plan CLI must return ready for complete required inputs.");
   }
+
+  const helpText = captureStdout(() => dashboardDeploymentPlanCli.main(["--help"]));
+  checkSnippets(helpText, [
+    "--frontend-origin <6529-io-origin>",
+    "--bot-origin <production-bot-origin>",
+    "--auth-check-url <6529-auth-check-url>",
+    "--require-ready",
+  ], "dashboard deployment plan CLI help", findings);
+  checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, "dashboard deployment plan CLI help", findings);
 }
 
 function checkSourceAnchors(sourceTexts, findings) {
@@ -256,6 +265,9 @@ function checkSourceAnchors(sourceTexts, findings) {
     ],
     "bin/dashboard-deployment-plan.cjs": [
       "npm run dashboard:deployment-plan",
+      "--frontend-origin <6529-io-origin>",
+      "--bot-origin <production-bot-origin>",
+      "--auth-check-url <6529-auth-check-url>",
       "--auth-check-url",
       "This command does not deploy 6529.io",
     ],
@@ -326,6 +338,36 @@ function checkSnippets(text, snippets, label, findings) {
       findings.push(`${label} must include '${snippet}'.`);
     }
   }
+}
+
+function checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, label, findings) {
+  const readyLines = String(helpText)
+    .split(/\r?\n/)
+    .filter((line) => line.includes("--require-ready"));
+  if (!readyLines.length) {
+    findings.push(`${label} must include a --require-ready example.`);
+    return;
+  }
+  for (const line of readyLines) {
+    if (line.includes("reviewbot.example.com")) {
+      findings.push(`${label} --require-ready examples must not use documentation/example origins.`);
+    }
+  }
+}
+
+function captureStdout(callback) {
+  const originalWrite = process.stdout.write;
+  let output = "";
+  process.stdout.write = (chunk) => {
+    output += String(chunk);
+    return true;
+  };
+  try {
+    callback();
+  } finally {
+    process.stdout.write = originalWrite;
+  }
+  return output;
 }
 
 function getText(relativePath, overrides) {

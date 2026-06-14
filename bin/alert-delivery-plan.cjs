@@ -92,8 +92,8 @@ function helpText() {
 
 Usage:
   npm run alerts:delivery-plan
-  npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0
-  npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --require-ready
+  npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0
+  npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready
 
 Options:
   --bot-origin <origin>           Production bot API origin.

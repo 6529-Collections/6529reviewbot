@@ -258,6 +258,15 @@ function checkCli(findings) {
   if (!plan.ready) {
     findings.push("production deployment plan CLI must return ready for complete required inputs.");
   }
+
+  const helpText = captureStdout(() => productionDeploymentPlanCli.main(["--help"]));
+  checkSnippets(helpText, [
+    "--host <production-bot-origin>",
+    "--image <operator-registry>/6529reviewbot",
+    "--operator-workspace <private-workspace-dir>",
+    "--require-ready",
+  ], "production deployment plan CLI help", findings);
+  checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, "production deployment plan CLI help", findings);
 }
 
 function checkSourceAnchors(sourceTexts, findings) {
@@ -281,6 +290,8 @@ function checkSourceAnchors(sourceTexts, findings) {
     ],
     "bin/production-deployment-plan.cjs": [
       "npm run production:deployment-plan",
+      "--host <production-bot-origin>",
+      "--image <operator-registry>/6529reviewbot",
       "--require-ready",
       "This command does not create GitHub Apps",
     ],
@@ -356,6 +367,36 @@ function checkSnippets(text, snippets, label, findings) {
       findings.push(`${label} must include '${snippet}'.`);
     }
   }
+}
+
+function checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, label, findings) {
+  const readyLines = String(helpText)
+    .split(/\r?\n/)
+    .filter((line) => line.includes("--require-ready"));
+  if (!readyLines.length) {
+    findings.push(`${label} must include a --require-ready example.`);
+    return;
+  }
+  for (const line of readyLines) {
+    if (line.includes("reviewbot.example.com")) {
+      findings.push(`${label} --require-ready examples must not use documentation/example origins.`);
+    }
+  }
+}
+
+function captureStdout(callback) {
+  const originalWrite = process.stdout.write;
+  let output = "";
+  process.stdout.write = (chunk) => {
+    output += String(chunk);
+    return true;
+  };
+  try {
+    callback();
+  } finally {
+    process.stdout.write = originalWrite;
+  }
+  return output;
 }
 
 function getText(relativePath, overrides) {

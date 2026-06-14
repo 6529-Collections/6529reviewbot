@@ -208,6 +208,15 @@ function checkCli(findings) {
   if (!plan.ready) {
     findings.push("alert delivery plan CLI must return ready for complete required inputs.");
   }
+
+  const helpText = captureStdout(() => alertDeliveryPlanCli.main(["--help"]));
+  checkSnippets(helpText, [
+    "--bot-origin <production-bot-origin>",
+    "--notify-mode <webhook|sns|ses>",
+    "--alert-channel <operator-alert-channel>",
+    "--require-ready",
+  ], "alert delivery plan CLI help", findings);
+  checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, "alert delivery plan CLI help", findings);
 }
 
 function checkSourceAnchors(sourceTexts, findings) {
@@ -221,6 +230,8 @@ function checkSourceAnchors(sourceTexts, findings) {
     ],
     "bin/alert-delivery-plan.cjs": [
       "npm run alerts:delivery-plan",
+      "--bot-origin <production-bot-origin>",
+      "--notify-mode <webhook|sns|ses>",
       "--notify-mode",
       "This command does not send alerts",
     ],
@@ -295,6 +306,36 @@ function checkSnippets(text, snippets, label, findings) {
       findings.push(`${label} must include '${snippet}'.`);
     }
   }
+}
+
+function checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, label, findings) {
+  const readyLines = String(helpText)
+    .split(/\r?\n/)
+    .filter((line) => line.includes("--require-ready"));
+  if (!readyLines.length) {
+    findings.push(`${label} must include a --require-ready example.`);
+    return;
+  }
+  for (const line of readyLines) {
+    if (line.includes("reviewbot.example.com")) {
+      findings.push(`${label} --require-ready examples must not use documentation/example origins.`);
+    }
+  }
+}
+
+function captureStdout(callback) {
+  const originalWrite = process.stdout.write;
+  let output = "";
+  process.stdout.write = (chunk) => {
+    output += String(chunk);
+    return true;
+  };
+  try {
+    callback();
+  } finally {
+    process.stdout.write = originalWrite;
+  }
+  return output;
 }
 
 function getText(relativePath, overrides) {

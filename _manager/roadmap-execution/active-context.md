@@ -509,25 +509,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Placeholder image repository gates PR: merged as PR #274, merge commit `55d3d25`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/reject-placeholder-manifest-hosts`.
-- Current local changes: reject documentation, example, local, or reserved
-  hosts from GitHub App manifest rendering.
+- Placeholder GitHub App manifest hosts PR: merged as PR #275, merge commit `3d9ee30`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/update-ready-gate-help-examples`.
+- Current local changes: align production deployment, dashboard deployment, and
+  alert delivery CLI help examples with placeholder-safe `--require-ready`
+  inputs, and contract-check those help anchors.
 - Current local validation:
-  - `npm run check:github-app-manifest` passed with 7 manifest cases,
-    6 conversion cases, and 7 docs checked;
-  - `npm run check:install-guide` passed with 6 guide cases and 6 docs checked;
-  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+  - `npm run check:production-deployment-plan` passed with 7 plan cases and
     6 docs checked;
-  - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
+    7 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
+    8 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #274,
-    and 5 docs checked;
   - `npm test` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #275,
+    and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    placeholder GitHub App manifest host guard exercised.
+    ready-gated deployment help anchors exercised.
 
 ## Key Decisions
 
