@@ -465,10 +465,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Shared image ref validator PR: merged as PR #252, merge commit `9e955a6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/image-ref-registry-port-guard`.
-- Current local changes: hardening shared image repository planning so numeric
-  registry ports are allowed but non-numeric registry port inputs are rejected
-  before commands are rendered.
+- Image ref registry port guard PR: merged as PR #253, merge commit `a87d413`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/image-ref-path-colon-contract`.
+- Current local changes: pinning image repository contracts so tag-like colons
+  inside repository path segments keep failing before commands are rendered.
 - Current local validation:
   - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
     checked;
@@ -479,7 +480,7 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 175 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #252,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #253,
     and 5 docs checked;
   - `npm run release:check` passed with 175 CommonJS files checked;
   - `npm run check:public-artifacts` passed with 116 files checked.

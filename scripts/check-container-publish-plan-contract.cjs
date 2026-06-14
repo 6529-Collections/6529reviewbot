@@ -144,6 +144,14 @@ function checkImageValidation(findings) {
     }
   }
   try {
+    normalizeImageRef("registry.example.com/team:latest/6529reviewbot");
+    findings.push("container publish plan must reject image refs with tag-like path segments.");
+  } catch (error) {
+    if (!String(error.message).includes("must not include a tag")) {
+      findings.push("container image path-segment tag rejection should be explicit.");
+    }
+  }
+  try {
     normalizeImageRef("registry.example.com/6529reviewbot@sha256:abc");
     findings.push("container publish plan must reject image refs that include digests.");
   } catch (error) {
