@@ -90,12 +90,12 @@ npm run dogfood:promotion
 From a private operator environment, include no-network runtime preflight:
 
 ```bash
-npm run dogfood:readiness -- -- --strict-preflight --require-ready
-npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 npm run check:dogfood-readiness
-npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 npm run check:dogfood-promotion
-npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
 See [Dogfood Readiness](dogfood-readiness.md) for custom target-repo config and
@@ -246,8 +246,8 @@ Fast rollback options, from narrowest to broadest:
 
 - Dogfood readiness passes for the target repo config and reviewed central
   budget policy.
-- Dogfood promotion passes with the private operator workspace, preflight, and
-  self-dogfood replay gates included.
+- Dogfood promotion passes with reviewed model price coverage, the private
+  operator workspace, preflight, and self-dogfood replay gates included.
 - Synthetic self-dogfood replay proves command-only PR-open skip, trusted
   command admission, deliberate multi-lane fanout, max-fanout rejection, and
   untrusted command denial.

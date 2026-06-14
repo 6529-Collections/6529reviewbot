@@ -38,6 +38,10 @@ function collectDogfoodPromotionPacket(options = {}) {
         : [targetConfigFile],
     budgetPolicyFile: options.budgetPolicyFile,
     modelCatalogFile: options.modelCatalogFile,
+    modelPriceFile: options.modelPriceFile,
+    allowStaleModelPriceSource: Boolean(options.allowStaleModelPriceSource),
+    allowZeroModelPrice: Boolean(options.allowZeroModelPrice),
+    maxModelPriceSourceAgeDays: options.maxModelPriceSourceAgeDays,
     includePreflight: Boolean(options.includePreflight),
     strictPreflight: Boolean(options.strictPreflight),
     preflightProfile: options.preflightProfile || "server",
@@ -79,6 +83,7 @@ function collectDogfoodPromotionPacket(options = {}) {
       targetConfigFile: publicInputPath(targetConfigFile, root),
       budgetPolicyFile: readiness.inputs.budgetPolicyFile,
       modelCatalogFile: readiness.inputs.modelCatalogFile,
+      modelPriceFile: readiness.inputs.modelPriceFile,
       preflight: options.includePreflight
         ? {
             profile: publicText(options.preflightProfile || "server"),
@@ -128,6 +133,13 @@ function formatDogfoodPromotionMarkdown(packet) {
     `- target config: ${publicText(packet.inputs.targetConfigFile)}`,
     `- budget policy: ${publicText(packet.inputs.budgetPolicyFile)}`,
     `- model catalog: ${publicText(packet.inputs.modelCatalogFile)}`,
+    `- model price file: ${
+      packet.inputs.modelPriceFile
+        ? `${publicText(packet.inputs.modelPriceFile.file)}${
+            packet.inputs.modelPriceFile.allowStaleSource ? " allow-stale-source" : ""
+          }${packet.inputs.modelPriceFile.allowZeroPrice ? " allow-zero-price" : ""}`
+        : "not included"
+    }`,
     `- self-dogfood replay: ${publicText(packet.inputs.selfDogfoodReplay)}`,
     `- preflight: ${
       packet.inputs.preflight
@@ -169,6 +181,7 @@ function formatDogfoodPromotionMarkdown(packet) {
     `- repository configs: ${packet.checks.readiness.checks.repositoryConfigs.status}`,
     `- budget policies: ${packet.checks.readiness.checks.budgetPolicies.status}`,
     `- model catalog: ${packet.checks.readiness.checks.modelCatalog.status}`,
+    `- model price coverage: ${modelPriceCoverageStatus(packet.checks.readiness.checks.modelPriceCoverage)}`,
     `- self-dogfood replay: ${packet.checks.selfDogfoodReplay.status}`,
     "",
     "## Next Actions",
@@ -195,7 +208,8 @@ function promotionGates(input) {
   const centralInputsOk =
     input.readiness.checks.repositoryConfigs.status === "ok" &&
     input.readiness.checks.budgetPolicies.status === "ok" &&
-    input.readiness.checks.modelCatalog.status === "ok";
+    input.readiness.checks.modelCatalog.status === "ok" &&
+    modelPriceCoverageReady(input.readiness.checks.modelPriceCoverage);
   const gates = [
     gate(
       "target-config",
@@ -210,8 +224,8 @@ function promotionGates(input) {
       "Central dogfood inputs",
       centralInputsOk ? "ok" : "error",
       centralInputsOk
-        ? "Repository config, budget policy, and model catalog inputs parse."
-        : "Repository config, budget policy, or model catalog validation failed."
+        ? "Repository config, budget policy, model catalog, and model price coverage inputs parse."
+        : "Repository config, budget policy, model catalog, or model price coverage validation failed."
     ),
     gate(
       "self-dogfood-replay",
@@ -322,7 +336,9 @@ function nextActions(gates) {
     } else if (item.id === "target-config") {
       actions.push("Fix the target repository .github/6529bot.yml posture.");
     } else if (item.id === "central-inputs") {
-      actions.push("Fix the dogfood budget policy, repository config, or model catalog input.");
+      actions.push(
+        "Fix the dogfood budget policy, repository config, model catalog, or model price coverage input."
+      );
     }
   }
   if (!actions.length) {
@@ -343,6 +359,20 @@ function summarizeGates(gates) {
     warnings: counts.warning,
     errors: counts.error,
   };
+}
+
+function modelPriceCoverageReady(summary) {
+  return !summary || (summary.status === "ok" && summary.ready);
+}
+
+function modelPriceCoverageStatus(summary) {
+  if (!summary) {
+    return "not included";
+  }
+  if (summary.status !== "ok") {
+    return "error";
+  }
+  return summary.ready ? "ready" : "not ready";
 }
 
 function gate(id, title, status, detail) {

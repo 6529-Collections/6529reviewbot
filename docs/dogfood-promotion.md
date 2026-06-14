@@ -9,6 +9,9 @@ separately:
 - target repository config posture from `dogfood:target`;
 - central repository config, budget policy, and model catalog validation from
   `dogfood:readiness`;
+- optional reviewed model price coverage from `dogfood:readiness`, so local
+  cost estimates are backed by complete, fresh provider evidence before live
+  traffic;
 - synthetic self-dogfood replay for PR-open skip, trusted maintainer command
   admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
   public command denial;
@@ -19,6 +22,7 @@ The report is public-safe. It does not print provider keys, GitHub App
 credentials, AWS account ids, ARNs, raw webhook payloads, prompts, diffs,
 provider responses, exact private workspace paths, or private status file
 contents.
+External model price file paths are summarized as `[external-path-set]`.
 
 ## Public Static Packet
 
@@ -53,11 +57,13 @@ output.
 ## Private Go/No-Go Check
 
 From the private operator environment, include the operator workspace and
-no-network preflight:
+no-network preflight. When relying on local cost estimates for the launch
+decision, include the reviewed model price file as well:
 
 ```bash
 npm --silent run dogfood:promotion -- -- \
   --operator-workspace <private-workspace-dir> \
+  --model-price-file <reviewed-model-price-file.json> \
   --strict-preflight \
   --require-ready
 ```
@@ -73,10 +79,19 @@ add the stricter workspace flag:
 ```bash
 npm --silent run dogfood:promotion -- -- \
   --operator-workspace <private-workspace-dir> \
+  --model-price-file <reviewed-model-price-file.json> \
   --require-operator-workspace-ready \
   --strict-preflight \
   --require-ready
 ```
+
+The model price coverage check fails the central-inputs promotion gate when a
+provided price file is missing configured default lanes, omits input or output
+rates, contains stale or future source evidence, uses zero-rate placeholders,
+or still points at placeholder source URLs. Use
+`--allow-stale-model-price-source`, `--allow-zero-model-price`, or
+`--max-model-price-source-age-days <days>` only when the exception is backed by
+explicit release evidence.
 
 ## Gate Meaning
 
@@ -84,7 +99,7 @@ npm --silent run dogfood:promotion -- -- \
 promotion gates are green:
 
 - target config packet is ready;
-- central dogfood inputs parse;
+- central dogfood inputs parse, including model price coverage when supplied;
 - self-dogfood replay passes;
 - private operator workspace is supplied and parses;
 - no-network preflight is supplied and passes.
@@ -123,6 +138,7 @@ npm run check:dogfood-promotion
 
 The dogfood promotion contract check verifies that `--require-ready` requires
 `--strict-preflight`, that private workspace paths stay summarized as
-`[operator-workspace]`, that Markdown table cells redact common secret and AWS
-identifier shapes, and that the public docs stay synchronized with the
+`[operator-workspace]`, that external model price file paths stay summarized
+as `[external-path-set]`, that Markdown table cells redact common secret and
+AWS identifier shapes, and that the public docs stay synchronized with the
 pre-traffic gate.

@@ -1168,6 +1168,10 @@ assert.deepEqual(
     json: true,
     mode: "auto",
     modelCatalogFile: undefined,
+    modelPriceFile: undefined,
+    allowStaleModelPriceSource: false,
+    allowZeroModelPrice: false,
+    maxModelPriceSourceAgeDays: undefined,
     operatorWorkspaceDir: "workspace",
     preflightProfile: "server",
     quiet: true,
@@ -5124,8 +5128,8 @@ appServer.handleGitHubWebhook({
   );
   const dogfoodPromotionContractResult =
     dogfoodPromotionContractCheck.checkDogfoodPromotionContract();
-  assert.equal(dogfoodPromotionContractResult.cliCases, 4);
-  assert.equal(dogfoodPromotionContractResult.packetCases, 4);
+  assert.equal(dogfoodPromotionContractResult.cliCases, 5);
+  assert.equal(dogfoodPromotionContractResult.packetCases, 5);
   assert.throws(
     () =>
       dogfoodPromotionContractCheck.checkDogfoodPromotionContract({
