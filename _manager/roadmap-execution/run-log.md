@@ -6534,8 +6534,9 @@
   Scorecard completed successfully.
 - Started `codex/centralize-public-redaction` increment:
   - remove duplicate AWS public-output redaction regex tables from release,
-    dogfood, operator-evidence, operator-workspace, cutover, v0 gate, and
-    GitHub App manifest conversion renderers;
+    dogfood promotion, dogfood readiness, dogfood target, GitHub App manifest
+    conversion, operator evidence, operator workspace, production cutover,
+    release candidate, and release gates renderers;
   - tie those public renderers to the shared diagnostics helper through the
     diagnostics redaction contract;
   - update release docs, changelog, and durable manager memory.
@@ -6562,7 +6563,7 @@
     cases, and 5 docs checked;
   - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
     docs checked;
-  - `rg -n "PUBLIC_REDACTION_PATTERNS" src scripts docs README.md -g "*.cjs" -g "*.md"` found only the diagnostics guard that forbids local public redaction tables;
+  - `rg -n ("PUBLIC_REDACTION_" + "PATTERNS") src scripts docs README.md _manager -g "*.cjs" -g "*.md"` found only the diagnostics guard that forbids local public redaction tables;
   - `npm test` passed after asserting 9 public renderers in the diagnostics
     redaction smoke path;
   - `npm run check:docs` passed with 76 files checked;
