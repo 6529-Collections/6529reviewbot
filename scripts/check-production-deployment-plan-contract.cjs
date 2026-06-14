@@ -336,6 +336,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "config/release-operations-map.json": [
       "production-deployment-plan-contract",
       "production-deployment-plan",
+      "--worker-dispatch-installation-id <central-repo-installation-id>",
     ],
   };
   for (const [file, snippets] of Object.entries(requiredBySource)) {

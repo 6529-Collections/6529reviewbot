@@ -4,9 +4,13 @@
 
 const fs = require("fs");
 const path = require("path");
+const alertDeliveryPlanCli = require("../bin/alert-delivery-plan.cjs");
+const containerPublishPlanCli = require("../bin/container-publish-plan.cjs");
+const dashboardDeploymentPlanCli = require("../bin/dashboard-deployment-plan.cjs");
 const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
+const productionDeploymentPlanCli = require("../bin/production-deployment-plan.cjs");
 const {
   DEFAULT_RELEASE_OPERATIONS_MAP_PATH,
   loadReleaseOperationsMap,
@@ -28,6 +32,7 @@ function checkReleaseOperationsMap(options = {}) {
   });
   checkReleaseNotesPublicationTools(validated);
   checkReleaseTagPlanTools(validated);
+  checkProductionHandoffCommands(validated);
   checkDogfoodReadyModeCommands(validated);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
@@ -75,24 +80,101 @@ function checkReleaseTagPlanTools(map) {
   }
 }
 
+function checkProductionHandoffCommands(map) {
+  const expectations = [
+    {
+      id: "container-publish-plan",
+      script: "container:publish-plan",
+      parseArgs: containerPublishPlanCli.parseArgs,
+      fields: {
+        image: "<operator-registry>/6529reviewbot",
+        release: "v0.1.0",
+        requireReady: true,
+      },
+    },
+    {
+      id: "production-deployment-plan",
+      script: "production:deployment-plan",
+      parseArgs: productionDeploymentPlanCli.parseArgs,
+      fields: {
+        host: "<production-bot-origin>",
+        image: "<operator-registry>/6529reviewbot",
+        operatorWorkspace: "<private-workspace-dir>",
+        workerDispatchInstallationId: "<central-repo-installation-id>",
+        release: "v0.1.0",
+        requireReady: true,
+      },
+    },
+    {
+      id: "dashboard-deployment-plan",
+      script: "dashboard:deployment-plan",
+      parseArgs: dashboardDeploymentPlanCli.parseArgs,
+      fields: {
+        frontendOrigin: "<6529-io-origin>",
+        botOrigin: "<production-bot-origin>",
+        operatorWorkspace: "<private-workspace-dir>",
+        authCheckUrl: "<6529-auth-check-url>",
+        release: "v0.1.0",
+        requireReady: true,
+      },
+    },
+    {
+      id: "alert-delivery-plan",
+      script: "alerts:delivery-plan",
+      parseArgs: alertDeliveryPlanCli.parseArgs,
+      fields: {
+        botOrigin: "<production-bot-origin>",
+        operatorWorkspace: "<private-workspace-dir>",
+        notifyMode: "<webhook|sns|ses>",
+        alertChannel: "<operator-alert-channel>",
+        release: "v0.1.0",
+        requireReady: true,
+      },
+    },
+  ];
+  checkParsedCommandExpectations(map, expectations, "production handoff");
+}
+
 function checkDogfoodReadyModeCommands(map) {
   const expectations = [
     {
       id: "dogfood-readiness",
       script: "dogfood:readiness",
       parseArgs: dogfoodReadinessCli.parseArgs,
+      fields: {
+        operatorWorkspaceDir: "<private-workspace-dir>",
+        modelPriceFile: "<reviewed-model-price-file.json>",
+        strictPreflight: true,
+        requireReady: true,
+      },
     },
     {
       id: "dogfood-promotion",
       script: "dogfood:promotion",
       parseArgs: dogfoodPromotionCli.parseArgs,
+      fields: {
+        operatorWorkspaceDir: "<private-workspace-dir>",
+        modelPriceFile: "<reviewed-model-price-file.json>",
+        strictPreflight: true,
+        requireReady: true,
+      },
     },
     {
       id: "dogfood-go-live",
       script: "dogfood:go-live",
       parseArgs: dogfoodGoLiveCli.parseArgs,
+      fields: {
+        operatorWorkspaceDir: "<private-workspace-dir>",
+        modelPriceFile: "<reviewed-model-price-file.json>",
+        strictPreflight: true,
+        requireReady: true,
+      },
     },
   ];
+  checkParsedCommandExpectations(map, expectations, "dogfood ready-mode");
+}
+
+function checkParsedCommandExpectations(map, expectations, label) {
   const tools = map.phases.flatMap((phase) => phase.tools);
   for (const expectation of expectations) {
     const tool = tools.find((item) => item.id === expectation.id);
@@ -103,25 +185,13 @@ function checkDogfoodReadyModeCommands(map) {
       throw new Error(`${expectation.id} must use ${expectation.script}.`);
     }
     const argv = argvForTool(tool);
-    for (const flag of [
-      "--operator-workspace",
-      "--model-price-file",
-      "--strict-preflight",
-      "--require-ready",
-    ]) {
-      if (!argv.includes(flag)) {
-        throw new Error(`${expectation.id} release operation command must include ${flag}.`);
-      }
-    }
     const parsed = expectation.parseArgs(argv);
-    if (!parsed.requireReady || !parsed.strictPreflight) {
-      throw new Error(`${expectation.id} release operation command must parse as strict ready mode.`);
-    }
-    if (parsed.operatorWorkspaceDir !== "<private-workspace-dir>") {
-      throw new Error(`${expectation.id} release operation command must use <private-workspace-dir>.`);
-    }
-    if (parsed.modelPriceFile !== "<reviewed-model-price-file.json>") {
-      throw new Error(`${expectation.id} release operation command must use <reviewed-model-price-file.json>.`);
+    for (const [field, expected] of Object.entries(expectation.fields)) {
+      if (parsed[field] !== expected) {
+        throw new Error(
+          `${expectation.id} ${label} command must parse ${field} as ${JSON.stringify(expected)}.`
+        );
+      }
     }
   }
 }
@@ -160,6 +230,8 @@ if (require.main === module) {
 
 module.exports = {
   checkDogfoodReadyModeCommands,
+  checkParsedCommandExpectations,
+  checkProductionHandoffCommands,
   checkReleaseNotesPublicationTools,
   checkReleaseTagPlanTools,
   checkReleaseOperationsDoc,

@@ -636,6 +636,10 @@ Completed in `6529reviewbot`:
   promotion, and go-live ready-mode commands through the real CLIs so operator
   handoff commands cannot drift away from required private workspace, model
   price, strict preflight, and ready-mode flags.
+- release operations map validation now parses production handoff commands
+  through the real CLIs so container publish, production deployment, dashboard
+  deployment, and alert delivery examples cannot drop required final inputs
+  such as the worker-dispatch installation id.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
