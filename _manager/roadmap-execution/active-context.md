@@ -441,25 +441,24 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - v0 alert delivery gate PR: merged as PR #240, merge commit `60d24d3`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-alert-plan-safety`.
-- Current local changes: aligning release notes template, generated draft,
-  publication fixture, and release-notes contract checks with the v0 alerts
-  gate by requiring reviewed alert delivery-plan evidence before scheduled
-  operator alerts satisfy public release safety language.
+- Release notes alert plan safety PR: merged as PR #241, merge commit `c710639`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/reusable-workflow-alert-plan-safety`.
+- Current local changes: aligning reusable workflow public-repo alert guidance
+  with the v0 alerts gate by requiring reviewed alert delivery-plan evidence
+  before scheduled operator alerts are considered ready, and pinning that
+  guidance in the alert-delivery plan contract.
 - Current local validation:
-  - `npm run check:release-notes` passed;
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
     checked;
-  - `npm run check:release-notes-publication` passed with 4 publication cases
-    and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
-  - `git diff --check` passed;
   - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including release notes template, draft,
-    and publication checks with reviewed alert delivery-plan safety language;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #240,
+  - `npm run release:check` passed, including alert delivery plan validation
+    with 8 docs checked and reusable workflow alert-plan safety guidance;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #241,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 

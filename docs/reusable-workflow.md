@@ -50,7 +50,8 @@ repository unless all of these are true:
 - budget controls are configured and enforced;
 - run-control dedupe and concurrency protections are enabled or explicitly
   accepted as a release risk;
-- scheduled operator alerts route to a private operator channel.
+- scheduled operator alerts have reviewed alert delivery plan evidence and
+  route to a private operator channel.
 
 The central App path gives stronger public-repo protections and should be used
 for 6529 dogfood and community release work.

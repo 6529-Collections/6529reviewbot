@@ -4205,3 +4205,24 @@
   - `npm run check:manager-memory` passed with 6 sections, latest PR #240,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #241 as `c710639`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/reusable-workflow-alert-plan-safety` increment:
+  - align reusable workflow public-repo alert guidance with the v0 alerts gate
+    by requiring reviewed alert delivery-plan evidence before scheduled
+    operator alerts are considered ready;
+  - pin that wording in the alert-delivery plan contract so the compatibility
+    bridge does not drift from central App release safety language.
+- Local validation for `codex/reusable-workflow-alert-plan-safety` so far:
+  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
+    checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including alert delivery plan validation
+    with 8 docs checked and reusable workflow alert-plan safety guidance;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #241,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked.
