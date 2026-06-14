@@ -31,6 +31,18 @@
           "title": "Dogfood readiness check passes for reviewed target config, budget policy, model catalog, and optional strict preflight.",
           "evidence": "npm run dogfood:readiness output summary",
           "runbook": "docs/dogfood-readiness.md"
+        },
+        {
+          "id": "provider-console-readiness-reviewed",
+          "title": "Provider-console readiness is reviewed for enabled accounts/projects, configured-model availability, key custody, quotas/rate limits, spend controls, billing alerts, and emergency key disablement before live dogfood model calls.",
+          "evidence": "provider-console-readiness operator evidence summary without API keys, billing account identifiers, private project ids, or provider screenshots",
+          "runbook": "docs/provider-setup.md"
+        },
+        {
+          "id": "iam-secret-custody-reviewed",
+          "title": "IAM and secret-custody evidence is reviewed for OIDC trust, Data API scope, database grants, runtime secret-store principals, target-repo/browser secret exclusion, rotation ownership, and break-glass revoke paths before live dogfood traffic.",
+          "evidence": "iam-and-secrets operator evidence summary without live account ids, ARNs, secret names, wallet addresses, or private principals",
+          "runbook": "infra/aws/README.md"
         }
       ]
     },

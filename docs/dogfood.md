@@ -105,6 +105,15 @@ readiness, self-dogfood replay, private workspace parsing, and preflight. Use
 `npm --silent run` before copying output from commands that include private
 workspace paths into public notes.
 
+Before the first live model call, record reviewed
+`provider-console-readiness` operator evidence and `iam-and-secrets` operator
+evidence in the private dogfood status overlay. Dogfood status should confirm
+provider model availability, quotas/rate limits, spend controls, billing
+alerts, emergency key disablement, OIDC trust, Data API scope, database grants,
+secret-store principals, target-repo/browser secret exclusion, rotation
+ownership, and break-glass revoke paths without copying private identifiers
+into public artifacts.
+
 When live dogfood starts, track the actual run with the private status overlay:
 
 ```bash
@@ -246,6 +255,8 @@ Fast rollback options, from narrowest to broadest:
 
 - Dogfood readiness passes for the target repo config and reviewed central
   budget policy.
+- Provider-console readiness and IAM/secret-custody evidence are reviewed in
+  the private dogfood status overlay before live model calls.
 - Dogfood promotion passes with reviewed model price coverage, the private
   operator workspace, preflight, and self-dogfood replay gates included.
 - Synthetic self-dogfood replay proves command-only PR-open skip, trusted

@@ -615,7 +615,8 @@ npm run check:dogfood-status
 ```
 
 The dogfood status contract keeps readiness behavior, missing-id checks,
-complete evidence requirements, deferred item semantics, public Markdown
+complete evidence requirements, provider-console readiness and
+IAM/secret-custody pre-traffic gates, deferred item semantics, public Markdown
 redaction, and docs synchronized.
 
 `npm run check:docs` is included in `npm run release:check` and verifies local

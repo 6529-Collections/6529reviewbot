@@ -411,7 +411,7 @@
         {
           "id": "dogfood-status-contract",
           "script": "check:dogfood-status",
-          "purpose": "Verify dogfood status readiness, missing-id checks, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify dogfood status readiness, missing-id checks, provider-console readiness and IAM/secret-custody pre-traffic gates, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/dogfood-status.md",
           "publicOutput": "Safe."
         },

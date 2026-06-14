@@ -31,6 +31,7 @@ function checkDogfoodStatusContract(options = {}) {
   const findings = [];
   checkCliContract(findings);
   checkStatusContract(findings);
+  checkChecklistConfig(findings);
   checkMarkdownRedaction(findings);
   checkSourceInvariants(options.sourceTexts || {}, findings);
   checkDocs(options.docTexts || {}, findings);
@@ -194,6 +195,93 @@ function checkStatusContract(findings) {
   );
 }
 
+function checkChecklistConfig(findings) {
+  const checklist = dogfoodStatus.loadDogfoodChecklist(
+    path.join(root, "config/dogfood-checklist.json")
+  );
+  const baseline = checklist.phases.find((phase) => phase.id === "baseline");
+  if (!baseline) {
+    findings.push("dogfood checklist must include the baseline phase.");
+    return;
+  }
+  const itemIds = baseline.items.map((item) => item.id);
+  const readinessIndex = itemIds.indexOf("dogfood-readiness-passes");
+  const providerIndex = itemIds.indexOf("provider-console-readiness-reviewed");
+  const iamIndex = itemIds.indexOf("iam-secret-custody-reviewed");
+  if (providerIndex === -1) {
+    findings.push("baseline phase must include provider-console-readiness-reviewed.");
+  } else {
+    if (readinessIndex !== -1 && providerIndex < readinessIndex) {
+      findings.push("provider-console-readiness-reviewed must come after dogfood-readiness-passes.");
+    }
+    const provider = baseline.items[providerIndex];
+    for (const snippet of [
+      "Provider-console readiness",
+      "configured-model availability",
+      "key custody",
+      "quotas/rate limits",
+      "spend controls",
+      "billing alerts",
+      "emergency key disablement",
+      "before live dogfood model calls",
+    ]) {
+      if (!provider.title.includes(snippet)) {
+        findings.push(`provider-console-readiness-reviewed title must include '${snippet}'.`);
+      }
+    }
+    for (const snippet of [
+      "provider-console-readiness operator evidence",
+      "without API keys",
+      "billing account identifiers",
+      "private project ids",
+      "provider screenshots",
+    ]) {
+      if (!provider.evidence.includes(snippet)) {
+        findings.push(`provider-console-readiness-reviewed evidence must include '${snippet}'.`);
+      }
+    }
+    if (provider.runbook !== "docs/provider-setup.md") {
+      findings.push("provider-console-readiness-reviewed runbook must be docs/provider-setup.md.");
+    }
+  }
+  if (iamIndex === -1) {
+    findings.push("baseline phase must include iam-secret-custody-reviewed.");
+  } else {
+    if (providerIndex !== -1 && iamIndex < providerIndex) {
+      findings.push("iam-secret-custody-reviewed must come after provider-console-readiness-reviewed.");
+    }
+    const iam = baseline.items[iamIndex];
+    for (const snippet of [
+      "IAM and secret-custody evidence",
+      "OIDC trust",
+      "Data API scope",
+      "database grants",
+      "runtime secret-store principals",
+      "target-repo/browser secret exclusion",
+      "break-glass revoke paths",
+      "before live dogfood traffic",
+    ]) {
+      if (!iam.title.includes(snippet)) {
+        findings.push(`iam-secret-custody-reviewed title must include '${snippet}'.`);
+      }
+    }
+    for (const snippet of [
+      "iam-and-secrets operator evidence",
+      "without live account ids",
+      "ARNs",
+      "secret names",
+      "private principals",
+    ]) {
+      if (!iam.evidence.includes(snippet)) {
+        findings.push(`iam-secret-custody-reviewed evidence must include '${snippet}'.`);
+      }
+    }
+    if (iam.runbook !== "infra/aws/README.md") {
+      findings.push("iam-secret-custody-reviewed runbook must be infra/aws/README.md.");
+    }
+  }
+}
+
 function checkMarkdownRedaction(findings) {
   const checklist = {
     version: 1,
@@ -285,6 +373,8 @@ function checkDocs(docTexts, findings) {
     "docs/dogfood-status.md": [
       "npm run check:dogfood-status",
       "dogfood status contract check",
+      "provider-console-readiness operator evidence",
+      "iam-and-secrets operator evidence",
       "AWS identifiers",
     ],
     "docs/release-readiness.md": ["dogfood status contract"],

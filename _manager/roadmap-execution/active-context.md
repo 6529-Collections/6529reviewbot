@@ -615,12 +615,15 @@ merged PRs.
 - Cutover provider/IAM evidence gates PR: merged as PR #324, merge commit `b88ca46`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `b88ca46`.
-- Current branch: `codex/release-gates-provider-iam-evidence`.
-- Current local changes: harden existing v0 and community release-gate
-  `secret-boundary` and `aws-iam` titles/contracts so they require
-  provider-console readiness and IAM/secret-custody operator evidence; update
-  release readiness, v0 release plan, release operations map, roadmap,
-  changelog, and durable manager memory.
+- Release-gate evidence hardening PR: merged as PR #325, merge commit `9e2fc95`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `9e2fc95`.
+- Current branch: `codex/dogfood-provider-iam-evidence-gates`.
+- Current local changes: add dogfood status baseline gates for
+  provider-console readiness and IAM/secret-custody evidence before first live
+  dogfood model calls; synchronize dogfood checklist/status example, dogfood
+  docs, release readiness, release operations map, roadmap, changelog, and
+  durable manager memory.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -691,7 +694,28 @@ merged PRs.
   - `npm test` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    hardened v0/community release-gate evidence requirements exercised.
+    hardened v0/community release-gate evidence requirements exercised;
+  - `gh run watch 27501411310 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #325 post-merge CI;
+  - `gh run watch 27501411316 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #325 post-merge OpenSSF Scorecard;
+  - `npm run check:dogfood-status` initially caught dogfood status doc wording
+    that split provider-console/IAM evidence snippets across backticked section
+    names; updated the docs and reran successfully with 3 CLI cases, 6 status
+    cases, and 7 docs checked;
+  - `npm run check:manager-memory` initially caught wrapped PR #325 merge
+    commit wording; fixed the active-context line and reran successfully with
+    6 sections, latest PR #325, and 5 docs checked;
+  - `npm run check:checklist-runbooks` passed with 93 links in 3 files;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` initially caught stale dogfood checklist item and pending
+    counts after adding two baseline gates; updated smoke expectations and
+    reran successfully;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood provider-console/IAM baseline gates exercised.
 
 ## Key Decisions
 

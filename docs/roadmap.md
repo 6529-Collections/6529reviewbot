@@ -623,6 +623,8 @@ Completed in `6529reviewbot`:
 - v0 and community release gates now require provider-console readiness and
   IAM/secret-custody operator evidence in their secret-boundary and AWS/IAM
   gates.
+- dogfood status now includes baseline provider-console readiness and
+  IAM/secret-custody evidence gates before first live dogfood model calls.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
