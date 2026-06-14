@@ -244,11 +244,11 @@ function operatorDrillNextCommands() {
     },
     {
       label: "dogfood promotion",
-      command: "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+      command: "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
     },
     {
       label: "dogfood go-live",
-      command: "npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+      command: "npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
     },
   ];
 }

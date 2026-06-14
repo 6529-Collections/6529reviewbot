@@ -359,8 +359,9 @@ npm run production:deployment-plan -- -- --host <production-bot-origin> --image 
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${release} --require-ready
 npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${release} --require-ready
 npm run release:candidate -- -- --operator-workspace . --strict-preflight
-npm --silent run dogfood:promotion -- -- --operator-workspace . --strict-preflight --require-ready
-npm --silent run dogfood:go-live -- -- --operator-workspace . --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json> --quiet
+npm --silent run dogfood:promotion -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 \`\`\`
 
 Copy only redacted summaries, release-candidate output, promotion packets, or
