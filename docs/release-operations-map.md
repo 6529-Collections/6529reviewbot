@@ -201,8 +201,8 @@ production deployment-plan evidence, public dashboard disclosure evidence,
 private admin auth evidence, public-summary redaction, source invariants, and
 docs aligned.
 `npm run check:production-cutover` keeps production cutover checklist/status
-readiness, deferral semantics, Markdown redaction, source invariants, and docs
-aligned.
+readiness, production deployment plan evidence, deferral semantics, Markdown
+redaction, source invariants, and docs aligned.
 `npm run check:security-review-status` keeps security review status readiness,
 deferral semantics, Markdown redaction, source invariants, and docs aligned.
 `npm run check:release-candidate` keeps release-candidate bundle redaction,

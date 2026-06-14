@@ -18,6 +18,10 @@
       "status": "pending",
       "notes": "Render from the private release-gate status and operator evidence files during cutover."
     },
+    "production-deployment-plan-reviewed": {
+      "status": "pending",
+      "notes": "Render and review the ready-mode production deployment plan before live handoff."
+    },
     "manifest-rendered": {
       "status": "pending",
       "notes": "Render the production-host manifest immediately before App registration."

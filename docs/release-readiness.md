@@ -771,10 +771,11 @@ verifies operator evidence sections, readiness semantics, production deployment
 plan evidence, public-summary redaction, source invariants, and docs stay
 aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
-verifies production cutover checklist/status readiness, container publish-plan
-evidence, worker dispatch credential evidence, public dashboard disclosure
-allowlist evidence, private admin auth-check evidence, deferral semantics,
-Markdown redaction, source invariants, and docs stay aligned.
+verifies production cutover checklist/status readiness, production deployment
+plan evidence, container publish-plan evidence, worker dispatch credential
+evidence, public dashboard disclosure allowlist evidence, private admin
+auth-check evidence, deferral semantics, Markdown redaction, source invariants,
+and docs stay aligned.
 `npm run check:security-review-status` is included in `npm run release:check`
 and verifies security review status readiness, deferral semantics, Markdown
 redaction, source invariants, and docs stay aligned.

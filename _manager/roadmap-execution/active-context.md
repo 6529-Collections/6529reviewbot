@@ -585,29 +585,30 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Production deployment dispatch installation id PR: merged as PR #312, merge commit `4e01bfd`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-evidence-deployment-plan-section`.
-- Current local changes: add a dedicated `production-deployment-plan` section
-  to structured operator evidence, the tracked example evidence file, the
-  operator evidence template, release-candidate public-safe summaries, and
-  release operations/readiness docs.
+- Operator evidence production deployment-plan section PR: merged as PR #313,
+  merge commit `18f24a0`; post-merge CI and OpenSSF Scorecard completed
+  successfully.
+- Current branch: `codex/cutover-deployment-plan-gate`.
+- Current local changes: add `production-deployment-plan-reviewed` to the
+  production cutover baseline checklist and status example, document the
+  ready-mode handoff command in the cutover runbook, and extend the cutover
+  contract plus smoke counts.
 - Current local validation:
-  - `gh run watch 27497684359 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #312 post-merge CI;
-  - `gh run watch 27497684369 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #312 post-merge OpenSSF Scorecard;
-  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence cases,
+  - `gh run watch 27497930503 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge CI;
+  - `gh run watch 27497930515 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge OpenSSF Scorecard;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
     and 6 docs checked;
-  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
-    cases, and 5 docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
   - `npm test` passed;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #312, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #313, and
     5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    production deployment-plan operator evidence section exercised.
+    production cutover deployment-plan gate exercised.
 
 ## Key Decisions
 

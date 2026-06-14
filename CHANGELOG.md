@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a production deployment-plan review item to the production cutover
+  checklist and status example.
 - Added a dedicated production deployment-plan section to structured operator
   evidence and release-candidate summaries.
 - Required a concrete central repository worker-dispatch installation id for
