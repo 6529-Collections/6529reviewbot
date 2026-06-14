@@ -554,6 +554,8 @@ Completed in `6529reviewbot`:
 - production deployment plan command for dry-run operator handoff across App
   registration, image publish, workspace, preflight, admin snapshot, cutover,
   and dogfood gates.
+- production deployment planning rejects URL-style image repository inputs
+  before rendering operator handoff commands.
 - dashboard deployment plan command for dry-run 6529.io dashboard handoff
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.

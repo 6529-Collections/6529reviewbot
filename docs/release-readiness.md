@@ -245,6 +245,8 @@ Ready for community review:
 - production deployment plan for a dry-run operator handoff across GitHub App
   registration, container publish, operator workspace, strict preflight, admin
   snapshot, cutover, and dogfood gates before live operator steps;
+- production deployment planning rejects URL-style image repository inputs
+  before rendering operator handoff commands;
 - dashboard deployment plan for a dry-run 6529.io handoff across public and
   private dashboard env, bot public disclosure settings, HMAC admin auth,
   route verification, cutover evidence, and release notes;
