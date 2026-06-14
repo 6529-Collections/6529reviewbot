@@ -6,12 +6,13 @@ starting point for operator review, not an automatic publisher.
 
 The draft intentionally leaves operator-owned facts as `TODO(operator)`:
 production App deployment, dashboard status, alert delivery, provider pricing,
-dogfood repositories, production deployment plan evidence, dashboard
-deployment plan evidence, public dashboard disclosure allowlists, private
-admin auth-check URL and wallet allowlist evidence, alert delivery plan
-evidence, manual security review, CI links, and accepted deferrals. Complete
-those fields from the private operator workspace before creating a GitHub
-Release. Before publishing, run
+dogfood repositories, worker dispatch credential evidence, container publish
+plan evidence, production deployment plan evidence, dashboard deployment plan
+evidence, public dashboard disclosure allowlists, private admin auth-check URL
+and wallet allowlist evidence, alert delivery plan evidence, manual security
+review, CI links, and accepted deferrals. Complete those fields from the
+private operator workspace before creating a GitHub Release. Before
+publishing, run
 [Release Notes Publication](release-notes-publication.md) or
 `npm run release:notes:check -- -- --file <release-notes.md>` to reject
 unfinished markers and obvious private-data leaks.
@@ -66,7 +67,8 @@ npm run check:release-notes-draft
 The check verifies the draft command keeps release-candidate summaries, model
 catalog defaults, OpenRouter explicit routing, `TODO(operator)` markers,
 production deployment plan evidence, dashboard deployment plan evidence,
-public dashboard disclosure allowlists, private admin auth-check URL and
-wallet allowlist evidence, alert delivery plan evidence, redaction, CLI flags,
+worker dispatch credential evidence, container publish plan evidence, public
+dashboard disclosure allowlists, private admin auth-check URL and wallet
+allowlist evidence, alert delivery plan evidence, redaction, CLI flags,
 release-check wiring, smoke coverage, operations map entries, and docs
 synchronized.

@@ -5198,3 +5198,25 @@
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     release-candidate runtime/dispatch evidence section coverage exercised.
+- Merged `6529reviewbot` PR #289 as `d69922e`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-runtime-dispatch-evidence` increment:
+  - require release notes drafts, templates, and publication checks to include
+    worker dispatch credential evidence and container publish-plan evidence
+    before pre-v1 release notes can be published.
+- Local validation for `codex/release-notes-runtime-dispatch-evidence` so far:
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and
+    6 docs checked;
+  - `npm run check:release-notes-publication` passed with 10 publication
+    cases and 7 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #289,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    release notes runtime/dispatch evidence fields exercised.

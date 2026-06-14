@@ -273,6 +273,10 @@ function checkSourceAnchors(sourceTexts, findings) {
       "target repo configuration is loaded from the base ref",
       "route to an operator-owned channel",
       "No accepted deferrals",
+      "Worker dispatch credential evidence:",
+      "Container publish plan evidence:",
+      "non-noop worker traffic has reviewed dispatch credential evidence",
+      "container image evidence has reviewed container publish-plan evidence",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -333,6 +337,8 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/release-notes-template.md": [
       "Release Notes Publication",
+      "Worker dispatch credential evidence:",
+      "Container publish plan evidence:",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -376,9 +382,11 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Worker path: central GitHub Actions dispatch in reviewed bot repo
 - GitHub Actions dispatch mode: GitHub App installation token
 - GitHub Actions dispatch token source: bot-owned dispatch App
+- Worker dispatch credential evidence: reviewed dispatch-only App or accepted fallback
 - App server runtime: reviewed container or local dogfood runtime
 - Container image contract check: passed
 - Container image digest, if used: not used for this dogfood release
+- Container publish plan evidence: reviewed or explicitly not used for dogfood
 - GitHub App permissions/events: reviewed manifest packet
 - Providers/models: anthropic:claude-opus-4-8
 - Default Anthropic model: claude-opus-4-8
@@ -408,7 +416,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 

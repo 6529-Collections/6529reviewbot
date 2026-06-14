@@ -537,23 +537,28 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator evidence runtime/dispatch sections PR: merged as PR #288, merge commit `4b0b4eb`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-candidate-runtime-dispatch-sections`.
-- Current local changes: pin release-candidate contract coverage and docs so
-  public bundles surface the container publish-plan and worker dispatch
-  credential operator evidence sections when present.
+- Release-candidate runtime/dispatch sections PR: merged as PR #289, merge commit `d69922e`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-runtime-dispatch-evidence`.
+- Current local changes: require release notes drafts, templates, and
+  publication checks to include worker dispatch credential evidence and
+  container publish-plan evidence before pre-v1 release notes can be published.
 - Current local validation:
-  - `npm run check:release-candidate` passed with 7 redaction cases,
-    3 path cases, and 5 docs checked;
-  - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and
+    6 docs checked;
+  - `npm run check:release-notes-publication` passed with 10 publication
+    cases and 7 docs checked;
+  - `npm run check:docs` passed with 73 files checked.
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #288,
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #289,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    release-candidate runtime/dispatch evidence section coverage exercised.
+    release notes runtime/dispatch evidence fields exercised.
 
 ## Key Decisions
 

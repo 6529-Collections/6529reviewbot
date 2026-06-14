@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required release notes drafts and publication checks to include worker
+  dispatch credential evidence and container publish-plan evidence before
+  pre-v1 notes can be published.
 - Pinned release-candidate contract coverage for container publish-plan and
   worker dispatch credential operator evidence sections.
 - Added first-class operator evidence sections for container publish-plan

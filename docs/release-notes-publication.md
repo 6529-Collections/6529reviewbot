@@ -42,6 +42,10 @@ The publication guard verifies:
 - tested configuration fields are filled;
 - known-gap fields are filled;
 - validation fields are filled;
+- worker dispatch credential evidence is filled before tag or GitHub Release
+  publication;
+- container publish plan evidence is filled before tag or GitHub Release
+  publication;
 - production deployment plan evidence is filled before tag or GitHub Release
   publication;
 - dashboard deployment plan evidence is filled before tag or GitHub Release
@@ -68,9 +72,10 @@ The publication guard verifies:
 
 Warnings remind operators to keep the standard safety language about
 trusted-actor admission, budget enforcement, run-control enforcement,
-bot-owned infrastructure, base-ref target repository configuration,
-public dashboard disclosure allowlists, private admin auth evidence,
-operator-owned alert routing, exact tag/commit pinning, and emergency rollback.
+worker dispatch credential evidence, container publish-plan evidence,
+bot-owned infrastructure, base-ref target repository configuration, public
+dashboard disclosure allowlists, private admin auth evidence, operator-owned
+alert routing, exact tag/commit pinning, and emergency rollback.
 
 ## Relationship To Drafts
 
