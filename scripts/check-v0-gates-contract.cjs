@@ -54,6 +54,27 @@ function checkV0GatesContract(options = {}) {
 function checkGateConfig(findings) {
   const gates = releaseGates.loadReleaseGates(path.join(root, "config/v0-release-gates.json"));
   const gatesById = new Map(gates.gates.map((gate) => [gate.id, gate]));
+  const containerImageGate = gatesById.get("container-image");
+  if (!containerImageGate) {
+    findings.push("v0 release gates must include 'container-image'.");
+  } else {
+    if (containerImageGate.evidence !== "docs/container-publish-plan.md") {
+      findings.push("container-image gate evidence must be docs/container-publish-plan.md.");
+    }
+    const containerTitle = normalizeWhitespace(containerImageGate.title).toLowerCase();
+    for (const snippet of [
+      "reviewed container publish plan evidence",
+      "operator-owned registry",
+      "container-image contract check",
+      "reviewed commit",
+      "scanned",
+      "digest",
+    ]) {
+      if (!containerTitle.includes(snippet)) {
+        findings.push(`container-image gate title must require ${snippet}.`);
+      }
+    }
+  }
   for (const id of ["public-dashboard", "admin-surface"]) {
     const gate = gatesById.get(id);
     if (!gate) {
@@ -316,6 +337,7 @@ function checkDocs(docTexts, findings) {
     "docs/v0-release-plan.md": [
       "npm run check:v0-gates",
       "v0 release gate contract check",
+      "reviewed container publish plan evidence",
       "reviewed alert delivery plan evidence",
       "AWS account ids",
     ],

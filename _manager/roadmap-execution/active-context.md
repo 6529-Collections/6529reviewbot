@@ -519,21 +519,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Deployment plan doc origin examples PR: merged as PR #279, merge commit `33193e7`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/public-artifact-example-host-scan`.
-- Current local changes: add a public artifact scan guard that rejects
-  `reviewbot.example.com` inside shell command blocks while allowing prose
-  warnings and the public env template placeholder.
+- Public artifact example-host scan PR: merged as PR #280, merge commit `93d0ed0`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/container-publish-plan-release-gate`.
+- Current local changes: require reviewed container publish plan evidence in
+  the v0 release gates and production cutover checklist before container
+  image deployment evidence can satisfy release readiness.
 - Current local validation:
-  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
+    6 docs checked;
+  - `npm run check:container-publish-plan` passed with 6 plan cases and
+    6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #279,
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #280,
     and 5 docs checked;
-  - `npm test` passed;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    public-artifact example-host guard exercised.
+    container publish-plan release/cutover gate exercised.
 
 ## Key Decisions
 

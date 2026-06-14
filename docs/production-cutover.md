@@ -49,6 +49,14 @@ delivery plan with explicit production inputs:
 npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready
 ```
 
+Before marking the container image complete, render and review the dry-run
+publish plan with an operator-owned registry. The plan must run before any
+live image build or push:
+
+```bash
+npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready
+```
+
 Include the cutover summary in the release-candidate bundle:
 
 ```bash
@@ -124,6 +132,7 @@ admin snapshot details outside the public repo.
 - [Operator Evidence Template](operator-evidence-template.md)
 - [Dashboard Deployment Plan](dashboard-deployment-plan.md)
 - [Alert Delivery Plan](alert-delivery-plan.md)
+- [Container Publish Plan](container-publish-plan.md)
 - [Production Deployment](deployment.md)
 - [GitHub App Registration](github-app-registration.md)
 - [Container Deployment](container-deployment.md)

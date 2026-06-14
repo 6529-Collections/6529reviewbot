@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required reviewed container publish plan evidence in the v0 release gates
+  and production cutover checklist before container image deployment evidence
+  can satisfy release readiness.
 - Added a public artifact scan guard for shell command examples that still use
   the reserved `reviewbot.example.com` bot host.
 - Aligned production deployment, dashboard deployment, and alert delivery

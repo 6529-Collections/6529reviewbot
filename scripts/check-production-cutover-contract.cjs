@@ -55,6 +55,48 @@ function checkChecklistConfig(findings) {
   const checklist = productionCutover.loadProductionCutoverChecklist(
     path.join(root, "config/production-cutover-checklist.json")
   );
+  const serverWorkerPhase = checklist.phases.find((phase) => phase.id === "server-and-worker");
+  if (!serverWorkerPhase) {
+    findings.push("production cutover checklist must include the server-and-worker phase.");
+  } else {
+    const itemIds = serverWorkerPhase.items.map((item) => item.id);
+    const containerImageIndex = itemIds.indexOf("container-image-reviewed");
+    const serverDeployedIndex = itemIds.indexOf("server-deployed-noop");
+    if (containerImageIndex === -1) {
+      findings.push("server-and-worker phase must include container-image-reviewed.");
+    } else {
+      if (serverDeployedIndex !== -1 && containerImageIndex > serverDeployedIndex) {
+        findings.push("container-image-reviewed must come before server-deployed-noop.");
+      }
+      const containerImage = serverWorkerPhase.items[containerImageIndex];
+      for (const snippet of [
+        "Container publish plan",
+        "operator-owned registry",
+        "before any image build or push",
+      ]) {
+        if (!containerImage.title.includes(snippet)) {
+          findings.push(`container-image-reviewed title must include '${snippet}'.`);
+        }
+      }
+      for (const snippet of [
+        "npm run container:publish-plan",
+        "--image <operator-registry>/6529reviewbot",
+        "--release v0.1.0",
+        "--require-ready",
+        "image digest",
+        "builder identity",
+        "source commit",
+        "scan summary",
+      ]) {
+        if (!containerImage.evidence.includes(snippet)) {
+          findings.push(`container-image-reviewed evidence must include '${snippet}'.`);
+        }
+      }
+      if (containerImage.runbook !== "docs/container-publish-plan.md") {
+        findings.push("container-image-reviewed runbook must be docs/container-publish-plan.md.");
+      }
+    }
+  }
   const dogfoodPhase = checklist.phases.find((phase) => phase.id === "dogfood");
   if (!dogfoodPhase) {
     findings.push("production cutover checklist must include the dogfood phase.");
@@ -389,6 +431,7 @@ function checkDocs(docTexts, findings) {
     "docs/production-cutover.md": [
       "npm run check:production-cutover",
       "production cutover contract check",
+      "npm run container:publish-plan",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["production cutover contract"],

@@ -4997,3 +4997,26 @@
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     public-artifact example-host guard exercised.
+- Merged `6529reviewbot` PR #280 as `93d0ed0`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/container-publish-plan-release-gate` increment:
+  - require reviewed container publish plan evidence in the v0 release gates
+    and production cutover checklist before container image deployment
+    evidence can satisfy release readiness.
+- Local validation for `codex/container-publish-plan-release-gate` so far:
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
+    6 docs checked;
+  - `npm run check:container-publish-plan` passed with 6 plan cases and
+    6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #280,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    container publish-plan release/cutover gate exercised.
