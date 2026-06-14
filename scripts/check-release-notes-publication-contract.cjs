@@ -135,6 +135,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "No accepted deferrals",
       "Dashboard deployment plan:",
       "Alert delivery plan:",
+      "reviewed alert delivery plan evidence",
       "`npm run dashboard:deployment-plan",
       "`npm run alerts:delivery-plan",
     ],
@@ -232,7 +233,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Ledger schema status: applied or explicitly manual for dogfood
 - Model pricing status: conservative defaults reviewed
 - Model price source freshness policy: reviewed during release candidate
-- Alert delivery: operator-owned channel verified
+- Alert delivery: operator-owned channel verified after reviewed alert delivery plan evidence
 - Alert delivery plan: ready
 - Empty provider output fail-closed evidence: smoke and release checks passed
 - Worker diagnostic redaction evidence: diagnostics redaction checks passed
@@ -250,7 +251,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, and scheduled operator alerts route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 

@@ -252,6 +252,8 @@ Ready for community review:
   before scheduled operator alert delivery is marked ready;
 - v0 release gate evidence now requires reviewed alert delivery plan evidence
   before scheduled operator alerts satisfy the tag checklist;
+- release notes template, draft, and publication checks carry the same
+  reviewed alert delivery plan evidence requirement as the v0 alerts gate;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret

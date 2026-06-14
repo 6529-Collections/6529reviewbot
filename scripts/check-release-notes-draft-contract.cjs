@@ -85,6 +85,7 @@ function checkDefaultDraft(findings) {
     "`npm run production:deployment-plan",
     "`npm run dashboard:deployment-plan",
     "`npm run alerts:delivery-plan",
+    "reviewed alert delivery plan evidence",
     "`npm --silent run dogfood:go-live",
   ]) {
     if (!markdown.includes(snippet)) {

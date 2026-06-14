@@ -557,6 +557,8 @@ Completed in `6529reviewbot`:
   or scheduled alert delivery.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
+- release notes template, draft, and publication checks now carry the same
+  reviewed alert delivery plan evidence requirement as the v0 alerts gate.
 - generated operator workspace guidance now includes the production deployment
   plan, dashboard deployment plan, and alert delivery plan commands so release
   evidence and deployment handoff commands stay together in the private
