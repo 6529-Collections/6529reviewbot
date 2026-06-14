@@ -264,6 +264,16 @@ function checkSourceInvariants(sourceTexts, findings) {
       findings.push(`${binPath} must include '${snippet}'.`);
     }
   }
+
+  const releaseCheckPath = "scripts/release-check.cjs";
+  const releaseCheckText = sourceTexts[releaseCheckPath] || readText(releaseCheckPath);
+  for (const snippet of [
+    'runNode("bin/dogfood-readiness.cjs", ["--json", "--quiet", "--require-ready"])',
+  ]) {
+    if (!releaseCheckText.includes(snippet)) {
+      findings.push(`${releaseCheckPath} must include '${snippet}'.`);
+    }
+  }
 }
 
 function checkDocs(docTexts, findings) {

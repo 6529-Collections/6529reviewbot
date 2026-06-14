@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added `dogfood:readiness --require-ready` to the release check so the
+  release gate exercises the ready-mode dogfood readiness CLI path.
 - Pinned image repository contracts to reject tag-like colons inside
   repository path segments before rendering commands.
 - Hardened image repository planning to allow numeric registry ports while

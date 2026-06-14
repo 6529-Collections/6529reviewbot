@@ -4461,3 +4461,22 @@
     and 5 docs checked;
   - `npm run release:check` passed with 175 CommonJS files checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #254 as `fbabb88`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-readiness-release-gate` increment:
+  - add `dogfood:readiness --require-ready` to the release check so the
+    pre-traffic dogfood readiness ready gate is exercised before releases.
+- Local validation for `codex/dogfood-readiness-release-gate` so far:
+  - `npm run check:dogfood-readiness` passed with 3 CLI cases, 3 report cases,
+    and 6 docs checked;
+  - `node bin/dogfood-readiness.cjs --json --quiet --require-ready` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 175 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #254,
+    and 5 docs checked;
+  - `npm run release:check` passed with 175 CommonJS files checked and the
+    dogfood readiness ready-mode release gate exercised;
+  - `npm run check:public-artifacts` passed with 116 files checked.

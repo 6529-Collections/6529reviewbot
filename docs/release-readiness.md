@@ -129,6 +129,8 @@ Ready for community review:
 - dogfood readiness checker that keeps static input defaults, private
   workspace path markers, preflight state, Markdown redaction, source
   invariants, and docs synchronized;
+- release checks run dogfood readiness in `--require-ready` mode so the
+  pre-traffic ready gate is exercised before releases;
 - dogfood promotion packet command for composing target config readiness,
   central dogfood inputs, synthetic self-dogfood replay, private workspace
   parsing, and preflight into one final pre-traffic go/no-go report;
