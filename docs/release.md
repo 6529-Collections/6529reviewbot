@@ -157,8 +157,8 @@ After stabilization:
 - `npm run release:notes:check -- -- --file <release-notes.md>` checks
   completed pre-v1 release notes before publishing a tag or GitHub Release
 - `npm run check:release-notes-publication` confirms the publication guard
-  rejects unfinished TODO markers, missing evidence fields, incomplete
-  deferrals, and public-safety leaks
+  rejects unfinished TODO markers, missing community-release or other evidence
+  fields, incomplete deferrals, and public-safety leaks
 - `npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
   builds the final dry-run tag plan from clean `main`, local and remote tag
   availability, and completed release notes; it does not create tags

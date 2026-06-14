@@ -457,8 +457,9 @@ Completed in `6529reviewbot`:
   plan evidence, public dashboard disclosure evidence, private admin auth
   evidence, community-release status evidence, and alert delivery plan evidence;
 - release notes publication guard for rejecting unfinished markers, missing
-  evidence fields, incomplete deferrals, vague or failed validation results,
-  and public-safety leaks before tags or GitHub Releases;
+  community-release or other evidence fields, incomplete deferrals, vague or
+  failed validation results, and public-safety leaks before tags or GitHub
+  Releases;
 - release tag plan command for checking clean synced `main`, local and remote
   tag availability, completed release notes, and final operator tag commands
   without creating tags;

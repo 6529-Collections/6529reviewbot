@@ -56,6 +56,8 @@ The publication guard verifies:
   GitHub Release publication;
 - private admin auth-check URL and wallet allowlist evidence is filled before
   tag or GitHub Release publication;
+- community-release status evidence is filled before tag, GitHub Release, or
+  broad community-use publication;
 - alert delivery plan evidence is filled before tag or GitHub Release
   publication;
 - accepted model-price overrides either state `none` or name
@@ -65,8 +67,8 @@ The publication guard verifies:
   rather than vague run status;
 - local validation is kept distinct from operator evidence, so repository
   checks can prove source contracts while production, dashboard, alert,
-  dogfood, security-review, and cutover readiness require reviewed operator
-  evidence or an explicit deferral;
+  community-release, dogfood, security-review, and cutover readiness require
+  reviewed operator evidence or an explicit deferral;
 - failed, pending, blocked, not-ready, or negated readiness evidence is
   rejected unless it is explicitly accepted, explicitly deferred, or
   dogfood-only;
@@ -81,7 +83,8 @@ trusted-actor admission, budget enforcement, run-control enforcement,
 worker dispatch credential evidence, container publish-plan evidence,
 bot-owned infrastructure, base-ref target repository configuration, public
 dashboard disclosure allowlists, private admin auth evidence, operator-owned
-alert routing, exact tag/commit pinning, and emergency rollback.
+alert routing, community-release readiness, exact tag/commit pinning, and
+emergency rollback.
 
 ## Relationship To Drafts
 
