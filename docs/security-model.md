@@ -57,7 +57,9 @@ budget authority.
 
 Budget admission runs before queueing review work or calling model providers.
 When budget caps are configured, missing spend data fails closed in enforce
-mode.
+mode. Within one webhook delivery, already admitted sibling jobs are counted as
+local reservations before later jobs are evaluated, so multi-kind or
+multi-model fanout cannot all pass against the same starting spend snapshot.
 
 ### Run Control Before Dispatch
 

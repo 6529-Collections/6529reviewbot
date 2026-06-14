@@ -208,6 +208,79 @@ function estimatedCostForScope(totalEstimatedUsd, subject, scopeType) {
   return roundUsd(totalEstimatedUsd / Math.max(1, subject.reviewKinds.length || 1));
 }
 
+function budgetReservationForDecision(decision) {
+  const reservations = {};
+  if (!decision?.allowed) {
+    return reservations;
+  }
+  const subject = decision.subject || {};
+  const estimatedCostUsd = roundUsd(decision.estimatedCostUsd || 0);
+  if (estimatedCostUsd <= 0) {
+    return reservations;
+  }
+  for (const scopeType of BUDGET_SCOPES) {
+    if (scopeType === "review_kind") {
+      const reviewKinds = Array.isArray(subject.reviewKinds) ? subject.reviewKinds : [];
+      for (const reviewKind of reviewKinds) {
+        addBudgetReservation(
+          reservations,
+          scopeType,
+          reviewKind,
+          estimatedCostForScope(estimatedCostUsd, subject, scopeType)
+        );
+      }
+      continue;
+    }
+    addBudgetReservation(
+      reservations,
+      scopeType,
+      scopeValueForSubject(subject, scopeType),
+      estimatedCostUsd
+    );
+  }
+  return reservations;
+}
+
+function mergeBudgetReservations(target, source) {
+  for (const [key, value] of Object.entries(source || {})) {
+    target[key] = roundUsd((target[key] || 0) + Number(value || 0));
+  }
+  return target;
+}
+
+function applyBudgetReservationsToSnapshot(snapshot, reservations) {
+  if (
+    !snapshot ||
+    !reservations ||
+    Object.keys(reservations).length === 0 ||
+    snapshot.unavailable
+  ) {
+    return snapshot;
+  }
+  const result = {
+    ...snapshot,
+    totals: { ...(snapshot?.totals || {}) },
+  };
+  for (const [key, reservedUsd] of Object.entries(reservations)) {
+    const existing = result.totals[key] || {};
+    result.totals[key] = {
+      ...existing,
+      dailyUsd: roundUsd(Number(existing.dailyUsd || 0) + reservedUsd),
+      weeklyUsd: roundUsd(Number(existing.weeklyUsd || 0) + reservedUsd),
+      monthlyUsd: roundUsd(Number(existing.monthlyUsd || 0) + reservedUsd),
+    };
+  }
+  return result;
+}
+
+function addBudgetReservation(reservations, scopeType, scopeValue, estimatedCostUsd) {
+  if (!scopeValue || estimatedCostUsd <= 0) {
+    return;
+  }
+  const key = budgetScopeKey(scopeType, scopeValue);
+  reservations[key] = roundUsd((reservations[key] || 0) + estimatedCostUsd);
+}
+
 function currentSpendUsd(snapshot, scopeType, scopeValue, period) {
   const key = budgetScopeKey(scopeType, scopeValue);
   const totals = snapshot.totals?.[key] || {};
@@ -282,10 +355,13 @@ function budgetDecision(status, allowed, code, reason, data) {
 
 module.exports = {
   BUDGET_SCOPES,
+  applyBudgetReservationsToSnapshot,
+  budgetReservationForDecision,
   budgetPolicyFromEnv,
   budgetPoliciesForSubject,
   budgetScopeKey,
   budgetSubjectFromEvent,
   evaluateBudgetAdmission,
   estimateCostUsd,
+  mergeBudgetReservations,
 };

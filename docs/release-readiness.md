@@ -28,6 +28,8 @@ Ready for community review:
 - GitHub App installation-token handling for repo config and actor permission
   resolution;
 - budget admission against the isolated AWS usage ledger;
+- same-delivery budget reservations so multi-kind or multi-model fanout counts
+  already admitted sibling jobs before later jobs are dispatched;
 - central DB budget policy dry-run/apply tooling and production admission
   loading;
 - budget policy runbook checks that keep central DB caps, dry-run/apply
