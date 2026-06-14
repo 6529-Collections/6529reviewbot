@@ -149,10 +149,11 @@ After stabilization:
   validation fields
 - `npm run release:notes` drafts public-safe pre-v1 release notes from a
   release-candidate JSON bundle and model catalog defaults, with
-  `TODO(operator)` markers for private evidence
+  `TODO(operator)` markers for private evidence, including community-release
+  status evidence
 - `npm run check:release-notes-draft` confirms the release notes draft command
-  keeps release-candidate summaries, model defaults, redaction, TODO markers,
-  CLI flags, and docs synchronized
+  keeps release-candidate summaries, model defaults, community-release status,
+  redaction, TODO markers, CLI flags, and docs synchronized
 - `npm run release:notes:check -- -- --file <release-notes.md>` checks
   completed pre-v1 release notes before publishing a tag or GitHub Release
 - `npm run check:release-notes-publication` confirms the publication guard

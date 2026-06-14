@@ -89,6 +89,7 @@ function summarizeCandidateBundle(candidate) {
       commit: publicText(candidate.git && candidate.git.commit),
     },
     releaseGates: readinessSummary(readiness.releaseGates),
+    communityRelease: optionalReadinessSummary(readiness.communityRelease),
     operatorEvidence: readinessSummary(readiness.operatorEvidence),
     dogfood: optionalReadinessSummary(readiness.dogfood),
     securityReview: optionalReadinessSummary(readiness.securityReview),
@@ -166,6 +167,7 @@ function formatReleaseNotesMarkdown(draft) {
     `- Dashboard deployment plan: ${TODO}`,
     `- Dogfood promotion packet: ${TODO}`,
     `- Dogfood go-live packet: ${TODO}`,
+    `- Community release status: ${readinessLine(draft.candidate.communityRelease)}`,
     `- Production cutover status: ${readinessLine(draft.candidate.productionCutover)}`,
     `- Preflight result: ${preflightLine(draft.candidate.preflight)}`,
     `- v0 gate checklist: ${readinessLine(draft.candidate.releaseGates)}`,
@@ -185,6 +187,7 @@ function formatReleaseNotesMarkdown(draft) {
     "- target repo configuration is loaded from the base ref;",
     "- public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed;",
     "- private admin exposure has reviewed auth-check URL and wallet allowlist evidence;",
+    "- broad community-release gates are complete or explicitly deferred before broad community use is announced;",
     "- scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.",
     "",
     "## Known Gaps",
@@ -224,6 +227,7 @@ function formatReleaseNotesMarkdown(draft) {
     `- \`npm run check:container-image\`: ${TODO}`,
     `- \`npm run v0:gates\`: ${TODO}`,
     `- \`npm run preflight -- -- --strict\`: ${TODO}`,
+    `- \`npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready\`: ${TODO}`,
     `- \`npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready\`: ${TODO}`,
     `- \`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready\`: ${TODO}`,
     `- \`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready\`: ${TODO}`,
@@ -270,12 +274,16 @@ function providerModel(catalog, provider) {
 }
 
 function candidateLine(candidate) {
-  return [
+  const parts = [
     candidate.ready ? "ready" : "not ready",
     `candidate ${candidate.release || "unknown"}`,
     `release gates ${summaryCounts(candidate.releaseGates)}`,
     `operator evidence ${summaryCounts(candidate.operatorEvidence)}`,
-  ].join("; ");
+  ];
+  if (candidate.communityRelease) {
+    parts.push(`community release ${summaryCounts(candidate.communityRelease)}`);
+  }
+  return parts.join("; ");
 }
 
 function readinessLine(summary) {
@@ -308,6 +316,7 @@ function preflightLine(preflight) {
 function deferralLines(candidate) {
   const deferrals = [
     ["release gates", candidate.releaseGates],
+    ["community release", candidate.communityRelease],
     ["operator evidence", candidate.operatorEvidence],
     ["dogfood", candidate.dogfood],
     ["security review", candidate.securityReview],

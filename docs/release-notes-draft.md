@@ -9,9 +9,10 @@ production App deployment, dashboard status, alert delivery, provider pricing,
 dogfood repositories, worker dispatch credential evidence, container publish
 plan evidence, production deployment plan evidence, dashboard deployment plan
 evidence, public dashboard disclosure allowlists, private admin auth-check URL
-and wallet allowlist evidence, alert delivery plan evidence, manual security
-review, CI links, and accepted deferrals. Complete those fields from the
-private operator workspace before creating a GitHub Release. Before
+and wallet allowlist evidence, community-release status evidence, alert
+delivery plan evidence, manual security review, CI links, and accepted
+deferrals. Complete those fields from the private operator workspace before
+creating a GitHub Release. Before
 publishing, run
 [Release Notes Publication](release-notes-publication.md) or
 `npm run release:notes:check -- -- --file <release-notes.md>` to reject
@@ -51,10 +52,10 @@ alert webhook, AWS access-key id, private-key, AWS ARN, and AWS account-id
 shapes. A human operator should still review the final Markdown before
 publishing it.
 
-Keep raw private release-gate, dogfood, security-review, cutover, and operator
-evidence files out of release notes. Generate a release-candidate JSON bundle
-or Markdown bundle first, review it, then use the draft command as the public
-notes starting point.
+Keep raw private release-gate, community-release, dogfood, security-review,
+cutover, and operator evidence files out of release notes. Generate a
+release-candidate JSON bundle or Markdown bundle first, review it, then use
+the draft command as the public notes starting point.
 
 ## Contract Check
 
@@ -69,6 +70,6 @@ catalog defaults, OpenRouter explicit routing, `TODO(operator)` markers,
 production deployment plan evidence, dashboard deployment plan evidence,
 worker dispatch credential evidence, container publish plan evidence, public
 dashboard disclosure allowlists, private admin auth-check URL and wallet
-allowlist evidence, alert delivery plan evidence, redaction, CLI flags,
-release-check wiring, smoke coverage, operations map entries, and docs
-synchronized.
+allowlist evidence, community-release status evidence, alert delivery plan
+evidence, redaction, CLI flags, release-check wiring, smoke coverage,
+operations map entries, and docs synchronized.

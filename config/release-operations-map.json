@@ -495,7 +495,7 @@
         {
           "id": "release-notes-draft-contract",
           "script": "check:release-notes-draft",
-          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, runtime dispatch evidence, container publish evidence, dashboard disclosure evidence, private admin auth evidence, alert evidence, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
+          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, runtime dispatch evidence, container publish evidence, dashboard disclosure evidence, private admin auth evidence, community-release status evidence, alert evidence, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
           "doc": "docs/release-notes-draft.md",
           "publicOutput": "Safe."
         },

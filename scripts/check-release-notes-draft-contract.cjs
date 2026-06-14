@@ -81,6 +81,7 @@ function checkDefaultDraft(findings) {
     "Release candidate bundle:",
     "Production deployment plan:",
     "Dashboard deployment plan:",
+    "Community release status:",
     "Public dashboard disclosure allowlists:",
     "Private admin auth-check/wallet allowlist evidence:",
     "Alert delivery plan:",
@@ -94,6 +95,8 @@ function checkDefaultDraft(findings) {
     "container image evidence has reviewed container publish-plan evidence",
     "public dashboard repo/org disclosure uses reviewed allowlists",
     "private admin exposure has reviewed auth-check URL and wallet allowlist evidence",
+    "broad community-release gates are complete or explicitly deferred",
+    "`npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready`",
     "`npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",
     "`npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",
   ]) {
@@ -117,6 +120,7 @@ function checkCandidateFileDraft(findings) {
         git: { branch: "main", commit: "abcdef123456" },
         readiness: {
           releaseGates: { ready: true, total: 2, complete: 2, deferred: 0, pending: 0, blocked: 0, missingStatusIds: [] },
+          communityRelease: { ready: true, total: 3, complete: 2, deferred: 1, pending: 0, blocked: 0, missingStatusIds: [] },
           operatorEvidence: { ready: true, total: 1, complete: 1, deferred: 0, pending: 0, blocked: 0 },
           preflight: { ok: true, profile: "server", strict: true, errors: [], warnings: [] },
         },
@@ -138,6 +142,12 @@ function checkCandidateFileDraft(findings) {
     }
     if (!markdown.includes("ready; candidate arn:aws:[redacted]; release gates 2/2 complete")) {
       findings.push("release notes draft must summarize candidate-file readiness.");
+    }
+    if (!markdown.includes("community release 2/3 complete, 1 deferred")) {
+      findings.push("release notes draft must summarize candidate-file community release readiness.");
+    }
+    if (!markdown.includes("Gate: community release (1 deferred)")) {
+      findings.push("release notes draft must include community release deferrals.");
     }
   } finally {
     fs.rmSync(directory, { force: true, recursive: true });
@@ -175,10 +185,12 @@ function checkSourceAnchors(sourceTexts, findings) {
       "TODO(operator)",
       "Worker dispatch credential evidence:",
       "Container publish plan evidence:",
+      "Community release status:",
       "dashboard:deployment-plan",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
       "alerts:delivery-plan",
+      "community:gates",
       "publicText",
     ],
     "bin/release-notes-draft.cjs": [
@@ -218,6 +230,7 @@ function checkDocs(docTexts, findings) {
       "container publish plan evidence",
       "public dashboard disclosure allowlists",
       "private admin auth-check URL and wallet allowlist evidence",
+      "community-release status",
       "npm --silent run release:notes -- -- --candidate-file <release-candidate.json>",
       "TODO(operator)",
       "npm run check:release-notes-draft",
@@ -237,6 +250,7 @@ function checkDocs(docTexts, findings) {
     "docs/roadmap.md": [
       "release notes draft",
       "release-candidate bundle",
+      "community-release status",
     ],
   };
 

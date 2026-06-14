@@ -70,6 +70,7 @@ repositories.
 - Dashboard deployment plan:
 - Dogfood promotion packet:
 - Dogfood go-live packet:
+- Community release status:
 - Production cutover status:
 - Preflight result:
 - v0 gate checklist:
@@ -93,6 +94,8 @@ are true:
   names are exposed;
 - private admin exposure has reviewed auth-check URL and wallet allowlist
   evidence;
+- broad community-release gates are complete or explicitly deferred before
+  broad community use is announced;
 - scheduled operator alerts have reviewed alert delivery plan evidence and
   route to an operator-owned channel.
 
@@ -137,6 +140,7 @@ before updating.
 - `npm run check:container-image`:
 - `npm run v0:gates`:
 - `npm run preflight -- -- --strict`:
+- `npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready`:
 - `npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready`:
 - `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`:
 - `npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready`:

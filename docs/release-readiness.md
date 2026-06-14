@@ -438,8 +438,9 @@ plan evidence, deferrals, known gaps, compatibility, and validation.
 `npm run check:release-notes-draft` is included in `npm run release:check` and
 keeps the public-safe release notes draft aligned with release-candidate
 summaries, model defaults, production deployment, runtime dispatch,
-container publish, dashboard disclosure, private admin auth, alert evidence,
-TODO markers, redaction, CLI flags, operations map entries, and docs.
+container publish, dashboard disclosure, private admin auth, community-release
+status, alert evidence, TODO markers, redaction, CLI flags, operations map
+entries, and docs.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and keeps the completed release notes publication
 guard aligned with required fields, deferral handling, public-safety
