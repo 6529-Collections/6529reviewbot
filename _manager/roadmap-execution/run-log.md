@@ -4565,3 +4565,22 @@
   - `npm run release:check` passed with 176 CommonJS files checked and the
     model-price dogfood readiness path exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #259 as `71e6349`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-promotion-model-prices` increment:
+  - forward optional model price coverage through dogfood promotion so
+    reviewed pricing evidence can participate in the final pre-traffic
+    central-inputs gate without exposing private file paths.
+- Local validation for `codex/dogfood-promotion-model-prices` so far:
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet
+    cases, and 6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 176 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #259,
+    and 5 docs checked;
+  - `npm run release:check` passed with 176 CommonJS files checked and the
+    model-price dogfood promotion path exercised;
+  - `npm run check:public-artifacts` passed with 116 files checked.
