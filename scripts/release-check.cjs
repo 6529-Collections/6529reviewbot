@@ -155,8 +155,51 @@ runNode("bin/production-cutover.cjs", [
   "--json",
   "--quiet",
 ]);
+runNode("bin/production-deployment-plan.cjs", [
+  "--host",
+  "https://reviewbot.example.com",
+  "--image",
+  "registry.example.com/6529reviewbot",
+  "--operator-workspace",
+  "operator-workspace",
+  "--release",
+  "v0.2.0",
+  "--require-ready",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/dashboard-deployment-plan.cjs", ["--json", "--quiet"]);
+runNode("bin/dashboard-deployment-plan.cjs", [
+  "--frontend-origin",
+  "https://6529.io",
+  "--bot-origin",
+  "https://reviewbot.example.com",
+  "--operator-workspace",
+  "operator-workspace",
+  "--auth-check-url",
+  "https://6529.io/api/auth/reviewbot",
+  "--release",
+  "v0.2.0",
+  "--require-ready",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/alert-delivery-plan.cjs", ["--json", "--quiet"]);
+runNode("bin/alert-delivery-plan.cjs", [
+  "--bot-origin",
+  "https://reviewbot.example.com",
+  "--operator-workspace",
+  "operator-workspace",
+  "--notify-mode",
+  "sns",
+  "--alert-channel",
+  "operator-alerts",
+  "--release",
+  "v0.2.0",
+  "--require-ready",
+  "--json",
+  "--quiet",
+]);
 runNode("bin/release-candidate.cjs", ["--json", "--quiet"]);
 runNode("bin/release-candidate.cjs", [
   "--dogfood-status-file",

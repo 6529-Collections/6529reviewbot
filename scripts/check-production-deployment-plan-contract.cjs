@@ -235,7 +235,11 @@ function checkSourceAnchors(sourceTexts, findings) {
       "--require-ready",
       "This command does not create GitHub Apps",
     ],
-    "scripts/release-check.cjs": ["scripts/check-production-deployment-plan-contract.cjs"],
+    "scripts/release-check.cjs": [
+      "scripts/check-production-deployment-plan-contract.cjs",
+      "bin/production-deployment-plan.cjs",
+      "--require-ready",
+    ],
     "scripts/smoke-test.cjs": [
       "productionDeploymentPlanContractCheck",
       "productionDeploymentPlanContractCheck.checkProductionDeploymentPlanContract",
