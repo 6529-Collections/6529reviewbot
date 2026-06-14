@@ -971,7 +971,11 @@ async function callOpenAI(settings, prompt) {
     settings.providerTimeoutMs
   );
   if (response.status === "incomplete") {
-    throw new Error(`OpenAI response incomplete: ${JSON.stringify(response.incomplete_details || {})}`);
+    throw new Error(
+      `OpenAI response incomplete: ${providerErrorSummary({
+        error: response.incomplete_details || { status: "incomplete" },
+      })}`
+    );
   }
   return {
     text: extractOpenAIText(response).trim(),
@@ -1074,7 +1078,7 @@ function providerErrorSummary(body) {
 
   const source = body.error && typeof body.error === "object" ? body.error : body;
   const summary = {};
-  for (const key of ["type", "code", "message", "param", "status"]) {
+  for (const key of ["type", "code", "message", "param", "status", "reason"]) {
     const value = safeErrorField(source[key]);
     if (value !== undefined) {
       summary[key] = value;
