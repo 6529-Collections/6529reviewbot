@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned admin snapshot operator docs with `<production-bot-origin>` instead
+  of documentation/example hosts.
 - Aligned production deployment, dashboard deployment, and alert delivery CLI
   help examples with placeholder-safe `--require-ready` inputs.
 - Rejected documentation, example, local, or reserved hosts from GitHub App

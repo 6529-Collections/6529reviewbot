@@ -45,7 +45,7 @@ outbound fetch.
 For a server-side 6529.io integration:
 
 ```text
-REVIEWBOT_USAGE_API_BASE_URL=https://reviewbot.example.com
+REVIEWBOT_USAGE_API_BASE_URL=<production-bot-origin>
 REVIEWBOT_USAGE_API_CLIENT_TIMEOUT_MS=10000
 REVIEWBOT_USAGE_API_ADMIN_ACTOR=6529.io
 REVIEWBOT_USAGE_API_ADMIN_ROLES=reviewbot-admin
@@ -72,7 +72,9 @@ templates/6529-io-reviewbot-env.example
 
 The template uses the env names expected by the public Open Data route and the
 private `/tools/6529bot/admin` route. It includes only placeholders and
-reviewed API paths. Validate it against the OpenAPI contract with:
+reviewed API paths; copy it into private deployment configuration and replace
+the example bot origin before enabling production traffic. Validate it against
+the OpenAPI contract with:
 
 ```bash
 npm run check:6529-io-env
@@ -155,7 +157,7 @@ or unredacted exception stacks.
 Operators can exercise the same client paths from a private environment:
 
 ```bash
-npm run admin:snapshot -- -- --base-url https://reviewbot.example.com
+npm run admin:snapshot -- -- --base-url <production-bot-origin>
 npm run admin:snapshot -- -- --json --require-ok
 ```
 

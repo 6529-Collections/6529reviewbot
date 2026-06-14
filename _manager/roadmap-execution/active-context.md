@@ -511,27 +511,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Placeholder GitHub App manifest hosts PR: merged as PR #275, merge commit `3d9ee30`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/update-ready-gate-help-examples`.
-- Current local changes: align production deployment, dashboard deployment, and
-  alert delivery CLI help examples with placeholder-safe `--require-ready`
-  inputs, and contract-check those help anchors.
+- Ready-gated deployment help examples PR: merged as PR #276, merge commit `11abf7a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-snapshot-production-origin-docs`.
+- Current local changes: align admin snapshot operator README and 6529.io
+  integration examples with `<production-bot-origin>`, keep the public env
+  template placeholder documented, and contract-check the operator examples.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 7 plan cases and
+  - `npm run check:admin-snapshot` passed with 9 checks, 9 CLI flags, and
     6 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
-    7 docs checked;
-  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
-    8 docs checked;
+  - `npm run check:6529-io-env` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #276,
+    and 5 docs checked;
   - `git diff --check` passed;
+  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
-  - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #275,
-    and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    ready-gated deployment help anchors exercised.
+    admin snapshot operator-origin docs exercised.
 
 ## Key Decisions
 
