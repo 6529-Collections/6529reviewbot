@@ -66,6 +66,22 @@ delivery plan with explicit production inputs:
 npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready
 ```
 
+Before marking AWS and secret custody complete, review the `iam-and-secrets`
+operator evidence. It must cover OIDC subject/audience scope, bot repository
+or protected-environment trust, Data API resource scope, database grants,
+SNS/SES resource scope, runtime secret-store access principals,
+target-repo/browser secret exclusion, rotation ownership, and break-glass
+revoke paths without publishing live account ids, ARNs, secret names, wallet
+addresses, or private principals.
+
+Before marking live provider readiness complete, review the
+`provider-console-readiness` operator evidence. It must cover enabled
+accounts/projects, key custody, configured-model availability, quotas/rate
+limits, provider-side spend caps or credit limits, billing alerts,
+data-retention/training settings where available, and emergency key
+disablement without publishing API keys, billing account identifiers, private
+project ids, or provider screenshots.
+
 Before marking the container image complete, render and review the dry-run
 publish plan with an operator-owned registry. The plan must run before any
 live image build or push:
@@ -116,8 +132,9 @@ The checklist tracks these phases:
   release-candidate bundle, and production deployment plan;
 - GitHub App registration: manifest rendering, production App creation,
   credential custody, and selected-repository install scope;
-- AWS ledger and secrets: IAM review, ledger schema, budget policies, model
-  prices, and runtime secret presence;
+- AWS ledger and secrets: IAM and secret custody evidence, ledger schema,
+  budget policies, provider-console readiness, model prices, and runtime
+  secret presence;
 - server and worker: image evidence, noop deployment, strict preflight,
   webhook acceptance, conservative worker enablement, and run-control posture;
 - 6529.io and alerts: dashboard deployment plan evidence, public dashboard,
@@ -141,6 +158,8 @@ npm run release:check passed on reviewed commit
 production deployment plan reviewed before live handoff
 strict preflight passed in release-candidate environment
 selected-repository installation scope reviewed
+iam-and-secrets operator evidence reviewed before production AWS or secret use
+provider-console-readiness operator evidence reviewed before live model calls
 operator alert delivery verified without publishing destination details
 alert delivery plan reviewed before delivery enablement
 worker dispatch credential posture reviewed before worker enablement
@@ -149,8 +168,8 @@ auth-check URL and wallet allowlist reviewed before private admin exposure
 ```
 
 Keep private evidence like the exact App id, installation id, secret names,
-database identifiers, provider-console screenshots, raw webhook payloads, and
-admin snapshot details outside the public repo.
+database identifiers, private principals, provider-console screenshots, raw
+webhook payloads, and admin snapshot details outside the public repo.
 
 ## Related Runbooks
 

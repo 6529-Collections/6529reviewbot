@@ -316,7 +316,8 @@ Build the operator experience:
   public dashboard disclosure allowlists, private admin auth evidence, and
   alert delivery plan review.
 - production cutover checklist and private status overlay for go/no-go
-  readiness before live dogfood traffic.
+  readiness before live dogfood traffic, including provider-console readiness
+  before model calls and IAM/secret-custody evidence before AWS or secret use.
 - release-candidate bundles that can include production cutover and
   community-release status when the release decision also covers live dogfood,
   production traffic, or broad community use.
@@ -426,8 +427,9 @@ Completed in `6529reviewbot`:
   redacted API failures;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for reviewed live-traffic
-  go/no-go decisions, including the dogfood promotion packet gate and
-  dashboard deployment plan evidence before 6529.io route exposure;
+  go/no-go decisions, including provider-console readiness, IAM and
+  secret-custody evidence, the dogfood promotion packet gate, and dashboard
+  deployment plan evidence before 6529.io route exposure;
 - optional release-candidate cutover status summaries for one public-safe
   tag-readiness and traffic-readiness artifact;
 - optional release-candidate dogfood status summaries for public-safe
@@ -615,6 +617,9 @@ Completed in `6529reviewbot`:
 - production cutover now includes explicit dashboard deployment-plan and alert
   delivery-plan evidence items before public/private dashboard route exposure
   or scheduled alert delivery.
+- production cutover now includes explicit provider-console readiness and
+  IAM/secret-custody evidence before live model calls or production AWS/secret
+  use.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same

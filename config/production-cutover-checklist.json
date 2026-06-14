@@ -78,8 +78,8 @@
       "items": [
         {
           "id": "aws-iam-reviewed",
-          "title": "AWS IAM/OIDC trust and identity policies are reviewed from least-privilege templates or equivalent private policy artifacts.",
-          "evidence": "policy review summary without live account ids or ARNs",
+          "title": "AWS IAM/OIDC trust, Data API scope, database grants, alert resources, runtime secret-store principals, target-repo/browser secret exclusion, rotation ownership, and break-glass revoke paths are reviewed in iam-and-secrets operator evidence.",
+          "evidence": "iam-and-secrets operator evidence summary without live account ids, ARNs, secret names, wallet addresses, or private principals",
           "runbook": "infra/aws/README.md"
         },
         {
@@ -93,6 +93,12 @@
           "title": "Central budget policies are reviewed and applied, or the release explicitly keeps conservative environment caps.",
           "evidence": "npm run budget-policies dry-run and apply summaries",
           "runbook": "docs/budget-policies.md"
+        },
+        {
+          "id": "provider-console-readiness-reviewed",
+          "title": "Provider-console readiness is reviewed for enabled accounts/projects, key custody, configured-model availability, quotas/rate limits, spend caps or credit limits, billing alerts, data-retention/training settings where available, and emergency key disablement before live model calls.",
+          "evidence": "provider-console-readiness operator evidence summary without API keys, billing account identifiers, private project ids, or provider screenshots",
+          "runbook": "docs/provider-setup.md"
         },
         {
           "id": "model-prices-applied",
