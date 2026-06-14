@@ -233,6 +233,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["operator-owned registry, source commit, digest, and vulnerability scan recorded"],
           },
           {
+            id: "production-deployment-plan",
+            status: "complete",
+            title: "Production Deployment Plan",
+            notes: "reviewed production deployment plan evidence",
+            evidence: ["ready-mode plan includes concrete host, image, workspace, and worker dispatch installation id"],
+          },
+          {
             id: "worker-dispatch-credentials",
             status: "complete",
             title: "Worker Dispatch Credentials",
@@ -285,6 +292,8 @@ function checkMarkdownOutput(findings) {
     "[redacted-github-token]",
     "container-publish-plan",
     "reviewed container publish plan evidence",
+    "production-deployment-plan",
+    "reviewed production deployment plan evidence",
     "worker-dispatch-credentials",
     "dispatch credential posture reviewed before non-noop worker traffic",
     "6529-io-public-disclosure",

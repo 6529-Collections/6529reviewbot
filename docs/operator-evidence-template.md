@@ -118,6 +118,19 @@ Vulnerability scan reviewed:
 Release/cutover evidence summary:
 ```
 
+## Production Deployment Plan
+
+```text
+Production deployment plan command:
+Production deployment plan reviewed:
+Production bot origin reviewed:
+Operator-owned image repository reviewed:
+Private operator workspace reviewed:
+Worker dispatch installation id reviewed:
+Ready-mode JSON captured privately:
+Release/cutover evidence summary:
+```
+
 ## Budget And Pricing
 
 ```text

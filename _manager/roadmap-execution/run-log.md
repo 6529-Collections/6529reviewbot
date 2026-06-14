@@ -5730,3 +5730,31 @@
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     production deployment installation-id ready-mode path exercised.
+- Merged `6529reviewbot` PR #312 as `4e01bfd`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-evidence-deployment-plan-section` increment:
+  - add a dedicated `production-deployment-plan` section to structured operator
+    evidence so the ordered production handoff is first-class private evidence;
+  - update `config/production-evidence.example.json`,
+    `docs/operator-evidence-template.md`, release-candidate summaries, and
+    release readiness/operations docs to surface the new section;
+  - keep operator-evidence and release-candidate contracts checking the section
+    so future evidence schema changes cannot drop it silently.
+- Local validation for `codex/operator-evidence-deployment-plan-section` so far:
+  - `gh run watch 27497684359 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #312 post-merge CI;
+  - `gh run watch 27497684369 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #312 post-merge OpenSSF Scorecard;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence cases,
+    and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #312, and
+    5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    production deployment-plan operator evidence section exercised.

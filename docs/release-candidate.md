@@ -178,6 +178,6 @@ invariants, and the public docs synchronized.
   status file is provided;
 - preflight error and warning summaries;
 - redacted operator evidence sections, including the container publish,
-  worker dispatch credential, public dashboard disclosure, and private admin
-  auth evidence sections when present;
+  production deployment plan, worker dispatch credential, public dashboard
+  disclosure, and private admin auth evidence sections when present;
 - the follow-up release commands the operator should run.
