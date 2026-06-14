@@ -249,6 +249,8 @@ Ready for community review:
   before rendering operator handoff commands;
 - image repository planning rejects empty path segments before rendering
   Docker or operator handoff commands;
+- image repository planning rejects uppercase repository characters before
+  rendering Docker or operator handoff commands;
 - dashboard deployment plan for a dry-run 6529.io handoff across public and
   private dashboard env, bot public disclosure settings, HMAC admin auth,
   route verification, cutover evidence, and release notes;

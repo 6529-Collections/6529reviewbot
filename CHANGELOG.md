@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened container and production image repository planning to reject
+  uppercase repository characters before rendering commands.
 - Hardened container and production image repository planning to reject empty
   path segments before rendering Docker or operator handoff commands.
 - Hardened the production deployment plan to reject image repository inputs

@@ -558,6 +558,8 @@ Completed in `6529reviewbot`:
   before rendering operator handoff commands.
 - image repository planning rejects empty path segments before rendering
   Docker or operator handoff commands.
+- image repository planning rejects uppercase repository characters before
+  rendering Docker or operator handoff commands.
 - dashboard deployment plan command for dry-run 6529.io dashboard handoff
   across frontend env, bot public disclosure, HMAC admin auth, verification,
   cutover evidence, and release notes.
