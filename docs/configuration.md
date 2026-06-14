@@ -58,6 +58,7 @@ JWT TTL, installation-token refresh buffering, or token profile behavior.
 REVIEWBOT_PUBLIC_REPO_MODE=trusted
 REVIEWBOT_PRIVATE_REPO_MODE=open
 REVIEWBOT_DRAFT_PR_MODE=skip
+REVIEWBOT_ALLOWED_PR_AUTHORS=
 REVIEWBOT_TRUSTED_USERS=
 REVIEWBOT_TRUSTED_TEAMS=
 REVIEWBOT_TRUSTED_ORGS=
@@ -66,7 +67,9 @@ REVIEWBOT_DENY_USERS=
 ```
 
 Public repositories require trusted actors by default. Private repositories are
-open by default. See [admission-policy.md](admission-policy.md).
+open by default. `REVIEWBOT_ALLOWED_PR_AUTHORS`, when set, is a comma-separated
+PR author allowlist that must match before trusted-actor checks can admit model
+work. See [admission-policy.md](admission-policy.md).
 
 ## Budget Admission
 

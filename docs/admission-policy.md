@@ -9,6 +9,7 @@ review work. It runs before budget checks and before provider calls.
 REVIEWBOT_PUBLIC_REPO_MODE=trusted
 REVIEWBOT_PRIVATE_REPO_MODE=open
 REVIEWBOT_DRAFT_PR_MODE=skip
+REVIEWBOT_ALLOWED_PR_AUTHORS=
 REVIEWBOT_TRUSTED_PERMISSION=write
 ```
 
@@ -17,6 +18,7 @@ Default behavior:
 - public repositories require trusted actors by default;
 - private repos allow review requests by default;
 - draft PRs are skipped until ready for review;
+- PR authors are not allowlisted by default;
 - actors with `write`, `maintain`, or `admin` repository permission are trusted.
 
 If actor context has not been resolved yet, the actor is treated as untrusted.
@@ -39,6 +41,11 @@ provider spend can occur.
 
 ## Trusted Actors
 
+Set `REVIEWBOT_ALLOWED_PR_AUTHORS` to a comma-separated list of GitHub logins to
+require the PR author to be on that list before model review work can run. This
+gate applies before the trusted-actor checks below. When the allowlist is set,
+events without a normalized PR author fail closed.
+
 An actor is trusted if any of these are true:
 
 - the actor is in `REVIEWBOT_TRUSTED_USERS`;
@@ -49,6 +56,7 @@ An actor is trusted if any of these are true:
 Configuration:
 
 ```text
+REVIEWBOT_ALLOWED_PR_AUTHORS=
 REVIEWBOT_TRUSTED_USERS=
 REVIEWBOT_TRUSTED_TEAMS=
 REVIEWBOT_TRUSTED_ORGS=

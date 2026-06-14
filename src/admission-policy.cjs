@@ -35,6 +35,7 @@ function admissionPolicyFromEnv(env = process.env) {
       TRUSTED_PERMISSION_ORDER,
       "REVIEWBOT_TRUSTED_PERMISSION"
     ),
+    allowedPrAuthors: csvSet(env.REVIEWBOT_ALLOWED_PR_AUTHORS || ""),
     denyUsers: csvSet(env.REVIEWBOT_DENY_USERS || ""),
   };
 }
@@ -60,6 +61,21 @@ function evaluateAdmission(event, actorContext = {}, policy = admissionPolicyFro
 
   if (event.draft && policy.draftPrMode === "skip") {
     return skipped("draft_pull_request", "Draft pull requests are skipped until ready for review.", requestor, policy);
+  }
+
+  if (policy.allowedPrAuthors.size) {
+    const prAuthor = String(event.prAuthor || "").toLowerCase();
+    if (!prAuthor) {
+      return denied("missing_pr_author", "PR author is required by policy.", requestor, policy);
+    }
+    if (!policy.allowedPrAuthors.has(prAuthor)) {
+      return denied(
+        "blocked_pr_author",
+        `PR author '${event.prAuthor}' is not allowed by policy.`,
+        requestor,
+        policy
+      );
+    }
   }
 
   const repoMode = event.repository?.private ? policy.privateRepoMode : policy.publicRepoMode;
