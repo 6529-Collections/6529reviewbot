@@ -17,6 +17,7 @@ const { parseRepositoryConfigText } = require("./repository-config.cjs");
 const fs = require("fs");
 
 const DEFAULT_REPOSITORY_CONFIG_FILES = [
+  ".github/6529bot.yml",
   "templates/dogfood-command-only-config.yml",
   "templates/dogfood-repository-config.yml",
 ];

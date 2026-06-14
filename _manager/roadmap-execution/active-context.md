@@ -577,29 +577,32 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - README community-release evidence PR: merged as PR #308, merge commit `943610c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-community-status-guard`.
-- Current local changes: harden release notes publication validation so empty
-  bullet fields cannot inherit the next bullet's text, and add explicit
-  contract coverage that completed release notes cannot omit community-release
-  status evidence before tag, GitHub Release, or broad community-use
-  publication.
+- Release-notes community status guard PR: merged as PR #309, merge commit `049a339`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/self-dogfood-config-readiness`.
+- Current local changes: include this repository's command-only
+  `.github/6529bot.yml` self-dogfood config in default dogfood readiness
+  summaries and release-check dogfood target validation, so the actual
+  committed config cannot drift from the reviewed command-only template.
 - Current local validation:
-  - `gh run watch 27496460520 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #307 post-merge CI;
-  - `gh run watch 27496460525 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #307 post-merge OpenSSF Scorecard;
   - `gh run watch 27496674873 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #308 post-merge CI;
   - `gh run watch 27496674868 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #308 post-merge OpenSSF Scorecard;
+  - `gh run watch 27496872099 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge CI;
+  - `gh run watch 27496872093 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge OpenSSF Scorecard;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:release-notes-publication` passed with 11 publication
-    cases and 7 docs checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #308,
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 6 docs checked;
+  - `npm run dogfood:readiness -- -- --json --quiet --require-ready` passed;
+  - `npm run dogfood:target -- -- --repository-config .github/6529bot.yml --mode command-only --require-ready --quiet` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #309,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    release-notes missing-community-status guard exercised.
+    self-dogfood config readiness path exercised.
 
 ## Key Decisions
 

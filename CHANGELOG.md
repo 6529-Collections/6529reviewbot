@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added default dogfood readiness and release-check validation for this
+  repository's command-only `.github/6529bot.yml` self-dogfood config.
 - Hardened release notes publication contract coverage for missing
   community-release status evidence and empty bullet field parsing.
 - Added community-release status requirements to release notes publication checks.

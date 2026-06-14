@@ -1066,7 +1066,7 @@ const dogfoodReport = dogfoodReadiness.collectDogfoodReadiness({
   now: new Date("2026-06-13T00:00:00.000Z"),
 });
 assert.equal(dogfoodReport.ready, true);
-assert.equal(dogfoodReport.checks.repositoryConfigs.count, 2);
+assert.equal(dogfoodReport.checks.repositoryConfigs.count, 3);
 assert.equal(dogfoodReport.checks.budgetPolicies.enabledPolicyCount > 0, true);
 assert.equal(dogfoodReport.checks.modelCatalog.defaultModel, "claude-opus-4-8");
 assert.equal(

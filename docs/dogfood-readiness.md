@@ -6,6 +6,7 @@ initial-review traffic on a target repository.
 The command validates the public dogfood inputs operators edit most often:
 
 - target repository config templates;
+- this repository's command-only `.github/6529bot.yml` self-dogfood config;
 - central dogfood budget policy file;
 - model catalog defaults.
 
