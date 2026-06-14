@@ -5396,3 +5396,20 @@
   - `npm test` passed;
   - `npm run release:check` passed with 181 CommonJS files checked and the
     repository ruleset guidance exercised.
+- Merged `6529reviewbot` PR #298 as `b1c7ead`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/contributing-release-validation` increment:
+  - add contributor guidance for release-sensitive validation, external
+    evidence boundaries, and repository ruleset checks.
+- Local validation for `codex/contributing-release-validation` so far:
+  - `gh run watch 27494545238 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge CI;
+  - `gh run watch 27494545243 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge OpenSSF Scorecard;
+  - `npm run check:governance` passed with 13 files checked;
+  - `npm run check:public-artifacts` passed with 119 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #298,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 181 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 181 CommonJS files checked and the
+    contributor release-validation guidance exercised.

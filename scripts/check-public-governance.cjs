@@ -61,6 +61,17 @@ function main() {
   if (!contributing.includes("(SECURITY.md)")) {
     findings.push("CONTRIBUTING.md must point security reports to SECURITY.md.");
   }
+  for (const snippet of [
+    "npm run release:check",
+    "npm run check:external-evidence-boundaries",
+    "npm run check:repository-rulesets",
+    "External Evidence Boundaries",
+    "operator-owned evidence",
+  ]) {
+    if (!contributing.includes(snippet)) {
+      findings.push(`CONTRIBUTING.md must include '${snippet}'.`);
+    }
+  }
 
   const support = read("SUPPORT.md");
   if (!support.includes("(SECURITY.md)")) {
