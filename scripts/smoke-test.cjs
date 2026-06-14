@@ -1276,7 +1276,23 @@ assert.deepEqual(
   }
 );
 assert.throws(
-  () => dogfoodPromotionCli.parseArgs(["--strict-preflight", "--require-ready"]),
+  () =>
+    dogfoodPromotionCli.parseArgs([
+      "--strict-preflight",
+      "--model-price-file",
+      "prices.json",
+      "--require-ready",
+    ]),
+  /requires --operator-workspace/
+);
+assert.throws(
+  () =>
+    dogfoodPromotionCli.parseArgs([
+      "--strict-preflight",
+      "--operator-workspace",
+      "workspace",
+      "--require-ready",
+    ]),
   /requires --model-price-file/
 );
 assert.equal(
@@ -1373,7 +1389,23 @@ assert.deepEqual(
   }
 );
 assert.throws(
-  () => dogfoodGoLiveCli.parseArgs(["--strict-preflight", "--require-ready"]),
+  () =>
+    dogfoodGoLiveCli.parseArgs([
+      "--strict-preflight",
+      "--model-price-file",
+      "prices.json",
+      "--require-ready",
+    ]),
+  /requires --operator-workspace/
+);
+assert.throws(
+  () =>
+    dogfoodGoLiveCli.parseArgs([
+      "--strict-preflight",
+      "--operator-workspace",
+      "workspace",
+      "--require-ready",
+    ]),
   /requires --model-price-file/
 );
 assert.throws(

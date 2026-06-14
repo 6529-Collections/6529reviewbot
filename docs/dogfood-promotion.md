@@ -94,8 +94,8 @@ explicit release evidence.
 
 ## Gate Meaning
 
-`--require-ready` requires `--strict-preflight` and `--model-price-file`, and
-fails unless all promotion gates are green:
+`--require-ready` requires `--operator-workspace`, `--strict-preflight`, and
+`--model-price-file`, and fails unless all promotion gates are green:
 
 - target config packet is ready;
 - central dogfood inputs parse, including reviewed model price coverage;
@@ -140,9 +140,9 @@ npm run check:dogfood-promotion
 ```
 
 The dogfood promotion contract check verifies that `--require-ready` requires
-`--strict-preflight` and `--model-price-file`, that private workspace paths
-stay summarized as `[operator-workspace]`, that external model price file paths
-stay summarized as `[external-path-set]`, that ready mode requires reviewed
-model price coverage, that Markdown table cells redact common secret and AWS
-identifier shapes, and that the public docs stay synchronized with the
-pre-traffic gate.
+`--operator-workspace`, `--strict-preflight`, and `--model-price-file`, that
+private workspace paths stay summarized as `[operator-workspace]`, that
+external model price file paths stay summarized as `[external-path-set]`, that
+ready mode requires reviewed model price coverage, that Markdown table cells
+redact common secret and AWS identifier shapes, and that the public docs stay
+synchronized with the pre-traffic gate.

@@ -13,6 +13,7 @@ const root = path.resolve(__dirname, "..");
 
 const goLiveDocs = [
   "README.md",
+  "config/release-operations-map.json",
   "docs/dogfood-go-live.md",
   "docs/release-readiness.md",
   "docs/release-operations-map.md",
@@ -123,7 +124,24 @@ function checkCliContract(findings) {
     findings
   );
   expectError(
-    () => dogfoodGoLiveCli.parseArgs(["--strict-preflight", "--require-ready"]),
+    () =>
+      dogfoodGoLiveCli.parseArgs([
+        "--strict-preflight",
+        "--model-price-file",
+        "prices.json",
+        "--require-ready",
+      ]),
+    "--require-ready requires --operator-workspace.",
+    findings
+  );
+  expectError(
+    () =>
+      dogfoodGoLiveCli.parseArgs([
+        "--strict-preflight",
+        "--operator-workspace",
+        "workspace",
+        "--require-ready",
+      ]),
     "--require-ready requires --model-price-file for reviewed model price coverage.",
     findings
   );
@@ -400,6 +418,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "result.requireReady && (!result.strictPreflight || result.skipPreflight)",
     "--require-ready requires --strict-preflight",
+    "--require-ready requires --operator-workspace.",
     "--require-ready requires --model-price-file for reviewed model price coverage.",
     "--model-price-file",
     "--allow-stale-model-price-source",
@@ -414,10 +433,16 @@ function checkSourceInvariants(sourceTexts, findings) {
 function checkDocs(docTexts, findings) {
   const requiredByDoc = {
     "README.md": ["npm run check:dogfood-go-live"],
+    "config/release-operations-map.json": [
+      "\"script\": \"dogfood:go-live\"",
+      "--operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+      "required ready-mode operator workspace and model price coverage",
+    ],
     "docs/dogfood-go-live.md": [
       "npm run check:dogfood-go-live",
       "dogfood go-live contract check",
-      "`--require-ready` requires `--strict-preflight`",
+      "`--require-ready` requires `--operator-workspace`",
+      "--operator-workspace",
       "--model-price-file",
       "model price coverage",
       "requires reviewed model price coverage",

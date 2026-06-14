@@ -13,6 +13,7 @@ const root = path.resolve(__dirname, "..");
 
 const readinessDocs = [
   "README.md",
+  "config/release-operations-map.json",
   "docs/dogfood-readiness.md",
   "docs/release-readiness.md",
   "docs/release-operations-map.md",
@@ -367,6 +368,11 @@ function checkSourceInvariants(sourceTexts, findings) {
 function checkDocs(docTexts, findings) {
   const requiredByDoc = {
     "README.md": ["npm run check:dogfood-readiness"],
+    "config/release-operations-map.json": [
+      "\"script\": \"dogfood:readiness\"",
+      "--operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+      "model price coverage when supplied",
+    ],
     "docs/dogfood-readiness.md": [
       "npm run check:dogfood-readiness",
       "dogfood readiness contract check",

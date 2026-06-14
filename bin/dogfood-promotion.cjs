@@ -117,6 +117,9 @@ function parseArgs(argv = []) {
   if (options.requireReady && !options.strictPreflight) {
     throw new Error("--require-ready requires --strict-preflight.");
   }
+  if (options.requireReady && !options.operatorWorkspaceDir) {
+    throw new Error("--require-ready requires --operator-workspace.");
+  }
   if (options.requireReady && !options.modelPriceFile) {
     throw new Error("--require-ready requires --model-price-file for reviewed model price coverage.");
   }
@@ -170,7 +173,8 @@ Options:
   --json                      Print JSON instead of Markdown.
   --quiet                     Do not print output.
   --require-ready             Exit non-zero unless the promotion packet is ready;
-                              requires --strict-preflight and --model-price-file.
+                              requires --operator-workspace, --strict-preflight,
+                              and --model-price-file.
 
 Use npm --silent run when copying output from commands that include private paths.
 `);
