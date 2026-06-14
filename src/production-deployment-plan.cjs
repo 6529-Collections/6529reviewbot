@@ -1,6 +1,7 @@
 "use strict";
 
 const { normalizeImageRepositoryRef } = require("./image-repository-ref.cjs");
+const { isPlaceholderImageRepository, isPlaceholderOrigin } = require("./placeholder-hosts.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 
 const DEFAULT_HOST = "<production-bot-origin>";
@@ -9,8 +10,6 @@ const DEFAULT_WORKSPACE = "<private-workspace-dir>";
 const REVIEWED_MODEL_PRICE_FILE = "<reviewed-model-price-file.json>";
 const DRY_RUN_NOTICE =
   "This command does not create GitHub Apps, convert manifest codes, deploy services, run checks, or send traffic.";
-const PLACEHOLDER_HOST_SUFFIXES = [".example", ".example.com", ".invalid", ".localhost", ".test"];
-const PLACEHOLDER_HOSTS = new Set(["0.0.0.0", "127.0.0.1", "::1", "[::1]", "example.com", "localhost"]);
 
 function collectProductionDeploymentPlan(options = {}) {
   const release = normalizeReleaseVersion(options.release || options.version || "v0.1.0");
@@ -28,6 +27,8 @@ function collectProductionDeploymentPlan(options = {}) {
     }
     if (image === DEFAULT_IMAGE) {
       errors.push("operator-owned image repository was not supplied.");
+    } else if (isPlaceholderImageRepository(image)) {
+      errors.push("operator-owned image repository must not use documentation, example, local, or reserved registries.");
     }
     if (workspace === DEFAULT_WORKSPACE) {
       errors.push("private operator workspace was not supplied.");
@@ -174,21 +175,6 @@ function normalizeOrigin(value) {
   return parsed.origin;
 }
 
-function isPlaceholderOrigin(value) {
-  const text = String(value || "").trim();
-  if (!text || /^<[^>]+>$/.test(text)) {
-    return true;
-  }
-  let parsed;
-  try {
-    parsed = new URL(text);
-  } catch (error) {
-    return false;
-  }
-  const host = parsed.hostname.toLowerCase();
-  return PLACEHOLDER_HOSTS.has(host) || PLACEHOLDER_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
-}
-
 function normalizeImageRef(value) {
   return normalizeImageRepositoryRef(value, {
     defaultValue: DEFAULT_IMAGE,
@@ -219,6 +205,7 @@ module.exports = {
   collectProductionDeploymentPlan,
   deploymentPhases,
   formatProductionDeploymentPlanMarkdown,
+  isPlaceholderImageRepository,
   isPlaceholderOrigin,
   normalizeImageRef,
   normalizeOrigin,

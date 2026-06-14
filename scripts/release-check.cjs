@@ -160,7 +160,7 @@ runNode("bin/production-deployment-plan.cjs", [
   "--host",
   "https://reviewbot.6529.io",
   "--image",
-  "registry.example.com/6529reviewbot",
+  "ghcr.io/6529-collections/6529reviewbot",
   "--operator-workspace",
   "operator-workspace",
   "--release",

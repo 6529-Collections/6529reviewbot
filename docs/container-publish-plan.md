@@ -27,7 +27,9 @@ npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot -
 
 Use `--require-ready` for the final pre-publish gate. This exits non-zero
 unless the local checkout is on clean, synced `main` and the container image
-contract passes:
+contract passes. Final ready plans reject documentation, example, local, or
+reserved registries such as `registry.example.com`; replace them with
+the operator-owned registry before using the handoff as release evidence:
 
 ```bash
 npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready

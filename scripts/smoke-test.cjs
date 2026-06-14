@@ -1977,7 +1977,7 @@ assert.equal(
 assert.equal(containerImageCheck.checkContainerImage().runtimeCopies, 6);
 const containerPublishPlanContractResult =
   containerPublishPlanContractCheck.checkContainerPublishPlanContract();
-assert.equal(containerPublishPlanContractResult.planCases, 5);
+assert.equal(containerPublishPlanContractResult.planCases, 6);
 assert.equal(containerPublishPlanContractResult.docs, 6);
 assert.throws(
   () =>
@@ -5260,7 +5260,7 @@ appServer.handleGitHubWebhook({
   );
   const productionDeploymentPlanContractResult =
     productionDeploymentPlanContractCheck.checkProductionDeploymentPlanContract();
-  assert.equal(productionDeploymentPlanContractResult.planCases, 6);
+  assert.equal(productionDeploymentPlanContractResult.planCases, 7);
   assert.equal(productionDeploymentPlanContractResult.docs, 6);
   assert.throws(
     () =>
