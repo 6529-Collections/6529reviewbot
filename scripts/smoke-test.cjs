@@ -5184,7 +5184,7 @@ appServer.handleGitHubWebhook({
   const alertDeliveryPlanContractResult =
     alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract();
   assert.equal(alertDeliveryPlanContractResult.planCases, 5);
-  assert.equal(alertDeliveryPlanContractResult.docs, 7);
+  assert.equal(alertDeliveryPlanContractResult.docs, 8);
   assert.throws(
     () =>
       alertDeliveryPlanContractCheck.checkAlertDeliveryPlanContract({

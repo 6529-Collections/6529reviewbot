@@ -23,6 +23,7 @@ const targetDocs = [
   "docs/release-readiness.md",
   "docs/roadmap.md",
   "docs/release-operations-map.md",
+  "docs/reusable-workflow.md",
 ];
 
 function main() {
@@ -251,6 +252,10 @@ function checkDocs(docTexts, findings) {
     "docs/release-operations-map.md": [
       "npm run check:alert-delivery-plan",
       "alerts:delivery-plan",
+    ],
+    "docs/reusable-workflow.md": [
+      "reviewed alert delivery plan evidence",
+      "route to a private operator channel",
     ],
   };
 

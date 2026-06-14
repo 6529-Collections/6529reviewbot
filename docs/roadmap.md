@@ -559,6 +559,9 @@ Completed in `6529reviewbot`:
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
   reviewed alert delivery plan evidence requirement as the v0 alerts gate.
+- reusable workflow public-repo rules now carry the same reviewed alert
+  delivery plan evidence requirement before scheduled operator alerts are
+  considered ready.
 - generated operator workspace guidance now includes the production deployment
   plan, dashboard deployment plan, and alert delivery plan commands so release
   evidence and deployment handoff commands stay together in the private

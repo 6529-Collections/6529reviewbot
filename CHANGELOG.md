@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned reusable workflow public-repo alert guidance with the reviewed alert
+  delivery plan evidence requirement.
 - Aligned release-note safety language with the reviewed alert delivery plan
   evidence requirement.
 - Made the admin auth HMAC TTL contract check deterministic on CI runners.
