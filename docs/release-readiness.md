@@ -404,12 +404,15 @@ evidence targets for 6529.io gates, public Markdown redaction, source
 invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
-production deployment plan evidence, deferrals, known gaps, compatibility, and
-validation.
+production deployment plan evidence, worker dispatch credential evidence,
+container publish-plan evidence, dashboard deployment plan evidence, public
+dashboard disclosure evidence, private admin auth evidence, alert delivery
+plan evidence, deferrals, known gaps, compatibility, and validation.
 `npm run check:release-notes-draft` is included in `npm run release:check` and
 keeps the public-safe release notes draft aligned with release-candidate
-summaries, model defaults, production deployment plan evidence, TODO markers,
-redaction, CLI flags, operations map entries, and docs.
+summaries, model defaults, production deployment, runtime dispatch,
+container publish, dashboard disclosure, private admin auth, alert evidence,
+TODO markers, redaction, CLI flags, operations map entries, and docs.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and keeps the completed release notes publication
 guard aligned with required fields, deferral handling, public-safety
@@ -476,9 +479,12 @@ docs synchronized.
 Use [Release Candidate Bundle](release-candidate.md) to combine release-gate
 counts, missing status ids, operator-evidence counts, redacted operator
 sections, git metadata, and no-network preflight into one public-safe release
-note artifact. The full pre-tag readiness rule is enforced by the bundle's
-`--require-ready`, because that check covers gate completeness, missing status
-ids, operator-evidence readiness, and preflight:
+note artifact. The bundle surfaces first-class operator evidence sections for
+container publish plans, worker dispatch credentials, public dashboard
+disclosure, and private admin auth when present. The full pre-tag readiness
+rule is enforced by the bundle's `--require-ready`, because that check covers
+gate completeness, missing status ids, operator-evidence readiness, and
+preflight:
 
 ```bash
 npm run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight

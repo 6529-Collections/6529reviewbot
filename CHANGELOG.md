@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Refreshed the roadmap, release readiness, and release operations map to
+  describe the now-enforced runtime, dispatch, dashboard, and admin evidence
+  coverage across release notes, release candidates, and operator evidence.
 - Required release notes drafts and publication checks to include worker
   dispatch credential evidence and container publish-plan evidence before
   pre-v1 notes can be published.

@@ -305,7 +305,9 @@ Build the operator experience:
   for commands that include private paths;
 - support process for adopters.
 - public-safe operator evidence templates for release, dogfood, production
-  deployment proof, and alert delivery plan review.
+  deployment proof, container publish plans, worker dispatch credentials,
+  public dashboard disclosure allowlists, private admin auth evidence, and
+  alert delivery plan review.
 - production cutover checklist and private status overlay for go/no-go
   readiness before live dogfood traffic.
 - release-candidate bundles that can include production cutover status when
@@ -580,7 +582,8 @@ Completed in `6529reviewbot`:
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
-  reviewed alert delivery plan evidence requirement as the v0 alerts gate.
+  reviewed runtime, dashboard, admin auth, and alert evidence requirements as
+  the v0 release gates.
 - release notes publication checks now reject failed, pending, blocked,
   not-ready, or negated readiness validation evidence unless the release notes
   explicitly describe the accepted deferral or dogfood-only exception.
@@ -593,8 +596,10 @@ Completed in `6529reviewbot`:
   plan, dashboard deployment plan, and alert delivery plan commands so release
   evidence and deployment handoff commands stay together in the private
   operator flow.
-- operator evidence template guidance now includes alert delivery plan command
-  and review fields before alert destination and dry-run evidence.
+- operator evidence template guidance now includes container publish-plan,
+  worker dispatch credential, public dashboard disclosure, private admin
+  auth-check/wallet allowlist, and alert delivery review fields before
+  release evidence can be summarized publicly.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.
@@ -617,8 +622,10 @@ Completed in `6529reviewbot`:
   shipped PR evidence, release-check wiring, smoke coverage, and public docs.
 - release notes draft command and contract check for public-safe pre-v1 notes
   generated from release-candidate bundle evidence, production deployment plan
-  evidence, dashboard deployment plan evidence, alert delivery plan evidence,
-  and model catalog defaults.
+  evidence, worker dispatch credential evidence, container publish-plan
+  evidence, dashboard deployment plan evidence, public dashboard disclosure
+  evidence, private admin auth evidence, alert delivery plan evidence, and
+  model catalog defaults.
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
 - release tag plan command and contract check for completed release notes,
