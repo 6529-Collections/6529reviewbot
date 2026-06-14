@@ -24,6 +24,7 @@ const requiredByFile = {
     "operator-owned registry",
     "AWS IAM/OIDC",
     "provider keys",
+    "`provider-console-readiness`",
     "6529.io production public and private dashboard routes",
     "operator-owned private channel",
     "target repositories have reviewed `.github/6529bot.yml` configuration",

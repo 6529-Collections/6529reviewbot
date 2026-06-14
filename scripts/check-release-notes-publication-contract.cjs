@@ -300,8 +300,12 @@ function checkSourceAnchors(sourceTexts, findings) {
       "No accepted deferrals",
       "Worker dispatch credential evidence:",
       "Container publish plan evidence:",
+      "Provider console readiness evidence:",
       "non-noop worker traffic has reviewed dispatch credential evidence",
       "container image evidence has reviewed container publish-plan evidence",
+      "provider-console readiness evidence has reviewed model availability",
+      "provider-side spend caps or credit limits",
+      "emergency key disablement",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -357,6 +361,7 @@ function checkDocs(docTexts, findings) {
       "No accepted deferrals",
       "Git ref-safe",
       "community-release status evidence is filled",
+      "provider console readiness evidence is filled",
       "passed, ready, reviewed, or accepted evidence",
       "npm run check:release-notes-publication",
     ],
@@ -368,6 +373,7 @@ function checkDocs(docTexts, findings) {
       "Release Notes Publication",
       "Worker dispatch credential evidence:",
       "Container publish plan evidence:",
+      "Provider console readiness evidence:",
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
@@ -421,6 +427,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - GitHub App permissions/events: reviewed manifest packet
 - Providers/models: anthropic:claude-opus-4-8
 - Default Anthropic model: claude-opus-4-8
+- Provider console readiness evidence: model availability, quotas, caps, alerts, and disablement path reviewed
 - Repository config template: templates/dogfood-command-only-config.yml
 - Budget mode and caps: enforce with conservative dogfood caps
 - Run-control mode and caps: enforce with conservative caps
@@ -448,7 +455,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, broad community-release gates are complete or explicitly deferred before broad community use is announced, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider-console readiness evidence has reviewed model availability, quota/rate-limit posture, provider-side spend caps or credit limits, billing alerts, and emergency key disablement, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, broad community-release gates are complete or explicitly deferred before broad community use is announced, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 
@@ -456,6 +463,7 @@ Public repositories should not enable automatic model calls unless trusted-actor
 - 6529.io public dashboard: deployed or explicitly deferred
 - 6529.io private admin UI: deployed or explicitly deferred
 - Dogfood repositories: selected trusted repos only
+- Provider console readiness: reviewed for dogfood provider lanes
 - Provider pricing/model update process: reviewed for dogfood
 - Accepted model-price overrides: none
 - Incident response readiness: incident runbook reviewed

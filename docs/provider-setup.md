@@ -16,6 +16,8 @@ so provider setup, source URLs, source-checked timestamps, stale-source
 overrides, and zero-price overrides stay aligned.
 Run `npm run check:model-price-coverage` after changing how reviewed price
 files are checked against catalog default lanes.
+Run `npm run check:operator-evidence` after changing the provider-console
+readiness evidence fields or release wording.
 
 Provider documentation and pricing change over time. Treat provider-owned docs
 as the source of truth and keep this repository focused on the operational
@@ -40,6 +42,15 @@ For every enabled provider:
    usage, error, or model-option behavior;
 9. run `npm run preflight -- -- --strict` from the release candidate
    environment.
+
+Record live provider account facts in the private
+`provider-console-readiness` operator evidence section before enabling model
+calls outside local tests. That evidence should summarize, without account ids
+or screenshots, the provider account/project owner, enabled providers,
+configured-model availability, API-key custody, quota and rate-limit posture,
+provider-side spend caps or credit limits, provider billing alerts, relevant
+data-retention or training settings when the provider exposes them, and the
+emergency key disablement path.
 
 Do not put provider keys in:
 

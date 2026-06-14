@@ -67,8 +67,8 @@ After stabilization:
   evidence, container publish-plan evidence, security-intake evidence,
   repository-rulesets evidence, GitHub App production registration evidence,
   production deployment-plan evidence, budget policy evidence, model-pricing
-  evidence, worker dispatch credential evidence, public-summary redaction, and
-  docs
+  evidence, provider-console-readiness evidence, worker dispatch credential
+  evidence, public-summary redaction, and docs
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes, with production bot origin,
   registration path, private manifest conversion summary, App id/slug custody,
@@ -126,6 +126,11 @@ After stabilization:
   passes before first live dogfood traffic, using the operator-reviewed target
   repo config, budget policy, and private workspace when they differ from the
   public examples
+- `provider-console-readiness` operator evidence reviewed before live model
+  calls, covering provider account/project ownership, configured-model
+  availability, quota/rate-limit posture, provider-side spend caps or credit
+  limits, provider billing alerts, relevant data-retention/training settings,
+  and emergency key disablement
 - `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`
   passes as the final composed pre-traffic go/no-go packet before command-only
   live dogfood traffic

@@ -273,6 +273,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["fresh source-checked timestamps, no stale or zero-price overrides"],
           },
           {
+            id: "provider-console-readiness",
+            status: "complete",
+            title: "Provider Console Readiness",
+            notes: "provider accounts, model availability, quotas, caps, billing alerts, data-retention settings, and disablement path reviewed",
+            evidence: ["enabled provider console readiness reviewed before live model calls"],
+          },
+          {
             id: "alert-delivery-plan",
             status: "complete",
             title: "Alert Delivery Plan",
@@ -351,6 +358,8 @@ function checkMarkdownOutput(findings) {
     "dispatch credential posture reviewed before non-noop worker traffic",
     "model-pricing",
     "reviewed provider price sources and catalog coverage",
+    "provider-console-readiness",
+    "enabled provider console readiness reviewed before live model calls",
     "alert-delivery-plan",
     "reviewed alert delivery plan evidence",
     "dashboard-deployment-plan",

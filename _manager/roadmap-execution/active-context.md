@@ -603,27 +603,35 @@ merged PRs.
 - Repository rulesets operator evidence PR: merged as PR #320, merge commit `f697060`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `f697060`.
-- Current branch: `codex/github-app-evidence-hardening`.
-- Current local changes: harden the existing `github-app` operator evidence
-  field guidance so production-host manifest review, registration path,
-  private manifest conversion summary, App id/slug custody, webhook ping,
-  selected-repository allowlist/count, and rotation ownership are recorded
-  before public release notes claim production GitHub App readiness.
+- GitHub App evidence hardening PR: merged as PR #321, merge commit `59b1f63`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `59b1f63`.
+- Current branch: `codex/provider-console-operator-evidence`.
+- Current local changes: add a dedicated `provider-console-readiness` section
+  to structured operator evidence so enabled provider accounts/projects, API
+  key custody, configured-model availability, quota/rate-limit posture,
+  provider-side spend caps or credit limits, billing alerts, data-retention or
+  training settings where available, and emergency key disablement are tracked
+  separately from model-pricing rows before live model calls.
 - Current local validation:
-  - `gh run watch 27499565237 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge CI;
-  - `gh run watch 27499565253 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge OpenSSF Scorecard;
+  - `gh run watch 27499941203 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge CI;
+  - `gh run watch 27499941202 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge OpenSSF Scorecard;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
-    cases, and 6 docs checked;
-  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
-    conversion cases, and 7 docs checked;
+    cases, and 7 docs checked;
   - `npm run check:external-evidence-boundaries` passed with 12 surfaces
     checked;
-  - `npm run check:release-candidate` initially caught lost AWS/GitHub-token
-    redaction fixture coverage, then passed with 7 redaction cases, 3 path
-    cases, and 5 docs checked after the fixture was restored under the
-    `github-app` evidence section;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` initially caught a
+    case-sensitive provider-console evidence doc anchor and then passed with
+    11 publication cases and 7 docs checked after the anchor was corrected;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
+    docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #320, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #321, and
     5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
@@ -632,7 +640,7 @@ merged PRs.
   - `npm test` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    GitHub App evidence hardening contracts exercised.
+    provider-console readiness evidence boundary exercised.
 
 ## Key Decisions
 
@@ -1253,6 +1261,11 @@ merged PRs.
   provider docs before dogfood release; missing/partial price rows leave usage
   estimates empty. The admin model-price status API should make this visible
   to private dashboards, but it does not replace operator source review.
+- Provider console readiness still needs operator review for account/project
+  ownership, API-key custody, configured-model availability, quotas/rate
+  limits, provider-side spend caps or credit limits, billing alerts,
+  data-retention/training settings where available, and emergency key
+  disablement before live model calls.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
 - The GitHub App manifest still needs production-host rendering, actual App
@@ -1265,8 +1278,10 @@ merged PRs.
 - Live conservative dogfood budget policies have been applied and aggregate
   scope counts verified. Exact operator files and live identifiers stay out of
   the public repo.
-- Provider pricing rows still require operator verification, fresh source-check
-  timestamps, and key/limit setup in provider-owned consoles.
+- Provider pricing rows still require operator verification and fresh
+  source-check timestamps; key custody, model availability, quota/rate limits,
+  and provider-side spend controls are tracked separately as provider-console
+  readiness.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
 - v0 gates still require external operator evidence before tagging.

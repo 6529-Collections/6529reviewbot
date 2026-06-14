@@ -6020,3 +6020,50 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     GitHub App production-registration evidence hardening exercised.
+- Merged `6529reviewbot` PR #321 as `59b1f63`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/provider-console-operator-evidence` increment:
+  - add a dedicated `provider-console-readiness` section to structured
+    operator evidence so live provider account/project ownership, API-key
+    custody, configured-model availability, quota/rate-limit posture,
+    provider-side spend caps or credit limits, billing alerts,
+    data-retention/training settings where available, and emergency key
+    disablement are tracked separately from model-pricing rows before live
+    model calls;
+  - update provider setup, release notes template/draft/publication surfaces,
+    external evidence boundaries, release docs, release readiness, roadmap,
+    release operations map, production example evidence, changelog, and durable
+    manager memory;
+  - keep operator-evidence, external-boundary, release-candidate, release-note
+    template/draft/publication, and release-operations contracts checking the
+    provider-console readiness evidence boundary.
+- Local validation for `codex/provider-console-operator-evidence` so far:
+  - `gh run watch 27499941203 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge CI;
+  - `gh run watch 27499941202 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge OpenSSF Scorecard;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 7 docs checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` initially caught a
+    case-sensitive `provider console readiness evidence` doc anchor against
+    the release notes template; fixed the contract snippet to match
+    `Provider console readiness evidence:` and reran successfully with 11
+    publication cases and 7 docs checked;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
+    docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #321, and
+    5 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    provider-console readiness operator evidence boundary exercised.

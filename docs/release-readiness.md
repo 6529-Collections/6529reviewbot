@@ -17,6 +17,11 @@ Ready for community review:
   crypto/security review modes;
 - provider abstraction for Anthropic, OpenAI, and OpenRouter;
 - provider setup guide for Anthropic, OpenAI, and OpenRouter;
+- provider console readiness evidence for enabled provider accounts/projects,
+  configured-model availability, API-key custody, quota/rate-limit posture,
+  provider-side spend caps or credit limits, billing alerts, data-retention or
+  training settings where available, and emergency key disablement before live
+  model calls;
 - default Anthropic model configuration through environment variables;
 - trusted-actor admission for public repositories;
 - central runtime pause controls before budget or worker dispatch;
@@ -617,8 +622,8 @@ keeps the command/evidence-boundary map aligned with package scripts and docs.
 the GitHub Release template aligned with v0 release evidence expectations.
 `npm run check:release-notes-draft` is included in `npm run release:check` and
 verifies the public-safe release notes draft keeps release-candidate summaries,
-model defaults, TODO markers, redaction, CLI flags, operations map entries, and
-docs aligned.
+model defaults, provider console readiness evidence, TODO markers, redaction,
+CLI flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and verifies completed release notes fail publication
 when required fields, deferral decisions, or public-safety checks are missing.
@@ -629,9 +634,9 @@ before rendering operator commands.
 `npm run check:release-notes-draft` and
 `npm run check:release-notes-publication` require production deployment plan,
 worker dispatch credential, container publish-plan, dashboard deployment plan,
-public dashboard disclosure allowlist, private admin auth-check and wallet
-allowlist, and alert delivery plan evidence in pre-v1 release notes before
-publication.
+provider console readiness, public dashboard disclosure allowlist, private
+admin auth-check and wallet allowlist, and alert delivery plan evidence in
+pre-v1 release notes before publication.
 `npm run check:container-publish-plan` is included in `npm run release:check`
 and verifies the container publish plan remains dry-run, checks clean synced
 `main`, runs the image contract, and renders build, push, vulnerability scan,
@@ -778,9 +783,9 @@ validation status, release-check wiring, smoke tests, and docs aligned.
 verifies operator evidence sections, readiness semantics, production deployment
 plan evidence, GitHub App production registration evidence, security-intake
 evidence, repository-rulesets evidence, budget policy evidence, model-pricing
-evidence, alert delivery-plan evidence, dashboard deployment-plan evidence,
-release tag-plan evidence, public-summary redaction, source invariants, and
-docs stay aligned.
+evidence, provider-console-readiness evidence, alert delivery-plan evidence,
+dashboard deployment-plan evidence, release tag-plan evidence, public-summary
+redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, production deployment
 plan evidence, container publish-plan evidence, worker dispatch credential
