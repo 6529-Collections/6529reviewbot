@@ -47,7 +47,8 @@ dispatch, usage/admin APIs, admin auth, alerting, review limits, env templates,
 and source parser anchors.
 `npm run check:aws-iam-templates` keeps AWS IAM/OIDC examples least-privilege,
 placeholder-only, scoped to the bot repository or protected environment, and
-linked from production cutover evidence.
+linked from `iam-and-secrets` operator evidence and production cutover
+evidence.
 `npm run check:security-model` keeps the security model and checklist aligned
 with first-principles trust boundaries, prompt/path/metadata safety,
 fail-closed controls, diagnostic redaction, admin/AWS/alert boundaries, and
@@ -201,10 +202,11 @@ go-live summaries, next commands, and docs aligned.
 readiness semantics, GitHub App production registration evidence, runtime
 dispatch evidence, container publish evidence, security-intake evidence,
 repository-rulesets evidence, production deployment-plan evidence, budget
-policy evidence, model-pricing evidence, provider-console-readiness evidence,
-alert delivery-plan evidence, dashboard deployment-plan evidence, public
-dashboard disclosure evidence, private admin auth evidence, release tag-plan
-evidence, public-summary redaction, source invariants, and docs aligned.
+policy evidence, IAM and secret custody evidence, model-pricing evidence,
+provider-console-readiness evidence, alert delivery-plan evidence, dashboard
+deployment-plan evidence, public dashboard disclosure evidence, private admin
+auth evidence, release tag-plan evidence, public-summary redaction, source
+invariants, and docs aligned.
 `npm run check:production-cutover` keeps production cutover checklist/status
 readiness, production deployment plan evidence, deferral semantics, Markdown
 redaction, source invariants, and docs aligned.
@@ -216,14 +218,14 @@ evidence section summaries, CLI defaults, source invariants, and docs aligned.
 `npm run check:release-notes-draft` keeps the release notes draft command's
 release-candidate summaries, model defaults, runtime dispatch evidence,
 container publish evidence, provider console readiness evidence, dashboard
-disclosure evidence, private admin auth evidence, community-release status
-evidence, alert evidence, TODO markers, redaction, CLI flags, operations map
-entries, and docs aligned.
+disclosure evidence, IAM and secret custody evidence, private admin auth
+evidence, community-release status evidence, alert evidence, TODO markers,
+redaction, CLI flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` keeps the completed release-notes
 publication guard aligned with required community-release and other evidence
-fields, including provider console readiness, deferral handling, vague or
-failed validation evidence, public-safety redaction, release-check wiring,
-smoke tests, and docs.
+fields, including provider console readiness and IAM/secret custody, deferral
+handling, vague or failed validation evidence, public-safety redaction,
+release-check wiring, smoke tests, and docs.
 `npm run check:release-tag-plan` keeps the release tag plan aligned with
 clean-main readiness, local and remote tag availability, completed release
 notes, release notes title matching, dry-run operator commands, release-check

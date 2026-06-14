@@ -50,6 +50,8 @@ The publication guard verifies:
   publication;
 - provider console readiness evidence is filled before tag or GitHub Release
   publication;
+- IAM and secret custody evidence is filled before tag or GitHub Release
+  publication;
 - production deployment plan evidence is filled before tag or GitHub Release
   publication;
 - dashboard deployment plan evidence is filled before tag or GitHub Release
@@ -84,9 +86,10 @@ Warnings remind operators to keep the standard safety language about
 trusted-actor admission, budget enforcement, run-control enforcement,
 worker dispatch credential evidence, container publish-plan evidence,
 provider console readiness evidence, bot-owned infrastructure, base-ref target
-repository configuration, public dashboard disclosure allowlists, private admin
-auth evidence, operator-owned alert routing, community-release readiness, exact
-tag/commit pinning, and emergency rollback.
+repository configuration, IAM and secret custody evidence, public dashboard
+disclosure allowlists, private admin auth evidence, operator-owned alert
+routing, community-release readiness, exact tag/commit pinning, and emergency
+rollback.
 
 ## Relationship To Drafts
 

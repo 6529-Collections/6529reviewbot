@@ -57,6 +57,7 @@ repositories.
 - Budget mode and caps:
 - Run-control mode and caps:
 - Ledger schema status:
+- IAM and secret custody evidence:
 - Model pricing status:
 - Model price source freshness policy:
 - Alert delivery:
@@ -93,6 +94,10 @@ are true:
   quota/rate-limit posture, provider-side spend caps or credit limits,
   billing alerts, and emergency key disablement;
 - provider keys and AWS credentials live only in bot-owned infrastructure;
+- IAM and secret custody evidence has reviewed OIDC trust scope, Data API
+  resource scope, database grants, secret-store access principals,
+  target-repo/browser secret exclusion, rotation owners, and break-glass
+  revocation paths;
 - target repo configuration is loaded from the base ref;
 - public dashboard repo/org disclosure uses reviewed allowlists before repo
   names are exposed;
@@ -109,6 +114,7 @@ are true:
 - 6529.io public dashboard:
 - 6529.io private admin UI:
 - Dogfood repositories:
+- IAM and secret custody:
 - Provider console readiness:
 - Provider pricing/model update process:
 - Accepted model-price overrides:

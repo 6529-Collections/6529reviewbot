@@ -8,6 +8,11 @@ stabilized.
 
 ## Unreleased
 
+- Hardened IAM and secret-custody operator evidence for OIDC scope,
+  bot-repository or protected-environment trust, Data API resource scope,
+  database grants, SNS/SES resource scope, runtime secret-store access,
+  target-repo/browser secret exclusion, rotation ownership, and break-glass
+  revocation paths.
 - Added a dedicated `provider-console-readiness` section to structured
   operator evidence for live provider account/project ownership, key custody,
   model availability, quota/rate-limit posture, provider-side spend controls,

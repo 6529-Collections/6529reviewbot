@@ -6067,3 +6067,46 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     provider-console readiness operator evidence boundary exercised.
+- Merged `6529reviewbot` PR #322 as `86d3faf`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/iam-secrets-evidence-hardening` increment:
+  - harden the existing `iam-and-secrets` operator evidence section so OIDC
+    subject/audience scope, bot-repository or protected-environment role
+    trust, Data API cluster/secret resource scope, database grants, SNS/SES
+    resource scope, runtime secret-store access principals,
+    target-repo/browser secret exclusion, rotation ownership, and break-glass
+    revoke paths are tracked before production AWS or secret use;
+  - update infra AWS guidance, external evidence boundaries, release docs,
+    release-candidate summaries, release notes template/draft/publication
+    surfaces, release readiness, roadmap, release operations map, production
+    example evidence, changelog, and durable manager memory;
+  - keep AWS IAM, operator-evidence, external-boundary, release-candidate,
+    release-note template/draft/publication, and release-operations contracts
+    checking the IAM and secret-custody evidence boundary.
+- Local validation for `codex/iam-secrets-evidence-hardening` so far:
+  - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
+  - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
+  - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
+    9 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 7 docs checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 11 publication
+    cases and 7 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #322,
+    and 5 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the IAM
+    and secret-custody evidence boundary exercised.

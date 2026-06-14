@@ -606,16 +606,21 @@ merged PRs.
 - GitHub App evidence hardening PR: merged as PR #321, merge commit `59b1f63`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `59b1f63`.
-- Current branch: `codex/provider-console-operator-evidence`.
-- Current local changes: add a dedicated `provider-console-readiness` section
-  to structured operator evidence so enabled provider accounts/projects, API
-  key custody, configured-model availability, quota/rate-limit posture,
-  provider-side spend caps or credit limits, billing alerts, data-retention or
-  training settings where available, and emergency key disablement are tracked
-  separately from model-pricing rows before live model calls.
+- Provider console readiness evidence PR: merged as PR #322, merge commit `86d3faf`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `86d3faf`.
+- Current branch: `codex/iam-secrets-evidence-hardening`.
+- Current local changes: harden the existing `iam-and-secrets` operator
+  evidence section so OIDC subject/audience scope, bot-repository or
+  protected-environment role trust, Data API cluster/secret resource scope,
+  database grants, SNS/SES resource scope, runtime secret-store access
+  principals, target-repo/browser secret exclusion, rotation ownership, and
+  break-glass revoke paths are tracked before production AWS or secret use.
 - Current local validation:
-  - `gh run watch 27499941203 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge CI;
-  - `gh run watch 27499941202 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #321 post-merge OpenSSF Scorecard;
+  - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
+  - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
+  - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
+    9 docs checked;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 7 docs checked;
   - `npm run check:external-evidence-boundaries` passed with 12 surfaces
@@ -625,22 +630,19 @@ merged PRs.
   - `npm run check:release-notes` passed;
   - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
     checked;
-  - `npm run check:release-notes-publication` initially caught a
-    case-sensitive provider-console evidence doc anchor and then passed with
-    11 publication cases and 7 docs checked after the anchor was corrected;
-  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
-    docs checked;
+  - `npm run check:release-notes-publication` passed with 11 publication
+    cases and 7 docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #321, and
-    5 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #322,
+    and 5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm test` passed;
   - `npm run check` passed with 184 CommonJS files;
-  - `npm run release:check` passed with 184 CommonJS files checked and the
-    provider-console readiness evidence boundary exercised.
+  - `npm run release:check` passed with 184 CommonJS files checked and the IAM
+    and secret-custody evidence boundary exercised.
 
 ## Key Decisions
 
@@ -1267,7 +1269,10 @@ merged PRs.
   data-retention/training settings where available, and emergency key
   disablement before live model calls.
 - AWS IAM/OIDC templates still need operator replacement with real account,
-  region, repo, branch/environment, cluster, secret, and SNS values before use.
+  region, repo, branch/environment, cluster, secret, SNS/SES values, reviewed
+  subject/audience scope, database grants, secret-store access principals,
+  rotation owners, target-repo/browser secret exclusion, and break-glass
+  revoke paths before use.
 - The GitHub App manifest still needs production-host rendering, actual App
   creation in GitHub, private conversion evidence, App id/slug custody,
   webhook ping evidence, selected-repository allowlist review, and rotation
