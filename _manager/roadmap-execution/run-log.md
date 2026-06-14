@@ -4324,3 +4324,21 @@
   - `npm run release:check` passed, including release tag plan validation with
     6 plan cases;
   - `npm run check:public-artifacts` passed with 116 files checked.
+- Merged `6529reviewbot` PR #247 as `32746dc`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/container-image-ref-scheme-guard` increment:
+  - harden the container publish plan so URL-style image repository inputs are
+    rejected before Docker build and push commands are rendered.
+- Local validation for `codex/container-image-ref-scheme-guard` so far:
+  - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
+    checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #247,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run release:check` passed, including container publish plan
+    validation;
+  - `npm run check:public-artifacts` passed with 116 files checked.

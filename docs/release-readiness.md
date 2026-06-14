@@ -240,6 +240,8 @@ Ready for community review:
   runtime boundary;
 - container publish plan for dry-run build, push, vulnerability scan, and
   private evidence commands before operator-owned registry work;
+- container publish planning rejects URL-style image repository inputs before
+  rendering Docker build and push commands;
 - production deployment plan for a dry-run operator handoff across GitHub App
   registration, container publish, operator workspace, strict preflight, admin
   snapshot, cutover, and dogfood gates before live operator steps;
