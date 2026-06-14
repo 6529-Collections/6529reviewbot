@@ -47,6 +47,11 @@ repo/org disclosure allowlists. Public summaries should expose repository names
 only through intentional `REVIEWBOT_USAGE_API_PUBLIC_ORGS` or exact repo
 allowlist decisions; everything else should collapse to `private`.
 
+Before marking private admin bridge wiring complete, record the reviewed
+auth-check URL and wallet allowlist evidence. Public summaries may mention that
+6529.io auth protects admin routes, but HMAC secrets, wallet addresses, and
+private auth endpoint details stay in operator evidence.
+
 Before marking scheduled alert delivery complete, render and review the alert
 delivery plan with explicit production inputs:
 
@@ -132,6 +137,7 @@ operator alert delivery verified without publishing destination details
 alert delivery plan reviewed before delivery enablement
 worker dispatch credential posture reviewed before worker enablement
 public repo/org disclosure allowlists reviewed before public dashboard exposure
+auth-check URL and wallet allowlist reviewed before private admin exposure
 ```
 
 Keep private evidence like the exact App id, installation id, secret names,

@@ -112,6 +112,18 @@ function checkGateConfig(findings) {
     ) {
       findings.push("public-dashboard gate title must require reviewed public repo/org disclosure allowlists.");
     }
+    if (id === "admin-surface") {
+      const adminTitle = normalizeWhitespace(gate.title).toLowerCase();
+      for (const snippet of [
+        "hmac auth bridge",
+        "reviewed 6529.io auth-check url",
+        "wallet allowlist evidence",
+      ]) {
+        if (!adminTitle.includes(snippet)) {
+          findings.push(`admin-surface gate title must require ${snippet}.`);
+        }
+      }
+    }
   }
 
   const alertGate = gatesById.get("alerts");
@@ -364,6 +376,7 @@ function checkDocs(docTexts, findings) {
       "v0 release gate contract check",
       "dispatch credential evidence",
       "reviewed public repo/org disclosure allowlists",
+      "wallet allowlist evidence",
       "reviewed container publish plan evidence",
       "reviewed alert delivery plan evidence",
       "AWS account ids",

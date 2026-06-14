@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required private admin auth-check URL and wallet allowlist evidence in the
+  v0 release gates and production cutover checklist before private admin
+  exposure can satisfy release readiness.
 - Required public repo/org disclosure allowlist evidence in the v0 release
   gates and production cutover checklist before public dashboard exposure can
   satisfy release readiness.

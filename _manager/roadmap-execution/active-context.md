@@ -525,10 +525,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Worker dispatch credential release evidence PR: merged as PR #282, merge commit `deeccc2`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/public-dashboard-disclosure-release-gate`.
-- Current local changes: require public repo/org disclosure allowlist evidence
-  in the v0 release gates and production cutover checklist before public
-  dashboard exposure can satisfy release readiness.
+- Public dashboard disclosure release evidence PR: merged as PR #283, merge commit `9412485`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/admin-dashboard-auth-release-gate`.
+- Current local changes: require private admin auth-check URL and wallet
+  allowlist evidence in the v0 release gates and production cutover checklist
+  before private admin exposure can satisfy release readiness.
 - Current local validation:
   - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
     6 docs checked;
@@ -536,18 +538,18 @@ merged PRs.
     cases, and 6 docs checked;
   - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
     7 docs checked;
-  - `npm run check:usage-api-routes` passed with 10 routes, 10 client
-    methods, and 8 docs/templates checked;
+  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and
+    5 docs/templates checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #282,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #283,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    public dashboard disclosure allowlist release/cutover gate exercised.
+    private admin auth-check/wallet allowlist release/cutover gate exercised.
 
 ## Key Decisions
 
