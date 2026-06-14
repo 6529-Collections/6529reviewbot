@@ -20,6 +20,12 @@ After stabilization:
 - [Release operations map](release-operations-map.md) reviewed when deciding
   which public check, private evidence overlay, or release-bundle command is
   next
+- [External evidence boundaries](external-evidence-boundaries.md) reviewed so
+  release notes and public summaries distinguish local validation from external
+  operator evidence
+- `npm run check:external-evidence-boundaries` confirms the public/private
+  evidence boundary stays synchronized with release docs, roadmap, operations
+  map, and package wiring
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook

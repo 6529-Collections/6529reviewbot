@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a checked external evidence boundary contract so public release
+  artifacts distinguish local validation from operator-owned production,
+  dashboard, alert, dogfood, security-review, and cutover evidence.
 - Added a checked compatibility policy for pre-v1 compatibility-sensitive
   surfaces, breaking-change release notes, exact tag/commit pinning, and the
   future v1 stable API promise.

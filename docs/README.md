@@ -16,6 +16,8 @@ be linked here before they are considered release-ready.
   exposure, and public-repo controls.
 - [Compatibility Policy](compatibility-policy.md): pre-v1 compatibility
   surfaces, breaking-change handling, and pinning guidance.
+- [External Evidence Boundaries](external-evidence-boundaries.md): local
+  validation limits and operator-owned private evidence requirements.
 - [Roadmap](roadmap.md): current direction, shipped pieces, and remaining
   release work.
 

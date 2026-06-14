@@ -28,6 +28,7 @@ runNode("scripts/check-configuration-reference-contract.cjs");
 runNode("scripts/check-aws-iam-templates.cjs");
 runNode("scripts/check-security-model-contract.cjs");
 runNode("scripts/check-compatibility-policy.cjs");
+runNode("scripts/check-external-evidence-boundaries.cjs");
 runNode("scripts/check-operations-runbook-contract.cjs");
 runNode("scripts/check-dependabot-config.cjs");
 runNode("scripts/check-container-image.cjs");

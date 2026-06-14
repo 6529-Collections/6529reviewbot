@@ -63,6 +63,10 @@ The publication guard verifies:
   evidence;
 - every validation field reports passed, ready, reviewed, or accepted evidence
   rather than vague run status;
+- local validation is kept distinct from operator evidence, so repository
+  checks can prove source contracts while production, dashboard, alert,
+  dogfood, security-review, and cutover readiness require reviewed operator
+  evidence or an explicit deferral;
 - failed, pending, blocked, not-ready, or negated readiness evidence is
   rejected unless it is explicitly accepted, explicitly deferred, or
   dogfood-only;

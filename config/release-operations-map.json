@@ -87,6 +87,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "external-evidence-boundary-contract",
+          "script": "check:external-evidence-boundaries",
+          "purpose": "Verify public docs distinguish local validation from operator-owned production, dashboard, alert, dogfood, security-review, and cutover evidence.",
+          "doc": "docs/external-evidence-boundaries.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "operations-runbook-contract",
           "script": "check:operations-runbook",
           "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",

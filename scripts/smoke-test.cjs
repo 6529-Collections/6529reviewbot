@@ -65,6 +65,7 @@ const managerMemoryContractCheck = require("./check-manager-memory.cjs");
 const awsIamTemplatesCheck = require("./check-aws-iam-templates.cjs");
 const securityModelContractCheck = require("./check-security-model-contract.cjs");
 const compatibilityPolicyCheck = require("./check-compatibility-policy.cjs");
+const externalEvidenceBoundariesCheck = require("./check-external-evidence-boundaries.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
@@ -5581,6 +5582,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /compatibility policy contract check found/
+  );
+  const externalEvidenceBoundariesResult =
+    externalEvidenceBoundariesCheck.checkExternalEvidenceBoundariesContract();
+  assert.equal(externalEvidenceBoundariesResult.surfaces, 12);
+  assert.throws(
+    () =>
+      externalEvidenceBoundariesCheck.checkExternalEvidenceBoundariesContract({
+        quiet: true,
+        texts: {
+          "docs/external-evidence-boundaries.md": "# External Evidence Boundaries\n",
+        },
+      }),
+    /external evidence boundaries contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();
