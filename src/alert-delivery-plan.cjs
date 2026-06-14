@@ -153,7 +153,7 @@ function alertDeliveryPhases({
         `npm run operator:evidence -- -- --file ${evidenceFile} --summary`,
       ],
       evidence:
-        "Record production cutover item alerts-deliver and worker-and-alerts operator evidence as complete or explicitly deferred with owner and risk.",
+        "Record production cutover items alert-delivery-plan-reviewed and alerts-deliver plus worker-and-alerts operator evidence as complete or explicitly deferred with owner and risk.",
     },
     {
       id: "release-notes",

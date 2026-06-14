@@ -246,6 +246,8 @@ Ready for community review:
   route verification, cutover evidence, and release notes;
 - production cutover checklist evidence now requires the dashboard deployment
   plan before public or private 6529.io dashboard routes are exposed;
+- production cutover checklist evidence now requires the alert delivery plan
+  before scheduled operator alert delivery is marked ready;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret
@@ -447,7 +449,8 @@ npm run check:production-cutover
 The production cutover contract keeps checklist/status readiness, complete
 evidence requirements, deferred item semantics, public Markdown redaction, and
 docs synchronized, including the dashboard deployment-plan evidence gate before
-6529.io dashboard exposure.
+6529.io dashboard exposure and the alert delivery-plan evidence gate before
+scheduled alert delivery.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:
@@ -535,7 +538,8 @@ frontend env, bot public disclosure, HMAC admin auth, verification, cutover,
 and release-note handoff commands without executing live operations.
 `npm run check:production-cutover` also verifies the dashboard deployment-plan
 evidence item stays before public or private 6529.io dashboard exposure in the
-cutover checklist.
+cutover checklist and the alert delivery-plan evidence item stays before
+scheduled alert delivery.
 `npm run check:public-artifacts` is included in `npm run release:check` and
 scans tracked and non-ignored untracked public docs, configs, templates,
 workflows, and durable manager memory for live-looking credentials or cloud

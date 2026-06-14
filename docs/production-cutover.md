@@ -42,6 +42,13 @@ dashboard deployment plan with explicit production inputs:
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
 ```
 
+Before marking scheduled alert delivery complete, render and review the alert
+delivery plan with explicit production inputs:
+
+```bash
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready
+```
+
 Include the cutover summary in the release-candidate bundle:
 
 ```bash
@@ -83,7 +90,8 @@ The checklist tracks these phases:
 - server and worker: image evidence, noop deployment, strict preflight,
   webhook acceptance, conservative worker enablement, and run-control posture;
 - 6529.io and alerts: dashboard deployment plan evidence, public dashboard,
-  private admin HMAC bridge, admin snapshot, and operator alert delivery;
+  private admin HMAC bridge, admin snapshot, alert delivery plan evidence, and
+  operator alert delivery;
 - dogfood: target repo config, promotion packet, command-only review, and
   limited initial review;
 - rollback and decision: spend-stop controls, manual security review, and
@@ -102,6 +110,7 @@ npm run release:check passed on reviewed commit
 strict preflight passed in release-candidate environment
 selected-repository installation scope reviewed
 operator alert delivery verified without publishing destination details
+alert delivery plan reviewed before delivery enablement
 ```
 
 Keep private evidence like the exact App id, installation id, secret names,
@@ -114,6 +123,7 @@ admin snapshot details outside the public repo.
 - [Release Candidate Bundle](release-candidate.md)
 - [Operator Evidence Template](operator-evidence-template.md)
 - [Dashboard Deployment Plan](dashboard-deployment-plan.md)
+- [Alert Delivery Plan](alert-delivery-plan.md)
 - [Production Deployment](deployment.md)
 - [GitHub App Registration](github-app-registration.md)
 - [Container Deployment](container-deployment.md)
