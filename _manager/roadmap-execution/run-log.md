@@ -4938,3 +4938,22 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     admin snapshot operator-origin docs exercised.
+- Merged `6529reviewbot` PR #277 as `cbf46da`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/manifest-convert-help-origin` increment:
+  - align GitHub App manifest conversion help with
+    `<production-bot-origin>` callback URLs and contract-check that help text
+    does not use documentation/example callback hosts.
+- Local validation for `codex/manifest-convert-help-origin` so far:
+  - `npm run check:github-app-manifest` passed with 7 manifest cases,
+    6 conversion cases, and 7 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #277,
+    and 5 docs checked;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    GitHub App manifest conversion help anchor exercised.

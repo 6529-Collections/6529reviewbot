@@ -250,6 +250,20 @@ function checkConversionCliContract(findings) {
     "Unknown argument '--unknown'.",
     findings
   );
+
+  const help = githubAppManifestConversionCli.helpText();
+  for (const snippet of [
+    "npm run github-app:convert -- -- --code <code> --output C:\\private\\6529bot-app.json",
+    "npm run github-app:convert -- -- --code <production-bot-origin>/github-app/manifest-complete?code=<code> --output /private/6529bot-app.json",
+    "--code <code|url>",
+  ]) {
+    if (!help.includes(snippet)) {
+      findings.push(`GitHub App manifest conversion CLI help must include '${snippet}'.`);
+    }
+  }
+  if (help.includes("reviewbot.example.com/github-app/manifest-complete?code=<code>")) {
+    findings.push("GitHub App manifest conversion CLI help must not use documentation/example callback hosts.");
+  }
 }
 
 async function checkConversionContract(findings) {
@@ -431,7 +445,14 @@ function checkSourceInvariants(sourceTexts, findings) {
 
   const conversionBinPath = "bin/convert-github-app-manifest.cjs";
   const conversionBinText = sourceTexts[conversionBinPath] || readText(conversionBinPath);
-  for (const snippet of ["--code", "--output", "--token-env", "--allow-repo-output", "--no-auth"]) {
+  for (const snippet of [
+    "--code",
+    "--output",
+    "--token-env",
+    "--allow-repo-output",
+    "--no-auth",
+    "<production-bot-origin>/github-app/manifest-complete?code=<code>",
+  ]) {
     if (!conversionBinText.includes(snippet)) {
       findings.push(`${conversionBinPath} must include '${snippet}'.`);
     }
