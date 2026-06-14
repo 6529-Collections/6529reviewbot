@@ -38,7 +38,8 @@ npm run production:deployment-plan -- -- --host https://reviewbot.example.com --
 ```
 
 Image repository inputs are validated as Docker image repositories without a
-URL scheme, tag, or digest. The release version supplies the command tag.
+URL scheme, tag, digest, or empty path segments. The release version supplies
+the command tag.
 
 For automation that wants JSON instead of Markdown:
 

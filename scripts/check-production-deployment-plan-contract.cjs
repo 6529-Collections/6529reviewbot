@@ -136,6 +136,14 @@ function checkImageValidation(findings) {
       findings.push("production deployment image URL scheme rejection should be explicit.");
     }
   }
+  try {
+    normalizeImageRef("registry.example.com//6529reviewbot");
+    findings.push("production deployment plan must reject image refs with empty path segments.");
+  } catch (error) {
+    if (!String(error.message).includes("empty path segments")) {
+      findings.push("production deployment image empty-segment rejection should be explicit.");
+    }
+  }
 }
 
 function checkWorkspaceValidation(findings) {
@@ -186,6 +194,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectProductionDeploymentPlan",
       "container:publish-plan",
       "URL scheme",
+      "empty path segments",
       "This command does not create GitHub Apps",
     ],
     "bin/production-deployment-plan.cjs": [
@@ -219,6 +228,7 @@ function checkDocs(docTexts, findings) {
       "npm run production:deployment-plan",
       "--require-ready",
       "without a URL scheme",
+      "empty path segments",
       "does not create GitHub Apps",
       "npm run check:production-deployment-plan",
     ],

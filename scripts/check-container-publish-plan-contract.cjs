@@ -151,6 +151,14 @@ function checkImageValidation(findings) {
       findings.push("container image digest rejection should be explicit.");
     }
   }
+  try {
+    normalizeImageRef("registry.example.com//6529reviewbot");
+    findings.push("container publish plan must reject image refs with empty path segments.");
+  } catch (error) {
+    if (!String(error.message).includes("empty path segments")) {
+      findings.push("container image empty-segment rejection should be explicit.");
+    }
+  }
 }
 
 function checkCli(findings) {
@@ -202,6 +210,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectContainerPublishPlan",
       "checkContainerImage",
       "URL scheme",
+      "empty path segments",
       "This command does not build, push, scan, or publish container images.",
     ],
     "bin/container-publish-plan.cjs": [
@@ -235,6 +244,7 @@ function checkDocs(docTexts, findings) {
       "npm run container:publish-plan",
       "--require-ready",
       "without a URL scheme",
+      "empty path segments",
       "does not build, push, scan, or publish container images",
       "npm run check:container-publish-plan",
     ],

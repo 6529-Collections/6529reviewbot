@@ -132,6 +132,9 @@ function normalizeImageRef(value) {
   if (/:([^/]+)$/.test(text)) {
     throw new Error("container image reference must not include a tag; use --tag or --release instead.");
   }
+  if (text.split("/").some((segment) => !segment)) {
+    throw new Error("container image reference must not contain empty path segments.");
+  }
   if (!/^[A-Za-z0-9._:/-]+$/.test(text)) {
     throw new Error("container image reference contains unsupported characters.");
   }

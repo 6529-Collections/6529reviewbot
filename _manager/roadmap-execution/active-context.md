@@ -457,11 +457,15 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Container image ref scheme guard PR: merged as PR #248, merge commit `c610a3e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-image-ref-scheme-guard`.
-- Current local changes: hardening the production deployment plan so URL-style
-  operator image repository inputs are rejected before operator handoff
-  commands are rendered.
+- Production image ref scheme guard PR: merged as PR #249, merge commit `b9a1985`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/image-ref-empty-segment-guard`.
+- Current local changes: hardening container publish and production deployment
+  image repository planning so empty path segments are rejected before Docker
+  or operator handoff commands are rendered.
 - Current local validation:
+  - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
+    checked;
   - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
     docs checked;
   - `npm run check:docs` passed with 73 files checked;
@@ -469,10 +473,10 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #248,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #249,
     and 5 docs checked;
-  - `npm run release:check` passed, including production deployment plan
-    validation with 5 plan cases;
+  - `npm run release:check` passed, including container publish and production
+    deployment plan validation;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions
