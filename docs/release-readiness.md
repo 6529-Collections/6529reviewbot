@@ -270,6 +270,8 @@ Ready for community review:
 - v0 and production cutover public dashboard gates now require reviewed public
   repo/org disclosure allowlists before public summaries can expose repo
   names;
+- v0 and production cutover private admin gates now require reviewed
+  auth-check URL and wallet allowlist evidence before private admin exposure;
 - production cutover checklist evidence now requires the dashboard deployment
   plan before public or private 6529.io dashboard routes are exposed;
 - production cutover checklist evidence now requires the alert delivery plan
@@ -395,8 +397,9 @@ verifies both gate count parity and v0 gate evidence references.
 v0 release gate contract synchronized across status readiness, missing-id
 checks, deferral semantics, dispatch credential evidence for worker gates,
 container publish-plan evidence targets for image gates, dashboard
-deployment-plan and public disclosure allowlist evidence targets for 6529.io
-gates, public Markdown redaction, source invariants, and release docs.
+deployment-plan, public disclosure allowlist, and private admin auth-check
+evidence targets for 6529.io gates, public Markdown redaction, source
+invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 production deployment plan evidence, deferrals, known gaps, compatibility, and
@@ -499,7 +502,8 @@ evidence requirements, deferred item semantics, public Markdown redaction, and
 docs synchronized, including the container publish-plan evidence gate before
 server deployment, worker dispatch credential evidence before non-noop worker
 traffic, dashboard deployment-plan and public repo/org disclosure allowlist
-evidence before 6529.io dashboard exposure, and the alert delivery-plan
+evidence before 6529.io dashboard exposure, private admin auth-check and
+wallet allowlist evidence before admin exposure, and the alert delivery-plan
 evidence gate before scheduled alert delivery.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
@@ -718,8 +722,8 @@ redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, container publish-plan
 evidence, worker dispatch credential evidence, public dashboard disclosure
-allowlist evidence, deferral semantics, Markdown redaction, source invariants,
-and docs stay aligned.
+allowlist evidence, private admin auth-check evidence, deferral semantics,
+Markdown redaction, source invariants, and docs stay aligned.
 `npm run check:security-review-status` is included in `npm run release:check`
 and verifies security review status readiness, deferral semantics, Markdown
 redaction, source invariants, and docs stay aligned.

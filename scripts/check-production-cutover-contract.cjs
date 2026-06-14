@@ -203,6 +203,30 @@ function checkChecklistConfig(findings) {
     findings.push("6529.io cutover phase must include admin-bridge-wired.");
   } else if (dashboardPlanIndex > adminBridgeIndex) {
     findings.push("dashboard-deployment-plan-reviewed must come before admin-bridge-wired.");
+  } else {
+    const adminBridge = ioPhase.items[adminBridgeIndex];
+    for (const snippet of [
+      "private admin surface",
+      "server-side HMAC signing",
+      "auth-check URL",
+      "wallet allowlist evidence",
+    ]) {
+      if (!adminBridge.title.includes(snippet)) {
+        findings.push(`admin-bridge-wired title must include '${snippet}'.`);
+      }
+    }
+    for (const snippet of [
+      "admin route",
+      "auth-bridge summary",
+      "auth-check URL",
+      "wallet allowlist summary",
+      "without HMAC secrets",
+      "private wallet details",
+    ]) {
+      if (!adminBridge.evidence.includes(snippet)) {
+        findings.push(`admin-bridge-wired evidence must include '${snippet}'.`);
+      }
+    }
   }
   if (alertPlanIndex === -1) {
     findings.push("6529.io cutover phase must include alert-delivery-plan-reviewed.");
@@ -492,6 +516,7 @@ function checkDocs(docTexts, findings) {
       "npm run container:publish-plan",
       "worker dispatch credential posture",
       "public repo/org disclosure allowlists",
+      "auth-check URL and wallet allowlist",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["production cutover contract"],

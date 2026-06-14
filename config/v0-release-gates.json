@@ -35,7 +35,7 @@
     },
     {
       "id": "admin-surface",
-      "title": "6529.io private admin surface is wired to the HMAC auth bridge and covered by reviewed dashboard deployment plan evidence, or explicitly deferred behind operator-only APIs.",
+      "title": "6529.io private admin surface is wired to the HMAC auth bridge, protected by reviewed 6529.io auth-check URL and wallet allowlist evidence, and covered by reviewed dashboard deployment plan evidence, or explicitly deferred behind operator-only APIs.",
       "evidence": "docs/dashboard-deployment-plan.md"
     },
     {

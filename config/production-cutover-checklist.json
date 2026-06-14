@@ -170,8 +170,8 @@
         },
         {
           "id": "admin-bridge-wired",
-          "title": "6529.io private admin surface calls bot-owned admin APIs through server-side HMAC signing.",
-          "evidence": "admin route and auth-bridge summary without HMAC secrets",
+          "title": "6529.io private admin surface calls bot-owned admin APIs through server-side HMAC signing after auth-check URL and wallet allowlist evidence is reviewed.",
+          "evidence": "admin route, auth-bridge summary, auth-check URL, and wallet allowlist summary without HMAC secrets or private wallet details",
           "runbook": "docs/6529-io-admin-integration.md"
         },
         {

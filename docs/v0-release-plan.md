@@ -123,7 +123,8 @@ Do not create the `v0` tag until all of these are true:
    and limited to reviewed public repo/org disclosure allowlists, or explicitly
    deferred in the release notes.
 7. The 6529.io private admin surface is wired to the HMAC auth bridge and
-   covered by reviewed dashboard deployment plan evidence or explicitly
+   protected by reviewed 6529.io auth-check URL and wallet allowlist evidence,
+   covered by reviewed dashboard deployment plan evidence, or explicitly
    deferred behind operator-only APIs.
 8. Dogfood repository configuration has been merged into at least one trusted
    6529 repository and tested in command-only mode. Use
