@@ -240,6 +240,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["SECURITY.md guidance reviewed and triage owner recorded"],
           },
           {
+            id: "repository-rulesets",
+            status: "complete",
+            title: "Repository Rulesets",
+            notes: "live main branch and release tag rulesets reviewed",
+            evidence: ["required PR checks, release tag rules, and bypass posture recorded"],
+          },
+          {
             id: "production-deployment-plan",
             status: "complete",
             title: "Production Deployment Plan",
@@ -329,6 +336,8 @@ function checkMarkdownOutput(findings) {
     "reviewed container publish plan evidence",
     "security-intake",
     "private vulnerability reporting enabled or equivalent intake recorded",
+    "repository-rulesets",
+    "live main branch and release tag rulesets reviewed",
     "production-deployment-plan",
     "reviewed production deployment plan evidence",
     "worker-dispatch-credentials",

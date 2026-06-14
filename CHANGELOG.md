@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated `repository-rulesets` section to structured operator
+  evidence so live GitHub `main` protection, required checks, release tag
+  rulesets, and bypass posture are tracked separately from local ruleset docs.
 - Added a dedicated `security-intake` section to structured operator evidence
   so GitHub private vulnerability reporting or an equivalent private intake
   channel is tracked explicitly before broad community release claims.

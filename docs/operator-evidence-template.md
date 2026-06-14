@@ -103,6 +103,19 @@ Initial response expectation reviewed:
 Public release-note summary:
 ```
 
+## Repository Rulesets
+
+```text
+Main branch protection reviewed:
+Required pull request checks reviewed:
+Required conversation resolution reviewed:
+Code owner review posture reviewed:
+Release tag ruleset reviewed:
+Bypass actors reviewed:
+Live ruleset evidence location:
+Public release-note summary:
+```
+
 ## App Server Runtime
 
 ```text

@@ -264,7 +264,8 @@ Build the operator experience:
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
 - repository ruleset guidance for main branch protection, required PR checks,
-  and release tag protection before public dogfood tags;
+  and release tag protection before public dogfood tags, with live settings
+  captured in `repository-rulesets` operator evidence;
 - CODEOWNERS guidance for default maintainer review ownership and future code
   owner review rules;
 - community-release gate contract so the broad community-use checklist is
@@ -628,9 +629,9 @@ Completed in `6529reviewbot`:
   evidence and deployment handoff commands stay together in the private
   operator flow.
 - operator evidence template guidance now includes container publish-plan,
-  security intake, worker dispatch credential, public dashboard disclosure,
-  private admin auth-check/wallet allowlist, and alert delivery review fields before
-  release evidence can be summarized publicly.
+  security intake, repository rulesets, worker dispatch credential, public
+  dashboard disclosure, private admin auth-check/wallet allowlist, and alert
+  delivery review fields before release evidence can be summarized publicly.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.

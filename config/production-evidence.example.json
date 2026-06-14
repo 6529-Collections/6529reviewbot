@@ -32,6 +32,10 @@
       "status": "pending",
       "notes": "Enable GitHub private vulnerability reporting or record an equivalent private security intake channel before broad community release."
     },
+    "repository-rulesets": {
+      "status": "pending",
+      "notes": "Verify live GitHub main branch protection, required PR checks, release tag rulesets, and bypass posture before public dogfood tags."
+    },
     "app-server-runtime": {
       "status": "pending",
       "notes": "Deploy the central App server or explicitly mark the release local/dogfood-only."

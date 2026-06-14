@@ -48,7 +48,8 @@ private operator evidence before they can satisfy release or dogfood gates:
 - manual security review, production cutover, dogfood promotion, and go-live
   status overlays are complete or explicitly deferred.
 - repository ruleset guidance has been checked locally, and the live ruleset
-  settings for `main` and release tags have been verified in GitHub.
+  settings for `main` and release tags have been verified in GitHub and
+  recorded in `repository-rulesets` operator evidence.
 
 ## Public Artifact Rule
 

@@ -598,23 +598,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Model pricing operator evidence PR: merged as PR #318, merge commit `178dbba`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/security-intake-operator-evidence`.
-- Current local changes: add a dedicated `security-intake` section to
-  structured operator evidence so GitHub private vulnerability reporting or an
-  equivalent private intake channel is tracked explicitly before broad
-  community-release readiness claims.
+- Security intake operator evidence PR: merged as PR #319, merge commit `0f8913f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/repository-rulesets-operator-evidence`.
+- Current local changes: add a dedicated `repository-rulesets` section to
+  structured operator evidence so live GitHub `main` protection, required PR
+  checks, release tag rulesets, and bypass posture are tracked separately from
+  local repository-ruleset docs.
 - Current local validation:
-  - `gh run watch 27499087936 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #318 post-merge CI;
-  - `gh run watch 27499087948 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #318 post-merge OpenSSF Scorecard;
-  - `npm run check:community-release-gates` passed with 14 gates, 14 evidence
-    refs, and 9 docs checked;
-  - `npm run check:governance` passed with 13 files checked;
+  - `gh run watch 27499289995 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge CI;
+  - `gh run watch 27499290006 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge OpenSSF Scorecard;
+  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
     cases, and 5 docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #318, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #319, and
     5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
@@ -623,7 +625,7 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    security-intake operator evidence section exercised.
+    repository-rulesets operator evidence section exercised.
 
 ## Key Decisions
 
@@ -669,6 +671,10 @@ merged PRs.
   operator evidence section; public SECURITY.md guidance and community-release
   gates should not imply the live GitHub/private intake setting is configured
   until that evidence is complete or explicitly deferred.
+- Live GitHub rulesets are now a first-class `repository-rulesets` operator
+  evidence section; local ruleset docs and checks can prove expected posture,
+  but live branch/tag protection and bypass settings remain operator-owned
+  evidence.
 - Model price apply should reject zero-rate placeholders by default; a real
   zero price requires explicit operator intent and provider documentation.
 - Model price apply should reject stale or future-dated source-check evidence

@@ -49,7 +49,7 @@ Recommended tag rules:
   before creating a tag;
 - require completed release notes to pass `npm run release:notes:check`;
 - record the tag name, commit SHA, release notes path, and GitHub Release URL
-  in private operator evidence.
+  in private `repository-rulesets` operator evidence.
 
 The release tag plan remains dry-run only. It verifies clean synced `main`,
 release-note readiness, local tag availability, and remote tag availability;
@@ -60,7 +60,7 @@ the operator still creates the annotated tag and GitHub Release explicitly.
 Public release notes may say the repository ruleset guidance is checked when
 `npm run check:repository-rulesets` passes. They may say the live rulesets are
 ready only after an operator records the GitHub settings summary in private
-operator evidence or explicitly defers the risk.
+`repository-rulesets` operator evidence or explicitly defers the risk.
 
 Do not copy GitHub organization security settings, bypass-user lists, private
 team names, or screenshots with account identifiers into public artifacts.
