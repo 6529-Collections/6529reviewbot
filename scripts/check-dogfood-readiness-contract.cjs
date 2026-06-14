@@ -327,9 +327,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     ".github/6529bot.yml",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(value)",
     "directory: \"[operator-workspace]\"",
     "return \"[external-path-set]\"",
     "modelPriceCoverage",

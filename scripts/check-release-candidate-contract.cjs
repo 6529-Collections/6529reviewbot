@@ -462,10 +462,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourcePath = "src/release-candidate.cjs";
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
-    "PUBLIC_REDACTION_PATTERNS",
     "redactSensitiveText(value)",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
     "[operator-workspace]",
     "[external-path-set]",
     "This bundle is public-safe.",

@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Centralized public release, dogfood, and operator renderer redaction on the
+  shared diagnostics helper so AWS and token redaction semantics cannot drift
+  across local public-output regex tables.
 - Added shared diagnostic redaction for AWS ARNs and 12-digit AWS account ids
   across worker, dispatch, ledger, alert, preflight, and support outputs.
 - Redacted rendered dry-run SQL parameter comments for budget policies and

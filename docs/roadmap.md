@@ -555,8 +555,8 @@ Completed in `6529reviewbot`:
 - support-bundle checks that keep safe env keys, presence-only secret keys,
   local path redaction, CLI flags, and support docs synchronized.
 - diagnostics-redaction checks that keep shared token, alert webhook, AWS
-  access-key id, private-key, error-line, and diagnostic-tail redaction
-  behavior synchronized.
+  access-key id, AWS ARN, AWS account-id, private-key, public renderer,
+  error-line, and diagnostic-tail redaction behavior synchronized.
 - preflight contract checks that keep no-network preflight check order,
   strict/profile behavior, CLI flags, redacted diagnostics, and docs
   synchronized.

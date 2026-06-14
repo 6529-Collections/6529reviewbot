@@ -10,10 +10,6 @@ const {
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
 const DEFAULT_GITHUB_MANIFEST_CONVERSION_TIMEOUT_MS = 10000;
 const DEFAULT_REPO_ROOT = path.resolve(__dirname, "..");
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function githubAppManifestConversionSettingsFromEnv(env = process.env) {
   return {
@@ -260,11 +256,7 @@ async function responseErrorSuffix(response) {
 }
 
 function safeSummaryText(value) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text
+  return redactSensitiveText(value)
     .slice(0, 1000)
     .replace(/\r?\n/g, " ");
 }

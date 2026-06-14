@@ -6530,3 +6530,47 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and shared
     AWS ARN/account-id diagnostic redaction exercised.
+- Merged `6529reviewbot` PR #338 as `96b64e7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/centralize-public-redaction` increment:
+  - remove duplicate AWS public-output redaction regex tables from release,
+    dogfood, operator-evidence, operator-workspace, cutover, v0 gate, and
+    GitHub App manifest conversion renderers;
+  - tie those public renderers to the shared diagnostics helper through the
+    diagnostics redaction contract;
+  - update release docs, changelog, and durable manager memory.
+- Local validation for `codex/centralize-public-redaction` so far:
+  - `gh run watch 27505655110 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge CI;
+  - `gh run watch 27505655115 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge OpenSSF Scorecard;
+  - `npm run check:diagnostics-redaction` passed with 10 fixtures, 9 public
+    renderers, and 6 docs checked;
+  - `npm run check:dogfood-target` passed with 3 CLI cases, 4 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 7 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 7 docs checked;
+  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
+    conversion cases, and 7 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 7 docs checked;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `rg -n "PUBLIC_REDACTION_PATTERNS" src scripts docs README.md -g "*.cjs" -g "*.md"` found only the diagnostics guard that forbids local public redaction tables;
+  - `npm test` passed after asserting 9 public renderers in the diagnostics
+    redaction smoke path;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #338,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and shared
+    public-renderer redaction coverage exercised.

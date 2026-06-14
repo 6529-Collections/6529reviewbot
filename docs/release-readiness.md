@@ -51,8 +51,8 @@ Ready for community review:
 - fail-closed provider output guard so empty live model responses do not become
   generic no-finding comments;
 - worker diagnostic redaction for common token, alert-webhook, AWS access-key
-  id, and private-key shapes in local output tails and GitHub API dispatch
-  failure bodies;
+  id, AWS ARN, AWS account-id, and private-key shapes in local output tails and
+  GitHub API dispatch failure bodies;
 - worker capacity and backpressure runbook for live scaling decisions;
 - worker dispatch credential evidence before non-noop worker traffic, with a
   dispatch-only GitHub App preferred and fallbacks explicitly accepted;
@@ -761,7 +761,8 @@ verifies sanitized support-bundle safe env keys, presence-only secret keys,
 local path redaction, CLI flags, and docs stay synchronized.
 `npm run check:diagnostics-redaction` is included in `npm run release:check`
 and verifies shared diagnostic redaction for tokens, alert webhooks, AWS
-access-key ids, private keys, error lines, and diagnostic tails.
+access-key ids, AWS ARNs, AWS account ids, private keys, public renderers,
+error lines, and diagnostic tails.
 `npm run check:model-defaults` is included in `npm run release:check` and
 verifies model-catalog defaults, reusable workflow fallbacks,
 provider-default docs, and conservative starter lanes stay aligned.

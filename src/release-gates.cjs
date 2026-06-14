@@ -5,10 +5,6 @@ const { redactSensitiveText } = require("./diagnostics.cjs");
 
 const RELEASE_GATE_STATUSES = ["pending", "complete", "deferred", "blocked"];
 const RELEASE_GATE_TEXT_MAX_CHARS = 1000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function loadReleaseGates(filePath = "config/v0-release-gates.json") {
   return validateReleaseGates(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
@@ -276,11 +272,7 @@ function optionalReleaseGateText(value, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) 
 }
 
 function publicReleaseGateText(value, maxChars = RELEASE_GATE_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text
+  return redactSensitiveText(value)
     .slice(0, maxChars)
     .replace(/\r?\n/g, " ");
 }

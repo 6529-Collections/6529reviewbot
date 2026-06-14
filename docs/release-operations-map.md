@@ -120,8 +120,8 @@ presence-only secret keys, local path redaction, CLI flags, and docs aligned.
 public/private reporting boundaries, maintainer triage, containment, recovery,
 and public follow-up guidance aligned.
 `npm run check:diagnostics-redaction` keeps shared diagnostic redaction for
-tokens, alert webhooks, AWS access-key ids, private keys, error lines, and
-diagnostic tails aligned.
+tokens, alert webhooks, AWS access-key ids, AWS ARNs, AWS account ids,
+private keys, public renderers, error lines, and diagnostic tails aligned.
 `npm run check:model-defaults` keeps model-catalog defaults, reusable workflow
 fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:model-pricing-runbook` keeps model pricing guidance aligned

@@ -57,10 +57,6 @@ const DEFAULT_OPERATOR_WORKSPACE_FILES = {
   securityReviewStatus: "security-review-status.json",
 };
 const OPERATOR_WORKSPACE_TEXT_MAX_CHARS = 1000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 const DOGFOOD_BASELINE_EVIDENCE_GUIDANCE = [
   "Before first live dogfood traffic, complete the private dogfood status baseline items",
   "`provider-console-readiness-reviewed` and `iam-secret-custody-reviewed`, backed by",
@@ -341,11 +337,7 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
 }
 
 function publicText(value, maxChars = OPERATOR_WORKSPACE_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(String(value || ""));
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, maxChars);
+  return redactSensitiveText(String(value || "")).slice(0, maxChars);
 }
 
 function publicLine(value, maxChars = OPERATOR_WORKSPACE_TEXT_MAX_CHARS) {

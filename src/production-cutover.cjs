@@ -6,11 +6,6 @@ const { redactSensitiveText } = require("./diagnostics.cjs");
 const CUTOVER_STATUSES = ["pending", "complete", "deferred", "blocked"];
 const CUTOVER_TEXT_MAX_CHARS = 1000;
 
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
-
 function loadProductionCutoverChecklist(filePath = "config/production-cutover-checklist.json") {
   return validateProductionCutoverChecklist(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
 }
@@ -315,11 +310,7 @@ function optionalCutoverItemStatus(value, source) {
 }
 
 function publicCutoverText(value) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, CUTOVER_TEXT_MAX_CHARS).replace(/\r?\n/g, " ");
+  return redactSensitiveText(value).slice(0, CUTOVER_TEXT_MAX_CHARS).replace(/\r?\n/g, " ");
 }
 
 function cutoverText(value, source, maxChars = CUTOVER_TEXT_MAX_CHARS) {

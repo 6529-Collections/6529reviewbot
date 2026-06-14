@@ -47,10 +47,6 @@ const packageJson = require("../package.json");
 
 const RELEASE_CANDIDATE_TEXT_MAX_CHARS = 1000;
 const RELEASE_CANDIDATE_GIT_MAX_CHARS = 4000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function collectReleaseCandidateBundle(options = {}) {
   const now = options.now || new Date();
@@ -610,11 +606,7 @@ function isInside(parent, child) {
 }
 
 function publicText(value, maxChars = RELEASE_CANDIDATE_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, maxChars);
+  return redactSensitiveText(value).slice(0, maxChars);
 }
 
 module.exports = {

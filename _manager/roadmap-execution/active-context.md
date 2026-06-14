@@ -654,34 +654,51 @@ merged PRs.
 - Dry-run SQL parameter redaction PR: merged as PR #337, merge commit `e9a47db`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `e9a47db`.
-- Current branch: `codex/shared-aws-diagnostic-redaction`.
-- Current local changes: add shared diagnostic redaction for AWS ARNs and
-  12-digit AWS account ids across worker, dispatch, ledger, alert, preflight,
-  and support outputs; update diagnostics, security model, alerting, worker
-  adapter, release-notes, changelog, and durable manager memory.
+- Shared AWS diagnostic redaction PR: merged as PR #338, merge commit `96b64e7`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `96b64e7`.
+- Current branch: `codex/centralize-public-redaction`.
+- Current local changes: remove duplicate AWS public-output redaction regex
+  tables from release, dogfood, operator-evidence, operator-workspace,
+  cutover, v0 gate, and GitHub App manifest conversion renderers; tie those
+  public renderers to the shared diagnostics helper through the diagnostics
+  redaction contract; update release docs, changelog, and durable manager
+  memory.
 - Current local validation:
-  - `gh run watch 27505311992 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #337 post-merge CI;
-  - OpenSSF Scorecard run `27505311965` passed for PR #337 post-merge;
-  - `npm run check:diagnostics-redaction` passed with 10 fixtures and 6 docs
-    checked;
-  - `npm run check:security-model` passed with 17 controls, 30 checklist
-    items, 12 source files, and 7 docs checked;
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run check:alerting-runbook` passed with 7 runbook cases and 8 docs
-    checked;
-  - `npm test` passed after adding shared AWS ARN/account-id diagnostic
-    redaction coverage;
-  - `rg -n "AWS access-key id, and private-key|AWS access-key id, and|alert-webhook, AWS access-key id, and private-key|Worker diagnostics redact common token, alert-webhook, AWS access-key id, and|token, alert-webhook, AWS access-key id, and" README.md docs scripts src -g "*.md" -g "*.cjs"` found no stale diagnostic wording;
+  - `gh run watch 27505655110 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge CI;
+  - `gh run watch 27505655115 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge OpenSSF Scorecard;
+  - `npm run check:diagnostics-redaction` passed with 10 fixtures, 9 public
+    renderers, and 6 docs checked;
+  - `npm run check:dogfood-target` passed with 3 CLI cases, 4 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 7 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 7 docs checked;
+  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
+    conversion cases, and 7 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 7 docs checked;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `rg -n "PUBLIC_REDACTION_PATTERNS" src scripts docs README.md -g "*.cjs" -g "*.md"` found only the diagnostics guard that forbids local public redaction tables;
+  - `npm test` passed after asserting 9 public renderers in the diagnostics
+    redaction smoke path;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #337,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #338,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and shared
-    AWS ARN/account-id diagnostic redaction exercised.
+    public-renderer redaction coverage exercised.
 
 ## Key Decisions
 
@@ -1135,7 +1152,8 @@ merged PRs.
 - Shared diagnostics redaction is a foundation for workers, support bundles,
   admin APIs, alerting, release evidence, and GitHub App helpers. Keep the
   common bearer, GitHub token, provider key, alert webhook, AWS access-key id,
-  private-key, safe-error-line, and diagnostic-tail behavior machine-checked.
+  AWS ARN, AWS account-id, private-key, public-renderer, safe-error-line, and
+  diagnostic-tail behavior machine-checked.
 - Runtime preflight is a deployment gate and an admin-status input. Keep check
   order, strict/profile behavior, CLI flags, redacted diagnostics, and docs
   machine-checked so operator evidence stays stable as config parsers evolve.

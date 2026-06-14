@@ -10,10 +10,6 @@ const DEFAULT_LIMITED_INITIAL_CONFIG = "templates/dogfood-repository-config.yml"
 const DOGFOOD_TARGET_MODES = ["auto", "command-only", "limited-initial"];
 const ALL_REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security"];
 const DOGFOOD_TARGET_TEXT_MAX_CHARS = 1000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function collectDogfoodTargetPacket(options = {}) {
   const root = path.resolve(options.root || process.cwd());
@@ -336,11 +332,7 @@ function normalizeSlashes(value) {
 }
 
 function publicText(value, maxChars = DOGFOOD_TARGET_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(String(value || ""));
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, maxChars);
+  return redactSensitiveText(String(value || "")).slice(0, maxChars);
 }
 
 function publicLine(value, maxChars = DOGFOOD_TARGET_TEXT_MAX_CHARS) {

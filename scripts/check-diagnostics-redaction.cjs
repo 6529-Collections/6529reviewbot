@@ -79,11 +79,22 @@ const diagnosticsDocs = [
   "docs/release-notes-template.md",
   "README.md",
 ];
+const publicRendererSources = [
+  "src/dogfood-promotion.cjs",
+  "src/dogfood-readiness.cjs",
+  "src/dogfood-target.cjs",
+  "src/github-app-manifest-conversion.cjs",
+  "src/operator-evidence.cjs",
+  "src/operator-workspace.cjs",
+  "src/production-cutover.cjs",
+  "src/release-candidate.cjs",
+  "src/release-gates.cjs",
+];
 
 function main() {
   const result = checkDiagnosticsRedaction();
   console.log(
-    `diagnostics redaction ok (${result.fixtures} fixtures, ${result.docs} docs checked)`
+    `diagnostics redaction ok (${result.fixtures} fixtures, ${result.publicRendererSources} public renderers, ${result.docs} docs checked)`
   );
 }
 
@@ -91,6 +102,7 @@ function checkDiagnosticsRedaction(options = {}) {
   const findings = [];
   checkRedactionFixtures(findings);
   checkErrorAndTailHelpers(findings);
+  checkPublicRendererRedaction(options.sourceTexts || {}, findings);
   checkDocs(options.docTexts || {}, findings);
 
   if (findings.length) {
@@ -105,6 +117,7 @@ function checkDiagnosticsRedaction(options = {}) {
   return {
     fixtures: redactionFixtures.length,
     docs: diagnosticsDocs.length,
+    publicRendererSources: publicRendererSources.length,
   };
 }
 
@@ -153,6 +166,18 @@ function checkErrorAndTailHelpers(findings) {
   const defaultTail = diagnostics.tail("abcdef", 3);
   if (defaultTail !== "def") {
     findings.push(`tail helper must return final characters, got '${defaultTail}'.`);
+  }
+}
+
+function checkPublicRendererRedaction(sourceTexts, findings) {
+  for (const source of publicRendererSources) {
+    const text = sourceTexts[source] || readText(source);
+    if (!text.includes("redactSensitiveText")) {
+      findings.push(`${source} must use shared redactSensitiveText for public output.`);
+    }
+    if (text.includes("PUBLIC_REDACTION_PATTERNS")) {
+      findings.push(`${source} must not carry local PUBLIC_REDACTION_PATTERNS; extend src/diagnostics.cjs instead.`);
+    }
   }
 }
 

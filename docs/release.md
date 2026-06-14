@@ -271,8 +271,8 @@ After stabilization:
   keep public/private reporting boundaries, maintainer triage, containment,
   recovery, and public follow-up guidance synchronized
 - `npm run check:diagnostics-redaction` confirms shared diagnostic redaction
-  for tokens, alert webhooks, AWS access-key ids, private keys, error lines,
-  and diagnostic tails
+  for tokens, alert webhooks, AWS access-key ids, AWS ARNs, AWS account ids,
+  private keys, public renderers, error lines, and diagnostic tails
 - `npm run check:model-defaults` confirms model-catalog defaults stay
   synchronized with reusable workflow fallbacks, provider-default docs, and
   conservative starter lanes

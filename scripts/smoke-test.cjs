@@ -360,7 +360,9 @@ assert.equal(
   supportBundleContractCheck.requiredPresenceEnvKeys.includes("REVIEWBOT_ADMIN_AUTH_HMAC_SECRET"),
   true
 );
-assert.equal(diagnosticsRedactionCheck.checkDiagnosticsRedaction().fixtures, 10);
+const diagnosticsRedactionResult = diagnosticsRedactionCheck.checkDiagnosticsRedaction();
+assert.equal(diagnosticsRedactionResult.fixtures, 10);
+assert.equal(diagnosticsRedactionResult.publicRendererSources, 9);
 assert.throws(
   () =>
     diagnosticsRedactionCheck.checkDiagnosticsRedaction({
