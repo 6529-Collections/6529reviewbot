@@ -5357,3 +5357,21 @@
   - `npm test` passed;
   - `npm run release:check` passed with 180 CommonJS files checked and the
     external evidence boundary contract exercised.
+- Merged `6529reviewbot` PR #296 as `e8d7061`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/pr-template-evidence-boundary` increment:
+  - add PR template governance prompts for external evidence boundaries so
+    release-readiness claims distinguish local validation from operator-owned
+    evidence during review.
+- Local validation for `codex/pr-template-evidence-boundary` so far:
+  - `gh run watch 27494138862 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #296 post-merge CI;
+  - `gh run watch 27494138851 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #296 post-merge OpenSSF Scorecard;
+  - `npm run check:governance` passed with 13 files checked;
+  - `npm run check:public-artifacts` passed with 118 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #296,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 180 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 180 CommonJS files checked and the PR
+    template evidence-boundary governance prompt exercised.

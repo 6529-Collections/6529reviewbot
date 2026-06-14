@@ -67,6 +67,7 @@ function main() {
     findings.push("SUPPORT.md must point security reports to SECURITY.md.");
   }
 
+  findings.push(...checkPullRequestTemplate());
   findings.push(...checkIssueTemplates());
 
   if (findings.length) {
@@ -81,6 +82,22 @@ function main() {
 
 function read(file) {
   return fs.readFileSync(path.join(root, file), "utf8");
+}
+
+function checkPullRequestTemplate() {
+  const findings = [];
+  const template = read(".github/PULL_REQUEST_TEMPLATE.md");
+  for (const snippet of [
+    "External Evidence Boundaries",
+    "../docs/external-evidence-boundaries.md",
+    "distinguish local validation from operator-owned",
+    "npm run check:external-evidence-boundaries",
+  ]) {
+    if (!template.includes(snippet)) {
+      findings.push(`PULL_REQUEST_TEMPLATE.md must include '${snippet}'.`);
+    }
+  }
+  return findings;
 }
 
 function checkIssueTemplates() {
