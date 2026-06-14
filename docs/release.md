@@ -26,6 +26,12 @@ After stabilization:
 - `npm run check:external-evidence-boundaries` confirms the public/private
   evidence boundary stays synchronized with release docs, roadmap, operations
   map, and package wiring
+- [Repository rulesets](repository-rulesets.md) reviewed so main branch
+  protection, required PR checks, and release tag ruleset expectations are
+  known before public release work
+- `npm run check:repository-rulesets` confirms repository ruleset guidance
+  stays synchronized with release docs, release-tag planning, and operations
+  map entries
 - [v0 release plan](v0-release-plan.md) reviewed before any pre-v1 tag
 - [Operator evidence template](operator-evidence-template.md) completed or
   linked from the private operator runbook

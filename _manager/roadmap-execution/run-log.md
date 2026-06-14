@@ -5375,3 +5375,24 @@
   - `npm test` passed;
   - `npm run release:check` passed with 180 CommonJS files checked and the PR
     template evidence-boundary governance prompt exercised.
+- Merged `6529reviewbot` PR #297 as `5605d2d`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/repository-ruleset-guidance` increment:
+  - add checked repository ruleset guidance for main branch protection,
+    required PR checks, release tag protection, and operator-owned live
+    ruleset evidence.
+- Local validation for `codex/repository-ruleset-guidance` so far:
+  - `gh run watch 27494312624 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge CI;
+  - `gh run watch 27494312625 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge OpenSSF Scorecard;
+  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
+  - `npm run check:release-operations` passed with 7 phases and 113 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 119 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #297,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 181 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 181 CommonJS files checked and the
+    repository ruleset guidance exercised.

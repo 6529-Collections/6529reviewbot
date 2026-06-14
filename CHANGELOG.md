@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added checked repository ruleset guidance for main branch protection,
+  required PR checks, release tag protection, and operator-owned live ruleset
+  evidence.
 - Added PR template governance prompts for external evidence boundaries so
   release-readiness claims distinguish local validation from operator-owned
   evidence during review.

@@ -553,22 +553,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - External evidence boundary contract PR: merged as PR #296, merge commit `e8d7061`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/pr-template-evidence-boundary`.
-- Current local changes: add PR template governance prompts for external
-  evidence boundaries so release-readiness claims distinguish local validation
-  from operator-owned evidence during review.
+- PR template evidence-boundary prompts PR: merged as PR #297, merge commit `5605d2d`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/repository-ruleset-guidance`.
+- Current local changes: add checked repository ruleset guidance for main
+  branch protection, required PR checks, release tag protection, and
+  operator-owned live ruleset evidence.
 - Current local validation:
-  - `gh run watch 27494138862 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #296 post-merge CI;
-  - `gh run watch 27494138851 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #296 post-merge OpenSSF Scorecard;
-  - `npm run check:governance` passed with 13 files checked;
-  - `npm run check:public-artifacts` passed with 118 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #296,
+  - `gh run watch 27494312624 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge CI;
+  - `gh run watch 27494312625 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #297 post-merge OpenSSF Scorecard;
+  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
+  - `npm run check:release-operations` passed with 7 phases and 113 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 119 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #297,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run check` passed with 180 CommonJS files;
+  - `npm run check` passed with 181 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed with 180 CommonJS files checked and the PR
-    template evidence-boundary governance prompt exercised.
+  - `npm run release:check` passed with 181 CommonJS files checked and the
+    repository ruleset guidance exercised.
 
 ## Key Decisions
 
