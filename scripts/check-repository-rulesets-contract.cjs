@@ -20,7 +20,7 @@ const requiredByFile = {
     "prevent moving or deleting existing release tags",
     "npm run release:tag-plan",
     "npm run release:notes:check",
-    "private operator evidence",
+    "`repository-rulesets` operator evidence",
     "npm run check:repository-rulesets",
   ],
   ".github/PULL_REQUEST_TEMPLATE.md": [

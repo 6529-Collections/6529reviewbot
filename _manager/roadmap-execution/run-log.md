@@ -5949,3 +5949,37 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     security-intake operator evidence section exercised.
+- Merged `6529reviewbot` PR #319 as `0f8913f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/repository-rulesets-operator-evidence` increment:
+  - add a dedicated `repository-rulesets` section to structured operator
+    evidence so live GitHub `main` protection, required PR checks, release tag
+    rulesets, and bypass posture are tracked separately from local
+    repository-ruleset docs;
+  - update repository ruleset docs, external evidence boundaries, release docs,
+    release readiness, roadmap, public example evidence, operator evidence
+    template, release operations map, and changelog to surface the new
+    section;
+  - keep repository-rulesets, operator-evidence, and release-candidate
+    contracts checking the new evidence boundary.
+- Local validation for `codex/repository-rulesets-operator-evidence` so far:
+  - `gh run watch 27499289995 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge CI;
+  - `gh run watch 27499290006 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge OpenSSF Scorecard;
+  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #319, and
+    5 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    repository-rulesets operator evidence section exercised.
