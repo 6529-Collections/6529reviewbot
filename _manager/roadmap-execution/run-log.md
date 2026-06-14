@@ -4162,17 +4162,23 @@
     first public tag checklist;
   - update the v0 gate contract, smoke coverage, v0 release plan,
     release-readiness, roadmap, changelog, and durable manager memory so tag
-    readiness cannot become weaker than production cutover for alert delivery.
+    readiness cannot become weaker than production cutover for alert delivery;
+  - harden the admin auth HMAC TTL contract check after PR #240 CI exposed a
+    one-second boundary race where `now + 301` could become exactly the
+    accepted 300-second TTL by the time the assertion ran on Ubuntu.
 - Local validation for `codex/v0-alert-delivery-gate` so far:
   - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
     docs checked;
+  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and 5
+    docs/templates checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed, including v0 release gate validation
-    requiring reviewed alert delivery-plan evidence for scheduled alerts;
+    requiring reviewed alert delivery-plan evidence for scheduled alerts and
+    deterministic admin-auth HMAC TTL validation;
   - `npm run check:manager-memory` passed with 6 sections, latest PR #239,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.

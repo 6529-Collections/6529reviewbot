@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Made the admin auth HMAC TTL contract check deterministic on CI runners.
 - Required reviewed alert delivery plan evidence for the v0 scheduled alerts
   release gate.
 - Added alert delivery plan fields to the operator evidence template.
