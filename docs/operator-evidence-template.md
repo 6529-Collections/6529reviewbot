@@ -243,6 +243,18 @@ Bot comment reviewed:
 Rollback tested:
 ```
 
+## Release Tag Plan
+
+```text
+Release tag plan command:
+Release tag plan reviewed:
+Clean synced main verified:
+Completed release notes checked:
+Local tag availability checked:
+Remote tag availability checked:
+GitHub Release handoff reviewed:
+```
+
 ## Release Decision
 
 ```text

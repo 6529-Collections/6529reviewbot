@@ -251,6 +251,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "dashboard-deployment-plan",
     "6529-io-public-disclosure",
     "6529-io-private-admin-auth",
+    "release-tag-plan",
     "operator evidence is not ready",
     "replace(/\\r?\\n/g, \" \")",
   ]) {
@@ -295,6 +296,8 @@ function checkDocs(docTexts, findings) {
       "Reviewed public repo/org disclosure allowlists",
       "Auth-check URL reviewed",
       "Wallet allowlist evidence reviewed",
+      "Release tag plan command",
+      "Remote tag availability checked",
     ],
     "docs/release-readiness.md": ["operator evidence contract"],
     "docs/release-operations-map.md": ["npm run check:operator-evidence"],

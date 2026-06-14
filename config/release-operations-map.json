@@ -453,7 +453,7 @@
         {
           "id": "operator-evidence-contract",
           "script": "check:operator-evidence",
-          "purpose": "Verify operator evidence sections, readiness semantics, runtime dispatch evidence, container publish evidence, production deployment-plan evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify operator evidence sections, readiness semantics, runtime dispatch evidence, container publish evidence, production deployment-plan evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, release tag-plan evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/operator-evidence-template.md",
           "publicOutput": "Safe."
         },

@@ -5847,3 +5847,35 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dashboard deployment-plan operator evidence section exercised.
+- Merged `6529reviewbot` PR #316 as `ab476aa`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-tag-plan-operator-evidence` increment:
+  - add a dedicated `release-tag-plan` section to structured operator evidence
+    so the final dry-run tag/GitHub Release handoff is tracked separately from
+    the operator's approval, deferral, or block decision;
+  - update `config/production-evidence.example.json`,
+    `docs/operator-evidence-template.md`, release tag plan docs, and release
+    readiness/operations docs to surface the new section;
+  - keep operator-evidence, release-candidate, and release-tag-plan contracts
+    checking the section so future evidence schema changes cannot drop release
+    tag plan evidence silently.
+- Local validation for `codex/release-tag-plan-operator-evidence` so far:
+  - `gh run watch 27498604723 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge CI;
+  - `gh run watch 27498604727 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge OpenSSF Scorecard;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-tag-plan` passed with 11 plan cases and 6 docs
+    checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #316, and
+    5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    release tag-plan operator evidence section exercised.
