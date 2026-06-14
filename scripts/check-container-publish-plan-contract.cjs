@@ -128,6 +128,14 @@ function checkMissingImagePlan(findings) {
 
 function checkImageValidation(findings) {
   try {
+    normalizeImageRef("https://registry.example.com/6529reviewbot");
+    findings.push("container publish plan must reject image refs that include URL schemes.");
+  } catch (error) {
+    if (!String(error.message).includes("URL scheme")) {
+      findings.push("container image URL scheme rejection should be explicit.");
+    }
+  }
+  try {
     normalizeImageRef("registry.example.com/6529reviewbot:latest");
     findings.push("container publish plan must reject image refs that include tags.");
   } catch (error) {
@@ -193,6 +201,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/container-publish-plan.cjs": [
       "collectContainerPublishPlan",
       "checkContainerImage",
+      "URL scheme",
       "This command does not build, push, scan, or publish container images.",
     ],
     "bin/container-publish-plan.cjs": [
@@ -225,6 +234,7 @@ function checkDocs(docTexts, findings) {
     "docs/container-publish-plan.md": [
       "npm run container:publish-plan",
       "--require-ready",
+      "without a URL scheme",
       "does not build, push, scan, or publish container images",
       "npm run check:container-publish-plan",
     ],

@@ -549,6 +549,8 @@ Completed in `6529reviewbot`:
   runtime boundary.
 - container publish plan command for dry-run operator-owned registry build,
   push, vulnerability scan, and private image evidence steps.
+- container publish planning rejects URL-style image repository inputs before
+  rendering Docker build and push commands.
 - production deployment plan command for dry-run operator handoff across App
   registration, image publish, workspace, preflight, admin snapshot, cutover,
   and dogfood gates.

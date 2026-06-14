@@ -453,23 +453,24 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release tag notes version match PR: merged as PR #246, merge commit `5d38f68`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-tag-existing-tag-guard`.
-- Current local changes: hardening the release tag plan so a locally existing
-  release tag blocks ready dry-run tag commands before an operator tries to
-  create or push the tag.
+- Release tag existing tag guard PR: merged as PR #247, merge commit `32746dc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/container-image-ref-scheme-guard`.
+- Current local changes: hardening the container publish plan so URL-style
+  image repository inputs are rejected before Docker build and push commands
+  are rendered.
 - Current local validation:
-  - `npm run check:release-tag-plan` passed with 6 plan cases and 6 docs
+  - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
     checked;
-  - `npm run check:release-operations` passed with 7 phases and 109 tools;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #246,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #247,
     and 5 docs checked;
   - `npm test` passed;
-  - `npm run release:check` passed, including release tag plan validation with
-    6 plan cases;
+  - `npm run release:check` passed, including container publish plan
+    validation;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

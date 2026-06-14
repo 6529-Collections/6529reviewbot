@@ -123,6 +123,9 @@ function normalizeImageRef(value) {
   if (text === DEFAULT_IMAGE) {
     return text;
   }
+  if (/^[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(text)) {
+    throw new Error("container image reference must not include a URL scheme.");
+  }
   if (text.includes("@")) {
     throw new Error("container image reference must not include a digest; record digests after push.");
   }

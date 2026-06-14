@@ -8,7 +8,8 @@ It checks:
 - the checked-in `Dockerfile` and `.dockerignore` through
   `npm run check:container-image`;
 - that the local checkout is on clean, synced `main`;
-- the requested release tag and image repository shape;
+- the requested release tag and image repository shape, without a URL scheme,
+  tag, or digest in the repository input;
 - the build, push, digest capture, vulnerability scan, and private evidence
   steps the operator should run.
 
