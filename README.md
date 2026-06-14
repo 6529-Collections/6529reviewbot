@@ -383,6 +383,11 @@ npm run release:operations -- -- --phase release-candidate
 npm run check:release-operations
 ```
 
+The release-operations check also parses the final dogfood readiness,
+promotion, and go-live ready-mode commands through their real CLIs so the map
+cannot drift away from required private workspace, model price, strict
+preflight, and ready-mode flags.
+
 Create a private operator workspace with community-release, v0, dogfood,
 security-review, production-cutover, and operator-evidence skeletons:
 

@@ -359,6 +359,9 @@ Ready for community review:
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's
   vague or failed validation evidence checks in the public command inventory;
+- release operations map validation parses final dogfood readiness, promotion,
+  and go-live ready-mode commands through the real CLIs so required private
+  workspace, model price, strict preflight, and ready-mode flags cannot drift;
 - checked compatibility policy for pre-v1 compatibility-sensitive surfaces,
   breaking-change release notes, exact tag/commit pinning, and the future v1
   stable API promise;
@@ -641,7 +644,8 @@ placeholders, and conservative dogfood defaults.
 `npm run check:dependabot` is included in `npm run release:check` and verifies
 weekly Dependabot coverage for npm and GitHub Actions dependencies.
 `npm run check:release-operations` is included in `npm run release:check` and
-keeps the command/evidence-boundary map aligned with package scripts and docs.
+keeps the command/evidence-boundary map aligned with package scripts, docs,
+and final dogfood ready-mode CLI requirements.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the GitHub Release template aligned with v0 release evidence expectations.
 `npm run check:release-notes-draft` is included in `npm run release:check` and

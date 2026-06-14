@@ -15,8 +15,11 @@ npm run release:operations -- -- --summary --json
 The source of truth is
 [config/release-operations-map.json](../config/release-operations-map.json).
 `npm run check:release-operations` validates that every mapped command exists
-in `package.json` and that every linked document is present. The check is
-included in `npm run release:check`.
+in `package.json`, every linked document is present, and the final dogfood
+readiness, promotion, and go-live ready-mode commands parse through their real
+CLIs with `--operator-workspace`, `--model-price-file`,
+`--strict-preflight`, and `--require-ready`. The check is included in
+`npm run release:check`.
 The canonical documentation index is [Docs Index](README.md), and
 `npm run check:doc-index` fails release checks when a public docs page is not
 linked there.

@@ -4,6 +4,9 @@
 
 const fs = require("fs");
 const path = require("path");
+const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
+const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
+const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const {
   DEFAULT_RELEASE_OPERATIONS_MAP_PATH,
   loadReleaseOperationsMap,
@@ -25,6 +28,7 @@ function checkReleaseOperationsMap(options = {}) {
   });
   checkReleaseNotesPublicationTools(validated);
   checkReleaseTagPlanTools(validated);
+  checkDogfoodReadyModeCommands(validated);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
 }
@@ -71,6 +75,61 @@ function checkReleaseTagPlanTools(map) {
   }
 }
 
+function checkDogfoodReadyModeCommands(map) {
+  const expectations = [
+    {
+      id: "dogfood-readiness",
+      script: "dogfood:readiness",
+      parseArgs: dogfoodReadinessCli.parseArgs,
+    },
+    {
+      id: "dogfood-promotion",
+      script: "dogfood:promotion",
+      parseArgs: dogfoodPromotionCli.parseArgs,
+    },
+    {
+      id: "dogfood-go-live",
+      script: "dogfood:go-live",
+      parseArgs: dogfoodGoLiveCli.parseArgs,
+    },
+  ];
+  const tools = map.phases.flatMap((phase) => phase.tools);
+  for (const expectation of expectations) {
+    const tool = tools.find((item) => item.id === expectation.id);
+    if (!tool) {
+      throw new Error(`release operations map must include ${expectation.id}.`);
+    }
+    if (tool.script !== expectation.script) {
+      throw new Error(`${expectation.id} must use ${expectation.script}.`);
+    }
+    const argv = argvForTool(tool);
+    for (const flag of [
+      "--operator-workspace",
+      "--model-price-file",
+      "--strict-preflight",
+      "--require-ready",
+    ]) {
+      if (!argv.includes(flag)) {
+        throw new Error(`${expectation.id} release operation command must include ${flag}.`);
+      }
+    }
+    const parsed = expectation.parseArgs(argv);
+    if (!parsed.requireReady || !parsed.strictPreflight) {
+      throw new Error(`${expectation.id} release operation command must parse as strict ready mode.`);
+    }
+    if (parsed.operatorWorkspaceDir !== "<private-workspace-dir>") {
+      throw new Error(`${expectation.id} release operation command must use <private-workspace-dir>.`);
+    }
+    if (parsed.modelPriceFile !== "<reviewed-model-price-file.json>") {
+      throw new Error(`${expectation.id} release operation command must use <reviewed-model-price-file.json>.`);
+    }
+  }
+}
+
+function argvForTool(tool) {
+  return tool.args.split(/\s+/).filter(Boolean);
+}
+
 function checkReleaseOperationsDoc(map, docFile) {
   const doc = fs.readFileSync(docFile, "utf8");
   const localQualityPhase = map.phases.find((phase) => phase.id === "local-quality");
@@ -100,6 +159,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  checkDogfoodReadyModeCommands,
   checkReleaseNotesPublicationTools,
   checkReleaseTagPlanTools,
   checkReleaseOperationsDoc,

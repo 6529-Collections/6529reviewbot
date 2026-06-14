@@ -632,6 +632,10 @@ Completed in `6529reviewbot`:
 - dogfood promotion and go-live ready mode now require a private operator
   workspace and reviewed model price coverage so final live-traffic gates
   cannot pass on catalog defaults alone.
+- release operations map validation now parses the final dogfood readiness,
+  promotion, and go-live ready-mode commands through the real CLIs so operator
+  handoff commands cannot drift away from required private workspace, model
+  price, strict preflight, and ready-mode flags.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
