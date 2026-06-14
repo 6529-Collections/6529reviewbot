@@ -18,6 +18,14 @@
       "status": "pending",
       "notes": "Run dogfood readiness with the reviewed target config and private budget policy."
     },
+    "provider-console-readiness-reviewed": {
+      "status": "pending",
+      "notes": "Review provider-console-readiness operator evidence before live dogfood model calls."
+    },
+    "iam-secret-custody-reviewed": {
+      "status": "pending",
+      "notes": "Review iam-and-secrets operator evidence before live dogfood traffic."
+    },
     "app-installed-selected-repo": {
       "status": "pending",
       "notes": "Install the GitHub App only on selected dogfood repositories."

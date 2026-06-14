@@ -178,8 +178,8 @@ avoids raw payload echo, and keeps replay docs aligned.
 config path redaction, Markdown sanitization, source invariants, and docs
 aligned.
 `npm run check:dogfood-status` keeps dogfood status readiness, missing-id
-checks, deferral semantics, Markdown redaction, source invariants, and docs
-aligned.
+checks, provider-console readiness and IAM/secret-custody pre-traffic gates,
+deferral semantics, Markdown redaction, source invariants, and docs aligned.
 `npm run check:dogfood-readiness` keeps dogfood readiness static defaults,
 private workspace markers, preflight state, Markdown redaction, source
 invariants, and docs aligned.

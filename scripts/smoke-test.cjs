@@ -1334,7 +1334,7 @@ assert.equal(dogfoodGoLiveCli.main(["--skip-self-dogfood-replay", "--quiet"]).re
 const dogfoodChecklist = dogfoodStatus.loadDogfoodChecklist("config/dogfood-checklist.json");
 assert.equal(dogfoodChecklist.release, "v0.1.0");
 assert.equal(dogfoodChecklist.phases.length, 5);
-assert.equal(dogfoodChecklist.phases.flatMap((phase) => phase.items).length, 23);
+assert.equal(dogfoodChecklist.phases.flatMap((phase) => phase.items).length, 25);
 const dogfoodExampleStatus = dogfoodStatus.loadDogfoodStatus("config/dogfood-status.example.json");
 const dogfoodWithStatus = dogfoodStatus.mergeDogfoodStatus(dogfoodChecklist, dogfoodExampleStatus, {
   requireComplete: true,
@@ -1343,7 +1343,7 @@ const dogfoodSummary = dogfoodStatus.summarizeDogfood(dogfoodWithStatus);
 assert.equal(dogfoodSummary.ready, false);
 assert.equal(dogfoodSummary.complete, 1);
 assert.equal(dogfoodSummary.deferred, 4);
-assert.equal(dogfoodSummary.pending, 18);
+assert.equal(dogfoodSummary.pending, 20);
 assert.equal(dogfoodStatus.missingDogfoodStatusIds(dogfoodChecklist, dogfoodExampleStatus).length, 0);
 assert.match(dogfoodStatus.renderDogfoodMarkdown(dogfoodWithStatus), /Dogfood Execution/);
 assert.match(dogfoodStatus.renderDogfoodSummaryMarkdown(dogfoodWithStatus), /Ready for next dogfood step: no/);
@@ -2780,7 +2780,7 @@ const candidateBundleWithDogfood = releaseCandidate.collectReleaseCandidateBundl
 });
 assert.equal(candidateBundleWithDogfood.readiness.dogfood.complete, 1);
 assert.equal(candidateBundleWithDogfood.readiness.dogfood.deferred, 4);
-assert.equal(candidateBundleWithDogfood.readiness.dogfood.pending, 18);
+assert.equal(candidateBundleWithDogfood.readiness.dogfood.pending, 20);
 assert.deepEqual(candidateBundleWithDogfood.readiness.dogfood.missingStatusIds, []);
 assert.equal(candidateBundleWithDogfood.ready, false);
 const candidateBundleWithDogfoodMarkdown =
@@ -2813,7 +2813,7 @@ const candidateBundleFromWorkspace = releaseCandidateCli.main([
 assert.equal(candidateBundleFromWorkspace.ready, false);
 assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 20);
 assert.equal(candidateBundleFromWorkspace.readiness.communityRelease.pending, 14);
-assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
+assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 25);
 assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
 assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 35);
 assert.deepEqual(candidateBundleFromWorkspace.readiness.communityRelease.missingStatusIds, []);

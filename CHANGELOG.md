@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added dogfood status baseline gates for provider-console readiness and
+  IAM/secret-custody evidence before first live dogfood model calls.
 - Hardened v0 and community release gates so secret-boundary and AWS/IAM gates
   require provider-console readiness and IAM/secret-custody operator evidence.
 - Added production cutover gates for provider-console readiness and

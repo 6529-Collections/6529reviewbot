@@ -78,6 +78,16 @@ The dogfood status contract check verifies pending skeletons, complete and
 deferred readiness semantics, required evidence rules, public Markdown
 redaction, and docs stay synchronized.
 
+## Baseline Evidence
+
+Before the first live dogfood model call, the baseline phase must include
+reviewed provider-console-readiness operator evidence for model availability,
+key custody, quotas/rate limits, spend controls, billing alerts, and emergency
+key disablement. It must also include reviewed iam-and-secrets operator
+evidence for OIDC trust, Data API scope, database grants, runtime secret-store
+principals, target-repo/browser secret exclusion, rotation ownership, and
+break-glass revoke paths.
+
 ## Evidence Boundary
 
 Status evidence may include:
