@@ -185,6 +185,9 @@ function checkWorkspaceLifecycle(findings) {
     "npm run alerts:delivery-plan",
     "npm run model-prices",
     "--require-catalog-coverage",
+    "npm --silent run dogfood:readiness -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json>",
+    "npm --silent run dogfood:promotion -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json>",
+    "npm --silent run dogfood:go-live -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json>",
     "--frontend-origin <6529-io-origin>",
     "--auth-check-url <6529-auth-check-url>",
     "--notify-mode <webhook|sns|ses>",
@@ -262,6 +265,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "alerts:delivery-plan",
     "model-prices",
     "--require-catalog-coverage",
+    "--model-price-file <reviewed-model-price-file.json>",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -289,6 +293,8 @@ function checkDocs(docTexts, findings) {
       "npm run dashboard:deployment-plan",
       "npm run alerts:delivery-plan",
       "npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage",
+      "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json>",
+      "npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json>",
       "operator workspace contract check",
       "[operator-workspace]",
     ],

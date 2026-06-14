@@ -85,10 +85,9 @@ Validate dogfood readiness against the same private workspace before first
 traffic:
 
 ```bash
-npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir>
-npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --quiet
-npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --quiet
+npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
 Equivalent explicit file flags are still available for non-standard private

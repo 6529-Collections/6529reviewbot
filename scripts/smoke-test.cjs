@@ -2294,7 +2294,7 @@ assert.match(
 );
 assert.match(
   fs.readFileSync(path.join(operatorWorkspaceDir, "README.md"), "utf8"),
-  /npm --silent run dogfood:go-live -- -- --operator-workspace \. --strict-preflight --require-ready/
+  /npm --silent run dogfood:go-live -- -- --operator-workspace \. --model-price-file <reviewed-model-price-file\.json> --strict-preflight --require-ready/
 );
 assert.match(
   operatorWorkspace.renderOperatorWorkspaceSummaryMarkdown(workspace),

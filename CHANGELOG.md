@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added reviewed model price file flags to generated operator drill and
+  workspace dogfood gate commands.
 - Added optional model price coverage to dogfood go-live packets.
 - Added optional model price coverage to dogfood promotion packets.
 - Added optional model price coverage to the dogfood readiness report.

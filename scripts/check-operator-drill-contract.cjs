@@ -91,6 +91,7 @@ function checkDefaultDrill(findings) {
     "npm run dashboard:deployment-plan",
     "npm run alerts:delivery-plan",
     "npm --silent run dogfood:go-live",
+    "--model-price-file <reviewed-model-price-file.json>",
   ]) {
     if (!markdown.includes(snippet)) {
       findings.push(`operator drill Markdown must include '${snippet}'.`);
@@ -145,6 +146,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "production:deployment-plan",
       "dashboard:deployment-plan",
       "alerts:delivery-plan",
+      "--model-price-file <reviewed-model-price-file.json>",
     ],
     "bin/operator-drill.cjs": [
       "npm run operator:drill",
@@ -178,6 +180,7 @@ function checkDocs(docTexts, findings) {
       "npm run dashboard:deployment-plan",
       "npm run alerts:delivery-plan",
       "npm --silent run operator:drill -- -- --dir <private-workspace-dir>",
+      "--model-price-file <reviewed-model-price-file.json>",
       "npm run check:operator-drill",
     ],
     "docs/operator-workspace.md": [
