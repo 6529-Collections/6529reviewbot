@@ -254,9 +254,11 @@ Ready for community review:
   before scheduled operator alerts satisfy the tag checklist;
 - release notes template, draft, and publication checks carry the same
   reviewed alert delivery plan evidence requirement as the v0 alerts gate;
-- release notes publication checks reject failed, pending, blocked, or
-  not-ready validation evidence unless the release notes explicitly describe
-  the accepted deferral or dogfood-only exception;
+- release notes publication checks reject failed, pending, blocked, not-ready,
+  or negated readiness validation evidence unless the release notes explicitly
+  describe the accepted deferral or dogfood-only exception;
+- release notes publication checks also require validation fields to report
+  passed, ready, reviewed, or accepted evidence instead of vague run status;
 - reusable workflow public-repo rules carry the same reviewed alert delivery
   plan evidence requirement before scheduled operator alerts are considered
   ready;

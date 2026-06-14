@@ -81,8 +81,11 @@ const VALIDATION_FIELDS = [
   "Manual security checklist:",
 ];
 const PLACEHOLDER_PATTERN = /\b(?:TODO(?:\(operator\))?|TBD|fill me|pending evidence)\b/i;
-const FAILED_VALIDATION_PATTERN = /\b(?:failed|failure|failing|error|not ready|blocked|pending)\b/i;
+const FAILED_VALIDATION_PATTERN =
+  /\b(?:failed|failure|failing|error|not\s+(?:pass(?:ed|es)?|success(?:ful)?|succeeded|ready|complete(?:d)?|reviewed|verified|clean|green|ok|okay)|blocked|pending)\b/i;
 const ACCEPTED_EXCEPTION_PATTERN = /\b(?:accepted|explicitly deferred|dogfood-only)\b/i;
+const READY_VALIDATION_PATTERN =
+  /\b(?:pass(?:ed|es)?|success(?:ful)?|succeeded|ready|complete(?:d)?|reviewed|verified|clean|green|ok|accepted|explicitly deferred|dogfood-only)\b/i;
 const AWS_ARN_PATTERN = /\barn:aws:[^\s)`]+/i;
 const AWS_ACCOUNT_ID_PATTERN = /\b\d{12}\b/;
 const LOCAL_PATH_PATTERN = /\b[A-Za-z]:\\[^\s`]+/;
@@ -227,12 +230,14 @@ function checkValidationResults(text, errors) {
   }
   for (const label of VALIDATION_FIELDS) {
     const value = fieldValue(section, label);
-    if (
-      value &&
-      FAILED_VALIDATION_PATTERN.test(value) &&
-      !ACCEPTED_EXCEPTION_PATTERN.test(value)
-    ) {
-      errors.push(`validation field '${label}' must not report failed, pending, blocked, or not-ready evidence.`);
+    if (!value) {
+      continue;
+    }
+    if (FAILED_VALIDATION_PATTERN.test(value) && !ACCEPTED_EXCEPTION_PATTERN.test(value)) {
+      errors.push(`validation field '${label}' must not report failed, pending, blocked, or negated readiness evidence.`);
+    }
+    if (!READY_VALIDATION_PATTERN.test(value)) {
+      errors.push(`validation field '${label}' must report passed, ready, reviewed, or accepted evidence.`);
     }
   }
 }

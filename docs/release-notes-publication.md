@@ -46,6 +46,11 @@ The publication guard verifies:
   publication;
 - alert delivery plan evidence is filled before tag or GitHub Release
   publication;
+- every validation field reports passed, ready, reviewed, or accepted evidence
+  rather than vague run status;
+- failed, pending, blocked, not-ready, or negated readiness evidence is
+  rejected unless it is explicitly accepted, explicitly deferred, or
+  dogfood-only;
 - deferrals either include Gate, Risk accepted, Follow-up owner,
   Follow-up trigger/date, and Public-safe evidence, or the section states
   `No accepted deferrals`;
@@ -83,5 +88,6 @@ npm run check:release-notes-publication
 ```
 
 The contract check validates a complete notes fixture, rejects unfinished
-drafts, rejects sensitive text, exercises the CLI, and keeps package scripts,
-release checks, smoke tests, operations map entries, and docs synchronized.
+drafts, rejects sensitive text, rejects failed or vague validation evidence,
+exercises the CLI, and keeps package scripts, release checks, smoke tests,
+operations map entries, and docs synchronized.

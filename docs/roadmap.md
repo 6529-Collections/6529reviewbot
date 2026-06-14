@@ -428,8 +428,8 @@ Completed in `6529reviewbot`:
   markers, including production deployment plan evidence, dashboard deployment
   plan evidence, and alert delivery plan evidence;
 - release notes publication guard for rejecting unfinished markers, missing
-  evidence fields, incomplete deferrals, and public-safety leaks before tags or
-  GitHub Releases;
+  evidence fields, incomplete deferrals, vague or failed validation results,
+  and public-safety leaks before tags or GitHub Releases;
 - release tag plan command for checking clean synced `main`, completed release
   notes, and final operator tag commands without creating tags;
 - release-candidate private workspace path redaction for JSON and Markdown
@@ -559,9 +559,11 @@ Completed in `6529reviewbot`:
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
   reviewed alert delivery plan evidence requirement as the v0 alerts gate.
-- release notes publication checks now reject failed, pending, blocked, or
-  not-ready validation evidence unless the release notes explicitly describe
-  the accepted deferral or dogfood-only exception.
+- release notes publication checks now reject failed, pending, blocked,
+  not-ready, or negated readiness validation evidence unless the release notes
+  explicitly describe the accepted deferral or dogfood-only exception.
+- release notes publication checks now require validation fields to report
+  passed, ready, reviewed, or accepted evidence instead of vague run status.
 - reusable workflow public-repo rules now carry the same reviewed alert
   delivery plan evidence requirement before scheduled operator alerts are
   considered ready.

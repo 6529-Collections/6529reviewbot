@@ -445,13 +445,15 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Reusable workflow alert safety PR: merged as PR #242, merge commit `d0ba4ef`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-validation-results`.
+- Release notes validation results PR: merged as PR #243, merge commit `7d49368`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-positive-validation`.
 - Current local changes: hardening the release notes publication guard so
-  completed release notes cannot report failed, pending, blocked, or not-ready
-  validation evidence unless the notes explicitly describe an accepted
-  deferral or dogfood-only exception.
+  completed release notes must report passed, ready, reviewed, or accepted
+  evidence for every validation field instead of vague run status, and
+  negated readiness phrases like `not ok` are treated as failures.
 - Current local validation:
-  - `npm run check:release-notes-publication` passed with 5 publication cases
+  - `npm run check:release-notes-publication` passed with 7 publication cases
     and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
@@ -459,8 +461,8 @@ merged PRs.
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed, including release notes publication
-    validation with 5 publication cases;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #242,
+    validation with 7 publication cases;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #243,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
