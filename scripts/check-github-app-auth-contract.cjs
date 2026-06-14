@@ -55,7 +55,7 @@ async function checkGitHubAppAuthContract(options = {}) {
 
   return {
     authCases: 7,
-    cliCases: 5,
+    cliCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -281,6 +281,16 @@ function checkGitHubActionsOutput(findings) {
   if (fs.readFileSync(outputFile, "utf8") !== "token=installation-token\n") {
     findings.push("GitHub Actions output mode must append token=<token> to GITHUB_OUTPUT.");
   }
+  expectError(
+    () => githubAppInstallationTokenCli.githubActionsOutputValue("", "token"),
+    "token must be non-empty.",
+    findings
+  );
+  expectError(
+    () => githubAppInstallationTokenCli.githubActionsOutputValue("token\ninjected=value", "token"),
+    "token must not contain newlines.",
+    findings
+  );
 }
 
 function checkSourceInvariants(sourceTexts, findings) {
@@ -309,6 +319,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID",
     "::add-mask::",
     "GITHUB_OUTPUT",
+    "githubActionsOutputValue",
     "writeGitHubActionsOutput",
   ]) {
     if (!binText.includes(snippet)) {

@@ -6647,3 +6647,28 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     sensitive-header diagnostic and public artifact guards exercised.
+- Merged `6529reviewbot` PR #342 as `624a790`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/reject-github-output-token-newlines` increment:
+  - reject empty or multiline GitHub Actions installation-token output values
+    before masking or writing `token=<value>` to `GITHUB_OUTPUT`;
+  - add GitHub App auth contract and smoke coverage for the output-value
+    guard;
+  - update GitHub App/operator docs, changelog, and durable manager memory.
+- Local validation for `codex/reject-github-output-token-newlines` so far:
+  - `gh run list --repo 6529-Collections/6529reviewbot --commit 624a790b1e1b0c052f82fad5997d35ac22a1e249 --limit 10` passed by showing PR #342 post-merge CI run `27507064476` and OpenSSF Scorecard run `27507064481` completed successfully;
+  - `npm run check:github-app-auth` passed with 7 auth cases, 6 CLI cases,
+    and 7 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` passed after adding GitHub Actions output newline rejection
+    coverage;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:production-deployment-plan` passed with 8 plan cases and 6
+    docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #342, and
+    5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    GitHub App auth output-value guard exercised.

@@ -216,7 +216,7 @@ npm run check:github-app-auth
 Run `npm run check:github-app-auth` after changing GitHub App auth settings,
 installation-token minting, profile routing, or GitHub Actions token output.
 The installation token contract verifies env parsing, JWT shape, token
-caching, CLI profiles, output masking, and docs.
+caching, CLI profiles, output masking, output newline rejection, and docs.
 
 ## Supported Events
 
