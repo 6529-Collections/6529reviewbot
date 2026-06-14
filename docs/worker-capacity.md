@@ -55,6 +55,12 @@ Target repository config should start command-only. Initial PR automation can
 be enabled only after command-triggered reviews prove that comments, ledgers,
 and alerts are healthy.
 
+Before switching out of `noop`, record the dispatch credential posture. Prefer
+a dispatch-only GitHub App installed only on `6529-Collections/6529reviewbot`
+with `Actions: write`. If operators reuse the main App credentials or
+`REVIEWBOT_WORKER_GITHUB_TOKEN`, record that fallback and accepted permission
+boundary in private evidence before enabling worker traffic.
+
 ## GitHub Actions Worker Shape
 
 The installed worker workflow uses:
@@ -196,6 +202,7 @@ Public-safe evidence:
 
 ```text
 Worker adapter:
+Dispatch credential posture:
 Worker timeout:
 Run-control mode:
 Repo max concurrency:
@@ -210,6 +217,7 @@ Private evidence:
 
 ```text
 Exact provider limits:
+Dispatch-only App installation id or reviewed fallback acceptance:
 Exact GitHub Actions run URLs for private repos:
 Exact run keys:
 Private repository names:
@@ -224,6 +232,7 @@ Block a scale-up when:
 
 - run control is disabled or unverified;
 - budget policies are missing for the target org/repo/provider/model;
+- dispatch credential posture is unreviewed before non-noop worker traffic;
 - provider keys are present in a target repository;
 - alerts are disabled for live provider traffic;
 - p95 worker duration is unknown;

@@ -57,6 +57,12 @@ live image build or push:
 npm run container:publish-plan -- -- --image <operator-registry>/6529reviewbot --release v0.1.0 --require-ready
 ```
 
+Before marking worker traffic enabled, record the worker dispatch credential
+posture in private evidence. Prefer a dispatch-only GitHub App scoped to the
+central bot repository with `Actions: write`; explicitly accept any main-App
+credential reuse or `REVIEWBOT_WORKER_GITHUB_TOKEN` fallback before enabling
+non-noop worker traffic.
+
 Include the cutover summary in the release-candidate bundle:
 
 ```bash
@@ -119,6 +125,7 @@ strict preflight passed in release-candidate environment
 selected-repository installation scope reviewed
 operator alert delivery verified without publishing destination details
 alert delivery plan reviewed before delivery enablement
+worker dispatch credential posture reviewed before worker enablement
 ```
 
 Keep private evidence like the exact App id, installation id, secret names,

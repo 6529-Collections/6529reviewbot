@@ -5020,3 +5020,29 @@
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     container publish-plan release/cutover gate exercised.
+- Merged `6529reviewbot` PR #281 as `2814f74`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/worker-dispatch-credential-release-gate` increment:
+  - require worker dispatch credential evidence in the v0 release gates and
+    production cutover checklist before non-noop worker traffic can satisfy
+    release readiness.
+- Local validation for `codex/worker-dispatch-credential-release-gate` so far:
+  - `npm run check:worker-capacity` passed with 7 capacity cases and
+    8 docs checked;
+  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+    6 docs checked;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
+    cases, and 6 docs checked;
+  - `npm run check:checklist-runbooks` passed with 89 links in 3 files;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
+    6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #281,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    worker dispatch credential release/cutover gate exercised.

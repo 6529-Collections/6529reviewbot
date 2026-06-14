@@ -275,6 +275,10 @@ for operator environments that intentionally manage GitHub CLI authentication.
 Preflight rejects partial worker App credential overrides and warns when the
 main App is reused for dispatch; treat a strict-preflight failure or warning as
 release evidence to resolve or explicitly accept before production traffic.
+Before enabling non-noop worker traffic, record the worker dispatch credential
+posture in private evidence: dispatch-only GitHub App preferred, central bot
+repository `Actions: write` scope confirmed, and any main-App credential reuse
+or `REVIEWBOT_WORKER_GITHUB_TOKEN` fallback explicitly accepted.
 
 ## 6529.io Wiring
 
@@ -365,6 +369,9 @@ or GitHub App private keys.
 - `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
 - `noop` mode returns jobs without dispatching workers.
+- Worker dispatch credential posture is reviewed before non-noop traffic:
+  dispatch-only GitHub App preferred, `Actions: write` scope confirmed, and
+  any main-App or token fallback explicitly accepted in private evidence.
 - Worker capacity and backpressure settings match
   [worker-capacity.md](worker-capacity.md), or release notes explicitly defer
   live scaling beyond command-only dogfood.

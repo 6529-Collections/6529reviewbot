@@ -521,27 +521,32 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Public artifact example-host scan PR: merged as PR #280, merge commit `93d0ed0`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/container-publish-plan-release-gate`.
-- Current local changes: require reviewed container publish plan evidence in
-  the v0 release gates and production cutover checklist before container
-  image deployment evidence can satisfy release readiness.
+- Container publish-plan release evidence PR: merged as PR #281, merge commit `2814f74`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/worker-dispatch-credential-release-gate`.
+- Current local changes: require worker dispatch credential evidence in the v0
+  release gates and production cutover checklist before non-noop worker
+  traffic can satisfy release readiness.
 - Current local validation:
+  - `npm run check:worker-capacity` passed with 7 capacity cases and
+    8 docs checked;
+  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+    6 docs checked;
   - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
     cases, and 6 docs checked;
+  - `npm run check:checklist-runbooks` passed with 89 links in 3 files;
   - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
-    6 docs checked;
-  - `npm run check:container-publish-plan` passed with 6 plan cases and
     6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #280,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #281,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    container publish-plan release/cutover gate exercised.
+    worker dispatch credential release/cutover gate exercised.
 
 ## Key Decisions
 

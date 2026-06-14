@@ -54,6 +54,25 @@ function checkV0GatesContract(options = {}) {
 function checkGateConfig(findings) {
   const gates = releaseGates.loadReleaseGates(path.join(root, "config/v0-release-gates.json"));
   const gatesById = new Map(gates.gates.map((gate) => [gate.id, gate]));
+  const serverWorkerGate = gatesById.get("server-worker");
+  if (!serverWorkerGate) {
+    findings.push("v0 release gates must include 'server-worker'.");
+  } else {
+    if (serverWorkerGate.evidence !== "docs/worker-capacity.md") {
+      findings.push("server-worker gate evidence must be docs/worker-capacity.md.");
+    }
+    const serverWorkerTitle = normalizeWhitespace(serverWorkerGate.title).toLowerCase();
+    for (const snippet of [
+      "reviewed worker capacity policy",
+      "dispatch credential evidence",
+      "dispatch-only github app",
+      "fallback explicitly accepted",
+    ]) {
+      if (!serverWorkerTitle.includes(snippet)) {
+        findings.push(`server-worker gate title must require ${snippet}.`);
+      }
+    }
+  }
   const containerImageGate = gatesById.get("container-image");
   if (!containerImageGate) {
     findings.push("v0 release gates must include 'container-image'.");
@@ -337,6 +356,7 @@ function checkDocs(docTexts, findings) {
     "docs/v0-release-plan.md": [
       "npm run check:v0-gates",
       "v0 release gate contract check",
+      "dispatch credential evidence",
       "reviewed container publish plan evidence",
       "reviewed alert delivery plan evidence",
       "AWS account ids",
