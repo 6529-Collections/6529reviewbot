@@ -648,27 +648,32 @@ merged PRs.
 - Conservative default job fanout PR: merged as PR #335, merge commit `9c57da1`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `9c57da1`.
-- Current branch: `codex/provider-incomplete-error-redaction`.
-- Current local changes: sanitize OpenAI incomplete-response details through
-  the shared provider-error summarizer; preserve safe incomplete reasons while
-  redacting secret-shaped provider-controlled detail; update provider-adapter
-  contract coverage, changelog, and durable manager memory.
+- Provider incomplete-response redaction PR: merged as PR #336, merge commit `8916593`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `8916593`.
+- Current branch: `codex/redact-dry-run-sql-params`.
+- Current local changes: redact rendered dry-run SQL parameter comments for
+  budget policies and model prices across every field, not only normalized
+  notes; update runbook contracts, smoke coverage, changelog, and durable
+  manager memory.
 - Current local validation:
-  - `gh run watch 27504911248 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #335 post-merge CI;
-  - OpenSSF Scorecard run `27504911251` passed for PR #335 post-merge;
-  - `npm run check:provider-adapters` passed with 3 providers, 19 source
-    snippets, and 7 docs checked;
-  - `npm test` passed after adding incomplete-detail redaction coverage;
-  - `rg -n "OpenAI response incomplete: \\$\\{JSON.stringify|incomplete_details \\|\\| \\{\\}|response\\.incomplete_details" src scripts docs -g "*.cjs" -g "*.md"` found only sanitized adapter/contract references;
+  - `gh run watch 27505080689 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #336 post-merge CI;
+  - `gh run watch 27505080679 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #336 post-merge OpenSSF Scorecard;
+  - `npm run check:budget-policies-runbook` passed with 5 runbook cases and
+    9 docs checked;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
+    docs checked;
+  - `npm test` passed after adding dry-run SQL parameter redaction coverage;
+  - `rg -n "parameters: \\$\\{JSON.stringify\\(params\\)\\}" src scripts docs -g "*.cjs" -g "*.md"` found no stale raw parameter renderers;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #335,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #336,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
-  - `npm run release:check` passed with 184 CommonJS files checked and
-    provider-adapter redaction coverage exercised.
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    budget/model-price dry-run parameter redaction behavior exercised.
 
 ## Key Decisions
 

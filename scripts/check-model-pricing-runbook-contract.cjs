@@ -93,7 +93,8 @@ function checkDryRunAndApply(text, findings) {
   for (const snippet of [
     "npm run model-prices -- -- --file prices.json",
     "dry run prints the SQL plus Data API parameter values",
-    "notes` values are redacted for common secret-shaped values",
+    "Rendered parameter comments are redacted for common secret-shaped values across every field",
+    "`notes` values are also capped at 1000 characters",
     "capped at 1000 characters",
     "npm run model-prices -- -- --file prices.json --apply",
     "npm run model-prices -- -- --file prices.json --apply --max-source-age-days 14",

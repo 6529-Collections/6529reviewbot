@@ -144,7 +144,7 @@ function renderBudgetPolicySql(schema, document) {
       );
       return [
         `-- ${statement.name}`,
-        `-- parameters: ${JSON.stringify(params)}`,
+        `-- parameters: ${redactSensitiveText(JSON.stringify(params))}`,
         `${statement.sql.trim()};`,
       ].join("\n");
     })

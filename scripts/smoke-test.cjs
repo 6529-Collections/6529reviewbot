@@ -512,7 +512,8 @@ const modelPriceFile = modelPrices.validateModelPriceFile({
       inputUsdPerMillion: 1,
       outputUsdPerMillion: 2,
       effectiveFrom: "2026-06-12T00:00:00.000Z",
-      sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+      sourceUrl:
+        "https://docs.anthropic.com/en/docs/about-claude/pricing?token=sk-proj-abcdefghijklmnopqrstuvwxyz123456",
       sourceCheckedAt: "2026-06-12T12:00:00.000Z",
       notes: `test price row sk-proj-abcdefghijklmnopqrstuvwxyz123456 ${"x".repeat(1200)}`,
     },
@@ -549,6 +550,7 @@ assert.match(renderedModelPriceSql, /source_checked_at/);
 assert.match(renderedModelPriceSql, /sk-\[redacted\]/);
 assert(!renderedModelPriceSql.includes("abcdefghijklmnopqrstuvwxyz123456"));
 assert(!renderedModelPriceSql.includes("x".repeat(1001)));
+assert(!renderedModelPriceSql.includes("token=sk-proj-"));
 const currentPriceStatement = modelPrices.currentModelPriceStatement("reviewbot", {
   provider: "anthropic",
   model: "claude-opus-4-8",
@@ -924,6 +926,12 @@ const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({
       dailyBudgetUsd: 10,
       enabled: true,
     },
+    {
+      scopeType: "repo",
+      scopeValue: "6529-Collections/sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+      dailyBudgetUsd: 1,
+      enabled: true,
+    },
   ],
 });
 assert.equal(budgetPolicyFile.policies[0].notes.length, 1000);
@@ -951,16 +959,17 @@ assert.throws(
   /unsupported key/
 );
 const budgetPolicyStatements = budgetPolicies.budgetPolicyStatements("reviewbot", budgetPolicyFile);
-assert.equal(budgetPolicyStatements.length, 2);
+assert.equal(budgetPolicyStatements.length, 3);
 const renderedBudgetPolicySql = budgetPolicies.renderBudgetPolicySql("reviewbot", budgetPolicyFile);
 assert.match(renderedBudgetPolicySql, /ai_review_budget_policies/);
 assert.match(renderedBudgetPolicySql, /github_pat_\[redacted\]/);
 assert(!renderedBudgetPolicySql.includes("abcdefghijklmnopqrstuvwxyz1234567890"));
 assert(!renderedBudgetPolicySql.includes("y".repeat(1001)));
+assert(!renderedBudgetPolicySql.includes("6529-Collections/sk-proj-"));
 assert.equal(
   budgetPolicies.mergeBudgetPolicyRows({ mode: "enforce", explicitPolicies: [] }, budgetPolicyFile.policies)
     .explicitPolicies.length,
-  2
+  3
 );
 let appliedBudgetPolicyStatements = 0;
 budgetPolicies.applyBudgetPolicies({
@@ -979,7 +988,7 @@ budgetPolicies.applyBudgetPolicies({
     appliedBudgetPolicyStatements += 1;
   },
 });
-assert.equal(appliedBudgetPolicyStatements, 2);
+assert.equal(appliedBudgetPolicyStatements, 3);
 assert.deepEqual(
   budgetPoliciesCli.parseArgs(["--file", "budgets.json", "--schema", "reviewbot", "--apply"]),
   { apply: true, file: "budgets.json", quiet: false, schema: "reviewbot" }

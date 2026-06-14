@@ -102,9 +102,9 @@ npm run budget-policies -- -- --file config/budget-policies.dogfood.example.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
-exactly what will be upserted. `notes` values are redacted for common
-secret-shaped values and capped at 1000 characters before they are rendered or
-applied.
+exactly what will be upserted. Rendered parameter comments are redacted for
+common secret-shaped values across every field. `notes` values are also capped
+at 1000 characters before they are rendered or applied.
 
 Use `--quiet` when a release or CI check should validate the file without
 printing SQL.
