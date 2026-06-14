@@ -99,8 +99,8 @@ function checkEnvParsing(findings) {
   if (defaults.trustedUsers.size !== 0 || defaults.trustedTeams.size !== 0 || defaults.trustedOrganizations.size !== 0) {
     findings.push("default admission trusted user/team/org sets must be empty.");
   }
-  if (defaults.denyUsers.size !== 0) {
-    findings.push("default admission deny user set must be empty.");
+  if (defaults.allowedPrAuthors.size !== 0 || defaults.denyUsers.size !== 0) {
+    findings.push("default admission allowed PR author and deny user sets must be empty.");
   }
 
   for (const mode of expectedRepoModes) {
@@ -191,6 +191,41 @@ function checkAdmissionDecisions(findings) {
     findings
   );
 
+  const allowedPrAuthorPolicy = admissionPolicy.admissionPolicyFromEnv({
+    REVIEWBOT_ALLOWED_PR_AUTHORS: "alice,bob",
+    REVIEWBOT_TRUSTED_USERS: "alice,bob",
+  });
+  expectDecision(
+    "configured allowed PR author",
+    admissionPolicy.evaluateAdmission(
+      { ...publicEvent, actor: "alice", prAuthor: "alice" },
+      { login: "alice", permission: "read" },
+      allowedPrAuthorPolicy
+    ),
+    { status: "allowed", allowed: true, code: "trusted_actor", requestor: "alice", trustedActor: true },
+    findings
+  );
+  expectDecision(
+    "configured blocked PR author",
+    admissionPolicy.evaluateAdmission(
+      { ...publicEvent, prAuthor: "mallory" },
+      { login: "mallory", permission: "admin", isOrgMember: true },
+      allowedPrAuthorPolicy
+    ),
+    { status: "denied", allowed: false, code: "blocked_pr_author", requestor: "external" },
+    findings
+  );
+  expectDecision(
+    "configured missing PR author",
+    admissionPolicy.evaluateAdmission(
+      { ...publicEvent, prAuthor: "" },
+      { login: "admin", permission: "admin" },
+      allowedPrAuthorPolicy
+    ),
+    { status: "denied", allowed: false, code: "missing_pr_author", requestor: "external" },
+    findings
+  );
+
   const denyPolicy = admissionPolicy.admissionPolicyFromEnv({
     REVIEWBOT_DENY_USERS: "maintainer",
   });
@@ -207,6 +242,7 @@ function checkDocs(docTexts, findings) {
     "REVIEWBOT_PUBLIC_REPO_MODE=trusted",
     "REVIEWBOT_PRIVATE_REPO_MODE=open",
     "REVIEWBOT_DRAFT_PR_MODE=skip",
+    "REVIEWBOT_ALLOWED_PR_AUTHORS=",
     "REVIEWBOT_TRUSTED_PERMISSION=write",
   ];
   for (const docPath of admissionDocs) {
@@ -247,6 +283,7 @@ function checkEnvExample(text, findings) {
     "REVIEWBOT_PUBLIC_REPO_MODE=trusted",
     "REVIEWBOT_PRIVATE_REPO_MODE=open",
     "REVIEWBOT_DRAFT_PR_MODE=skip",
+    "REVIEWBOT_ALLOWED_PR_AUTHORS=",
     "REVIEWBOT_TRUSTED_PERMISSION=write",
   ];
   for (const line of expectedLines) {

@@ -5865,7 +5865,7 @@ appServer.handleGitHubWebhook({
     /admin snapshot contract check found/
   );
   const supportBundleContractResult = supportBundleContractCheck.checkSupportBundleContract();
-  assert.equal(supportBundleContractResult.safeKeys, 17);
+  assert.equal(supportBundleContractResult.safeKeys, 19);
   assert.throws(
     () =>
       supportBundleContractCheck.checkSupportBundleContract({
