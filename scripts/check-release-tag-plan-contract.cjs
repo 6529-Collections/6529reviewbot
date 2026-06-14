@@ -39,6 +39,7 @@ function checkReleaseTagPlanContract(options = {}) {
 
   checkReadyPlan(findings);
   checkDirtyPlan(findings);
+  checkExistingTagPlan(findings);
   checkReleaseNotesFailure(findings);
   checkReleaseNotesVersionMismatch(findings);
   checkCli(findings);
@@ -55,7 +56,7 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 5,
+    planCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -78,6 +79,7 @@ function checkReadyPlan(findings) {
   for (const snippet of [
     "Ready to tag: yes",
     "- release: v0.1.0",
+    "- local tag exists: no",
     "git fetch origin --tags",
     "git tag -a v0.1.0",
     "Create the GitHub Release",
@@ -107,6 +109,24 @@ function checkDirtyPlan(findings) {
   }
   if (!plan.errors.some((error) => error.includes("working tree must be clean"))) {
     findings.push("dirty working tree error must explain the cleanup requirement.");
+  }
+}
+
+function checkExistingTagPlan(findings) {
+  const plan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: completeReleaseNotesFixture(),
+    requireReleaseNotes: true,
+    git: {
+      ...cleanMainGit(),
+      tagExists: true,
+    },
+  });
+  if (plan.ready) {
+    findings.push("existing local release tag must block release tag readiness.");
+  }
+  if (!plan.errors.some((error) => error.includes("already exists locally"))) {
+    findings.push("existing tag error must explain that the release tag already exists locally.");
   }
 }
 
@@ -192,6 +212,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "collectReleaseTagPlan",
       "validateReleaseNotesPublication",
       "releaseFromReleaseNotes",
+      "already exists locally",
       "This command does not create tags",
     ],
     "bin/release-tag-plan.cjs": [
@@ -208,6 +229,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "release-tag-plan-contract",
       "release-tag-plan",
       "release notes title match",
+      "local tag availability",
     ],
   };
   for (const [file, snippets] of Object.entries(requiredBySource)) {
@@ -225,6 +247,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-tag-plan.md": [
       "npm run release:tag-plan",
       "--require-ready",
+      "local tag",
       "release notes title",
       "does not create tags",
       "npm run check:release-tag-plan",

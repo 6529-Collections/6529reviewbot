@@ -5292,7 +5292,7 @@ appServer.handleGitHubWebhook({
   );
   const releaseTagPlanContractResult =
     releaseTagPlanContractCheck.checkReleaseTagPlanContract();
-  assert.equal(releaseTagPlanContractResult.planCases, 5);
+  assert.equal(releaseTagPlanContractResult.planCases, 6);
   assert.equal(releaseTagPlanContractResult.docs, 6);
   assert.throws(
     () =>

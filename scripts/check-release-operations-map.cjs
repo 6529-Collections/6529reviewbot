@@ -56,6 +56,9 @@ function checkReleaseTagPlanTools(map) {
   if (!contractTool.purpose.includes("release notes title match")) {
     throw new Error("release-tag-plan-contract purpose must mention release notes title match.");
   }
+  if (!contractTool.purpose.includes("local tag availability")) {
+    throw new Error("release-tag-plan-contract purpose must mention local tag availability.");
+  }
 }
 
 function checkReleaseOperationsDoc(map, docFile) {

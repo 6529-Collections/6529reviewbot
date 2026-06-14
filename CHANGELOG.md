@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened the release tag plan to reject locally existing release tags before
+  rendering ready tag commands.
 - Hardened the release tag plan to reject completed release notes whose title
   version does not match the planned tag.
 - Aligned the release operations map with the stricter release-notes validation
