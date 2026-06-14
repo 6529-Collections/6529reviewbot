@@ -42,6 +42,8 @@ function checkReleaseNotesPublicationContract(options = {}) {
   checkDraftRejected(findings);
   checkSensitiveTextRejected(findings);
   checkFailedValidationRejected(findings);
+  checkNegatedReadyValidationRejected(findings);
+  checkVagueValidationRejected(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -56,7 +58,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 5,
+    publicationCases: 7,
     docs: targetDocs.length,
   };
 }
@@ -114,6 +116,30 @@ function checkFailedValidationRejected(findings) {
   }
 }
 
+function checkNegatedReadyValidationRejected(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace("CI: passed", "CI: not ok")
+  );
+  if (report.ready) {
+    findings.push("release notes publication check must reject negated ready validation evidence.");
+  }
+  if (!report.errors.some((error) => error.includes("CI:") && error.includes("negated"))) {
+    findings.push("negated ready validation rejection must identify the validation field.");
+  }
+}
+
+function checkVagueValidationRejected(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace("CI: passed", "CI: ran")
+  );
+  if (report.ready) {
+    findings.push("release notes publication check must reject vague validation evidence.");
+  }
+  if (!report.errors.some((error) => error.includes("CI:") && error.includes("passed"))) {
+    findings.push("vague validation rejection must identify the validation field and ready-evidence requirement.");
+  }
+}
+
 function checkCli(findings) {
   try {
     publicationCli.parseArgs(["--nope"]);
@@ -147,6 +173,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "redactSensitiveText",
       "checkValidationResults",
       "FAILED_VALIDATION_PATTERN",
+      "READY_VALIDATION_PATTERN",
       "No accepted deferrals",
       "Dashboard deployment plan:",
       "Alert delivery plan:",
@@ -187,6 +214,7 @@ function checkDocs(docTexts, findings) {
       "npm run release:notes:check",
       "TODO(operator)",
       "No accepted deferrals",
+      "passed, ready, reviewed, or accepted evidence",
       "npm run check:release-notes-publication",
     ],
     "docs/release-notes-draft.md": [
