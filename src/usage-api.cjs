@@ -728,7 +728,10 @@ function groupedUsage(events, keyFn) {
     current.budgetSkippedRuns += event.budgetSkipped ? 1 : 0;
     groups.set(key, current);
   }
-  return Array.from(groups.values());
+  return Array.from(groups.values()).map((group) => ({
+    ...group,
+    averageCostUsd: group.reviewRuns ? roundUsd(group.costUsd / group.reviewRuns) : 0,
+  }));
 }
 
 function dayKey(value) {

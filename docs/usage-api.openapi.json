@@ -567,7 +567,7 @@
       },
       "UsageGroup": {
         "type": "object",
-        "required": ["key", "reviewRuns", "costUsd", "totalTokens", "budgetSkippedRuns"],
+        "required": ["key", "reviewRuns", "costUsd", "averageCostUsd", "totalTokens", "budgetSkippedRuns"],
         "properties": {
           "key": {
             "type": "string"
@@ -576,6 +576,9 @@
             "type": "integer"
           },
           "costUsd": {
+            "type": "number"
+          },
+          "averageCostUsd": {
             "type": "number"
           },
           "totalTokens": {

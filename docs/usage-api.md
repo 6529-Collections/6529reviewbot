@@ -55,6 +55,9 @@ The public summary is safe for a public 6529.io transparency page. It includes:
 - provider/model aggregates;
 - review-kind aggregates.
 
+Aggregate rows include `costUsd` for total spend in that group and
+`averageCostUsd` for average spend per review run in that group.
+
 It does not include requester-level aggregates, raw events, private repo names,
 provider request IDs, or hidden metadata.
 
@@ -64,7 +67,8 @@ The admin summary is for authenticated 6529 operators. It includes the public
 summary fields plus:
 
 - requester aggregates;
-- PR-level aggregates;
+- PR-level aggregates, where each `byPr` row's `costUsd` is the total cost for
+  that PR and `averageCostUsd` is the average cost per review run on that PR;
 - private repo names, when the data loader supplies them.
 
 Admin endpoints fail closed unless the server is given an admin authorizer.
