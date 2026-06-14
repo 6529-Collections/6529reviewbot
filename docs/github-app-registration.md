@@ -271,7 +271,7 @@ Private key rotation:
 Run `npm run check:github-app-auth` after changing private-key handling,
 installation-token minting, profile routing, or GitHub Actions token output.
 The installation token contract verifies env parsing, JWT shape, token
-caching, CLI profiles, output masking, and docs.
+caching, CLI profiles, output masking, output newline rejection, and docs.
 
 Provider keys, AWS access, and admin-auth secrets rotate through their own
 runbooks. Do not combine rotations unless an incident requires broad

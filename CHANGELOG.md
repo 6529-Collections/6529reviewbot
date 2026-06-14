@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Rejected empty or multiline GitHub Actions installation-token output values
+  before writing `token=<value>` to `GITHUB_OUTPUT`, preventing accidental
+  output injection in the token helper.
 - Added sensitive-header redaction for diagnostic text and public artifact
   scanning so long `x-api-key`, admin-secret, admin-signature, and Basic/Token
   authorization values are redacted or blocked even when they do not use a

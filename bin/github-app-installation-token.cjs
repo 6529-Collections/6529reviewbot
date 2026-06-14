@@ -108,8 +108,20 @@ function writeGitHubActionsOutput(token) {
   if (!outputPath) {
     throw new Error("--github-actions-output requires GITHUB_OUTPUT.");
   }
-  process.stdout.write(`::add-mask::${token}\n`);
-  fs.appendFileSync(outputPath, `token=${token}\n`);
+  const safeToken = githubActionsOutputValue(token, "token");
+  process.stdout.write(`::add-mask::${safeToken}\n`);
+  fs.appendFileSync(outputPath, `token=${safeToken}\n`);
+}
+
+function githubActionsOutputValue(value, name) {
+  const text = String(value || "");
+  if (!text) {
+    throw new Error(`${name} must be non-empty.`);
+  }
+  if (/[\r\n]/.test(text)) {
+    throw new Error(`${name} must not contain newlines.`);
+  }
+  return text;
 }
 
 function printUsage() {
@@ -132,6 +144,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  githubActionsOutputValue,
   githubAppAuthSettingsForProfile,
   installationIdFromEnv,
   parseArgs,

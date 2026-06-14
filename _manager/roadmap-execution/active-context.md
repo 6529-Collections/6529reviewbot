@@ -666,31 +666,31 @@ merged PRs.
 - Bearer-token public artifact scan PR: merged as PR #341, merge commit `e6eb913`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `e6eb913`.
-- Current branch: `codex/generic-sensitive-header-redaction`.
-- Current local changes: add shared diagnostic redaction and public artifact
-  scanner coverage for long sensitive header values such as `x-api-key`,
-  admin-secret, admin-signature, and Basic/Token authorization headers; update
-  diagnostics fixtures, smoke tests, docs, changelog, and durable manager
-  memory.
+- Sensitive-header redaction PR: merged as PR #342, merge commit `624a790`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `624a790`.
+- Current branch: `codex/reject-github-output-token-newlines`.
+- Current local changes: reject empty or multiline GitHub Actions
+  installation-token output values before masking or writing `token=<value>` to
+  `GITHUB_OUTPUT`; add GitHub App auth contract coverage, update smoke tests,
+  docs, changelog, and durable manager memory.
 - Current local validation:
-  - `gh run list --repo 6529-Collections/6529reviewbot --commit e6eb913ba7bb7aabb7e404738117a2e83a5decf7 --limit 10` passed by showing PR #341 post-merge CI run `27506746080` and OpenSSF Scorecard run `27506746089` completed successfully;
-  - `npm run check:diagnostics-redaction` passed with 13 fixtures, 9 public
-    renderers, 9 renderer behavior cases, and 6 docs checked;
+  - `gh run list --repo 6529-Collections/6529reviewbot --commit 624a790b1e1b0c052f82fad5997d35ac22a1e249 --limit 10` passed by showing PR #342 post-merge CI run `27507064476` and OpenSSF Scorecard run `27507064481` completed successfully;
+  - `npm run check:github-app-auth` passed with 7 auth cases, 6 CLI cases,
+    and 7 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
-  - `npm test` passed after adding sensitive-header diagnostics and public
-    artifact coverage;
+  - `npm test` passed after adding GitHub Actions output newline rejection
+    coverage;
   - `npm run check:docs` passed with 76 files checked;
-  - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:security-model` passed with 17 controls, 30 checklist
-    items, 12 source files, and 7 docs checked;
-  - `npm run check:support-runbooks` passed with 4 support cases, 3 incident
-    cases, and 7 docs checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #341, and
+  - `npm run check:production-deployment-plan` passed with 8 plan cases and 6
+    docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #342, and
     5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    sensitive-header diagnostic and public artifact guards exercised.
+    GitHub App auth output-value guard exercised.
 
 ## Key Decisions
 

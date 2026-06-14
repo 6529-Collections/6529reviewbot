@@ -94,9 +94,10 @@ npm run github-app:token -- -- --profile worker-dispatch --installation-id <cent
 ```
 
 Run it only in the private operator or GitHub Actions context that owns
-`GITHUB_OUTPUT`. Do not paste the minted token into public evidence; record the
-masked smoke result, dispatch-only App installation, scope, and any accepted
-fallback decision.
+`GITHUB_OUTPUT`. The helper masks the token and rejects multiline output values
+before writing to GitHub Actions output. Do not paste the minted token into
+public evidence; record the masked smoke result, dispatch-only App
+installation, scope, and any accepted fallback decision.
 
 ## Contract
 
