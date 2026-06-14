@@ -573,33 +573,38 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release-notes community status PR: merged as PR #306, merge commit `ddd25ac`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-publication-community-status`.
-- Current local changes: require completed release notes to include
-  community-release status evidence, community gate validation evidence, and
-  broad community-use safety language before publication, with matching
-  publication guard fixtures, contract coverage, release docs, roadmap,
-  changelog, operations inventory, and durable memory.
+- Release-notes publication community status PR: merged as PR #307, merge commit `87bb8cc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/readme-community-release-evidence`.
+- Current local changes: sweep the top-level README and docs index so
+  community-release gate validation, release-candidate community status input,
+  release notes draft output, and publication/tag readiness guidance match the
+  checked release-evidence flow.
 - Current local validation:
-  - `gh run watch 27496121953 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #305 post-merge CI;
-  - `gh run watch 27496121961 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #305 post-merge OpenSSF Scorecard;
   - `gh run watch 27496315800 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #306 post-merge CI;
   - `gh run watch 27496315799 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #306 post-merge OpenSSF Scorecard;
-  - `npm run check:release-notes-publication` passed with 10 publication
-    cases and 7 docs checked;
-  - `npm run check:release-notes` passed;
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `gh run watch 27496460520 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #307 post-merge CI;
+  - `gh run watch 27496460525 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #307 post-merge OpenSSF Scorecard;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #306,
+  - `npm run check:community-release-gates` passed with 14 gates, 14 evidence
+    refs, and 9 docs checked;
+  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 10 publication
+    cases and 7 docs checked;
+  - `npm run check:release-tag-plan` passed with 11 plan cases and 6 docs
+    checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #307,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    release-notes publication community-release status path exercised.
+    README community-release evidence flow exercised.
 
 ## Key Decisions
 

@@ -252,9 +252,14 @@ npm run release:check
 Check completed release notes before publishing a tag or GitHub Release:
 
 ```bash
+npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready
 npm run release:notes:check -- -- --file <release-notes.md>
 npm run check:release-notes-publication
 ```
+
+Publication-ready notes must include community-release status evidence and the
+matching community gate validation result, or explicitly document a
+dogfood-only or community-release deferral.
 
 Build a dry-run release tag plan after completed notes pass:
 
@@ -304,6 +309,7 @@ Draft pre-v1 release notes from public-safe evidence:
 
 ```bash
 npm run release:notes
+npm --silent run release:notes -- -- --candidate-file <release-candidate.json> --out <release-notes.md> --quiet
 ```
 
 Validate central runtime configuration without network calls:
@@ -335,6 +341,15 @@ The final `--require-ready` check also verifies that the status file lists
 every current gate, so stale private evidence files fail loudly after the
 canonical gate list changes.
 
+Render the broad community-release gate checklist:
+
+```bash
+npm run community:gates
+npm run community:gates -- -- --status-file <operator-community-status-file> --summary
+npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready
+npm run check:community-release-gates
+```
+
 Validate a structured operator evidence file and render a redacted public
 summary:
 
@@ -351,6 +366,7 @@ evidence, git metadata, and no-network preflight:
 ```bash
 npm run release:candidate
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+npm run release:candidate -- -- --status-file <operator-status-file> --community-status-file <operator-community-status-file> --operator-evidence-file <private-evidence-file>
 npm run release:candidate -- -- --operator-workspace <private-workspace-dir>
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --out <public-bundle-file.md> --quiet
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>

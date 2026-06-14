@@ -76,11 +76,12 @@ be linked here before they are considered release-ready.
 - [v0 Release Plan](v0-release-plan.md): first public dogfood tag criteria.
 - `npm run community:gates`: broad community-release gate checklist renderer.
 - [Release Candidate Bundle](release-candidate.md): public-safe readiness
-  artifact.
+  artifact, including community-release status when supplied.
 - [Release Notes Draft](release-notes-draft.md): public-safe pre-v1 release
   notes draft from release-candidate evidence.
 - [Release Notes Publication](release-notes-publication.md): completed release
-  notes guard before publishing a tag or GitHub Release.
+  notes guard, including community-release status evidence, before publishing a
+  tag or GitHub Release.
 - [Release Tag Plan](release-tag-plan.md): dry-run clean-main,
   tag-availability, and completed release-notes check before operator tagging.
 - [Release Notes Template](release-notes-template.md): pre-v1 release notes
