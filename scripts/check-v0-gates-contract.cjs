@@ -67,6 +67,22 @@ function checkGateConfig(findings) {
       findings.push(`${id} gate title must require reviewed dashboard deployment plan evidence.`);
     }
   }
+
+  const alertGate = gatesById.get("alerts");
+  if (!alertGate) {
+    findings.push("v0 release gates must include 'alerts'.");
+  } else {
+    if (alertGate.evidence !== "docs/alert-delivery-plan.md") {
+      findings.push("alerts gate evidence must be docs/alert-delivery-plan.md.");
+    }
+    const alertTitle = normalizeWhitespace(alertGate.title).toLowerCase();
+    if (!alertTitle.includes("reviewed alert delivery plan evidence")) {
+      findings.push("alerts gate title must require reviewed alert delivery plan evidence.");
+    }
+    if (!alertTitle.includes("operator-owned channel")) {
+      findings.push("alerts gate title must require an operator-owned channel.");
+    }
+  }
 }
 
 function checkCliContract(findings) {
@@ -300,6 +316,7 @@ function checkDocs(docTexts, findings) {
     "docs/v0-release-plan.md": [
       "npm run check:v0-gates",
       "v0 release gate contract check",
+      "reviewed alert delivery plan evidence",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["v0 release gate contract"],

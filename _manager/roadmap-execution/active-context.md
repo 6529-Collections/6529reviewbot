@@ -437,27 +437,32 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert delivery cutover gate PR: merged as PR #238, merge commit `b5d8436`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-evidence-alert-plan`.
-- Current local changes: adding alert delivery plan command/review fields to
-  the operator evidence template, updating the public production-evidence
-  example for 32 cutover items, and updating operator evidence contracts,
-  release-readiness, roadmap, changelog, and durable manager memory so private
-  operator evidence captures the reviewed alert delivery handoff before alert
-  destination and dry-run evidence.
+- Operator evidence alert plan PR: merged as PR #239, merge commit `fb49803`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/v0-alert-delivery-gate`.
+- Current local changes: strengthening the existing v0 `alerts` gate so
+  scheduled operator alerts require reviewed alert delivery-plan evidence
+  before satisfying the first public tag checklist, and updating v0 gate
+  contracts, smoke coverage, release-readiness, roadmap, changelog, and
+  durable manager memory. This branch also hardens the admin auth HMAC TTL
+  contract check after PR #240 CI exposed a one-second boundary race on Ubuntu
+  runners.
 - Current local validation:
-  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
-    cases, and 6 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and 5
+    docs/templates checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #238,
-    and 5 docs checked;
-  - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including operator evidence validation
-    for alert delivery-plan fields and the production-evidence `2/32`
-    cutover summary.
+  - `npm run release:check` passed, including v0 release gate validation
+    requiring reviewed alert delivery-plan evidence for scheduled alerts and
+    deterministic admin-auth HMAC TTL validation;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #239,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions
 

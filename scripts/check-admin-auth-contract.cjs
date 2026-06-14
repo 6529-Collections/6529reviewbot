@@ -211,9 +211,19 @@ function checkHmacAuth(findings) {
   if (expired.allowed || expired.code !== "admin_auth_expired") {
     findings.push("hmac auth must reject expired assertions.");
   }
+  const tooLongExpiresAt = String(nowSeconds + settings.maxTtlSeconds + 120);
   const tooLong = adminAuth.authorizeAdminRequest({
     ...request,
-    headers: { ...headers, "x-6529-admin-expires-at": String(nowSeconds + 301) },
+    headers: {
+      ...headers,
+      "x-6529-admin-expires-at": tooLongExpiresAt,
+      "x-6529-admin-signature": `sha256=${adminAuth.signAdminAuthRequest({
+        ...request,
+        actor: "operator",
+        roles: ["reviewbot-admin", "admin"],
+        expiresAt: tooLongExpiresAt,
+      }, settings)}`,
+    },
   }, settings);
   if (tooLong.allowed || tooLong.code !== "admin_auth_ttl_too_long") {
     findings.push("hmac auth must reject assertions beyond the configured TTL.");

@@ -1907,6 +1907,9 @@ assert.match(
   gates.gates.find((gate) => gate.id === "model-prices").title,
   /fresh source-checked timestamps/
 );
+const alertsGate = gates.gates.find((gate) => gate.id === "alerts");
+assert.match(alertsGate.title, /reviewed alert delivery plan evidence/);
+assert.equal(alertsGate.evidence, "docs/alert-delivery-plan.md");
 assert.match(releaseGates.renderReleaseGatesMarkdown(gates), /Release Gates/);
 const gateStatus = releaseGates.loadReleaseGateStatus("config/v0-release-status.example.json");
 const gatesWithStatus = releaseGates.mergeReleaseGateStatus(gates, gateStatus);
