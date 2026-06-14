@@ -464,9 +464,9 @@ Completed in `6529reviewbot`:
   before marking dry-run tag commands ready;
 - release-candidate private workspace path redaction for JSON and Markdown
   bundles;
-- operator workspace bootstrap for private release-gate, dogfood,
-  security-review, production-cutover, and operator-evidence skeletons with
-  generated promotion/go-live command guidance;
+- operator workspace bootstrap for private community-release, v0 release-gate,
+  dogfood, security-review, production-cutover, and operator-evidence
+  skeletons with generated promotion/go-live command guidance;
 - read-only Aurora usage API loaders;
 - repository configuration loading, validation, restrictive policy merge, and
   base-ref GitHub contents loading;

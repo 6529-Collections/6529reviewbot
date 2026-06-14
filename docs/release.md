@@ -316,8 +316,8 @@ After stabilization:
   stays synchronized with strict-preflight readiness, workspace path markers,
   Markdown redaction, and docs
 - `npm run check:operator-workspace` confirms the operator workspace contract
-  stays synchronized with creation/check behavior, private path markers,
-  Markdown redaction, and docs
+  stays synchronized with community-release status, creation/check behavior,
+  private path markers, Markdown redaction, and docs
 - `npm run check:operator-evidence` confirms the operator evidence contract
   stays synchronized with section readiness, required evidence, deferral
   semantics, public-summary redaction, and docs

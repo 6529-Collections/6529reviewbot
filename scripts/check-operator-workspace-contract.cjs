@@ -180,6 +180,8 @@ function checkWorkspaceLifecycle(findings) {
 
   const readme = fs.readFileSync(path.join(tempDir, "README.md"), "utf8");
   for (const snippet of [
+    "community-release-status.json",
+    "npm run community:gates -- -- --status-file community-release-status.json --summary",
     "npm run production:deployment-plan",
     "npm run dashboard:deployment-plan",
     "npm run alerts:delivery-plan",
@@ -260,6 +262,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "assertWorkspaceDirectory",
     "privateWorkspaceReadme",
     "publicLine",
+    "communityReleaseStatus",
+    "community:gates",
     "production:deployment-plan",
     "dashboard:deployment-plan",
     "alerts:delivery-plan",
@@ -289,6 +293,8 @@ function checkDocs(docTexts, findings) {
     "README.md": ["npm run check:operator-workspace"],
     "docs/operator-workspace.md": [
       "npm run check:operator-workspace",
+      "community-release-status.json",
+      "npm run community:gates -- -- --status-file <private-workspace-dir>/community-release-status.json --summary",
       "npm run production:deployment-plan",
       "npm run dashboard:deployment-plan",
       "npm run alerts:delivery-plan",

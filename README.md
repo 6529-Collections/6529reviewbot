@@ -367,8 +367,8 @@ npm run release:operations -- -- --phase release-candidate
 npm run check:release-operations
 ```
 
-Create a private operator workspace with all release status/evidence
-skeletons:
+Create a private operator workspace with community-release, v0, dogfood,
+security-review, production-cutover, and operator-evidence skeletons:
 
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir>
