@@ -41,6 +41,7 @@ function checkReleaseTagPlanContract(options = {}) {
   checkDirtyPlan(findings);
   checkExistingTagPlan(findings);
   checkReleaseNotesFailure(findings);
+  checkReleaseNotesWarningGate(findings);
   checkReleaseNotesVersionMismatch(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
@@ -56,7 +57,7 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 6,
+    planCases: 7,
     docs: targetDocs.length,
   };
 }
@@ -145,6 +146,49 @@ function checkReleaseNotesFailure(findings) {
   }
 }
 
+function checkReleaseNotesWarningGate(findings) {
+  const warningNotes = completeReleaseNotesFixture().replace(
+    "run-control mode is `enforce`, ",
+    ""
+  );
+  const advisoryPlan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: warningNotes,
+    requireReleaseNotes: true,
+    git: cleanMainGit(),
+  });
+  if (!advisoryPlan.ready) {
+    findings.push(
+      `release-note recommendation warnings should stay advisory without requireNoWarnings: ${advisoryPlan.errors.join("; ")}`
+    );
+  }
+  const hasRunControlWarning = advisoryPlan.warnings.some((warning) =>
+    warning.includes("run-control mode is `enforce`")
+  );
+  if (!hasRunControlWarning) {
+    findings.push("release tag plan must surface release-note recommendation warnings.");
+  }
+
+  const strictPlan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: warningNotes,
+    requireReleaseNotes: true,
+    requireNoWarnings: true,
+    git: cleanMainGit(),
+  });
+  if (strictPlan.ready) {
+    findings.push("release tag plan must block readiness when release-note warnings are promoted.");
+  }
+  if (!strictPlan.errors.some((error) => error.includes("warning promoted to error"))) {
+    findings.push("release tag plan must surface promoted release-note warnings as errors.");
+  }
+
+  const readyArgs = tagPlanCli.parseArgs(["--require-ready"]);
+  if (!readyArgs.requireNoWarnings) {
+    findings.push("release tag plan --require-ready must imply --require-no-warnings.");
+  }
+}
+
 function checkReleaseNotesVersionMismatch(findings) {
   const plan = collectReleaseTagPlan({
     release: "v0.2.0",
@@ -218,6 +262,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "bin/release-tag-plan.cjs": [
       "npm run release:tag-plan",
       "--require-ready",
+      "result.requireNoWarnings = true",
       "This command does not create tags or GitHub Releases.",
     ],
     "scripts/release-check.cjs": ["scripts/check-release-tag-plan-contract.cjs"],
@@ -230,6 +275,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "release-tag-plan",
       "release notes title match",
       "local tag availability",
+      "release-note warnings",
     ],
   };
   for (const [file, snippets] of Object.entries(requiredBySource)) {
@@ -249,6 +295,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "local tag",
       "release notes title",
+      "release-note warnings",
       "does not create tags",
       "npm run check:release-tag-plan",
     ],

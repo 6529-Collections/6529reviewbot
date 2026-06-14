@@ -46,12 +46,12 @@ function collectReleaseTagPlan(options = {}) {
     if (releaseNotes.release && releaseNotes.release !== release) {
       errors.push(`release notes title '${releaseNotes.release}' must match planned release '${release}'.`);
     }
+    for (const warning of releaseNotes.report.warnings) {
+      warnings.push(`release notes: ${warning}`);
+    }
     if (!releaseNotes.report.ready) {
       for (const error of releaseNotes.report.errors) {
         errors.push(`release notes: ${error}`);
-      }
-      for (const warning of releaseNotes.report.warnings) {
-        warnings.push(`release notes: ${warning}`);
       }
     }
   }

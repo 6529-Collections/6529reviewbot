@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Made `release:tag-plan --require-ready` promote release-note recommendation
+  warnings to blockers before final tag planning.
 - Expanded release notes publication recommendation warnings for base-ref target
   config and operator-owned alert routing safety language.
 - Added run-control enforcement to release notes publication recommendation

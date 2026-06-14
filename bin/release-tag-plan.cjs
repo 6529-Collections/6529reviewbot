@@ -62,6 +62,7 @@ function parseArgs(argv = []) {
     } else if (arg === "--require-ready") {
       result.requireReady = true;
       result.requireReleaseNotes = true;
+      result.requireNoWarnings = true;
     } else if (arg === "--release" || arg === "--version") {
       result.release = requireValue(args, (index += 1), arg);
     } else if (arg === "--release-notes" || arg === "--notes") {
@@ -94,8 +95,8 @@ Options:
   --version <version>          Alias for --release.
   --release-notes <path>       Completed release notes Markdown.
   --notes <path>               Alias for --release-notes.
-  --require-ready              Exit non-zero unless the plan is ready; also requires release notes.
-  --require-no-warnings        Treat release-notes warnings as errors.
+  --require-ready              Exit non-zero unless the plan is ready; also requires release notes and no release-note warnings.
+  --require-no-warnings        Treat release-notes warnings as errors in non-final dry runs too.
   --allow-non-main             Permit planning from a non-main branch.
   --json                       Print JSON instead of Markdown.
   --quiet                      Suppress stdout.
