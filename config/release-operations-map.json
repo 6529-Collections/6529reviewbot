@@ -467,7 +467,7 @@
         {
           "id": "release-tag-plan-contract",
           "script": "check:release-tag-plan",
-          "purpose": "Verify the release tag plan stays dry-run, checks clean main and completed release notes, renders operator tag commands, and keeps public docs synchronized.",
+          "purpose": "Verify the release tag plan stays dry-run, checks clean main, completed release notes, release notes title match, renders operator tag commands, and keeps public docs synchronized.",
           "doc": "docs/release-tag-plan.md",
           "publicOutput": "Safe."
         },

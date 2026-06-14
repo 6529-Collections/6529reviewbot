@@ -40,6 +40,7 @@ function checkReleaseTagPlanContract(options = {}) {
   checkReadyPlan(findings);
   checkDirtyPlan(findings);
   checkReleaseNotesFailure(findings);
+  checkReleaseNotesVersionMismatch(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -54,14 +55,14 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 4,
+    planCases: 5,
     docs: targetDocs.length,
   };
 }
 
 function checkReadyPlan(findings) {
   const plan = collectReleaseTagPlan({
-    release: "0.2.0",
+    release: "0.1.0",
     releaseNotesMarkdown: completeReleaseNotesFixture(),
     requireReleaseNotes: true,
     now: new Date("2026-06-13T00:00:00.000Z"),
@@ -70,14 +71,15 @@ function checkReadyPlan(findings) {
   if (!plan.ready) {
     findings.push(`clean main plan with complete notes must be ready: ${plan.errors.join("; ")}`);
   }
-  if (plan.release !== "v0.2.0") {
+  if (plan.release !== "v0.1.0") {
     findings.push("release tag plan must normalize versions with a v prefix.");
   }
   const markdown = formatReleaseTagPlanMarkdown(plan);
   for (const snippet of [
     "Ready to tag: yes",
+    "- release: v0.1.0",
     "git fetch origin --tags",
-    "git tag -a v0.2.0",
+    "git tag -a v0.1.0",
     "Create the GitHub Release",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -123,6 +125,21 @@ function checkReleaseNotesFailure(findings) {
   }
 }
 
+function checkReleaseNotesVersionMismatch(findings) {
+  const plan = collectReleaseTagPlan({
+    release: "v0.2.0",
+    releaseNotesMarkdown: completeReleaseNotesFixture(),
+    requireReleaseNotes: true,
+    git: cleanMainGit(),
+  });
+  if (plan.ready) {
+    findings.push("release notes title version mismatch must block release tag readiness.");
+  }
+  if (!plan.errors.some((error) => error.includes("must match planned release"))) {
+    findings.push("release notes version mismatch error must explain the planned release mismatch.");
+  }
+}
+
 function checkCli(findings) {
   try {
     tagPlanCli.parseArgs(["--nope"]);
@@ -139,7 +156,7 @@ function checkCli(findings) {
     fs.writeFileSync(file, completeReleaseNotesFixture(), "utf8");
     const plan = tagPlanCli.main([
       "--release",
-      "v0.2.0",
+      "v0.1.0",
       "--release-notes",
       file,
       "--require-ready",
@@ -174,6 +191,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/release-tag-plan.cjs": [
       "collectReleaseTagPlan",
       "validateReleaseNotesPublication",
+      "releaseFromReleaseNotes",
       "This command does not create tags",
     ],
     "bin/release-tag-plan.cjs": [
@@ -189,6 +207,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "config/release-operations-map.json": [
       "release-tag-plan-contract",
       "release-tag-plan",
+      "release notes title match",
     ],
   };
   for (const [file, snippets] of Object.entries(requiredBySource)) {
@@ -206,6 +225,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-tag-plan.md": [
       "npm run release:tag-plan",
       "--require-ready",
+      "release notes title",
       "does not create tags",
       "npm run check:release-tag-plan",
     ],

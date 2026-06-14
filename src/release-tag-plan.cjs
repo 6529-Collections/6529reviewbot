@@ -39,12 +39,17 @@ function collectReleaseTagPlan(options = {}) {
     } else {
       warnings.push(`${message} Run release:notes:check before publishing.`);
     }
-  } else if (!releaseNotes.report.ready) {
-    for (const error of releaseNotes.report.errors) {
-      errors.push(`release notes: ${error}`);
+  } else {
+    if (releaseNotes.release && releaseNotes.release !== release) {
+      errors.push(`release notes title '${releaseNotes.release}' must match planned release '${release}'.`);
     }
-    for (const warning of releaseNotes.report.warnings) {
-      warnings.push(`release notes: ${warning}`);
+    if (!releaseNotes.report.ready) {
+      for (const error of releaseNotes.report.errors) {
+        errors.push(`release notes: ${error}`);
+      }
+      for (const warning of releaseNotes.report.warnings) {
+        warnings.push(`release notes: ${warning}`);
+      }
     }
   }
 
@@ -101,10 +106,16 @@ function collectReleaseNotesState(options = {}) {
   return {
     provided: true,
     file: file ? "[release-notes-file]" : "",
+    release: releaseFromReleaseNotes(markdown),
     report: validateReleaseNotesPublication(markdown, {
       requireNoWarnings: Boolean(options.requireNoWarnings),
     }),
   };
+}
+
+function releaseFromReleaseNotes(markdown) {
+  const match = String(markdown || "").match(/^#\s+6529reviewbot\s+([vV]?[0-9][0-9A-Za-z._-]*)\s*$/m);
+  return match ? normalizeReleaseVersion(match[1]) : "";
 }
 
 function publicGitState(git) {
@@ -147,6 +158,7 @@ function formatReleaseTagPlanMarkdown(plan) {
     "## Release Notes",
     "",
     `- supplied: ${plan.releaseNotes.provided ? "yes" : "no"}`,
+    `- release: ${plan.releaseNotes.release || "unknown"}`,
     `- ready: ${plan.releaseNotes.report ? (plan.releaseNotes.report.ready ? "yes" : "no") : "not checked"}`,
     "",
     "## Commands",
@@ -206,5 +218,6 @@ module.exports = {
   DRY_RUN_NOTICE,
   formatReleaseTagPlanMarkdown,
   parseAheadBehind,
+  releaseFromReleaseNotes,
   tagCommands,
 };
