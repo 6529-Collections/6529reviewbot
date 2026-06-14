@@ -152,6 +152,17 @@ function checkImageValidation(findings) {
       findings.push("production deployment image uppercase rejection should be explicit.");
     }
   }
+  if (normalizeImageRef("registry.example.com:5000/6529reviewbot") !== "registry.example.com:5000/6529reviewbot") {
+    findings.push("production deployment plan must allow numeric registry ports.");
+  }
+  try {
+    normalizeImageRef("registry.example.com:port/6529reviewbot");
+    findings.push("production deployment plan must reject image refs with non-numeric registry ports.");
+  } catch (error) {
+    if (!String(error.message).includes("registry port")) {
+      findings.push("production deployment image non-numeric port rejection should be explicit.");
+    }
+  }
 }
 
 function checkWorkspaceValidation(findings) {
@@ -208,6 +219,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "normalizeImageRepositoryRef",
       "URL scheme",
       "empty path segments",
+      "registry port",
       "lowercase",
     ],
     "bin/production-deployment-plan.cjs": [
@@ -242,6 +254,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "without a URL scheme",
       "empty path segments",
+      "registry port",
       "lowercase",
       "does not create GitHub Apps",
       "npm run check:production-deployment-plan",

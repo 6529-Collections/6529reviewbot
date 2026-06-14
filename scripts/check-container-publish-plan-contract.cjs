@@ -167,6 +167,17 @@ function checkImageValidation(findings) {
       findings.push("container image uppercase rejection should be explicit.");
     }
   }
+  if (normalizeImageRef("registry.example.com:5000/6529reviewbot") !== "registry.example.com:5000/6529reviewbot") {
+    findings.push("container publish plan must allow numeric registry ports.");
+  }
+  try {
+    normalizeImageRef("registry.example.com:port/6529reviewbot");
+    findings.push("container publish plan must reject image refs with non-numeric registry ports.");
+  } catch (error) {
+    if (!String(error.message).includes("registry port")) {
+      findings.push("container image non-numeric port rejection should be explicit.");
+    }
+  }
 }
 
 function checkCli(findings) {
@@ -224,6 +235,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "normalizeImageRepositoryRef",
       "URL scheme",
       "empty path segments",
+      "registry port",
       "lowercase",
     ],
     "bin/container-publish-plan.cjs": [
@@ -258,6 +270,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "without a URL scheme",
       "empty path segments",
+      "registry port",
       "lowercase",
       "does not build, push, scan, or publish container images",
       "npm run check:container-publish-plan",
