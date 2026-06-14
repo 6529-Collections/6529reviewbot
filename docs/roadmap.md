@@ -316,8 +316,9 @@ Build the operator experience:
   alert delivery plan review.
 - production cutover checklist and private status overlay for go/no-go
   readiness before live dogfood traffic.
-- release-candidate bundles that can include production cutover status when
-  the release decision also covers live dogfood or production traffic.
+- release-candidate bundles that can include production cutover and
+  community-release status when the release decision also covers live dogfood,
+  production traffic, or broad community use.
 - dogfood promotion packet required by both v0 release gates and production
   cutover before first live dogfood traffic.
 - dogfood go-live packet included in operator docs and PR review prompts so
@@ -428,6 +429,8 @@ Completed in `6529reviewbot`:
   command-only and limited-initial evidence rollups;
 - optional release-candidate security-review status summaries for public-safe
   manual-review evidence rollups;
+- optional release-candidate community-release status summaries for broad
+  community-use readiness decisions;
 - release operations map for recurring checks, private evidence overlays, and
   release-bundle commands with explicit public/private output boundaries;
 - release operations map doc-sync checks so mapped local quality commands stay
@@ -462,8 +465,8 @@ Completed in `6529reviewbot`:
   does not match the planned release tag;
 - release tag planning now rejects locally or remotely existing release tags
   before marking dry-run tag commands ready;
-- release-candidate private workspace path redaction for JSON and Markdown
-  bundles;
+- release-candidate private workspace path redaction and optional
+  community-release status summaries for JSON and Markdown bundles;
 - operator workspace bootstrap for private community-release, v0 release-gate,
   dogfood, security-review, production-cutover, and operator-evidence
   skeletons with generated promotion/go-live command guidance;

@@ -205,8 +205,8 @@ aligned.
 `npm run check:security-review-status` keeps security review status readiness,
 deferral semantics, Markdown redaction, source invariants, and docs aligned.
 `npm run check:release-candidate` keeps release-candidate bundle redaction,
-private workspace path markers, operator evidence section summaries, CLI
-defaults, source invariants, and docs aligned.
+private workspace path markers, community-release status summaries, operator
+evidence section summaries, CLI defaults, source invariants, and docs aligned.
 `npm run check:release-notes-draft` keeps the release notes draft command's
 release-candidate summaries, model defaults, runtime dispatch evidence,
 container publish evidence, dashboard disclosure evidence, private admin auth

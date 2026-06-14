@@ -56,6 +56,8 @@ function collectReleaseCandidateBundle(options = {}) {
   const now = options.now || new Date();
   const root = options.root || process.cwd();
   const gatesFile = options.gatesFile || "config/v0-release-gates.json";
+  const communityGatesFile = options.communityGatesFile || "config/community-release-gates.json";
+  const communityGateStatusFile = options.communityGateStatusFile || "";
   const operatorEvidenceFile =
     options.operatorEvidenceFile || "config/production-evidence.example.json";
   const gateStatusFile = options.gateStatusFile || "";
@@ -78,6 +80,9 @@ function collectReleaseCandidateBundle(options = {}) {
     : gates.gates.map((gate) => gate.id);
   const mergedGates = gateStatus ? mergeReleaseGateStatus(gates, gateStatus) : gates;
   const releaseGateSummary = summarizeReleaseGates(mergedGates);
+  const communityRelease = communityGateStatusFile
+    ? collectReleaseGateSummary(communityGatesFile, communityGateStatusFile)
+    : null;
 
   const operatorEvidence = loadOperatorEvidence(operatorEvidenceFile);
   const operatorEvidenceSummary = summarizeOperatorEvidence(operatorEvidence);
@@ -102,6 +107,8 @@ function collectReleaseCandidateBundle(options = {}) {
   const ready =
     releaseGateSummary.ready &&
     missingGateStatusIds.length === 0 &&
+    (!communityRelease ||
+      (communityRelease.summary.ready && communityRelease.missingStatusIds.length === 0)) &&
     operatorEvidenceSummary.ready &&
     (!dogfood || (dogfood.summary.ready && dogfood.missingStatusIds.length === 0)) &&
     (!securityReview ||
@@ -121,6 +128,12 @@ function collectReleaseCandidateBundle(options = {}) {
     inputs: {
       releaseGatesFile: publicPath(gatesFile, root, publicPathOptions),
       releaseGateStatusFile: gateStatusFile ? publicPath(gateStatusFile, root, publicPathOptions) : "",
+      communityReleaseGatesFile: communityRelease
+        ? publicPath(communityGatesFile, root, publicPathOptions)
+        : "",
+      communityReleaseStatusFile: communityGateStatusFile
+        ? publicPath(communityGateStatusFile, root, publicPathOptions)
+        : "",
       operatorEvidenceFile: publicPath(operatorEvidenceFile, root, publicPathOptions),
       dogfoodChecklistFile: dogfood ? publicPath(dogfoodChecklistFile, root, publicPathOptions) : "",
       dogfoodStatusFile: dogfoodStatusFile ? publicPath(dogfoodStatusFile, root, publicPathOptions) : "",
@@ -145,6 +158,14 @@ function collectReleaseCandidateBundle(options = {}) {
         ...releaseGateSummary,
         missingStatusIds: missingGateStatusIds.map((id) => publicText(id)),
       },
+      ...(communityRelease
+        ? {
+            communityRelease: {
+              ...communityRelease.summary,
+              missingStatusIds: communityRelease.missingStatusIds.map((id) => publicText(id)),
+            },
+          }
+        : {}),
       operatorEvidence: operatorEvidenceSummary,
       ...(dogfood
         ? {
@@ -189,6 +210,18 @@ function collectReleaseCandidateBundle(options = {}) {
       );
     }
     assertReleaseGatesReady(mergedGates);
+    if (communityRelease) {
+      if (communityRelease.missingStatusIds.length) {
+        throw new Error(
+          [
+            "community release status is missing",
+            `${communityRelease.missingStatusIds.length} current gate(s):`,
+            `${communityRelease.missingStatusIds.join(", ")}.`,
+          ].join(" ")
+        );
+      }
+      assertReleaseGatesReady(communityRelease.merged);
+    }
     assertOperatorEvidenceReady(operatorEvidence);
     if (dogfood) {
       if (dogfood.missingStatusIds.length) {
@@ -250,6 +283,17 @@ function collectCutoverSummary(cutoverChecklistFile, cutoverStatusFile) {
   };
 }
 
+function collectReleaseGateSummary(gatesFile, gateStatusFile) {
+  const gates = loadReleaseGates(gatesFile);
+  const status = loadReleaseGateStatus(gateStatusFile);
+  const merged = mergeReleaseGateStatus(gates, status);
+  return {
+    missingStatusIds: missingReleaseGateStatusIds(gates, status),
+    merged,
+    summary: summarizeReleaseGates(merged),
+  };
+}
+
 function collectDogfoodSummary(dogfoodChecklistFile, dogfoodStatusFile) {
   const checklist = loadDogfoodChecklist(dogfoodChecklistFile);
   const status = loadDogfoodStatus(dogfoodStatusFile);
@@ -304,6 +348,12 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     "",
     `- release gates: ${publicText(bundle.inputs.releaseGatesFile)}`,
     `- release gate status: ${publicText(bundle.inputs.releaseGateStatusFile || "not provided")}`,
+    ...(bundle.inputs.communityReleaseStatusFile
+      ? [
+          `- community release gates: ${publicText(bundle.inputs.communityReleaseGatesFile)}`,
+          `- community release status: ${publicText(bundle.inputs.communityReleaseStatusFile)}`,
+        ]
+      : []),
     `- operator evidence: ${publicText(bundle.inputs.operatorEvidenceFile)}`,
     ...(bundle.inputs.dogfoodStatusFile
       ? [
@@ -330,6 +380,9 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
     "## Readiness",
     "",
     readinessLine("release gates", bundle.readiness.releaseGates),
+    ...(bundle.readiness.communityRelease
+      ? [readinessLine("community release", bundle.readiness.communityRelease)]
+      : []),
     readinessLine("operator evidence", bundle.readiness.operatorEvidence),
     ...(bundle.readiness.dogfood
       ? [readinessLine("dogfood", bundle.readiness.dogfood)]
@@ -346,6 +399,13 @@ function formatReleaseCandidateBundleMarkdown(bundle) {
       `${bundle.readiness.preflight.warnings.length} warnings)`,
     ].join(" "),
     `- missing gate status ids: ${idList(bundle.readiness.releaseGates.missingStatusIds)}`,
+    ...(bundle.readiness.communityRelease
+      ? [
+          `- missing community release status ids: ${idList(
+            bundle.readiness.communityRelease.missingStatusIds
+          )}`,
+        ]
+      : []),
     ...(bundle.readiness.dogfood
       ? [`- missing dogfood status ids: ${idList(bundle.readiness.dogfood.missingStatusIds)}`]
       : []),
@@ -425,6 +485,14 @@ function releaseCandidateCommands() {
     {
       label: "release gate readiness",
       command: "npm run v0:gates -- -- --status-file <operator-status-file> --require-ready",
+    },
+    {
+      label: "community release summary",
+      command: "npm run community:gates -- -- --status-file <operator-community-status-file> --summary",
+    },
+    {
+      label: "community release readiness",
+      command: "npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready",
     },
     {
       label: "operator evidence summary",

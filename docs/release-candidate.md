@@ -6,8 +6,8 @@ needs while preparing release notes or a tag/no-tag decision.
 It is intentionally no-network. It reads local release gate definitions,
 optional private release-gate status, optional private operator evidence, git
 metadata, package metadata, optional dogfood status, optional security-review
-status, optional production cutover status, and the same preflight checks used
-by the runtime.
+status, optional production cutover status, optional broad community-release
+status, and the same preflight checks used by the runtime.
 It does not replace `npm run release:check`, CI, Dependency Review, OpenSSF
 Scorecard, or private operator evidence.
 Run the v0 release gate checker after changing release-gate status readiness,
@@ -47,6 +47,7 @@ Render from private operator files:
 
 ```bash
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+npm run release:candidate -- -- --status-file <operator-status-file> --community-status-file <operator-community-status-file> --operator-evidence-file <private-evidence-file>
 ```
 
 Render from a private operator workspace created by
@@ -81,14 +82,15 @@ Fail unless the candidate is ready:
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready
 ```
 
-When `--dogfood-status-file`, `--security-review-status-file`, or
-`--cutover-status-file` is provided, `--require-ready` also fails unless that
-status lists every current checklist item and no provided dogfood, security
-review, or cutover item is pending or blocked.
+When `--community-status-file`, `--dogfood-status-file`,
+`--security-review-status-file`, or `--cutover-status-file` is provided,
+`--require-ready` also fails unless that status lists every current checklist
+item and no provided community-release, dogfood, security review, or cutover
+item is pending or blocked.
 When `--operator-workspace` is provided, the bundle reads the standard
-workspace files for release gates, operator evidence, dogfood status,
-security-review status, and production cutover status. Explicit file flags can
-still override individual workspace paths.
+workspace files for release gates, community-release gates, operator evidence,
+dogfood status, security-review status, and production cutover status.
+Explicit file flags can still override individual workspace paths.
 
 Write the bundle to a file:
 
@@ -110,6 +112,8 @@ paths.
 
 - every current v0 release gate is present in the status file;
 - release gates have no `pending` or `blocked` entries;
+- if provided, community-release status has no missing, `pending`, or
+  `blocked` gates;
 - operator evidence has no `pending` or `blocked` sections;
 - if provided, dogfood status has no missing, `pending`, or `blocked` items;
 - if provided, security-review status has no missing, `pending`, or `blocked`
@@ -119,9 +123,9 @@ paths.
 - preflight passes, with warnings treated as failures when
   `--strict-preflight` is set.
 
-Deferred release gates, operator evidence sections, dogfood items, or
-production cutover items are allowed, but release notes must name the risk and
-follow-up owner.
+Deferred release gates, community-release gates, operator evidence sections,
+dogfood items, or production cutover items are allowed, but release notes must
+name the risk and follow-up owner.
 
 Run the production cutover checker after changing cutover readiness behavior,
 deferral semantics, or public cutover Markdown because release-candidate
@@ -161,6 +165,10 @@ invariants, and the public docs synchronized.
 - current git branch and commit when available;
 - release-gate complete/deferred/pending/blocked counts;
 - missing release-gate status ids;
+- broad community-release complete/deferred/pending/blocked counts when a
+  community status file is provided;
+- missing community-release status ids when a community status file is
+  provided;
 - operator-evidence complete/deferred/pending/blocked counts;
 - dogfood complete/deferred/pending/blocked counts when a dogfood status file
   is provided;

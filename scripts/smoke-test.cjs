@@ -2812,12 +2812,18 @@ const candidateBundleFromWorkspace = releaseCandidateCli.main([
 });
 assert.equal(candidateBundleFromWorkspace.ready, false);
 assert.equal(candidateBundleFromWorkspace.readiness.releaseGates.pending, 20);
+assert.equal(candidateBundleFromWorkspace.readiness.communityRelease.pending, 14);
 assert.equal(candidateBundleFromWorkspace.readiness.dogfood.pending, 23);
 assert.equal(candidateBundleFromWorkspace.readiness.securityReview.pending, 33);
 assert.equal(candidateBundleFromWorkspace.readiness.productionCutover.pending, 33);
+assert.deepEqual(candidateBundleFromWorkspace.readiness.communityRelease.missingStatusIds, []);
 assert.deepEqual(candidateBundleFromWorkspace.readiness.dogfood.missingStatusIds, []);
 assert.equal(JSON.stringify(candidateBundleFromWorkspace).includes(operatorWorkspaceDir), false);
 assert.equal(candidateBundleFromWorkspace.inputs.releaseGateStatusFile, "[operator-workspace]/v0-release-status.json");
+assert.equal(
+  candidateBundleFromWorkspace.inputs.communityReleaseStatusFile,
+  "[operator-workspace]/community-release-status.json"
+);
 assert.equal(candidateBundleFromWorkspace.inputs.operatorEvidenceFile, "[operator-workspace]/operator-evidence.json");
 assert.equal(candidateBundleFromWorkspace.inputs.dogfoodStatusFile, "[operator-workspace]/dogfood-status.json");
 assert.equal(
@@ -2862,6 +2868,10 @@ assert.deepEqual(
     "evidence.json",
     "--operator-workspace",
     "workspace",
+    "--community-gate-file",
+    "community-gates.json",
+    "--community-status-file",
+    "community-status.json",
     "--dogfood-file",
     "dogfood.json",
     "--dogfood-status-file",
@@ -2883,6 +2893,8 @@ assert.deepEqual(
     "--include-git-status",
   ]),
   {
+    communityGateStatusFile: "community-status.json",
+    communityGatesFile: "community-gates.json",
     cutoverChecklistFile: "cutover.json",
     cutoverStatusFile: "cutover-status.json",
     dogfoodChecklistFile: "dogfood.json",
@@ -2910,6 +2922,10 @@ assert.equal(
   path.join("workspace", "v0-release-status.json")
 );
 assert.equal(
+  releaseCandidateWorkspaceDefaults.communityGateStatusFile,
+  path.join("workspace", "community-release-status.json")
+);
+assert.equal(
   releaseCandidateWorkspaceDefaults.operatorEvidenceFile,
   path.join("workspace", "operator-evidence.json")
 );
@@ -2933,6 +2949,8 @@ const releaseCandidateWorkspaceOverrides = releaseCandidateCli.applyOperatorWork
     "status.json",
     "--operator-evidence-file",
     "evidence.json",
+    "--community-status-file",
+    "community-status.json",
     "--dogfood-status-file",
     "dogfood-status.json",
     "--security-review-status-file",
@@ -2942,6 +2960,7 @@ const releaseCandidateWorkspaceOverrides = releaseCandidateCli.applyOperatorWork
   ])
 );
 assert.equal(releaseCandidateWorkspaceOverrides.gateStatusFile, "status.json");
+assert.equal(releaseCandidateWorkspaceOverrides.communityGateStatusFile, "community-status.json");
 assert.equal(releaseCandidateWorkspaceOverrides.operatorEvidenceFile, "evidence.json");
 assert.equal(releaseCandidateWorkspaceOverrides.dogfoodStatusFile, "dogfood-status.json");
 assert.equal(releaseCandidateWorkspaceOverrides.securityReviewStatusFile, "security-status.json");

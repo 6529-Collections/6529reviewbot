@@ -183,6 +183,8 @@ function checkMarkdownOutput(findings) {
     inputs: {
       releaseGatesFile: "config/v0-release-gates.json",
       releaseGateStatusFile: "[operator-workspace]/v0-release-status.json",
+      communityReleaseGatesFile: "config/community-release-gates.json",
+      communityReleaseStatusFile: "[operator-workspace]/community-release-status.json",
       operatorEvidenceFile: "[operator-workspace]/operator-evidence.json",
       dogfoodChecklistFile: "",
       dogfoodStatusFile: "",
@@ -195,6 +197,7 @@ function checkMarkdownOutput(findings) {
     },
     readiness: {
       releaseGates: summary({ missingStatusIds: ["gate-sk-proj-abcdefghijklmnopqrstuvwxyz1234567890"] }),
+      communityRelease: summary({ missingStatusIds: ["community-sk-proj-abcdefghijklmnopqrstuvwxyz1234567890"] }),
       operatorEvidence: summary(),
       preflight: {
         ok: false,
@@ -288,6 +291,9 @@ function checkMarkdownOutput(findings) {
     "reviewed public repo/org disclosure allowlists",
     "6529-io-private-admin-auth",
     "auth-check URL and wallet allowlist evidence reviewed",
+    "community release",
+    "community release gates",
+    "missing community release status ids",
   ]) {
     if (!markdown.includes(expected)) {
       findings.push(`release candidate markdown must include '${expected}'.`);
@@ -314,6 +320,8 @@ function checkCliContract(findings) {
     !objectsEqual(parsed, {
       gateStatusFile: "",
       gatesFile: "config/v0-release-gates.json",
+      communityGatesFile: "config/community-release-gates.json",
+      communityGateStatusFile: "",
       cutoverChecklistFile: "config/production-cutover-checklist.json",
       cutoverStatusFile: "",
       dogfoodChecklistFile: "config/dogfood-checklist.json",
@@ -337,6 +345,7 @@ function checkCliContract(findings) {
   const defaults = releaseCandidateCli.applyOperatorWorkspaceDefaults(parsed);
   const expectedWorkspaceFiles = {
     gateStatusFile: "v0-release-status.json",
+    communityGateStatusFile: "community-release-status.json",
     operatorEvidenceFile: "operator-evidence.json",
     dogfoodStatusFile: "dogfood-status.json",
     securityReviewStatusFile: "security-review-status.json",
@@ -372,6 +381,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "[operator-workspace]",
     "[external-path-set]",
     "This bundle is public-safe.",
+    "communityRelease",
+    "community release status is missing",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -383,6 +394,8 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "DEFAULT_OPERATOR_WORKSPACE_FILES",
     "privatePathRoots",
+    "communityGateStatusFile",
+    "communityReleaseStatus",
     "args.operatorWorkspaceDir ? [args.operatorWorkspaceDir] : []",
     "npm --silent run release:candidate",
     "--operator-workspace <path>",
@@ -399,6 +412,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-candidate.md": [
       "npm run check:release-candidate",
       "release-candidate contract check",
+      "--community-status-file",
       "[operator-workspace]",
       "[external-path-set]",
     ],
