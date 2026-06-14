@@ -304,8 +304,8 @@ Build the operator experience:
 - public-safe operator evidence capture patterns, including silent npm output
   for commands that include private paths;
 - support process for adopters.
-- public-safe operator evidence templates for release, dogfood, and production
-  deployment proof.
+- public-safe operator evidence templates for release, dogfood, production
+  deployment proof, and alert delivery plan review.
 - production cutover checklist and private status overlay for go/no-go
   readiness before live dogfood traffic.
 - release-candidate bundles that can include production cutover status when
@@ -559,6 +559,8 @@ Completed in `6529reviewbot`:
   plan, dashboard deployment plan, and alert delivery plan commands so release
   evidence and deployment handoff commands stay together in the private
   operator flow.
+- operator evidence template guidance now includes alert delivery plan command
+  and review fields before alert destination and dry-run evidence.
 - reviewable GitHub App manifest template for production registration.
 - GitHub App manifest renderer for host-specific validation and local
   registration forms.

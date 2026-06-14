@@ -435,28 +435,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes alert delivery evidence PR: merged as PR #237, merge commit `2701f08`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/alert-delivery-cutover-gate`.
-- Current local changes: adding `alert-delivery-plan-reviewed` to production
-  cutover before `alerts-deliver`, updating the public status example,
-  production cutover/alert delivery docs, contract checks, smoke counts,
-  release-readiness, roadmap, changelog, and durable manager memory so alert
-  delivery cannot be marked ready without reviewed alert delivery-plan
-  evidence.
+- Alert delivery cutover gate PR: merged as PR #238, merge commit `b5d8436`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/operator-evidence-alert-plan`.
+- Current local changes: adding alert delivery plan command/review fields to
+  the operator evidence template, updating the public production-evidence
+  example for 32 cutover items, and updating operator evidence contracts,
+  release-readiness, roadmap, changelog, and durable manager memory so private
+  operator evidence captures the reviewed alert delivery handoff before alert
+  destination and dry-run evidence.
 - Current local validation:
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
-    and 6 docs checked;
-  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 7 docs
-    checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
+    cases, and 6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #237,
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #238,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including production cutover validation
-    with 32 checklist items and alert delivery-plan evidence ordering.
+  - `npm run release:check` passed, including operator evidence validation
+    for alert delivery-plan fields and the production-evidence `2/32`
+    cutover summary.
 
 ## Key Decisions
 

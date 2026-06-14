@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added alert delivery plan fields to the operator evidence template.
 - Added alert delivery-plan evidence to production cutover before scheduled
   alert delivery can be marked ready.
 - Added alert delivery plan evidence to release notes draft, template, and

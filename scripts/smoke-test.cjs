@@ -2079,7 +2079,7 @@ assert.equal(productionEvidenceSummary.pending, 8);
 assert.equal(productionEvidenceSummary.deferred, 1);
 assert.match(
   operatorEvidence.renderOperatorEvidenceSummaryMarkdown(productionEvidenceExample),
-  /Production cutover summary: 2\/31 complete/
+  /Production cutover summary: 2\/32 complete/
 );
 const sensitiveOperatorEvidence = operatorEvidence.validateOperatorEvidence({
   version: 1,

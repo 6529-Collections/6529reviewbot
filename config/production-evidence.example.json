@@ -12,7 +12,7 @@
     "releaseGateSummary": "0/20 complete, example file only",
     "releaseGateReadyCheck": "not run for example evidence",
     "productionCutoverStatusFile": "private production cutover status JSON",
-    "productionCutoverSummary": "2/31 complete, example file only",
+    "productionCutoverSummary": "2/32 complete, example file only",
     "productionCutoverReadyCheck": "not run for example evidence"
   },
   "sections": {
@@ -38,7 +38,7 @@
     },
     "worker-and-alerts": {
       "status": "pending",
-      "notes": "Enable one worker path and scheduled operator alert delivery."
+      "notes": "Render the alert delivery plan, enable one worker path, and verify scheduled operator alert delivery."
     },
     "6529-io-surfaces": {
       "status": "pending",
