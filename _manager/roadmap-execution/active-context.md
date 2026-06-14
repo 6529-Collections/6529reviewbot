@@ -493,23 +493,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes run-control warning PR: merged as PR #266, merge commit `fd30d49`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-safety-warning-coverage`.
-- Current local changes: expanding release notes publication recommendation
-  warnings for base-ref target config and operator-owned alert routing safety
-  language.
+- Release notes safety warning coverage PR: merged as PR #267, merge commit `0536c9a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-tag-plan-warning-gate`.
+- Current local changes: make the final release tag plan gate treat
+  release-note recommendation warnings as blocking when `--require-ready` is
+  used, while preserving advisory warnings for normal dry-run plans.
 - Current local validation:
-  - `npm run check:release-notes-publication` passed with 9 publication cases
-    and 7 docs checked;
+  - `npm run check:release-tag-plan` passed with 7 plan cases and 6 docs
+    checked;
+  - `npm run check:release-operations` passed with 7 phases and 110 tools;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 176 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #266,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #267,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 176 CommonJS files checked and the
-    expanded release notes safety warning coverage exercised.
+    7-case release tag plan contract exercised.
 
 ## Key Decisions
 

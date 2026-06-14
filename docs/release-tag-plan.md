@@ -26,7 +26,8 @@ npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.m
 Use `--require-ready` for the final pre-tag gate. This exits non-zero unless
 the working tree is clean, the branch is `main`, the local branch is neither
 ahead nor behind its upstream, the local tag is absent, and completed release
-notes are supplied, publishable, and titled for the planned release:
+notes are supplied, publishable, free of release-note warnings, and titled for
+the planned release:
 
 ```bash
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
@@ -51,7 +52,7 @@ npm run check:release-tag-plan
 ```
 
 It verifies the dry-run behavior, clean-main readiness gate, release-notes
-publication integration, CLI flags, release operations map entries, smoke-test
-wiring, and public docs.
+publication integration, release-note warnings in the final gate, CLI flags,
+release operations map entries, smoke-test wiring, and public docs.
 
 The check is included in `npm run release:check`.

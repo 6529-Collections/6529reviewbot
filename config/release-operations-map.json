@@ -841,7 +841,7 @@
           "id": "release-tag-plan",
           "script": "release:tag-plan",
           "args": "-- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready",
-          "purpose": "Build a dry-run tag plan that checks clean synced main and completed release notes, then prints the exact tag and GitHub Release steps for the operator.",
+          "purpose": "Build a dry-run tag plan that checks clean synced main, completed release notes, release-note warnings, release notes title match, and local tag availability, then prints the exact tag and GitHub Release steps for the operator.",
           "doc": "docs/release-tag-plan.md",
           "privateInputs": "Reads local git state and the operator-completed public release notes Markdown.",
           "publicOutput": "Safe when the checked release notes file is intended for publication and local paths are not included in copied command lines."
