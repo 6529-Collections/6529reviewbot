@@ -1974,6 +1974,20 @@ assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "checkout D:\\repos\\6529reviewbot\n").length,
   0
 );
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "Use `reviewbot.example.com` only in explanatory prose.\n"
+  ).length,
+  0
+);
+assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "```bash\nnpm run admin:snapshot -- -- --base-url https://reviewbot.example.com\n```\n"
+  )[0].rule,
+  "reserved_bot_host_shell_command"
+);
 assert.equal(containerImageCheck.checkContainerImage().runtimeCopies, 6);
 const containerPublishPlanContractResult =
   containerPublishPlanContractCheck.checkContainerPublishPlanContract();

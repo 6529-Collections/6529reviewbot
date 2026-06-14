@@ -111,7 +111,10 @@ matches in output and fails on live-looking cloud account ids, ARNs, provider
 keys, GitHub tokens, AWS access keys, alert webhook URLs, and private key
 blocks in public artifacts. It also flags common local private paths, such as
 Windows private folders and Unix/macOS home directories, so public examples use
-placeholders instead of operator-specific filesystem locations.
+placeholders instead of operator-specific filesystem locations. Shell command
+blocks also fail when they use the reserved bot example host
+`reviewbot.example.com`; use `<production-bot-origin>` for operator commands
+and keep the reserved host only in explanatory prose or public env templates.
 
 ## Escalation
 
