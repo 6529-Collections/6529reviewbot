@@ -136,11 +136,23 @@ Release/cutover evidence summary:
 ```text
 Central budget policies reviewed:
 Central budget policies applied:
+Fail-open/fail-closed behavior accepted:
+```
+
+## Model Pricing
+
+```text
+Model price coverage command:
 Model price sources reviewed:
 Model price source-checked timestamps recorded:
+Catalog default lane coverage verified:
+Stale model-price override accepted:
+Zero-price override accepted:
+Model prices dry-run reviewed:
 Model price source freshness policy:
 Model prices applied:
-Fail-open/fail-closed behavior accepted:
+Admin model-price status checked:
+Release-note override disclosure:
 ```
 
 ## Worker Dispatch Credentials

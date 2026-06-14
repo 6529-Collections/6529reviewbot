@@ -182,6 +182,12 @@ source-evidence freshness through `GET /api/admin/model-prices/status`. The
 endpoint returns rates, source hosts, and freshness posture, but not operator
 notes or full source URLs. See [Usage API](usage-api.md).
 
+Record the reviewed price-file command, catalog coverage result, source
+freshness policy, any stale or zero-price override, apply summary, and admin
+model-price status check in the private `model-pricing` operator evidence
+section. Keep the raw operator price file private unless an operator
+intentionally publishes a redacted excerpt.
+
 ## Estimation Behavior
 
 At usage-write time the runner selects the active row where:

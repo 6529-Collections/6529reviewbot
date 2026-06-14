@@ -594,32 +594,31 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dashboard deployment-plan operator evidence PR: merged as PR #316, merge commit `ab476aa`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-tag-plan-operator-evidence`.
-- Current local changes: add a dedicated `release-tag-plan` section to
-  structured operator evidence, update the public example and operator
-  template, surface it in release-candidate summaries, and keep the
-  operator-evidence, release-candidate, release-tag-plan, and
-  release-operations contracts checking the new section.
+- Release tag-plan operator evidence PR: merged as PR #317, merge commit `5ac0584`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-pricing-operator-evidence`.
+- Current local changes: add a dedicated `model-pricing` section to structured
+  operator evidence so provider price-source review, catalog coverage,
+  stale/zero-price overrides, apply summaries, and admin price-status checks
+  are tracked separately from central budget-policy evidence.
 - Current local validation:
-  - `gh run watch 27498604723 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge CI;
-  - `gh run watch 27498604727 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge OpenSSF Scorecard;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
     cases, and 5 docs checked;
-  - `npm run check:release-tag-plan` passed with 11 plan cases and 6 docs
-    checked;
-  - `npm test` passed;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
+    docs checked;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #317, and
+    5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #316, and
-    5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` passed;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    release tag-plan operator evidence section exercised.
+    model-pricing operator evidence section exercised.
 
 ## Key Decisions
 
@@ -657,6 +656,10 @@ merged PRs.
   slots until TTL.
 - Model pricing should be operator-maintained through reviewed price files and
   source URLs instead of hardcoded stale prices in the public repo.
+- Model pricing is now a first-class `model-pricing` operator evidence section
+  separate from central `budget-and-pricing` policy evidence, because
+  provider price-source verification and budget-cap approval are different
+  release decisions.
 - Model price apply should reject zero-rate placeholders by default; a real
   zero price requires explicit operator intent and provider documentation.
 - Model price apply should reject stale or future-dated source-check evidence
