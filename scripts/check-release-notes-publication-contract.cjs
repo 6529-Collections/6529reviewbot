@@ -45,7 +45,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   checkNegatedReadyValidationRejected(findings);
   checkVagueValidationRejected(findings);
   checkModelPriceOverrideDisclosure(findings);
-  checkRunControlRecommendation(findings);
+  checkSafetyRecommendations(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -184,28 +184,36 @@ function checkModelPriceOverrideDisclosure(findings) {
   }
 }
 
-function checkRunControlRecommendation(findings) {
-  const report = validateReleaseNotesPublication(
-    completeReleaseNotesFixture().replace(
-      "run-control mode is `enforce`, ",
-      ""
-    )
-  );
-  if (!report.ready) {
-    findings.push(`missing run-control recommendation should warn, not fail readiness: ${report.errors.join("; ")}`);
-  }
-  if (!report.warnings.some((warning) => warning.includes("run-control mode is `enforce`"))) {
-    findings.push("release notes publication warnings must recommend run-control enforcement language.");
-  }
-  const strictReport = validateReleaseNotesPublication(
-    completeReleaseNotesFixture().replace(
-      "run-control mode is `enforce`, ",
-      ""
-    ),
-    { requireNoWarnings: true }
-  );
-  if (strictReport.ready) {
-    findings.push("release notes publication check must promote missing run-control warning when requireNoWarnings is set.");
+function checkSafetyRecommendations(findings) {
+  for (const [description, text, expectedWarning] of [
+    ["run-control enforcement", "run-control mode is `enforce`, ", "run-control mode is `enforce`"],
+    [
+      "base-ref target config",
+      "target repo configuration is loaded from the base ref, ",
+      "target repo configuration is loaded from the base ref",
+    ],
+    [
+      "operator-owned alert channel",
+      " and route to an operator-owned channel",
+      "route to an operator-owned channel",
+    ],
+  ]) {
+    const report = validateReleaseNotesPublication(
+      completeReleaseNotesFixture().replace(text, "")
+    );
+    if (!report.ready) {
+      findings.push(`missing ${description} recommendation should warn, not fail readiness: ${report.errors.join("; ")}`);
+    }
+    if (!report.warnings.some((warning) => warning.includes(expectedWarning))) {
+      findings.push(`release notes publication warnings must recommend ${description} language.`);
+    }
+    const strictReport = validateReleaseNotesPublication(
+      completeReleaseNotesFixture().replace(text, ""),
+      { requireNoWarnings: true }
+    );
+    if (strictReport.ready) {
+      findings.push(`release notes publication check must promote missing ${description} warning when requireNoWarnings is set.`);
+    }
   }
 }
 
@@ -245,6 +253,8 @@ function checkSourceAnchors(sourceTexts, findings) {
       "FAILED_VALIDATION_PATTERN",
       "READY_VALIDATION_PATTERN",
       "run-control mode is `enforce`",
+      "target repo configuration is loaded from the base ref",
+      "route to an operator-owned channel",
       "No accepted deferrals",
       "Dashboard deployment plan:",
       "Alert delivery plan:",

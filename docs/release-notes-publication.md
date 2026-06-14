@@ -62,7 +62,9 @@ The publication guard verifies:
 
 Warnings remind operators to keep the standard safety language about
 trusted-actor admission, budget enforcement, run-control enforcement,
-bot-owned infrastructure, exact tag/commit pinning, and emergency rollback.
+bot-owned infrastructure, base-ref target repository configuration,
+operator-owned alert routing, exact tag/commit pinning, and emergency
+rollback.
 
 ## Relationship To Drafts
 
