@@ -5626,3 +5626,25 @@
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     README community-release evidence flow exercised.
+- Merged `6529reviewbot` PR #308 as `943610c`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-notes-community-status-guard` increment:
+  - harden release notes publication validation so empty bullet fields cannot
+    inherit the next bullet's text, and add explicit contract coverage that
+    completed release notes cannot omit community-release status evidence before
+    tag, GitHub Release, or broad community-use publication.
+- Local validation for `codex/release-notes-community-status-guard`:
+  - `gh run watch 27496674873 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #308 post-merge CI;
+  - `gh run watch 27496674868 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #308 post-merge OpenSSF Scorecard;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:release-notes-publication` passed with 11 publication
+    cases and 7 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #308,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    release-notes missing-community-status guard exercised.

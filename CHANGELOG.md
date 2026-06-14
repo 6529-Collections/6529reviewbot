@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release notes publication contract coverage for missing
+  community-release status evidence and empty bullet field parsing.
 - Added community-release status requirements to release notes publication checks.
 - Added community-release status evidence to release notes drafts.
 - Added community-release status summaries to release-candidate bundles.
