@@ -517,6 +517,25 @@ assert.equal(modelPriceFile.prices[0].provider, "anthropic");
 assert.equal(modelPriceFile.prices[0].sourceCheckedAt, "2026-06-12T12:00:00.000Z");
 assert.equal(modelPriceFile.prices[0].notes.length, 1000);
 assert.match(modelPriceFile.prices[0].notes, /sk-\[redacted\]/);
+assert.throws(
+  () =>
+    modelPrices.validateModelPriceFile({
+      version: 1,
+      currency: "USD",
+      prices: [
+        {
+          provider: "anthropic",
+          model: "claude-opus-4-8",
+          inputUsdPerMillion: 1,
+          outputUsdPerMillion: 2,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "http://example.com/provider-pricing",
+          sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+        },
+      ],
+    }),
+  /absolute https URL/
+);
 const modelPriceStatements = modelPrices.modelPriceStatements("reviewbot", modelPriceFile);
 assert.equal(modelPriceStatements.length, 2);
 const renderedModelPriceSql = modelPrices.renderModelPriceSql("reviewbot", modelPriceFile);

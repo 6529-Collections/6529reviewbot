@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Required model price source URLs to use HTTPS before pricing evidence can be
+  applied or used for catalog coverage.
 - Hardened release notes publication to reject Git-ref-unsafe title versions
   before tag or GitHub Release text can be published.
 - Hardened release tag planning to reject Git-ref-unsafe tag names before

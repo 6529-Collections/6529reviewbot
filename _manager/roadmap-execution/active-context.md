@@ -499,26 +499,26 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release tag Git-ref validation PR: merged as PR #269, merge commit `55a85c4`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-title-ref-safety`.
-- Current local changes: share release-version safety helpers and make release
-  notes publication reject Git-ref-unsafe title versions before tag or GitHub
-  Release text can be published.
+- Release notes title ref-safety PR: merged as PR #270, merge commit `9fab5bc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-price-source-https`.
+- Current local changes: require model price source URLs to use HTTPS and
+  document the operator evidence requirement.
 - Current local validation:
-  - `npm run check:release-notes-publication` passed with 10 publication cases
-    and 7 docs checked;
-  - `npm run check:release-tag-plan` passed with 8 plan cases and 6 docs
-    checked;
-  - `npm run check:release-operations` passed with 7 phases and 110 tools;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and
+    8 docs checked;
+  - `npm run check:model-price-coverage` passed with 6 coverage cases and
+    8 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 177 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #269,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #270,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 177 CommonJS files checked and the
-    10-case release notes publication contract exercised.
+    HTTPS model price source URL guard exercised.
 
 ## Key Decisions
 

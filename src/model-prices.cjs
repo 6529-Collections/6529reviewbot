@@ -552,10 +552,10 @@ function urlField(value, source) {
   try {
     parsed = new URL(text);
   } catch {
-    throw new Error(`${source} must be an absolute http(s) URL.`);
+    throw new Error(`${source} must be an absolute https URL.`);
   }
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    throw new Error(`${source} must be an absolute http(s) URL.`);
+  if (parsed.protocol !== "https:") {
+    throw new Error(`${source} must be an absolute https URL.`);
   }
   return text;
 }
