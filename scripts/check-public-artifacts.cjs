@@ -60,6 +60,10 @@ const localPrivatePathPattern = new RegExp(
 
 const staticRules = [
   {
+    name: "bearer_token",
+    pattern: /\bBearer\s+[A-Za-z0-9._~+/=-]{20,}\b/gi,
+  },
+  {
     name: "aws_access_key_id",
     pattern: /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g,
   },

@@ -660,28 +660,26 @@ merged PRs.
 - Public renderer redaction centralization PR: merged as PR #339, merge commit `4da9d61`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `4da9d61`.
-- Current branch: `codex/public-renderer-redaction-fixtures`.
-- Current local changes: export the remaining internal public redaction helper
-  entry points and add direct behavior fixtures in the diagnostics redaction
-  contract for all 9 public renderers, proving shared bearer, GitHub token,
-  provider key, AWS ARN, and AWS account-id redaction at runtime; update smoke
-  coverage, changelog, and durable manager memory.
+- Public renderer redaction behavior fixtures PR: merged as PR #340, merge commit `7d22b5b`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `7d22b5b`.
+- Current branch: `codex/bearer-token-public-artifact-scan`.
+- Current local changes: add bearer-token detection to the public artifact
+  leak scanner, cover it in smoke tests, document the scanner coverage in the
+  support runbook, and update changelog and durable manager memory.
 - Current local validation:
-  - `gh run watch 27506197871 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge CI;
-  - `gh run watch 27506197853 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge OpenSSF Scorecard;
-  - `npm run check:diagnostics-redaction` passed with 10 fixtures, 9 public
-    renderers, 9 renderer behavior cases, and 6 docs checked;
-  - `npm test` passed after asserting the 9 public renderer behavior cases in
-    smoke coverage;
-  - `npm run check:docs` passed with 76 files checked;
-  - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #339, and
-    5 docs checked;
+  - `gh run list --repo 6529-Collections/6529reviewbot --commit 7d22b5b363dda4659275bef90256563833cf01c5 --limit 10` passed by showing PR #340 post-merge CI run `27506484178` and OpenSSF Scorecard run `27506484173` completed successfully;
   - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` passed after adding bearer-token public artifact coverage;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:support-runbooks` passed with 4 support cases, 3 incident
+    cases, and 7 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #340, and
+    5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    public renderer redaction behavior fixtures exercised.
+    bearer-token public artifact scanner guard exercised.
 
 ## Key Decisions
 
