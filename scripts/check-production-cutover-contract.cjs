@@ -97,6 +97,84 @@ function checkChecklistConfig(findings) {
       }
     }
   }
+  const awsLedgerPhase = checklist.phases.find((phase) => phase.id === "aws-ledger-and-secrets");
+  if (!awsLedgerPhase) {
+    findings.push("production cutover checklist must include the aws-ledger-and-secrets phase.");
+  } else {
+    const itemIds = awsLedgerPhase.items.map((item) => item.id);
+    const iamIndex = itemIds.indexOf("aws-iam-reviewed");
+    const providerConsoleIndex = itemIds.indexOf("provider-console-readiness-reviewed");
+    const modelPricesIndex = itemIds.indexOf("model-prices-applied");
+    if (iamIndex === -1) {
+      findings.push("aws-ledger-and-secrets phase must include aws-iam-reviewed.");
+    } else {
+      const iam = awsLedgerPhase.items[iamIndex];
+      for (const snippet of [
+        "AWS IAM/OIDC trust",
+        "Data API scope",
+        "database grants",
+        "runtime secret-store principals",
+        "target-repo/browser secret exclusion",
+        "break-glass revoke paths",
+      ]) {
+        if (!iam.title.includes(snippet)) {
+          findings.push(`aws-iam-reviewed title must include '${snippet}'.`);
+        }
+      }
+      for (const snippet of [
+        "iam-and-secrets operator evidence",
+        "without live account ids",
+        "ARNs",
+        "secret names",
+        "private principals",
+      ]) {
+        if (!iam.evidence.includes(snippet)) {
+          findings.push(`aws-iam-reviewed evidence must include '${snippet}'.`);
+        }
+      }
+      if (iam.runbook !== "infra/aws/README.md") {
+        findings.push("aws-iam-reviewed runbook must be infra/aws/README.md.");
+      }
+    }
+    if (providerConsoleIndex === -1) {
+      findings.push("aws-ledger-and-secrets phase must include provider-console-readiness-reviewed.");
+    } else {
+      if (modelPricesIndex !== -1 && providerConsoleIndex > modelPricesIndex) {
+        findings.push("provider-console-readiness-reviewed must come before model-prices-applied.");
+      }
+      const providerConsole = awsLedgerPhase.items[providerConsoleIndex];
+      for (const snippet of [
+        "Provider-console readiness",
+        "enabled accounts/projects",
+        "key custody",
+        "configured-model availability",
+        "quotas/rate limits",
+        "spend caps or credit limits",
+        "billing alerts",
+        "data-retention/training settings",
+        "emergency key disablement",
+        "before live model calls",
+      ]) {
+        if (!providerConsole.title.includes(snippet)) {
+          findings.push(`provider-console-readiness-reviewed title must include '${snippet}'.`);
+        }
+      }
+      for (const snippet of [
+        "provider-console-readiness operator evidence",
+        "without API keys",
+        "billing account identifiers",
+        "private project ids",
+        "provider screenshots",
+      ]) {
+        if (!providerConsole.evidence.includes(snippet)) {
+          findings.push(`provider-console-readiness-reviewed evidence must include '${snippet}'.`);
+        }
+      }
+      if (providerConsole.runbook !== "docs/provider-setup.md") {
+        findings.push("provider-console-readiness-reviewed runbook must be docs/provider-setup.md.");
+      }
+    }
+  }
   const serverWorkerPhase = checklist.phases.find((phase) => phase.id === "server-and-worker");
   if (!serverWorkerPhase) {
     findings.push("production cutover checklist must include the server-and-worker phase.");
@@ -561,6 +639,8 @@ function checkDocs(docTexts, findings) {
       "worker dispatch credential posture",
       "public repo/org disclosure allowlists",
       "auth-check URL and wallet allowlist",
+      "iam-and-secrets operator evidence",
+      "provider-console-readiness operator evidence",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["production cutover contract"],

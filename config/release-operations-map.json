@@ -460,7 +460,7 @@
         {
           "id": "production-cutover-contract",
           "script": "check:production-cutover",
-          "purpose": "Verify production cutover checklist/status readiness, production deployment plan evidence, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify production cutover checklist/status readiness, production deployment plan evidence, provider-console readiness evidence, IAM and secret-custody evidence, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/production-cutover.md",
           "publicOutput": "Safe."
         },

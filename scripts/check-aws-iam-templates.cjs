@@ -222,7 +222,10 @@ function checkDocs(docTexts, findings) {
   const awsItem = JSON.stringify(checklist);
   for (const snippet of [
     "aws-iam-reviewed",
-    "AWS IAM/OIDC trust and identity policies are reviewed from least-privilege templates",
+    "AWS IAM/OIDC trust",
+    "iam-and-secrets operator evidence",
+    "runtime secret-store principals",
+    "break-glass revoke paths",
     "infra/aws/README.md",
   ]) {
     if (!awsItem.includes(snippet)) {

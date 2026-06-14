@@ -609,13 +609,15 @@ merged PRs.
 - Provider console readiness evidence PR: merged as PR #322, merge commit `86d3faf`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `86d3faf`.
-- Current branch: `codex/iam-secrets-evidence-hardening`.
-- Current local changes: harden the existing `iam-and-secrets` operator
-  evidence section so OIDC subject/audience scope, bot-repository or
-  protected-environment role trust, Data API cluster/secret resource scope,
-  database grants, SNS/SES resource scope, runtime secret-store access
-  principals, target-repo/browser secret exclusion, rotation ownership, and
-  break-glass revoke paths are tracked before production AWS or secret use.
+- IAM and secret custody evidence PR: merged as PR #323, merge commit `c06e736`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `c06e736`.
+- Current branch: `codex/cutover-provider-iam-evidence-gates`.
+- Current local changes: add production cutover checklist/status gates for
+  provider-console readiness and IAM/secret-custody operator evidence before
+  live model calls or production AWS/secret use; synchronize production
+  cutover docs, release readiness, roadmap, release operations map, changelog,
+  and contract checks.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -642,7 +644,31 @@ merged PRs.
   - `npm test` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the IAM
-    and secret-custody evidence boundary exercised.
+    and secret-custody evidence boundary exercised;
+  - `gh run watch 27500908345 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #323 post-merge CI;
+  - `gh run watch 27500908329 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #323 post-merge OpenSSF Scorecard;
+  - `npm test` initially caught stale production-cutover item/pending counts
+    after adding the new gate; updated smoke expectations and reran
+    successfully;
+  - `npm run release:check` initially caught the AWS IAM template checker still
+    pinning the older generic `aws-iam-reviewed` checklist wording; updated it
+    to assert the new `iam-and-secrets` evidence boundary and reran
+    successfully;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
+    9 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:checklist-runbooks` passed with 91 links in 3 files;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #323,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    provider-console and IAM/secret-custody production cutover gates exercised.
 
 ## Key Decisions
 

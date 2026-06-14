@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added production cutover gates for provider-console readiness and
+  IAM/secret-custody operator evidence before live model calls or production
+  AWS/secret use.
 - Hardened IAM and secret-custody operator evidence for OIDC scope,
   bot-repository or protected-environment trust, Data API resource scope,
   database grants, SNS/SES resource scope, runtime secret-store access,

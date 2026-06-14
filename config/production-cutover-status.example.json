@@ -40,7 +40,7 @@
     },
     "aws-iam-reviewed": {
       "status": "pending",
-      "notes": "Review least-privilege policy artifacts in the private operator workspace."
+      "notes": "Review the iam-and-secrets operator evidence for OIDC scope, Data API resources, database grants, secret-store principals, target-repo/browser exclusion, rotation, and break-glass paths."
     },
     "ledger-schema-applied": {
       "status": "pending",
@@ -49,6 +49,10 @@
     "budget-policies-applied": {
       "status": "pending",
       "notes": "Apply reviewed central budget policies or document conservative environment caps."
+    },
+    "provider-console-readiness-reviewed": {
+      "status": "pending",
+      "notes": "Review provider-console-readiness operator evidence before live model calls."
     },
     "model-prices-applied": {
       "status": "deferred",

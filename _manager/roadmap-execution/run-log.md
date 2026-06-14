@@ -6110,3 +6110,38 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the IAM
     and secret-custody evidence boundary exercised.
+- Merged `6529reviewbot` PR #323 as `c06e736`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/cutover-provider-iam-evidence-gates` increment:
+  - add production cutover checklist/status gates for provider-console
+    readiness and IAM/secret-custody operator evidence before live model calls
+    or production AWS/secret use;
+  - update production cutover docs, release readiness, roadmap, release
+    operations map, changelog, and durable manager memory;
+  - keep the production-cutover and release-operations contracts checking the
+    new gate wording, ordering, runbooks, and public-safe evidence boundary.
+- Local validation for `codex/cutover-provider-iam-evidence-gates` so far:
+  - `gh run watch 27500908345 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #323 post-merge CI;
+  - `gh run watch 27500908329 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #323 post-merge OpenSSF Scorecard;
+  - `npm test` initially caught stale production-cutover item/pending counts
+    after adding the new gate; updated smoke expectations and reran
+    successfully;
+  - `npm run release:check` initially caught the AWS IAM template checker still
+    pinning the older generic `aws-iam-reviewed` checklist wording; updated it
+    to assert the new `iam-and-secrets` evidence boundary and reran
+    successfully;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
+    9 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:checklist-runbooks` passed with 91 links in 3 files;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #323,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    provider-console and IAM/secret-custody production cutover gates exercised.

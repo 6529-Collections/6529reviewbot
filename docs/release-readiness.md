@@ -114,7 +114,8 @@ Ready for community review:
 - server-side 6529.io usage API client helper for signed admin endpoint calls;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
 - production cutover checklist and validator for go/no-go tracking before live
-  dogfood traffic, including the dogfood promotion packet gate and dashboard
+  dogfood traffic, including provider-console readiness, IAM and
+  secret-custody evidence, the dogfood promotion packet gate, and dashboard
   deployment plan evidence before 6529.io route exposure;
 - scheduled operator alerts for spend, failed jobs, and stale claims with
   stdout, webhook, SNS, and SES email delivery;
@@ -300,6 +301,9 @@ Ready for community review:
   plan before public or private 6529.io dashboard routes are exposed;
 - production cutover checklist evidence now requires the alert delivery plan
   before scheduled operator alert delivery is marked ready;
+- production cutover checklist evidence now requires provider-console
+  readiness before live model calls and IAM/secret-custody evidence before
+  production AWS or secret use;
 - v0 release gate evidence now requires reviewed container publish plan
   evidence before containerized App server images satisfy the tag checklist;
 - v0 release gate evidence now requires reviewed alert delivery plan evidence
@@ -795,10 +799,11 @@ tag-plan evidence, public-summary redaction, source invariants, and docs stay
 aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, production deployment
-plan evidence, container publish-plan evidence, worker dispatch credential
-evidence, public dashboard disclosure allowlist evidence, private admin
-auth-check evidence, deferral semantics, Markdown redaction, source invariants,
-and docs stay aligned.
+plan evidence, container publish-plan evidence, provider-console readiness
+evidence, IAM and secret-custody evidence, worker dispatch credential evidence,
+public dashboard disclosure allowlist evidence, private admin auth-check
+evidence, deferral semantics, Markdown redaction, source invariants, and docs
+stay aligned.
 `npm run check:security-review-status` is included in `npm run release:check`
 and verifies security review status readiness, deferral semantics, Markdown
 redaction, source invariants, and docs stay aligned.
