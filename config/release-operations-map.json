@@ -227,6 +227,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "model-price-coverage-contract",
+          "script": "check:model-price-coverage",
+          "purpose": "Verify model price coverage behavior keeps catalog default provider/model lane coverage, required input/output rates, freshness, zero-placeholder, and placeholder-source checks synchronized.",
+          "doc": "docs/model-pricing.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "provider-contract",
           "script": "check:providers",
           "purpose": "Verify supported provider constants stay synchronized with model catalog providers, preflight key requirements, workflow dispatch options, and provider docs.",
@@ -554,8 +561,8 @@
         {
           "id": "model-prices",
           "script": "model-prices",
-          "args": "-- -- --file <reviewed-model-price-file.json>",
-          "purpose": "Validate provider/model price rows, source URLs, and source-checked freshness before optional apply.",
+          "args": "-- -- --file <reviewed-model-price-file.json> --require-catalog-coverage",
+          "purpose": "Validate provider/model price rows, catalog default lane coverage, source URLs, and source-checked freshness before optional apply.",
           "doc": "docs/model-pricing.md",
           "privateInputs": "Reviewed price files can include operator notes.",
           "publicOutput": "Share provider/model coverage and freshness status, not private notes."

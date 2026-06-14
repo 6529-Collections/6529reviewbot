@@ -102,6 +102,9 @@ fallbacks, provider-default docs, and conservative starter lanes aligned.
 `npm run check:model-pricing-runbook` keeps model pricing guidance aligned
 across price-file shape, source-checked evidence, stale/zero overrides, apply
 behavior, and estimation semantics.
+`npm run check:model-price-coverage` keeps model price coverage aligned so
+operator-owned price files can be audited against catalog default lanes before
+estimates rely on them.
 `npm run check:providers` keeps supported provider constants, preflight key
 requirements, workflow dispatch choices, and provider docs aligned.
 `npm run check:provider-adapters` keeps Anthropic, OpenAI, and OpenRouter
@@ -237,6 +240,8 @@ The local quality gate command inventory is:
 - `npm run check:support-bundle`
 - `npm run check:diagnostics-redaction`
 - `npm run check:model-defaults`
+- `npm run check:model-pricing-runbook`
+- `npm run check:model-price-coverage`
 - `npm run check:providers`
 - `npm run check:provider-adapters`
 - `npm run check:ledger-privacy`

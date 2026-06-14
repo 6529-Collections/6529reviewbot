@@ -3,8 +3,10 @@
 "use strict";
 
 const { safeErrorLine } = require("../src/diagnostics.cjs");
+const { loadModelCatalog } = require("../src/model-catalog.cjs");
 const {
   applyModelPrices,
+  assertModelPriceCatalogCoverage,
   loadModelPriceFile,
   renderModelPriceSql,
 } = require("../src/model-prices.cjs");
@@ -14,6 +16,13 @@ function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
   const document = loadModelPriceFile(args.file);
   const schema = args.schema || process.env.REVIEW_USAGE_DB_SCHEMA || "reviewbot";
+  if (args.requireCatalogCoverage) {
+    assertModelPriceCatalogCoverage(document, loadModelCatalog({ path: args.catalog }), {
+      allowStaleSource: args.allowStaleSource,
+      allowZeroPrice: args.allowZeroPrice,
+      maxSourceAgeDays: args.maxSourceAgeDays,
+    });
+  }
   if (!args.apply) {
     const sql = renderModelPriceSql(schema, document);
     process.stdout.write(`${sql || "-- no model price rows"}\n`);
@@ -36,7 +45,9 @@ function parseArgs(argv) {
     allowStaleSource: false,
     allowZeroPrice: false,
     apply: false,
+    catalog: "config/model-catalog.json",
     file: "config/model-prices.example.json",
+    requireCatalogCoverage: false,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -52,7 +63,16 @@ function parseArgs(argv) {
       result.allowStaleSource = true;
       continue;
     }
-    if (arg === "--file" || arg === "--schema" || arg === "--max-source-age-days") {
+    if (arg === "--require-catalog-coverage") {
+      result.requireCatalogCoverage = true;
+      continue;
+    }
+    if (
+      arg === "--catalog" ||
+      arg === "--file" ||
+      arg === "--schema" ||
+      arg === "--max-source-age-days"
+    ) {
       const value = argv[index + 1];
       if (!value || value.startsWith("--")) {
         throw new Error(`${arg} requires a value.`);
@@ -91,8 +111,12 @@ Usage:
 
 Options:
   --file <path>    JSON price file. Default: config/model-prices.example.json
+  --catalog <path> Model catalog for coverage checks. Default: config/model-catalog.json
   --schema <name>  Database schema. Default: REVIEW_USAGE_DB_SCHEMA or reviewbot
   --apply          Apply through the RDS Data API. Default is dry-run SQL.
+  --require-catalog-coverage
+                   Fail unless the price file covers every catalog default
+                   provider/model lane with fresh non-zero input and output rates.
   --max-source-age-days <days>
                    Maximum age for sourceCheckedAt during apply. Default: 30.
   --allow-stale-source

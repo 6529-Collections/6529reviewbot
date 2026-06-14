@@ -84,6 +84,7 @@ Review model price rows without touching AWS:
 
 ```bash
 npm run model-prices -- -- --file <reviewed-model-price-file.json>
+npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage
 ```
 
 Apply reviewed model price rows from a configured operator environment:
@@ -98,6 +99,10 @@ by default. Record explicit operator evidence before using
 Run `npm run check:model-pricing-runbook` after editing model-pricing guidance
 so source-checked evidence, zero-rate overrides, apply behavior, and cost
 estimation semantics stay synchronized.
+Run `npm run check:model-price-coverage` after changing catalog coverage
+behavior so release checks continue to fail missing catalog default lanes,
+missing input/output rates, stale source evidence, zero placeholders, and
+placeholder source URLs before operators rely on estimates.
 
 Run a dry operator-alert pass:
 

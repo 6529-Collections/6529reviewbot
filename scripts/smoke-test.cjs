@@ -805,7 +805,9 @@ assert.deepEqual(
     allowStaleSource: false,
     allowZeroPrice: false,
     apply: true,
+    catalog: "config/model-catalog.json",
     file: "prices.json",
+    requireCatalogCoverage: false,
     schema: "reviewbot",
   }
 );
@@ -815,7 +817,26 @@ assert.deepEqual(
     allowStaleSource: false,
     allowZeroPrice: true,
     apply: true,
+    catalog: "config/model-catalog.json",
     file: "prices.json",
+    requireCatalogCoverage: false,
+  }
+);
+assert.deepEqual(
+  modelPricesCli.parseArgs([
+    "--file",
+    "prices.json",
+    "--catalog",
+    "catalog.json",
+    "--require-catalog-coverage",
+  ]),
+  {
+    allowStaleSource: false,
+    allowZeroPrice: false,
+    apply: false,
+    catalog: "catalog.json",
+    file: "prices.json",
+    requireCatalogCoverage: true,
   }
 );
 assert.deepEqual(
@@ -831,8 +852,10 @@ assert.deepEqual(
     allowStaleSource: true,
     allowZeroPrice: false,
     apply: true,
+    catalog: "config/model-catalog.json",
     file: "prices.json",
     maxSourceAgeDays: 45,
+    requireCatalogCoverage: false,
   }
 );
 const budgetPolicyFile = budgetPolicies.validateBudgetPolicyFile({

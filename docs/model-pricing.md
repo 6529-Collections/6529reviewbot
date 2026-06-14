@@ -16,6 +16,8 @@ Run `npm run check:model-pricing-runbook` after edits. The model pricing
 runbook contract keeps price-file shape, dry-run/apply guidance, stale-source
 and zero-rate overrides, review requirements, estimation behavior, and public
 docs synchronized with release checks.
+Run `npm run check:model-price-coverage` after changing catalog coverage
+behavior or the `--require-catalog-coverage` operator flow.
 
 ## Price File
 
@@ -72,6 +74,29 @@ The dry run prints the SQL plus Data API parameter values so reviewers can see
 exactly what will be inserted. `notes` values are redacted for common
 secret-shaped values and capped at 1000 characters before they are rendered or
 applied.
+
+## Catalog Coverage
+
+Before relying on local cost estimates, audit the operator-owned price file
+against the configured model catalog:
+
+```bash
+npm run model-prices -- -- --file prices.json --require-catalog-coverage
+```
+
+This mode still does not contact AWS or provider APIs. It fails unless the
+reviewed file includes every catalog default provider/model lane, includes
+both input and output rates for those lanes, uses fresh `sourceCheckedAt`
+evidence, avoids zero-rate placeholders unless `--allow-zero-price` is
+explicitly supplied, and avoids placeholder source URLs such as
+`provider.example`.
+
+Use a non-default catalog only when the operator is intentionally testing a
+different deployed policy:
+
+```bash
+npm run model-prices -- -- --file prices.json --catalog config/model-catalog.json --require-catalog-coverage
+```
 
 ## Apply
 

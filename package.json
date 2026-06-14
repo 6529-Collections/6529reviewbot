@@ -76,6 +76,7 @@
     "check:review-context-boundary": "node scripts/check-review-context-boundary.cjs",
     "check:model-defaults": "node scripts/check-model-defaults.cjs",
     "check:model-pricing-runbook": "node scripts/check-model-pricing-runbook-contract.cjs",
+    "check:model-price-coverage": "node scripts/check-model-price-coverage-contract.cjs",
     "check:providers": "node scripts/check-provider-contract.cjs",
     "check:provider-adapters": "node scripts/check-provider-adapters.cjs",
     "check:ledger-privacy": "node scripts/check-ledger-privacy-contract.cjs",

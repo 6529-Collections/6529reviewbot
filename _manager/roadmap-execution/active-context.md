@@ -471,28 +471,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Dogfood readiness release gate PR: merged as PR #255, merge commit `b68d880`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-handoff-ready-release-check`.
-- Current local changes: adding production deployment, dashboard deployment,
-  and alert delivery `--require-ready` dry-run plans to the release check.
+- Operator handoff ready release check PR: merged as PR #256, merge commit `649bcd3`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-price-catalog-coverage`.
+- Current local changes: adding model price catalog coverage checks so
+  operator-owned price files must cover configured default lanes before local
+  estimates are trusted.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
+  - `npm run check:model-pricing-runbook` passed with 5 runbook cases and 8
     docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 6 plan cases and 7
+  - `npm run check:model-price-coverage` passed with 6 coverage cases and 8
     docs checked;
-  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
-    checked;
-  - production deployment, dashboard deployment, and alert delivery ready-mode
-    CLI invocations passed with safe example inputs;
+  - `npm run check:release-operations` passed with 7 phases and 110 tools;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `git diff --check` passed;
-  - `npm run check` passed with 175 CommonJS files;
+  - `npm run check` passed with 176 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #255,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #256,
     and 5 docs checked;
-  - `npm run release:check` passed with 175 CommonJS files checked and the
-    production deployment, dashboard deployment, and alert delivery ready-mode
-    release gates exercised;
+  - `git diff --check` passed;
+  - `npm run release:check` passed with 176 CommonJS files checked and the
+    model price coverage contract exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions

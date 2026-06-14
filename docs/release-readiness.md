@@ -84,6 +84,9 @@ Ready for community review:
 - `npm run check:model-pricing-runbook` keeps [Model Pricing](model-pricing.md)
   synchronized with price-file shape, source-checked evidence, stale/zero
   overrides, apply behavior, and estimation semantics;
+- `npm run check:model-price-coverage` keeps model price coverage checks
+  synchronized so reviewed price files must cover catalog default
+  provider/model lanes before operators rely on local estimates;
 - model-price apply safety that rejects zero-rate placeholder rows unless an
   operator explicitly allows a documented free price;
 - usage-write cost estimation from active provider/model price rows;
