@@ -527,29 +527,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Public dashboard disclosure release evidence PR: merged as PR #283, merge commit `9412485`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/admin-dashboard-auth-release-gate`.
-- Current local changes: require private admin auth-check URL and wallet
-  allowlist evidence in the v0 release gates and production cutover checklist
-  before private admin exposure can satisfy release readiness.
+- Admin dashboard auth release evidence PR: merged as PR #284, merge commit `40b1ffc`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-dashboard-auth-evidence`.
+- Current local changes: require release notes drafts, templates, and
+  publication checks to include public dashboard disclosure allowlist evidence
+  and private admin auth-check/wallet allowlist evidence before pre-v1 release
+  notes can be published.
 - Current local validation:
-  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and
     6 docs checked;
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
-    cases, and 6 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
-    7 docs checked;
-  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and
-    5 docs/templates checked;
+  - `npm run check:release-notes-publication` passed with 10 publication
+    cases and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #283,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #284,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    private admin auth-check/wallet allowlist release/cutover gate exercised.
+    release notes dashboard/admin evidence fields exercised.
 
 ## Key Decisions
 

@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required release notes drafts and publication checks to include public
+  dashboard disclosure allowlist evidence and private admin auth-check/wallet
+  allowlist evidence before pre-v1 notes can be published.
 - Required private admin auth-check URL and wallet allowlist evidence in the
   v0 release gates and production cutover checklist before private admin
   exposure can satisfy release readiness.

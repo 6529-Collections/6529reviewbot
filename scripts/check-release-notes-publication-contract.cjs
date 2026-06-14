@@ -274,7 +274,11 @@ function checkSourceAnchors(sourceTexts, findings) {
       "route to an operator-owned channel",
       "No accepted deferrals",
       "Dashboard deployment plan:",
+      "Public dashboard disclosure allowlists:",
+      "Private admin auth-check/wallet allowlist evidence:",
       "Alert delivery plan:",
+      "public dashboard repo/org disclosure uses reviewed allowlists",
+      "private admin exposure has reviewed auth-check URL and wallet allowlist evidence",
       "reviewed alert delivery plan evidence",
       "`npm run dashboard:deployment-plan",
       "`npm run alerts:delivery-plan",
@@ -330,6 +334,8 @@ function checkDocs(docTexts, findings) {
     "docs/release-notes-template.md": [
       "Release Notes Publication",
       "Dashboard deployment plan:",
+      "Public dashboard disclosure allowlists:",
+      "Private admin auth-check/wallet allowlist evidence:",
       "Alert delivery plan:",
       "No accepted deferrals",
     ],
@@ -387,6 +393,8 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Empty provider output fail-closed evidence: smoke and release checks passed
 - Worker diagnostic redaction evidence: diagnostics redaction checks passed
 - 6529.io dashboard/admin status: public dashboard deployed or deferred
+- Public dashboard disclosure allowlists: reviewed for public repo/org summaries
+- Private admin auth-check/wallet allowlist evidence: reviewed in private operator evidence
 - Release candidate bundle: ready
 - Production deployment plan: ready
 - Dashboard deployment plan: ready
@@ -400,7 +408,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 

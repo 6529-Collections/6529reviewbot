@@ -573,8 +573,9 @@ verifies the release tag plan remains a dry-run tag plan that requires clean,
 synced `main` and completed release notes before rendering operator commands.
 `npm run check:release-notes-draft` and
 `npm run check:release-notes-publication` require production deployment plan,
-dashboard deployment plan, and alert delivery plan evidence in pre-v1 release
-notes before publication.
+dashboard deployment plan, public dashboard disclosure allowlist, private
+admin auth-check and wallet allowlist, and alert delivery plan evidence in
+pre-v1 release notes before publication.
 `npm run check:container-publish-plan` is included in `npm run release:check`
 and verifies the container publish plan remains dry-run, checks clean synced
 `main`, runs the image contract, and renders build, push, vulnerability scan,
