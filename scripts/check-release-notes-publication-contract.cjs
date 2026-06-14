@@ -213,6 +213,11 @@ function checkSafetyRecommendations(findings) {
       " and route to an operator-owned channel",
       "route to an operator-owned channel",
     ],
+    [
+      "community-release readiness",
+      " broad community-release gates are complete or explicitly deferred before broad community use is announced,",
+      "broad community-release gates are complete or explicitly deferred",
+    ],
   ]) {
     const report = validateReleaseNotesPublication(
       completeReleaseNotesFixture().replace(text, "")
@@ -280,10 +285,13 @@ function checkSourceAnchors(sourceTexts, findings) {
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
+      "Community release status:",
       "Alert delivery plan:",
       "public dashboard repo/org disclosure uses reviewed allowlists",
       "private admin exposure has reviewed auth-check URL and wallet allowlist evidence",
+      "broad community-release gates are complete or explicitly deferred",
       "reviewed alert delivery plan evidence",
+      "`npm run community:gates",
       "`npm run dashboard:deployment-plan",
       "`npm run alerts:delivery-plan",
     ],
@@ -328,6 +336,7 @@ function checkDocs(docTexts, findings) {
       "TODO(operator)",
       "No accepted deferrals",
       "Git ref-safe",
+      "community-release status evidence is filled",
       "passed, ready, reviewed, or accepted evidence",
       "npm run check:release-notes-publication",
     ],
@@ -342,6 +351,7 @@ function checkDocs(docTexts, findings) {
       "Dashboard deployment plan:",
       "Public dashboard disclosure allowlists:",
       "Private admin auth-check/wallet allowlist evidence:",
+      "Community release status:",
       "Alert delivery plan:",
       "No accepted deferrals",
     ],
@@ -355,6 +365,7 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/roadmap.md": [
       "release notes publication",
+      "community-release status",
       "completed release notes",
     ],
   };
@@ -408,6 +419,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Dashboard deployment plan: ready
 - Dogfood promotion packet: ready
 - Dogfood go-live packet: ready
+- Community release status: ready or explicitly deferred for dogfood-only release
 - Production cutover status: dogfood-only release
 - Preflight result: strict preflight passed
 - v0 gate checklist: reviewed
@@ -416,7 +428,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, non-noop worker traffic has reviewed dispatch credential evidence, container image evidence has reviewed container publish-plan evidence, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, public dashboard repo/org disclosure uses reviewed allowlists before repo names are exposed, private admin exposure has reviewed auth-check URL and wallet allowlist evidence, broad community-release gates are complete or explicitly deferred before broad community use is announced, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 
@@ -448,6 +460,7 @@ Pre-v1 releases may change worker payloads. Pin target repositories to an exact 
 - \`npm run check:container-image\`: passed
 - \`npm run v0:gates\`: passed
 - \`npm run preflight -- -- --strict\`: passed
+- \`npm run community:gates -- -- --status-file <operator-community-status-file> --require-ready\`: passed or explicitly dogfood-only
 - \`npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight --require-ready\`: passed
 - \`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready\`: passed
 - \`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready\`: passed

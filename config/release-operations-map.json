@@ -502,7 +502,7 @@
         {
           "id": "release-notes-publication-contract",
           "script": "check:release-notes-publication",
-          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, Git ref-unsafe title versions, missing evidence fields, incomplete deferrals, vague or failed validation results, and public-safety leaks before tags or GitHub Releases.",
+          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, Git ref-unsafe title versions, missing community-release or other evidence fields, incomplete deferrals, vague or failed validation results, and public-safety leaks before tags or GitHub Releases.",
           "doc": "docs/release-notes-publication.md",
           "publicOutput": "Safe."
         },

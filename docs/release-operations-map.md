@@ -213,9 +213,9 @@ container publish evidence, dashboard disclosure evidence, private admin auth
 evidence, community-release status evidence, alert evidence, TODO markers,
 redaction, CLI flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` keeps the completed release-notes
-publication guard aligned with required fields, deferral handling,
-vague or failed validation evidence, public-safety redaction, release-check
-wiring, smoke tests, and docs.
+publication guard aligned with required community-release and other evidence
+fields, deferral handling, vague or failed validation evidence, public-safety
+redaction, release-check wiring, smoke tests, and docs.
 `npm run check:release-tag-plan` keeps the release tag plan aligned with
 clean-main readiness, local and remote tag availability, completed release
 notes, release notes title matching, dry-run operator commands, release-check

@@ -443,8 +443,9 @@ status, alert evidence, TODO markers, redaction, CLI flags, operations map
 entries, and docs.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and keeps the completed release notes publication
-guard aligned with required fields, deferral handling, public-safety
-redaction, CLI flags, operations map entries, and docs. Run
+guard aligned with required community-release and other evidence fields,
+deferral handling, public-safety redaction, CLI flags, operations map entries,
+and docs. Run
 `npm run release:notes:check -- -- --file <release-notes.md>` on completed
 release notes before publishing a tag or GitHub Release.
 `npm run check:release-tag-plan` is included in `npm run release:check` and
