@@ -501,9 +501,11 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes title ref-safety PR: merged as PR #270, merge commit `9fab5bc`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/model-price-source-https`.
-- Current local changes: require model price source URLs to use HTTPS and
-  document the operator evidence requirement.
+- Model price source HTTPS PR: merged as PR #271, merge commit `8ed6888`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-price-placeholder-apply-guard`.
+- Current local changes: reject placeholder model price source URL hosts before
+  applying pricing rows to the ledger.
 - Current local validation:
   - `npm run check:model-pricing-runbook` passed with 6 runbook cases and
     8 docs checked;
@@ -513,12 +515,12 @@ merged PRs.
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 177 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #270,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #271,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 177 CommonJS files checked and the
-    HTTPS model price source URL guard exercised.
+    placeholder model price source apply guard exercised.
 
 ## Key Decisions
 

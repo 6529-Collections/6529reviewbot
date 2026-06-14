@@ -83,6 +83,7 @@ function checkPriceFile(text, findings) {
     "rejects zero-rate rows by default",
     "sourceCheckedAt` timestamp is older than 30 days",
     "rejects future-dated source checks",
+    "rejects placeholder source URL hosts such as",
   ]) {
     requireSnippet(text, snippet, "model price-file guidance", findings);
   }
@@ -100,6 +101,7 @@ function checkDryRunAndApply(text, findings) {
     "record the accepted risk and evidence in the operator runbook",
     "npm run model-prices -- -- --file prices.json --apply --allow-zero-price",
     "provider really documents a free token class or free model",
+    "rejects placeholder source URL hosts before writing ledger rows",
     "REVIEW_USAGE_DB_RESOURCE_ARN",
     "REVIEW_USAGE_DB_SECRET_ARN",
     "Use `--schema <name>` only when the deployment intentionally stores bot data in a non-default schema.",
@@ -136,6 +138,7 @@ function checkReviewRequirements(text, findings) {
     "`--allow-zero-price`",
     "rejects stale or future-dated source-checked",
     "`--allow-stale-source`",
+    "Placeholder source URL hosts are rejected before apply.",
     "Do not put secrets, private account details, provider diagnostics, or private PR payloads in `notes`",
     "Provider pages and APIs are the source of truth.",
     "leave the row unapplied and keep budget admission on conservative default estimates",
