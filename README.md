@@ -139,8 +139,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [v0 Release Plan](docs/v0-release-plan.md): first tag criteria.
 - [Release Notes Publication](docs/release-notes-publication.md): completed
   release notes guard before tags or GitHub Releases.
-- [Release Tag Plan](docs/release-tag-plan.md): dry-run clean-main and
-  completed-notes check before operator tagging.
+- [Release Tag Plan](docs/release-tag-plan.md): dry-run clean-main,
+  tag-availability, and completed-notes check before operator tagging.
 - [Release Candidate Bundle](docs/release-candidate.md): public-safe
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and

@@ -14,11 +14,11 @@ const DRY_RUN_NOTICE = "This command does not create tags or GitHub Releases.";
 
 function collectReleaseTagPlan(options = {}) {
   const release = normalizeReleaseVersion(options.release || options.version || "v0.1.0");
-  const git = options.git || collectGitState({ ...options, release });
   const releaseNotes = collectReleaseNotesState(options);
   const errors = [];
   const warnings = [];
   const tagNameError = releaseTagNameError(release);
+  const git = options.git || collectGitState({ ...options, release, skipRemoteTagCheck: Boolean(tagNameError) });
 
   if (tagNameError) {
     errors.push(tagNameError);
@@ -31,6 +31,19 @@ function collectReleaseTagPlan(options = {}) {
   }
   if (git.tagExists) {
     errors.push(`release tag '${release}' already exists locally; inspect tags before planning a release.`);
+  }
+  if (git.remoteTagExists) {
+    errors.push(
+      `release tag '${release}' already exists on ${git.remote || "origin"}; inspect remote tags before planning a release.`
+    );
+  }
+  if (git.remoteTagCheckFailed) {
+    const message = `remote tag check for '${release}' on ${git.remote || "origin"} did not complete.`;
+    if (options.requireRemoteTagCheck) {
+      errors.push(`${message} Run from a networked checkout or verify the remote tag manually before tagging.`);
+    } else {
+      warnings.push(`${message} Final --require-ready planning will fail until the remote can be checked.`);
+    }
   }
   if (git.upstream) {
     if (git.ahead > 0) {
@@ -73,12 +86,13 @@ function collectReleaseTagPlan(options = {}) {
     releaseNotes,
     errors,
     warnings,
-    commands: tagCommands(release, git.commit),
+    commands: tagCommands(release, git.commit, git.remote),
   };
 }
 
 function collectGitState(options = {}) {
   const cwd = options.root || process.cwd();
+  const remote = options.remote || "origin";
   const branch = gitOutput(["rev-parse", "--abbrev-ref", "HEAD"], cwd);
   const commit = gitOutput(["rev-parse", "HEAD"], cwd);
   const status = gitOutput(["status", "--porcelain"], cwd);
@@ -94,6 +108,10 @@ function collectGitState(options = {}) {
   const tagExists = options.release
     ? Boolean(gitOutput(["tag", "--list", options.release], cwd, { optional: true }).trim())
     : false;
+  const remoteTagState =
+    options.release && !options.skipRemoteTagCheck
+      ? collectRemoteTagState(cwd, remote, options.release)
+      : { remote, remoteTagExists: false, remoteTagCheckFailed: false };
   return {
     branch,
     commit,
@@ -102,7 +120,40 @@ function collectGitState(options = {}) {
     ahead,
     behind,
     tagExists,
+    ...remoteTagState,
   };
+}
+
+function collectRemoteTagState(cwd, remote, release) {
+  try {
+    const output = childProcess.execFileSync(
+      gitBin(),
+      ["ls-remote", "--tags", remote, `refs/tags/${release}`],
+      {
+        cwd,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }
+    );
+    const expectedTag = `refs/tags/${release}`;
+    const remoteTagExists = String(output || "")
+      .split(/\r?\n/)
+      .some((line) => {
+        const ref = line.trim().split(/\s+/)[1];
+        return ref === expectedTag || ref === `${expectedTag}^{}`;
+      });
+    return {
+      remote,
+      remoteTagExists,
+      remoteTagCheckFailed: false,
+    };
+  } catch (error) {
+    return {
+      remote,
+      remoteTagExists: false,
+      remoteTagCheckFailed: true,
+    };
+  }
 }
 
 function collectReleaseNotesState(options = {}) {
@@ -137,19 +188,23 @@ function publicGitState(git) {
     branch: String(git.branch || ""),
     commit: String(git.commit || ""),
     dirty: Boolean(git.dirty),
+    remote: String(git.remote || "origin"),
     upstream: String(git.upstream || ""),
     ahead: wholeNumber(git.ahead),
     behind: wholeNumber(git.behind),
     tagExists: Boolean(git.tagExists),
+    remoteTagExists: Boolean(git.remoteTagExists),
+    remoteTagCheckFailed: Boolean(git.remoteTagCheckFailed),
   };
 }
 
-function tagCommands(release, commit) {
+function tagCommands(release, commit, remote = "origin") {
   const safeCommit = /^[0-9a-f]{7,40}$/i.test(String(commit || "")) ? commit : "<reviewed-commit-sha>";
+  const safeRemote = /^[A-Za-z0-9._/-]+$/.test(String(remote || "")) ? remote : "origin";
   return [
-    "git fetch origin --tags",
+    `git fetch ${safeRemote} --tags`,
     `git tag -a ${release} -m "${release} dogfood release" ${safeCommit}`,
-    `git push origin ${release}`,
+    `git push ${safeRemote} ${release}`,
     `Create the GitHub Release for ${release} from the checked release notes Markdown.`,
   ];
 }
@@ -167,9 +222,13 @@ function formatReleaseTagPlanMarkdown(plan) {
     `- branch: ${plan.git.branch || "unknown"}`,
     `- commit: ${plan.git.commit || "unknown"}`,
     `- dirty: ${plan.git.dirty ? "yes" : "no"}`,
+    `- remote: ${plan.git.remote || "origin"}`,
     `- upstream: ${plan.git.upstream || "none"}`,
     `- ahead/behind: ${plan.git.ahead}/${plan.git.behind}`,
     `- local tag exists: ${plan.git.tagExists ? "yes" : "no"}`,
+    `- remote tag exists: ${
+      plan.git.remoteTagCheckFailed ? "unchecked" : plan.git.remoteTagExists ? "yes" : "no"
+    }`,
     "",
     "## Release Notes",
     "",
@@ -236,5 +295,6 @@ module.exports = {
   parseAheadBehind,
   releaseFromReleaseNotes,
   releaseTagNameError,
+  collectRemoteTagState,
   tagCommands,
 };

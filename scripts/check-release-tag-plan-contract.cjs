@@ -42,6 +42,8 @@ function checkReleaseTagPlanContract(options = {}) {
   checkGitRefSafeTagName(findings);
   checkDirtyPlan(findings);
   checkExistingTagPlan(findings);
+  checkRemoteTagCollisionPlan(findings);
+  checkRemoteTagUnavailablePlan(findings);
   checkReleaseNotesFailure(findings);
   checkReleaseNotesWarningGate(findings);
   checkReleaseNotesVersionMismatch(findings);
@@ -59,7 +61,7 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 8,
+    planCases: 10,
     docs: targetDocs.length,
   };
 }
@@ -83,8 +85,10 @@ function checkReadyPlan(findings) {
     "Ready to tag: yes",
     "- release: v0.1.0",
     "- local tag exists: no",
+    "- remote tag exists: no",
     "git fetch origin --tags",
     "git tag -a v0.1.0",
+    "git push origin v0.1.0",
     "Create the GitHub Release",
   ]) {
     if (!markdown.includes(snippet)) {
@@ -162,6 +166,67 @@ function checkExistingTagPlan(findings) {
   }
   if (!plan.errors.some((error) => error.includes("already exists locally"))) {
     findings.push("existing tag error must explain that the release tag already exists locally.");
+  }
+}
+
+function checkRemoteTagCollisionPlan(findings) {
+  const plan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: completeReleaseNotesFixture(),
+    requireReleaseNotes: true,
+    git: {
+      ...cleanMainGit(),
+      remoteTagExists: true,
+    },
+  });
+  if (plan.ready) {
+    findings.push("existing remote release tag must block release tag readiness.");
+  }
+  if (!plan.errors.some((error) => error.includes("already exists on origin"))) {
+    findings.push("remote tag collision error must name the remote tag collision.");
+  }
+  const markdown = formatReleaseTagPlanMarkdown(plan);
+  if (!markdown.includes("- remote tag exists: yes")) {
+    findings.push("remote tag collision markdown must show the remote tag status.");
+  }
+}
+
+function checkRemoteTagUnavailablePlan(findings) {
+  const advisoryPlan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: completeReleaseNotesFixture(),
+    requireReleaseNotes: true,
+    git: {
+      ...cleanMainGit(),
+      remoteTagCheckFailed: true,
+    },
+  });
+  if (!advisoryPlan.ready) {
+    findings.push("non-final release tag plans should warn, not fail, when the remote tag check is unavailable.");
+  }
+  if (!advisoryPlan.warnings.some((warning) => warning.includes("remote tag check"))) {
+    findings.push("unavailable remote tag checks must be surfaced as warnings in advisory plans.");
+  }
+  const advisoryMarkdown = formatReleaseTagPlanMarkdown(advisoryPlan);
+  if (!advisoryMarkdown.includes("- remote tag exists: unchecked")) {
+    findings.push("unavailable remote tag markdown must show the unchecked status.");
+  }
+
+  const strictPlan = collectReleaseTagPlan({
+    release: "v0.1.0",
+    releaseNotesMarkdown: completeReleaseNotesFixture(),
+    requireReleaseNotes: true,
+    requireRemoteTagCheck: true,
+    git: {
+      ...cleanMainGit(),
+      remoteTagCheckFailed: true,
+    },
+  });
+  if (strictPlan.ready) {
+    findings.push("final release tag plans must fail when the remote tag check is unavailable.");
+  }
+  if (!strictPlan.errors.some((error) => error.includes("Run from a networked checkout"))) {
+    findings.push("final remote tag check errors must explain how to recover.");
   }
 }
 
@@ -277,9 +342,13 @@ function cleanMainGit() {
     branch: "main",
     commit: "abcdef1234567890abcdef1234567890abcdef12",
     dirty: false,
+    remote: "origin",
     upstream: "origin/main",
     ahead: 0,
     behind: 0,
+    tagExists: false,
+    remoteTagExists: false,
+    remoteTagCheckFailed: false,
   };
 }
 
@@ -288,10 +357,14 @@ function checkSourceAnchors(sourceTexts, findings) {
     "package.json": ["release:tag-plan", "check:release-tag-plan"],
     "src/release-tag-plan.cjs": [
       "collectReleaseTagPlan",
+      "collectRemoteTagState",
       "validateReleaseNotesPublication",
       "releaseFromReleaseNotes",
       "releaseTagNameError",
+      "ls-remote",
       "already exists locally",
+      "already exists on",
+      "remote tag exists",
       "This command does not create tags",
     ],
     "src/release-version.cjs": [
@@ -302,6 +375,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "bin/release-tag-plan.cjs": [
       "npm run release:tag-plan",
       "--require-ready",
+      "requireRemoteTagCheck: args.requireReady",
       "result.requireNoWarnings = true",
       "This command does not create tags or GitHub Releases.",
     ],
@@ -315,6 +389,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "release-tag-plan",
       "release notes title match",
       "local tag availability",
+      "remote tag availability",
       "release-note warnings",
     ],
   };
@@ -335,6 +410,7 @@ function checkDocs(docTexts, findings) {
       "--require-ready",
       "Git ref-safe",
       "local tag",
+      "remote tag",
       "release notes title",
       "release-note warnings",
       "does not create tags",

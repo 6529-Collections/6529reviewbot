@@ -59,6 +59,16 @@ function checkReleaseTagPlanTools(map) {
   if (!contractTool.purpose.includes("local tag availability")) {
     throw new Error("release-tag-plan-contract purpose must mention local tag availability.");
   }
+  if (!contractTool.purpose.includes("remote tag availability")) {
+    throw new Error("release-tag-plan-contract purpose must mention remote tag availability.");
+  }
+  const tagPlanTool = tools.find((tool) => tool.id === "release-tag-plan");
+  if (!tagPlanTool) {
+    throw new Error("release operations map must include release-tag-plan.");
+  }
+  if (!tagPlanTool.purpose.includes("remote tag availability")) {
+    throw new Error("release-tag-plan purpose must mention remote tag availability.");
+  }
 }
 
 function checkReleaseOperationsDoc(map, docFile) {

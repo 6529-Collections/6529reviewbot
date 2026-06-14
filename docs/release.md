@@ -147,10 +147,11 @@ After stabilization:
   rejects unfinished TODO markers, missing evidence fields, incomplete
   deferrals, and public-safety leaks
 - `npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready`
-  builds the final dry-run tag plan from clean `main` and completed release
-  notes; it does not create tags
+  builds the final dry-run tag plan from clean `main`, local and remote tag
+  availability, and completed release notes; it does not create tags
 - `npm run check:release-tag-plan` confirms the release tag plan stays dry-run
-  and synchronized with the release operations map, smoke tests, and public docs
+  and synchronized with tag availability, the release operations map, smoke
+  tests, and public docs
 - `npm run check:release-operations` confirms the release operations map only
   references existing package scripts and public documentation paths
 - `npm run check:install-guide` confirms the installation guide contract keeps

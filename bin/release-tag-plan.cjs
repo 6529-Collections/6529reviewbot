@@ -19,6 +19,7 @@ function main(argv = process.argv.slice(2), options = {}) {
     allowNonMain: args.allowNonMain,
     release: args.release,
     releaseNotesFile: args.releaseNotesFile,
+    requireRemoteTagCheck: args.requireReady,
     requireNoWarnings: args.requireNoWarnings,
     requireReleaseNotes: args.requireReleaseNotes,
   });

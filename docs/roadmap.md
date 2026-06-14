@@ -434,12 +434,13 @@ Completed in `6529reviewbot`:
 - release notes publication guard for rejecting unfinished markers, missing
   evidence fields, incomplete deferrals, vague or failed validation results,
   and public-safety leaks before tags or GitHub Releases;
-- release tag plan command for checking clean synced `main`, completed release
-  notes, and final operator tag commands without creating tags;
+- release tag plan command for checking clean synced `main`, local and remote
+  tag availability, completed release notes, and final operator tag commands
+  without creating tags;
 - release tag planning now rejects completed release notes whose title version
   does not match the planned release tag;
-- release tag planning now rejects locally existing release tags before
-  marking dry-run tag commands ready;
+- release tag planning now rejects locally or remotely existing release tags
+  before marking dry-run tag commands ready;
 - release-candidate private workspace path redaction for JSON and Markdown
   bundles;
 - operator workspace bootstrap for private release-gate, dogfood,

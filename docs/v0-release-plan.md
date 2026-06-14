@@ -273,9 +273,9 @@ npm --silent run release:candidate -- -- --operator-workspace <private-workspace
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
 ```
 
-The release tag plan is a dry-run tag plan. It checks clean synced `main` and
-completed release notes, then prints the operator commands; it does not create
-the tag or GitHub Release.
+The release tag plan is a dry-run tag plan. It checks clean synced `main`,
+local and remote tag availability, and completed release notes, then prints
+the operator commands; it does not create the tag or GitHub Release.
 
 Then review remote checks and create an annotated tag:
 
