@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned release-note safety language with the reviewed alert delivery plan
+  evidence requirement.
 - Made the admin auth HMAC TTL contract check deterministic on CI runners.
 - Required reviewed alert delivery plan evidence for the v0 scheduled alerts
   release gate.

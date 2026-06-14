@@ -222,6 +222,7 @@ function checkRecommendedText(text, warnings) {
     "trusted-actor admission",
     "budget mode is `enforce`",
     "provider keys and AWS credentials live only in bot-owned infrastructure",
+    "reviewed alert delivery plan evidence",
     "Pin target repositories to an exact tag or commit SHA",
     "Set `REVIEWBOT_ENABLED=false`",
   ]) {

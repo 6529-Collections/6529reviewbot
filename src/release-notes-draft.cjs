@@ -176,7 +176,7 @@ function formatReleaseNotesMarkdown(draft) {
     "- run-control mode is `enforce`, or the release notes explain why it is deferred;",
     "- provider keys and AWS credentials live only in bot-owned infrastructure;",
     "- target repo configuration is loaded from the base ref;",
-    "- scheduled operator alerts route to an operator-owned channel.",
+    "- scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.",
     "",
     "## Known Gaps",
     "",

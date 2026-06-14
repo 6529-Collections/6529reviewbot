@@ -439,28 +439,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator evidence alert plan PR: merged as PR #239, merge commit `fb49803`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/v0-alert-delivery-gate`.
-- Current local changes: strengthening the existing v0 `alerts` gate so
-  scheduled operator alerts require reviewed alert delivery-plan evidence
-  before satisfying the first public tag checklist, and updating v0 gate
-  contracts, smoke coverage, release-readiness, roadmap, changelog, and
-  durable manager memory. This branch also hardens the admin auth HMAC TTL
-  contract check after PR #240 CI exposed a one-second boundary race on Ubuntu
-  runners.
+- v0 alert delivery gate PR: merged as PR #240, merge commit `60d24d3`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-alert-plan-safety`.
+- Current local changes: aligning release notes template, generated draft,
+  publication fixture, and release-notes contract checks with the v0 alerts
+  gate by requiring reviewed alert delivery-plan evidence before scheduled
+  operator alerts satisfy public release safety language.
 - Current local validation:
-  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
-    docs checked;
-  - `npm run check:admin-auth` passed with 3 modes, 4 HMAC headers, and 5
-    docs/templates checked;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 4 publication cases
+    and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
+  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including v0 release gate validation
-    requiring reviewed alert delivery-plan evidence for scheduled alerts and
-    deterministic admin-auth HMAC TTL validation;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #239,
+  - `npm run release:check` passed, including release notes template, draft,
+    and publication checks with reviewed alert delivery-plan safety language;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #240,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
