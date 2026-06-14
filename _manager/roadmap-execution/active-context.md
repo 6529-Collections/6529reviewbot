@@ -663,23 +663,34 @@ merged PRs.
 - Public renderer redaction behavior fixtures PR: merged as PR #340, merge commit `7d22b5b`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `7d22b5b`.
-- Current branch: `codex/bearer-token-public-artifact-scan`.
-- Current local changes: add bearer-token detection to the public artifact
-  leak scanner, cover it in smoke tests, document the scanner coverage in the
-  support runbook, and update changelog and durable manager memory.
+- Bearer-token public artifact scan PR: merged as PR #341, merge commit `e6eb913`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `e6eb913`.
+- Current branch: `codex/generic-sensitive-header-redaction`.
+- Current local changes: add shared diagnostic redaction and public artifact
+  scanner coverage for long sensitive header values such as `x-api-key`,
+  admin-secret, admin-signature, and Basic/Token authorization headers; update
+  diagnostics fixtures, smoke tests, docs, changelog, and durable manager
+  memory.
 - Current local validation:
-  - `gh run list --repo 6529-Collections/6529reviewbot --commit 7d22b5b363dda4659275bef90256563833cf01c5 --limit 10` passed by showing PR #340 post-merge CI run `27506484178` and OpenSSF Scorecard run `27506484173` completed successfully;
+  - `gh run list --repo 6529-Collections/6529reviewbot --commit e6eb913ba7bb7aabb7e404738117a2e83a5decf7 --limit 10` passed by showing PR #341 post-merge CI run `27506746080` and OpenSSF Scorecard run `27506746089` completed successfully;
+  - `npm run check:diagnostics-redaction` passed with 13 fixtures, 9 public
+    renderers, 9 renderer behavior cases, and 6 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
-  - `npm test` passed after adding bearer-token public artifact coverage;
+  - `npm test` passed after adding sensitive-header diagnostics and public
+    artifact coverage;
   - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:security-model` passed with 17 controls, 30 checklist
+    items, 12 source files, and 7 docs checked;
   - `npm run check:support-runbooks` passed with 4 support cases, 3 incident
     cases, and 7 docs checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #340, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #341, and
     5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    bearer-token public artifact scanner guard exercised.
+    sensitive-header diagnostic and public artifact guards exercised.
 
 ## Key Decisions
 
