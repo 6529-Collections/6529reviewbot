@@ -391,8 +391,14 @@ Before announcing broad community use:
    infrastructure, using the reviewed container image or an equivalent
    operator-reviewed runtime.
 3. Configure provider keys, GitHub App secrets, AWS Data API access, and
-   alerting secrets only in the bot environment.
-4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.
+   alerting secrets only in the bot environment, and review
+   `provider-console-readiness` operator evidence for model availability,
+   quotas/rate limits, spend controls, billing alerts, and emergency key
+   disablement before broad model calls.
+4. Review AWS IAM/OIDC trust, Data API scope, database grants, runtime
+   secret-store principals, target-repo/browser secret exclusion, rotation
+   ownership, and break-glass revoke paths in `iam-and-secrets` operator
+   evidence for the central bot runtime.
 5. Apply reviewed central budget policies or explicitly keep budget control to
    environment/repository caps for the release.
 6. Enable GitHub private vulnerability reporting for this repository or record
@@ -448,10 +454,11 @@ verifies both gate count parity and v0 gate evidence references.
 `npm run check:v0-gates` is included in `npm run release:check` and keeps the
 v0 release gate contract synchronized across status readiness, missing-id
 checks, deferral semantics, dispatch credential evidence for worker gates,
-container publish-plan evidence targets for image gates, dashboard
-deployment-plan, public disclosure allowlist, and private admin auth-check
-evidence targets for 6529.io gates, public Markdown redaction, source
-invariants, and release docs.
+container publish-plan evidence targets for image gates, provider-console
+readiness evidence for secret-boundary gates, IAM/secret-custody evidence for
+AWS gates, dashboard deployment-plan, public disclosure allowlist, and private
+admin auth-check evidence targets for 6529.io gates, public Markdown
+redaction, source invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 production deployment plan evidence, worker dispatch credential evidence,

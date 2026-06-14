@@ -94,6 +94,51 @@ function checkGateConfig(findings) {
       }
     }
   }
+  const secretBoundaryGate = gatesById.get("secret-boundary");
+  if (!secretBoundaryGate) {
+    findings.push("v0 release gates must include 'secret-boundary'.");
+  } else {
+    if (secretBoundaryGate.evidence !== "docs/provider-setup.md") {
+      findings.push("secret-boundary gate evidence must be docs/provider-setup.md.");
+    }
+    const secretTitle = normalizeWhitespace(secretBoundaryGate.title).toLowerCase();
+    for (const snippet of [
+      "provider-console-readiness operator evidence",
+      "model availability",
+      "quotas/rate limits",
+      "spend controls",
+      "billing alerts",
+      "emergency key disablement",
+      "before live model calls",
+    ]) {
+      if (!secretTitle.includes(snippet)) {
+        findings.push(`secret-boundary gate title must require ${snippet}.`);
+      }
+    }
+  }
+  const awsIamGate = gatesById.get("aws-iam");
+  if (!awsIamGate) {
+    findings.push("v0 release gates must include 'aws-iam'.");
+  } else {
+    if (awsIamGate.evidence !== "infra/aws/README.md") {
+      findings.push("aws-iam gate evidence must be infra/aws/README.md.");
+    }
+    const awsIamTitle = normalizeWhitespace(awsIamGate.title).toLowerCase();
+    for (const snippet of [
+      "aws iam/oidc",
+      "data api scope",
+      "database grants",
+      "runtime secret-store principals",
+      "target-repo/browser secret exclusion",
+      "rotation ownership",
+      "break-glass revoke paths",
+      "iam-and-secrets operator evidence",
+    ]) {
+      if (!awsIamTitle.includes(snippet)) {
+        findings.push(`aws-iam gate title must require ${snippet}.`);
+      }
+    }
+  }
   for (const id of ["public-dashboard", "admin-surface"]) {
     const gate = gatesById.get(id);
     if (!gate) {
@@ -379,6 +424,8 @@ function checkDocs(docTexts, findings) {
       "wallet allowlist evidence",
       "reviewed container publish plan evidence",
       "reviewed alert delivery plan evidence",
+      "provider-console-readiness operator evidence",
+      "iam-and-secrets operator evidence",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["v0 release gate contract"],

@@ -612,12 +612,15 @@ merged PRs.
 - IAM and secret custody evidence PR: merged as PR #323, merge commit `c06e736`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `c06e736`.
-- Current branch: `codex/cutover-provider-iam-evidence-gates`.
-- Current local changes: add production cutover checklist/status gates for
-  provider-console readiness and IAM/secret-custody operator evidence before
-  live model calls or production AWS/secret use; synchronize production
-  cutover docs, release readiness, roadmap, release operations map, changelog,
-  and contract checks.
+- Cutover provider/IAM evidence gates PR: merged as PR #324, merge commit `b88ca46`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `b88ca46`.
+- Current branch: `codex/release-gates-provider-iam-evidence`.
+- Current local changes: harden existing v0 and community release-gate
+  `secret-boundary` and `aws-iam` titles/contracts so they require
+  provider-console readiness and IAM/secret-custody operator evidence; update
+  release readiness, v0 release plan, release operations map, roadmap,
+  changelog, and durable manager memory.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -668,7 +671,27 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    provider-console and IAM/secret-custody production cutover gates exercised.
+    provider-console and IAM/secret-custody production cutover gates exercised;
+  - `gh run watch 27501211719 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #324 post-merge CI;
+  - `gh run watch 27501211724 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #324 post-merge OpenSSF Scorecard;
+  - `npm run check:v0-gates` initially caught v0 release-plan wording that
+    split the required provider-console/IAM evidence snippets across backticked
+    section names; updated the docs and reran successfully with 3 CLI cases, 6
+    status cases, and 6 docs checked;
+  - `npm run check:community-release-gates` passed with 14 gates, 14 evidence
+    refs, and 9 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:manager-memory` initially caught wrapped PR #324 merge
+    commit wording; fixed the active-context line and reran successfully with
+    6 sections, latest PR #324, and 5 docs checked;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    hardened v0/community release-gate evidence requirements exercised.
 
 ## Key Decisions
 

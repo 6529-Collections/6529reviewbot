@@ -115,9 +115,14 @@ Do not create the `v0` tag until all of these are true:
    passes, and the image was built from a reviewed commit, scanned, and
    recorded by digest in private operator evidence.
 4. Provider keys, GitHub App secrets, AWS Data API access, and alert secrets
-   are configured only in bot-owned infrastructure.
-5. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
-   `infra/aws` or equivalent least-privilege documents.
+   are configured only in bot-owned infrastructure, and
+   provider-console-readiness operator evidence has reviewed model
+   availability, quotas/rate limits, spend controls, billing alerts, and
+   emergency key disablement before live model calls.
+5. AWS IAM/OIDC trust, Data API scope, database grants, runtime secret-store
+   principals, target-repo/browser secret exclusion, rotation ownership, and
+   break-glass revoke paths are reviewed in iam-and-secrets operator
+   evidence.
 6. The 6529.io public usage dashboard is merged, deployed, wired to the
    public usage API, covered by reviewed dashboard deployment plan evidence,
    and limited to reviewed public repo/org disclosure allowlists, or explicitly
