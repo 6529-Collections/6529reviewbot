@@ -384,9 +384,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "RELEASE_GATE_STATUSES",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(value)",
     "status === \"complete\" && !statusEvidence",
     "Deferred gates must be called out in the release notes",
     "release gate status is missing",

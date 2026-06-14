@@ -262,9 +262,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "DEFAULT_OPERATOR_WORKSPACE_FILES",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(String(value || \"\"))",
     "[operator-workspace]",
     "assertWorkspaceDirectory",
     "privateWorkspaceReadme",

@@ -201,9 +201,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "DOGFOOD_TARGET_MODES",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(String(value || \"\"))",
     "[external-config]",
     "return publicText(value).replace",
   ]) {

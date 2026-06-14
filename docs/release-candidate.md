@@ -135,8 +135,8 @@ bundles can include those counts and deferrals.
 
 The bundle is suitable for public PRs, issues, releases, and durable manager
 memory after operator review. It redacts common bearer, GitHub, provider API
-key, alert webhook, AWS access-key id, private-key, AWS ARN, and AWS account id
-shapes.
+key, alert webhook, AWS access-key id, AWS ARN, AWS account-id, and
+private-key shapes.
 
 Preflight error and warning summaries are sanitized before inclusion, including
 embedded tokens, secrets, external file paths, and other accidental private

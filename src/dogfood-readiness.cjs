@@ -24,10 +24,6 @@ const DEFAULT_REPOSITORY_CONFIG_FILES = [
 const DEFAULT_BUDGET_POLICY_FILE = "config/budget-policies.dogfood.example.json";
 const DEFAULT_MODEL_CATALOG_FILE = "config/model-catalog.json";
 const DOGFOOD_TEXT_MAX_CHARS = 1000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function collectDogfoodReadiness(options = {}) {
   const root = options.root || process.cwd();
@@ -574,11 +570,7 @@ function publicPath(filePath, root) {
 }
 
 function publicText(value, maxChars = DOGFOOD_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, maxChars);
+  return redactSensitiveText(value).slice(0, maxChars);
 }
 
 function priceKey(price) {

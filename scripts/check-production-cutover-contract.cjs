@@ -603,9 +603,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "CUTOVER_STATUSES",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(value)",
     "status === \"complete\" && !statusEvidence",
     "Deferred cutover items must be named in release notes",
     "replace(/\\r?\\n/g, \" \")",

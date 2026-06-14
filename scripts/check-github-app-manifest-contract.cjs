@@ -423,9 +423,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const conversionPath = "src/github-app-manifest-conversion.cjs";
   const conversionText = sourceTexts[conversionPath] || readText(conversionPath);
   for (const snippet of [
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(value)",
     "safeSummaryText(text).slice(0, 200)",
     "replace(/\\r?\\n/g, \" \")",
     "Refusing to write GitHub App credentials inside this public repository",

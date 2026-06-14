@@ -49,7 +49,7 @@ npm run release:notes -- -- --json
 
 The draft uses the same public text redaction boundary as the
 [Release Candidate Bundle](release-candidate.md), including common token,
-alert webhook, AWS access-key id, private-key, AWS ARN, and AWS account-id
+alert webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key
 shapes. A human operator should still review the final Markdown before
 publishing it.
 

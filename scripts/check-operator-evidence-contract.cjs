@@ -240,9 +240,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "OPERATOR_EVIDENCE_SECTIONS",
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(value)",
     "status === \"complete\" && evidence.length === 0",
     "Deferred sections must be named in release notes",
     "security-intake",

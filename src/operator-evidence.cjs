@@ -30,11 +30,6 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "release-decision", title: "Release Decision" },
 ];
 
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
-
 function loadOperatorEvidence(filePath = "config/production-evidence.example.json") {
   return validateOperatorEvidence(JSON.parse(fs.readFileSync(filePath, "utf8")), filePath);
 }
@@ -287,11 +282,7 @@ function serializableOperatorEvidence(document) {
 }
 
 function publicEvidenceText(value) {
-  let text = redactSensitiveText(value);
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text
+  return redactSensitiveText(value)
     .slice(0, OPERATOR_EVIDENCE_TEXT_MAX_CHARS)
     .replace(/\r?\n/g, " ");
 }

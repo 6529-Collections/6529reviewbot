@@ -11,10 +11,6 @@ const {
 const { collectDogfoodReadiness } = require("./dogfood-readiness.cjs");
 
 const DOGFOOD_PROMOTION_TEXT_MAX_CHARS = 1000;
-const PUBLIC_REDACTION_PATTERNS = [
-  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
-  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
-];
 
 function collectDogfoodPromotionPacket(options = {}) {
   const root = path.resolve(options.root || process.cwd());
@@ -411,11 +407,7 @@ function publicInputPath(filePath, root) {
 }
 
 function publicText(value, maxChars = DOGFOOD_PROMOTION_TEXT_MAX_CHARS) {
-  let text = redactSensitiveText(String(value || ""));
-  for (const [pattern, replacement] of PUBLIC_REDACTION_PATTERNS) {
-    text = text.replace(pattern, replacement);
-  }
-  return text.slice(0, maxChars);
+  return redactSensitiveText(String(value || "")).slice(0, maxChars);
 }
 
 function lastLine(output) {

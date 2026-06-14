@@ -372,9 +372,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourcePath = "src/dogfood-promotion.cjs";
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
-    "PUBLIC_REDACTION_PATTERNS",
-    "arn:aws:[redacted]",
-    "[redacted-aws-account-id]",
+    "redactSensitiveText(String(value || \"\"))",
     "operatorWorkspaceDir",
     "modelPriceFile",
     "modelPriceCoverageReady",
