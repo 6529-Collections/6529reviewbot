@@ -425,12 +425,16 @@ Completed in `6529reviewbot`:
   vague or failed validation evidence rules in the command inventory;
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production deployment plan evidence,
-  dashboard deployment plan evidence, alert delivery plan evidence, production
-  cutover status, deferrals, known gaps, compatibility, and validation fields;
+  worker dispatch credential evidence, container publish-plan evidence,
+  dashboard deployment plan evidence, public dashboard disclosure evidence,
+  private admin auth evidence, alert delivery plan evidence, production cutover
+  status, deferrals, known gaps, compatibility, and validation fields;
 - release notes draft command for turning release-candidate bundle evidence
   and model catalog defaults into a public-safe pre-v1 draft with operator TODO
-  markers, including production deployment plan evidence, dashboard deployment
-  plan evidence, and alert delivery plan evidence;
+  markers, including production deployment plan evidence, worker dispatch
+  credential evidence, container publish-plan evidence, dashboard deployment
+  plan evidence, public dashboard disclosure evidence, private admin auth
+  evidence, and alert delivery plan evidence;
 - release notes publication guard for rejecting unfinished markers, missing
   evidence fields, incomplete deferrals, vague or failed validation results,
   and public-safety leaks before tags or GitHub Releases;
@@ -630,7 +634,8 @@ Completed in `6529reviewbot`:
 - release notes publication guard and contract check for completed release
   notes before pre-v1 tags or GitHub Releases.
 - release tag plan command and contract check for completed release notes,
-  clean-main readiness, and dry-run tag commands.
+  clean-main readiness, local and remote tag availability, and dry-run tag
+  commands.
 - security review status checklist and CLI for private manual-review evidence.
 - CI enforcement of `npm run release:check` on pull requests and `main`.
 - OpenSSF Scorecard workflow permissions scoped for published result
