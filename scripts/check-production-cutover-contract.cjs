@@ -176,6 +176,28 @@ function checkChecklistConfig(findings) {
     findings.push("6529.io cutover phase must include public-dashboard-wired.");
   } else if (dashboardPlanIndex > publicDashboardIndex) {
     findings.push("dashboard-deployment-plan-reviewed must come before public-dashboard-wired.");
+  } else {
+    const publicDashboard = ioPhase.items[publicDashboardIndex];
+    for (const snippet of [
+      "public transparency route",
+      "public usage summary API",
+      "reviewed public repo/org disclosure allowlists",
+    ]) {
+      if (!publicDashboard.title.includes(snippet)) {
+        findings.push(`public-dashboard-wired title must include '${snippet}'.`);
+      }
+    }
+    for (const snippet of [
+      "route",
+      "API target",
+      "REVIEWBOT_USAGE_API_PUBLIC_ORGS",
+      "repo allowlist decision",
+      "deployment summary",
+    ]) {
+      if (!publicDashboard.evidence.includes(snippet)) {
+        findings.push(`public-dashboard-wired evidence must include '${snippet}'.`);
+      }
+    }
   }
   if (adminBridgeIndex === -1) {
     findings.push("6529.io cutover phase must include admin-bridge-wired.");
@@ -469,6 +491,7 @@ function checkDocs(docTexts, findings) {
       "production cutover contract check",
       "npm run container:publish-plan",
       "worker dispatch credential posture",
+      "public repo/org disclosure allowlists",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["production cutover contract"],

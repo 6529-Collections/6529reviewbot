@@ -30,7 +30,7 @@
     },
     {
       "id": "public-dashboard",
-      "title": "6529.io public usage dashboard is merged, deployed, wired to the public usage API, and covered by reviewed dashboard deployment plan evidence, or explicitly deferred.",
+      "title": "6529.io public usage dashboard is merged, deployed, wired to the public usage API, covered by reviewed dashboard deployment plan evidence, and limited to reviewed public repo/org disclosure allowlists, or explicitly deferred.",
       "evidence": "docs/dashboard-deployment-plan.md"
     },
     {

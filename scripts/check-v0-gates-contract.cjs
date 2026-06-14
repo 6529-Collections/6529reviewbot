@@ -106,6 +106,12 @@ function checkGateConfig(findings) {
     if (!normalizeWhitespace(gate.title).toLowerCase().includes("reviewed dashboard deployment plan evidence")) {
       findings.push(`${id} gate title must require reviewed dashboard deployment plan evidence.`);
     }
+    if (
+      id === "public-dashboard" &&
+      !normalizeWhitespace(gate.title).toLowerCase().includes("reviewed public repo/org disclosure allowlists")
+    ) {
+      findings.push("public-dashboard gate title must require reviewed public repo/org disclosure allowlists.");
+    }
   }
 
   const alertGate = gatesById.get("alerts");
@@ -357,6 +363,7 @@ function checkDocs(docTexts, findings) {
       "npm run check:v0-gates",
       "v0 release gate contract check",
       "dispatch credential evidence",
+      "reviewed public repo/org disclosure allowlists",
       "reviewed container publish plan evidence",
       "reviewed alert delivery plan evidence",
       "AWS account ids",

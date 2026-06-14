@@ -119,8 +119,9 @@ Do not create the `v0` tag until all of these are true:
 5. AWS IAM/OIDC trust and identity policies are reviewed from the templates in
    `infra/aws` or equivalent least-privilege documents.
 6. The 6529.io public usage dashboard is merged, deployed, wired to the
-   public usage API, and covered by reviewed dashboard deployment plan evidence
-   or explicitly deferred in the release notes.
+   public usage API, covered by reviewed dashboard deployment plan evidence,
+   and limited to reviewed public repo/org disclosure allowlists, or explicitly
+   deferred in the release notes.
 7. The 6529.io private admin surface is wired to the HMAC auth bridge and
    covered by reviewed dashboard deployment plan evidence or explicitly
    deferred behind operator-only APIs.

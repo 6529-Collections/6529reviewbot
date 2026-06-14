@@ -164,8 +164,8 @@
         },
         {
           "id": "public-dashboard-wired",
-          "title": "6529.io public transparency route is merged, deployed, and wired to the public usage summary API, or explicitly deferred.",
-          "evidence": "route, API target, and deployment summary",
+          "title": "6529.io public transparency route is merged, deployed, wired to the public usage summary API, and limited to reviewed public repo/org disclosure allowlists, or explicitly deferred.",
+          "evidence": "route, API target, reviewed REVIEWBOT_USAGE_API_PUBLIC_ORGS or repo allowlist decision, and deployment summary",
           "runbook": "docs/usage-api.md"
         },
         {

@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required public repo/org disclosure allowlist evidence in the v0 release
+  gates and production cutover checklist before public dashboard exposure can
+  satisfy release readiness.
 - Required worker dispatch credential evidence in the v0 release gates and
   production cutover checklist before non-noop worker traffic can satisfy
   release readiness.
