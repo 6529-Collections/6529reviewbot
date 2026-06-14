@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release notes publication checks for accepted model-price override
+  disclosure.
 - Strengthened the model pricing runbook contract to pin catalog coverage
   section ordering and guidance.
 - Aligned release evidence, deployment, and cutover dogfood gate commands with

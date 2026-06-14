@@ -44,6 +44,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   checkFailedValidationRejected(findings);
   checkNegatedReadyValidationRejected(findings);
   checkVagueValidationRejected(findings);
+  checkModelPriceOverrideDisclosure(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -58,7 +59,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 7,
+    publicationCases: 8,
     docs: targetDocs.length,
   };
 }
@@ -140,6 +141,48 @@ function checkVagueValidationRejected(findings) {
   }
 }
 
+function checkModelPriceOverrideDisclosure(findings) {
+  const vagueOverride = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "Accepted model-price overrides: none",
+      "Accepted model-price overrides: stale pricing allowed"
+    )
+  );
+  if (vagueOverride.ready) {
+    findings.push("release notes publication check must reject vague model-price override disclosure.");
+  }
+  if (
+    !vagueOverride.errors.some((error) =>
+      error.includes("--allow-stale-source/--allow-zero-price")
+    )
+  ) {
+    findings.push("vague model-price override rejection must name the exact override flags.");
+  }
+
+  const missingEvidence = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "Accepted model-price overrides: none",
+      "Accepted model-price overrides: --allow-stale-source for anthropic:claude-opus-4-8"
+    )
+  );
+  if (missingEvidence.ready) {
+    findings.push("release notes publication check must reject model-price overrides without evidence.");
+  }
+  if (!missingEvidence.errors.some((error) => error.includes("accepted risk and operator evidence"))) {
+    findings.push("model-price override evidence rejection must mention accepted risk and operator evidence.");
+  }
+
+  const acceptedOverride = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "Accepted model-price overrides: none",
+      "Accepted model-price overrides: --allow-stale-source accepted for anthropic:claude-opus-4-8 with private operator evidence in the release runbook"
+    )
+  );
+  if (!acceptedOverride.ready) {
+    findings.push(`accepted model-price override disclosure should pass: ${acceptedOverride.errors.join("; ")}`);
+  }
+}
+
 function checkCli(findings) {
   try {
     publicationCli.parseArgs(["--nope"]);
@@ -172,6 +215,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "TODO(operator)",
       "redactSensitiveText",
       "checkValidationResults",
+      "checkModelPriceOverrideDisclosure",
       "FAILED_VALIDATION_PATTERN",
       "READY_VALIDATION_PATTERN",
       "No accepted deferrals",

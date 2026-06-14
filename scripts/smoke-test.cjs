@@ -5339,7 +5339,7 @@ appServer.handleGitHubWebhook({
   );
   const releaseNotesPublicationContractResult =
     releaseNotesPublicationContractCheck.checkReleaseNotesPublicationContract();
-  assert.equal(releaseNotesPublicationContractResult.publicationCases, 7);
+  assert.equal(releaseNotesPublicationContractResult.publicationCases, 8);
   assert.equal(releaseNotesPublicationContractResult.docs, 7);
   assert.throws(
     () =>
