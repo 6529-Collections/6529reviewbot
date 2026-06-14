@@ -5270,3 +5270,25 @@
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     release tag remote-collision guard exercised.
+- Merged `6529reviewbot` PR #292 as `09d9180`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-tag-remote-fixture-coverage` increment:
+  - add no-network bare-remote fixture coverage so the release tag planner's
+    real `git ls-remote` remote tag lookup is exercised against present and
+    absent tags.
+- Local validation for `codex/release-tag-remote-fixture-coverage` so far:
+  - initial `npm run check:release-tag-plan` caught that Node could not spawn
+    `git` from PATH in this Windows shell, so the fixture now uses the same
+    Windows Git fallback as the runtime planner;
+  - `npm run check:release-tag-plan` passed with 11 plan cases and
+    6 docs checked;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #292,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    release tag bare-remote fixture exercised.

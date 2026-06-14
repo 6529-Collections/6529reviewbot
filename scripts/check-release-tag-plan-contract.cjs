@@ -3,9 +3,11 @@
 "use strict";
 
 const fs = require("fs");
+const childProcess = require("child_process");
 const os = require("os");
 const path = require("path");
 const {
+  collectRemoteTagState,
   collectReleaseTagPlan,
   formatReleaseTagPlanMarkdown,
   parseAheadBehind,
@@ -44,6 +46,7 @@ function checkReleaseTagPlanContract(options = {}) {
   checkExistingTagPlan(findings);
   checkRemoteTagCollisionPlan(findings);
   checkRemoteTagUnavailablePlan(findings);
+  checkRemoteTagLookupFixture(findings);
   checkReleaseNotesFailure(findings);
   checkReleaseNotesWarningGate(findings);
   checkReleaseNotesVersionMismatch(findings);
@@ -61,7 +64,7 @@ function checkReleaseTagPlanContract(options = {}) {
   }
 
   return {
-    planCases: 10,
+    planCases: 11,
     docs: targetDocs.length,
   };
 }
@@ -230,6 +233,36 @@ function checkRemoteTagUnavailablePlan(findings) {
   }
 }
 
+function checkRemoteTagLookupFixture(findings) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "6529-release-tag-remote-"));
+  const remote = path.join(directory, "remote.git");
+  const work = path.join(directory, "work");
+  try {
+    runGit(["init", "--bare", remote], directory);
+    runGit(["init", work], directory);
+    runGit(["config", "user.name", "6529 Review Bot Test"], work);
+    runGit(["config", "user.email", "reviewbot@example.invalid"], work);
+    fs.writeFileSync(path.join(work, "README.md"), "release tag fixture\n", "utf8");
+    runGit(["add", "README.md"], work);
+    runGit(["commit", "-m", "fixture"], work);
+    runGit(["tag", "v0.9.0"], work);
+    runGit(["remote", "add", "origin", remote], work);
+    runGit(["push", "origin", "HEAD:main", "--tags"], work);
+
+    const existingTag = collectRemoteTagState(work, "origin", "v0.9.0");
+    if (!existingTag.remoteTagExists || existingTag.remoteTagCheckFailed) {
+      findings.push("remote tag lookup fixture must detect an existing pushed tag.");
+    }
+
+    const missingTag = collectRemoteTagState(work, "origin", "v0.9.1");
+    if (missingTag.remoteTagExists || missingTag.remoteTagCheckFailed) {
+      findings.push("remote tag lookup fixture must report absent tags without failing.");
+    }
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+}
+
 function checkReleaseNotesFailure(findings) {
   const plan = collectReleaseTagPlan({
     release: "v0.2.0",
@@ -350,6 +383,25 @@ function cleanMainGit() {
     remoteTagExists: false,
     remoteTagCheckFailed: false,
   };
+}
+
+function runGit(args, cwd) {
+  childProcess.execFileSync(testGitBin(), args, {
+    cwd,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
+function testGitBin() {
+  if (process.env.GIT_BIN) {
+    return process.env.GIT_BIN;
+  }
+  const windowsGit = "C:\\Program Files\\Git\\cmd\\git.exe";
+  if (process.platform === "win32" && fs.existsSync(windowsGit)) {
+    return windowsGit;
+  }
+  return "git";
 }
 
 function checkSourceAnchors(sourceTexts, findings) {
