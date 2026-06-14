@@ -10,6 +10,7 @@ It checks:
   format;
 - that the local checkout is on clean, synced `main`;
 - that the planned release tag does not already exist locally;
+- that the planned release tag does not already exist on the remote;
 - that completed release notes pass the publication guard;
 - that the release notes title matches the requested release tag;
 - the exact tag and GitHub Release steps the operator should run.
@@ -28,8 +29,9 @@ npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.m
 Use `--require-ready` for the final pre-tag gate. This exits non-zero unless
 the release tag is Git ref-safe, the working tree is clean, the branch is
 `main`, the local branch is neither ahead nor behind its upstream, the local
-tag is absent, and completed release notes are supplied, publishable, free of
-release-note warnings, and titled for the planned release:
+tag is absent, the remote tag check succeeds, the remote tag is absent, and
+completed release notes are supplied, publishable, free of release-note
+warnings, and titled for the planned release:
 
 ```bash
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready
@@ -54,8 +56,8 @@ npm run check:release-tag-plan
 ```
 
 It verifies the dry-run behavior, Git ref-safe tag-name guard, clean-main
-readiness gate, release-notes publication integration, release-note warnings in
-the final gate, CLI flags, release operations map entries, smoke-test wiring,
-and public docs.
+readiness gate, local and remote tag availability, release-notes publication
+integration, release-note warnings in the final gate, CLI flags, release
+operations map entries, smoke-test wiring, and public docs.
 
 The check is included in `npm run release:check`.

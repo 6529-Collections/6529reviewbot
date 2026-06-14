@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release tag planning to check remote tag availability before a
+  final ready tag plan can pass.
 - Refreshed the roadmap, release readiness, and release operations map to
   describe the now-enforced runtime, dispatch, dashboard, and admin evidence
   coverage across release notes, release candidates, and operator evidence.

@@ -322,8 +322,8 @@ Ready for community review:
   status, deferrals, known gaps, compatibility, and validation fields;
 - release tag planning rejects completed release notes whose title version does
   not match the planned release tag;
-- release tag planning rejects locally existing release tags before marking
-  dry-run tag commands ready;
+- release tag planning rejects locally or remotely existing release tags before
+  marking dry-run tag commands ready;
 - release operations map validation that keeps the public command inventory in
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's
@@ -580,7 +580,8 @@ docs aligned.
 when required fields, deferral decisions, or public-safety checks are missing.
 `npm run check:release-tag-plan` is included in `npm run release:check` and
 verifies the release tag plan remains a dry-run tag plan that requires clean,
-synced `main` and completed release notes before rendering operator commands.
+synced `main`, local and remote tag availability, and completed release notes
+before rendering operator commands.
 `npm run check:release-notes-draft` and
 `npm run check:release-notes-publication` require production deployment plan,
 worker dispatch credential, container publish-plan, dashboard deployment plan,
