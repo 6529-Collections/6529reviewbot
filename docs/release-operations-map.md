@@ -15,11 +15,14 @@ npm run release:operations -- -- --summary --json
 The source of truth is
 [config/release-operations-map.json](../config/release-operations-map.json).
 `npm run check:release-operations` validates that every mapped command exists
-in `package.json`, every linked document is present, and final production
-handoff, status/release gate, and dogfood ready-mode commands parse through
-their real CLIs with the required private workspace, model price,
-worker-dispatch, status, release-notes, strict preflight, and ready-mode
-inputs. The check is included in `npm run release:check`.
+in `package.json`, every linked document is present, and mapped CLI argument
+examples parse through their real CLIs. The parser-backed coverage includes
+production handoff, status/release gates, dogfood ready-mode commands, private
+operator workspace setup, status skeleton creation, budget/model-price dry
+runs, webhook replay dry runs, admin snapshots, and release-note commands with
+the required private workspace, model price, worker-dispatch, status,
+release-notes, strict preflight, ready-mode, and dry-run safety inputs. The
+check is included in `npm run release:check`.
 The canonical documentation index is [Docs Index](README.md), and
 `npm run check:doc-index` fails release checks when a public docs page is not
 linked there.
