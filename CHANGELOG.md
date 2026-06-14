@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a worker-dispatch credential phase to the production deployment plan
+  handoff.
 - Added default dogfood readiness and release-check validation for this
   repository's command-only `.github/6529bot.yml` self-dogfood config.
 - Hardened release notes publication contract coverage for missing
