@@ -84,14 +84,17 @@ registration settings are reviewable before any live App credentials exist.
 Render the template for a concrete HTTPS host with:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com
+npm run github-app:manifest -- -- --host <production-bot-origin>
 npm run check:github-app-manifest
 ```
+
+The manifest renderer rejects documentation, example, local, or reserved hosts
+such as `reviewbot.example.com`; use the actual production App server origin.
 
 To generate an operator-owned registration form for an organization install:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com \
+npm run github-app:manifest -- -- --host <production-bot-origin> \
   --form \
   --owner 6529-Collections \
   --state <unguessable-state>

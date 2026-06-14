@@ -4875,3 +4875,24 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     placeholder image registry ready gates exercised.
+- Merged `6529reviewbot` PR #274 as `55d3d25`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/reject-placeholder-manifest-hosts` increment:
+  - reject documentation, example, local, or reserved hosts from GitHub App
+    manifest rendering.
+- Local validation for `codex/reject-placeholder-manifest-hosts` so far:
+  - `npm run check:github-app-manifest` passed with 7 manifest cases,
+    6 conversion cases, and 7 docs checked;
+  - `npm run check:install-guide` passed with 6 guide cases and 6 docs checked;
+  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+    6 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #274,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    placeholder GitHub App manifest host guard exercised.

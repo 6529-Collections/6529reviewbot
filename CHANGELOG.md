@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Rejected documentation, example, local, or reserved hosts from GitHub App
+  manifest rendering.
 - Rejected documentation, example, local, or reserved container registries from
   final container publish and production deployment ready gates.
 - Rejected documentation, example, local, or reserved origin hosts from final

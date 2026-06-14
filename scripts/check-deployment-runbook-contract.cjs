@@ -87,7 +87,7 @@ function checkGitHubAppDeploymentPath(text, findings) {
   for (const snippet of [
     "Create a GitHub App named `6529bot`.",
     "templates/github-app-manifest.example.json",
-    "npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet",
+    "npm run github-app:manifest -- -- --host <production-bot-origin> --quiet",
     "npm run check:github-app-manifest",
     "npm run github-app:convert -- -- --code <code> --output <private-json-path>",
     "GET /github-app/manifest-complete",

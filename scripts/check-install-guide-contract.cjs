@@ -87,7 +87,7 @@ function checkCommandPath(text, findings) {
     "npm run release:check",
     "npm run check:install-guide",
     "npm run preflight",
-    "npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet",
+    "npm run github-app:manifest -- -- --host <production-bot-origin> --quiet",
     "npm run check:github-app-manifest",
     "npm run check:github-app-auth",
     "npm run check:github-app-routes",

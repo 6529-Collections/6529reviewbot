@@ -448,14 +448,14 @@ npm run security:review -- -- --status-file <operator-security-status-file> --re
 Validate the GitHub App manifest template:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host <production-bot-origin> --quiet
 npm run check:github-app-manifest
 ```
 
 Render a production-hosted manifest without generating any secrets:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com
+npm run github-app:manifest -- -- --host <production-bot-origin>
 ```
 
 Convert GitHub's one-hour manifest code from a private operator environment:

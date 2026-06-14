@@ -42,14 +42,17 @@ fragment. The manifest renderer validates this shape.
 Render the reviewed manifest for the final production origin:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com
+npm run github-app:manifest -- -- --host <production-bot-origin>
 ```
 
 Validate without printing the manifest:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host <production-bot-origin> --quiet
 ```
+
+The renderer rejects documentation, example, local, or reserved hosts such as
+`reviewbot.example.com`; use the actual production App server origin.
 
 Confirm the rendered manifest:
 
@@ -76,7 +79,7 @@ Preferred dogfood path:
 2. Generate an operator-owned local registration form:
 
    ```bash
-   npm run github-app:manifest -- -- --host https://reviewbot.example.com \
+   npm run github-app:manifest -- -- --host <production-bot-origin> \
      --form \
      --owner 6529-Collections \
      --state <unguessable-state>
@@ -281,7 +284,7 @@ Treat GitHub App permission or event changes as release-sensitive:
 
    ```bash
    npm run release:check
-   npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+   npm run github-app:manifest -- -- --host <production-bot-origin> --quiet
    npm run check:github-app-manifest
    ```
 

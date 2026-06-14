@@ -507,25 +507,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Placeholder ready-origin gates PR: merged as PR #273, merge commit `08aa203`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/reject-placeholder-image-repos`.
+- Placeholder image repository gates PR: merged as PR #274, merge commit `55d3d25`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/reject-placeholder-manifest-hosts`.
 - Current local changes: reject documentation, example, local, or reserved
-  container registries from final container publish and production deployment
-  `--require-ready` gates.
+  hosts from GitHub App manifest rendering.
 - Current local validation:
-  - `npm run check:container-publish-plan` passed with 6 plan cases and
-    6 docs checked;
-  - `npm run check:production-deployment-plan` passed with 7 plan cases and
+  - `npm run check:github-app-manifest` passed with 7 manifest cases,
+    6 conversion cases, and 7 docs checked;
+  - `npm run check:install-guide` passed with 6 guide cases and 6 docs checked;
+  - `npm run check:deployment-runbook` passed with 7 runbook cases and
     6 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #273,
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #274,
     and 5 docs checked;
   - `npm test` passed;
-  - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    placeholder image registry ready gates exercised.
+    placeholder GitHub App manifest host guard exercised.
 
 ## Key Decisions
 
