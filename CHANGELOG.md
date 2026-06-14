@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added checked security reporting guidance for private vulnerability intake
+  before broad community release.
 - Added contributor guidance for release-sensitive validation, external
   evidence boundaries, and repository ruleset checks.
 - Added checked repository ruleset guidance for main branch protection,
