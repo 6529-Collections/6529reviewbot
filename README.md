@@ -85,6 +85,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [Architecture](docs/architecture.md): system boundaries and trust model.
 - [Installation](docs/install.md): central App setup and target repo onboarding.
 - [Configuration](docs/configuration.md): central runtime settings.
+- [Compatibility Policy](docs/compatibility-policy.md): pre-v1 compatibility
+  surfaces, breaking-change handling, and pinning guidance.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
 - [GitHub App Registration](docs/github-app-registration.md): operator packet
   for App creation, credential custody, verification, and rotation.

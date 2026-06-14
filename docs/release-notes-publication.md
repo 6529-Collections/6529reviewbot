@@ -41,6 +41,8 @@ The publication guard verifies:
 - `TODO(operator)`, `TODO`, `TBD`, and similar placeholders are gone;
 - tested configuration fields are filled;
 - known-gap fields are filled;
+  in particular, `Compatibility guarantees:` must describe the pre-v1
+  compatibility promise and exact tag/commit pinning;
 - validation fields are filled;
 - worker dispatch credential evidence is filled before tag or GitHub Release
   publication;

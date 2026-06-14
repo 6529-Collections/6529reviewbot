@@ -423,6 +423,9 @@ Completed in `6529reviewbot`:
   visible in public operator docs;
 - release operations map checks now pin the release notes publication guard's
   vague or failed validation evidence rules in the command inventory;
+- compatibility policy contract for pre-v1 compatibility-sensitive surfaces,
+  breaking-change release notes, exact tag/commit pinning, and the future v1
+  stable API promise;
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production deployment plan evidence,
   worker dispatch credential evidence, container publish-plan evidence,

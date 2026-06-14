@@ -42,6 +42,9 @@ linked from production cutover evidence.
 with first-principles trust boundaries, prompt/path/metadata safety,
 fail-closed controls, diagnostic redaction, admin/AWS/alert boundaries, and
 source anchors.
+`npm run check:compatibility-policy` keeps the pre-v1 compatibility policy,
+release notes, release process, reusable workflow guidance, and public docs
+aligned.
 `npm run check:operations-runbook` keeps the operations runbook's routine
 checks and triage paths for replay, spend, ledgers, workers, dashboards, and
 bot comments synchronized.
@@ -223,6 +226,7 @@ The local quality gate command inventory is:
 - `npm run check:configuration-reference`
 - `npm run check:aws-iam-templates`
 - `npm run check:security-model`
+- `npm run check:compatibility-policy`
 - `npm run check:operations-runbook`
 - `npm run check:dependabot`
 - `npm run check:container-image`

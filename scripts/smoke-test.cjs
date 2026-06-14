@@ -64,6 +64,7 @@ const configurationReferenceContractCheck = require("./check-configuration-refer
 const managerMemoryContractCheck = require("./check-manager-memory.cjs");
 const awsIamTemplatesCheck = require("./check-aws-iam-templates.cjs");
 const securityModelContractCheck = require("./check-security-model-contract.cjs");
+const compatibilityPolicyCheck = require("./check-compatibility-policy.cjs");
 const operationsRunbookContractCheck = require("./check-operations-runbook-contract.cjs");
 const supportRunbooksContractCheck = require("./check-support-runbooks-contract.cjs");
 const jobHealthAlerts = require("../src/job-health-alerts.cjs");
@@ -5567,6 +5568,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /security model contract check found/
+  );
+  const compatibilityPolicyResult =
+    compatibilityPolicyCheck.checkCompatibilityPolicyContract();
+  assert.equal(compatibilityPolicyResult.surfaces, 14);
+  assert.throws(
+    () =>
+      compatibilityPolicyCheck.checkCompatibilityPolicyContract({
+        quiet: true,
+        texts: {
+          "docs/compatibility-policy.md": "# Compatibility Policy\n",
+        },
+      }),
+    /compatibility policy contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

@@ -14,6 +14,8 @@ be linked here before they are considered release-ready.
   settings.
 - [Security Model](security-model.md): trust boundaries, secrets, model
   exposure, and public-repo controls.
+- [Compatibility Policy](compatibility-policy.md): pre-v1 compatibility
+  surfaces, breaking-change handling, and pinning guidance.
 - [Roadmap](roadmap.md): current direction, shipped pieces, and remaining
   release work.
 
