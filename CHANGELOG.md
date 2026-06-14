@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added no-network bare-remote fixture coverage for release tag remote
+  availability checks.
 - Hardened release tag planning to check remote tag availability before a
   final ready tag plan can pass.
 - Refreshed the roadmap, release readiness, and release operations map to
