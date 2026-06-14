@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added bearer-token detection to the public artifact leak scanner so copied
+  authorization headers fail release checks before reaching public docs,
+  templates, workflows, or manager memory.
 - Added direct behavior fixtures for all 9 public renderer redaction entry
   points so release, dogfood, operator, cutover, gate, and manifest summaries
   prove shared token and AWS redaction at runtime.

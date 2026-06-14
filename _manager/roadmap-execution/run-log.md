@@ -6599,3 +6599,23 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     public renderer redaction behavior fixtures exercised.
+- Merged `6529reviewbot` PR #340 as `7d22b5b`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/bearer-token-public-artifact-scan` increment:
+  - add bearer-token detection to the public artifact leak scanner;
+  - cover the new scanner rule in smoke tests;
+  - document scanner coverage in the support runbook and update changelog and
+    durable manager memory.
+- Local validation for `codex/bearer-token-public-artifact-scan` so far:
+  - `gh run list --repo 6529-Collections/6529reviewbot --commit 7d22b5b363dda4659275bef90256563833cf01c5 --limit 10` passed by showing PR #340 post-merge CI run `27506484178` and OpenSSF Scorecard run `27506484173` completed successfully;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm test` passed after adding bearer-token public artifact coverage;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:support-runbooks` passed with 4 support cases, 3 incident
+    cases, and 7 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #340, and
+    5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    bearer-token public artifact scanner guard exercised.

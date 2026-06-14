@@ -2029,6 +2029,13 @@ assert.equal(
   "aws_account_id"
 );
 assert.equal(
+  publicArtifactsCheck.scanFile(
+    "docs/example.md",
+    "Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456\n"
+  )[0].rule,
+  "bearer_token"
+);
+assert.equal(
   publicArtifactsCheck.scanFile("docs/example.md", "GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwx123456\n")[0].rule,
   "github_token"
 );
