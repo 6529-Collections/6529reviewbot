@@ -559,6 +559,9 @@ Completed in `6529reviewbot`:
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
   reviewed alert delivery plan evidence requirement as the v0 alerts gate.
+- release notes publication checks now reject failed, pending, blocked, or
+  not-ready validation evidence unless the release notes explicitly describe
+  the accepted deferral or dogfood-only exception.
 - reusable workflow public-repo rules now carry the same reviewed alert
   delivery plan evidence requirement before scheduled operator alerts are
   considered ready.

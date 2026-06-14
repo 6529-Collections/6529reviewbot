@@ -81,6 +81,8 @@ const VALIDATION_FIELDS = [
   "Manual security checklist:",
 ];
 const PLACEHOLDER_PATTERN = /\b(?:TODO(?:\(operator\))?|TBD|fill me|pending evidence)\b/i;
+const FAILED_VALIDATION_PATTERN = /\b(?:failed|failure|failing|error|not ready|blocked|pending)\b/i;
+const ACCEPTED_EXCEPTION_PATTERN = /\b(?:accepted|explicitly deferred|dogfood-only)\b/i;
 const AWS_ARN_PATTERN = /\barn:aws:[^\s)`]+/i;
 const AWS_ACCOUNT_ID_PATTERN = /\b\d{12}\b/;
 const LOCAL_PATH_PATTERN = /\b[A-Za-z]:\\[^\s`]+/;
@@ -99,6 +101,7 @@ function validateReleaseNotesPublication(markdown, options = {}) {
   checkSectionFields(text, "## Known Gaps", "## Deferrals And Accepted Risks", KNOWN_GAP_FIELDS, errors);
   checkDeferrals(text, errors);
   checkSectionFields(text, "## Validation", "", VALIDATION_FIELDS, errors);
+  checkValidationResults(text, errors);
   checkRecommendedText(text, warnings);
 
   if (options.requireNoWarnings && warnings.length) {
@@ -213,6 +216,23 @@ function checkDeferrals(text, errors) {
     const value = fieldValue(section, label);
     if (!filledValue(value)) {
       errors.push(`deferral field '${label}' must be filled, or state 'No accepted deferrals'.`);
+    }
+  }
+}
+
+function checkValidationResults(text, errors) {
+  const section = sectionText(text, "## Validation", "");
+  if (!section) {
+    return;
+  }
+  for (const label of VALIDATION_FIELDS) {
+    const value = fieldValue(section, label);
+    if (
+      value &&
+      FAILED_VALIDATION_PATTERN.test(value) &&
+      !ACCEPTED_EXCEPTION_PATTERN.test(value)
+    ) {
+      errors.push(`validation field '${label}' must not report failed, pending, blocked, or not-ready evidence.`);
     }
   }
 }
