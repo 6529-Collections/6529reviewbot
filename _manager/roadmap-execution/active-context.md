@@ -489,23 +489,24 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Model pricing coverage runbook contract PR: merged as PR #264, merge commit `350dc5c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-model-price-overrides`.
-- Current local changes: hardening release notes publication checks so accepted
-  model-price overrides must either state none or name the exact override flag,
-  accepted risk, and operator evidence.
+- Release notes model-price override disclosure PR: merged as PR #265, merge commit `5236a24`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-run-control-warning`.
+- Current local changes: adding run-control enforcement to release notes
+  publication recommendation warnings and the complete publication fixture.
 - Current local validation:
-  - `npm run check:release-notes-publication` passed with 8 publication cases
+  - `npm run check:release-notes-publication` passed with 9 publication cases
     and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 176 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #264,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #265,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 176 CommonJS files checked and the
-    8-case release notes publication contract exercised.
+    9-case release notes publication contract exercised.
 
 ## Key Decisions
 
