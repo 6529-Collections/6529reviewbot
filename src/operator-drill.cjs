@@ -232,7 +232,7 @@ function operatorDrillNextCommands() {
     },
     {
       label: "production deployment plan",
-      command: "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready",
+      command: "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready",
     },
     {
       label: "dashboard deployment plan",

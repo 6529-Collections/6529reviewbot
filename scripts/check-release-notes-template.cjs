@@ -101,6 +101,7 @@ const requiredValidationFields = [
   "`npm run community:gates",
   "`npm run release:candidate",
   "`npm run production:deployment-plan",
+  "--worker-dispatch-installation-id <central-repo-installation-id>",
   "`npm run dashboard:deployment-plan",
   "`npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",
   "`npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`",

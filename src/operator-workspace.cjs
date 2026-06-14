@@ -324,7 +324,7 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   lines.push(`npm run production:cutover -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus} --summary`);
   lines.push(`npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary`);
   lines.push("npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage");
-  lines.push(`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --release ${summary.release} --require-ready`);
+  lines.push(`npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --worker-dispatch-installation-id <central-repo-installation-id> --release ${summary.release} --require-ready`);
   lines.push(`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${summary.release} --require-ready`);
   lines.push(`npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${summary.release} --require-ready`);
   lines.push("```");
@@ -399,7 +399,7 @@ npm run security:review -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.s
 npm run production:cutover -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.productionCutoverStatus} --summary
 npm run operator:evidence -- -- --file ${DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence} --summary
 npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --release ${release} --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace . --worker-dispatch-installation-id <central-repo-installation-id> --release ${release} --require-ready
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${release} --require-ready
 npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${release} --require-ready
 npm run release:candidate -- -- --operator-workspace . --strict-preflight

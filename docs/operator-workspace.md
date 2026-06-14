@@ -51,7 +51,7 @@ Review the production deployment handoff against the same workspace before
 running live App, registry, runtime, cutover, or dogfood actions:
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
 ```
 
 Review the 6529.io dashboard handoff against the same workspace before

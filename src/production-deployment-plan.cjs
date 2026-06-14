@@ -7,6 +7,7 @@ const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const DEFAULT_HOST = "<production-bot-origin>";
 const DEFAULT_IMAGE = "<operator-registry>/6529reviewbot";
 const DEFAULT_WORKSPACE = "<private-workspace-dir>";
+const DEFAULT_WORKER_DISPATCH_INSTALLATION_ID = "<central-repo-installation-id>";
 const REVIEWED_MODEL_PRICE_FILE = "<reviewed-model-price-file.json>";
 const DRY_RUN_NOTICE =
   "This command does not create GitHub Apps, convert manifest codes, deploy services, run checks, or send traffic.";
@@ -16,6 +17,11 @@ function collectProductionDeploymentPlan(options = {}) {
   const host = normalizeOrigin(options.host || options.origin || DEFAULT_HOST);
   const image = normalizeImageRef(options.image || DEFAULT_IMAGE);
   const workspace = normalizeWorkspace(options.operatorWorkspace || options.workspace || DEFAULT_WORKSPACE);
+  const workerDispatchInstallationId = normalizeWorkerDispatchInstallationId(
+    options.workerDispatchInstallationId ||
+      options.centralInstallationId ||
+      DEFAULT_WORKER_DISPATCH_INSTALLATION_ID
+  );
   const errors = [];
   const warnings = [];
 
@@ -33,6 +39,9 @@ function collectProductionDeploymentPlan(options = {}) {
     if (workspace === DEFAULT_WORKSPACE) {
       errors.push("private operator workspace was not supplied.");
     }
+    if (workerDispatchInstallationId === DEFAULT_WORKER_DISPATCH_INSTALLATION_ID) {
+      errors.push("worker dispatch central repository installation id was not supplied.");
+    }
   } else {
     if (host === DEFAULT_HOST) {
       warnings.push("production bot origin was not supplied; using placeholder commands.");
@@ -43,10 +52,18 @@ function collectProductionDeploymentPlan(options = {}) {
     if (workspace === DEFAULT_WORKSPACE) {
       warnings.push("private operator workspace was not supplied; using placeholder commands.");
     }
+    if (workerDispatchInstallationId === DEFAULT_WORKER_DISPATCH_INSTALLATION_ID) {
+      warnings.push("worker dispatch central repository installation id was not supplied; using placeholder commands.");
+    }
   }
 
-  if (host !== DEFAULT_HOST || image !== DEFAULT_IMAGE || workspace !== DEFAULT_WORKSPACE) {
-    warnings.push("deployment plan output can include private operator paths, origins, or registry names.");
+  if (
+    host !== DEFAULT_HOST ||
+    image !== DEFAULT_IMAGE ||
+    workspace !== DEFAULT_WORKSPACE ||
+    workerDispatchInstallationId !== DEFAULT_WORKER_DISPATCH_INSTALLATION_ID
+  ) {
+    warnings.push("deployment plan output can include private operator paths, origins, registry names, or installation ids.");
   }
 
   const ready = errors.length === 0;
@@ -59,6 +76,7 @@ function collectProductionDeploymentPlan(options = {}) {
       host,
       image,
       operatorWorkspace: workspace,
+      workerDispatchInstallationId,
     },
     errors,
     warnings,
@@ -67,11 +85,12 @@ function collectProductionDeploymentPlan(options = {}) {
       host,
       image,
       workspace,
+      workerDispatchInstallationId,
     }),
   };
 }
 
-function deploymentPhases({ release, host, image, workspace }) {
+function deploymentPhases({ release, host, image, workspace, workerDispatchInstallationId }) {
   const cutoverStatus = `${workspace}/production-cutover-status.json`;
   return [
     {
@@ -103,7 +122,7 @@ function deploymentPhases({ release, host, image, workspace }) {
       id: "worker-dispatch-credentials",
       title: "Worker Dispatch Credentials",
       commands: [
-        "npm run github-app:token -- -- --profile worker-dispatch --installation-id <central-repo-installation-id> --github-actions-output",
+        `npm run github-app:token -- -- --profile worker-dispatch --installation-id ${workerDispatchInstallationId} --github-actions-output`,
       ],
       evidence: "Record dispatch-only GitHub App installation evidence or accepted fallback, Actions: write scope, token mint smoke result, and credential custody in private operator evidence.",
     },
@@ -142,6 +161,7 @@ function formatProductionDeploymentPlanMarkdown(plan) {
     `- host: ${plan.inputs.host}`,
     `- image: ${plan.inputs.image}`,
     `- operator workspace: ${plan.inputs.operatorWorkspace}`,
+    `- worker dispatch installation id: ${plan.inputs.workerDispatchInstallationId}`,
   ];
 
   for (const phase of plan.phases) {
@@ -205,7 +225,22 @@ function normalizeWorkspace(value) {
   return text.replace(/\\/g, "/").replace(/\/+$/, "");
 }
 
+function normalizeWorkerDispatchInstallationId(value) {
+  const text = String(value || "").trim();
+  if (!text) {
+    throw new Error("worker dispatch installation id is required.");
+  }
+  if (text === DEFAULT_WORKER_DISPATCH_INSTALLATION_ID) {
+    return text;
+  }
+  if (!/^[0-9]+$/.test(text)) {
+    throw new Error("worker dispatch installation id must be numeric.");
+  }
+  return text;
+}
+
 module.exports = {
+  DEFAULT_WORKER_DISPATCH_INSTALLATION_ID,
   DEFAULT_HOST,
   DEFAULT_IMAGE,
   DEFAULT_WORKSPACE,
@@ -217,5 +252,6 @@ module.exports = {
   isPlaceholderOrigin,
   normalizeImageRef,
   normalizeOrigin,
+  normalizeWorkerDispatchInstallationId,
   normalizeWorkspace,
 };

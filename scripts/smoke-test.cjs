@@ -5317,7 +5317,7 @@ appServer.handleGitHubWebhook({
   );
   const productionDeploymentPlanContractResult =
     productionDeploymentPlanContractCheck.checkProductionDeploymentPlanContract();
-  assert.equal(productionDeploymentPlanContractResult.planCases, 7);
+  assert.equal(productionDeploymentPlanContractResult.planCases, 8);
   assert.equal(productionDeploymentPlanContractResult.docs, 6);
   assert.throws(
     () =>

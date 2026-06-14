@@ -581,30 +581,39 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Self dogfood config readiness PR: merged as PR #310, merge commit `e47ac41`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/production-dispatch-evidence-phase`.
-- Current local changes: add a worker-dispatch credential phase to the
-  production deployment plan so the dry-run operator handoff includes the
-  private token-smoke command, dispatch-only App or accepted fallback evidence,
-  Actions: write scope review, and credential custody before non-noop worker
-  traffic.
+- Production dispatch evidence phase PR: merged as PR #311, merge commit `6c4e45a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/production-dispatch-installation-id`.
+- Current local changes: require a concrete central repository
+  worker-dispatch installation id for production deployment `--require-ready`,
+  render that numeric id into the token-smoke command, expose it in plan inputs,
+  and update operator, release-note, and contract examples.
 - Current local validation:
-  - `gh run watch 27496872099 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge CI;
-  - `gh run watch 27496872093 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #309 post-merge OpenSSF Scorecard;
-  - `gh run watch 27497071044 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #310 post-merge CI;
-  - `gh run watch 27497071056 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #310 post-merge OpenSSF Scorecard;
+  - `gh run watch 27497264412 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #311 post-merge CI;
+  - `gh run watch 27497264407 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #311 post-merge OpenSSF Scorecard;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:production-deployment-plan` passed with 7 plan cases and 6
+  - `npm run check:production-deployment-plan` passed with 8 plan cases and 6
     docs checked;
-  - `npm run production:deployment-plan -- -- --host https://reviewbot.6529.io --image ghcr.io/6529-collections/6529reviewbot --operator-workspace operator-workspace --release v0.2.0 --require-ready --json --quiet` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #310,
-    and 5 docs checked;
+  - `npm run production:deployment-plan -- -- --host https://reviewbot.6529.io --image ghcr.io/6529-collections/6529reviewbot --operator-workspace operator-workspace --worker-dispatch-installation-id 123456 --release v0.2.0 --require-ready --json --quiet` passed;
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and 7
+    docs checked;
+  - `node scripts/check-release-notes-template.cjs` passed;
+  - `npm run check:release-notes` passed;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:release-notes-publication` passed with 11 publication cases
+    and 7 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #311, and
+    5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    production dispatch evidence phase exercised.
+    production deployment installation-id ready-mode path exercised.
 
 ## Key Decisions
 
