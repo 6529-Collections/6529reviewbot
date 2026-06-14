@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release notes publication checks to reject failed, pending,
+  blocked, or not-ready validation evidence unless explicitly accepted.
 - Aligned reusable workflow public-repo alert guidance with the reviewed alert
   delivery plan evidence requirement.
 - Aligned release-note safety language with the reviewed alert delivery plan

@@ -41,6 +41,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   checkCompleteNotes(findings);
   checkDraftRejected(findings);
   checkSensitiveTextRejected(findings);
+  checkFailedValidationRejected(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -55,7 +56,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 4,
+    publicationCases: 5,
     docs: targetDocs.length,
   };
 }
@@ -101,6 +102,18 @@ function checkSensitiveTextRejected(findings) {
   }
 }
 
+function checkFailedValidationRejected(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace("CI: passed", "CI: failed")
+  );
+  if (report.ready) {
+    findings.push("release notes publication check must reject failed validation evidence.");
+  }
+  if (!report.errors.some((error) => error.includes("CI:") && error.includes("failed"))) {
+    findings.push("failed validation rejection must identify the failing validation field.");
+  }
+}
+
 function checkCli(findings) {
   try {
     publicationCli.parseArgs(["--nope"]);
@@ -132,6 +145,8 @@ function checkSourceAnchors(sourceTexts, findings) {
       "validateReleaseNotesPublication",
       "TODO(operator)",
       "redactSensitiveText",
+      "checkValidationResults",
+      "FAILED_VALIDATION_PATTERN",
       "No accepted deferrals",
       "Dashboard deployment plan:",
       "Alert delivery plan:",

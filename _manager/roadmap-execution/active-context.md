@@ -443,22 +443,24 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes alert plan safety PR: merged as PR #241, merge commit `c710639`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/reusable-workflow-alert-plan-safety`.
-- Current local changes: aligning reusable workflow public-repo alert guidance
-  with the v0 alerts gate by requiring reviewed alert delivery-plan evidence
-  before scheduled operator alerts are considered ready, and pinning that
-  guidance in the alert-delivery plan contract.
+- Reusable workflow alert safety PR: merged as PR #242, merge commit `d0ba4ef`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-validation-results`.
+- Current local changes: hardening the release notes publication guard so
+  completed release notes cannot report failed, pending, blocked, or not-ready
+  validation evidence unless the notes explicitly describe an accepted
+  deferral or dogfood-only exception.
 - Current local validation:
-  - `npm run check:alert-delivery-plan` passed with 5 plan cases and 8 docs
-    checked;
+  - `npm run check:release-notes-publication` passed with 5 publication cases
+    and 7 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 174 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed, including alert delivery plan validation
-    with 8 docs checked and reusable workflow alert-plan safety guidance;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #241,
+  - `npm run release:check` passed, including release notes publication
+    validation with 5 publication cases;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #242,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
