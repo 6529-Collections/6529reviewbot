@@ -5,6 +5,15 @@
 const fs = require("fs");
 const path = require("path");
 const diagnostics = require("../src/diagnostics.cjs");
+const dogfoodPromotion = require("../src/dogfood-promotion.cjs");
+const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
+const dogfoodTarget = require("../src/dogfood-target.cjs");
+const githubAppManifestConversion = require("../src/github-app-manifest-conversion.cjs");
+const operatorEvidence = require("../src/operator-evidence.cjs");
+const operatorWorkspace = require("../src/operator-workspace.cjs");
+const productionCutover = require("../src/production-cutover.cjs");
+const releaseCandidate = require("../src/release-candidate.cjs");
+const releaseGates = require("../src/release-gates.cjs");
 
 const root = path.resolve(__dirname, "..");
 
@@ -90,11 +99,49 @@ const publicRendererSources = [
   "src/release-candidate.cjs",
   "src/release-gates.cjs",
 ];
+const publicRendererBehaviorChecks = [
+  {
+    name: "dogfood promotion",
+    render: dogfoodPromotion.publicText,
+  },
+  {
+    name: "dogfood readiness",
+    render: dogfoodReadiness.publicText,
+  },
+  {
+    name: "dogfood target",
+    render: dogfoodTarget.publicText,
+  },
+  {
+    name: "GitHub App manifest conversion",
+    render: githubAppManifestConversion.safeSummaryText,
+  },
+  {
+    name: "operator evidence",
+    render: operatorEvidence.publicEvidenceText,
+  },
+  {
+    name: "operator workspace",
+    render: operatorWorkspace.publicText,
+  },
+  {
+    name: "production cutover",
+    render: productionCutover.publicCutoverText,
+  },
+  {
+    name: "release candidate",
+    render: releaseCandidate.publicText,
+  },
+  {
+    name: "release gates",
+    render: releaseGates.publicReleaseGateText,
+  },
+];
 
 function main() {
   const result = checkDiagnosticsRedaction();
   console.log(
-    `diagnostics redaction ok (${result.fixtures} fixtures, ${result.publicRendererSources} public renderers, ${result.docs} docs checked)`
+    `diagnostics redaction ok (${result.fixtures} fixtures, ${result.publicRendererSources} public renderers, ${result.publicRendererBehaviorCases} renderer behavior cases, ${result.docs} docs checked)`
   );
 }
 
@@ -103,6 +150,7 @@ function checkDiagnosticsRedaction(options = {}) {
   checkRedactionFixtures(findings);
   checkErrorAndTailHelpers(findings);
   checkPublicRendererRedaction(options.sourceTexts || {}, findings);
+  checkPublicRendererBehavior(findings);
   checkDocs(options.docTexts || {}, findings);
 
   if (findings.length) {
@@ -118,6 +166,7 @@ function checkDiagnosticsRedaction(options = {}) {
     fixtures: redactionFixtures.length,
     docs: diagnosticsDocs.length,
     publicRendererSources: publicRendererSources.length,
+    publicRendererBehaviorCases: publicRendererBehaviorChecks.length,
   };
 }
 
@@ -177,6 +226,43 @@ function checkPublicRendererRedaction(sourceTexts, findings) {
     }
     if (text.includes("PUBLIC_REDACTION_PATTERNS")) {
       findings.push(`${source} must not carry local PUBLIC_REDACTION_PATTERNS; extend src/diagnostics.cjs instead.`);
+    }
+  }
+}
+
+function checkPublicRendererBehavior(findings) {
+  const input = [
+    "Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456",
+    "token github_pat_abcdefghijklmnopqrstuvwxyz1234567890",
+    "key sk-proj-abcdefghijklmnopqrstuvwx123456",
+    "resource arn:aws:rds:us-east-1:111122223333:cluster/reviewbot",
+    "account 111122223333",
+  ].join("\n");
+  const expected = [
+    "Bearer [redacted]",
+    "github_pat_[redacted]",
+    "sk-[redacted]",
+    "arn:aws:[redacted]",
+    "[redacted-aws-account-id]",
+  ];
+  const forbidden = [
+    "abcdefghijklmnopqrstuvwxyz123456",
+    "github_pat_abcdefghijklmnopqrstuvwxyz",
+    "sk-proj-abcdefghijkl",
+    "arn:aws:rds",
+    "111122223333",
+  ];
+  for (const renderer of publicRendererBehaviorChecks) {
+    const output = String(renderer.render(input));
+    for (const snippet of expected) {
+      if (!output.includes(snippet)) {
+        findings.push(`${renderer.name} public renderer must include redacted snippet '${snippet}'.`);
+      }
+    }
+    for (const snippet of forbidden) {
+      if (output.includes(snippet)) {
+        findings.push(`${renderer.name} public renderer leaked forbidden text '${snippet}'.`);
+      }
     }
   }
 }

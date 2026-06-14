@@ -300,6 +300,7 @@ module.exports = {
   loadReleaseGates,
   mergeReleaseGateStatus,
   missingReleaseGateStatusIds,
+  publicReleaseGateText,
   renderReleaseGateSummaryMarkdown,
   renderReleaseGatesMarkdown,
   summarizeReleaseGates,

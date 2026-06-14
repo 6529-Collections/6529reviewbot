@@ -310,6 +310,7 @@ module.exports = {
   manifestConversionSummary,
   normalizeManifestCode,
   resolvePrivateOutputPath,
+  safeSummaryText,
   validateManifestConversionResponse,
   writeManifestConversionOutput,
 };

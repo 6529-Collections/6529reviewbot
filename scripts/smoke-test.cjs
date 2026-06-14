@@ -363,6 +363,7 @@ assert.equal(
 const diagnosticsRedactionResult = diagnosticsRedactionCheck.checkDiagnosticsRedaction();
 assert.equal(diagnosticsRedactionResult.fixtures, 10);
 assert.equal(diagnosticsRedactionResult.publicRendererSources, 9);
+assert.equal(diagnosticsRedactionResult.publicRendererBehaviorCases, 9);
 assert.throws(
   () =>
     diagnosticsRedactionCheck.checkDiagnosticsRedaction({
