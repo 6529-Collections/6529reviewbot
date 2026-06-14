@@ -87,6 +87,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
 - [Configuration](docs/configuration.md): central runtime settings.
 - [Compatibility Policy](docs/compatibility-policy.md): pre-v1 compatibility
   surfaces, breaking-change handling, and pinning guidance.
+- [External Evidence Boundaries](docs/external-evidence-boundaries.md): what
+  local checks can prove and what remains operator-owned private evidence.
 - [GitHub App](docs/github-app.md): permissions, events, and webhook setup.
 - [GitHub App Registration](docs/github-app-registration.md): operator packet
   for App creation, credential custody, verification, and rotation.
@@ -173,6 +175,7 @@ npm run check:deployment-runbook
 npm run check:configuration-reference
 npm run check:aws-iam-templates
 npm run check:security-model
+npm run check:external-evidence-boundaries
 npm run check:operations-runbook
 npm run check:comment-commands
 npm run check:review-workflows

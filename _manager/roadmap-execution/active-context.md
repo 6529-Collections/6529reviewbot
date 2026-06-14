@@ -549,25 +549,28 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes evidence wording sync PR: merged as PR #294, merge commit `09e1161`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/compatibility-policy-contract`.
-- Current local changes: add a checked compatibility policy for pre-v1
-  compatibility-sensitive surfaces, breaking-change release notes, exact
-  tag/commit pinning, and the future v1 stable API promise.
+- Compatibility policy contract PR: merged as PR #295, merge commit `3724b72`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/external-evidence-boundary-contract`.
+- Current local changes: add a checked external evidence boundary contract so
+  public release artifacts distinguish local validation from operator-owned
+  production, dashboard, alert, dogfood, security-review, and cutover evidence.
 - Current local validation:
-  - `npm run check:compatibility-policy` passed with 14 surfaces checked;
-  - `npm run check:release-operations` passed with 7 phases and 111 tools;
-  - `npm run check:docs` passed with 74 files checked;
-  - `npm run check:doc-index` passed with 60 docs indexed;
-  - `npm run check:release-notes-publication` passed with 10 publication
-    cases and 7 docs checked;
-  - `npm run check:public-artifacts` passed with 117 files checked;
+  - `gh run watch 27493813432 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #295 post-merge CI;
+  - `gh run watch 27493813437 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #295 post-merge OpenSSF Scorecard;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:release-operations` passed with 7 phases and 112 tools;
+  - `npm run check:docs` passed with 75 files checked;
+  - `npm run check:doc-index` passed with 61 docs indexed;
+  - `npm run check:public-artifacts` passed with 118 files checked;
   - `git diff --check` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #294,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #295,
     and 5 docs checked;
-  - `npm run check` passed with 179 CommonJS files;
+  - `npm run check` passed with 180 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed with 179 CommonJS files checked and the
-    compatibility policy contract exercised.
+  - `npm run release:check` passed with 180 CommonJS files checked and the
+    external evidence boundary contract exercised.
 
 ## Key Decisions
 

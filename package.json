@@ -68,6 +68,7 @@
     "check:aws-iam-templates": "node scripts/check-aws-iam-templates.cjs",
     "check:security-model": "node scripts/check-security-model-contract.cjs",
     "check:compatibility-policy": "node scripts/check-compatibility-policy.cjs",
+    "check:external-evidence-boundaries": "node scripts/check-external-evidence-boundaries.cjs",
     "check:operations-runbook": "node scripts/check-operations-runbook-contract.cjs",
     "check:dependabot": "node scripts/check-dependabot-config.cjs",
     "check:container-image": "node scripts/check-container-image.cjs",

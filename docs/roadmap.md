@@ -332,6 +332,9 @@ Build the operator experience:
   contract checks for evidence target and ordering drift.
 - manager memory contract that keeps durable manager memory synchronized with
   the latest shipped PR, release-check wiring, smoke coverage, and public docs.
+- external evidence boundary contract that keeps local validation distinct
+  from operator-owned production, dashboard, alert, dogfood, and cutover
+  evidence.
 
 ### 9. Community Release
 
@@ -426,6 +429,9 @@ Completed in `6529reviewbot`:
 - compatibility policy contract for pre-v1 compatibility-sensitive surfaces,
   breaking-change release notes, exact tag/commit pinning, and the future v1
   stable API promise;
+- external evidence boundary contract that keeps local validation distinct
+  from operator-owned production, dashboard, alert, dogfood, and cutover
+  evidence before public release artifacts claim readiness;
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production deployment plan evidence,
   worker dispatch credential evidence, container publish-plan evidence,

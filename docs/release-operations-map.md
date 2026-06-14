@@ -45,6 +45,10 @@ source anchors.
 `npm run check:compatibility-policy` keeps the pre-v1 compatibility policy,
 release notes, release process, reusable workflow guidance, and public docs
 aligned.
+`npm run check:external-evidence-boundaries` keeps external evidence
+boundaries aligned so public release artifacts distinguish local validation
+from operator-owned production, dashboard, alert, dogfood, security-review,
+and cutover evidence.
 `npm run check:operations-runbook` keeps the operations runbook's routine
 checks and triage paths for replay, spend, ledgers, workers, dashboards, and
 bot comments synchronized.

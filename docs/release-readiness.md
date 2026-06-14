@@ -112,6 +112,9 @@ Ready for community review:
 - release-candidate checker that keeps public bundle redaction, private
   workspace path markers, CLI defaults, source invariants, and docs
   synchronized;
+- external evidence boundary contract that keeps local validation distinct
+  from operator-owned production, dashboard, alert, dogfood, and cutover
+  evidence before release notes or public summaries claim readiness;
 - public usage summaries enforce repo/org allowlists before repo names are
   disclosed, even when data comes from a custom loader;
 - incident response runbook for spend, secret, provider, webhook, ledger, and
