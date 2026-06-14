@@ -247,6 +247,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["dispatch-only GitHub App preferred; fallback risk accepted if used"],
           },
           {
+            id: "model-pricing",
+            status: "complete",
+            title: "Model Pricing",
+            notes: "reviewed provider price sources and catalog coverage",
+            evidence: ["fresh source-checked timestamps, no stale or zero-price overrides"],
+          },
+          {
             id: "alert-delivery-plan",
             status: "complete",
             title: "Alert Delivery Plan",
@@ -317,6 +324,8 @@ function checkMarkdownOutput(findings) {
     "reviewed production deployment plan evidence",
     "worker-dispatch-credentials",
     "dispatch credential posture reviewed before non-noop worker traffic",
+    "model-pricing",
+    "reviewed provider price sources and catalog coverage",
     "alert-delivery-plan",
     "reviewed alert delivery plan evidence",
     "dashboard-deployment-plan",

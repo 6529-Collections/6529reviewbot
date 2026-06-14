@@ -197,10 +197,11 @@ production deployment, dashboard deployment, alert delivery, promotion,
 go-live summaries, next commands, and docs aligned.
 `npm run check:operator-evidence` keeps operator evidence sections,
 readiness semantics, runtime dispatch evidence, container publish evidence,
-production deployment-plan evidence, alert delivery-plan evidence, dashboard
-deployment-plan evidence, public dashboard disclosure evidence, private admin
-auth evidence, release tag-plan evidence, public-summary redaction, source
-invariants, and docs aligned.
+production deployment-plan evidence, budget policy evidence, model-pricing
+evidence, alert delivery-plan evidence, dashboard deployment-plan evidence,
+public dashboard disclosure evidence, private admin auth evidence, release
+tag-plan evidence, public-summary redaction, source invariants, and docs
+aligned.
 `npm run check:production-cutover` keeps production cutover checklist/status
 readiness, production deployment plan evidence, deferral semantics, Markdown
 redaction, source invariants, and docs aligned.

@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated `model-pricing` section to structured operator evidence
+  so provider price-source review, catalog coverage, stale/zero overrides,
+  apply summaries, and admin price-status checks are tracked separately from
+  central budget-policy evidence.
 - Added a dedicated release tag-plan section to structured operator evidence
   and release-candidate summaries.
 - Added a dedicated dashboard deployment-plan section to structured operator

@@ -42,7 +42,11 @@
     },
     "budget-and-pricing": {
       "status": "deferred",
-      "notes": "Example only: defer applied price rows when release notes keep conservative default estimates."
+      "notes": "Example only: defer central budget-policy apply evidence until dogfood caps are reviewed; model price source verification is tracked separately."
+    },
+    "model-pricing": {
+      "status": "pending",
+      "notes": "Review provider/model price sources, catalog default lane coverage, source freshness, stale/zero-price overrides, admin model-price status, and any release-note disclosure before relying on price-row estimates."
     },
     "worker-dispatch-credentials": {
       "status": "pending",

@@ -63,8 +63,9 @@ After stabilization:
 - `npm run check:operator-evidence` confirms the operator evidence contract
   stays synchronized with section readiness, required evidence, deferral
   semantics, public dashboard disclosure evidence, private admin auth
-  evidence, container publish-plan evidence, worker dispatch credential
-  evidence, public-summary redaction, and docs
+  evidence, container publish-plan evidence, production deployment-plan
+  evidence, budget policy evidence, model-pricing evidence, worker dispatch
+  credential evidence, public-summary redaction, and docs
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when
@@ -363,7 +364,7 @@ After stabilization:
   provider/model price rows changed, plus `--apply` from the operator
   environment unless the release keeps conservative default estimates
 - release notes name any accepted model-price `--allow-stale-source` or
-  `--allow-zero-price` override and its operator evidence
+  `--allow-zero-price` override and its `model-pricing` operator evidence
 - `npm run preflight -- -- --strict` in the release candidate environment
 - [Worker capacity and backpressure](worker-capacity.md) reviewed for live
   worker releases
