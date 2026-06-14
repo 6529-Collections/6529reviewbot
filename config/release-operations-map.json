@@ -54,7 +54,7 @@
         {
           "id": "community-release-gates",
           "script": "check:community-release-gates",
-          "purpose": "Verify broad community-release gates, evidence references, release readiness guidance, and release docs stay synchronized.",
+          "purpose": "Verify broad community-release gates, evidence references, provider-console readiness and IAM/secret-custody evidence targets, release readiness guidance, and release docs stay synchronized.",
           "doc": "docs/release-readiness.md",
           "publicOutput": "Safe."
         },
@@ -390,7 +390,7 @@
         {
           "id": "v0-release-gates-contract",
           "script": "check:v0-gates",
-          "purpose": "Verify v0 release-gate status readiness, missing-id checks, deferral semantics, Markdown redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify v0 release-gate status readiness, missing-id checks, deferral semantics, provider-console readiness evidence, IAM/secret-custody evidence, Markdown redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/v0-release-plan.md",
           "publicOutput": "Safe."
         },

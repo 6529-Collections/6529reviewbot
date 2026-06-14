@@ -620,6 +620,9 @@ Completed in `6529reviewbot`:
 - production cutover now includes explicit provider-console readiness and
   IAM/secret-custody evidence before live model calls or production AWS/secret
   use.
+- v0 and community release gates now require provider-console readiness and
+  IAM/secret-custody operator evidence in their secret-boundary and AWS/IAM
+  gates.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same

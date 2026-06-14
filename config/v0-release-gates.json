@@ -20,12 +20,12 @@
     },
     {
       "id": "secret-boundary",
-      "title": "Provider keys, GitHub App secrets, AWS Data API access, and alert secrets are configured only in bot-owned infrastructure.",
+      "title": "Provider keys, GitHub App secrets, AWS Data API access, and alert secrets are configured only in bot-owned infrastructure, and provider-console-readiness operator evidence has reviewed model availability, quotas/rate limits, spend controls, billing alerts, and emergency key disablement before live model calls.",
       "evidence": "docs/provider-setup.md"
     },
     {
       "id": "aws-iam",
-      "title": "AWS IAM/OIDC trust and identity policies are reviewed from infra/aws templates or equivalent least-privilege documents.",
+      "title": "AWS IAM/OIDC trust, Data API scope, database grants, runtime secret-store principals, target-repo/browser secret exclusion, rotation ownership, and break-glass revoke paths are reviewed in iam-and-secrets operator evidence.",
       "evidence": "infra/aws/README.md"
     },
     {

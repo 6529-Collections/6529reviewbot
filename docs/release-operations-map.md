@@ -30,8 +30,9 @@ high-risk path coverage, repository ruleset guidance, and governance docs
 aligned.
 `npm run check:community-release-gates` keeps
 [config/community-release-gates.json](../config/community-release-gates.json),
-the broad community-release gate renderer, release readiness guidance, and
-release docs aligned.
+the broad community-release gate renderer, provider-console readiness and
+IAM/secret-custody evidence targets, release readiness guidance, and release
+docs aligned.
 `npm run check:repository-rulesets` keeps repository rulesets guidance aligned
 across main branch protection, required PR checks, release tag ruleset
 expectations, dry-run tag planning, and operator-owned live ruleset evidence.
@@ -167,7 +168,8 @@ strict/profile behavior, CLI flags, redacted diagnostics, and docs aligned.
 `npm run check:release-gates` keeps the machine-readable v0 release gates in
 parity with the release plan and public evidence references.
 `npm run check:v0-gates` keeps v0 release-gate status readiness, missing-id
-checks, deferral semantics, Markdown redaction, source invariants, and docs
+checks, deferral semantics, provider-console readiness evidence,
+IAM/secret-custody evidence, Markdown redaction, source invariants, and docs
 aligned.
 `npm run check:webhook-replay` keeps saved webhook replay dry-run by default,
 requires explicit dispatch for worker queueing, checks local payload signing,

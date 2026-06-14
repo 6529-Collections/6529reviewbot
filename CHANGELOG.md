@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened v0 and community release gates so secret-boundary and AWS/IAM gates
+  require provider-console readiness and IAM/secret-custody operator evidence.
 - Added production cutover gates for provider-console readiness and
   IAM/secret-custody operator evidence before live model calls or production
   AWS/secret use.
