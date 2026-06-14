@@ -3,8 +3,8 @@ enabled: true
 
 reviewKinds:
   allowed: [general, followup, wcag, i18n, security]
-  initial: []
-  followup: []
+  initial: [general, security]
+  followup: [followup]
 
 commands:
   enabled: true
@@ -14,7 +14,7 @@ lanes:
     model: claude-opus-4-8
 
 limits:
-  maxJobsPerDelivery: 2
+  maxJobsPerDelivery: 4
 
 admission:
   publicRepoMode: trusted
@@ -31,10 +31,11 @@ budget:
   defaultEstimatedCostUsd: 1
   caps:
     repo:
-      dailyUsd: 5
+      dailyUsd: 10
+      monthlyUsd: 200
     requestor:
-      dailyUsd: 2
+      dailyUsd: 5
     pr:
-      dailyUsd: 2
-    review_kind:
       dailyUsd: 3
+    review_kind:
+      dailyUsd: 5

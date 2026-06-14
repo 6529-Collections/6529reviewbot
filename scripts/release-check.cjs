@@ -109,7 +109,7 @@ runNode("bin/dogfood-target.cjs", [
   "--repository-config",
   ".github/6529bot.yml",
   "--mode",
-  "command-only",
+  "auto",
   "--require-ready",
   "--quiet",
 ]);

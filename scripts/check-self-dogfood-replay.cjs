@@ -29,10 +29,14 @@ async function main() {
   assert.equal(pullRequestReplay.body.enqueued, false);
   assert.equal(pullRequestReplay.body.configuration.status, "loaded");
   assert.equal(pullRequestReplay.body.event.trigger, "pull_request");
-  assert.equal(pullRequestReplay.body.event.reviewKinds.length, 0);
-  assert.match(
-    pullRequestReplay.body.event.reason,
-    /Repository config does not allow any requested review kinds/
+  assert.deepEqual(pullRequestReplay.body.event.reviewKinds, ["general", "security"]);
+  assert.equal(pullRequestReplay.body.admission.allowed, true);
+  assert.equal(pullRequestReplay.body.budget.allowed, true);
+  assert.equal(pullRequestReplay.body.queue.adapter, "dry_run");
+  assert.equal(pullRequestReplay.body.queue.jobCount, 2);
+  assert.deepEqual(
+    pullRequestReplay.body.jobs.map((job) => job.reviewKind),
+    ["general", "security"]
   );
 
   const checkedCommands = await checkCommandMatrix();
