@@ -151,6 +151,7 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   release-readiness summary command.
 - [Release Operations Map](docs/release-operations-map.md): command and
   evidence-boundary index for release operators.
+- `npm run community:gates`: render the broad community-release gate checklist.
 - [Release Notes Draft](docs/release-notes-draft.md): public-safe pre-v1
   release notes draft from release-candidate evidence.
 - [Operator Workspace](docs/operator-workspace.md): private release evidence
@@ -173,6 +174,7 @@ npm run check
 npm run check:docs
 npm run check:manager-memory
 npm run check:codeowners
+npm run check:community-release-gates
 npm run check:repository-rulesets
 npm run check:install-guide
 npm run check:deployment-runbook

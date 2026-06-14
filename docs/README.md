@@ -74,6 +74,7 @@ be linked here before they are considered release-ready.
   check, and release tag protection guidance.
 - [Release Readiness](release-readiness.md): current gates and gaps.
 - [v0 Release Plan](v0-release-plan.md): first public dogfood tag criteria.
+- `npm run community:gates`: broad community-release gate checklist renderer.
 - [Release Candidate Bundle](release-candidate.md): public-safe readiness
   artifact.
 - [Release Notes Draft](release-notes-draft.md): public-safe pre-v1 release

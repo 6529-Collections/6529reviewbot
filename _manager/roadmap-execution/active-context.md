@@ -563,26 +563,33 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Security intake release docs PR: merged as PR #301, merge commit `27e4d93`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/codeowners-release-governance`.
-- Current local changes: add checked CODEOWNERS review ownership guidance for
-  default maintainers, high-risk path coverage, and future code owner review
-  rules.
+- CODEOWNERS release governance PR: merged as PR #302, merge commit `57a5ccb`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/community-release-gates`.
+- Current local changes: add a checked broad community-release gate config,
+  renderer, release docs wiring, and release-check/smoke coverage so the
+  "before announcing broad community use" checklist is machine-auditable.
 - Current local validation:
-  - `gh run watch 27495024418 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #301 post-merge CI;
-  - `gh run watch 27495024417 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #301 post-merge OpenSSF Scorecard;
-  - `npm run check:codeowners` passed with 10 rules and 11 surfaces checked;
-  - `npm run check:release-operations` passed with 7 phases and 114 tools;
+  - `gh run watch 27495265493 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #302 post-merge CI;
+  - `gh run watch 27495265513 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #302 post-merge OpenSSF Scorecard;
+  - `npm run community:gates -- -- --summary` passed with 14 pending gates;
+  - `npm run check:community-release-gates` passed with 14 gates, 14 evidence
+    refs, and 9 docs checked;
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:release-gates` passed with 20 gates and 20 evidence refs;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
   - `npm run check:governance` passed with 13 files checked;
-  - `npm run check:public-artifacts` passed with 119 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #301,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #302,
     and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
-  - `npm run check` passed with 182 CommonJS files;
+  - `npm run check` passed with 184 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed with 182 CommonJS files checked and the
-    CODEOWNERS contract exercised.
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    community-release gate contract exercised.
 
 ## Key Decisions
 

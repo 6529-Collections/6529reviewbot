@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added checked broad community-release gate config and checklist rendering.
 - Added checked CODEOWNERS review ownership guidance for default maintainers,
   high-risk path coverage, and future code owner review rules.
 - Added community-release docs for private vulnerability intake readiness.

@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "release": "community-release",
+  "description": "Broad community-use release gates for 6529reviewbot.",
+  "checklist": "docs/release-readiness.md",
+  "gates": [
+    {
+      "id": "github-app",
+      "title": "Production GitHub App named 6529bot has been created and configured from the reviewed GitHub App Registration Packet or equivalent manual settings.",
+      "evidence": "docs/github-app-registration.md"
+    },
+    {
+      "id": "central-runtime",
+      "title": "Central App server and worker path are deployed in controlled 6529 infrastructure from a reviewed image or equivalent operator-reviewed runtime.",
+      "evidence": "docs/production-deployment-plan.md"
+    },
+    {
+      "id": "secret-boundary",
+      "title": "Provider keys, GitHub App secrets, AWS Data API access, and alerting secrets are configured only in the bot environment.",
+      "evidence": "docs/configuration.md"
+    },
+    {
+      "id": "aws-iam",
+      "title": "AWS IAM/OIDC trust and identity policies have been reviewed for the central bot runtime.",
+      "evidence": "infra/aws/README.md"
+    },
+    {
+      "id": "budget-policies",
+      "title": "Reviewed central budget policies have been applied or budget control is explicitly limited to environment and repository caps for the release.",
+      "evidence": "docs/budget-policies.md"
+    },
+    {
+      "id": "security-intake",
+      "title": "GitHub private vulnerability reporting is enabled for this repository or an equivalent private security intake channel is recorded in operator evidence.",
+      "evidence": "SECURITY.md"
+    },
+    {
+      "id": "dashboard-plan",
+      "title": "The dashboard deployment plan has passed with explicit 6529.io origin, production bot origin, private operator workspace, auth-check URL, and require-ready evidence.",
+      "evidence": "docs/dashboard-deployment-plan.md"
+    },
+    {
+      "id": "public-dashboard",
+      "title": "The merged 6529.io public transparency dashboard is deployed and wired to reviewed public repo/org disclosure allowlists.",
+      "evidence": "docs/6529-io-admin-integration.md"
+    },
+    {
+      "id": "private-admin",
+      "title": "The merged 6529.io private admin surface is deployed behind 6529 auth and wired to the HMAC admin auth bridge.",
+      "evidence": "docs/admin-auth-bridge.md"
+    },
+    {
+      "id": "operator-alerts",
+      "title": "Scheduled operator alerts are enabled through reviewed private operator channels.",
+      "evidence": "docs/alert-delivery-plan.md"
+    },
+    {
+      "id": "trusted-dogfood",
+      "title": "Trusted 6529 repository dogfood has run with conservative budgets, starting in command-only mode and advancing only after readiness, promotion, and go-live packets agree.",
+      "evidence": "docs/dogfood-go-live.md"
+    },
+    {
+      "id": "remote-security-checks",
+      "title": "CI, Dependency Review, OpenSSF Scorecard, and manual security review have been completed for the release candidate.",
+      "evidence": "docs/security-review-status.md"
+    },
+    {
+      "id": "public-tag",
+      "title": "Initial v0 tag plan has passed with explicit pre-v1 compatibility warnings and clean release notes.",
+      "evidence": "docs/release-tag-plan.md"
+    },
+    {
+      "id": "release-docs",
+      "title": "README, changelog, release notes, install docs, and example configs match the tagged behavior.",
+      "evidence": "docs/release-notes-publication.md"
+    }
+  ]
+}

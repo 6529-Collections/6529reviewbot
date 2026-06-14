@@ -25,6 +25,7 @@ function validateReleaseGates(document, source = "release gates") {
   }
   const release = releaseGateText(document.release, `${source}.release`);
   const description = releaseGateText(document.description, `${source}.description`);
+  const checklist = optionalReleaseGateText(document.checklist) || "docs/v0-release-plan.md";
   if (!Array.isArray(document.gates) || document.gates.length === 0) {
     throw new Error(`${source}.gates must be a non-empty array.`);
   }
@@ -47,6 +48,7 @@ function validateReleaseGates(document, source = "release gates") {
     version: 1,
     release,
     description,
+    checklist,
     gates,
   };
 }
@@ -126,7 +128,7 @@ function renderReleaseGatesMarkdown(document) {
     "",
     gates.description,
     "",
-    "Use this checklist with docs/v0-release-plan.md. If a gate is intentionally",
+    `Use this checklist with ${gates.checklist}. If a gate is intentionally`,
     "deferred, the release notes must say so plainly and describe the risk.",
     "",
   ];

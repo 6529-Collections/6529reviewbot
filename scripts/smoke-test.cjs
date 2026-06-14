@@ -121,6 +121,7 @@ const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const containerPublishPlanContractCheck = require("./check-container-publish-plan-contract.cjs");
 const codeownersContractCheck = require("./check-codeowners-contract.cjs");
+const communityReleaseGatesContractCheck = require("./check-community-release-gates-contract.cjs");
 const repositoryRulesetsContractCheck = require("./check-repository-rulesets-contract.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
@@ -5623,6 +5624,24 @@ appServer.handleGitHubWebhook({
         },
       }),
     /CODEOWNERS contract check found/
+  );
+  const communityReleaseGatesContractResult =
+    communityReleaseGatesContractCheck.checkCommunityReleaseGatesContract();
+  assert.equal(communityReleaseGatesContractResult.gates, 14);
+  assert.equal(communityReleaseGatesContractResult.evidenceReferences, 14);
+  assert.throws(
+    () =>
+      communityReleaseGatesContractCheck.checkCommunityReleaseGatesContract({
+        quiet: true,
+        gatesText: JSON.stringify({
+          version: 1,
+          release: "community-release",
+          description: "Broken.",
+          checklist: "docs/release-readiness.md",
+          gates: [],
+        }),
+      }),
+    /community release gates contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

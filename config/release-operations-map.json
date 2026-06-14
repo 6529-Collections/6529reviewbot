@@ -52,6 +52,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "community-release-gates",
+          "script": "check:community-release-gates",
+          "purpose": "Verify broad community-release gates, evidence references, release readiness guidance, and release docs stay synchronized.",
+          "doc": "docs/release-readiness.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "repository-ruleset-contract",
           "script": "check:repository-rulesets",
           "purpose": "Verify main branch protection, required PR checks, release tag ruleset guidance, dry-run tag planning, and operator-owned live ruleset evidence guidance stay synchronized.",
