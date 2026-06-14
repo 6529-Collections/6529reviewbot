@@ -633,12 +633,15 @@ merged PRs.
 - Release-operations dogfood command contract PR: merged as PR #330, merge commit `b276ebf`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `b276ebf`.
-- Current branch: `codex/release-operations-production-command-contract`.
+- Release-operations production command contract PR: merged as PR #331, merge commit `6181a2f`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `6181a2f`.
+- Current branch: `codex/release-operations-status-command-contract`.
 - Current local changes: make `npm run check:release-operations` parse
-  production handoff commands through their real CLIs, add the missing
-  `--worker-dispatch-installation-id` to the production deployment map
-  command, update release-operations docs/README/release readiness, roadmap,
-  changelog, and carry PR #330 post-merge durable memory forward.
+  status overlay, release-candidate bundle, and release tag-plan commands
+  through their real CLIs, update release-operations docs/README/release
+  readiness, roadmap, changelog, and carry PR #331 post-merge durable memory
+  forward.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -821,6 +824,21 @@ merged PRs.
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     parsed production handoff command coverage exercised.
+  - `gh run watch 27503569816 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #331 post-merge CI;
+  - OpenSSF Scorecard run `27503569808` passed for PR #331 post-merge;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools
+    after adding parsed status/release gate command coverage and normalizing
+    npm flag-forwarding separators.
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #331,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    parsed status/release gate command coverage exercised.
 
 ## Key Decisions
 
@@ -1198,6 +1216,10 @@ merged PRs.
   production deployment, dashboard deployment, and alert delivery commands
   through the real CLIs so private worker-dispatch, origin, workspace,
   registry, and notification inputs cannot drift from the final runbooks.
+- Status overlay and release-gate command inventories should parse
+  `--require-ready` commands through the real CLIs so private status files,
+  operator workspaces, release notes, strict preflight, and ready-mode flags
+  cannot drift from final tag/no-tag handoffs.
 - Public MIT/community governance files should be machine-checked, not only
   manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
   template, and license entry points stay present for community release.

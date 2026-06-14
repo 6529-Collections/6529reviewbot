@@ -6353,3 +6353,26 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     parsed production handoff command coverage exercised.
+- Merged `6529reviewbot` PR #331 as `6181a2f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/release-operations-status-command-contract` increment:
+  - make `npm run check:release-operations` parse operator workspace, dogfood
+    target/status, security-review, production-cutover, v0 release-gate,
+    release-candidate, and release-tag ready commands through their real CLIs;
+  - normalize npm flag-forwarding separators before parser checks;
+  - update release-operations docs, README, release readiness, roadmap,
+    changelog, and durable manager memory.
+- Local validation for `codex/release-operations-status-command-contract`:
+  - `gh run watch 27503569816 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #331 post-merge CI;
+  - OpenSSF Scorecard run `27503569808` passed for PR #331 post-merge;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools.
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #331,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    parsed status/release gate command coverage exercised.
