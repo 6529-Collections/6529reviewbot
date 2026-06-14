@@ -22,6 +22,7 @@ runNode("scripts/check-doc-links.cjs");
 runNode("scripts/check-doc-index.cjs");
 runNode("scripts/check-manager-memory.cjs");
 runNode("scripts/check-public-governance.cjs");
+runNode("scripts/check-repository-rulesets-contract.cjs");
 runNode("scripts/check-install-guide-contract.cjs");
 runNode("scripts/check-deployment-runbook-contract.cjs");
 runNode("scripts/check-configuration-reference-contract.cjs");

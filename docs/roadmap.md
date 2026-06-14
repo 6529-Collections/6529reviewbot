@@ -263,6 +263,8 @@ Build the operator experience:
   default, explicit before dispatch, locally signed, and payload-safe;
 - dry-run and prompt-print tools for debugging;
 - release tags and changelog discipline;
+- repository ruleset guidance for main branch protection, required PR checks,
+  and release tag protection before public dogfood tags;
 - support runbook checks that keep the public support process and incident
   response playbook aligned with reporting, containment, recovery, and
   public-follow-up boundaries;
@@ -665,6 +667,8 @@ Completed in `6529reviewbot`:
 - canonical docs index checker so every public docs page remains discoverable.
 - public governance checker for MIT/community files and README governance
   links.
+- repository ruleset guidance for main branch protection, required PR checks,
+  and release tag protection before public dogfood tags.
 - workflow permission checker for explicit least-privilege GitHub Actions
   permission maps.
 - machine-readable v0 release gates and checklist renderer, including the

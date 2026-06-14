@@ -45,6 +45,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "repository-ruleset-contract",
+          "script": "check:repository-rulesets",
+          "purpose": "Verify main branch protection, required PR checks, release tag ruleset guidance, dry-run tag planning, and operator-owned live ruleset evidence guidance stay synchronized.",
+          "doc": "docs/repository-rulesets.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "install-guide-contract",
           "script": "check:install-guide",
           "purpose": "Verify the installation guide keeps the conservative central App dogfood path, GitHub App validation commands, runtime defaults, command-only target posture, and rollback controls synchronized.",

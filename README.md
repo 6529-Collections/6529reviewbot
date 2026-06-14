@@ -107,6 +107,8 @@ The full canonical documentation index is [docs/README.md](docs/README.md).
   caller-secret boundary.
 - [Run Control](docs/run-control.md): dedupe and concurrency claims.
 - [Support](docs/support.md): support bundle and issue triage.
+- [Repository Rulesets](docs/repository-rulesets.md): GitHub-side `main`,
+  pull request check, and release tag protection guidance.
 - [Job Ledger](docs/job-ledger.md): durable job lifecycle audit events.
 - [Usage API](docs/usage-api.md): public and admin reporting contracts.
 - [Deployment](docs/deployment.md): production App, worker, and 6529.io wiring.
@@ -170,6 +172,7 @@ Run local checks:
 npm run check
 npm run check:docs
 npm run check:manager-memory
+npm run check:repository-rulesets
 npm run check:install-guide
 npm run check:deployment-runbook
 npm run check:configuration-reference

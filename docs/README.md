@@ -70,6 +70,8 @@ be linked here before they are considered release-ready.
 ## Release And Dogfood
 
 - [Release Process](release.md): release checklist and tag procedure.
+- [Repository Rulesets](repository-rulesets.md): GitHub-side branch, PR
+  check, and release tag protection guidance.
 - [Release Readiness](release-readiness.md): current gates and gaps.
 - [v0 Release Plan](v0-release-plan.md): first public dogfood tag criteria.
 - [Release Candidate Bundle](release-candidate.md): public-safe readiness

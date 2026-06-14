@@ -120,6 +120,7 @@ const preflightContractCheck = require("./check-preflight-contract.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const containerPublishPlanContractCheck = require("./check-container-publish-plan-contract.cjs");
+const repositoryRulesetsContractCheck = require("./check-repository-rulesets-contract.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
 const reviewContextBoundaryCheck = require("./check-review-context-boundary.cjs");
@@ -5595,6 +5596,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /external evidence boundaries contract check found/
+  );
+  const repositoryRulesetsContractResult =
+    repositoryRulesetsContractCheck.checkRepositoryRulesetsContract();
+  assert.equal(repositoryRulesetsContractResult.surfaces, 13);
+  assert.throws(
+    () =>
+      repositoryRulesetsContractCheck.checkRepositoryRulesetsContract({
+        quiet: true,
+        texts: {
+          "docs/repository-rulesets.md": "# Repository Rulesets\n",
+        },
+      }),
+    /repository ruleset contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();
