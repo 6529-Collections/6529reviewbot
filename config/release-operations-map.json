@@ -418,7 +418,7 @@
         {
           "id": "operator-evidence-contract",
           "script": "check:operator-evidence",
-          "purpose": "Verify operator evidence sections, readiness semantics, public-summary redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify operator evidence sections, readiness semantics, runtime dispatch evidence, container publish evidence, public dashboard disclosure evidence, private admin auth evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/operator-evidence-template.md",
           "publicOutput": "Safe."
         },
@@ -453,14 +453,14 @@
         {
           "id": "release-candidate-contract",
           "script": "check:release-candidate",
-          "purpose": "Verify release-candidate bundle redaction, private workspace path markers, CLI flags, source invariants, and public release docs stay synchronized.",
+          "purpose": "Verify release-candidate bundle redaction, private workspace path markers, operator evidence section summaries, CLI flags, source invariants, and public release docs stay synchronized.",
           "doc": "docs/release-candidate.md",
           "publicOutput": "Safe."
         },
         {
           "id": "release-notes-draft-contract",
           "script": "check:release-notes-draft",
-          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
+          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, runtime dispatch evidence, container publish evidence, dashboard disclosure evidence, private admin auth evidence, alert evidence, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
           "doc": "docs/release-notes-draft.md",
           "publicOutput": "Safe."
         },

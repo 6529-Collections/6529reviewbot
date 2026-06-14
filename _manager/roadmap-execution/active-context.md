@@ -539,26 +539,34 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release-candidate runtime/dispatch sections PR: merged as PR #289, merge commit `d69922e`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-runtime-dispatch-evidence`.
-- Current local changes: require release notes drafts, templates, and
-  publication checks to include worker dispatch credential evidence and
-  container publish-plan evidence before pre-v1 release notes can be published.
+- Release notes runtime/dispatch evidence PR: merged as PR #290, merge commit `9bcfa0a`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/evidence-coverage-roadmap-refresh`.
+- Current local changes: refresh the public roadmap, release readiness guide,
+  release operations map, changelog, and durable manager memory so the docs
+  describe the now-enforced runtime, dispatch, dashboard, and admin evidence
+  coverage across release notes, release candidates, and operator evidence.
 - Current local validation:
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:release-operations` passed with 7 phases and 110 tools;
   - `npm run check:release-notes` passed;
+  - `npm run check:release-candidate` passed with 7 redaction cases,
+    3 path cases, and 5 docs checked;
   - `npm run check:release-notes-draft` passed with 3 draft cases and
     6 docs checked;
   - `npm run check:release-notes-publication` passed with 10 publication
     cases and 7 docs checked;
-  - `npm run check:docs` passed with 73 files checked.
-  - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #289,
-    and 5 docs checked;
+  - `npm run check:operator-evidence` passed with 3 CLI cases,
+    6 evidence cases, and 6 docs checked;
   - `git diff --check` passed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #290,
+    and 5 docs checked;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    release notes runtime/dispatch evidence fields exercised.
+    evidence coverage documentation exercised.
 
 ## Key Decisions
 
