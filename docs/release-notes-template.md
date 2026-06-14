@@ -44,9 +44,11 @@ repositories.
 - Worker path:
 - GitHub Actions dispatch mode:
 - GitHub Actions dispatch token source:
+- Worker dispatch credential evidence:
 - App server runtime:
 - Container image contract check:
 - Container image digest, if used:
+- Container publish plan evidence:
 - GitHub App permissions/events:
 - Providers/models:
 - Default Anthropic model:
@@ -83,6 +85,8 @@ are true:
 - budget mode is `enforce`;
 - run-control mode is `enforce`, or the release notes explain why it is
   deferred;
+- non-noop worker traffic has reviewed dispatch credential evidence;
+- container image evidence has reviewed container publish-plan evidence;
 - provider keys and AWS credentials live only in bot-owned infrastructure;
 - target repo configuration is loaded from the base ref;
 - public dashboard repo/org disclosure uses reviewed allowlists before repo
