@@ -467,22 +467,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Image ref registry port guard PR: merged as PR #253, merge commit `a87d413`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/image-ref-path-colon-contract`.
-- Current local changes: pinning image repository contracts so tag-like colons
-  inside repository path segments keep failing before commands are rendered.
+- Image ref path colon contract PR: merged as PR #254, merge commit `fbabb88`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/dogfood-readiness-release-gate`.
+- Current local changes: adding `dogfood:readiness --require-ready` to the
+  release check so the pre-traffic dogfood readiness ready gate is exercised
+  before releases.
 - Current local validation:
-  - `npm run check:container-publish-plan` passed with 5 plan cases and 6 docs
-    checked;
-  - `npm run check:production-deployment-plan` passed with 5 plan cases and 6
-    docs checked;
+  - `npm run check:dogfood-readiness` passed with 3 CLI cases, 3 report cases,
+    and 6 docs checked;
+  - `node bin/dogfood-readiness.cjs --json --quiet --require-ready` passed;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 175 CommonJS files;
   - `npm test` passed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #253,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #254,
     and 5 docs checked;
-  - `npm run release:check` passed with 175 CommonJS files checked;
+  - `npm run release:check` passed with 175 CommonJS files checked and the
+    dogfood readiness ready-mode release gate exercised;
   - `npm run check:public-artifacts` passed with 116 files checked.
 
 ## Key Decisions
