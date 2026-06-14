@@ -39,8 +39,11 @@ private operator evidence before they can satisfy release or dogfood gates:
   operator-owned registry, scanned, and recorded by immutable digest;
 - AWS IAM/OIDC, Aurora Data API access, ledger schema, budget policies, SNS,
   and SES settings are applied in the operator-owned account;
-- provider keys, model availability, provider quotas, and pricing source
-  checks are current in provider-owned consoles or private price files;
+- provider keys, model availability, provider quotas, provider-side spend caps
+  or credit limits, billing alerts, provider data-retention/training settings
+  where available, emergency key disablement paths, and pricing source checks
+  are current in provider-owned consoles or private price files and recorded
+  in `provider-console-readiness` and `model-pricing` operator evidence;
 - 6529.io production public and private dashboard routes are configured under
   the existing 6529.io auth system, with reviewed auth-check URL, HMAC secret
   custody, and wallet allowlists;

@@ -180,7 +180,7 @@ invariants, and the public docs synchronized.
 - redacted operator evidence sections, including GitHub App production
   registration, container publish, security intake, repository rulesets,
   production deployment plan, budget, model pricing, worker dispatch
-  credential, alert delivery plan, dashboard deployment plan, public dashboard
-  disclosure, and private admin auth evidence sections, plus release tag plan
-  evidence when present;
+  credential, provider console readiness, alert delivery plan, dashboard
+  deployment plan, public dashboard disclosure, and private admin auth evidence
+  sections, plus release tag plan evidence when present;
 - the follow-up release commands the operator should run.

@@ -56,6 +56,10 @@
       "status": "pending",
       "notes": "Review provider/model price sources, catalog default lane coverage, source freshness, stale/zero-price overrides, admin model-price status, and any release-note disclosure before relying on price-row estimates."
     },
+    "provider-console-readiness": {
+      "status": "pending",
+      "notes": "Review enabled provider accounts/projects, API-key custody, configured-model availability, quota/rate-limit posture, provider-side spend caps or credit limits, provider alerting, data-retention/training settings where available, and emergency key disablement before live model calls."
+    },
     "worker-dispatch-credentials": {
       "status": "pending",
       "notes": "Review worker dispatch credential posture before enabling non-noop worker traffic."

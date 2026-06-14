@@ -187,6 +187,21 @@ Admin model-price status checked:
 Release-note override disclosure:
 ```
 
+## Provider Console Readiness
+
+```text
+Enabled providers reviewed:
+Provider account/project ownership reviewed:
+Provider API keys stored only in bot-owned secret store:
+Model availability for configured lanes reviewed:
+Provider quota and rate-limit posture reviewed:
+Provider-side spend caps or credit limits reviewed:
+Provider alerting or billing-notification posture reviewed:
+Provider data-retention or training settings reviewed, if available:
+Emergency key disablement path reviewed:
+Public release-note summary:
+```
+
 ## Worker Dispatch Credentials
 
 ```text

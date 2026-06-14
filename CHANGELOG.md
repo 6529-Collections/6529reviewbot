@@ -8,6 +8,11 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated `provider-console-readiness` section to structured
+  operator evidence for live provider account/project ownership, key custody,
+  model availability, quota/rate-limit posture, provider-side spend controls,
+  billing alerts, data-retention/training settings where available, and
+  emergency key disablement.
 - Hardened GitHub App operator evidence fields for production origin review,
   manifest/manual registration path, private conversion summary, App id/slug
   custody, webhook ping, selected-repository allowlist/count, and credential

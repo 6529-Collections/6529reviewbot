@@ -17,6 +17,7 @@ const targetDocs = [
   "docs/release-operations-map.md",
   "docs/release.md",
   "docs/release-candidate.md",
+  "docs/provider-setup.md",
 ];
 
 function main() {
@@ -249,6 +250,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "container-publish-plan",
     "production-deployment-plan",
     "model-pricing",
+    "provider-console-readiness",
     "worker-dispatch-credentials",
     "alert-delivery-plan",
     "dashboard-deployment-plan",
@@ -303,6 +305,14 @@ function checkDocs(docTexts, findings) {
       "Model price coverage command",
       "Catalog default lane coverage verified",
       "Admin model-price status checked",
+      "Enabled providers reviewed",
+      "Provider account/project ownership reviewed",
+      "Provider API keys stored only in bot-owned secret store",
+      "Model availability for configured lanes reviewed",
+      "Provider quota and rate-limit posture reviewed",
+      "Provider-side spend caps or credit limits reviewed",
+      "Provider alerting or billing-notification posture reviewed",
+      "Emergency key disablement path reviewed",
       "Worker dispatch mode",
       "Dispatch-only GitHub App preferred/reviewed",
       "Alert delivery plan command",
@@ -325,6 +335,12 @@ function checkDocs(docTexts, findings) {
       "operator evidence contract",
     ],
     "docs/release-candidate.md": ["operator evidence checker"],
+    "docs/provider-setup.md": [
+      "provider-console-readiness",
+      "npm run check:operator-evidence",
+      "provider-side spend caps or credit limits",
+      "emergency key disablement path",
+    ],
   };
   for (const [doc, snippets] of Object.entries(requiredByDoc)) {
     const text = normalizeWhitespace(docTexts[doc] || readText(doc));

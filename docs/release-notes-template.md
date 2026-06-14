@@ -52,6 +52,7 @@ repositories.
 - GitHub App permissions/events:
 - Providers/models:
 - Default Anthropic model:
+- Provider console readiness evidence:
 - Repository config template:
 - Budget mode and caps:
 - Run-control mode and caps:
@@ -88,6 +89,9 @@ are true:
   deferred;
 - non-noop worker traffic has reviewed dispatch credential evidence;
 - container image evidence has reviewed container publish-plan evidence;
+- provider-console readiness evidence has reviewed model availability,
+  quota/rate-limit posture, provider-side spend caps or credit limits,
+  billing alerts, and emergency key disablement;
 - provider keys and AWS credentials live only in bot-owned infrastructure;
 - target repo configuration is loaded from the base ref;
 - public dashboard repo/org disclosure uses reviewed allowlists before repo
@@ -105,6 +109,7 @@ are true:
 - 6529.io public dashboard:
 - 6529.io private admin UI:
 - Dogfood repositories:
+- Provider console readiness:
 - Provider pricing/model update process:
 - Accepted model-price overrides:
 - Incident response readiness:

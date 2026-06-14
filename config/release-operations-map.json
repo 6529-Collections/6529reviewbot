@@ -453,7 +453,7 @@
         {
           "id": "operator-evidence-contract",
           "script": "check:operator-evidence",
-          "purpose": "Verify operator evidence sections, readiness semantics, GitHub App production registration evidence, runtime dispatch evidence, container publish evidence, security-intake evidence, repository-rulesets evidence, production deployment-plan evidence, budget policy evidence, model-pricing evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, release tag-plan evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify operator evidence sections, readiness semantics, GitHub App production registration evidence, runtime dispatch evidence, container publish evidence, security-intake evidence, repository-rulesets evidence, production deployment-plan evidence, budget policy evidence, model-pricing evidence, provider-console-readiness evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, release tag-plan evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/operator-evidence-template.md",
           "publicOutput": "Safe."
         },
@@ -495,14 +495,14 @@
         {
           "id": "release-notes-draft-contract",
           "script": "check:release-notes-draft",
-          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, runtime dispatch evidence, container publish evidence, dashboard disclosure evidence, private admin auth evidence, community-release status evidence, alert evidence, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
+          "purpose": "Verify the release notes draft command keeps candidate-bundle summaries, model catalog defaults, runtime dispatch evidence, container publish evidence, provider console readiness evidence, dashboard disclosure evidence, private admin auth evidence, community-release status evidence, alert evidence, TODO markers, redaction, CLI flags, source anchors, and docs synchronized.",
           "doc": "docs/release-notes-draft.md",
           "publicOutput": "Safe."
         },
         {
           "id": "release-notes-publication-contract",
           "script": "check:release-notes-publication",
-          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, Git ref-unsafe title versions, missing community-release or other evidence fields, incomplete deferrals, vague or failed validation results, and public-safety leaks before tags or GitHub Releases.",
+          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, Git ref-unsafe title versions, missing community-release, provider console readiness, or other evidence fields, incomplete deferrals, vague or failed validation results, and public-safety leaks before tags or GitHub Releases.",
           "doc": "docs/release-notes-publication.md",
           "publicOutput": "Safe."
         },

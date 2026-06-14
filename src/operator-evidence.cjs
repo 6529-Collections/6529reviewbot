@@ -17,6 +17,7 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "production-deployment-plan", title: "Production Deployment Plan" },
   { id: "budget-and-pricing", title: "Budget And Pricing" },
   { id: "model-pricing", title: "Model Pricing" },
+  { id: "provider-console-readiness", title: "Provider Console Readiness" },
   { id: "worker-dispatch-credentials", title: "Worker Dispatch Credentials" },
   { id: "alert-delivery-plan", title: "Alert Delivery Plan" },
   { id: "worker-and-alerts", title: "Worker And Alerts" },
