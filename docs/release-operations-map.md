@@ -191,7 +191,8 @@ release-candidate summaries, model defaults, TODO markers, redaction, CLI
 flags, operations map entries, and docs aligned.
 `npm run check:release-notes-publication` keeps the completed release-notes
 publication guard aligned with required fields, deferral handling,
-public-safety redaction, release-check wiring, smoke tests, and docs.
+vague or failed validation evidence, public-safety redaction, release-check
+wiring, smoke tests, and docs.
 `npm run check:release-tag-plan` keeps the release tag plan aligned with
 clean-main readiness, completed release notes, dry-run operator commands,
 release-check wiring, smoke tests, and docs.

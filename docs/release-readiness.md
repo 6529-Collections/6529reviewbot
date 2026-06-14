@@ -292,6 +292,8 @@ Ready for community review:
   status, deferrals, known gaps, compatibility, and validation fields;
 - release operations map validation that keeps the public command inventory in
   sync with mapped local quality gates;
+- release operations map validation pins the release notes publication guard's
+  vague or failed validation evidence checks in the public command inventory;
 - structured operator evidence validation and redacted public-summary rendering
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private

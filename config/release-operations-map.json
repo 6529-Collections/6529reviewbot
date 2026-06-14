@@ -460,7 +460,7 @@
         {
           "id": "release-notes-publication-contract",
           "script": "check:release-notes-publication",
-          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, missing evidence fields, incomplete deferrals, and public-safety leaks before tags or GitHub Releases.",
+          "purpose": "Verify the release notes publication guard rejects unfinished TODO markers, missing evidence fields, incomplete deferrals, vague or failed validation results, and public-safety leaks before tags or GitHub Releases.",
           "doc": "docs/release-notes-publication.md",
           "publicOutput": "Safe."
         },
@@ -825,7 +825,7 @@
           "id": "release-notes-publication",
           "script": "release:notes:check",
           "args": "-- -- --file <release-notes.md>",
-          "purpose": "Check completed release notes before publishing a tag or GitHub Release.",
+          "purpose": "Check completed release notes and explicit validation evidence before publishing a tag or GitHub Release.",
           "doc": "docs/release-notes-publication.md",
           "privateInputs": "Reads the operator-completed public release notes Markdown.",
           "publicOutput": "Safe when the checked file is intended for publication."
