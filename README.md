@@ -412,9 +412,8 @@ npm run dogfood:readiness
 npm run dogfood:readiness -- -- --preflight
 npm run dogfood:readiness -- -- --strict-preflight --require-ready
 npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
-npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready
+npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
+npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
 `check:self-dogfood-replay` uses synthetic payloads and dry-run queueing to
@@ -426,8 +425,9 @@ Use `dogfood:promotion` as the final pre-traffic go/no-go packet. Use
 `dogfood:go-live` as the final composed view when release-candidate,
 promotion, production-cutover, and operator-workspace evidence should agree in
 one place. Use `npm --silent run` when copying promotion, go-live, or readiness
-output from commands that include private workspace paths; normal `npm run`
-can echo the command line before the redacted report.
+output from commands that include private workspace or reviewed model price
+file paths; normal `npm run` can echo the command line before the redacted
+report.
 
 Track private dogfood execution evidence:
 

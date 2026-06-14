@@ -32,6 +32,7 @@ function checkDogfoodGoLiveContract(options = {}) {
   checkCliContract(findings);
   checkReadyContract(findings);
   checkWorkspacePacket(findings);
+  checkModelPricePromotionGate(findings);
   checkMarkdownRedaction(findings);
   checkSourceInvariants(options.sourceTexts || {}, findings);
   checkDocs(options.docTexts || {}, findings);
@@ -46,8 +47,8 @@ function checkDogfoodGoLiveContract(options = {}) {
   }
 
   return {
-    cliCases: 4,
-    packetCases: 4,
+    cliCases: 5,
+    packetCases: 5,
     docs: goLiveDocs.length,
   };
 }
@@ -63,6 +64,12 @@ function checkCliContract(findings) {
     "target.yml",
     "--mode",
     "command-only",
+    "--model-price-file",
+    "prices.json",
+    "--allow-stale-model-price-source",
+    "--allow-zero-model-price",
+    "--max-model-price-source-age-days",
+    "45",
     "--strict-preflight",
     "--require-ready",
     "--require-operator-workspace-ready",
@@ -83,6 +90,10 @@ function checkCliContract(findings) {
       json: true,
       mode: "command-only",
       modelCatalogFile: "",
+      modelPriceFile: "prices.json",
+      allowStaleModelPriceSource: true,
+      allowZeroModelPrice: true,
+      maxModelPriceSourceAgeDays: 45,
       operatorEvidenceFile: "",
       operatorWorkspaceDir: "workspace",
       out: "packet.md",
@@ -114,6 +125,11 @@ function checkCliContract(findings) {
   expectError(
     () => dogfoodGoLiveCli.parseArgs(["--require-operator-workspace-ready"]),
     "--require-operator-workspace-ready requires --operator-workspace.",
+    findings
+  );
+  expectError(
+    () => dogfoodGoLiveCli.parseArgs(["--max-model-price-source-age-days", "-1"]),
+    "--max-model-price-source-age-days must be a non-negative number.",
     findings
   );
 }
@@ -174,8 +190,10 @@ function checkWorkspacePacket(findings) {
     force: true,
     repoRoot: root,
   });
+  const priceFile = writePriceFile(freshPriceDocument());
   const packet = dogfoodGoLive.collectDogfoodGoLivePacket({
     env: contractEnv(),
+    modelPriceFile: priceFile,
     now: new Date("2026-06-13T00:00:00.000Z"),
     operatorWorkspaceDir: workspaceDir,
     root,
@@ -192,6 +210,15 @@ function checkWorkspacePacket(findings) {
   if (packet.inputs.dogfoodPromotion.operatorWorkspace?.directory !== "[operator-workspace]") {
     findings.push("promotion input nested inside go-live packet must keep the workspace path redacted.");
   }
+  if (packet.inputs.dogfoodPromotion.modelPriceFile?.file !== "[external-path-set]") {
+    findings.push("promotion input nested inside go-live packet must keep the model price file path redacted.");
+  }
+  if (JSON.stringify(packet).includes(path.dirname(priceFile)) || markdown.includes(path.dirname(priceFile))) {
+    findings.push("go-live packet output must not include the private model price file path.");
+  }
+  if (packet.checks.dogfoodPromotion.checks.readiness.checks.modelPriceCoverage?.ready !== true) {
+    findings.push("go-live packet must forward ready model price coverage through promotion.");
+  }
   const gateIds = packet.gates.map((gate) => gate.id);
   for (const expected of [
     "operator-workspace",
@@ -202,6 +229,38 @@ function checkWorkspacePacket(findings) {
     if (!gateIds.includes(expected)) {
       findings.push(`go-live packet gates must include ${expected}.`);
     }
+  }
+}
+
+function checkModelPricePromotionGate(findings) {
+  const workspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-go-live-prices-"));
+  operatorWorkspace.createOperatorWorkspace({
+    directory: workspaceDir,
+    force: true,
+    repoRoot: root,
+  });
+  const missing = freshPriceDocument();
+  missing.prices = missing.prices.slice(0, 1);
+  const packet = dogfoodGoLive.collectDogfoodGoLivePacket({
+    env: contractEnv(),
+    modelPriceFile: writePriceFile(missing),
+    now: new Date("2026-06-13T00:00:00.000Z"),
+    operatorWorkspaceDir: workspaceDir,
+    root,
+    selfDogfoodReplayRunner: fakeReplay,
+    strictPreflight: true,
+  });
+  const promotionGate = packet.gates.find((gate) => gate.id === "dogfood-promotion");
+  if (promotionGate?.status !== "error") {
+    findings.push("missing model price coverage must fail the go-live dogfood-promotion gate.");
+  }
+  const coverage =
+    packet.checks.dogfoodPromotion.checks.readiness.checks.modelPriceCoverage;
+  if (!coverage?.missing.includes("openai:gpt-5.5")) {
+    findings.push("go-live packet must preserve model price coverage missing-lane details.");
+  }
+  if (!packet.nextActions.some((action) => action.includes("reviewed model price file"))) {
+    findings.push("go-live next actions must mention the reviewed model price file when promotion fails.");
   }
 }
 
@@ -286,6 +345,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "assertDogfoodGoLiveReady",
     "packet.inputs.strictPreflight",
     "packet.inputs.dogfoodPromotion.preflight",
+    "modelPriceFile",
+    "modelPriceCoverageStatus",
     "This packet is public-safe.",
     "operatorWorkspace: operatorWorkspaceDir ? \"[operator-workspace]\" : \"\"",
     "privatePathRoots",
@@ -301,6 +362,8 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "result.requireReady && (!result.strictPreflight || result.skipPreflight)",
     "--require-ready requires --strict-preflight",
+    "--model-price-file",
+    "--allow-stale-model-price-source",
     "Use npm --silent run when copying output from commands that include private paths.",
   ]) {
     if (!binText.includes(snippet)) {
@@ -316,6 +379,8 @@ function checkDocs(docTexts, findings) {
       "npm run check:dogfood-go-live",
       "dogfood go-live contract check",
       "`--require-ready` requires `--strict-preflight`",
+      "--model-price-file",
+      "model price coverage",
     ],
     "docs/release-readiness.md": ["dogfood go-live checker"],
     "docs/release-operations-map.md": ["npm run check:dogfood-go-live"],
@@ -333,6 +398,44 @@ function checkDocs(docTexts, findings) {
       }
     }
   }
+}
+
+function writePriceFile(document) {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-go-live-prices-"));
+  const priceFile = path.join(tempDir, "model-prices.json");
+  fs.writeFileSync(priceFile, JSON.stringify(document, null, 2), "utf8");
+  return priceFile;
+}
+
+function freshPriceDocument() {
+  return {
+    version: 1,
+    currency: "USD",
+    prices: [
+      {
+        provider: "anthropic",
+        model: "claude-opus-4-8",
+        inputUsdPerMillion: 1,
+        cachedInputUsdPerMillion: 0.5,
+        outputUsdPerMillion: 5,
+        reasoningUsdPerMillion: null,
+        effectiveFrom: "2026-06-12T00:00:00.000Z",
+        sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+        sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+      },
+      {
+        provider: "openai",
+        model: "gpt-5.5",
+        inputUsdPerMillion: 1,
+        cachedInputUsdPerMillion: null,
+        outputUsdPerMillion: 5,
+        reasoningUsdPerMillion: 5,
+        effectiveFrom: "2026-06-12T00:00:00.000Z",
+        sourceUrl: "https://platform.openai.com/docs/pricing",
+        sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+      },
+    ],
+  };
 }
 
 function contractEnv(overrides = {}) {

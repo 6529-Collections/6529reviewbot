@@ -76,6 +76,10 @@ function collectDogfoodGoLivePacket(options = {}) {
     includePreflight: options.includePreflight !== false,
     mode: options.mode || "command-only",
     modelCatalogFile: options.modelCatalogFile,
+    modelPriceFile: options.modelPriceFile,
+    allowStaleModelPriceSource: Boolean(options.allowStaleModelPriceSource),
+    allowZeroModelPrice: Boolean(options.allowZeroModelPrice),
+    maxModelPriceSourceAgeDays: options.maxModelPriceSourceAgeDays,
     nodeBin: options.nodeBin,
     now,
     operatorWorkspaceDir,
@@ -221,7 +225,10 @@ function formatDogfoodGoLiveMarkdown(packet) {
     `- promotion ready: ${
       packet.checks.dogfoodPromotion.ready ? "yes" : "no"
     }`,
-    `- promotion gates: ${packet.summaries.dogfoodPromotion.ok} ok, ${packet.summaries.dogfoodPromotion.warnings} warnings, ${packet.summaries.dogfoodPromotion.errors} errors`
+    `- promotion gates: ${packet.summaries.dogfoodPromotion.ok} ok, ${packet.summaries.dogfoodPromotion.warnings} warnings, ${packet.summaries.dogfoodPromotion.errors} errors`,
+    `- promotion model price coverage: ${modelPriceCoverageStatus(
+      packet.checks.dogfoodPromotion.checks?.readiness?.checks?.modelPriceCoverage
+    )}`
   );
 
   if (packet.summaries.operatorWorkspace) {
@@ -320,7 +327,7 @@ function nextActions(gates) {
       );
     } else if (item.id === "dogfood-promotion") {
       actions.push(
-        "Run dogfood:promotion with the same operator workspace and strict preflight, then resolve any promotion gate failures."
+        "Run dogfood:promotion with the same operator workspace, strict preflight, and reviewed model price file, then resolve any promotion gate failures."
       );
     } else if (item.id === "production-cutover") {
       actions.push(
@@ -347,6 +354,16 @@ function readinessLine(label, summary) {
     `${summary.blocked} blocked,`,
     `${missing.length} missing)`,
   ].join(" ");
+}
+
+function modelPriceCoverageStatus(summary) {
+  if (!summary) {
+    return "not included";
+  }
+  if (summary.status !== "ok") {
+    return "error";
+  }
+  return summary.ready ? "ready" : "not ready";
 }
 
 function operatorWorkspaceFilePaths(directory) {
