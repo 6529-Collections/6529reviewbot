@@ -292,6 +292,8 @@ Ready for community review:
   status, deferrals, known gaps, compatibility, and validation fields;
 - release tag planning rejects completed release notes whose title version does
   not match the planned release tag;
+- release tag planning rejects locally existing release tags before marking
+  dry-run tag commands ready;
 - release operations map validation that keeps the public command inventory in
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's

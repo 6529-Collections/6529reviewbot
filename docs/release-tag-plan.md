@@ -7,6 +7,7 @@ It checks:
 
 - the requested release version and normalized tag name;
 - that the local checkout is on clean, synced `main`;
+- that the planned release tag does not already exist locally;
 - that completed release notes pass the publication guard;
 - that the release notes title matches the requested release tag;
 - the exact tag and GitHub Release steps the operator should run.
@@ -24,8 +25,8 @@ npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.m
 
 Use `--require-ready` for the final pre-tag gate. This exits non-zero unless
 the working tree is clean, the branch is `main`, the local branch is neither
-ahead nor behind its upstream, and completed release notes are supplied,
-publishable, and titled for the planned release:
+ahead nor behind its upstream, the local tag is absent, and completed release
+notes are supplied, publishable, and titled for the planned release:
 
 ```bash
 npm run release:tag-plan -- -- --release v0.1.0 --release-notes <release-notes.md> --require-ready

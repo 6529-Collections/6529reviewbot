@@ -11,7 +11,7 @@ const DRY_RUN_NOTICE = "This command does not create tags or GitHub Releases.";
 
 function collectReleaseTagPlan(options = {}) {
   const release = normalizeReleaseVersion(options.release || options.version || "v0.1.0");
-  const git = options.git || collectGitState(options);
+  const git = options.git || collectGitState({ ...options, release });
   const releaseNotes = collectReleaseNotesState(options);
   const errors = [];
   const warnings = [];
@@ -21,6 +21,9 @@ function collectReleaseTagPlan(options = {}) {
   }
   if (git.dirty) {
     errors.push("working tree must be clean before planning a release tag.");
+  }
+  if (git.tagExists) {
+    errors.push(`release tag '${release}' already exists locally; inspect tags before planning a release.`);
   }
   if (git.upstream) {
     if (git.ahead > 0) {
@@ -81,6 +84,9 @@ function collectGitState(options = {}) {
       })
     : "";
   const [ahead, behind] = parseAheadBehind(aheadBehind);
+  const tagExists = options.release
+    ? Boolean(gitOutput(["tag", "--list", options.release], cwd, { optional: true }).trim())
+    : false;
   return {
     branch,
     commit,
@@ -88,6 +94,7 @@ function collectGitState(options = {}) {
     upstream,
     ahead,
     behind,
+    tagExists,
   };
 }
 
@@ -126,6 +133,7 @@ function publicGitState(git) {
     upstream: String(git.upstream || ""),
     ahead: wholeNumber(git.ahead),
     behind: wholeNumber(git.behind),
+    tagExists: Boolean(git.tagExists),
   };
 }
 
@@ -154,6 +162,7 @@ function formatReleaseTagPlanMarkdown(plan) {
     `- dirty: ${plan.git.dirty ? "yes" : "no"}`,
     `- upstream: ${plan.git.upstream || "none"}`,
     `- ahead/behind: ${plan.git.ahead}/${plan.git.behind}`,
+    `- local tag exists: ${plan.git.tagExists ? "yes" : "no"}`,
     "",
     "## Release Notes",
     "",
