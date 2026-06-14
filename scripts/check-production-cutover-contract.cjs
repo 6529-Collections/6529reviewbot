@@ -55,6 +55,48 @@ function checkChecklistConfig(findings) {
   const checklist = productionCutover.loadProductionCutoverChecklist(
     path.join(root, "config/production-cutover-checklist.json")
   );
+  const releaseBaselinePhase = checklist.phases.find((phase) => phase.id === "release-baseline");
+  if (!releaseBaselinePhase) {
+    findings.push("production cutover checklist must include the release-baseline phase.");
+  } else {
+    const itemIds = releaseBaselinePhase.items.map((item) => item.id);
+    const candidateIndex = itemIds.indexOf("release-candidate-bundle");
+    const deploymentPlanIndex = itemIds.indexOf("production-deployment-plan-reviewed");
+    if (deploymentPlanIndex === -1) {
+      findings.push("release-baseline phase must include production-deployment-plan-reviewed.");
+    } else {
+      if (candidateIndex !== -1 && candidateIndex > deploymentPlanIndex) {
+        findings.push("release-candidate-bundle must come before production-deployment-plan-reviewed.");
+      }
+      const deploymentPlan = releaseBaselinePhase.items[deploymentPlanIndex];
+      for (const snippet of [
+        "Production deployment plan",
+        "concrete production bot origin",
+        "operator-owned image repository",
+        "worker-dispatch installation id",
+        "before live handoff",
+      ]) {
+        if (!deploymentPlan.title.includes(snippet)) {
+          findings.push(`production-deployment-plan-reviewed title must include '${snippet}'.`);
+        }
+      }
+      for (const snippet of [
+        "npm run production:deployment-plan",
+        "--host <production-bot-origin>",
+        "--image <operator-registry>/6529reviewbot",
+        "--operator-workspace <private-workspace-dir>",
+        "--worker-dispatch-installation-id <central-repo-installation-id>",
+        "--require-ready",
+      ]) {
+        if (!deploymentPlan.evidence.includes(snippet)) {
+          findings.push(`production-deployment-plan-reviewed evidence must include '${snippet}'.`);
+        }
+      }
+      if (deploymentPlan.runbook !== "docs/production-deployment-plan.md") {
+        findings.push("production-deployment-plan-reviewed runbook must be docs/production-deployment-plan.md.");
+      }
+    }
+  }
   const serverWorkerPhase = checklist.phases.find((phase) => phase.id === "server-and-worker");
   if (!serverWorkerPhase) {
     findings.push("production cutover checklist must include the server-and-worker phase.");
@@ -513,6 +555,8 @@ function checkDocs(docTexts, findings) {
     "docs/production-cutover.md": [
       "npm run check:production-cutover",
       "production cutover contract check",
+      "npm run production:deployment-plan",
+      "production deployment plan reviewed before live handoff",
       "npm run container:publish-plan",
       "worker dispatch credential posture",
       "public repo/org disclosure allowlists",

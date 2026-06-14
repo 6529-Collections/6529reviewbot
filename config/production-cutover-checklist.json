@@ -31,6 +31,12 @@
           "title": "Release candidate bundle is rendered from current private release-gate status and operator evidence.",
           "evidence": "npm run release:candidate with private status and evidence files",
           "runbook": "docs/release-candidate.md"
+        },
+        {
+          "id": "production-deployment-plan-reviewed",
+          "title": "Production deployment plan is rendered with concrete production bot origin, operator-owned image repository, private workspace, and worker-dispatch installation id before live handoff.",
+          "evidence": "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready",
+          "runbook": "docs/production-deployment-plan.md"
         }
       ]
     },

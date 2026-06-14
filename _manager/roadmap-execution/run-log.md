@@ -5758,3 +5758,28 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     production deployment-plan operator evidence section exercised.
+- Merged `6529reviewbot` PR #313 as `18f24a0`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/cutover-deployment-plan-gate` increment:
+  - add `production-deployment-plan-reviewed` to the production cutover baseline
+    checklist and public-safe status example;
+  - document the ready-mode production deployment handoff command in
+    `docs/production-cutover.md`;
+  - extend the production cutover contract and smoke-test counts so final live
+    cutover evidence cannot omit the reviewed deployment plan.
+- Local validation for `codex/cutover-deployment-plan-gate` so far:
+  - `gh run watch 27497930503 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge CI;
+  - `gh run watch 27497930515 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #313 post-merge OpenSSF Scorecard;
+  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #313, and
+    5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    production cutover deployment-plan gate exercised.

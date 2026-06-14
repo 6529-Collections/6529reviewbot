@@ -35,6 +35,13 @@ Render a public-safe summary from private status:
 npm run production:cutover -- -- --status-file <operator-cutover-status-file> --summary
 ```
 
+Before marking the production deployment handoff complete, render and review
+the production deployment plan with explicit production inputs:
+
+```bash
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
+```
+
 Before marking 6529.io dashboard items complete, render and review the
 dashboard deployment plan with explicit production inputs:
 
@@ -105,8 +112,8 @@ redaction, and docs stay synchronized.
 
 The checklist tracks these phases:
 
-- release baseline: reviewed commit, local release check, remote checks, and
-  release-candidate bundle;
+- release baseline: reviewed commit, local release check, remote checks,
+  release-candidate bundle, and production deployment plan;
 - GitHub App registration: manifest rendering, production App creation,
   credential custody, and selected-repository install scope;
 - AWS ledger and secrets: IAM review, ledger schema, budget policies, model
@@ -131,6 +138,7 @@ Use public-safe evidence like:
 
 ```text
 npm run release:check passed on reviewed commit
+production deployment plan reviewed before live handoff
 strict preflight passed in release-candidate environment
 selected-repository installation scope reviewed
 operator alert delivery verified without publishing destination details
