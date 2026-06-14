@@ -92,6 +92,13 @@ npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace
 npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 ```
 
+Before the first live dogfood model call, complete the private
+`dogfood-status.json` baseline items `provider-console-readiness-reviewed` and
+`iam-secret-custody-reviewed`. Back them with `provider-console-readiness` and
+`iam-and-secrets` operator evidence while keeping provider account/project ids,
+API keys, billing account identifiers, AWS identifiers, ARNs, secret names,
+wallet addresses, and private principals out of public summaries.
+
 Equivalent explicit file flags are still available for non-standard private
 workspace layouts:
 

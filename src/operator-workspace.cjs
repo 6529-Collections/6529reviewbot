@@ -61,6 +61,13 @@ const PUBLIC_REDACTION_PATTERNS = [
   [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
   [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
 ];
+const DOGFOOD_BASELINE_EVIDENCE_GUIDANCE = [
+  "Before first live dogfood traffic, complete the private dogfood status baseline items",
+  "`provider-console-readiness-reviewed` and `iam-secret-custody-reviewed`, backed by",
+  "`provider-console-readiness` and `iam-and-secrets` operator evidence. Keep provider",
+  "account/project ids, API keys, billing account identifiers, AWS identifiers, ARNs,",
+  "secret names, wallet addresses, and private principals out of public summaries.",
+];
 
 function createOperatorWorkspace(options = {}) {
   if (!options.directory) {
@@ -328,6 +335,8 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   lines.push(`npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace . --auth-check-url <6529-auth-check-url> --release ${summary.release} --require-ready`);
   lines.push(`npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace . --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release ${summary.release} --require-ready`);
   lines.push("```");
+  lines.push("", "## Dogfood Evidence Handoff", "");
+  lines.push(...DOGFOOD_BASELINE_EVIDENCE_GUIDANCE);
   return `${lines.join("\n")}\n`;
 }
 
@@ -407,6 +416,10 @@ npm --silent run dogfood:readiness -- -- --operator-workspace . --model-price-fi
 npm --silent run dogfood:promotion -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 npm --silent run dogfood:go-live -- -- --operator-workspace . --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready
 \`\`\`
+
+## Dogfood Evidence Handoff
+
+${DOGFOOD_BASELINE_EVIDENCE_GUIDANCE.join("\n")}
 
 Copy only redacted summaries, release-candidate output, promotion packets, or
 go-live packets into public PRs, issues, releases, or durable manager memory.

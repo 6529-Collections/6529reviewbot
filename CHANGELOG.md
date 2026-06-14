@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added operator handoff guidance for the dogfood provider-console readiness
+  and IAM/secret-custody baseline gates across generated workspace files,
+  promotion/go-live next actions, and release docs.
 - Added dogfood status baseline gates for provider-console readiness and
   IAM/secret-custody evidence before first live dogfood model calls.
 - Hardened v0 and community release gates so secret-boundary and AWS/IAM gates

@@ -615,7 +615,7 @@
           "id": "operator-workspace",
           "script": "operator:workspace",
           "args": "-- -- --dir <private-workspace-dir>",
-          "purpose": "Create the private release-gate, dogfood, security-review, cutover, and operator-evidence skeleton files in one workspace.",
+          "purpose": "Create the private release-gate, dogfood, security-review, cutover, and operator-evidence skeleton files in one workspace, including dogfood baseline provider/IAM handoff guidance.",
           "doc": "docs/operator-workspace.md",
           "privateInputs": "Writes operator-owned private status and evidence files.",
           "publicOutput": "Share only the public-safe summary, CLI counts, or release-candidate bundle output."
@@ -701,7 +701,7 @@
           "id": "dogfood-readiness",
           "script": "dogfood:readiness",
           "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
-          "purpose": "Check dogfood input files, model catalog, budget policy, repository config, private workspace parsing, and optional preflight before first traffic.",
+          "purpose": "Check dogfood input files, model catalog, budget policy, repository config, private workspace parsing, model price coverage when supplied, and optional preflight before first traffic.",
           "doc": "docs/dogfood-readiness.md",
           "privateInputs": "Reads operator-owned private workspace files when --operator-workspace is supplied.",
           "publicOutput": "Safe after reviewing preflight diagnostics and redacted workspace counts."
@@ -710,7 +710,7 @@
           "id": "dogfood-promotion",
           "script": "dogfood:promotion",
           "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
-          "purpose": "Compose target config, central dogfood inputs, self-dogfood replay, private workspace parsing, and preflight into one final pre-traffic go/no-go packet.",
+          "purpose": "Compose target config, central dogfood inputs, self-dogfood replay, private workspace parsing, model price coverage when supplied, and preflight into one final pre-traffic go/no-go packet.",
           "doc": "docs/dogfood-promotion.md",
           "privateInputs": "Reads operator-owned private workspace files and the private runtime environment when preflight is included.",
           "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
@@ -719,7 +719,7 @@
           "id": "dogfood-go-live",
           "script": "dogfood:go-live",
           "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
-          "purpose": "Cross-check release-candidate, dogfood promotion, production cutover, and operator workspace evidence before command-only live dogfood traffic.",
+          "purpose": "Cross-check release-candidate, dogfood promotion, production cutover, operator workspace evidence, and baseline provider/IAM dogfood status evidence before command-only live dogfood traffic.",
           "doc": "docs/dogfood-go-live.md",
           "privateInputs": "Reads operator-owned private workspace files and private runtime preflight settings.",
           "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."

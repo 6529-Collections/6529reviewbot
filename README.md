@@ -456,6 +456,13 @@ output from commands that include private workspace or reviewed model price
 file paths; normal `npm run` can echo the command line before the redacted
 report.
 
+Before the first live dogfood model call, the private dogfood status overlay
+must include `provider-console-readiness-reviewed` and
+`iam-secret-custody-reviewed`, backed by `provider-console-readiness` and
+`iam-and-secrets` operator evidence. Keep provider account/project ids, API
+keys, billing account identifiers, AWS identifiers, ARNs, secret names, wallet
+addresses, and private principals out of public summaries.
+
 Track private dogfood execution evidence:
 
 ```bash

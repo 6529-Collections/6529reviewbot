@@ -603,6 +603,10 @@ reviewed model price files. Use
 [Dogfood Go-Live Packet](dogfood-go-live.md) as the final composed
 cross-check when release-candidate, promotion, cutover, and operator-workspace
 evidence must agree before traffic.
+Before first live dogfood model calls, the private dogfood status overlay must
+complete `provider-console-readiness-reviewed` and
+`iam-secret-custody-reviewed`, backed by `provider-console-readiness` and
+`iam-and-secrets` operator evidence.
 
 Use [Dogfood Status](dogfood-status.md) as the private evidence overlay after
 the first live command-only trigger:

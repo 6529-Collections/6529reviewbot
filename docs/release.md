@@ -138,6 +138,9 @@ After stabilization:
   protected-environment trust, Data API resource scope, database grants,
   SNS/SES resource scope, runtime secret-store access principals, rotation
   ownership, target-repo/browser secret exclusion, and break-glass revoke paths
+- private dogfood status baseline items `provider-console-readiness-reviewed`
+  and `iam-secret-custody-reviewed` completed before first live dogfood model
+  calls, backed by the reviewed provider-console and IAM/secret evidence above
 - `npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready`
   passes as the final composed pre-traffic go/no-go packet before command-only
   live dogfood traffic
