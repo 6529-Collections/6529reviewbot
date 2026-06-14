@@ -132,6 +132,12 @@
           "runbook": "docs/deployment.md"
         },
         {
+          "id": "worker-dispatch-credentials-reviewed",
+          "title": "Worker dispatch credential posture is reviewed before enabling non-noop worker traffic, with a dispatch-only GitHub App preferred and any main-App or token fallback explicitly accepted.",
+          "evidence": "dispatch mode, dispatch-only App installation or reviewed fallback acceptance, Actions: write scope, and strict preflight warning decision kept in private evidence",
+          "runbook": "docs/deployment.md"
+        },
+        {
           "id": "worker-enabled-conservative",
           "title": "Worker path is enabled only after noop verification, with conservative capacity and command-only dogfood.",
           "evidence": "worker adapter, capacity, and command-only config summary",

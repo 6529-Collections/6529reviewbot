@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Required worker dispatch credential evidence in the v0 release gates and
+  production cutover checklist before non-noop worker traffic can satisfy
+  release readiness.
 - Required reviewed container publish plan evidence in the v0 release gates
   and production cutover checklist before container image deployment evidence
   can satisfy release readiness.

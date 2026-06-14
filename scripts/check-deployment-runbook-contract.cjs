@@ -154,6 +154,9 @@ function checkWorkerDeploymentPath(text, findings) {
     "Actions: write",
     "REVIEWBOT_WORKER_GITHUB_TOKEN",
     "Preflight rejects partial worker App credential overrides",
+    "Before enabling non-noop worker traffic, record the worker dispatch credential posture",
+    "central bot repository `Actions: write` scope confirmed",
+    "main-App credential reuse or `REVIEWBOT_WORKER_GITHUB_TOKEN` fallback explicitly accepted",
   ]) {
     if (!hasSnippet(text, snippet)) {
       findings.push(`central worker deployment path must include '${snippet}'.`);
@@ -179,6 +182,7 @@ function checkDashboardAndVerificationPath(text, findings) {
     "npm --silent run dogfood:promotion",
     "npm --silent run dogfood:go-live",
     "Worker mints a short-lived installation token without logging it.",
+    "Worker dispatch credential posture is reviewed before non-noop traffic",
     "Operator alerts run from the central bot environment",
     "npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready",
   ]) {

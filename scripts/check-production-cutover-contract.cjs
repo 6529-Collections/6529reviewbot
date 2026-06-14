@@ -62,6 +62,8 @@ function checkChecklistConfig(findings) {
     const itemIds = serverWorkerPhase.items.map((item) => item.id);
     const containerImageIndex = itemIds.indexOf("container-image-reviewed");
     const serverDeployedIndex = itemIds.indexOf("server-deployed-noop");
+    const workerDispatchIndex = itemIds.indexOf("worker-dispatch-credentials-reviewed");
+    const workerEnabledIndex = itemIds.indexOf("worker-enabled-conservative");
     if (containerImageIndex === -1) {
       findings.push("server-and-worker phase must include container-image-reviewed.");
     } else {
@@ -94,6 +96,40 @@ function checkChecklistConfig(findings) {
       }
       if (containerImage.runbook !== "docs/container-publish-plan.md") {
         findings.push("container-image-reviewed runbook must be docs/container-publish-plan.md.");
+      }
+    }
+    if (workerDispatchIndex === -1) {
+      findings.push("server-and-worker phase must include worker-dispatch-credentials-reviewed.");
+    } else {
+      if (workerEnabledIndex === -1) {
+        findings.push("server-and-worker phase must include worker-enabled-conservative.");
+      } else if (workerDispatchIndex > workerEnabledIndex) {
+        findings.push("worker-dispatch-credentials-reviewed must come before worker-enabled-conservative.");
+      }
+      const workerDispatch = serverWorkerPhase.items[workerDispatchIndex];
+      for (const snippet of [
+        "Worker dispatch credential posture",
+        "before enabling non-noop worker traffic",
+        "dispatch-only GitHub App",
+        "fallback explicitly accepted",
+      ]) {
+        if (!workerDispatch.title.includes(snippet)) {
+          findings.push(`worker-dispatch-credentials-reviewed title must include '${snippet}'.`);
+        }
+      }
+      for (const snippet of [
+        "dispatch mode",
+        "dispatch-only App installation",
+        "reviewed fallback acceptance",
+        "Actions: write scope",
+        "strict preflight warning decision",
+      ]) {
+        if (!workerDispatch.evidence.includes(snippet)) {
+          findings.push(`worker-dispatch-credentials-reviewed evidence must include '${snippet}'.`);
+        }
+      }
+      if (workerDispatch.runbook !== "docs/deployment.md") {
+        findings.push("worker-dispatch-credentials-reviewed runbook must be docs/deployment.md.");
       }
     }
   }
@@ -432,6 +468,7 @@ function checkDocs(docTexts, findings) {
       "npm run check:production-cutover",
       "production cutover contract check",
       "npm run container:publish-plan",
+      "worker dispatch credential posture",
       "AWS account ids",
     ],
     "docs/release-readiness.md": ["production cutover contract"],

@@ -107,8 +107,9 @@ Do not create the `v0` tag until all of these are true:
    webhook secret handling, private-key rotation, and completed registration
    packet evidence.
 2. The central App server and at least one worker path are deployed with a
-   reviewed worker capacity policy, or the release notes explicitly mark the
-   release as local/dogfood-only.
+   reviewed worker capacity policy and dispatch credential evidence, preferring
+   a dispatch-only GitHub App with any fallback explicitly accepted, or the
+   release notes explicitly mark the release as local/dogfood-only.
 3. If the App server is containerized, reviewed container publish plan evidence
    exists for an operator-owned registry, `npm run check:container-image`
    passes, and the image was built from a reviewed commit, scanned, and

@@ -70,6 +70,10 @@
       "status": "pending",
       "notes": "Verify invalid signatures, ping, and dry-run replay."
     },
+    "worker-dispatch-credentials-reviewed": {
+      "status": "pending",
+      "notes": "Review dispatch-only App credentials or explicitly accept any main-App/token fallback before enabling non-noop workers."
+    },
     "worker-enabled-conservative": {
       "status": "pending",
       "notes": "Enable worker traffic only after noop verification."

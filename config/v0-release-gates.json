@@ -10,7 +10,7 @@
     },
     {
       "id": "server-worker",
-      "title": "Central App server and at least one worker path are deployed with reviewed worker capacity policy, or release notes mark the release local/dogfood-only.",
+      "title": "Central App server and at least one worker path are deployed with reviewed worker capacity policy and dispatch credential evidence, preferring a dispatch-only GitHub App with any fallback explicitly accepted, or release notes mark the release local/dogfood-only.",
       "evidence": "docs/worker-capacity.md"
     },
     {

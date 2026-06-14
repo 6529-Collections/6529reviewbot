@@ -43,6 +43,8 @@ Ready for community review:
   id, and private-key shapes in local output tails and GitHub API dispatch
   failure bodies;
 - worker capacity and backpressure runbook for live scaling decisions;
+- worker dispatch credential evidence before non-noop worker traffic, with a
+  dispatch-only GitHub App preferred and fallbacks explicitly accepted;
 - reusable workflow compatibility docs with explicit provider-secret mapping;
 - public/admin usage API contracts and Aurora readers;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
@@ -197,9 +199,9 @@ Ready for community review:
 - run-control scope checker that keeps concurrency scopes synchronized with
   budget scopes, env parsing, claim SQL, docs, and env examples;
 - `npm run check:worker-capacity` keeps [Worker Capacity](worker-capacity.md)
-  synchronized with starting caps, scale-up rules, backpressure controls,
-  stuck-job triage, provider limits, alert evidence, and release-decision
-  blockers;
+  synchronized with starting caps, dispatch credential evidence, scale-up
+  rules, backpressure controls, stuck-job triage, provider limits, alert
+  evidence, and release-decision blockers;
 - alert-dimension checker that keeps scheduled spend-spike dimensions
   synchronized across alert defaults, env parsing, docs, and env examples;
 - alert notifier mode checker that keeps scheduled alert delivery modes
@@ -388,9 +390,10 @@ pre-v1 tagging gates and public release note expectations.
 verifies both gate count parity and v0 gate evidence references.
 `npm run check:v0-gates` is included in `npm run release:check` and keeps the
 v0 release gate contract synchronized across status readiness, missing-id
-checks, deferral semantics, container publish-plan evidence targets for image
-gates, dashboard deployment-plan evidence targets for 6529.io gates, public
-Markdown redaction, source invariants, and release docs.
+checks, deferral semantics, dispatch credential evidence for worker gates,
+container publish-plan evidence targets for image gates, dashboard
+deployment-plan evidence targets for 6529.io gates, public Markdown redaction,
+source invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 production deployment plan evidence, deferrals, known gaps, compatibility, and
@@ -491,9 +494,10 @@ npm run check:production-cutover
 The production cutover contract keeps checklist/status readiness, complete
 evidence requirements, deferred item semantics, public Markdown redaction, and
 docs synchronized, including the container publish-plan evidence gate before
-server deployment, the dashboard deployment-plan evidence gate before 6529.io
-dashboard exposure, and the alert delivery-plan evidence gate before scheduled
-alert delivery.
+server deployment, worker dispatch credential evidence before non-noop worker
+traffic, the dashboard deployment-plan evidence gate before 6529.io dashboard
+exposure, and the alert delivery-plan evidence gate before scheduled alert
+delivery.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:
@@ -635,9 +639,9 @@ loading.
 fields, local worker env, redacted diagnostics, workflow template inputs, and
 worker docs stay synchronized.
 `npm run check:worker-capacity` is included in `npm run release:check` and
-verifies worker capacity and backpressure guidance for starting caps,
-scale-up rules, stuck-job triage, provider limits, alert evidence, and
-release blockers.
+verifies worker capacity and backpressure guidance for starting caps, dispatch
+credential evidence, scale-up rules, stuck-job triage, provider limits, alert
+evidence, and release blockers.
 `npm run check:admin-auth` is included in `npm run release:check` and verifies
 private admin auth modes, shared-secret behavior, HMAC headers, TTL and role
 checks, 6529.io bridge docs, and public env templates stay synchronized.
@@ -710,8 +714,8 @@ verifies operator evidence sections, readiness semantics, public-summary
 redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, container publish-plan
-evidence, deferral semantics, Markdown redaction, source invariants, and docs
-stay aligned.
+evidence, worker dispatch credential evidence, deferral semantics, Markdown
+redaction, source invariants, and docs stay aligned.
 `npm run check:security-review-status` is included in `npm run release:check`
 and verifies security review status readiness, deferral semantics, Markdown
 redaction, source invariants, and docs stay aligned.

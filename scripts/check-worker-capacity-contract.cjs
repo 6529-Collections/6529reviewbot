@@ -92,6 +92,9 @@ function checkStartingPolicy(text, findings) {
     "REVIEWBOT_RUN_CONTROL_MODEL_MAX_CONCURRENT=4",
     "REVIEWBOT_WORKER_TIMEOUT_MINUTES=20",
     "Target repository config should start command-only.",
+    "Before switching out of `noop`, record the dispatch credential posture",
+    "dispatch-only GitHub App installed only on `6529-Collections/6529reviewbot`",
+    "record that fallback and accepted permission boundary",
   ]) {
     requireSnippet(text, snippet, "worker starting policy", findings);
   }
@@ -174,16 +177,19 @@ function checkEvidenceAndReleaseDecision(text, findings) {
   for (const snippet of [
     "Public-safe evidence:",
     "Worker adapter:",
+    "Dispatch credential posture:",
     "Provider/model concurrency cap class:",
     "Alert delivery configured: yes/no",
     "Private evidence:",
     "Exact provider limits:",
+    "Dispatch-only App installation id or reviewed fallback acceptance:",
     "Exact run keys:",
     "Provider error payloads:",
     "AWS account ids, ARNs, and secret ARNs:",
     "Block a scale-up when:",
     "run control is disabled or unverified",
     "budget policies are missing for the target org/repo/provider/model",
+    "dispatch credential posture is unreviewed before non-noop worker traffic",
     "provider keys are present in a target repository",
     "alerts are disabled for live provider traffic",
     "external PRs can trigger automatic spend without a trusted actor",
@@ -221,6 +227,7 @@ function checkDocs(docTexts, findings) {
     "docs/release-readiness.md": [
       "npm run check:worker-capacity",
       "Worker Capacity",
+      "dispatch credential evidence",
     ],
     "docs/roadmap.md": [
       "worker capacity contract",
