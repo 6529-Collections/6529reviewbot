@@ -194,6 +194,11 @@ function formatDogfoodPromotionMarkdown(packet) {
 }
 
 function assertDogfoodPromotionReady(packet) {
+  if (!packet.inputs?.modelPriceFile) {
+    throw new Error(
+      "dogfood promotion packet requires reviewed model price coverage before it can be marked ready."
+    );
+  }
   if (!packet.ready) {
     const failing = packet.gates
       .filter((gate) => gate.status !== "ok")
@@ -367,7 +372,7 @@ function summarizeGates(gates) {
 }
 
 function modelPriceCoverageReady(summary) {
-  return !summary || (summary.status === "ok" && summary.ready);
+  return Boolean(summary) && summary.status === "ok" && summary.ready;
 }
 
 function modelPriceCoverageStatus(summary) {

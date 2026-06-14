@@ -9,8 +9,10 @@ delivery plan handoffs.
 The default drill removes the temporary workspace before exiting.
 
 The drill rehearses the sequence without calling GitHub, AWS, or model
-providers. It does not replace the final `--require-ready` gates for release,
-promotion, or go-live decisions.
+providers. It uses a temporary model price coverage fixture for the committed
+catalog default lanes so promotion and go-live rehearsals exercise the same
+ready-mode price gate as live traffic. It does not replace the final
+`--require-ready` gates for release, promotion, or go-live decisions.
 
 ## Quick Run
 
@@ -37,7 +39,7 @@ The drill composes existing public-safe commands and summaries:
 - `operator:workspace` skeleton creation and parse checks;
 - `release:candidate` readiness summary using the workspace overlays;
 - `dogfood:readiness` static input checks for repository config, budget policy,
-  model catalog, and workspace parsing;
+  model catalog, temporary model price coverage, and workspace parsing;
 - `dogfood:promotion` summary with self-dogfood replay included by default;
 - `dogfood:go-live` summary that shows which final gates are still pending.
 - `production:deployment-plan` as the dry-run deployment handoff command to

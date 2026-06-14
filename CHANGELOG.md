@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Required reviewed model price coverage for final dogfood promotion and
+  go-live ready mode before live dogfood traffic.
 - Added operator handoff guidance for the dogfood provider-console readiness
   and IAM/secret-custody baseline gates across generated workspace files,
   promotion/go-live next actions, and release docs.

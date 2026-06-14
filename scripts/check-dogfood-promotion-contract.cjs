@@ -113,6 +113,11 @@ function checkCliContract(findings) {
     findings
   );
   expectError(
+    () => dogfoodPromotionCli.parseArgs(["--strict-preflight", "--require-ready"]),
+    "--require-ready requires --model-price-file for reviewed model price coverage.",
+    findings
+  );
+  expectError(
     () => dogfoodPromotionCli.parseArgs(["--require-operator-workspace-ready"]),
     "--require-operator-workspace-ready requires --operator-workspace.",
     findings
@@ -129,6 +134,9 @@ function checkReadyContract(findings) {
     () =>
       dogfoodPromotion.assertDogfoodPromotionReady({
         ready: false,
+        inputs: {
+          modelPriceFile: { file: "[external-path-set]" },
+        },
         gates: [
           { id: "operator-workspace", status: "warning" },
           { id: "preflight", status: "error" },
@@ -137,8 +145,23 @@ function checkReadyContract(findings) {
     "dogfood promotion packet is not ready: operator-workspace, preflight.",
     findings
   );
+  expectError(
+    () =>
+      dogfoodPromotion.assertDogfoodPromotionReady({
+        ready: true,
+        inputs: {
+          modelPriceFile: null,
+        },
+        gates: [],
+      }),
+    "dogfood promotion packet requires reviewed model price coverage before it can be marked ready.",
+    findings
+  );
   const readyPacket = {
     ready: true,
+    inputs: {
+      modelPriceFile: { file: "[external-path-set]" },
+    },
     gates: [],
   };
   if (dogfoodPromotion.assertDogfoodPromotionReady(readyPacket) !== readyPacket) {
@@ -337,6 +360,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "operatorWorkspaceDir",
     "modelPriceFile",
     "modelPriceCoverageReady",
+    "Boolean(summary) && summary.status === \"ok\" && summary.ready",
     "directory: \"[operator-workspace]\"",
     "return publicText(value).replace",
     "provider-console-readiness-reviewed",
@@ -354,6 +378,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "options.requireReady && !options.strictPreflight",
     "--require-ready requires --strict-preflight.",
+    "--require-ready requires --model-price-file for reviewed model price coverage.",
     "--model-price-file",
     "--allow-stale-model-price-source",
     "Use npm --silent run when copying output from commands that include private paths.",
@@ -373,6 +398,7 @@ function checkDocs(docTexts, findings) {
       "`--require-ready` requires `--strict-preflight`",
       "--model-price-file",
       "model price coverage",
+      "requires reviewed model price coverage",
       "provider-console-readiness-reviewed",
       "iam-secret-custody-reviewed",
       "provider-console-readiness",

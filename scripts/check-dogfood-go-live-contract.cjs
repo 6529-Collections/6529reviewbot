@@ -123,6 +123,11 @@ function checkCliContract(findings) {
     findings
   );
   expectError(
+    () => dogfoodGoLiveCli.parseArgs(["--strict-preflight", "--require-ready"]),
+    "--require-ready requires --model-price-file for reviewed model price coverage.",
+    findings
+  );
+  expectError(
     () => dogfoodGoLiveCli.parseArgs(["--require-operator-workspace-ready"]),
     "--require-operator-workspace-ready requires --operator-workspace.",
     findings
@@ -158,6 +163,7 @@ function checkReadyContract(findings) {
           strictPreflight: true,
           dogfoodPromotion: {
             preflight: { strict: true },
+            modelPriceFile: { file: "[external-path-set]" },
           },
         },
         gates: [
@@ -168,12 +174,29 @@ function checkReadyContract(findings) {
     "dogfood go-live packet is not ready: release-candidate, production-cutover.",
     findings
   );
+  expectError(
+    () =>
+      dogfoodGoLive.assertDogfoodGoLiveReady({
+        ready: true,
+        inputs: {
+          strictPreflight: true,
+          dogfoodPromotion: {
+            preflight: { strict: true },
+            modelPriceFile: null,
+          },
+        },
+        gates: [],
+      }),
+    "dogfood go-live packet requires reviewed model price coverage before it can be marked ready.",
+    findings
+  );
   const readyPacket = {
     ready: true,
     inputs: {
       strictPreflight: true,
       dogfoodPromotion: {
         preflight: { strict: true },
+        modelPriceFile: { file: "[external-path-set]" },
       },
     },
     gates: [],
@@ -377,6 +400,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "result.requireReady && (!result.strictPreflight || result.skipPreflight)",
     "--require-ready requires --strict-preflight",
+    "--require-ready requires --model-price-file for reviewed model price coverage.",
     "--model-price-file",
     "--allow-stale-model-price-source",
     "Use npm --silent run when copying output from commands that include private paths.",
@@ -396,6 +420,7 @@ function checkDocs(docTexts, findings) {
       "`--require-ready` requires `--strict-preflight`",
       "--model-price-file",
       "model price coverage",
+      "requires reviewed model price coverage",
       "provider-console-readiness-reviewed",
       "iam-secret-custody-reviewed",
       "provider-console-readiness",

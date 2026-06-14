@@ -599,7 +599,9 @@ npm --silent run dogfood:readiness -- -- --operator-workspace <private-workspace
 Use [Dogfood Promotion Packet](dogfood-promotion.md) immediately before live
 command-only traffic. Use the silent npm form when copying promotion or
 readiness evidence from a command that includes private workspace paths or
-reviewed model price files. Use
+reviewed model price files. Promotion and go-live ready mode require a
+reviewed model price file so the final traffic gates include model price
+coverage, not only provider/model catalog defaults. Use
 [Dogfood Go-Live Packet](dogfood-go-live.md) as the final composed
 cross-check when release-candidate, promotion, cutover, and operator-workspace
 evidence must agree before traffic.

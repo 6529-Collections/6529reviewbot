@@ -374,6 +374,8 @@ function checkDocs(docTexts, findings) {
       "[external-path-set]",
       "--model-price-file",
       "model price coverage",
+      "dogfood:promotion --require-ready",
+      "dogfood:go-live --require-ready",
     ],
     "docs/release-readiness.md": ["dogfood readiness checker"],
     "docs/release-operations-map.md": ["npm run check:dogfood-readiness"],

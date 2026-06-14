@@ -1165,7 +1165,7 @@ assert.match(
 );
 assert.throws(
   () => dogfoodPromotion.assertDogfoodPromotionReady(dogfoodPromotionPublicPacket),
-  /operator-workspace/
+  /reviewed model price coverage/
 );
 const dogfoodPromotionWorkspaceDir = fs.mkdtempSync(
   path.join(os.tmpdir(), "6529-promotion-workspace-")
@@ -1184,9 +1184,50 @@ const promotionPreflightEnv = {
   REVIEWBOT_ALERTS_ENABLED: "false",
   REVIEWBOT_ADMIN_AUTH_MODE: "disabled",
 };
+const dogfoodModelPriceFile = path.join(
+  os.tmpdir(),
+  `6529-dogfood-prices-${Date.now()}.json`
+);
+fs.writeFileSync(
+  dogfoodModelPriceFile,
+  JSON.stringify(
+    {
+      version: 1,
+      currency: "USD",
+      prices: [
+        {
+          provider: "anthropic",
+          model: "claude-opus-4-8",
+          inputUsdPerMillion: 1,
+          cachedInputUsdPerMillion: 0.5,
+          outputUsdPerMillion: 5,
+          reasoningUsdPerMillion: null,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
+          sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+        },
+        {
+          provider: "openai",
+          model: "gpt-5.5",
+          inputUsdPerMillion: 1,
+          cachedInputUsdPerMillion: null,
+          outputUsdPerMillion: 5,
+          reasoningUsdPerMillion: 5,
+          effectiveFrom: "2026-06-12T00:00:00.000Z",
+          sourceUrl: "https://platform.openai.com/docs/pricing",
+          sourceCheckedAt: "2026-06-12T12:00:00.000Z",
+        },
+      ],
+    },
+    null,
+    2
+  ),
+  "utf8"
+);
 const dogfoodPromotionReadyPacket = dogfoodPromotion.collectDogfoodPromotionPacket({
   env: promotionPreflightEnv,
   includePreflight: true,
+  modelPriceFile: dogfoodModelPriceFile,
   now: new Date("2026-06-13T00:00:00.000Z"),
   operatorWorkspaceDir: dogfoodPromotionWorkspaceDir,
   root: dogfoodTargetRepoRoot,
@@ -1206,6 +1247,8 @@ assert.deepEqual(
     "6529-Collections/example",
     "--operator-workspace",
     "workspace",
+    "--model-price-file",
+    "prices.json",
     "--strict-preflight",
     "--json",
     "--quiet",
@@ -1217,7 +1260,7 @@ assert.deepEqual(
     json: true,
     mode: "auto",
     modelCatalogFile: undefined,
-    modelPriceFile: undefined,
+    modelPriceFile: "prices.json",
     allowStaleModelPriceSource: false,
     allowZeroModelPrice: false,
     maxModelPriceSourceAgeDays: undefined,
@@ -1231,6 +1274,10 @@ assert.deepEqual(
     strictPreflight: true,
     targetRepository: "6529-Collections/example",
   }
+);
+assert.throws(
+  () => dogfoodPromotionCli.parseArgs(["--strict-preflight", "--require-ready"]),
+  /requires --model-price-file/
 );
 assert.equal(
   dogfoodPromotionCli.main(["--skip-self-dogfood-replay", "--quiet"]).ready,
@@ -1254,6 +1301,7 @@ assert.throws(
 );
 const dogfoodGoLiveWorkspacePacket = dogfoodGoLive.collectDogfoodGoLivePacket({
   env: promotionPreflightEnv,
+  modelPriceFile: dogfoodModelPriceFile,
   now: new Date("2026-06-13T00:00:00.000Z"),
   operatorWorkspaceDir: dogfoodPromotionWorkspaceDir,
   root: dogfoodTargetRepoRoot,
@@ -1288,6 +1336,8 @@ assert.deepEqual(
     "workspace",
     "--repository",
     "6529-Collections/example",
+    "--model-price-file",
+    "prices.json",
     "--strict-preflight",
     "--require-ready",
     "--json",
@@ -1303,7 +1353,7 @@ assert.deepEqual(
     json: true,
     mode: "command-only",
     modelCatalogFile: "",
-    modelPriceFile: "",
+    modelPriceFile: "prices.json",
     allowStaleModelPriceSource: false,
     allowZeroModelPrice: false,
     maxModelPriceSourceAgeDays: undefined,
@@ -1321,6 +1371,10 @@ assert.deepEqual(
     strictPreflight: true,
     targetRepository: "6529-Collections/example",
   }
+);
+assert.throws(
+  () => dogfoodGoLiveCli.parseArgs(["--strict-preflight", "--require-ready"]),
+  /requires --model-price-file/
 );
 assert.throws(
   () => dogfoodGoLiveCli.parseArgs(["--require-ready"]),

@@ -621,12 +621,14 @@ merged PRs.
 - Dogfood provider/IAM evidence gates PR: merged as PR #326, merge commit `ce99168`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `ce99168`.
-- Current branch: `codex/operator-handoff-dogfood-evidence-guidance`.
-- Current local changes: operator handoff guidance for dogfood
-  provider-console readiness and IAM/secret-custody baseline evidence across
-  generated workspace README output, dogfood promotion/go-live next actions,
-  public docs, release operations map, changelog, roadmap, and focused
-  contracts.
+- Dogfood evidence handoff guidance PR: merged as PR #327, merge commit `c3eaf46`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `c3eaf46`.
+- Current branch: `codex/dogfood-ready-model-price-required`.
+- Current local changes: require reviewed model price coverage for dogfood
+  promotion and go-live ready mode, update the operator drill to rehearse the
+  price gate with a temporary public-safe fixture, and synchronize docs,
+  roadmap, changelog, contracts, smoke tests, and durable manager memory.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -739,6 +741,27 @@ merged PRs.
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood handoff contract changes exercised.
+  - `gh run watch 27502095869 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #327 post-merge CI;
+  - `gh run watch 27502095881 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #327 post-merge OpenSSF Scorecard.
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:operator-drill` passed with 2 drill cases, 8 commands, and
+    7 docs checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #327,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood ready-mode model price requirement exercised.
 
 ## Key Decisions
 
