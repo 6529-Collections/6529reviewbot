@@ -523,30 +523,31 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Container publish-plan release evidence PR: merged as PR #281, merge commit `2814f74`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/worker-dispatch-credential-release-gate`.
-- Current local changes: require worker dispatch credential evidence in the v0
-  release gates and production cutover checklist before non-noop worker
-  traffic can satisfy release readiness.
+- Worker dispatch credential release evidence PR: merged as PR #282, merge commit `deeccc2`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/public-dashboard-disclosure-release-gate`.
+- Current local changes: require public repo/org disclosure allowlist evidence
+  in the v0 release gates and production cutover checklist before public
+  dashboard exposure can satisfy release readiness.
 - Current local validation:
-  - `npm run check:worker-capacity` passed with 7 capacity cases and
-    8 docs checked;
-  - `npm run check:deployment-runbook` passed with 7 runbook cases and
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
     6 docs checked;
   - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
     cases, and 6 docs checked;
-  - `npm run check:checklist-runbooks` passed with 89 links in 3 files;
-  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and
-    6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
+    7 docs checked;
+  - `npm run check:usage-api-routes` passed with 10 routes, 10 client
+    methods, and 8 docs/templates checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #281,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #282,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    worker dispatch credential release/cutover gate exercised.
+    public dashboard disclosure allowlist release/cutover gate exercised.
 
 ## Key Decisions
 

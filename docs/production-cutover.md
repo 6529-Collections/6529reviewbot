@@ -42,6 +42,11 @@ dashboard deployment plan with explicit production inputs:
 npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
 ```
 
+Before marking public dashboard wiring complete, record the reviewed public
+repo/org disclosure allowlists. Public summaries should expose repository names
+only through intentional `REVIEWBOT_USAGE_API_PUBLIC_ORGS` or exact repo
+allowlist decisions; everything else should collapse to `private`.
+
 Before marking scheduled alert delivery complete, render and review the alert
 delivery plan with explicit production inputs:
 
@@ -126,6 +131,7 @@ selected-repository installation scope reviewed
 operator alert delivery verified without publishing destination details
 alert delivery plan reviewed before delivery enablement
 worker dispatch credential posture reviewed before worker enablement
+public repo/org disclosure allowlists reviewed before public dashboard exposure
 ```
 
 Keep private evidence like the exact App id, installation id, secret names,

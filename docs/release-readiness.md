@@ -267,6 +267,9 @@ Ready for community review:
 - dashboard deployment plan for a dry-run 6529.io handoff across public and
   private dashboard env, bot public disclosure settings, HMAC admin auth,
   route verification, cutover evidence, and release notes;
+- v0 and production cutover public dashboard gates now require reviewed public
+  repo/org disclosure allowlists before public summaries can expose repo
+  names;
 - production cutover checklist evidence now requires the dashboard deployment
   plan before public or private 6529.io dashboard routes are exposed;
 - production cutover checklist evidence now requires the alert delivery plan
@@ -392,8 +395,8 @@ verifies both gate count parity and v0 gate evidence references.
 v0 release gate contract synchronized across status readiness, missing-id
 checks, deferral semantics, dispatch credential evidence for worker gates,
 container publish-plan evidence targets for image gates, dashboard
-deployment-plan evidence targets for 6529.io gates, public Markdown redaction,
-source invariants, and release docs.
+deployment-plan and public disclosure allowlist evidence targets for 6529.io
+gates, public Markdown redaction, source invariants, and release docs.
 `npm run check:release-notes` is included in `npm run release:check` and keeps
 the pre-v1 release notes template explicit about tested configuration,
 production deployment plan evidence, deferrals, known gaps, compatibility, and
@@ -495,9 +498,9 @@ The production cutover contract keeps checklist/status readiness, complete
 evidence requirements, deferred item semantics, public Markdown redaction, and
 docs synchronized, including the container publish-plan evidence gate before
 server deployment, worker dispatch credential evidence before non-noop worker
-traffic, the dashboard deployment-plan evidence gate before 6529.io dashboard
-exposure, and the alert delivery-plan evidence gate before scheduled alert
-delivery.
+traffic, dashboard deployment-plan and public repo/org disclosure allowlist
+evidence before 6529.io dashboard exposure, and the alert delivery-plan
+evidence gate before scheduled alert delivery.
 
 Use [Dogfood Readiness](dogfood-readiness.md) as the focused input check before
 first traffic:
@@ -714,8 +717,9 @@ verifies operator evidence sections, readiness semantics, public-summary
 redaction, source invariants, and docs stay aligned.
 `npm run check:production-cutover` is included in `npm run release:check` and
 verifies production cutover checklist/status readiness, container publish-plan
-evidence, worker dispatch credential evidence, deferral semantics, Markdown
-redaction, source invariants, and docs stay aligned.
+evidence, worker dispatch credential evidence, public dashboard disclosure
+allowlist evidence, deferral semantics, Markdown redaction, source invariants,
+and docs stay aligned.
 `npm run check:security-review-status` is included in `npm run release:check`
 and verifies security review status readiness, deferral semantics, Markdown
 redaction, source invariants, and docs stay aligned.
