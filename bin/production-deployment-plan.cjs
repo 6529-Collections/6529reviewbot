@@ -84,8 +84,8 @@ function helpText() {
 
 Usage:
   npm run production:deployment-plan
-  npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
-  npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
+  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 
 Options:
   --host <origin>                 Production bot origin.

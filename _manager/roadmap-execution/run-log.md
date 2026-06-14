@@ -4896,3 +4896,25 @@
   - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     placeholder GitHub App manifest host guard exercised.
+- Merged `6529reviewbot` PR #275 as `3d9ee30`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/update-ready-gate-help-examples` increment:
+  - align production deployment, dashboard deployment, and alert delivery CLI
+    help examples with placeholder-safe `--require-ready` inputs.
+- Local validation for `codex/update-ready-gate-help-examples` so far:
+  - `npm run check:production-deployment-plan` passed with 7 plan cases and
+    6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
+    7 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
+    8 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #275,
+    and 5 docs checked;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    ready-gated deployment help anchors exercised.
