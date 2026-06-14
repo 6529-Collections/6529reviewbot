@@ -13,7 +13,7 @@ publish, workspace checks, preflight, cutover, and dogfood gates, use the
 [production deployment plan](production-deployment-plan.md):
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
 ```
 
 For the 6529.io public/private dashboard handoff after the frontend routes are
@@ -328,7 +328,7 @@ or GitHub App private keys.
 
 ## Verification Checklist
 
-- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`
+- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready`
   has been reviewed as the production deployment plan before running live
   operator steps.
 - `npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready`

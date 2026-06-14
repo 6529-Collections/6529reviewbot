@@ -279,7 +279,7 @@ Build a dry-run production deployment plan before App registration, registry,
 worker dispatch credential, runtime, cutover, or dogfood handoff work:
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
 npm run check:production-deployment-plan
 ```
 

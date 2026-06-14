@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Required a concrete central repository worker-dispatch installation id for
+  ready-mode production deployment plans.
 - Added a worker-dispatch credential phase to the production deployment plan
   handoff.
 - Added default dogfood readiness and release-check validation for this

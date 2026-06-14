@@ -12,6 +12,7 @@ const {
   normalizeImageRef,
   normalizeWorkspace,
   normalizeOrigin,
+  normalizeWorkerDispatchInstallationId,
 } = require("../src/production-deployment-plan.cjs");
 const productionDeploymentPlanCli = require("../bin/production-deployment-plan.cjs");
 
@@ -44,6 +45,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
   checkOriginValidation(findings);
   checkImageValidation(findings);
   checkWorkspaceValidation(findings);
+  checkWorkerDispatchInstallationValidation(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -58,7 +60,7 @@ function checkProductionDeploymentPlanContract(options = {}) {
   }
 
   return {
-    planCases: 7,
+    planCases: 8,
     docs: targetDocs.length,
   };
 }
@@ -69,6 +71,7 @@ function checkReadyPlan(findings) {
     host: "https://reviewbot.6529.io",
     image: "ghcr.io/6529-collections/6529reviewbot",
     operatorWorkspace: "operator-workspace",
+    workerDispatchInstallationId: "123456",
     requireInputs: true,
     now: new Date("2026-06-13T00:00:00.000Z"),
   });
@@ -85,7 +88,8 @@ function checkReadyPlan(findings) {
     "npm run github-app:manifest",
     "npm run container:publish-plan",
     "Worker Dispatch Credentials",
-    "npm run github-app:token -- -- --profile worker-dispatch --installation-id <central-repo-installation-id> --github-actions-output",
+    "- worker dispatch installation id: 123456",
+    "npm run github-app:token -- -- --profile worker-dispatch --installation-id 123456 --github-actions-output",
     "npm run admin:snapshot",
     "npm --silent run dogfood:promotion -- -- --operator-workspace operator-workspace --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
     "npm --silent run dogfood:go-live -- -- --operator-workspace operator-workspace --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
@@ -108,6 +112,7 @@ function checkMissingInputsPlan(findings) {
     "production bot origin",
     "operator-owned image repository",
     "private operator workspace",
+    "worker dispatch central repository installation id",
   ]) {
     if (!plan.errors.some((error) => error.includes(snippet))) {
       findings.push(`missing input errors must include '${snippet}'.`);
@@ -232,6 +237,20 @@ function checkWorkspaceValidation(findings) {
   }
 }
 
+function checkWorkerDispatchInstallationValidation(findings) {
+  try {
+    normalizeWorkerDispatchInstallationId("abc");
+    findings.push("production deployment plan must reject non-numeric worker dispatch installation ids.");
+  } catch (error) {
+    if (!String(error.message).includes("must be numeric")) {
+      findings.push("worker dispatch installation id rejection should be explicit.");
+    }
+  }
+  if (normalizeWorkerDispatchInstallationId("123456") !== "123456") {
+    findings.push("production deployment plan must preserve numeric worker dispatch installation ids.");
+  }
+}
+
 function checkCli(findings) {
   try {
     productionDeploymentPlanCli.parseArgs(["--nope"]);
@@ -249,6 +268,8 @@ function checkCli(findings) {
     "ghcr.io/6529-collections/6529reviewbot",
     "--operator-workspace",
     "operator-workspace",
+    "--worker-dispatch-installation-id",
+    "123456",
     "--release",
     "v0.2.0",
     "--require-ready",
@@ -266,6 +287,7 @@ function checkCli(findings) {
     "--host <production-bot-origin>",
     "--image <operator-registry>/6529reviewbot",
     "--operator-workspace <private-workspace-dir>",
+    "--worker-dispatch-installation-id <central-repo-installation-id>",
     "--require-ready",
   ], "production deployment plan CLI help", findings);
   checkRequireReadyHelpDoesNotUseExampleOrigin(helpText, "production deployment plan CLI help", findings);
@@ -283,6 +305,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "<reviewed-model-price-file.json>",
       "worker-dispatch",
       "<central-repo-installation-id>",
+      "normalizeWorkerDispatchInstallationId",
       "This command does not create GitHub Apps",
     ],
     "src/image-repository-ref.cjs": [
@@ -296,12 +319,14 @@ function checkSourceAnchors(sourceTexts, findings) {
       "npm run production:deployment-plan",
       "--host <production-bot-origin>",
       "--image <operator-registry>/6529reviewbot",
+      "--worker-dispatch-installation-id <central-repo-installation-id>",
       "--require-ready",
       "This command does not create GitHub Apps",
     ],
     "scripts/release-check.cjs": [
       "scripts/check-production-deployment-plan-contract.cjs",
       "bin/production-deployment-plan.cjs",
+      "--worker-dispatch-installation-id",
       "--require-ready",
     ],
     "scripts/smoke-test.cjs": [
@@ -327,7 +352,7 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/production-deployment-plan.md": [
       "npm run production:deployment-plan",
-      "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0",
+      "npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0",
       "--require-ready",
       "without a URL scheme",
       "empty path segments",
@@ -338,6 +363,7 @@ function checkDocs(docTexts, findings) {
       "does not create GitHub Apps",
       "Worker dispatch credentials",
       "github-app:token -- -- --profile worker-dispatch",
+      "--worker-dispatch-installation-id <central-repo-installation-id>",
       "--model-price-file <reviewed-model-price-file.json>",
       "npm run check:production-deployment-plan",
     ],

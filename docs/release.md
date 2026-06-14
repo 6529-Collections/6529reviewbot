@@ -106,7 +106,7 @@ After stabilization:
 - `npm run production:cutover -- -- --status-file <operator-cutover-status-file> --require-ready`
   passes before broad community traffic unless release notes intentionally mark
   the release as dogfood-only and name every cutover deferral
-- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready`
+- `npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready`
   reviewed as the ordered dry-run handoff before live App, registry, runtime,
   cutover, or dogfood actions
 - `npm run dogfood:target -- -- --repository-config <target-repo>/.github/6529bot.yml --mode auto --require-ready`

@@ -176,6 +176,8 @@ runNode("bin/production-deployment-plan.cjs", [
   "ghcr.io/6529-collections/6529reviewbot",
   "--operator-workspace",
   "operator-workspace",
+  "--worker-dispatch-installation-id",
+  "123456",
   "--release",
   "v0.2.0",
   "--require-ready",

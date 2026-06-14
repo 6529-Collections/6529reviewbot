@@ -26,15 +26,15 @@ npm run production:deployment-plan
 Use explicit inputs for a reviewed operator handoff:
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0
 ```
 
 Use `--require-ready` for the final handoff gate. This exits non-zero unless
-the production bot origin, operator-owned image repository, and private
-operator workspace are supplied:
+the production bot origin, operator-owned image repository, private operator
+workspace, and central repository worker-dispatch installation id are supplied:
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
 ```
 
 Image repository inputs are validated as lowercase Docker image repositories
@@ -49,14 +49,14 @@ operator-owned registry before using the handoff as release evidence.
 For automation that wants JSON instead of Markdown:
 
 ```bash
-npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready --json
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready --json
 ```
 
-The output can include private deployment origins, registry names, and
-operator workspace paths. Treat raw output as private unless each command line
-has been reviewed for public release notes or PR descriptions. Prefer
-`npm --silent run ...` or `--json --quiet` when capturing output that includes
-private paths.
+The output can include private deployment origins, registry names, operator
+workspace paths, and installation ids. Treat raw output as private unless each
+command line has been reviewed for public release notes or PR descriptions.
+Prefer `npm --silent run ...` or `--json --quiet` when capturing output that
+includes private paths.
 
 ## Operator Flow
 
@@ -86,7 +86,8 @@ The cutover and dogfood phase prints the final promotion and go-live commands
 with `--model-price-file <reviewed-model-price-file.json>` so the same reviewed
 provider pricing evidence is carried into the last traffic gates.
 
-The worker dispatch credential phase prints the private token-smoke command:
+The worker dispatch credential phase prints the private token-smoke command
+using `--worker-dispatch-installation-id <central-repo-installation-id>`:
 
 ```bash
 npm run github-app:token -- -- --profile worker-dispatch --installation-id <central-repo-installation-id> --github-actions-output

@@ -21,6 +21,7 @@ function main(argv = process.argv.slice(2), options = {}) {
     operatorWorkspace: args.operatorWorkspace,
     release: args.release,
     requireInputs: args.requireReady,
+    workerDispatchInstallationId: args.workerDispatchInstallationId,
   });
   const output = args.json
     ? `${JSON.stringify(plan, null, 2)}\n`
@@ -44,6 +45,7 @@ function parseArgs(argv = []) {
     quiet: false,
     release: "",
     requireReady: false,
+    workerDispatchInstallationId: "",
   };
   const args = argv.filter((item) => item !== "--");
   for (let index = 0; index < args.length; index += 1) {
@@ -56,6 +58,11 @@ function parseArgs(argv = []) {
       result.image = requireValue(args, (index += 1), arg);
     } else if (arg === "--operator-workspace" || arg === "--workspace") {
       result.operatorWorkspace = requireValue(args, (index += 1), arg);
+    } else if (
+      arg === "--worker-dispatch-installation-id" ||
+      arg === "--central-installation-id"
+    ) {
+      result.workerDispatchInstallationId = requireValue(args, (index += 1), arg);
     } else if (arg === "--release" || arg === "--version") {
       result.release = requireValue(args, (index += 1), arg);
     } else if (arg === "--require-ready") {
@@ -84,8 +91,8 @@ function helpText() {
 
 Usage:
   npm run production:deployment-plan
-  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
-  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0
+  npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --worker-dispatch-installation-id <central-repo-installation-id> --release v0.1.0 --require-ready
 
 Options:
   --host <origin>                 Production bot origin.
@@ -93,9 +100,12 @@ Options:
   --image <ref>                   Container repository without tag or digest.
   --operator-workspace <path>     Private operator workspace directory.
   --workspace <path>              Alias for --operator-workspace.
+  --worker-dispatch-installation-id <id>
+                                  Central repo installation id for dispatch token smoke.
+  --central-installation-id <id>  Alias for --worker-dispatch-installation-id.
   --release <version>             Release version. Default: v0.1.0.
   --version <version>             Alias for --release.
-  --require-ready                 Exit non-zero unless host, image, and workspace are supplied.
+  --require-ready                 Exit non-zero unless host, image, workspace, and dispatch installation id are supplied.
   --json                          Print JSON instead of Markdown.
   --quiet                         Suppress stdout.
 

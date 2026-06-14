@@ -88,6 +88,7 @@ function checkDefaultDraft(findings) {
     "TODO(operator)",
     "`npm run release:check`",
     "`npm run production:deployment-plan",
+    "--worker-dispatch-installation-id <central-repo-installation-id>",
     "`npm run dashboard:deployment-plan",
     "`npm run alerts:delivery-plan",
     "reviewed alert delivery plan evidence",
