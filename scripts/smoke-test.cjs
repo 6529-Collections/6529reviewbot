@@ -120,6 +120,7 @@ const preflightContractCheck = require("./check-preflight-contract.cjs");
 const commentCommandsCheck = require("./check-comment-commands.cjs");
 const containerImageCheck = require("./check-container-image.cjs");
 const containerPublishPlanContractCheck = require("./check-container-publish-plan-contract.cjs");
+const codeownersContractCheck = require("./check-codeowners-contract.cjs");
 const repositoryRulesetsContractCheck = require("./check-repository-rulesets-contract.cjs");
 const publicArtifactsCheck = require("./check-public-artifacts.cjs");
 const reviewCommentFormatCheck = require("./check-review-comment-format.cjs");
@@ -5609,6 +5610,19 @@ appServer.handleGitHubWebhook({
         },
       }),
     /repository ruleset contract check found/
+  );
+  const codeownersContractResult = codeownersContractCheck.checkCodeownersContract();
+  assert.equal(codeownersContractResult.rules, 10);
+  assert.equal(codeownersContractResult.surfaces, 11);
+  assert.throws(
+    () =>
+      codeownersContractCheck.checkCodeownersContract({
+        quiet: true,
+        texts: {
+          ".github/CODEOWNERS": "* @punk6529\n",
+        },
+      }),
+    /CODEOWNERS contract check found/
   );
   const operationsRunbookContractResult =
     operationsRunbookContractCheck.checkOperationsRunbookContract();

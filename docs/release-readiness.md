@@ -9,6 +9,8 @@ environment, and 6529.io surfaces are wired and dogfooded.
 Ready for community review:
 
 - public repository structure, license, governance, support, and security docs;
+- CODEOWNERS guidance for default maintainer review ownership and future code
+  owner review rules;
 - repository ruleset guidance for main branch protection, required PR checks,
   and release tag protection before public dogfood tags;
 - standalone review engine for general, follow-up, WCAG 2.2 AA, i18n, and

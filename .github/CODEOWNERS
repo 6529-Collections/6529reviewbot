@@ -1,0 +1,16 @@
+# Default review ownership for 6529reviewbot.
+#
+# Replace or supplement this with a dedicated 6529 maintainer team when the
+# GitHub organization team is ready, then update the checked governance docs.
+
+* @punk6529
+
+/.github/ @punk6529
+/bin/ @punk6529
+/docs/ @punk6529
+/infra/ @punk6529
+/scripts/ @punk6529
+/src/ @punk6529
+/templates/ @punk6529
+/Dockerfile @punk6529
+/package.json @punk6529

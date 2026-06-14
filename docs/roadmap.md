@@ -265,6 +265,8 @@ Build the operator experience:
 - release tags and changelog discipline;
 - repository ruleset guidance for main branch protection, required PR checks,
   and release tag protection before public dogfood tags;
+- CODEOWNERS guidance for default maintainer review ownership and future code
+  owner review rules;
 - support runbook checks that keep the public support process and incident
   response playbook aligned with reporting, containment, recovery, and
   public-follow-up boundaries;
@@ -671,6 +673,8 @@ Completed in `6529reviewbot`:
   links.
 - repository ruleset guidance for main branch protection, required PR checks,
   and release tag protection before public dogfood tags.
+- CODEOWNERS guidance for default maintainer review ownership and future code
+  owner review rules.
 - workflow permission checker for explicit least-privilege GitHub Actions
   permission maps.
 - machine-readable v0 release gates and checklist renderer, including the

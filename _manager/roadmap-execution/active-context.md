@@ -561,22 +561,28 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Security reporting governance PR: merged as PR #300, merge commit `627c7b6`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/security-intake-release-docs`.
-- Current local changes: add community-release docs for private vulnerability
-  intake readiness.
+- Security intake release docs PR: merged as PR #301, merge commit `27e4d93`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/codeowners-release-governance`.
+- Current local changes: add checked CODEOWNERS review ownership guidance for
+  default maintainers, high-risk path coverage, and future code owner review
+  rules.
 - Current local validation:
-  - `gh run watch 27494829553 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #300 post-merge CI;
-  - `gh run watch 27494829544 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #300 post-merge OpenSSF Scorecard;
+  - `gh run watch 27495024418 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #301 post-merge CI;
+  - `gh run watch 27495024417 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #301 post-merge OpenSSF Scorecard;
+  - `npm run check:codeowners` passed with 10 rules and 11 surfaces checked;
+  - `npm run check:release-operations` passed with 7 phases and 114 tools;
   - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
   - `npm run check:governance` passed with 13 files checked;
   - `npm run check:public-artifacts` passed with 119 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #300,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #301,
     and 5 docs checked;
   - `git diff --check` passed;
-  - `npm run check` passed with 181 CommonJS files;
+  - `npm run check` passed with 182 CommonJS files;
   - `npm test` passed;
-  - `npm run release:check` passed with 181 CommonJS files checked and the
-    security intake release docs exercised.
+  - `npm run release:check` passed with 182 CommonJS files checked and the
+    CODEOWNERS contract exercised.
 
 ## Key Decisions
 
