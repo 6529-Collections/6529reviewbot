@@ -106,7 +106,11 @@ promotion gates are green:
 
 Pending private dogfood evidence does not block first command-only traffic
 unless `--require-operator-workspace-ready` is also supplied. The pending
-evidence is what operators fill in after live dogfood starts.
+evidence is what operators fill in after live dogfood starts. The exception is
+the baseline provider/IAM handoff: before first live dogfood model calls,
+complete `provider-console-readiness-reviewed` and
+`iam-secret-custody-reviewed` in the private dogfood status overlay, backed by
+`provider-console-readiness` and `iam-and-secrets` operator evidence.
 
 ## Relationship To Other Dogfood Tools
 
@@ -124,7 +128,7 @@ evidence is what operators fill in after live dogfood starts.
 Use the promotion packet immediately before enabling live command-only traffic,
 then use the go-live packet when the traffic decision should include all
 release and cutover evidence in one public-safe summary. Record the first run
-in the private dogfood status overlay.
+and baseline provider/IAM evidence in the private dogfood status overlay.
 
 ## Contract Check
 

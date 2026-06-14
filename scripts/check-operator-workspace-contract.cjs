@@ -198,6 +198,12 @@ function checkWorkspaceLifecycle(findings) {
     "--operator-workspace .",
     "--release v0.1.0",
     "--require-ready",
+    "Dogfood Evidence Handoff",
+    "provider-console-readiness-reviewed",
+    "iam-secret-custody-reviewed",
+    "provider-console-readiness",
+    "iam-and-secrets",
+    "billing account identifiers",
   ]) {
     if (!readme.includes(snippet)) {
       findings.push(`operator workspace README must include '${snippet}'.`);
@@ -272,6 +278,11 @@ function checkSourceInvariants(sourceTexts, findings) {
     "model-prices",
     "--require-catalog-coverage",
     "--model-price-file <reviewed-model-price-file.json>",
+    "DOGFOOD_BASELINE_EVIDENCE_GUIDANCE",
+    "provider-console-readiness-reviewed",
+    "iam-secret-custody-reviewed",
+    "provider-console-readiness",
+    "iam-and-secrets",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -304,6 +315,10 @@ function checkDocs(docTexts, findings) {
       "npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage",
       "npm --silent run dogfood:promotion -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json>",
       "npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json>",
+      "provider-console-readiness-reviewed",
+      "iam-secret-custody-reviewed",
+      "provider-console-readiness",
+      "iam-and-secrets",
       "operator workspace contract check",
       "[operator-workspace]",
     ],

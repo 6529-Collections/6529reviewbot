@@ -618,12 +618,15 @@ merged PRs.
 - Release-gate evidence hardening PR: merged as PR #325, merge commit `9e2fc95`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `9e2fc95`.
-- Current branch: `codex/dogfood-provider-iam-evidence-gates`.
-- Current local changes: add dogfood status baseline gates for
-  provider-console readiness and IAM/secret-custody evidence before first live
-  dogfood model calls; synchronize dogfood checklist/status example, dogfood
-  docs, release readiness, release operations map, roadmap, changelog, and
-  durable manager memory.
+- Dogfood provider/IAM evidence gates PR: merged as PR #326, merge commit `ce99168`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `ce99168`.
+- Current branch: `codex/operator-handoff-dogfood-evidence-guidance`.
+- Current local changes: operator handoff guidance for dogfood
+  provider-console readiness and IAM/secret-custody baseline evidence across
+  generated workspace README output, dogfood promotion/go-live next actions,
+  public docs, release operations map, changelog, roadmap, and focused
+  contracts.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -715,7 +718,27 @@ merged PRs.
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    dogfood provider-console/IAM baseline gates exercised.
+    dogfood provider-console/IAM baseline gates exercised;
+  - `gh run watch 27501643395 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #326 post-merge CI;
+  - `gh run watch 27501643389 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #326 post-merge OpenSSF Scorecard.
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` initially caught wrapped PR #326 merge
+    commit wording; fixed the active-context line and reran successfully with
+    6 sections, latest PR #326, and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood handoff contract changes exercised.
 
 ## Key Decisions
 

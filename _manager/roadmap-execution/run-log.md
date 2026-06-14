@@ -6207,3 +6207,35 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood provider-console/IAM baseline gates exercised.
+- Merged `6529reviewbot` PR #326 as `ce99168`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/operator-handoff-dogfood-evidence-guidance` increment:
+  - add generated operator workspace guidance for the dogfood
+    `provider-console-readiness-reviewed` and `iam-secret-custody-reviewed`
+    baseline items before first live model calls;
+  - update dogfood promotion and go-live next actions so missing/incomplete
+    operator workspace guidance names the baseline provider/IAM evidence;
+  - update public operator, dogfood, release, operations-map, roadmap, and
+    changelog docs;
+  - strengthen focused contracts so the generated README, next actions, and
+    docs keep naming the baseline item ids and corresponding
+    `provider-console-readiness` / `iam-and-secrets` operator evidence.
+- Local validation for `codex/operator-handoff-dogfood-evidence-guidance`:
+  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
+    cases, and 6 docs checked;
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 6 docs checked;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` initially caught wrapped PR #326 merge
+    commit wording; fixed the active-context line and reran successfully with
+    6 sections, latest PR #326, and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood handoff contract changes exercised.

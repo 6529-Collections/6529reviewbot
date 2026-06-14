@@ -325,7 +325,12 @@ function nextActions(gates) {
     }
     if (item.id === "operator-workspace") {
       actions.push(
-        "Run dogfood promotion again with --operator-workspace <private-workspace-dir> from the private operator workspace."
+        [
+          "Run dogfood promotion again with --operator-workspace <private-workspace-dir>",
+          "after the private workspace includes dogfood status baseline items",
+          "provider-console-readiness-reviewed and iam-secret-custody-reviewed backed by",
+          "provider-console-readiness and iam-and-secrets operator evidence.",
+        ].join(" ")
       );
     } else if (item.id === "preflight") {
       actions.push(

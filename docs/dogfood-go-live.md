@@ -55,6 +55,9 @@ npm --silent run dogfood:go-live -- -- --operator-workspace <private-workspace-d
 go-live gate is ready:
 
 - the private operator workspace exists and all overlay summaries are ready;
+- dogfood status baseline items `provider-console-readiness-reviewed` and
+  `iam-secret-custody-reviewed` are backed by `provider-console-readiness` and
+  `iam-and-secrets` operator evidence before first live dogfood model calls;
 - the release-candidate bundle is ready;
 - the dogfood promotion packet is ready, including model price coverage when
   supplied;

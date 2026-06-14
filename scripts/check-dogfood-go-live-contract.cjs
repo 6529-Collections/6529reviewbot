@@ -219,6 +219,17 @@ function checkWorkspacePacket(findings) {
   if (packet.checks.dogfoodPromotion.checks.readiness.checks.modelPriceCoverage?.ready !== true) {
     findings.push("go-live packet must forward ready model price coverage through promotion.");
   }
+  if (
+    !packet.nextActions.some(
+      (action) =>
+        action.includes("provider-console-readiness-reviewed") &&
+        action.includes("iam-secret-custody-reviewed") &&
+        action.includes("provider-console-readiness") &&
+        action.includes("iam-and-secrets")
+    )
+  ) {
+    findings.push("go-live operator-workspace next action must name baseline provider/IAM dogfood evidence.");
+  }
   const gateIds = packet.gates.map((gate) => gate.id);
   for (const expected of [
     "operator-workspace",
@@ -351,6 +362,10 @@ function checkSourceInvariants(sourceTexts, findings) {
     "operatorWorkspace: operatorWorkspaceDir ? \"[operator-workspace]\" : \"\"",
     "privatePathRoots",
     "return publicText(value).replace",
+    "provider-console-readiness-reviewed",
+    "iam-secret-custody-reviewed",
+    "provider-console-readiness",
+    "iam-and-secrets",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -381,6 +396,10 @@ function checkDocs(docTexts, findings) {
       "`--require-ready` requires `--strict-preflight`",
       "--model-price-file",
       "model price coverage",
+      "provider-console-readiness-reviewed",
+      "iam-secret-custody-reviewed",
+      "provider-console-readiness",
+      "iam-and-secrets",
     ],
     "docs/release-readiness.md": ["dogfood go-live checker"],
     "docs/release-operations-map.md": ["npm run check:dogfood-go-live"],

@@ -319,7 +319,12 @@ function nextActions(gates) {
     }
     if (item.id === "operator-workspace") {
       actions.push(
-        "Create or complete the private operator workspace, then rerun dogfood:go-live with --operator-workspace <private-workspace-dir>."
+        [
+          "Create or complete the private operator workspace, including dogfood status baseline items",
+          "provider-console-readiness-reviewed and iam-secret-custody-reviewed backed by",
+          "provider-console-readiness and iam-and-secrets operator evidence, then rerun",
+          "dogfood:go-live with --operator-workspace <private-workspace-dir>.",
+        ].join(" ")
       );
     } else if (item.id === "release-candidate") {
       actions.push(

@@ -195,6 +195,26 @@ function checkWorkspacePacket(findings) {
   if (packet.checks.readiness.checks.modelPriceCoverage?.ready !== true) {
     findings.push("promotion packet must forward ready model price coverage into readiness.");
   }
+
+  const missingWorkspacePacket = dogfoodPromotion.collectDogfoodPromotionPacket({
+    env: contractEnv(),
+    includePreflight: true,
+    now: new Date("2026-06-13T00:00:00.000Z"),
+    root,
+    selfDogfoodReplayRunner: fakeReplay,
+    strictPreflight: true,
+  });
+  if (
+    !missingWorkspacePacket.nextActions.some(
+      (action) =>
+        action.includes("provider-console-readiness-reviewed") &&
+        action.includes("iam-secret-custody-reviewed") &&
+        action.includes("provider-console-readiness") &&
+        action.includes("iam-and-secrets")
+    )
+  ) {
+    findings.push("promotion operator-workspace next action must name baseline provider/IAM dogfood evidence.");
+  }
 }
 
 function checkModelPriceGate(findings) {
@@ -319,6 +339,10 @@ function checkSourceInvariants(sourceTexts, findings) {
     "modelPriceCoverageReady",
     "directory: \"[operator-workspace]\"",
     "return publicText(value).replace",
+    "provider-console-readiness-reviewed",
+    "iam-secret-custody-reviewed",
+    "provider-console-readiness",
+    "iam-and-secrets",
   ]) {
     if (!sourceText.includes(snippet)) {
       findings.push(`${sourcePath} must include '${snippet}'.`);
@@ -349,6 +373,10 @@ function checkDocs(docTexts, findings) {
       "`--require-ready` requires `--strict-preflight`",
       "--model-price-file",
       "model price coverage",
+      "provider-console-readiness-reviewed",
+      "iam-secret-custody-reviewed",
+      "provider-console-readiness",
+      "iam-and-secrets",
     ],
     "docs/release-readiness.md": ["dogfood promotion checker"],
     "docs/release-operations-map.md": ["npm run check:dogfood-promotion"],

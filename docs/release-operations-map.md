@@ -184,18 +184,20 @@ deferral semantics, Markdown redaction, source invariants, and docs aligned.
 private workspace markers, preflight state, Markdown redaction, source
 invariants, and docs aligned.
 `npm run check:dogfood-promotion` keeps the pre-traffic promotion packet's
-strict-preflight gate, private workspace markers, Markdown redaction, source
-invariants, and docs aligned.
+strict-preflight gate, private workspace markers, model price coverage,
+baseline provider/IAM handoff guidance, Markdown redaction, source invariants,
+and docs aligned.
 `npm run check:dogfood-go-live` keeps the final dogfood traffic packet's
-strict-preflight gate, private workspace markers, Markdown redaction, source
-invariants, and docs aligned.
+strict-preflight gate, private workspace markers, baseline provider/IAM
+handoff guidance, Markdown redaction, source invariants, and docs aligned.
 `npm run check:self-dogfood-replay` replays public-safe self-dogfood payloads
 through the App pipeline to prove command-only PR-open skip, trusted command
 admission, deliberate multi-lane fanout, max-fanout rejection, and untrusted
 command denial without dispatching workers.
 `npm run check:operator-workspace` keeps operator workspace creation,
 community-release status, check-mode readiness failures, private path
-redaction, Markdown sanitization, source invariants, and docs aligned.
+redaction, baseline provider/IAM handoff guidance, Markdown sanitization,
+source invariants, and docs aligned.
 `npm run check:operator-drill` keeps the operator drill's temporary workspace
 cleanup, private path redaction, release-candidate, dogfood readiness,
 production deployment, dashboard deployment, alert delivery, promotion,

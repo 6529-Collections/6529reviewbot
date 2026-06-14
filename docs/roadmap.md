@@ -625,6 +625,10 @@ Completed in `6529reviewbot`:
   gates.
 - dogfood status now includes baseline provider-console readiness and
   IAM/secret-custody evidence gates before first live dogfood model calls.
+- generated operator workspace, dogfood promotion, and dogfood go-live
+  guidance now names those baseline provider/IAM gates so private operators
+  complete them before first live dogfood traffic instead of discovering them
+  only in checklist JSON.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same
