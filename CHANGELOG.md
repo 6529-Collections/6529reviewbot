@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added same-delivery budget reservations so multi-kind or multi-model webhook
+  fanout counts already admitted sibling job estimates before dispatching later
+  jobs in the same delivery.
 - Hardened release operations map validation so mapped CLI argument examples
   parse through their real CLIs, including private workspace setup, status
   skeletons, budget/model-price dry runs, webhook replay dry runs, admin

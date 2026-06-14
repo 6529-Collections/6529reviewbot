@@ -7,8 +7,11 @@ const {
   requestorForEvent,
 } = require("./admission-policy.cjs");
 const {
+  applyBudgetReservationsToSnapshot,
+  budgetReservationForDecision,
   budgetPolicyFromEnv,
   evaluateBudgetAdmission,
+  mergeBudgetReservations,
 } = require("./budget-admission.cjs");
 const {
   attachBudgetToReviewJob,
@@ -346,9 +349,13 @@ async function handleGitHubWebhook(input) {
     baseBudgetPolicy,
     repositoryConfig
   );
+  const deliveryBudgetReservations = {};
   for (const job of runtimeControlledJobs.jobs) {
     const jobEvent = eventForReviewJob(controlledEvent, job);
-    const spendSnapshot = await resolveBudgetSnapshot(jobEvent, admission, job, budgetPolicy);
+    const spendSnapshot = applyBudgetReservationsToSnapshot(
+      await resolveBudgetSnapshot(jobEvent, admission, job, budgetPolicy),
+      deliveryBudgetReservations
+    );
     const estimate = await estimateBudgetCost(jobEvent, admission, job);
     const budget = evaluateBudgetAdmission({
       event: jobEvent,
@@ -362,6 +369,10 @@ async function handleGitHubWebhook(input) {
     budgetedJobs.push(budgetedJob);
     if (budget.allowed) {
       admittedJobs.push(budgetedJob);
+      mergeBudgetReservations(
+        deliveryBudgetReservations,
+        budgetReservationForDecision(budget)
+      );
     } else {
       deniedJobs.push(budgetedJob);
     }

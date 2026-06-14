@@ -116,8 +116,11 @@ Recommended flow:
 7. Dashboards summarize spend by org, repo, requester, PR, provider, model, and
    review kind.
 
-The current AWS usage ledger is the foundation for this, but the app still
-needs an admission/reservation layer before model calls.
+The current AWS usage ledger, budget admission, and same-delivery reservation
+guard are the foundation for this. Remaining production work is operator
+execution: apply reviewed live policy rows, verify current provider pricing,
+and dogfood the controls against trusted repositories before broad community
+use.
 
 ### 4. Visibility And Admin UX
 

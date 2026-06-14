@@ -4546,6 +4546,36 @@ assert.equal(budgetAdmission.evaluateBudgetAdmission({
   }),
   estimate: { estimatedCostUsd: 1 },
 }).status, "warning");
+const deliveryReservation = budgetAdmission.budgetReservationForDecision({
+  allowed: true,
+  estimatedCostUsd: 1,
+  subject: {
+    ...budgetSubject,
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    reviewKinds: ["general"],
+  },
+});
+assert.equal(deliveryReservation["global:*"], 1);
+assert.equal(deliveryReservation["repo:6529-Collections/example"], 1);
+assert.equal(deliveryReservation["provider:anthropic"], 1);
+assert.equal(deliveryReservation["review_kind:general"], 1);
+const reservedSnapshot = budgetAdmission.applyBudgetReservationsToSnapshot(
+  {
+    unavailable: false,
+    totals: {
+      "global:*": { dailyUsd: 1, weeklyUsd: 1, monthlyUsd: 1 },
+    },
+  },
+  deliveryReservation
+);
+assert.equal(reservedSnapshot.totals["global:*"].dailyUsd, 2);
+assert.equal(reservedSnapshot.totals["global:*"].weeklyUsd, 2);
+assert.equal(reservedSnapshot.totals["review_kind:general"].dailyUsd, 1);
+assert.equal(
+  budgetAdmission.applyBudgetReservationsToSnapshot(undefined, deliveryReservation),
+  undefined
+);
 const spendQuery = budgetLedger.buildScopeSpendQuery("reviewbot", "requestor", "maintainer");
 assert.match(spendQuery.sql, /metadata->>'requestor'/);
 assert.equal(spendQuery.parameters[0].value.stringValue, "maintainer");
@@ -5218,6 +5248,7 @@ appServer.handleGitHubWebhook({
     capturedBudgetSnapshotPolicy = policy;
     return { unavailable: false, totals: {} };
   },
+  estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
   jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
   const manifestConversionSummary = await runManifestConversionSmoke();
@@ -6892,6 +6923,45 @@ appServer.handleGitHubWebhook({
   assert.equal(budgetDeniedResult.body.enqueued, false);
   assert.equal(budgetDeniedResult.body.deniedJobs.length, 4);
   assert.equal(budgetDeniedQueued, false);
+  let reservationQueuedJobs = [];
+  const deliveryReservationResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": webhookSignature,
+      "x-github-event": "pull_request",
+      "x-github-delivery": "delivery-1",
+    },
+    rawBody: webhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    budgetPolicy: cappedPolicy,
+    resolveBudgetSnapshot: async () => ({
+      unavailable: false,
+      totals: {
+        "global:*": { dailyUsd: 0, weeklyUsd: 0, monthlyUsd: 0 },
+      },
+    }),
+    estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
+    enqueueReviewJobs: async (jobs) => {
+      reservationQueuedJobs = jobs;
+      return {
+        accepted: true,
+        adapter: "test",
+        jobCount: jobs.length,
+        acceptedJobs: jobs.length,
+        failedJobs: 0,
+      };
+    },
+  });
+  assert.equal(deliveryReservationResult.body.budget.status, "partial");
+  assert.equal(deliveryReservationResult.body.budget.deniedJobs, 2);
+  assert.equal(deliveryReservationResult.body.jobs.length, 2);
+  assert.equal(deliveryReservationResult.body.deniedJobs.length, 2);
+  assert.equal(deliveryReservationResult.body.deniedJobs[0].budget.code, "budget_exceeded");
+  assert.equal(reservationQueuedJobs.length, 2);
   let ledgerBudgetPolicyQueued = false;
   const ledgerBudgetPolicyResult = await appServer.handleGitHubWebhook({
     headers: {

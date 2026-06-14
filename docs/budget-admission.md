@@ -92,6 +92,20 @@ returns a warning.
 If no caps are configured, budget admission allows the request even when no
 spend snapshot resolver is available.
 
+## Delivery Reservations
+
+Within one webhook delivery, budget admission applies local reservations for
+jobs that have already been admitted in that delivery. Later sibling jobs see
+the earlier admitted estimates in their daily, weekly, and monthly scope
+totals before they are evaluated.
+
+This prevents a multi-kind or multi-model fanout from admitting more work than
+the cap allows simply because each job read the same starting ledger snapshot.
+It is an in-process pre-dispatch guardrail, not a durable cross-run ledger
+hold. Actual spend is still recorded after workers finish, and concurrent
+deliveries still rely on the usage ledger, budget caps, run-control claims,
+and conservative limits.
+
 ## Ledger Snapshot Contract
 
 Budget snapshots are keyed by scope:
@@ -133,6 +147,9 @@ for an external contributor PR, the maintainer is the budget requestor.
 - App-server enforcement: `src/app-server.cjs`
 - Production server wiring: `bin/server.cjs` injects the Data API snapshot
   resolver and central DB policy loader when `REVIEW_USAGE_ENABLED=true`
+- Delivery reservation helpers: `src/budget-admission.cjs` builds local
+  reservation totals from admitted decisions before later jobs in the same
+  webhook delivery are evaluated
 
 `AWS_CLI_BIN` can be set when the runtime needs a specific AWS CLI binary path.
 On Windows, the ledger helpers invoke the AWS CLI through a shell when no

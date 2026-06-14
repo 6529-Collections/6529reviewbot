@@ -6400,3 +6400,29 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     mapped CLI argument parser coverage exercised.
+- Merged `6529reviewbot` PR #333 as `c02be7f`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/budget-delivery-reservations` increment:
+  - add same-delivery budget reservations so multi-kind or multi-model webhook
+    fanout counts already admitted sibling job estimates before dispatching
+    later jobs in the same delivery;
+  - document that this is an in-process pre-dispatch guardrail, not a durable
+    cross-run ledger hold;
+  - update budget admission docs, security model, release readiness, roadmap,
+    changelog, smoke tests, and durable manager memory.
+- Local validation for `codex/budget-delivery-reservations` so far:
+  - `gh run watch 27504212152 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #333 post-merge CI;
+  - OpenSSF Scorecard run `27504212142` passed for PR #333 post-merge;
+  - `npm test` passed after adding same-delivery budget reservation smoke
+    coverage.
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #333,
+    and 5 docs checked;
+  - `npm run check:security-model` passed with 17 controls, 30 checklist
+    items, 12 source files, and 7 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    same-delivery budget reservation behavior exercised.
