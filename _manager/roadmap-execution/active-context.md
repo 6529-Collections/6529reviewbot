@@ -645,27 +645,30 @@ merged PRs.
 - Same-delivery budget reservations PR: merged as PR #334, merge commit `64f1930`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `64f1930`.
-- Current branch: `codex/conservative-default-job-fanout`.
-- Current local changes: lower the runtime default max review jobs per
-  delivery from 50 to 8; update README, configuration, review-job,
-  release-readiness, roadmap, changelog, and smoke-test coverage so fresh
-  installs match conservative job fanout guidance.
+- Conservative default job fanout PR: merged as PR #335, merge commit `9c57da1`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `9c57da1`.
+- Current branch: `codex/provider-incomplete-error-redaction`.
+- Current local changes: sanitize OpenAI incomplete-response details through
+  the shared provider-error summarizer; preserve safe incomplete reasons while
+  redacting secret-shaped provider-controlled detail; update provider-adapter
+  contract coverage, changelog, and durable manager memory.
 - Current local validation:
-  - `gh run watch 27504571709 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #334 post-merge CI;
-  - `gh run watch 27504571706 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #334 post-merge OpenSSF Scorecard;
-  - `rg -n "DEFAULT_MAX_JOBS_PER_DELIVERY = 50|REVIEWBOT_MAX_JOBS_PER_DELIVERY=50|MAX_JOBS_PER_DELIVERY=50" . -g "*.cjs" -g "*.md" -g "*.yml" -g "*.json"` found no stale review fanout defaults;
-  - `npm test` passed after adding default max-jobs coverage;
-  - `npm run check:configuration-reference` passed with 21 sections, 141 env
-    keys, and 8 docs/templates checked;
+  - `gh run watch 27504911248 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #335 post-merge CI;
+  - OpenSSF Scorecard run `27504911251` passed for PR #335 post-merge;
+  - `npm run check:provider-adapters` passed with 3 providers, 19 source
+    snippets, and 7 docs checked;
+  - `npm test` passed after adding incomplete-detail redaction coverage;
+  - `rg -n "OpenAI response incomplete: \\$\\{JSON.stringify|incomplete_details \\|\\| \\{\\}|response\\.incomplete_details" src scripts docs -g "*.cjs" -g "*.md"` found only sanitized adapter/contract references;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #334,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #335,
     and 5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
-  - `npm run release:check` passed with 184 CommonJS files checked, 76 docs
-    checked, 62 docs indexed, and the max-fanout guard exercised.
+  - `npm run release:check` passed with 184 CommonJS files checked and
+    provider-adapter redaction coverage exercised.
 
 ## Key Decisions
 

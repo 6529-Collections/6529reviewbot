@@ -66,6 +66,8 @@ const providerSourceSnippets = [
   "body.reasoning = { effort: settings.reasoningEffort }",
   "body.text = { verbosity: settings.verbosity }",
   "OpenAI response incomplete",
+  "providerErrorSummary({",
+  "error: response.incomplete_details || { status: \"incomplete\" }",
   "https://openrouter.ai/api/v1/chat/completions",
   "\"http-referer\": settings.openrouterSiteUrl",
   "\"x-title\": settings.openrouterAppName",
@@ -167,6 +169,18 @@ function checkProviderErrorSafety(findings) {
   }
   if (summary.includes("Bearer abcdef") || summary.includes("sk-proj-abcdefghijkl")) {
     findings.push("providerErrorSummary must redact common token and provider-key shapes.");
+  }
+  const incompleteSummary = reviewBot.providerErrorSummary({
+    error: {
+      reason: "max_output_tokens",
+      message: "stopped near sk-proj-abcdefghijklmnopqrstuvwx123456",
+    },
+  });
+  if (!incompleteSummary.includes("\"reason\":\"max_output_tokens\"")) {
+    findings.push(`providerErrorSummary must preserve safe incomplete reason fields, got ${incompleteSummary}.`);
+  }
+  if (incompleteSummary.includes("sk-proj-abcdefghijkl")) {
+    findings.push("providerErrorSummary must redact incomplete provider details before logging.");
   }
   if (reviewBot.providerErrorSummary({ raw: "<html>secret</html>" }) !== "provider returned a non-JSON error body") {
     findings.push("providerErrorSummary must not echo raw non-JSON provider error bodies.");

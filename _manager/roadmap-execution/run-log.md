@@ -6450,3 +6450,28 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked, 76 docs
     checked, 62 docs indexed, and the max-fanout guard exercised.
+- Merged `6529reviewbot` PR #335 as `9c57da1`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/provider-incomplete-error-redaction` increment:
+  - sanitize OpenAI incomplete-response details through the shared provider
+    error summarizer;
+  - preserve safe incomplete reasons while redacting secret-shaped
+    provider-controlled detail;
+  - update provider-adapter contract coverage, changelog, and durable manager
+    memory.
+- Local validation for `codex/provider-incomplete-error-redaction` so far:
+  - `gh run watch 27504911248 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #335 post-merge CI;
+  - OpenSSF Scorecard run `27504911251` passed for PR #335 post-merge;
+  - `npm run check:provider-adapters` passed with 3 providers, 19 source
+    snippets, and 7 docs checked;
+  - `npm test` passed after adding incomplete-detail redaction coverage;
+  - `rg -n "OpenAI response incomplete: \\$\\{JSON.stringify|incomplete_details \\|\\| \\{\\}|response\\.incomplete_details" src scripts docs -g "*.cjs" -g "*.md"` found only sanitized adapter/contract references;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #335,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and
+    provider-adapter redaction coverage exercised.
