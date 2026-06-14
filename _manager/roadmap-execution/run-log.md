@@ -4810,3 +4810,23 @@
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 177 CommonJS files checked and the
     HTTPS model price source URL guard exercised.
+- Merged `6529reviewbot` PR #271 as `8ed6888`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/model-price-placeholder-apply-guard` increment:
+  - reject placeholder model price source URL hosts before applying pricing
+    rows to the ledger.
+- Local validation for `codex/model-price-placeholder-apply-guard` so far:
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and
+    8 docs checked;
+  - `npm run check:model-price-coverage` passed with 6 coverage cases and
+    8 docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 177 CommonJS files;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #271,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run release:check` passed with 177 CommonJS files checked and the
+    placeholder model price source apply guard exercised.

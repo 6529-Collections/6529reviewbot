@@ -507,7 +507,7 @@ const modelPriceFile = modelPrices.validateModelPriceFile({
       inputUsdPerMillion: 1,
       outputUsdPerMillion: 2,
       effectiveFrom: "2026-06-12T00:00:00.000Z",
-      sourceUrl: "https://example.com/provider-pricing",
+      sourceUrl: "https://docs.anthropic.com/en/docs/about-claude/pricing",
       sourceCheckedAt: "2026-06-12T12:00:00.000Z",
       notes: `test price row sk-proj-abcdefghijklmnopqrstuvwxyz123456 ${"x".repeat(1200)}`,
     },
@@ -564,7 +564,7 @@ const modelPriceRecord = [
   { stringValue: "USD" },
   { stringValue: "2026-06-12 00:00:00+00" },
   { isNull: true },
-  { stringValue: "https://example.com/provider-pricing" },
+  { stringValue: "https://docs.anthropic.com/en/docs/about-claude/pricing" },
   { stringValue: "2026-06-12 12:00:00+00" },
   { stringValue: "test price row" },
 ];
@@ -582,7 +582,7 @@ const modelPriceStatusRow = modelPriceStatus.modelPriceStatusRecordToPrice(
 );
 assert.equal(modelPriceStatusRow.provider, "anthropic");
 assert.equal(modelPriceStatusRow.rates.outputUsdPerMillion, 2);
-assert.equal(modelPriceStatusRow.sourceHost, "example.com");
+assert.equal(modelPriceStatusRow.sourceHost, "docs.anthropic.com");
 assert.equal(modelPriceStatusRow.sourceStatus, "fresh");
 assert.equal(modelPriceStatusRow.sourceAgeDays, 8);
 assert.equal(modelPriceStatusRow.hasSourceUrl, true);
@@ -651,7 +651,7 @@ const readPriceStatus = modelPriceStatus.readModelPriceStatus({
 });
 assert.match(modelPriceStatusSql, /ai_model_prices/);
 assert.equal(readPriceStatus.summary.activeRows, 1);
-assert.equal(readPriceStatus.prices[0].sourceHost, "example.com");
+assert.equal(readPriceStatus.prices[0].sourceHost, "docs.anthropic.com");
 assert.equal(
   modelPrices.estimateUsageCostUsd(
     { inputTokens: 1000, cachedInputTokens: 250, outputTokens: 500, reasoningTokens: 100 },
@@ -800,6 +800,31 @@ assert.equal(
   0.002
 );
 let appliedModelPriceStatements = 0;
+assert.throws(
+  () =>
+    modelPrices.applyModelPrices({
+      enabled: true,
+      region: "us-east-1",
+      resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+      secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+      database: "reviewbot",
+      schema: "reviewbot",
+    }, {
+      ...modelPriceFile,
+      prices: [
+        {
+          ...modelPriceFile.prices[0],
+          sourceUrl: "https://provider.example/pricing",
+        },
+      ],
+    }, {
+      executeStatement: () => {
+        throw new Error("placeholder source rows must not execute SQL.");
+      },
+      now: "2026-06-20T12:00:00.000Z",
+    }),
+  /placeholder source URLs/
+);
 modelPrices.applyModelPrices({
   enabled: true,
   region: "us-east-1",
@@ -5845,7 +5870,7 @@ appServer.handleGitHubWebhook({
   assert.equal(adminModelPriceStatusRouteResult.body.status.summary.staleRows, 1);
   assert.equal(
     adminModelPriceStatusRouteResult.body.status.prices[0].sourceHost,
-    "example.com"
+    "docs.anthropic.com"
   );
   assert.equal(JSON.stringify(adminModelPriceStatusRouteResult.body).includes("sourceUrl"), false);
   assert.equal(JSON.stringify(adminModelPriceStatusRouteResult.body).includes("notes"), false);

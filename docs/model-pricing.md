@@ -62,6 +62,8 @@ The apply path also rejects rows whose `sourceCheckedAt` timestamp is older
 than 30 days by default, and rejects future-dated source checks. Use a shorter
 or longer window only when the operator runbook explains why that provider's
 pricing evidence can age differently.
+The apply path also rejects placeholder source URL hosts such as
+`provider.example`; replace them with provider pricing sources before applying.
 
 ## Dry Run
 
@@ -136,6 +138,7 @@ The apply path:
 4. keeps prior rows for audit/history.
 5. rejects stale source-check evidence unless `--allow-stale-source` is supplied.
 6. rejects zero-rate rows unless `--allow-zero-price` is supplied.
+7. rejects placeholder source URL hosts before writing ledger rows.
 
 The command uses the same RDS Data API settings as the usage ledger:
 
@@ -166,7 +169,7 @@ The CLI enforces a source URL, source-checked timestamp, and at least one price
 field. Source URLs must use HTTPS. It also rejects zero-rate rows during apply
 unless the operator passes `--allow-zero-price`, and rejects stale or
 future-dated source-checked timestamps unless the operator passes
-`--allow-stale-source`.
+`--allow-stale-source`. Placeholder source URL hosts are rejected before apply.
 Do not put secrets, private account details, provider diagnostics, or private
 PR payloads in `notes`; the redaction guardrail is there for accidental
 token-shaped text, not as a reason to store sensitive data in pricing rows.

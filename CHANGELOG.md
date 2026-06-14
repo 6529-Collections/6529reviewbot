@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Rejected placeholder model price source URL hosts before applying pricing
+  rows to the ledger.
 - Required model price source URLs to use HTTPS before pricing evidence can be
   applied or used for catalog coverage.
 - Hardened release notes publication to reject Git-ref-unsafe title versions

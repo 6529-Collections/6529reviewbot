@@ -262,6 +262,7 @@ function estimateUsageCostUsd(usage = {}, price = {}) {
 function applyModelPrices(settings, document, options = {}) {
   assertDataApiSettings(settings, "Model price ledger");
   const priceFile = validateModelPriceFile(document);
+  assertNoPlaceholderSourceUrls(priceFile);
   if (!options.allowZeroPrice) {
     assertNoZeroPriceRows(priceFile);
   }
@@ -342,6 +343,19 @@ function assertNoZeroPriceRows(document, source = "model price file") {
         );
       }
     }
+  }
+  return priceFile;
+}
+
+function assertNoPlaceholderSourceUrls(document, source = "model price file") {
+  const priceFile = validateModelPriceFile(document, source);
+  const findings = placeholderSourceFindings(priceFile);
+  if (findings.length) {
+    throw new Error(
+      `${source} has placeholder source URLs: ${findings
+        .map((row) => `${priceKey(row)} ${row.host}`)
+        .join(", ")}; replace placeholders with provider pricing sources before applying.`
+    );
   }
   return priceFile;
 }
@@ -631,6 +645,7 @@ module.exports = {
   applyModelPrices,
   assertFreshModelPriceSources,
   assertModelPriceCatalogCoverage,
+  assertNoPlaceholderSourceUrls,
   assertNoZeroPriceRows,
   currentModelPriceStatement,
   DEFAULT_MAX_SOURCE_AGE_DAYS,
