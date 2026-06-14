@@ -627,11 +627,14 @@ merged PRs.
 - Dogfood ready-mode model price coverage PR: merged as PR #328, merge commit `4ac3427`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `4ac3427`.
-- Current branch: `codex/dogfood-ready-operator-workspace-required`.
-- Current local changes: require `dogfood:promotion --require-ready` and
-  `dogfood:go-live --require-ready` to include `--operator-workspace` at CLI
-  parse time, update ready-mode docs/contracts/smoke tests, and carry PR #328
-  post-merge durable memory forward.
+- Dogfood ready-mode operator workspace PR: merged as PR #329, merge commit `48cc9c6`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `48cc9c6`.
+- Current branch: `codex/release-operations-dogfood-command-contract`.
+- Current local changes: make `npm run check:release-operations` parse the
+  final dogfood readiness, promotion, and go-live ready-mode commands through
+  their real CLIs, update release-operations docs/README/release readiness,
+  roadmap, changelog, and carry PR #329 post-merge durable memory forward.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -784,6 +787,20 @@ merged PRs.
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood ready-mode operator workspace requirement exercised.
+  - `gh run watch 27502985699 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #329 post-merge CI;
+  - `gh run watch 27502985701 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #329 post-merge OpenSSF Scorecard;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools
+    after adding parsed dogfood ready-mode command coverage.
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #329,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    parsed dogfood ready-mode command coverage exercised.
 
 ## Key Decisions
 
@@ -1154,6 +1171,9 @@ merged PRs.
   traffic gate.
 - Public docs need a canonical index with machine-checked coverage so release
   and operator guidance cannot become hidden as the documentation set grows.
+- Public release command inventories should parse final ready-mode dogfood
+  handoff commands through the real CLIs so operator-facing examples cannot
+  drift away from required private inputs.
 - Public MIT/community governance files should be machine-checked, not only
   manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
   template, and license entry points stay present for community release.
