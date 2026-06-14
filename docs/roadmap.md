@@ -679,6 +679,8 @@ Completed in `6529reviewbot`:
   with explicit override for accepted stale evidence.
 - model pricing runbook contract for source-checked price evidence, stale and
   zero-rate overrides, apply behavior, and cost-estimation semantics.
+- model price coverage contract so reviewed price files must cover catalog
+  default provider/model lanes before operators rely on local estimates.
 - installation and onboarding guide for conservative central App dogfood.
 - installation guide contract for the conservative dogfood onboarding path,
   GitHub App validation commands, runtime defaults, target-repo posture, and

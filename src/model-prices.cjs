@@ -10,7 +10,11 @@ const {
 } = require("./data-api.cjs");
 const { redactSensitiveText } = require("./diagnostics.cjs");
 const { quoteIdent } = require("./usage-ledger.cjs");
-const { normalizeProvider } = require("./model-catalog.cjs");
+const {
+  PROVIDERS,
+  loadModelCatalog,
+  normalizeProvider,
+} = require("./model-catalog.cjs");
 
 const DEFAULT_MAX_SOURCE_AGE_DAYS = 30;
 const MAX_SOURCE_CHECK_CLOCK_SKEW_MS = 5 * 60 * 1000;
@@ -342,6 +346,146 @@ function assertNoZeroPriceRows(document, source = "model price file") {
   return priceFile;
 }
 
+function assertModelPriceCatalogCoverage(document, catalog = loadModelCatalog(), options = {}) {
+  const coverage = modelPriceCatalogCoverage(document, catalog, options);
+  if (!coverage.ready) {
+    const findings = [];
+    if (coverage.missing.length) {
+      findings.push(`missing rows: ${coverage.missing.map(priceKey).join(", ")}`);
+    }
+    if (coverage.incompleteRates.length) {
+      findings.push(
+        `missing input/output rates: ${coverage.incompleteRates
+          .map(priceKey)
+          .join(", ")}`
+      );
+    }
+    if (coverage.zeroRates.length) {
+      findings.push(
+        `zero-rate placeholders: ${coverage.zeroRates
+          .map((row) => `${priceKey(row)} ${row.field}`)
+          .join(", ")}`
+      );
+    }
+    if (coverage.staleSources.length) {
+      findings.push(
+        `stale or future source evidence: ${coverage.staleSources
+          .map(describeFreshnessIssue)
+          .join(", ")}`
+      );
+    }
+    if (coverage.placeholderSources.length) {
+      findings.push(
+        `placeholder source URLs: ${coverage.placeholderSources
+          .map((row) => `${priceKey(row)} ${row.host}`)
+          .join(", ")}`
+      );
+    }
+    throw new Error(`model price catalog coverage failed: ${findings.join("; ")}.`);
+  }
+  return coverage;
+}
+
+function modelPriceCatalogCoverage(document, catalog = loadModelCatalog(), options = {}) {
+  const priceFile = validateModelPriceFile(document, options.source || "model price file");
+  const required = requiredModelPriceRowsFromCatalog(catalog);
+  const pricesByKey = new Map();
+  for (const price of priceFile.prices) {
+    const key = priceKey(price);
+    const rows = pricesByKey.get(key) || [];
+    rows.push(price);
+    pricesByKey.set(key, rows);
+  }
+
+  const missing = [];
+  const incompleteRates = [];
+  for (const requiredRow of required) {
+    const rows = pricesByKey.get(priceKey(requiredRow)) || [];
+    if (!rows.length) {
+      missing.push(requiredRow);
+    } else if (!rows.some(hasRequiredUsageRates)) {
+      incompleteRates.push(requiredRow);
+    }
+  }
+
+  const zeroRates = options.allowZeroPrice ? [] : zeroPriceFindings(priceFile);
+  const staleSources = options.allowStaleSource
+    ? []
+    : staleModelPriceSources(priceFile, options);
+  const placeholderSources = placeholderSourceFindings(priceFile);
+
+  return {
+    ready:
+      missing.length === 0 &&
+      incompleteRates.length === 0 &&
+      zeroRates.length === 0 &&
+      staleSources.length === 0 &&
+      placeholderSources.length === 0,
+    required,
+    covered: required.length - missing.length,
+    missing,
+    incompleteRates,
+    zeroRates,
+    staleSources,
+    placeholderSources,
+  };
+}
+
+function requiredModelPriceRowsFromCatalog(catalog = loadModelCatalog()) {
+  const required = [];
+  for (const provider of PROVIDERS) {
+    const defaultModel = catalog.providers?.[provider]?.defaultModel || "";
+    if (defaultModel) {
+      required.push({ provider, model: defaultModel });
+    }
+  }
+  return required;
+}
+
+function hasRequiredUsageRates(price) {
+  return price.inputUsdPerMillion !== null && price.outputUsdPerMillion !== null;
+}
+
+function zeroPriceFindings(document) {
+  const priceFile = validateModelPriceFile(document);
+  const findings = [];
+  for (const price of priceFile.prices) {
+    for (const field of priceRateFields()) {
+      if (price[field] === 0) {
+        findings.push({ provider: price.provider, model: price.model, field });
+      }
+    }
+  }
+  return findings;
+}
+
+function placeholderSourceFindings(document) {
+  const priceFile = validateModelPriceFile(document);
+  return priceFile.prices
+    .map((price) => {
+      let host = "";
+      try {
+        host = new URL(price.sourceUrl).hostname.toLowerCase();
+      } catch {
+        host = "";
+      }
+      return {
+        provider: price.provider,
+        model: price.model,
+        host,
+      };
+    })
+    .filter((row) => isPlaceholderSourceHost(row.host));
+}
+
+function isPlaceholderSourceHost(host) {
+  return ["example.com", "example.net", "example.org", "provider.example"].includes(host);
+}
+
+function priceKey(price) {
+  return `${price.provider}:${price.model}`;
+}
+
 function priceRateFields() {
   return [
     "inputUsdPerMillion",
@@ -486,6 +630,7 @@ function assertPlainObject(value, source) {
 module.exports = {
   applyModelPrices,
   assertFreshModelPriceSources,
+  assertModelPriceCatalogCoverage,
   assertNoZeroPriceRows,
   currentModelPriceStatement,
   DEFAULT_MAX_SOURCE_AGE_DAYS,
@@ -493,8 +638,10 @@ module.exports = {
   estimateUsageCostUsd,
   loadModelPriceFile,
   modelPriceFromRecord,
+  modelPriceCatalogCoverage,
   modelPriceStatements,
   readCurrentModelPrice,
+  requiredModelPriceRowsFromCatalog,
   renderModelPriceSql,
   staleModelPriceSources,
   validateModelPriceFile,

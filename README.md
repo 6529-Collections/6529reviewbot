@@ -485,6 +485,14 @@ Preview model pricing SQL without touching AWS:
 npm run model-prices -- -- --file config/model-prices.example.json
 ```
 
+Audit an operator-owned price file against the active model catalog without
+touching AWS:
+
+```bash
+npm run model-prices -- -- --file prices.json --require-catalog-coverage
+npm run check:model-price-coverage
+```
+
 Applying price rows rejects zero-rate placeholders by default:
 
 ```bash

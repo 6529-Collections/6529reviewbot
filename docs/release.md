@@ -330,6 +330,9 @@ After stabilization:
   changed
 - `npm run budget-policies -- -- --file <reviewed-budget-policy-file.json>` when
   central budget rows changed, plus `--apply` from the operator environment
+- `npm run check:model-price-coverage` and
+  `npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage`
+  when provider/model price rows changed or model defaults changed
 - `npm run model-prices -- -- --file <reviewed-model-price-file.json>` when
   provider/model price rows changed, plus `--apply` from the operator
   environment unless the release keeps conservative default estimates

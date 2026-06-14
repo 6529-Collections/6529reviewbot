@@ -14,6 +14,8 @@ Use this guide with:
 Run `npm run check:model-pricing-runbook` after editing model-pricing guidance
 so provider setup, source URLs, source-checked timestamps, stale-source
 overrides, and zero-price overrides stay aligned.
+Run `npm run check:model-price-coverage` after changing how reviewed price
+files are checked against catalog default lanes.
 
 Provider documentation and pricing change over time. Treat provider-owned docs
 as the source of truth and keep this repository focused on the operational
@@ -29,11 +31,14 @@ For every enabled provider:
    one;
 4. configure 6529bot budget caps before allowing public repository spend;
 5. add or verify the model in `config/model-catalog.json`;
-6. apply reviewed price rows with `npm run model-prices -- -- --file <file>
+6. audit reviewed price rows with `npm run model-prices -- -- --file <file>
+   --require-catalog-coverage` so catalog default lanes have fresh input and
+   output rates;
+7. apply reviewed price rows with `npm run model-prices -- -- --file <file>
    --apply`, including fresh `sourceCheckedAt` evidence for the provider docs;
-7. run `npm run check:provider-adapters` after changing provider request,
+8. run `npm run check:provider-adapters` after changing provider request,
    usage, error, or model-option behavior;
-8. run `npm run preflight -- -- --strict` from the release candidate
+9. run `npm run preflight -- -- --strict` from the release candidate
    environment.
 
 Do not put provider keys in:
