@@ -7,7 +7,7 @@ const {
   defaultProvider,
   normalizeProvider,
 } = require("./model-catalog.cjs");
-const DEFAULT_MAX_JOBS_PER_DELIVERY = 50;
+const DEFAULT_MAX_JOBS_PER_DELIVERY = 8;
 
 function reviewJobPolicyFromEnv(env = process.env) {
   return {

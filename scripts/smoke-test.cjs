@@ -3543,6 +3543,11 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
 assert.equal(commentEvent.kind, "comment_command");
 assert.deepEqual(commentEvent.reviewKinds, ["security"]);
 
+const defaultJobPolicy = reviewJob.reviewJobPolicyFromEnv({
+  REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8",
+});
+assert.equal(defaultJobPolicy.maxJobsPerDelivery, 8);
+
 const twoLanePolicy = reviewJob.reviewJobPolicyFromEnv({
   REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5,anthropic:claude-opus-4-8",
   REVIEWBOT_MAX_JOBS_PER_DELIVERY: "20",
