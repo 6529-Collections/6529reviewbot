@@ -4980,3 +4980,20 @@
     and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
     deployment-plan runbook origin examples exercised.
+- Merged `6529reviewbot` PR #279 as `33193e7`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/public-artifact-example-host-scan` increment:
+  - add a public artifact scan guard that rejects `reviewbot.example.com`
+    inside shell command blocks while allowing prose warnings and the public
+    env template placeholder.
+- Local validation for `codex/public-artifact-example-host-scan` so far:
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #279,
+    and 5 docs checked;
+  - `npm test` passed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 178 CommonJS files;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run release:check` passed with 178 CommonJS files checked and the
+    public-artifact example-host guard exercised.

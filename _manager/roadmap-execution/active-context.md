@@ -517,27 +517,23 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Manifest conversion help origin PR: merged as PR #278, merge commit `9528713`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/deployment-plan-doc-origin-examples`.
-- Current local changes: align production deployment, dashboard deployment, and
-  alert delivery runbook input examples with production-origin placeholders
-  and contract-check those doc examples.
+- Deployment plan doc origin examples PR: merged as PR #279, merge commit `33193e7`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/public-artifact-example-host-scan`.
+- Current local changes: add a public artifact scan guard that rejects
+  `reviewbot.example.com` inside shell command blocks while allowing prose
+  warnings and the public env template placeholder.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 7 plan cases and
-    6 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
-    7 docs checked;
-  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
-    8 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #279,
+    and 5 docs checked;
+  - `npm test` passed;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
-  - `npm test` passed;
-  - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
-  - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #278,
-    and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    deployment-plan runbook origin examples exercised.
+    public-artifact example-host guard exercised.
 
 ## Key Decisions
 

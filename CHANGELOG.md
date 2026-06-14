@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a public artifact scan guard for shell command examples that still use
+  the reserved `reviewbot.example.com` bot host.
 - Aligned production deployment, dashboard deployment, and alert delivery
   runbook input examples with production-origin placeholders.
 - Aligned GitHub App manifest conversion help with the production bot origin

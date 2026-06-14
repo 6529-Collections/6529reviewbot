@@ -37,6 +37,8 @@ const textExtensions = new Set([
   ".yml",
 ]);
 const allowedAwsAccountIds = new Set(["123456789012"]);
+const reservedBotExampleHost = "reviewbot.example.com";
+const shellFenceLanguages = new Set(["bash", "sh", "shell", "zsh", "powershell", "ps1"]);
 const localPathStopChars = '\\s"\'<>`';
 const windowsPathSeparator = String.raw`(?:\\+|/)`;
 const localPrivateWindowsRoots = [
@@ -139,6 +141,7 @@ function scanFile(file, content) {
   const awsArnMatches = findAwsArns(content);
   findings.push(...findLiveAwsArns(file, content, awsArnMatches));
   findings.push(...findLiveAwsAccountIds(file, content, awsArnMatches));
+  findings.push(...findReservedBotHostInShellBlocks(file, content));
   return findings;
 }
 
@@ -200,6 +203,34 @@ function findLiveAwsArns(file, content, awsArnMatches = findAwsArns(content)) {
   return findings;
 }
 
+function findReservedBotHostInShellBlocks(file, content) {
+  const findings = [];
+  const fencePattern = /```([^\r\n`]*)\r?\n([\s\S]*?)```/g;
+  for (const match of content.matchAll(fencePattern)) {
+    const language = String(match[1] || "").trim().toLowerCase().split(/\s+/, 1)[0];
+    if (!shellFenceLanguages.has(language)) {
+      continue;
+    }
+    const block = match[2] || "";
+    const blockOffset = (match.index || 0) + match[0].indexOf(block);
+    let searchFrom = 0;
+    while (searchFrom < block.length) {
+      const index = block.indexOf(reservedBotExampleHost, searchFrom);
+      if (index === -1) {
+        break;
+      }
+      findings.push({
+        file,
+        line: lineForIndex(content, blockOffset + index),
+        rule: "reserved_bot_host_shell_command",
+        detail: "use <production-bot-origin> in shell command examples",
+      });
+      searchFrom = index + reservedBotExampleHost.length;
+    }
+  }
+  return findings;
+}
+
 function lineForIndex(content, index) {
   let line = 1;
   for (let cursor = 0; cursor < index; cursor += 1) {
@@ -235,6 +266,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  findReservedBotHostInShellBlocks,
   findLiveAwsAccountIds,
   findLiveAwsArns,
   isPublicTextArtifact,
