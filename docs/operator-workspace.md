@@ -9,6 +9,7 @@ npm run operator:workspace -- -- --dir <private-workspace-dir>
 
 The command writes:
 
+- `community-release-status.json`
 - `v0-release-status.json`
 - `dogfood-status.json`
 - `security-review-status.json`
@@ -32,6 +33,7 @@ Review initial status counts:
 
 ```bash
 npm run operator:workspace -- -- --dir <private-workspace-dir> --check
+npm run community:gates -- -- --status-file <private-workspace-dir>/community-release-status.json --summary
 npm run v0:gates -- -- --status-file <private-workspace-dir>/v0-release-status.json --summary
 npm run dogfood:status -- -- --status-file <private-workspace-dir>/dogfood-status.json --summary
 npm run security:review -- -- --status-file <private-workspace-dir>/security-review-status.json --summary

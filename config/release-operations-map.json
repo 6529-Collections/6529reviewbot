@@ -439,7 +439,7 @@
         {
           "id": "operator-workspace-contract",
           "script": "check:operator-workspace",
-          "purpose": "Verify operator workspace creation, check-mode readiness failures, private path redaction, Markdown sanitization, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify operator workspace creation, community-release status, check-mode readiness failures, private path redaction, Markdown sanitization, source invariants, and public docs stay synchronized.",
           "doc": "docs/operator-workspace.md",
           "publicOutput": "Safe."
         },

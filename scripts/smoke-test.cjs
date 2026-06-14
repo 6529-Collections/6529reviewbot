@@ -1272,6 +1272,7 @@ assert.equal(JSON.stringify(dogfoodGoLiveWorkspacePacket).includes(dogfoodPromot
 assert.deepEqual(
   dogfoodGoLive.operatorWorkspaceFilePaths("workspace"),
   {
+    communityReleaseStatus: path.join("workspace", "community-release-status.json"),
     dogfoodStatus: path.join("workspace", "dogfood-status.json"),
     operatorEvidence: path.join("workspace", "operator-evidence.json"),
     productionCutoverStatus: path.join("workspace", "production-cutover-status.json"),
@@ -2351,13 +2352,15 @@ const workspace = operatorWorkspace.createOperatorWorkspace({
   privateEvidenceLocation: "private runbook",
   repoRoot: path.resolve(__dirname, ".."),
 });
-assert.equal(workspace.files.length, 6);
+assert.equal(workspace.files.length, 7);
+assert.equal(workspace.summaries.communityRelease.pending, 14);
 assert.equal(workspace.summaries.releaseGates.pending, 20);
 assert.equal(
   workspace.summaries.operatorEvidence.pending,
   operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length
 );
 assert.equal(workspace.ready, false);
+assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "community-release-status.json")), true);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "operator-evidence.json")), true);
 assert.match(

@@ -48,6 +48,7 @@ const {
 } = require("./security-review-status.cjs");
 
 const DEFAULT_OPERATOR_WORKSPACE_FILES = {
+  communityReleaseStatus: "community-release-status.json",
   dogfoodStatus: "dogfood-status.json",
   operatorEvidence: "operator-evidence.json",
   productionCutoverStatus: "production-cutover-status.json",
@@ -75,6 +76,26 @@ function createOperatorWorkspace(options = {}) {
 
   const files = [];
   const releaseGates = loadReleaseGates(options.releaseGatesFile);
+  const communityReleaseGates = loadReleaseGates(
+    options.communityReleaseGatesFile || "config/community-release-gates.json"
+  );
+  const communityReleaseStatusPath = workspacePath(
+    directory,
+    DEFAULT_OPERATOR_WORKSPACE_FILES.communityReleaseStatus
+  );
+  const communityReleaseStatus = writeReleaseGateStatusFile(
+    communityReleaseStatusPath,
+    createReleaseGateStatusSkeleton(communityReleaseGates),
+    { force: options.force }
+  );
+  files.push(
+    fileSummary(
+      "community-release-status",
+      communityReleaseStatusPath,
+      "Private broad community-release gate status overlay."
+    )
+  );
+
   const releaseGateStatusPath = workspacePath(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus);
   const releaseGateStatus = writeReleaseGateStatusFile(
     releaseGateStatusPath,
@@ -142,6 +163,9 @@ function createOperatorWorkspace(options = {}) {
     release: releaseGates.release,
     files,
     summaries: {
+      communityRelease: summarizeReleaseGates(
+        mergeReleaseGateStatus(communityReleaseGates, communityReleaseStatus)
+      ),
       dogfood: summarizeDogfood(mergeDogfoodStatus(dogfoodChecklist, dogfoodStatus)),
       operatorEvidence: summarizeOperatorEvidence(operatorEvidence),
       productionCutover: summarizeProductionCutover(
@@ -180,6 +204,18 @@ function checkOperatorWorkspace(options = {}) {
   assertExistingWorkspaceFiles(Object.values(filePaths));
 
   const releaseGates = loadReleaseGates(options.releaseGatesFile);
+  const communityReleaseGates = loadReleaseGates(
+    options.communityReleaseGatesFile || "config/community-release-gates.json"
+  );
+  const communityReleaseStatus = loadReleaseGateStatus(filePaths.communityReleaseStatus);
+  const communityReleaseGatesWithStatus = mergeReleaseGateStatus(
+    communityReleaseGates,
+    communityReleaseStatus,
+    {
+      requireComplete: options.requireReady,
+    }
+  );
+
   const releaseGateStatus = loadReleaseGateStatus(filePaths.releaseGateStatus);
   const releaseGatesWithStatus = mergeReleaseGateStatus(releaseGates, releaseGateStatus, {
     requireComplete: options.requireReady,
@@ -211,6 +247,7 @@ function checkOperatorWorkspace(options = {}) {
     release: releaseGates.release,
     files: workspaceFiles(directory),
     summaries: {
+      communityRelease: summarizeReleaseGates(communityReleaseGatesWithStatus),
       dogfood: summarizeDogfood(dogfoodWithStatus),
       operatorEvidence: summarizeOperatorEvidence(operatorEvidence),
       productionCutover: summarizeProductionCutover(productionCutoverWithStatus),
@@ -221,6 +258,7 @@ function checkOperatorWorkspace(options = {}) {
   workspace.ready = operatorWorkspaceReady(workspace);
   if (options.requireReady) {
     assertOperatorWorkspaceReady(workspace, {
+      communityRelease: communityReleaseGatesWithStatus,
       dogfood: dogfoodWithStatus,
       operatorEvidence,
       productionCutover: productionCutoverWithStatus,
@@ -232,6 +270,9 @@ function checkOperatorWorkspace(options = {}) {
 }
 
 function assertOperatorWorkspaceReady(workspace, documents = {}) {
+  if (documents.communityRelease) {
+    assertReleaseGatesReady(documents.communityRelease);
+  }
   if (documents.releaseGates) {
     assertReleaseGatesReady(documents.releaseGates);
   }
@@ -276,6 +317,7 @@ function renderOperatorWorkspaceSummaryMarkdown(workspace, options = {}) {
   }
   lines.push("", "## Starting Commands", "");
   lines.push("```bash");
+  lines.push(`npm run community:gates -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.communityReleaseStatus} --summary`);
   lines.push(`npm run v0:gates -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus} --summary`);
   lines.push(`npm run dogfood:status -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.dogfoodStatus} --summary`);
   lines.push(`npm run security:review -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus} --summary`);
@@ -340,6 +382,7 @@ commit it to the public repository.
 
 ## Files
 
+- \`${DEFAULT_OPERATOR_WORKSPACE_FILES.communityReleaseStatus}\`: broad community-release gate status.
 - \`${DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus}\`: v0 release gate status.
 - \`${DEFAULT_OPERATOR_WORKSPACE_FILES.dogfoodStatus}\`: command-only and limited initial-review dogfood status.
 - \`${DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus}\`: manual security-review status.
@@ -349,6 +392,7 @@ commit it to the public repository.
 ## Commands
 
 \`\`\`bash
+npm run community:gates -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.communityReleaseStatus} --summary
 npm run v0:gates -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus} --summary
 npm run dogfood:status -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.dogfoodStatus} --summary
 npm run security:review -- -- --status-file ${DEFAULT_OPERATOR_WORKSPACE_FILES.securityReviewStatus} --summary
@@ -400,6 +444,7 @@ function operatorWorkspaceFilePaths(directory) {
 function workspaceFiles(directory) {
   const paths = operatorWorkspaceFilePaths(directory);
   return [
+    fileSummary("community-release-status", paths.communityReleaseStatus, "Private broad community-release gate status overlay."),
     fileSummary("release-gate-status", paths.releaseGateStatus, "Private v0 release gate status overlay."),
     fileSummary("dogfood-status", paths.dogfoodStatus, "Private dogfood execution status overlay."),
     fileSummary("security-review-status", paths.securityReviewStatus, "Private manual security-review status overlay."),
