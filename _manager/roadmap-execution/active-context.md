@@ -600,32 +600,39 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Security intake operator evidence PR: merged as PR #319, merge commit `0f8913f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/repository-rulesets-operator-evidence`.
-- Current local changes: add a dedicated `repository-rulesets` section to
-  structured operator evidence so live GitHub `main` protection, required PR
-  checks, release tag rulesets, and bypass posture are tracked separately from
-  local repository-ruleset docs.
+- Repository rulesets operator evidence PR: merged as PR #320, merge commit `f697060`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `f697060`.
+- Current branch: `codex/github-app-evidence-hardening`.
+- Current local changes: harden the existing `github-app` operator evidence
+  field guidance so production-host manifest review, registration path,
+  private manifest conversion summary, App id/slug custody, webhook ping,
+  selected-repository allowlist/count, and rotation ownership are recorded
+  before public release notes claim production GitHub App readiness.
 - Current local validation:
-  - `gh run watch 27499289995 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge CI;
-  - `gh run watch 27499290006 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #319 post-merge OpenSSF Scorecard;
-  - `npm run check:repository-rulesets` passed with 13 surfaces checked;
-  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
-    checked;
+  - `gh run watch 27499565237 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge CI;
+  - `gh run watch 27499565253 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #320 post-merge OpenSSF Scorecard;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 6 docs checked;
-  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
-    cases, and 5 docs checked;
+  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
+    conversion cases, and 7 docs checked;
+  - `npm run check:external-evidence-boundaries` passed with 12 surfaces
+    checked;
+  - `npm run check:release-candidate` initially caught lost AWS/GitHub-token
+    redaction fixture coverage, then passed with 7 redaction cases, 3 path
+    cases, and 5 docs checked after the fixture was restored under the
+    `github-app` evidence section;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #319, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #320, and
     5 docs checked;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
   - `npm run check:public-artifacts` passed with 120 files checked;
-  - `npm test` passed;
   - `git diff --check` passed;
+  - `npm test` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    repository-rulesets operator evidence section exercised.
+    GitHub App evidence hardening contracts exercised.
 
 ## Key Decisions
 
@@ -1248,8 +1255,10 @@ merged PRs.
   to private dashboards, but it does not replace operator source review.
 - AWS IAM/OIDC templates still need operator replacement with real account,
   region, repo, branch/environment, cluster, secret, and SNS values before use.
-- The GitHub App manifest still needs production-host rendering and actual App
-  creation in GitHub before production use.
+- The GitHub App manifest still needs production-host rendering, actual App
+  creation in GitHub, private conversion evidence, App id/slug custody,
+  webhook ping evidence, selected-repository allowlist review, and rotation
+  owner review before production use.
 - Live operator Aurora ledger schema has been applied and read-only verified
   with expected base tables and daily aggregate views. Keep unredacted resource
   identifiers in the private operator runbook, not in this public repo.

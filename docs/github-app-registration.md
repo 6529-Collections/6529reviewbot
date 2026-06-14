@@ -97,7 +97,9 @@ Preferred dogfood path:
    ```
 
 7. Move the returned credentials directly into the bot runtime secret store.
-8. Record only redacted completion evidence.
+8. Record only redacted completion evidence, including the private conversion
+   summary location, App id/slug custody confirmation, webhook ping result,
+   selected-repository allowlist/count, and credential rotation owner.
 
 Manual fallback path:
 
@@ -107,6 +109,9 @@ Manual fallback path:
 3. Generate a high-entropy webhook secret and store it in the bot secret store.
 4. Generate a private key and store it in the bot secret store.
 5. Record that the manual settings match the rendered manifest.
+6. Record the App id/slug custody confirmation, webhook ping result,
+   selected-repository allowlist/count, and credential rotation owner in
+   private operator evidence.
 
 The helper intentionally does not exchange GitHub's temporary manifest code.
 Use `npm run github-app:convert` only from a private operator environment to
@@ -332,10 +337,16 @@ Safe to publish:
 
 ```text
 Manifest rendered and reviewed: yes/no
+Production bot origin reviewed: yes/no
+Registration path: manifest/manual
+Manifest conversion summary captured privately: yes/no
+GitHub App id and slug captured privately: yes/no
 Permissions match docs: yes/no
 Webhook URL host class: production/staging/local
 Webhook ping acknowledged: yes/no
+Installation allowlist or selected-repository count reviewed: yes/no
 Installed repository count: number only
+Credential rotation owner and cadence reviewed: yes/no
 Preflight result: pass/pass-with-accepted-warnings/fail
 ```
 

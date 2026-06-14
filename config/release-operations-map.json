@@ -348,7 +348,7 @@
         {
           "id": "github-app-manifest-contract",
           "script": "check:github-app-manifest",
-          "purpose": "Verify target GitHub App manifest permissions/events, no Actions write permission, registration form rendering, private manifest conversion, redacted summaries, and docs stay synchronized.",
+          "purpose": "Verify target GitHub App manifest permissions/events, no Actions write permission, registration form rendering, production-host manifest review, private conversion summary, App id/slug custody, webhook ping, selected-repository allowlist/count, rotation ownership, redacted summaries, and docs stay synchronized.",
           "doc": "docs/github-app-registration.md",
           "publicOutput": "Safe."
         },
@@ -453,7 +453,7 @@
         {
           "id": "operator-evidence-contract",
           "script": "check:operator-evidence",
-          "purpose": "Verify operator evidence sections, readiness semantics, runtime dispatch evidence, container publish evidence, security-intake evidence, repository-rulesets evidence, production deployment-plan evidence, budget policy evidence, model-pricing evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, release tag-plan evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
+          "purpose": "Verify operator evidence sections, readiness semantics, GitHub App production registration evidence, runtime dispatch evidence, container publish evidence, security-intake evidence, repository-rulesets evidence, production deployment-plan evidence, budget policy evidence, model-pricing evidence, alert delivery-plan evidence, dashboard deployment-plan evidence, public dashboard disclosure evidence, private admin auth evidence, release tag-plan evidence, public-summary redaction, source invariants, and public docs stay synchronized.",
           "doc": "docs/operator-evidence-template.md",
           "publicOutput": "Safe."
         },

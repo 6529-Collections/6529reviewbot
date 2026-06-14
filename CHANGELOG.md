@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Hardened GitHub App operator evidence fields for production origin review,
+  manifest/manual registration path, private conversion summary, App id/slug
+  custody, webhook ping, selected-repository allowlist/count, and credential
+  rotation ownership.
 - Added a dedicated `repository-rulesets` section to structured operator
   evidence so live GitHub `main` protection, required checks, release tag
   rulesets, and bypass posture are tracked separately from local ruleset docs.

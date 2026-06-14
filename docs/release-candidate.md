@@ -177,9 +177,10 @@ invariants, and the public docs synchronized.
 - production cutover complete/deferred/pending/blocked counts when a cutover
   status file is provided;
 - preflight error and warning summaries;
-- redacted operator evidence sections, including the container publish,
-  security intake, repository rulesets, production deployment plan, budget,
-  model pricing, worker dispatch credential, alert delivery plan, dashboard
-  deployment plan, public dashboard disclosure, and private admin auth evidence
-  sections, plus release tag plan evidence when present;
+- redacted operator evidence sections, including GitHub App production
+  registration, container publish, security intake, repository rulesets,
+  production deployment plan, budget, model pricing, worker dispatch
+  credential, alert delivery plan, dashboard deployment plan, public dashboard
+  disclosure, and private admin auth evidence sections, plus release tag plan
+  evidence when present;
 - the follow-up release commands the operator should run.
