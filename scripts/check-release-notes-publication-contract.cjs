@@ -39,6 +39,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   const docTexts = options.docTexts || {};
 
   checkCompleteNotes(findings);
+  checkTitleRefSafety(findings);
   checkDraftRejected(findings);
   checkSensitiveTextRejected(findings);
   checkFailedValidationRejected(findings);
@@ -60,7 +61,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 9,
+    publicationCases: 10,
     docs: targetDocs.length,
   };
 }
@@ -73,6 +74,21 @@ function checkCompleteNotes(findings) {
   }
   if (!formatPublicationReport(report).includes("Release notes publication ready: yes")) {
     findings.push("publication report must include ready status.");
+  }
+}
+
+function checkTitleRefSafety(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "# 6529reviewbot v0.1.0",
+      "# 6529reviewbot v0..1"
+    )
+  );
+  if (report.ready) {
+    findings.push("release notes publication check must reject Git-ref-unsafe title versions.");
+  }
+  if (!report.errors.some((error) => error.includes("Git ref-safe"))) {
+    findings.push("Git-ref-unsafe release notes title rejection must explain the ref-safety issue.");
   }
 }
 
@@ -248,6 +264,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "validateReleaseNotesPublication",
       "TODO(operator)",
       "redactSensitiveText",
+      "releaseTagNameError",
       "checkValidationResults",
       "checkModelPriceOverrideDisclosure",
       "FAILED_VALIDATION_PATTERN",
@@ -261,6 +278,11 @@ function checkSourceAnchors(sourceTexts, findings) {
       "reviewed alert delivery plan evidence",
       "`npm run dashboard:deployment-plan",
       "`npm run alerts:delivery-plan",
+    ],
+    "src/release-version.cjs": [
+      "normalizeReleaseVersion",
+      "releaseTagNameError",
+      "Git ref-safe",
     ],
     "bin/release-notes-publication.cjs": [
       "npm run release:notes:check",
@@ -297,6 +319,7 @@ function checkDocs(docTexts, findings) {
       "npm run release:notes:check",
       "TODO(operator)",
       "No accepted deferrals",
+      "Git ref-safe",
       "passed, ready, reviewed, or accepted evidence",
       "npm run check:release-notes-publication",
     ],

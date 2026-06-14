@@ -35,6 +35,8 @@ The publication guard verifies:
 
 - the expected pre-v1 release note headings are present;
 - the title looks like `# 6529reviewbot v0.1.0`;
+- the title version is Git ref-safe for the constrained release-version
+  format;
 - the status line is filled;
 - `TODO(operator)`, `TODO`, `TBD`, and similar placeholders are gone;
 - tested configuration fields are filled;
@@ -92,7 +94,8 @@ template, draft workflow, or release docs:
 npm run check:release-notes-publication
 ```
 
-The contract check validates a complete notes fixture, rejects unfinished
-drafts, rejects sensitive text, rejects failed or vague validation evidence,
-exercises the CLI, and keeps package scripts, release checks, smoke tests,
-operations map entries, and docs synchronized.
+The contract check validates a complete notes fixture, rejects Git ref-unsafe
+title versions, rejects unfinished drafts, rejects sensitive text, rejects
+failed or vague validation evidence, exercises the CLI, and keeps package
+scripts, release checks, smoke tests, operations map entries, and docs
+synchronized.

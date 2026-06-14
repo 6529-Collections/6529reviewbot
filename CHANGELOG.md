@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release notes publication to reject Git-ref-unsafe title versions
+  before tag or GitHub Release text can be published.
 - Hardened release tag planning to reject Git-ref-unsafe tag names before
   rendering tag commands.
 - Made `release:tag-plan --require-ready` promote release-note recommendation
