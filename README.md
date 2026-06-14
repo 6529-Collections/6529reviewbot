@@ -172,6 +172,7 @@ Run local checks:
 npm run check
 npm run check:docs
 npm run check:manager-memory
+npm run check:codeowners
 npm run check:repository-rulesets
 npm run check:install-guide
 npm run check:deployment-runbook

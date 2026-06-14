@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added checked CODEOWNERS review ownership guidance for default maintainers,
+  high-risk path coverage, and future code owner review rules.
 - Added community-release docs for private vulnerability intake readiness.
 - Added checked security reporting guidance for private vulnerability intake
   before broad community release.

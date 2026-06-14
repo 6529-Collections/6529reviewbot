@@ -25,6 +25,9 @@ latest merged PR state, validation status, release-check wiring, smoke tests,
 and public docs synchronized.
 `npm run check:governance` keeps the public MIT license, community files, issue
 templates, and README governance links present.
+`npm run check:codeowners` keeps CODEOWNERS default review ownership,
+high-risk path coverage, repository ruleset guidance, and governance docs
+aligned.
 `npm run check:repository-rulesets` keeps repository rulesets guidance aligned
 across main branch protection, required PR checks, release tag ruleset
 expectations, dry-run tag planning, and operator-owned live ruleset evidence.

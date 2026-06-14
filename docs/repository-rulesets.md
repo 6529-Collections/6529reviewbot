@@ -14,12 +14,19 @@ Recommended `main` rules:
 
 - require pull requests before merging;
 - require conversation resolution before merging;
+- require code owner review once `.github/CODEOWNERS` reflects the active
+  maintainer set;
 - require the `check` and `dependency-review` pull request checks;
 - require branches to be up to date before merge when GitHub reports the
   branch is out of date;
 - disallow force pushes and branch deletion;
 - keep bypass permissions narrow and review bypass use in private operator
   evidence.
+
+`.github/CODEOWNERS` currently assigns default ownership to `@punk6529` and
+high-risk repository areas. Replace or supplement that owner with a dedicated
+6529 maintainer team before broad community release when the GitHub team is
+ready.
 
 Do not require CodeRabbit while its review quota is rate-limited. Treat
 CodeRabbit comments as useful review input when available, not as a required
@@ -69,4 +76,3 @@ release operations, branch-protection guidance, or PR validation policy:
 ```bash
 npm run check:repository-rulesets
 ```
-

@@ -186,6 +186,9 @@ After stabilization:
 - `npm run check:governance` confirms SECURITY.md, support, contributing, PR
   template, issue templates, private vulnerability intake guidance, and public
   governance links stay present
+- `npm run check:codeowners` confirms CODEOWNERS default ownership,
+  high-risk path coverage, repository ruleset guidance, and governance docs
+  stay synchronized
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized

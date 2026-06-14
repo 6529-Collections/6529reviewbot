@@ -45,6 +45,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "codeowners-contract",
+          "script": "check:codeowners",
+          "purpose": "Verify CODEOWNERS default review ownership, high-risk path coverage, repository ruleset guidance, and governance docs stay synchronized.",
+          "doc": "GOVERNANCE.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "repository-ruleset-contract",
           "script": "check:repository-rulesets",
           "purpose": "Verify main branch protection, required PR checks, release tag ruleset guidance, dry-run tag planning, and operator-owned live ruleset evidence guidance stay synchronized.",
