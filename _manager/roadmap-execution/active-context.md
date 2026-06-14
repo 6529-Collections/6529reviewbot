@@ -515,23 +515,29 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Admin snapshot production-origin docs PR: merged as PR #277, merge commit `cbf46da`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/manifest-convert-help-origin`.
-- Current local changes: align GitHub App manifest conversion help with
-  `<production-bot-origin>` callback URLs, export the help text for contract
-  checks, and pin the no-example-callback-host invariant.
+- Manifest conversion help origin PR: merged as PR #278, merge commit `9528713`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/deployment-plan-doc-origin-examples`.
+- Current local changes: align production deployment, dashboard deployment, and
+  alert delivery runbook input examples with production-origin placeholders
+  and contract-check those doc examples.
 - Current local validation:
-  - `npm run check:github-app-manifest` passed with 7 manifest cases,
-    6 conversion cases, and 7 docs checked;
+  - `npm run check:production-deployment-plan` passed with 7 plan cases and
+    6 docs checked;
+  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and
+    7 docs checked;
+  - `npm run check:alert-delivery-plan` passed with 6 plan cases and
+    8 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
   - `npm test` passed;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #277,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #278,
     and 5 docs checked;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    GitHub App manifest conversion help anchor exercised.
+    deployment-plan runbook origin examples exercised.
 
 ## Key Decisions
 

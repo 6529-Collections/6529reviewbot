@@ -26,7 +26,7 @@ npm run production:deployment-plan
 Use explicit inputs for a reviewed operator handoff:
 
 ```bash
-npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0
 ```
 
 Use `--require-ready` for the final handoff gate. This exits non-zero unless
