@@ -225,6 +225,8 @@ function checkMarkdownRedaction(findings) {
     "maintainer operator",
     "evidence line one line two",
     "notes with owner",
+    "production-deployment-plan",
+    "Production Deployment Plan",
   ]) {
     if (!markdown.includes(expected) && !publicJson.includes(expected)) {
       findings.push(`operator evidence public output must include '${expected}'.`);
@@ -243,6 +245,7 @@ function checkSourceInvariants(sourceTexts, findings) {
     "status === \"complete\" && evidence.length === 0",
     "Deferred sections must be named in release notes",
     "container-publish-plan",
+    "production-deployment-plan",
     "worker-dispatch-credentials",
     "6529-io-public-disclosure",
     "6529-io-private-admin-auth",
@@ -275,6 +278,9 @@ function checkDocs(docTexts, findings) {
       "AWS account ids",
       "Container publish plan command",
       "Container publish plan reviewed",
+      "Production deployment plan command",
+      "Production deployment plan reviewed",
+      "Worker dispatch installation id reviewed",
       "Worker dispatch mode",
       "Dispatch-only GitHub App preferred/reviewed",
       "Alert delivery plan command",

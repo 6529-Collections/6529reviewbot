@@ -36,6 +36,10 @@
       "status": "pending",
       "notes": "Render and review the dry-run container publish plan before treating container image evidence as release-ready."
     },
+    "production-deployment-plan": {
+      "status": "pending",
+      "notes": "Render and review the production deployment plan with concrete host, image, workspace, and worker-dispatch installation id before live handoff."
+    },
     "budget-and-pricing": {
       "status": "deferred",
       "notes": "Example only: defer applied price rows when release notes keep conservative default estimates."

@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added a dedicated production deployment-plan section to structured operator
+  evidence and release-candidate summaries.
 - Required a concrete central repository worker-dispatch installation id for
   ready-mode production deployment plans.
 - Added a worker-dispatch credential phase to the production deployment plan
