@@ -6475,3 +6475,28 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and
     provider-adapter redaction coverage exercised.
+- Merged `6529reviewbot` PR #336 as `8916593`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/redact-dry-run-sql-params` increment:
+  - redact rendered dry-run SQL parameter comments for budget policies and
+    model prices across every field, not only normalized notes;
+  - update runbook contracts, smoke coverage, changelog, and durable manager
+    memory.
+- Local validation for `codex/redact-dry-run-sql-params` so far:
+  - `gh run watch 27505080689 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #336 post-merge CI;
+  - `gh run watch 27505080679 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #336 post-merge OpenSSF Scorecard;
+  - `npm run check:budget-policies-runbook` passed with 5 runbook cases and
+    9 docs checked;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and 8
+    docs checked;
+  - `npm test` passed after adding dry-run SQL parameter redaction coverage;
+  - `rg -n "parameters: \\$\\{JSON.stringify\\(params\\)\\}" src scripts docs -g "*.cjs" -g "*.md"` found no stale raw parameter renderers;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #336,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    budget/model-price dry-run parameter redaction behavior exercised.

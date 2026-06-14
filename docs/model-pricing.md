@@ -74,9 +74,9 @@ npm run model-prices -- -- --file prices.json
 ```
 
 The dry run prints the SQL plus Data API parameter values so reviewers can see
-exactly what will be inserted. `notes` values are redacted for common
-secret-shaped values and capped at 1000 characters before they are rendered or
-applied.
+exactly what will be inserted. Rendered parameter comments are redacted for
+common secret-shaped values across every field. `notes` values are also capped
+at 1000 characters before they are rendered or applied.
 
 ## Catalog Coverage
 

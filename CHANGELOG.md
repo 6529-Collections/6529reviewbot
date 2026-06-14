@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Redacted rendered dry-run SQL parameter comments for budget policies and
+  model prices across every field, not only normalized notes.
 - Sanitized OpenAI incomplete-response details through the shared provider
   error summarizer so safe reasons survive while secret-shaped text is redacted.
 - Lowered the default review-job fanout cap to 8 jobs per delivery so fresh
