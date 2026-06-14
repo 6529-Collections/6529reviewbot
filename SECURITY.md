@@ -13,6 +13,12 @@ Report privately through GitHub's private vulnerability reporting if enabled on
 the repository, or contact a 6529 maintainer through the organization's normal
 private security channel.
 
+Before broad community release, maintainers should enable GitHub private
+vulnerability reporting for this repository or record an equivalent private
+security intake channel in operator evidence. Public release notes should not
+claim community-release security readiness while private vulnerability intake
+is unknown or explicitly deferred.
+
 Useful report details:
 
 - affected file or workflow;

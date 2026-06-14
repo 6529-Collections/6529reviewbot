@@ -557,21 +557,23 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Repository ruleset guidance PR: merged as PR #298, merge commit `b1c7ead`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/contributing-release-validation`.
-- Current local changes: add contributor guidance for release-sensitive
-  validation, external evidence boundaries, and repository ruleset checks.
+- Contributor release-validation guidance PR: merged as PR #299, merge commit `704c233`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/security-reporting-governance`.
+- Current local changes: add checked security reporting guidance for private
+  vulnerability intake before broad community release.
 - Current local validation:
-  - `gh run watch 27494545238 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge CI;
-  - `gh run watch 27494545243 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #298 post-merge OpenSSF Scorecard;
+  - `gh run watch 27494691982 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #299 post-merge CI;
+  - `gh run watch 27494691979 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #299 post-merge OpenSSF Scorecard;
   - `npm run check:governance` passed with 13 files checked;
   - `npm run check:public-artifacts` passed with 119 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #298,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #299,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 181 CommonJS files;
   - `npm test` passed;
   - `npm run release:check` passed with 181 CommonJS files checked and the
-    contributor release-validation guidance exercised.
+    security reporting governance exercised.
 
 ## Key Decisions
 

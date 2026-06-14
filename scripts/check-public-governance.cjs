@@ -78,6 +78,18 @@ function main() {
     findings.push("SUPPORT.md must point security reports to SECURITY.md.");
   }
 
+  const security = read("SECURITY.md");
+  for (const snippet of [
+    "private vulnerability reporting",
+    "equivalent private",
+    "operator evidence",
+    "community-release security readiness",
+  ]) {
+    if (!security.includes(snippet)) {
+      findings.push(`SECURITY.md must include '${snippet}'.`);
+    }
+  }
+
   findings.push(...checkPullRequestTemplate());
   findings.push(...checkIssueTemplates());
 
