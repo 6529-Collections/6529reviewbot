@@ -13,6 +13,7 @@ const root = path.resolve(__dirname, "..");
 
 const promotionDocs = [
   "README.md",
+  "config/release-operations-map.json",
   "docs/dogfood-promotion.md",
   "docs/release-readiness.md",
   "docs/release-operations-map.md",
@@ -113,7 +114,24 @@ function checkCliContract(findings) {
     findings
   );
   expectError(
-    () => dogfoodPromotionCli.parseArgs(["--strict-preflight", "--require-ready"]),
+    () =>
+      dogfoodPromotionCli.parseArgs([
+        "--strict-preflight",
+        "--model-price-file",
+        "prices.json",
+        "--require-ready",
+      ]),
+    "--require-ready requires --operator-workspace.",
+    findings
+  );
+  expectError(
+    () =>
+      dogfoodPromotionCli.parseArgs([
+        "--strict-preflight",
+        "--operator-workspace",
+        "workspace",
+        "--require-ready",
+      ]),
     "--require-ready requires --model-price-file for reviewed model price coverage.",
     findings
   );
@@ -378,6 +396,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "options.requireReady && !options.strictPreflight",
     "--require-ready requires --strict-preflight.",
+    "--require-ready requires --operator-workspace.",
     "--require-ready requires --model-price-file for reviewed model price coverage.",
     "--model-price-file",
     "--allow-stale-model-price-source",
@@ -392,10 +411,16 @@ function checkSourceInvariants(sourceTexts, findings) {
 function checkDocs(docTexts, findings) {
   const requiredByDoc = {
     "README.md": ["npm run check:dogfood-promotion"],
+    "config/release-operations-map.json": [
+      "\"script\": \"dogfood:promotion\"",
+      "--operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+      "required ready-mode private workspace parsing, model price coverage, and preflight",
+    ],
     "docs/dogfood-promotion.md": [
       "npm run check:dogfood-promotion",
       "dogfood promotion contract check",
-      "`--require-ready` requires `--strict-preflight`",
+      "`--require-ready` requires `--operator-workspace`",
+      "--operator-workspace",
       "--model-price-file",
       "model price coverage",
       "requires reviewed model price coverage",

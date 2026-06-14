@@ -624,11 +624,14 @@ merged PRs.
 - Dogfood evidence handoff guidance PR: merged as PR #327, merge commit `c3eaf46`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `c3eaf46`.
-- Current branch: `codex/dogfood-ready-model-price-required`.
-- Current local changes: require reviewed model price coverage for dogfood
-  promotion and go-live ready mode, update the operator drill to rehearse the
-  price gate with a temporary public-safe fixture, and synchronize docs,
-  roadmap, changelog, contracts, smoke tests, and durable manager memory.
+- Dogfood ready-mode model price coverage PR: merged as PR #328, merge commit `4ac3427`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `4ac3427`.
+- Current branch: `codex/dogfood-ready-operator-workspace-required`.
+- Current local changes: require `dogfood:promotion --require-ready` and
+  `dogfood:go-live --require-ready` to include `--operator-workspace` at CLI
+  parse time, update ready-mode docs/contracts/smoke tests, and carry PR #328
+  post-merge durable memory forward.
 - Current local validation:
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
@@ -762,6 +765,25 @@ merged PRs.
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood ready-mode model price requirement exercised.
+  - `gh run watch 27502520528 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #328 post-merge CI;
+  - `gh run watch 27502520520 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #328 post-merge OpenSSF Scorecard.
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet
+    cases, and 7 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 7 docs checked;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 7 docs checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #328,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood ready-mode operator workspace requirement exercised.
 
 ## Key Decisions
 
@@ -1119,8 +1141,10 @@ merged PRs.
 - The final command-only dogfood traffic decision should have one operator
   cross-check that proves the release-candidate bundle, promotion packet,
   cutover status, and workspace overlays agree.
-- `dogfood:go-live --require-ready` should require strict preflight so the
-  final traffic gate cannot silently accept runtime warnings.
+- `dogfood:go-live --require-ready` should require a private operator
+  workspace, strict preflight, and reviewed model price coverage so the final
+  traffic gate cannot silently accept missing private evidence, runtime
+  warnings, or catalog-default-only price assumptions.
 - The generated private operator workspace README should include the final
   promotion and go-live packet commands so operators do not have to reconstruct
   the sequence from separate docs.

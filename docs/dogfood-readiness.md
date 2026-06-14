@@ -99,8 +99,9 @@ future-dated, zero-rate placeholders remain, or placeholder source URLs are
 still present. Use `--allow-stale-model-price-source` or
 `--allow-zero-model-price` only with explicit release evidence.
 `dogfood:promotion --require-ready` and `dogfood:go-live --require-ready`
-require `--model-price-file`; the public static readiness check can still run
-without one when it is only validating committed dogfood inputs.
+require `--operator-workspace` and `--model-price-file`; the public static
+readiness check can still run without those private inputs when it is only
+validating committed dogfood inputs.
 
 ## Optional Preflight
 

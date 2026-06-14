@@ -700,28 +700,28 @@
         {
           "id": "dogfood-readiness",
           "script": "dogfood:readiness",
-          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
           "purpose": "Check dogfood input files, model catalog, budget policy, repository config, private workspace parsing, model price coverage when supplied, and optional preflight before first traffic.",
           "doc": "docs/dogfood-readiness.md",
-          "privateInputs": "Reads operator-owned private workspace files when --operator-workspace is supplied.",
+          "privateInputs": "Reads operator-owned private workspace files and reviewed model price files when supplied.",
           "publicOutput": "Safe after reviewing preflight diagnostics and redacted workspace counts."
         },
         {
           "id": "dogfood-promotion",
           "script": "dogfood:promotion",
-          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
-          "purpose": "Compose target config, central dogfood inputs, self-dogfood replay, private workspace parsing, required ready-mode model price coverage, and preflight into one final pre-traffic go/no-go packet.",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+          "purpose": "Compose target config, central dogfood inputs, self-dogfood replay, required ready-mode private workspace parsing, model price coverage, and preflight into one final pre-traffic go/no-go packet.",
           "doc": "docs/dogfood-promotion.md",
-          "privateInputs": "Reads operator-owned private workspace files and the private runtime environment when preflight is included.",
+          "privateInputs": "Reads operator-owned private workspace files, reviewed model price files, and the private runtime environment when preflight is included.",
           "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
         },
         {
           "id": "dogfood-go-live",
           "script": "dogfood:go-live",
-          "args": "-- -- --operator-workspace <private-workspace-dir> --strict-preflight --require-ready",
-          "purpose": "Cross-check release-candidate, dogfood promotion, production cutover, required ready-mode model price coverage, operator workspace evidence, and baseline provider/IAM dogfood status evidence before command-only live dogfood traffic.",
+          "args": "-- -- --operator-workspace <private-workspace-dir> --model-price-file <reviewed-model-price-file.json> --strict-preflight --require-ready",
+          "purpose": "Cross-check release-candidate, dogfood promotion, production cutover, required ready-mode operator workspace and model price coverage, and baseline provider/IAM dogfood status evidence before command-only live dogfood traffic.",
           "doc": "docs/dogfood-go-live.md",
-          "privateInputs": "Reads operator-owned private workspace files and private runtime preflight settings.",
+          "privateInputs": "Reads operator-owned private workspace files, reviewed model price files, and private runtime preflight settings.",
           "publicOutput": "Designed to be public-safe after reviewing preflight diagnostics; use npm --silent run when private paths are in the command."
         },
         {

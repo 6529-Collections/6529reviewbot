@@ -6276,3 +6276,31 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     dogfood ready-mode model price requirement exercised.
+- Merged `6529reviewbot` PR #328 as `4ac3427`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/dogfood-ready-operator-workspace-required` increment:
+  - require `dogfood:promotion --require-ready` and
+    `dogfood:go-live --require-ready` to include `--operator-workspace` at CLI
+    parse time;
+  - preserve separate fail-fast errors for missing strict preflight, missing
+    operator workspace, and missing reviewed model price file;
+  - update ready-mode docs, release operations map, roadmap, changelog,
+    focused contracts, smoke tests, and durable manager memory.
+- Local validation for `codex/dogfood-ready-operator-workspace-required`:
+  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
+    and 7 docs checked;
+  - `npm run check:dogfood-go-live` passed with 5 CLI cases, 5 packet cases,
+    and 7 docs checked;
+  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
+    and 7 docs checked;
+  - `npm test` passed;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #328,
+    and 5 docs checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    dogfood ready-mode operator workspace requirement exercised.
