@@ -39,6 +39,12 @@ npm run production:cutover -- -- --status-file <private-workspace-dir>/productio
 npm run operator:evidence -- -- --file <private-workspace-dir>/operator-evidence.json --summary
 ```
 
+Audit the reviewed model price file before relying on local cost estimates:
+
+```bash
+npm run model-prices -- -- --file <reviewed-model-price-file.json> --require-catalog-coverage
+```
+
 Review the production deployment handoff against the same workspace before
 running live App, registry, runtime, cutover, or dogfood actions:
 

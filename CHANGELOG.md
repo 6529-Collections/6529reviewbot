@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added the model price catalog coverage audit to generated operator
+  workspace guidance.
 - Added a model price catalog coverage audit so operator-owned price files can
   be checked against configured default lanes before relying on estimates.
 - Added production deployment, dashboard deployment, and alert delivery
