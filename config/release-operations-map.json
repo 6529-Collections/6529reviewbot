@@ -488,7 +488,7 @@
         {
           "id": "release-candidate-contract",
           "script": "check:release-candidate",
-          "purpose": "Verify release-candidate bundle redaction, private workspace path markers, operator evidence section summaries, CLI flags, source invariants, and public release docs stay synchronized.",
+          "purpose": "Verify release-candidate bundle redaction, private workspace path markers, community-release status summaries, operator evidence section summaries, CLI flags, source invariants, and public release docs stay synchronized.",
           "doc": "docs/release-candidate.md",
           "publicOutput": "Safe."
         },

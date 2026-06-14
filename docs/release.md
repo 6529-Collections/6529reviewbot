@@ -329,7 +329,7 @@ After stabilization:
   redaction, and docs
 - `npm run check:release-candidate` confirms the public-safe
   release-candidate bundle contract stays synchronized with redaction,
-  workspace path markers, CLI defaults, and docs
+  workspace path markers, community-release status, CLI defaults, and docs
 - `npm run github-app:manifest -- -- --host <production-bot-origin> --quiet`
 - `npm run check:github-app-manifest` confirms the GitHub App manifest
   contract stays synchronized with target App permissions/events, the

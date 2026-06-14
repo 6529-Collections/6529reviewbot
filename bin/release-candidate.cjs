@@ -17,6 +17,8 @@ function main(argv = process.argv.slice(2), options = {}) {
     ...options,
     gateStatusFile: args.gateStatusFile,
     gatesFile: args.gatesFile,
+    communityGatesFile: args.communityGatesFile,
+    communityGateStatusFile: args.communityGateStatusFile,
     cutoverChecklistFile: args.cutoverChecklistFile,
     cutoverStatusFile: args.cutoverStatusFile,
     dogfoodChecklistFile: args.dogfoodChecklistFile,
@@ -49,6 +51,8 @@ function parseArgs(argv) {
   const result = {
     gateStatusFile: "",
     gatesFile: "config/v0-release-gates.json",
+    communityGatesFile: "config/community-release-gates.json",
+    communityGateStatusFile: "",
     cutoverChecklistFile: "config/production-cutover-checklist.json",
     cutoverStatusFile: "",
     dogfoodChecklistFile: "config/dogfood-checklist.json",
@@ -97,6 +101,16 @@ function parseArgs(argv) {
     }
     if (arg === "--status-file" || arg === "--gate-status-file") {
       result.gateStatusFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--community-gate-file" || arg === "--community-gates-file") {
+      result.communityGatesFile = requiredValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--community-status-file" || arg === "--community-gate-status-file") {
+      result.communityGateStatusFile = requiredValue(argv, index, arg);
       index += 1;
       continue;
     }
@@ -168,6 +182,9 @@ function applyOperatorWorkspaceDefaults(args) {
     ...args,
     gateStatusFile:
       args.gateStatusFile || path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.releaseGateStatus),
+    communityGateStatusFile:
+      args.communityGateStatusFile ||
+      path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.communityReleaseStatus),
     operatorEvidenceFile:
       args.operatorEvidenceFile === "config/production-evidence.example.json"
         ? path.join(directory, DEFAULT_OPERATOR_WORKSPACE_FILES.operatorEvidence)
@@ -204,6 +221,7 @@ Usage:
   npm run release:candidate
   npm run release:candidate -- -- --json
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file>
+  npm run release:candidate -- -- --status-file <operator-status-file> --community-status-file <operator-community-status-file> --operator-evidence-file <private-evidence-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file>
   npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --cutover-status-file <operator-cutover-status-file>
@@ -214,6 +232,8 @@ Usage:
 Options:
   --gate-file <path>              Release gates JSON file. Default: config/v0-release-gates.json
   --status-file <path>            Optional release gate status/evidence JSON file.
+  --community-gate-file <path>    Community release gates JSON file. Default: config/community-release-gates.json
+  --community-status-file <path>  Optional community release gate status/evidence JSON file.
   --operator-evidence-file <path> Operator evidence JSON file. Default: config/production-evidence.example.json
   --operator-workspace <path>     Use standard private workspace files from npm run operator:workspace.
   --dogfood-file <path>            Dogfood checklist JSON file. Default: config/dogfood-checklist.json

@@ -517,6 +517,7 @@ preflight:
 ```bash
 npm run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight
 npm --silent run release:candidate -- -- --operator-workspace <private-workspace-dir> --strict-preflight --out <public-bundle-file.md> --quiet
+npm run release:candidate -- -- --status-file <operator-status-file> --community-status-file <operator-community-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --strict-preflight
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --dogfood-status-file <operator-dogfood-status-file> --strict-preflight
 npm run release:candidate -- -- --status-file <operator-status-file> --operator-evidence-file <private-evidence-file> --security-review-status-file <operator-security-status-file> --strict-preflight
