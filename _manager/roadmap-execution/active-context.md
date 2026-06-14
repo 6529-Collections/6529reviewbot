@@ -592,32 +592,34 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Alert delivery-plan operator evidence PR: merged as PR #315, merge commit `742deff`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/dashboard-deployment-operator-evidence`.
-- Current local changes: add a dedicated `dashboard-deployment-plan` section to
+- Dashboard deployment-plan operator evidence PR: merged as PR #316, merge commit `ab476aa`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-tag-plan-operator-evidence`.
+- Current local changes: add a dedicated `release-tag-plan` section to
   structured operator evidence, update the public example and operator
   template, surface it in release-candidate summaries, and keep the
-  operator-evidence, release-candidate, dashboard-plan, and release-operations
-  contracts checking the new section.
+  operator-evidence, release-candidate, release-tag-plan, and
+  release-operations contracts checking the new section.
 - Current local validation:
-  - `gh run watch 27498424041 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #315 post-merge CI;
-  - `gh run watch 27498424066 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #315 post-merge OpenSSF Scorecard;
+  - `gh run watch 27498604723 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge CI;
+  - `gh run watch 27498604727 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #316 post-merge OpenSSF Scorecard;
   - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
     cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
     cases, and 5 docs checked;
-  - `npm run check:dashboard-deployment-plan` passed with 7 plan cases and 7 docs
+  - `npm run check:release-tag-plan` passed with 11 plan cases and 6 docs
     checked;
   - `npm test` passed;
   - `npm run check:release-operations` passed with 7 phases and 115 tools;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #315, and
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #316, and
     5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
-    dashboard deployment-plan operator evidence section exercised.
+    release tag-plan operator evidence section exercised.
 
 ## Key Decisions
 
@@ -1162,7 +1164,9 @@ merged PRs.
   gone.
 - Release tag planning is intentionally dry-run only: the guard can fail on
   dirty or unsynced `main` and unfinished notes, but the operator still creates
-  the annotated tag and GitHub Release explicitly.
+  the annotated tag and GitHub Release explicitly. The reviewed handoff is a
+  first-class `release-tag-plan` operator evidence section, separate from the
+  final `release-decision` approval/deferral record.
 - Container publish planning is intentionally dry-run only: the guard can fail
   on dirty or unsynced `main` and container-image contract drift, but the
   operator still builds, pushes, scans, and records image evidence explicitly.

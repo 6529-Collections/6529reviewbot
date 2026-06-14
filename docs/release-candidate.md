@@ -180,5 +180,5 @@ invariants, and the public docs synchronized.
 - redacted operator evidence sections, including the container publish,
   production deployment plan, worker dispatch credential, alert delivery plan,
   dashboard deployment plan, public dashboard disclosure, and private admin
-  auth evidence sections when present;
+  auth evidence sections, plus release tag plan evidence when present;
 - the follow-up release commands the operator should run.

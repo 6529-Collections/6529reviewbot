@@ -16,6 +16,8 @@ It checks:
 - the exact tag and GitHub Release steps the operator should run.
 
 It does not create tags or GitHub Releases.
+Record the rendered ready plan in the private release-tag-plan operator
+evidence section before creating a tag or GitHub Release.
 
 ## Commands
 

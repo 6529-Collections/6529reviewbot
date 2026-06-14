@@ -463,6 +463,7 @@ function checkDocs(docTexts, findings) {
       "Git ref-safe",
       "local tag",
       "remote tag",
+      "release-tag-plan operator evidence",
       "release notes title",
       "release-note warnings",
       "does not create tags",

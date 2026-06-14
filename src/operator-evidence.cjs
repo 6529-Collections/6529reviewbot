@@ -22,6 +22,7 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "6529-io-public-disclosure", title: "6529.io Public Dashboard Disclosure" },
   { id: "6529-io-private-admin-auth", title: "6529.io Private Admin Auth" },
   { id: "dogfood-evidence", title: "Dogfood Evidence" },
+  { id: "release-tag-plan", title: "Release Tag Plan" },
   { id: "release-decision", title: "Release Decision" },
 ];
 
