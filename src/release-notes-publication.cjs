@@ -275,7 +275,9 @@ function checkRecommendedText(text, warnings) {
     "budget mode is `enforce`",
     "run-control mode is `enforce`",
     "provider keys and AWS credentials live only in bot-owned infrastructure",
+    "target repo configuration is loaded from the base ref",
     "reviewed alert delivery plan evidence",
+    "route to an operator-owned channel",
     "Pin target repositories to an exact tag or commit SHA",
     "Set `REVIEWBOT_ENABLED=false`",
   ]) {

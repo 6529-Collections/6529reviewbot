@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Expanded release notes publication recommendation warnings for base-ref target
+  config and operator-owned alert routing safety language.
 - Added run-control enforcement to release notes publication recommendation
   warnings.
 - Hardened release notes publication checks for accepted model-price override

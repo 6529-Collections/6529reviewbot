@@ -491,9 +491,12 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes model-price override disclosure PR: merged as PR #265, merge commit `5236a24`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-notes-run-control-warning`.
-- Current local changes: adding run-control enforcement to release notes
-  publication recommendation warnings and the complete publication fixture.
+- Release notes run-control warning PR: merged as PR #266, merge commit `fd30d49`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-notes-safety-warning-coverage`.
+- Current local changes: expanding release notes publication recommendation
+  warnings for base-ref target config and operator-owned alert routing safety
+  language.
 - Current local validation:
   - `npm run check:release-notes-publication` passed with 9 publication cases
     and 7 docs checked;
@@ -501,12 +504,12 @@ merged PRs.
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 176 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #265,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #266,
     and 5 docs checked;
   - `npm test` passed;
   - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 176 CommonJS files checked and the
-    9-case release notes publication contract exercised.
+    expanded release notes safety warning coverage exercised.
 
 ## Key Decisions
 
