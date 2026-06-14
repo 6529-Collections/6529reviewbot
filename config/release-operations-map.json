@@ -80,6 +80,13 @@
           "publicOutput": "Safe."
         },
         {
+          "id": "compatibility-policy-contract",
+          "script": "check:compatibility-policy",
+          "purpose": "Verify the pre-v1 compatibility policy, release notes, release process, reusable workflow guidance, and public docs stay synchronized.",
+          "doc": "docs/compatibility-policy.md",
+          "publicOutput": "Safe."
+        },
+        {
           "id": "operations-runbook-contract",
           "script": "check:operations-runbook",
           "purpose": "Verify the operations runbook keeps routine checks and triage paths for replay, spend, ledgers, workers, dashboards, and bot comments synchronized.",

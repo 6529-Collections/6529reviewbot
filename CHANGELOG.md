@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added a checked compatibility policy for pre-v1 compatibility-sensitive
+  surfaces, breaking-change release notes, exact tag/commit pinning, and the
+  future v1 stable API promise.
 - Synced release readiness and roadmap evidence summaries with the full
   runtime, dispatch, dashboard, admin auth, and alert evidence set enforced by
   release notes.

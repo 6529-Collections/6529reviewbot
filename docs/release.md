@@ -375,6 +375,9 @@ After stabilization:
 
 ## Breaking Changes
 
+Use [Compatibility Policy](compatibility-policy.md) as the canonical pre-v1
+compatibility surface and breaking-change rule.
+
 Treat these as breaking:
 
 - changing hidden metadata format;

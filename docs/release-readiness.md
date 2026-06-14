@@ -330,6 +330,9 @@ Ready for community review:
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's
   vague or failed validation evidence checks in the public command inventory;
+- checked compatibility policy for pre-v1 compatibility-sensitive surfaces,
+  breaking-change release notes, exact tag/commit pinning, and the future v1
+  stable API promise;
 - structured operator evidence validation and redacted public-summary rendering
   for production deployment proof kept outside the public repo;
 - PR and security-review templates that call out API contracts, admin/private
