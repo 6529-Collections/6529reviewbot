@@ -531,25 +531,25 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Release notes dashboard/admin evidence PR: merged as PR #285, merge commit `4b3f48c`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/operator-evidence-dashboard-auth-sections`.
-- Current local changes: add first-class operator evidence sections for public
-  dashboard disclosure allowlists and private admin auth-check/wallet allowlist
-  evidence while keeping the existing 6529.io surfaces deployment bucket.
+- Operator evidence dashboard/admin sections PR: merged as PR #286, merge commit `85b805d`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/release-candidate-dashboard-evidence-sections`.
+- Current local changes: pin release-candidate contract coverage and docs so
+  public bundles surface the public dashboard disclosure and private admin
+  auth operator evidence sections when present.
 - Current local validation:
-  - `npm run check:operator-evidence` passed with 3 CLI cases,
-    6 evidence cases, and 6 docs checked;
   - `npm run check:release-candidate` passed with 7 redaction cases,
     3 path cases, and 5 docs checked;
-  - `npm test` passed;
   - `npm run check:docs` passed with 73 files checked;
-  - `npm run check:doc-index` passed with 59 docs indexed;
   - `npm run check:public-artifacts` passed with 116 files checked;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #285,
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #286,
     and 5 docs checked;
   - `git diff --check` passed;
   - `npm run check` passed with 178 CommonJS files;
+  - `npm test` passed;
   - `npm run release:check` passed with 178 CommonJS files checked and the
-    new operator evidence dashboard/admin sections exercised.
+    release-candidate dashboard/admin evidence section coverage exercised.
 
 ## Key Decisions
 

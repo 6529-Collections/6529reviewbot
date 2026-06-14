@@ -222,6 +222,20 @@ function checkMarkdownOutput(findings) {
             notes: "token ghp_abcdefghijklmnopqrstuvwxyz1234567890",
             evidence: ["arn:aws:rds:us-east-1:123456789012:cluster:reviewbot"],
           },
+          {
+            id: "6529-io-public-disclosure",
+            status: "complete",
+            title: "6529.io Public Dashboard Disclosure",
+            notes: "reviewed public repo/org disclosure allowlists",
+            evidence: ["public summaries limited to reviewed allowlists"],
+          },
+          {
+            id: "6529-io-private-admin-auth",
+            status: "complete",
+            title: "6529.io Private Admin Auth",
+            notes: "auth-check URL and wallet allowlist evidence reviewed",
+            evidence: ["private admin route blocked without 6529.io auth"],
+          },
         ],
       },
     },
@@ -252,6 +266,10 @@ function checkMarkdownOutput(findings) {
     "arn:aws:[redacted]",
     "[redacted-aws-account-id]",
     "[redacted-github-token]",
+    "6529-io-public-disclosure",
+    "reviewed public repo/org disclosure allowlists",
+    "6529-io-private-admin-auth",
+    "auth-check URL and wallet allowlist evidence reviewed",
   ]) {
     if (!markdown.includes(expected)) {
       findings.push(`release candidate markdown must include '${expected}'.`);
