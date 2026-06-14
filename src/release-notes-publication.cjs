@@ -319,7 +319,7 @@ function sectionText(text, startHeading, endHeading) {
 }
 
 function fieldValue(section, label) {
-  const match = section.match(new RegExp(`^\\s*-?\\s*${escapeRegExp(label)}\\s*(.*)$`, "m"));
+  const match = section.match(new RegExp(`^[ \\t]*-?[ \\t]*${escapeRegExp(label)}[ \\t]*(.*)$`, "m"));
   return match ? match[1].trim() : "";
 }
 

@@ -291,6 +291,9 @@ Ready for community review:
   before scheduled operator alerts satisfy the tag checklist;
 - release notes template, draft, and publication checks carry the same
   reviewed alert delivery plan evidence requirement as the v0 alerts gate;
+- release notes publication checks explicitly reject missing community-release
+  status evidence before a tag, GitHub Release, or broad community-use
+  publication can pass;
 - release notes publication checks reject failed, pending, blocked, not-ready,
   or negated readiness validation evidence unless the release notes explicitly
   describe the accepted deferral or dogfood-only exception;
@@ -443,7 +446,7 @@ status, alert evidence, TODO markers, redaction, CLI flags, operations map
 entries, and docs.
 `npm run check:release-notes-publication` is included in
 `npm run release:check` and keeps the completed release notes publication
-guard aligned with required community-release and other evidence fields,
+guard aligned with required community-release status and other evidence fields,
 deferral handling, public-safety redaction, CLI flags, operations map entries,
 and docs. Run
 `npm run release:notes:check -- -- --file <release-notes.md>` on completed

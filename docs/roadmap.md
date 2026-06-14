@@ -611,6 +611,9 @@ Completed in `6529reviewbot`:
 - release notes template, draft, and publication checks now carry the same
   reviewed runtime, dashboard, admin auth, and alert evidence requirements as
   the v0 release gates.
+- release notes publication checks now explicitly reject missing
+  community-release status evidence before a tag, GitHub Release, or broad
+  community-use publication can pass.
 - release notes publication checks now reject failed, pending, blocked,
   not-ready, or negated readiness validation evidence unless the release notes
   explicitly describe the accepted deferral or dogfood-only exception.

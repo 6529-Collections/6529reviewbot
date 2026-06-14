@@ -39,6 +39,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   const docTexts = options.docTexts || {};
 
   checkCompleteNotes(findings);
+  checkMissingCommunityReleaseStatusRejected(findings);
   checkTitleRefSafety(findings);
   checkDraftRejected(findings);
   checkSensitiveTextRejected(findings);
@@ -61,7 +62,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 10,
+    publicationCases: 11,
     docs: targetDocs.length,
   };
 }
@@ -89,6 +90,25 @@ function checkTitleRefSafety(findings) {
   }
   if (!report.errors.some((error) => error.includes("Git ref-safe"))) {
     findings.push("Git-ref-unsafe release notes title rejection must explain the ref-safety issue.");
+  }
+}
+
+function checkMissingCommunityReleaseStatusRejected(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "Community release status: ready or explicitly deferred for dogfood-only release",
+      "Community release status:"
+    )
+  );
+  if (report.ready) {
+    findings.push("release notes publication check must reject missing community-release status evidence.");
+  }
+  if (
+    !report.errors.some((error) =>
+      error.includes("Community release status:") && error.includes("must be filled")
+    )
+  ) {
+    findings.push("missing community-release status rejection must identify the required field.");
   }
 }
 
