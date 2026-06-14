@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Strengthened the model pricing runbook contract to pin catalog coverage
+  section ordering and guidance.
 - Aligned release evidence, deployment, and cutover dogfood gate commands with
   reviewed model price file coverage.
 - Added reviewed model price file flags to generated operator drill and
