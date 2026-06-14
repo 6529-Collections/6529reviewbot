@@ -98,8 +98,8 @@ function helpText() {
   return `Render the reviewed 6529bot GitHub App manifest.
 
 Usage:
-  npm run github-app:manifest -- -- --host https://reviewbot.example.com
-  npm run github-app:manifest -- -- --host https://reviewbot.example.com --form --owner 6529-Collections
+  npm run github-app:manifest -- -- --host <production-bot-origin>
+  npm run github-app:manifest -- -- --host <production-bot-origin> --form --owner 6529-Collections
 
 Options:
   --host <url>       Production HTTPS origin for the App server.

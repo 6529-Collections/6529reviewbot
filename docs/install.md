@@ -43,16 +43,19 @@ secret store only.
 Validate the rendered manifest:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host <production-bot-origin> --quiet
 npm run check:github-app-manifest
 npm run check:github-app-auth
 npm run check:github-app-routes
 ```
 
+The manifest renderer rejects documentation, example, local, or reserved hosts
+such as `reviewbot.example.com`; use the actual production App server origin.
+
 When using GitHub's manifest flow, render a local registration form:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com \
+npm run github-app:manifest -- -- --host <production-bot-origin> \
   --form \
   --owner 6529-Collections \
   --state <unguessable-state>

@@ -2986,12 +2986,12 @@ try {
   fs.rmSync(releaseOperationsDocFixture, { force: true });
 }
 const renderedGitHubAppManifest = githubAppManifest.renderGitHubAppManifest({
-  host: "https://reviewbot.example.com/",
+  host: "https://reviewbot.6529.io/",
 });
 assert.equal(renderedGitHubAppManifest.name, "6529bot");
 assert.equal(
   renderedGitHubAppManifest.hook_attributes.url,
-  "https://reviewbot.example.com/webhooks/github"
+  "https://reviewbot.6529.io/webhooks/github"
 );
 assert.equal(renderedGitHubAppManifest.default_permissions.members, "read");
 assert(renderedGitHubAppManifest.default_events.includes("pull_request"));
@@ -3002,6 +3002,10 @@ assert.throws(
 assert.throws(
   () => githubAppManifest.renderGitHubAppManifest({ host: "https://reviewbot.example.com/path" }),
   /must not include a path/
+);
+assert.throws(
+  () => githubAppManifest.renderGitHubAppManifest({ host: "https://reviewbot.example.com" }),
+  /must not use documentation, example, local, or reserved hosts/
 );
 const githubAppManifestForm = githubAppManifest.renderGitHubAppRegistrationForm({
   manifest: renderedGitHubAppManifest,
@@ -3014,7 +3018,7 @@ assert.match(githubAppManifestForm, /&quot;name&quot;:&quot;6529bot&quot;/);
 assert.deepEqual(
   githubAppManifestCli.parseArgs([
     "--host",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--form",
     "--owner",
     "6529-Collections",
@@ -3023,7 +3027,7 @@ assert.deepEqual(
   ]),
   {
     form: true,
-    host: "https://reviewbot.example.com",
+    host: "https://reviewbot.6529.io",
     name: "",
     owner: "6529-Collections",
     quiet: false,
@@ -5411,7 +5415,7 @@ appServer.handleGitHubWebhook({
   );
   const githubAppManifestContractResult =
     await githubAppManifestContractCheck.checkGitHubAppManifestContract();
-  assert.equal(githubAppManifestContractResult.manifestCases, 6);
+  assert.equal(githubAppManifestContractResult.manifestCases, 7);
   assert.equal(githubAppManifestContractResult.conversionCases, 6);
   await assert.rejects(
     () =>

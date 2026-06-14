@@ -55,7 +55,7 @@ async function checkGitHubAppManifestContract(options = {}) {
   }
 
   return {
-    manifestCases: 6,
+    manifestCases: 7,
     conversionCases: 6,
     docs: targetDocs.length,
   };
@@ -64,7 +64,7 @@ async function checkGitHubAppManifestContract(options = {}) {
 function checkManifestCliContract(findings) {
   const parsed = githubAppManifestCli.parseArgs([
     "--host",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--template",
     "templates/github-app-manifest.example.json",
     "--name",
@@ -79,7 +79,7 @@ function checkManifestCliContract(findings) {
   if (
     !objectsEqual(parsed, {
       form: true,
-      host: "https://reviewbot.example.com",
+      host: "https://reviewbot.6529.io",
       name: "6529bot-review",
       owner: "6529-Collections",
       quiet: true,
@@ -127,18 +127,18 @@ function checkManifestContract(findings) {
   }
 
   const rendered = githubAppManifest.renderGitHubAppManifest({
-    host: "https://reviewbot.example.com/",
+    host: "https://reviewbot.6529.io/",
   });
-  if (rendered.hook_attributes.url !== "https://reviewbot.example.com/webhooks/github") {
+  if (rendered.hook_attributes.url !== "https://reviewbot.6529.io/webhooks/github") {
     findings.push("GitHub App manifest hook URL did not render from the host.");
   }
-  if (rendered.redirect_url !== "https://reviewbot.example.com/github-app/manifest-complete") {
+  if (rendered.redirect_url !== "https://reviewbot.6529.io/github-app/manifest-complete") {
     findings.push("GitHub App manifest redirect URL did not render from the host.");
   }
-  if (!rendered.callback_urls.includes("https://reviewbot.example.com/github-app/callback")) {
+  if (!rendered.callback_urls.includes("https://reviewbot.6529.io/github-app/callback")) {
     findings.push("GitHub App manifest callback URL did not render from the host.");
   }
-  if (rendered.setup_url !== "https://reviewbot.example.com/github-app/setup") {
+  if (rendered.setup_url !== "https://reviewbot.6529.io/github-app/setup") {
     findings.push("GitHub App manifest setup URL did not render from the host.");
   }
   if (JSON.stringify(rendered).includes("<bot-host>")) {
@@ -153,6 +153,16 @@ function checkManifestContract(findings) {
   expectError(
     () => githubAppManifest.renderGitHubAppManifest({ host: "https://reviewbot.example.com/path" }),
     "--host must not include a path, query, or fragment.",
+    findings
+  );
+  expectError(
+    () => githubAppManifest.renderGitHubAppManifest({ host: "https://reviewbot.example.com" }),
+    "--host must not use documentation, example, local, or reserved hosts.",
+    findings
+  );
+  expectError(
+    () => githubAppManifest.renderGitHubAppManifest({ host: "https://localhost" }),
+    "--host must not use documentation, example, local, or reserved hosts.",
     findings
   );
 
@@ -385,9 +395,11 @@ function checkSourceInvariants(sourceTexts, findings) {
   for (const snippet of [
     "REQUIRED_DEFAULT_PERMISSIONS",
     "REQUIRED_DEFAULT_EVENTS",
+    "isPlaceholderOrigin",
     "default_permissions.actions must be omitted",
     "dispatch-only App for Actions write",
     "manifestContainsPlaceholder(manifest, \"<bot-host>\")",
+    "isPlaceholderOrigin",
   ]) {
     if (!manifestText.includes(snippet)) {
       findings.push(`${manifestPath} must include '${snippet}'.`);
@@ -432,15 +444,20 @@ function checkDocs(docTexts, findings) {
     "docs/github-app-registration.md": [
       "npm run check:github-app-manifest",
       "GitHub App manifest contract check",
+      "documentation, example, local, or reserved hosts",
       "Actions: write",
     ],
     "docs/github-app.md": [
       "npm run check:github-app-manifest",
+      "documentation, example, local, or reserved hosts",
       "dispatch-only App",
       "Actions: write",
     ],
     "docs/deployment.md": ["npm run check:github-app-manifest"],
-    "docs/install.md": ["npm run check:github-app-manifest"],
+    "docs/install.md": [
+      "npm run check:github-app-manifest",
+      "documentation, example, local, or reserved hosts",
+    ],
     "docs/release-operations-map.md": ["npm run check:github-app-manifest"],
     "docs/release.md": [
       "npm run check:github-app-manifest",

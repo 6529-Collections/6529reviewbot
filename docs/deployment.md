@@ -59,7 +59,7 @@ store, not committed back to the public repository.
 Render and validate the manifest before registration:
 
 ```bash
-npm run github-app:manifest -- -- --host https://reviewbot.example.com --quiet
+npm run github-app:manifest -- -- --host <production-bot-origin> --quiet
 npm run check:github-app-manifest
 ```
 

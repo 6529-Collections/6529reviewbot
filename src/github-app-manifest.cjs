@@ -3,6 +3,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { isPlaceholderOrigin } = require("./placeholder-hosts.cjs");
 
 const DEFAULT_GITHUB_APP_MANIFEST_TEMPLATE_PATH = path.resolve(
   __dirname,
@@ -124,6 +125,9 @@ function normalizeManifestHost(host) {
   }
   if (url.pathname !== "/" || url.search || url.hash) {
     throw new Error("--host must not include a path, query, or fragment.");
+  }
+  if (isPlaceholderOrigin(url.origin)) {
+    throw new Error("--host must not use documentation, example, local, or reserved hosts.");
   }
   return url.toString().replace(/\/$/, "");
 }

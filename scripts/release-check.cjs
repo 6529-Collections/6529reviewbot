@@ -239,7 +239,7 @@ runNode("bin/v0-gates.cjs", [
   "--json",
   "--quiet",
 ]);
-runNode("bin/render-github-app-manifest.cjs", ["--host", "https://reviewbot.example.com", "--quiet"]);
+runNode("bin/render-github-app-manifest.cjs", ["--host", "https://reviewbot.6529.io", "--quiet"]);
 runNode("bin/validate-repository-config.cjs", repoConfigTemplates);
 parseJsonDirectories(["infra/aws", "templates"]);
 parseYamlDirectories(["templates", ".github/workflows"]);
