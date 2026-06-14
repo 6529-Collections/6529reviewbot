@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added direct behavior fixtures for all 9 public renderer redaction entry
+  points so release, dogfood, operator, cutover, gate, and manifest summaries
+  prove shared token and AWS redaction at runtime.
 - Centralized public release, dogfood, and operator renderer redaction on the
   shared diagnostics helper so AWS and token redaction semantics cannot drift
   across local public-output regex tables.

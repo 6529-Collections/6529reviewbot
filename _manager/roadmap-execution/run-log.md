@@ -6575,3 +6575,27 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and shared
     public-renderer redaction coverage exercised.
+- Merged `6529reviewbot` PR #339 as `4da9d61`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/public-renderer-redaction-fixtures` increment:
+  - export the remaining internal public redaction helper entry points;
+  - add direct behavior fixtures in the diagnostics redaction contract for all
+    9 public renderers, proving shared bearer, GitHub token, provider key, AWS
+    ARN, and AWS account-id redaction at runtime;
+  - update smoke coverage, changelog, and durable manager memory.
+- Local validation for `codex/public-renderer-redaction-fixtures` so far:
+  - `gh run watch 27506197871 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge CI;
+  - `gh run watch 27506197853 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge OpenSSF Scorecard;
+  - `npm run check:diagnostics-redaction` passed with 10 fixtures, 9 public
+    renderers, 9 renderer behavior cases, and 6 docs checked;
+  - `npm test` passed after asserting the 9 public renderer behavior cases in
+    smoke coverage;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #339, and
+    5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    public renderer redaction behavior fixtures exercised.

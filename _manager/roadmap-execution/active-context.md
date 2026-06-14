@@ -657,48 +657,31 @@ merged PRs.
 - Shared AWS diagnostic redaction PR: merged as PR #338, merge commit `96b64e7`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `96b64e7`.
-- Current branch: `codex/centralize-public-redaction`.
-- Current local changes: remove duplicate AWS public-output redaction regex
-  tables from dogfood promotion, dogfood readiness, dogfood target, GitHub App
-  manifest conversion, operator evidence, operator workspace, production
-  cutover, release candidate, and release gates renderers; tie those public
-  renderers to the shared diagnostics helper through the diagnostics redaction
-  contract; update release docs, changelog, and durable manager memory.
+- Public renderer redaction centralization PR: merged as PR #339, merge commit `4da9d61`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `4da9d61`.
+- Current branch: `codex/public-renderer-redaction-fixtures`.
+- Current local changes: export the remaining internal public redaction helper
+  entry points and add direct behavior fixtures in the diagnostics redaction
+  contract for all 9 public renderers, proving shared bearer, GitHub token,
+  provider key, AWS ARN, and AWS account-id redaction at runtime; update smoke
+  coverage, changelog, and durable manager memory.
 - Current local validation:
-  - `gh run watch 27505655110 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge CI;
-  - `gh run watch 27505655115 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #338 post-merge OpenSSF Scorecard;
+  - `gh run watch 27506197871 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge CI;
+  - `gh run watch 27506197853 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #339 post-merge OpenSSF Scorecard;
   - `npm run check:diagnostics-redaction` passed with 10 fixtures, 9 public
-    renderers, and 6 docs checked;
-  - `npm run check:dogfood-target` passed with 3 CLI cases, 4 packet cases,
-    and 6 docs checked;
-  - `npm run check:dogfood-readiness` passed with 4 CLI cases, 4 report cases,
-    and 7 docs checked;
-  - `npm run check:dogfood-promotion` passed with 5 CLI cases, 5 packet cases,
-    and 7 docs checked;
-  - `npm run check:github-app-manifest` passed with 7 manifest cases, 6
-    conversion cases, and 7 docs checked;
-  - `npm run check:operator-evidence` passed with 3 CLI cases, 6 evidence
-    cases, and 7 docs checked;
-  - `npm run check:operator-workspace` passed with 4 CLI cases, 4 workspace
-    cases, and 6 docs checked;
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
-    cases, and 6 docs checked;
-  - `npm run check:release-candidate` passed with 7 redaction cases, 3 path
-    cases, and 5 docs checked;
-  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
-    docs checked;
-  - `rg -n ("PUBLIC_REDACTION_" + "PATTERNS") src scripts docs README.md _manager -g "*.cjs" -g "*.md"` found only the diagnostics guard that forbids local public redaction tables;
-  - `npm test` passed after asserting 9 public renderers in the diagnostics
-    redaction smoke path;
+    renderers, 9 renderer behavior cases, and 6 docs checked;
+  - `npm test` passed after asserting the 9 public renderer behavior cases in
+    smoke coverage;
   - `npm run check:docs` passed with 76 files checked;
   - `npm run check:doc-index` passed with 62 docs indexed;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #338,
-    and 5 docs checked;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #339, and
+    5 docs checked;
   - `npm run check:public-artifacts` passed with 120 files checked;
   - `git diff --check` passed;
   - `npm run check` passed with 184 CommonJS files;
-  - `npm run release:check` passed with 184 CommonJS files checked and shared
-    public-renderer redaction coverage exercised.
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    public renderer redaction behavior fixtures exercised.
 
 ## Key Decisions
 

@@ -426,5 +426,6 @@ module.exports = {
   assertDogfoodPromotionReady,
   collectDogfoodPromotionPacket,
   formatDogfoodPromotionMarkdown,
+  publicText,
   runSelfDogfoodReplay,
 };
