@@ -14,6 +14,8 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "budget-and-pricing", title: "Budget And Pricing" },
   { id: "worker-and-alerts", title: "Worker And Alerts" },
   { id: "6529-io-surfaces", title: "6529.io Surfaces" },
+  { id: "6529-io-public-disclosure", title: "6529.io Public Dashboard Disclosure" },
+  { id: "6529-io-private-admin-auth", title: "6529.io Private Admin Auth" },
   { id: "dogfood-evidence", title: "Dogfood Evidence" },
   { id: "release-decision", title: "Release Decision" },
 ];

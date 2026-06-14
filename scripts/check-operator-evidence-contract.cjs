@@ -242,6 +242,8 @@ function checkSourceInvariants(sourceTexts, findings) {
     "[redacted-aws-account-id]",
     "status === \"complete\" && evidence.length === 0",
     "Deferred sections must be named in release notes",
+    "6529-io-public-disclosure",
+    "6529-io-private-admin-auth",
     "operator evidence is not ready",
     "replace(/\\r?\\n/g, \" \")",
   ]) {
@@ -271,6 +273,9 @@ function checkDocs(docTexts, findings) {
       "AWS account ids",
       "Alert delivery plan command",
       "Alert delivery plan reviewed",
+      "Reviewed public repo/org disclosure allowlists",
+      "Auth-check URL reviewed",
+      "Wallet allowlist evidence reviewed",
     ],
     "docs/release-readiness.md": ["operator evidence contract"],
     "docs/release-operations-map.md": ["npm run check:operator-evidence"],

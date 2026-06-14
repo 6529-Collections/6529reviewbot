@@ -44,6 +44,14 @@
       "status": "pending",
       "notes": "Render the dashboard deployment plan, then wire public and private 6529.io surfaces or explicitly defer them."
     },
+    "6529-io-public-disclosure": {
+      "status": "pending",
+      "notes": "Review public dashboard repo/org disclosure allowlists before exposing named summaries."
+    },
+    "6529-io-private-admin-auth": {
+      "status": "pending",
+      "notes": "Review the 6529.io auth-check URL, wallet allowlist evidence, and server-side HMAC bridge before exposing private admin dashboards."
+    },
     "dogfood-evidence": {
       "status": "pending",
       "notes": "Dogfood on at least one trusted 6529 repository with conservative limits."

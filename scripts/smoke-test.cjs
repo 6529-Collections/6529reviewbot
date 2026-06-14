@@ -2197,7 +2197,10 @@ assert.equal(productionEvidenceExample.release, "v0.1.0");
 assert.equal(productionEvidenceExample.sections.length, operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length);
 const productionEvidenceSummary = operatorEvidence.summarizeOperatorEvidence(productionEvidenceExample);
 assert.equal(productionEvidenceSummary.ready, false);
-assert.equal(productionEvidenceSummary.pending, 8);
+assert.equal(
+  productionEvidenceSummary.pending,
+  operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length - 1
+);
 assert.equal(productionEvidenceSummary.deferred, 1);
 assert.match(
   operatorEvidence.renderOperatorEvidenceSummaryMarkdown(productionEvidenceExample),
@@ -2329,7 +2332,10 @@ const operatorEvidenceSkeleton = operatorEvidence.createOperatorEvidenceSkeleton
   operator: "maintainer",
   privateEvidenceLocation: "private runbook",
 });
-assert.equal(operatorEvidence.summarizeOperatorEvidence(operatorEvidenceSkeleton).pending, 9);
+assert.equal(
+  operatorEvidence.summarizeOperatorEvidence(operatorEvidenceSkeleton).pending,
+  operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length
+);
 const operatorWorkspaceDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-operator-workspace-"));
 const workspace = operatorWorkspace.createOperatorWorkspace({
   commit: "abc123",
@@ -2342,7 +2348,10 @@ const workspace = operatorWorkspace.createOperatorWorkspace({
 });
 assert.equal(workspace.files.length, 6);
 assert.equal(workspace.summaries.releaseGates.pending, 20);
-assert.equal(workspace.summaries.operatorEvidence.pending, 9);
+assert.equal(
+  workspace.summaries.operatorEvidence.pending,
+  operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length
+);
 assert.equal(workspace.ready, false);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "v0-release-status.json")), true);
 assert.equal(fs.existsSync(path.join(operatorWorkspaceDir, "operator-evidence.json")), true);
@@ -2729,7 +2738,10 @@ assert.equal(candidateBundle.ready, false);
 assert.equal(candidateBundle.readiness.releaseGates.complete, 1);
 assert.equal(candidateBundle.readiness.releaseGates.deferred, 1);
 assert(candidateBundle.readiness.releaseGates.missingStatusIds.includes("container-image"));
-assert.equal(candidateBundle.readiness.operatorEvidence.pending, 8);
+assert.equal(
+  candidateBundle.readiness.operatorEvidence.pending,
+  operatorEvidence.OPERATOR_EVIDENCE_SECTIONS.length - 1
+);
 assert.equal(candidateBundle.readiness.preflight.ok, true);
 assert.equal(Object.prototype.hasOwnProperty.call(candidateBundle.readiness, "productionCutover"), false);
 assert.match(candidateBundle.git.branch, /sk-\[redacted\]/);

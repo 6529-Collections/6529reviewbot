@@ -50,7 +50,8 @@ After stabilization:
   dogfood-only or local-only
 - `npm run check:operator-evidence` confirms the operator evidence contract
   stays synchronized with section readiness, required evidence, deferral
-  semantics, public-summary redaction, and docs
+  semantics, public dashboard disclosure evidence, private admin auth
+  evidence, public-summary redaction, and docs
 - [GitHub App registration packet](github-app-registration.md) completed or
   explicitly deferred in the release notes
 - `npm run v0:gates -- -- --init-status <operator-status-file>` used when
