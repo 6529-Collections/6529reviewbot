@@ -15,6 +15,7 @@ const OPERATOR_EVIDENCE_SECTIONS = [
   { id: "production-deployment-plan", title: "Production Deployment Plan" },
   { id: "budget-and-pricing", title: "Budget And Pricing" },
   { id: "worker-dispatch-credentials", title: "Worker Dispatch Credentials" },
+  { id: "alert-delivery-plan", title: "Alert Delivery Plan" },
   { id: "worker-and-alerts", title: "Worker And Alerts" },
   { id: "6529-io-surfaces", title: "6529.io Surfaces" },
   { id: "6529-io-public-disclosure", title: "6529.io Public Dashboard Disclosure" },

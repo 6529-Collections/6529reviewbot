@@ -247,6 +247,13 @@ function checkMarkdownOutput(findings) {
             evidence: ["dispatch-only GitHub App preferred; fallback risk accepted if used"],
           },
           {
+            id: "alert-delivery-plan",
+            status: "complete",
+            title: "Alert Delivery Plan",
+            notes: "reviewed alert delivery plan evidence",
+            evidence: ["ready-mode alert handoff includes production bot origin, delivery mode, private workspace, and operator channel"],
+          },
+          {
             id: "6529-io-public-disclosure",
             status: "complete",
             title: "6529.io Public Dashboard Disclosure",
@@ -296,6 +303,8 @@ function checkMarkdownOutput(findings) {
     "reviewed production deployment plan evidence",
     "worker-dispatch-credentials",
     "dispatch credential posture reviewed before non-noop worker traffic",
+    "alert-delivery-plan",
+    "reviewed alert delivery plan evidence",
     "6529-io-public-disclosure",
     "reviewed public repo/org disclosure allowlists",
     "6529-io-private-admin-auth",
