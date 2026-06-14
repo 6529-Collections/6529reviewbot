@@ -4220,6 +4220,7 @@ const publicUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
 });
 assert.equal(publicUsageSummary.totals.reviewRuns, 2);
 assert.equal(publicUsageSummary.totals.costUsd, 2);
+assert.equal(publicUsageSummary.byDay[0].averageCostUsd, 1);
 assert.equal(publicUsageSummary.byRepo.some((item) => item.key === "private"), true);
 assert.equal(
   publicUsageSummary.byRepo.some((item) => item.key === "6529-Collections/public-repo"),
@@ -4279,6 +4280,11 @@ assert.equal(
   true
 );
 assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
+assert.equal(
+  adminUsageSummary.byPr.find((item) => item.key === "6529-Collections/public-repo#10")
+    .averageCostUsd,
+  1.25
+);
 const unsafeAdminUsageEvent = usageApi.normalizeAdminUsageEvent({
   createdAt: "2026-06-10T01:00:00.000Z",
   repoFullName: "6529-Collections/private",

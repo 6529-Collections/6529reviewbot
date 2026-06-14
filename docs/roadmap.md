@@ -20,6 +20,28 @@ The reusable workflow in this repository remains useful as a development and
 dogfood bridge, but the polished release should centralize secrets, budgets,
 provider routing, and AWS access outside target application repositories.
 
+## Current Dogfood Rollout
+
+As of the June 2026 production dogfood, `reviewbot.6529.io` is deployed as the
+central App endpoint. Real GitHub App webhook deliveries are returning `200`
+from production, repository config loading is enabled, and the dogfood target
+repos have `.github/6529bot.yml` on their default branches.
+
+Initial production admission is intentionally narrow:
+
+- PR author allowlist:
+  `punk6529,ragnep,gelatogenesis,simo6529,prxt6529`;
+- public and private repo modes require trusted actors;
+- the same five users are explicit trusted users for the dogfood window;
+- draft PRs are skipped.
+
+The remaining live-dispatch blocker is the GitHub App installation permission
+for central workflow dispatch. The installation token must show
+`actions: write`, and a workflow-dispatch permission probe should fail only on
+the deliberately fake ref, not with `Resource not accessible by integration`.
+Until that is true, keep the production worker adapter in `noop` and do not
+fall back to a personal token.
+
 ## Why Central Execution
 
 Central execution means the review job runs as the bot system rather than as
@@ -140,6 +162,8 @@ Recommended split:
     private bucket.
 - Private 6529.io admin page:
   - requester-level spend;
+  - PR-level spend, including total cost per PR and average cost per review run
+    on that PR;
   - private repo detail;
   - budget policies;
   - active model-price freshness and token-class coverage;
