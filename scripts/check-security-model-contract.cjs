@@ -165,6 +165,8 @@ const sourceExpectations = {
   "src/diagnostics.cjs": [
     "Bearer [redacted]",
     "[redacted-aws-access-key-id]",
+    "arn:aws:[redacted]",
+    "[redacted-aws-account-id]",
     "github_pat_[redacted]",
     "[redacted-alert-webhook-url]",
     "[redacted-private-key]",

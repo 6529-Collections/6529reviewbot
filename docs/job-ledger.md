@@ -244,7 +244,8 @@ them to private operator channels.
 The job ledger can contain private repo names, PR numbers, requestors, provider
 and model choices, and failure reasons. Job-event reasons and metadata strings
 redact common bearer, GitHub, provider-key, alert-webhook, AWS access-key id,
-and private-key shapes before ledger writes, but this is only a backstop. Treat
+AWS ARN, AWS account-id, and private-key shapes before ledger writes, but this
+is only a backstop. Treat
 job events as admin-only data. The admin API performs another redaction and
 shape-normalization pass before returning rows to 6529.io, but public 6529.io
 pages should still summarize counts only and must not disclose raw rows or

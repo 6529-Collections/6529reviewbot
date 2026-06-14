@@ -6500,3 +6500,33 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     budget/model-price dry-run parameter redaction behavior exercised.
+- Merged `6529reviewbot` PR #337 as `e9a47db`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/shared-aws-diagnostic-redaction` increment:
+  - add shared diagnostic redaction for AWS ARNs and 12-digit AWS account ids
+    across worker, dispatch, ledger, alert, preflight, and support outputs;
+  - update diagnostics, security model, alerting, worker adapter,
+    release-notes, changelog, and durable manager memory.
+- Local validation for `codex/shared-aws-diagnostic-redaction` so far:
+  - `gh run watch 27505311992 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #337 post-merge CI;
+  - OpenSSF Scorecard run `27505311965` passed for PR #337 post-merge;
+  - `npm run check:diagnostics-redaction` passed with 10 fixtures and 6 docs
+    checked;
+  - `npm run check:security-model` passed with 17 controls, 30 checklist
+    items, 12 source files, and 7 docs checked;
+  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
+    checked;
+  - `npm run check:alerting-runbook` passed with 7 runbook cases and 8 docs
+    checked;
+  - `npm test` passed after adding shared AWS ARN/account-id diagnostic
+    redaction coverage;
+  - `rg -n "AWS access-key id, and private-key|AWS access-key id, and|alert-webhook, AWS access-key id, and private-key|Worker diagnostics redact common token, alert-webhook, AWS access-key id, and|token, alert-webhook, AWS access-key id, and" README.md docs scripts src -g "*.md" -g "*.cjs"` found no stale diagnostic wording;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #337,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and shared
+    AWS ARN/account-id diagnostic redaction exercised.

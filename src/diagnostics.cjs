@@ -11,6 +11,8 @@ const ALERT_WEBHOOK_URL_PATTERN = new RegExp(
 const SENSITIVE_TEXT_PATTERNS = [
   [/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [redacted]"],
   [/\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g, "[redacted-aws-access-key-id]"],
+  [/\barn:aws[a-z-]*:[^\s"'`,)]+/gi, "arn:aws:[redacted]"],
+  [/\b\d{12}\b/g, "[redacted-aws-account-id]"],
   [/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "github_pat_[redacted]"],
   [/\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{20,}\b/g, "[redacted-github-token]"],
   [/\bsk-[A-Za-z0-9._-]{8,}\b/g, "sk-[redacted]"],

@@ -156,7 +156,7 @@ function checkPayloadPrivacy(text, findings) {
     "`severity`: `warning` or `critical`",
     "private repo names, requestors, providers, model names, job ids, and failure reasons",
     "Route it through private notification channels unless the configured deployment explicitly treats this data as public.",
-    "Before dry-run output or notification delivery, the notifier redacts common bearer, GitHub, provider-key, alert-webhook, AWS access-key id, and private-key shapes",
+    "Before dry-run output or notification delivery, the notifier redacts common bearer, GitHub, provider-key, alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key shapes",
     "bounds nested payload size",
     "omits unsafe or secret-shaped custom keys",
   ]) {
