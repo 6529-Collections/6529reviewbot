@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Lowered the default review-job fanout cap to 8 jobs per delivery so fresh
+  installs match the conservative install guide and repository template.
 - Added same-delivery budget reservations so multi-kind or multi-model webhook
   fanout counts already admitted sibling job estimates before dispatching later
   jobs in the same delivery.

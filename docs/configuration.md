@@ -140,11 +140,15 @@ review kind and one provider/model lane.
 
 ```text
 REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
 ```
 
 Leave `REVIEWBOT_REVIEW_LANES` empty to create one lane from `REVIEW_PROVIDER`
 and `REVIEW_MODEL`, or from the provider default variables above.
+
+The default max-jobs cap is `8`, enough for the four standard review kinds
+across two provider/model lanes. Raise it deliberately for trusted high-volume
+deployments after budgets and worker capacity have been reviewed.
 
 Use explicit OpenRouter lanes because OpenRouter model routing affects cost and
 provider trust:

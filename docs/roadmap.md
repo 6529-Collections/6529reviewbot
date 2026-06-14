@@ -116,11 +116,11 @@ Recommended flow:
 7. Dashboards summarize spend by org, repo, requester, PR, provider, model, and
    review kind.
 
-The current AWS usage ledger, budget admission, and same-delivery reservation
-guard are the foundation for this. Remaining production work is operator
-execution: apply reviewed live policy rows, verify current provider pricing,
-and dogfood the controls against trusted repositories before broad community
-use.
+The current AWS usage ledger, budget admission, same-delivery reservation
+guard, and conservative default review-job fanout cap are the foundation for
+this. Remaining production work is operator execution: apply reviewed live
+policy rows, verify current provider pricing, and dogfood the controls against
+trusted repositories before broad community use.
 
 ### 4. Visibility And Admin UX
 

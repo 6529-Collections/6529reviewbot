@@ -85,11 +85,13 @@ lanes; it cannot introduce a new provider or model by editing repo config.
 Use this variable to cap accidental or malicious fanout:
 
 ```text
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
 ```
 
 The app denies a delivery that would create more jobs than this limit. This is
-a pre-provider guardrail.
+a pre-provider guardrail. The default is `8`, enough for the four standard
+review kinds across two provider/model lanes. Raise it only for trusted
+high-volume deployments with reviewed budgets and worker capacity.
 
 `npm run check:self-dogfood-replay` exercises this guard through the webhook
 replay path: a deliberate two-lane command creates distinct jobs and run keys,

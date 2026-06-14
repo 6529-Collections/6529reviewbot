@@ -629,8 +629,12 @@ Central App job fanout:
 
 ```text
 REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=50
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
 ```
+
+The default max-jobs cap is `8`, enough for the four standard review kinds
+across two provider/model lanes. Raise it only for trusted high-volume
+deployments with reviewed budgets and worker capacity.
 
 Runtime control:
 

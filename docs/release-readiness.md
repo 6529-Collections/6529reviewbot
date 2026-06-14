@@ -859,6 +859,10 @@ REVIEWBOT_ALERTS_NOTIFY_MODE=sns
 REVIEWBOT_ALERTS_JOB_HEALTH_ENABLED=true
 ```
 
+The runtime default for `REVIEWBOT_MAX_JOBS_PER_DELIVERY` is also `8`, so a
+fresh central App install has the same conservative two-lane, four-review-kind
+ceiling unless an operator deliberately raises it.
+
 After the durable run-control claim table is applied, move to:
 
 ```text
