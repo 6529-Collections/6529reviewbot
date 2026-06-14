@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Required reviewed alert delivery plan evidence for the v0 scheduled alerts
+  release gate.
 - Added alert delivery plan fields to the operator evidence template.
 - Added alert delivery-plan evidence to production cutover before scheduled
   alert delivery can be marked ready.

@@ -250,6 +250,8 @@ Ready for community review:
   plan before public or private 6529.io dashboard routes are exposed;
 - production cutover checklist evidence now requires the alert delivery plan
   before scheduled operator alert delivery is marked ready;
+- v0 release gate evidence now requires reviewed alert delivery plan evidence
+  before scheduled operator alerts satisfy the tag checklist;
 - installed central worker and dormant-by-default alert workflows with
   release-check action pinning validation;
 - public env template checker for syntax, duplicate keys, blank secret

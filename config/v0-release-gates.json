@@ -75,8 +75,8 @@
     },
     {
       "id": "alerts",
-      "title": "Scheduled spend alerts route to an operator-owned channel.",
-      "evidence": "docs/alerting.md"
+      "title": "Scheduled spend alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.",
+      "evidence": "docs/alert-delivery-plan.md"
     },
     {
       "id": "release-check",

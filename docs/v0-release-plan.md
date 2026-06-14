@@ -147,7 +147,8 @@ Do not create the `v0` tag until all of these are true:
 14. A limited initial-review dogfood run has completed with conservative budget
    caps, visible comments, and ledgered usage, tracked with
    `npm run dogfood:status -- -- --status-file <operator-dogfood-status-file>`.
-15. Scheduled operator alerts route to an operator-owned channel.
+15. Scheduled operator alerts have reviewed alert delivery plan evidence and
+    route to an operator-owned channel.
 16. `npm run release:check` passes from a clean `main`.
     The release check includes `npm run check:release-operations` so the
     operations map cannot reference stale scripts or missing docs.
@@ -245,6 +246,9 @@ npm run production:cutover -- -- --status-file <operator-cutover-status-file> --
 The 6529.io cutover phase includes
 `dashboard-deployment-plan-reviewed`, so the dashboard deployment plan should
 be rendered and recorded before dashboard route exposure is marked complete.
+It also includes `alert-delivery-plan-reviewed`, so the alert delivery plan
+should be rendered and recorded before scheduled alert delivery is marked
+complete.
 
 `--require-ready` is the broad-traffic cutover gate. Dogfood-only releases may
 defer items, but release notes must name the risk and follow-up owner for each

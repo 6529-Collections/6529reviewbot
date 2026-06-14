@@ -4154,3 +4154,25 @@
   - `npm run release:check` passed, including operator evidence validation
     for alert delivery-plan fields and the production-evidence `2/32`
     cutover summary.
+- Merged `6529reviewbot` PR #239 as `fb49803`; post-merge CI and OpenSSF
+  Scorecard completed successfully.
+- Started `codex/v0-alert-delivery-gate` increment:
+  - strengthen the existing v0 `alerts` release gate so scheduled operator
+    alerts require reviewed alert delivery-plan evidence before satisfying the
+    first public tag checklist;
+  - update the v0 gate contract, smoke coverage, v0 release plan,
+    release-readiness, roadmap, changelog, and durable manager memory so tag
+    readiness cannot become weaker than production cutover for alert delivery.
+- Local validation for `codex/v0-alert-delivery-gate` so far:
+  - `npm run check:v0-gates` passed with 3 CLI cases, 6 status cases, and 6
+    docs checked;
+  - `npm run check:docs` passed with 73 files checked;
+  - `npm run check:doc-index` passed with 59 docs indexed;
+  - `git diff --check` passed;
+  - `npm run check` passed with 174 CommonJS files;
+  - `npm test` passed;
+  - `npm run release:check` passed, including v0 release gate validation
+    requiring reviewed alert delivery-plan evidence for scheduled alerts;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #239,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 116 files checked.

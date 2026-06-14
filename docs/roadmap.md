@@ -555,6 +555,8 @@ Completed in `6529reviewbot`:
 - production cutover now includes explicit dashboard deployment-plan and alert
   delivery-plan evidence items before public/private dashboard route exposure
   or scheduled alert delivery.
+- v0 release gates now require reviewed alert delivery plan evidence before
+  scheduled operator alerts satisfy the first public tag checklist.
 - generated operator workspace guidance now includes the production deployment
   plan, dashboard deployment plan, and alert delivery plan commands so release
   evidence and deployment handoff commands stay together in the private
