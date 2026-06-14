@@ -419,6 +419,8 @@ Completed in `6529reviewbot`:
   release-bundle commands with explicit public/private output boundaries;
 - release operations map doc-sync checks so mapped local quality commands stay
   visible in public operator docs;
+- release operations map checks now pin the release notes publication guard's
+  vague or failed validation evidence rules in the command inventory;
 - release notes template validation for required pre-v1 tested configuration,
   dogfood promotion/go-live evidence, production deployment plan evidence,
   dashboard deployment plan evidence, alert delivery plan evidence, production

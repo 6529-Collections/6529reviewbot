@@ -23,8 +23,27 @@ function checkReleaseOperationsMap(options = {}) {
     packageScripts: packageJson.scripts || {},
     repoRoot: root,
   });
+  checkReleaseNotesPublicationTools(validated);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
+}
+
+function checkReleaseNotesPublicationTools(map) {
+  const tools = map.phases.flatMap((phase) => phase.tools);
+  const contractTool = tools.find((tool) => tool.id === "release-notes-publication-contract");
+  if (!contractTool) {
+    throw new Error("release operations map must include release-notes-publication-contract.");
+  }
+  if (!contractTool.purpose.includes("vague or failed validation results")) {
+    throw new Error("release-notes-publication-contract purpose must mention vague or failed validation results.");
+  }
+  const publicationTool = tools.find((tool) => tool.id === "release-notes-publication");
+  if (!publicationTool) {
+    throw new Error("release operations map must include release-notes-publication.");
+  }
+  if (!publicationTool.purpose.includes("explicit validation evidence")) {
+    throw new Error("release-notes-publication purpose must mention explicit validation evidence.");
+  }
 }
 
 function checkReleaseOperationsDoc(map, docFile) {
@@ -56,6 +75,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  checkReleaseNotesPublicationTools,
   checkReleaseOperationsDoc,
   checkReleaseOperationsMap,
 };

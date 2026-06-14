@@ -196,6 +196,8 @@ function checkSourceAnchors(sourceTexts, findings) {
     "config/release-operations-map.json": [
       "release-notes-publication-contract",
       "release-notes-publication",
+      "vague or failed validation results",
+      "explicit validation evidence",
     ],
   };
   for (const [file, snippets] of Object.entries(requiredBySource)) {

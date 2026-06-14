@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Aligned the release operations map with the stricter release-notes validation
+  evidence publication guard.
 - Hardened release notes publication checks to reject vague validation fields
   that do not report passed, ready, reviewed, or accepted evidence.
 - Hardened release notes publication checks to reject failed, pending,
