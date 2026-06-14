@@ -3,6 +3,7 @@
 const childProcess = require("child_process");
 const fs = require("fs");
 const { safeErrorLine } = require("./diagnostics.cjs");
+const { normalizeImageRepositoryRef } = require("./image-repository-ref.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const { parseAheadBehind } = require("./release-tag-plan.cjs");
 const { checkContainerImage } = require("../scripts/check-container-image.cjs");
@@ -116,32 +117,14 @@ function collectContainerCheck(options, errors) {
 }
 
 function normalizeImageRef(value) {
-  const text = String(value || "").trim();
-  if (!text) {
-    throw new Error("container image reference is required.");
-  }
-  if (text === DEFAULT_IMAGE) {
-    return text;
-  }
-  if (/^[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(text)) {
-    throw new Error("container image reference must not include a URL scheme.");
-  }
-  if (text.includes("@")) {
-    throw new Error("container image reference must not include a digest; record digests after push.");
-  }
-  if (/:([^/]+)$/.test(text)) {
-    throw new Error("container image reference must not include a tag; use --tag or --release instead.");
-  }
-  if (text.split("/").some((segment) => !segment)) {
-    throw new Error("container image reference must not contain empty path segments.");
-  }
-  if (/[A-Z]/.test(text)) {
-    throw new Error("container image reference repository must be lowercase.");
-  }
-  if (!/^[A-Za-z0-9._:/-]+$/.test(text)) {
-    throw new Error("container image reference contains unsupported characters.");
-  }
-  return text;
+  return normalizeImageRepositoryRef(value, {
+    defaultValue: DEFAULT_IMAGE,
+    label: "container image reference",
+    requiredMessage: "container image reference is required.",
+    digestMessage: "container image reference must not include a digest; record digests after push.",
+    tagMessage: "container image reference must not include a tag; use --tag or --release instead.",
+    lowercaseMessage: "container image reference repository must be lowercase.",
+  });
 }
 
 function normalizeRuntimeImage(value, label) {

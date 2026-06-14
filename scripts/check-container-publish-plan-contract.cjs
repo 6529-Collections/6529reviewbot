@@ -217,10 +217,14 @@ function checkSourceAnchors(sourceTexts, findings) {
     "src/container-publish-plan.cjs": [
       "collectContainerPublishPlan",
       "checkContainerImage",
+      "normalizeImageRepositoryRef",
+      "This command does not build, push, scan, or publish container images.",
+    ],
+    "src/image-repository-ref.cjs": [
+      "normalizeImageRepositoryRef",
       "URL scheme",
       "empty path segments",
       "lowercase",
-      "This command does not build, push, scan, or publish container images.",
     ],
     "bin/container-publish-plan.cjs": [
       "npm run container:publish-plan",
