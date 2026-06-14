@@ -61,8 +61,8 @@ The publication guard verifies:
   strings are not present.
 
 Warnings remind operators to keep the standard safety language about
-trusted-actor admission, budget enforcement, bot-owned infrastructure, exact
-tag/commit pinning, and emergency rollback.
+trusted-actor admission, budget enforcement, run-control enforcement,
+bot-owned infrastructure, exact tag/commit pinning, and emergency rollback.
 
 ## Relationship To Drafts
 

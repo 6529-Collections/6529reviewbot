@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Added run-control enforcement to release notes publication recommendation
+  warnings.
 - Hardened release notes publication checks for accepted model-price override
   disclosure.
 - Strengthened the model pricing runbook contract to pin catalog coverage

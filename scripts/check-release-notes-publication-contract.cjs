@@ -45,6 +45,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   checkNegatedReadyValidationRejected(findings);
   checkVagueValidationRejected(findings);
   checkModelPriceOverrideDisclosure(findings);
+  checkRunControlRecommendation(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
   checkDocs(docTexts, findings);
@@ -59,7 +60,7 @@ function checkReleaseNotesPublicationContract(options = {}) {
   }
 
   return {
-    publicationCases: 8,
+    publicationCases: 9,
     docs: targetDocs.length,
   };
 }
@@ -183,6 +184,31 @@ function checkModelPriceOverrideDisclosure(findings) {
   }
 }
 
+function checkRunControlRecommendation(findings) {
+  const report = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "run-control mode is `enforce`, ",
+      ""
+    )
+  );
+  if (!report.ready) {
+    findings.push(`missing run-control recommendation should warn, not fail readiness: ${report.errors.join("; ")}`);
+  }
+  if (!report.warnings.some((warning) => warning.includes("run-control mode is `enforce`"))) {
+    findings.push("release notes publication warnings must recommend run-control enforcement language.");
+  }
+  const strictReport = validateReleaseNotesPublication(
+    completeReleaseNotesFixture().replace(
+      "run-control mode is `enforce`, ",
+      ""
+    ),
+    { requireNoWarnings: true }
+  );
+  if (strictReport.ready) {
+    findings.push("release notes publication check must promote missing run-control warning when requireNoWarnings is set.");
+  }
+}
+
 function checkCli(findings) {
   try {
     publicationCli.parseArgs(["--nope"]);
@@ -218,6 +244,7 @@ function checkSourceAnchors(sourceTexts, findings) {
       "checkModelPriceOverrideDisclosure",
       "FAILED_VALIDATION_PATTERN",
       "READY_VALIDATION_PATTERN",
+      "run-control mode is `enforce`",
       "No accepted deferrals",
       "Dashboard deployment plan:",
       "Alert delivery plan:",
@@ -340,7 +367,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 
 ## Safety Requirements
 
-Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
+Public repositories should not enable automatic model calls unless trusted-actor admission is enabled, budget mode is \`enforce\`, run-control mode is \`enforce\`, provider keys and AWS credentials live only in bot-owned infrastructure, target repo configuration is loaded from the base ref, and scheduled operator alerts have reviewed alert delivery plan evidence and route to an operator-owned channel.
 
 ## Known Gaps
 
