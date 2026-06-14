@@ -485,32 +485,27 @@ merged PRs.
   post-merge CI and OpenSSF Scorecard completed successfully.
 - Operator guidance model-price gates PR: merged as PR #262, merge commit `362e90b`;
   post-merge CI and OpenSSF Scorecard completed successfully.
-- Current branch: `codex/release-evidence-model-price-gates`.
-- Current local changes: aligning release evidence, production deployment,
-  production cutover, release-note validation, operations guidance, and CLI
-  help with reviewed model price file gates.
+- Release evidence model-price gates PR: merged as PR #263, merge commit `a13c1cf`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+- Current branch: `codex/model-pricing-runbook-coverage-section`.
+- Current local changes: strengthening the model pricing runbook contract so
+  catalog coverage section ordering and guidance stay pinned with the rest of
+  the operator pricing evidence runbook.
 - Current local validation:
-  - `npm run check:production-deployment-plan` passed with 5 plan cases and
-    6 docs checked;
-  - `npm run check:production-cutover` passed with 3 CLI cases, 5 status
-    cases, and 6 docs checked;
-  - `npm run check:release-notes-draft` passed with 3 draft cases and 6 docs
-    checked;
-  - `npm run check:release-notes-publication` passed with 7 publication cases
-    and 7 docs checked;
-  - `npm run check:release-notes` passed;
-  - `npm run check:operations-runbook` passed with 7 runbook cases and 6 docs
-    checked;
+  - `npm run check:model-pricing-runbook` passed with 6 runbook cases and
+    8 docs checked;
+  - `npm run check:model-price-coverage` passed with 6 coverage cases and
+    8 docs checked;
   - `npm run check:docs` passed with 73 files checked;
   - `npm run check:doc-index` passed with 59 docs indexed;
   - `git diff --check` passed;
   - `npm run check` passed with 176 CommonJS files;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #262,
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #263,
     and 5 docs checked;
   - `npm test` passed;
+  - `npm run check:public-artifacts` passed with 116 files checked;
   - `npm run release:check` passed with 176 CommonJS files checked and the
-    release-evidence model-price gate commands exercised;
-  - `npm run check:public-artifacts` passed with 116 files checked.
+    6-case model pricing runbook contract exercised.
 
 ## Key Decisions
 

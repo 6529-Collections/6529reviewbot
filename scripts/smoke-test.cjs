@@ -5599,7 +5599,7 @@ appServer.handleGitHubWebhook({
   );
   const modelPricingRunbookContractResult =
     modelPricingRunbookContractCheck.checkModelPricingRunbookContract();
-  assert.equal(modelPricingRunbookContractResult.runbookCases, 5);
+  assert.equal(modelPricingRunbookContractResult.runbookCases, 6);
   assert.throws(
     () =>
       modelPricingRunbookContractCheck.checkModelPricingRunbookContract({

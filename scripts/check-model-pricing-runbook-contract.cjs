@@ -33,6 +33,7 @@ function checkModelPricingRunbookContract(options = {}) {
   checkSections(text, findings);
   checkPriceFile(text, findings);
   checkDryRunAndApply(text, findings);
+  checkCatalogCoverage(text, findings);
   checkReviewRequirements(text, findings);
   checkEstimationBehavior(text, findings);
   checkDocs(docTexts, findings);
@@ -47,7 +48,7 @@ function checkModelPricingRunbookContract(options = {}) {
   }
 
   return {
-    runbookCases: 5,
+    runbookCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -58,6 +59,7 @@ function checkSections(text, findings) {
     [
       "## Price File",
       "## Dry Run",
+      "## Catalog Coverage",
       "## Apply",
       "## Review Requirements",
       "## Estimation Behavior",
@@ -102,6 +104,22 @@ function checkDryRunAndApply(text, findings) {
     "Use `--schema <name>` only when the deployment intentionally stores bot data in a non-default schema.",
   ]) {
     requireSnippet(text, snippet, "model price apply guidance", findings);
+  }
+}
+
+function checkCatalogCoverage(text, findings) {
+  for (const snippet of [
+    "## Catalog Coverage",
+    "npm run model-prices -- -- --file prices.json --require-catalog-coverage",
+    "does not contact AWS or provider APIs",
+    "every catalog default provider/model lane",
+    "both input and output rates",
+    "fresh `sourceCheckedAt`",
+    "avoids zero-rate placeholders unless `--allow-zero-price` is explicitly supplied",
+    "avoids placeholder source URLs",
+    "npm run model-prices -- -- --file prices.json --catalog config/model-catalog.json --require-catalog-coverage",
+  ]) {
+    requireSnippet(text, snippet, "model price catalog coverage guidance", findings);
   }
 }
 
