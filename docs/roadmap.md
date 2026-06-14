@@ -644,6 +644,11 @@ Completed in `6529reviewbot`:
   candidate bundle, and release tag plan commands through the real CLIs so
   final gate examples cannot drop required status, workspace, release-note, or
   ready-mode inputs.
+- release operations map validation now also parses the remaining mapped CLI
+  argument examples through the real CLIs so private operator workspace setup,
+  status skeleton creation, budget/model-price dry runs, webhook replay dry
+  runs, admin snapshots, and release-note commands cannot drop required
+  placeholders or accidentally add live-apply/dispatch flags.
 - v0 release gates now require reviewed alert delivery plan evidence before
   scheduled operator alerts satisfy the first public tag checklist.
 - release notes template, draft, and publication checks now carry the same

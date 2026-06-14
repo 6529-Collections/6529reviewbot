@@ -636,13 +636,31 @@ merged PRs.
 - Release-operations production command contract PR: merged as PR #331, merge commit `6181a2f`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `6181a2f`.
-- Current branch: `codex/release-operations-status-command-contract`.
-- Current local changes: make `npm run check:release-operations` parse
-  status overlay, release-candidate bundle, and release tag-plan commands
-  through their real CLIs, update release-operations docs/README/release
-  readiness, roadmap, changelog, and carry PR #331 post-merge durable memory
-  forward.
+- Release-operations status/release gate command contract PR: merged as PR #332, merge commit `eaf69d8`;
+  post-merge CI and OpenSSF Scorecard completed successfully.
+  Latest run-log merge commit: `eaf69d8`.
+- Current branch: `codex/release-operations-parser-coverage`.
+- Current local changes: make `npm run check:release-operations` parse the
+  remaining mapped CLI argument examples through their real CLIs, including
+  private operator workspace setup, status skeleton creation, budget/model-price
+  dry runs, webhook replay dry runs, admin snapshots, release-note commands,
+  and dry-run safety defaults; update release-operations docs, README, release
+  readiness, roadmap, changelog, and durable manager memory.
 - Current local validation:
+  - `gh run watch 27503853432 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #332 post-merge CI;
+  - `gh run watch 27503853438 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #332 post-merge OpenSSF Scorecard;
+  - `npm run check:release-operations` passed with 7 phases and 115 tools
+    after adding mapped CLI argument parser coverage.
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #332,
+    and 5 docs checked;
+  - `npm run check:public-artifacts` passed with 120 files checked;
+  - `git diff --check` passed;
+  - `npm test` passed;
+  - `npm run check` passed with 184 CommonJS files;
+  - `npm run release:check` passed with 184 CommonJS files checked and the
+    mapped CLI argument parser coverage exercised.
   - `gh run watch 27500407951 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge CI;
   - `gh run watch 27500407939 --repo 6529-Collections/6529reviewbot --exit-status` passed for PR #322 post-merge OpenSSF Scorecard;
   - `npm run check:aws-iam-templates` passed with 3 templates, 6 actions, and
@@ -1220,6 +1238,11 @@ merged PRs.
   `--require-ready` commands through the real CLIs so private status files,
   operator workspaces, release notes, strict preflight, and ready-mode flags
   cannot drift from final tag/no-tag handoffs.
+- Parser-backed mapped release-operation commands should parse through their
+  real CLIs even when they are setup, dry-run, or diagnostic commands, so
+  operator workspaces, status skeletons, budget/model-price dry runs, webhook
+  replays, admin snapshots, and release-note commands cannot gain stale
+  placeholders or unsafe live-apply/dispatch flags.
 - Public MIT/community governance files should be machine-checked, not only
   manually reviewed, so SECURITY, SUPPORT, contribution, governance, issue
   template, and license entry points stay present for community release.

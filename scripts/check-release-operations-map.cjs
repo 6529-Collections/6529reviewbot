@@ -4,19 +4,30 @@
 
 const fs = require("fs");
 const path = require("path");
+const adminSnapshotCli = require("../bin/admin-snapshot.cjs");
 const alertDeliveryPlanCli = require("../bin/alert-delivery-plan.cjs");
+const budgetPoliciesCli = require("../bin/apply-budget-policies.cjs");
+const modelPricesCli = require("../bin/apply-model-prices.cjs");
 const containerPublishPlanCli = require("../bin/container-publish-plan.cjs");
+const githubAppConversionCli = require("../bin/convert-github-app-manifest.cjs");
 const dashboardDeploymentPlanCli = require("../bin/dashboard-deployment-plan.cjs");
 const dogfoodGoLiveCli = require("../bin/dogfood-go-live.cjs");
 const dogfoodPromotionCli = require("../bin/dogfood-promotion.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
 const dogfoodStatusCli = require("../bin/dogfood-status.cjs");
 const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
+const operatorDrillCli = require("../bin/operator-drill.cjs");
+const operatorEvidenceCli = require("../bin/operator-evidence.cjs");
 const operatorWorkspaceCli = require("../bin/operator-workspace.cjs");
+const preflightCli = require("../bin/preflight.cjs");
 const productionDeploymentPlanCli = require("../bin/production-deployment-plan.cjs");
 const productionCutoverCli = require("../bin/production-cutover.cjs");
+const releaseNotesDraftCli = require("../bin/release-notes-draft.cjs");
+const releaseNotesPublicationCli = require("../bin/release-notes-publication.cjs");
 const releaseCandidateCli = require("../bin/release-candidate.cjs");
 const releaseTagPlanCli = require("../bin/release-tag-plan.cjs");
+const replayWebhookCli = require("../bin/replay-webhook.cjs");
+const githubAppManifestCli = require("../bin/render-github-app-manifest.cjs");
 const securityReviewStatusCli = require("../bin/security-review-status.cjs");
 const v0GatesCli = require("../bin/v0-gates.cjs");
 const {
@@ -38,11 +49,14 @@ function checkReleaseOperationsMap(options = {}) {
     packageScripts: packageJson.scripts || {},
     repoRoot: root,
   });
+  const parsedCommandIds = new Set();
   checkReleaseNotesPublicationTools(validated);
   checkReleaseTagPlanTools(validated);
-  checkProductionHandoffCommands(validated);
-  checkDogfoodReadyModeCommands(validated);
-  checkStatusAndReleaseGateCommands(validated);
+  checkProductionHandoffCommands(validated, parsedCommandIds);
+  checkDogfoodReadyModeCommands(validated, parsedCommandIds);
+  checkStatusAndReleaseGateCommands(validated, parsedCommandIds);
+  checkMappedCliArgumentCommands(validated, parsedCommandIds);
+  checkParsedCommandCoverage(validated, parsedCommandIds);
   checkReleaseOperationsDoc(validated, docFile);
   return summarizeReleaseOperationsMap(validated);
 }
@@ -89,7 +103,7 @@ function checkReleaseTagPlanTools(map) {
   }
 }
 
-function checkProductionHandoffCommands(map) {
+function checkProductionHandoffCommands(map, parsedCommandIds = new Set()) {
   const expectations = [
     {
       id: "container-publish-plan",
@@ -141,10 +155,10 @@ function checkProductionHandoffCommands(map) {
       },
     },
   ];
-  checkParsedCommandExpectations(map, expectations, "production handoff");
+  checkParsedCommandExpectations(map, expectations, "production handoff", parsedCommandIds);
 }
 
-function checkDogfoodReadyModeCommands(map) {
+function checkDogfoodReadyModeCommands(map, parsedCommandIds = new Set()) {
   const expectations = [
     {
       id: "dogfood-readiness",
@@ -180,10 +194,10 @@ function checkDogfoodReadyModeCommands(map) {
       },
     },
   ];
-  checkParsedCommandExpectations(map, expectations, "dogfood ready-mode");
+  checkParsedCommandExpectations(map, expectations, "dogfood ready-mode", parsedCommandIds);
 }
 
-function checkStatusAndReleaseGateCommands(map) {
+function checkStatusAndReleaseGateCommands(map, parsedCommandIds = new Set()) {
   const expectations = [
     {
       id: "operator-workspace-check",
@@ -263,10 +277,173 @@ function checkStatusAndReleaseGateCommands(map) {
       },
     },
   ];
-  checkParsedCommandExpectations(map, expectations, "status and release gate");
+  checkParsedCommandExpectations(map, expectations, "status and release gate", parsedCommandIds);
 }
 
-function checkParsedCommandExpectations(map, expectations, label) {
+function checkMappedCliArgumentCommands(map, parsedCommandIds = new Set()) {
+  const expectations = [
+    {
+      id: "preflight",
+      script: "preflight",
+      parseArgs: preflightCli.parseArgs,
+      fields: {
+        profile: "server",
+        strict: true,
+        json: false,
+      },
+    },
+    {
+      id: "github-app-manifest",
+      script: "github-app:manifest",
+      parseArgs: githubAppManifestCli.parseArgs,
+      fields: {
+        host: "<production-bot-origin>",
+        quiet: true,
+        form: false,
+      },
+    },
+    {
+      id: "github-app-conversion",
+      script: "github-app:convert",
+      parseArgs: githubAppConversionCli.parseArgs,
+      fields: {
+        code: "<manifest-code>",
+        outputPath: "<private-json-path>",
+        allowRepoOutput: false,
+        noAuth: false,
+        overwrite: false,
+      },
+    },
+    {
+      id: "budget-policies",
+      script: "budget-policies",
+      parseArgs: budgetPoliciesCli.parseArgs,
+      fields: {
+        file: "<reviewed-budget-policy-file.json>",
+        apply: false,
+        quiet: false,
+      },
+    },
+    {
+      id: "model-prices",
+      script: "model-prices",
+      parseArgs: modelPricesCli.parseArgs,
+      fields: {
+        file: "<reviewed-model-price-file.json>",
+        apply: false,
+        requireCatalogCoverage: true,
+        allowStaleSource: false,
+        allowZeroPrice: false,
+      },
+    },
+    {
+      id: "operator-evidence",
+      script: "operator:evidence",
+      parseArgs: operatorEvidenceCli.parseArgs,
+      fields: {
+        file: "<private-evidence-file>",
+        summary: true,
+        requireReady: false,
+      },
+    },
+    {
+      id: "operator-workspace",
+      script: "operator:workspace",
+      parseArgs: operatorWorkspaceCli.parseArgs,
+      fields: {
+        directory: "<private-workspace-dir>",
+        allowRepoDir: false,
+        check: false,
+        requireReady: false,
+      },
+    },
+    {
+      id: "operator-drill",
+      script: "operator:drill",
+      parseArgs: operatorDrillCli.parseArgs,
+      fields: {
+        directory: "<private-workspace-dir>",
+        allowRepoDir: false,
+        force: false,
+        skipSelfDogfoodReplay: false,
+      },
+    },
+    {
+      id: "dogfood-status-init",
+      script: "dogfood:status",
+      parseArgs: dogfoodStatusCli.parseArgs,
+      fields: {
+        initStatusFile: "<operator-dogfood-status-file>",
+        force: false,
+        requireReady: false,
+      },
+    },
+    {
+      id: "webhook-replay",
+      script: "webhook:replay",
+      parseArgs: replayWebhookCli.parseArgs,
+      fields: {
+        payloadPath: "<private-payload.json>",
+        actorPermission: "write",
+        assumeEmptyBudget: true,
+        dispatch: false,
+      },
+    },
+    {
+      id: "security-review-init",
+      script: "security:review",
+      parseArgs: securityReviewStatusCli.parseArgs,
+      fields: {
+        initStatusFile: "<operator-security-status-file>",
+        force: false,
+        requireReady: false,
+      },
+    },
+    {
+      id: "cutover-init",
+      script: "production:cutover",
+      parseArgs: productionCutoverCli.parseArgs,
+      fields: {
+        initStatusFile: "<operator-cutover-status-file>",
+        force: false,
+        requireReady: false,
+      },
+    },
+    {
+      id: "admin-snapshot",
+      script: "admin:snapshot",
+      parseArgs: adminSnapshotCli.parseArgs,
+      fields: {
+        baseUrl: "<production-bot-origin>",
+        requireOk: true,
+        json: false,
+        quiet: false,
+      },
+    },
+    {
+      id: "release-notes-draft",
+      script: "release:notes",
+      parseArgs: releaseNotesDraftCli.parseArgs,
+      fields: {
+        candidateFile: "<release-candidate.json>",
+        includeGitStatus: false,
+        strictPreflight: false,
+      },
+    },
+    {
+      id: "release-notes-publication",
+      script: "release:notes:check",
+      parseArgs: releaseNotesPublicationCli.parseArgs,
+      fields: {
+        file: "<release-notes.md>",
+        requireNoWarnings: false,
+      },
+    },
+  ];
+  checkParsedCommandExpectations(map, expectations, "mapped CLI argument", parsedCommandIds);
+}
+
+function checkParsedCommandExpectations(map, expectations, label, parsedCommandIds = new Set()) {
   const tools = map.phases.flatMap((phase) => phase.tools);
   for (const expectation of expectations) {
     const tool = tools.find((item) => item.id === expectation.id);
@@ -285,6 +462,19 @@ function checkParsedCommandExpectations(map, expectations, label) {
         );
       }
     }
+    parsedCommandIds.add(expectation.id);
+  }
+}
+
+function checkParsedCommandCoverage(map, parsedCommandIds) {
+  const missing = map.phases
+    .flatMap((phase) => phase.tools)
+    .filter((tool) => tool.args && !parsedCommandIds.has(tool.id))
+    .map((tool) => tool.id);
+  if (missing.length) {
+    throw new Error(
+      `release operations map command(s) with args need parser-backed expectations: ${missing.join(", ")}.`
+    );
   }
 }
 
@@ -322,6 +512,8 @@ if (require.main === module) {
 
 module.exports = {
   checkDogfoodReadyModeCommands,
+  checkMappedCliArgumentCommands,
+  checkParsedCommandCoverage,
   checkParsedCommandExpectations,
   checkProductionHandoffCommands,
   checkStatusAndReleaseGateCommands,

@@ -359,10 +359,12 @@ Ready for community review:
   sync with mapped local quality gates;
 - release operations map validation pins the release notes publication guard's
   vague or failed validation evidence checks in the public command inventory;
-- release operations map validation parses final production handoff,
-  status/release gate, and dogfood ready-mode commands through the real CLIs so
-  required private workspace, model price, worker-dispatch, status,
-  release-notes, strict preflight, and ready-mode flags cannot drift;
+- release operations map validation parses mapped CLI argument examples
+  through the real CLIs so production handoff, status/release gate, dogfood
+  ready-mode, private operator workspace, status skeleton, budget/model-price
+  dry-run, webhook replay dry-run, admin snapshot, and release-note commands
+  cannot drop required private workspace, model price, worker-dispatch,
+  status, release-notes, strict preflight, ready-mode, or dry-run safety flags;
 - checked compatibility policy for pre-v1 compatibility-sensitive surfaces,
   breaking-change release notes, exact tag/commit pinning, and the future v1
   stable API promise;

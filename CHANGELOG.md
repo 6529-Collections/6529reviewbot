@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Hardened release operations map validation so mapped CLI argument examples
+  parse through their real CLIs, including private workspace setup, status
+  skeletons, budget/model-price dry runs, webhook replay dry runs, admin
+  snapshots, release-note commands, and dry-run safety defaults.
 - Hardened release operations map validation so final dogfood readiness,
   promotion, and go-live ready-mode commands must parse through their real CLIs
   with private workspace, reviewed model price, strict preflight, and
