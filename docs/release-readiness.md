@@ -371,17 +371,19 @@ Before announcing broad community use:
 4. Review AWS IAM/OIDC trust and identity policies for the central bot runtime.
 5. Apply reviewed central budget policies or explicitly keep budget control to
    environment/repository caps for the release.
-6. Run the dashboard deployment plan:
+6. Enable GitHub private vulnerability reporting for this repository or record
+   an equivalent private security intake channel in operator evidence.
+7. Run the dashboard deployment plan:
 
    ```bash
    npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
    ```
 
-7. Deploy the merged 6529.io public transparency dashboard.
-8. Deploy the merged 6529.io private admin surface and wire it to the HMAC
+8. Deploy the merged 6529.io public transparency dashboard.
+9. Deploy the merged 6529.io private admin surface and wire it to the HMAC
    admin auth bridge.
-9. Enable scheduled operator alerts through private operator channels.
-10. Dogfood on a small set of trusted repositories with conservative budgets.
+10. Enable scheduled operator alerts through private operator channels.
+11. Dogfood on a small set of trusted repositories with conservative budgets.
    Start with [Dogfood Runbook](dogfood.md), `noop` worker mode, and the
    command-only repository config template.
    Run [Dogfood Target Packet](dogfood-target.md) before opening the target
@@ -393,9 +395,9 @@ Before announcing broad community use:
    Run [Dogfood Go-Live Packet](dogfood-go-live.md) when release-candidate,
    promotion, cutover, and operator-workspace evidence should agree in one
    public-safe summary.
-11. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
-12. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
-13. Update README, changelog, release notes, install docs, and example configs.
+12. Run CI, Dependency Review, OpenSSF Scorecard, and a manual security review.
+13. Publish an initial `v0` tag with explicit pre-v1 compatibility warnings.
+14. Update README, changelog, release notes, install docs, and example configs.
 
 Use `npm run release:check` and
 [Security Review Checklist](security-review-checklist.md) as the repeatable

@@ -183,6 +183,9 @@ After stabilization:
   stay synchronized with first-principles trust boundaries, prompt/path/
   metadata safety, fail-closed controls, diagnostic redaction, admin/AWS/alert
   boundaries, and source anchors
+- `npm run check:governance` confirms SECURITY.md, support, contributing, PR
+  template, issue templates, private vulnerability intake guidance, and public
+  governance links stay present
 - `npm run check:operations-runbook` confirms the operations runbook contract
   keeps routine checks and triage paths for replay, spend, ledgers, workers,
   dashboards, and bot comments synchronized

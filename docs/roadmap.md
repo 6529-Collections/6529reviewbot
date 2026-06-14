@@ -349,6 +349,8 @@ Before broad community release:
 - ship stable examples for repo configuration and comment commands;
 - cut the first stable release tag;
 - confirm SECURITY.md, support policy, and contribution process are accurate;
+- enable GitHub private vulnerability reporting or record an equivalent
+  private security intake channel in operator evidence;
 - verify OpenSSF Scorecard and dependency review are clean.
 
 ## Current Implementation Focus

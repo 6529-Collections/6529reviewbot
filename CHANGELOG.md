@@ -8,6 +8,7 @@ stabilized.
 
 ## Unreleased
 
+- Added community-release docs for private vulnerability intake readiness.
 - Added checked security reporting guidance for private vulnerability intake
   before broad community release.
 - Added contributor guidance for release-sensitive validation, external
