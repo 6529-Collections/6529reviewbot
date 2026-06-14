@@ -263,7 +263,7 @@ Build a dry-run production deployment plan before App registration, registry,
 runtime, cutover, or dogfood handoff work:
 
 ```bash
-npm run production:deployment-plan -- -- --host https://reviewbot.example.com --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
+npm run production:deployment-plan -- -- --host <production-bot-origin> --image <operator-registry>/6529reviewbot --operator-workspace <private-workspace-dir> --release v0.1.0 --require-ready
 npm run check:production-deployment-plan
 ```
 
@@ -271,7 +271,7 @@ Build a dry-run 6529.io dashboard deployment plan before wiring the public
 Open Data and private admin routes to production:
 
 ```bash
-npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready
 npm run check:dashboard-deployment-plan
 ```
 
@@ -279,7 +279,7 @@ Build a dry-run production alert delivery plan before enabling webhook, SNS,
 or SES routing from the operator environment:
 
 ```bash
-npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --notify-mode sns --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
+npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --release v0.1.0 --require-ready
 npm run check:alert-delivery-plan
 ```
 

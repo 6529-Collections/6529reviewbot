@@ -82,7 +82,7 @@ Before wiring the merged 6529.io routes to production, render the dry-run
 dashboard handoff:
 
 ```bash
-npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --require-ready
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --require-ready
 ```
 
 Keep the live wallet allowlist, auth-check URL, HMAC secret, and production

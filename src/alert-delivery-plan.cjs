@@ -1,7 +1,7 @@
 "use strict";
 
 const { NOTIFY_MODES } = require("./alert-notifier.cjs");
-const { normalizeOrigin, normalizeWorkspace } = require("./production-deployment-plan.cjs");
+const { isPlaceholderOrigin, normalizeOrigin, normalizeWorkspace } = require("./production-deployment-plan.cjs");
 const { normalizeReleaseVersion } = require("./release-notes-draft.cjs");
 const { DEFAULT_ADMIN_ALERT_STATUS_PATH } = require("./usage-api.cjs");
 
@@ -33,6 +33,8 @@ function collectAlertDeliveryPlan(options = {}) {
   if (options.requireInputs) {
     if (botOrigin === DEFAULT_BOT_ORIGIN) {
       errors.push("production bot origin was not supplied.");
+    } else if (isPlaceholderOrigin(botOrigin)) {
+      errors.push("production bot origin must not use documentation, example, local, or reserved hosts.");
     }
     if (operatorWorkspace === DEFAULT_OPERATOR_WORKSPACE) {
       errors.push("private operator workspace was not supplied.");

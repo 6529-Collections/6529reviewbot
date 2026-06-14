@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Rejected documentation, example, local, or reserved origin hosts from final
+  production deployment, dashboard deployment, and alert delivery ready gates.
 - Rejected placeholder model price source URL hosts before applying pricing
   rows to the ledger.
 - Required model price source URLs to use HTTPS before pricing evidence can be

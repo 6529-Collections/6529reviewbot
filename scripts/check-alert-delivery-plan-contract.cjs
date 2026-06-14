@@ -40,6 +40,7 @@ function checkAlertDeliveryPlanContract(options = {}) {
 
   checkReadyPlan(findings);
   checkMissingInputsPlan(findings);
+  checkPlaceholderOriginPlan(findings);
   checkValidation(findings);
   checkCli(findings);
   checkSourceAnchors(sourceTexts, findings);
@@ -55,7 +56,7 @@ function checkAlertDeliveryPlanContract(options = {}) {
   }
 
   return {
-    planCases: 5,
+    planCases: 6,
     docs: targetDocs.length,
   };
 }
@@ -63,7 +64,7 @@ function checkAlertDeliveryPlanContract(options = {}) {
 function checkReadyPlan(findings) {
   const plan = collectAlertDeliveryPlan({
     release: "0.2.0",
-    botOrigin: "https://reviewbot.example.com",
+    botOrigin: "https://reviewbot.6529.io",
     operatorWorkspace: "operator-workspace",
     notifyMode: "sns",
     alertChannel: "operator-sns",
@@ -114,7 +115,7 @@ function checkMissingInputsPlan(findings) {
   }
 
   const disabledDeliveryPlan = collectAlertDeliveryPlan({
-    botOrigin: "https://reviewbot.example.com",
+    botOrigin: "https://reviewbot.6529.io",
     operatorWorkspace: "operator-workspace",
     notifyMode: "none",
     alertChannel: "operator-channel",
@@ -122,6 +123,23 @@ function checkMissingInputsPlan(findings) {
   });
   if (disabledDeliveryPlan.ready) {
     findings.push("required alert delivery plans must reject non-delivery notify modes.");
+  }
+}
+
+function checkPlaceholderOriginPlan(findings) {
+  const plan = collectAlertDeliveryPlan({
+    release: "v0.2.0",
+    botOrigin: "https://reviewbot.example.com",
+    operatorWorkspace: "operator-workspace",
+    notifyMode: "sns",
+    alertChannel: "operator-sns",
+    requireInputs: true,
+  });
+  if (plan.ready) {
+    findings.push("required alert delivery plans must block documentation/example bot origins.");
+  }
+  if (!plan.errors.some((error) => error.includes("documentation, example, local, or reserved hosts"))) {
+    findings.push("alert placeholder origin errors must explain the reserved-host requirement.");
   }
 }
 
@@ -172,7 +190,7 @@ function checkCli(findings) {
 
   const plan = alertDeliveryPlanCli.main([
     "--bot-origin",
-    "https://reviewbot.example.com",
+    "https://reviewbot.6529.io",
     "--operator-workspace",
     "operator-workspace",
     "--notify-mode",
@@ -197,6 +215,7 @@ function checkSourceAnchors(sourceTexts, findings) {
     "package.json": ["alerts:delivery-plan", "check:alert-delivery-plan"],
     "src/alert-delivery-plan.cjs": [
       "collectAlertDeliveryPlan",
+      "isPlaceholderOrigin",
       "REVIEWBOT_ALERTS_NOTIFY_MODE",
       "This command does not send alerts",
     ],
@@ -234,6 +253,7 @@ function checkDocs(docTexts, findings) {
     "docs/alert-delivery-plan.md": [
       "npm run alerts:delivery-plan",
       "--notify-mode",
+      "documentation, example, local, or reserved origin hosts",
       "does not send alerts",
       "npm run check:alert-delivery-plan",
     ],

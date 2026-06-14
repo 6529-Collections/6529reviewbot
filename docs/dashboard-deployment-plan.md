@@ -35,13 +35,18 @@ non-zero unless the 6529.io origin, production bot origin, private operator
 workspace, and 6529.io server-side auth-check URL are supplied:
 
 ```bash
-npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready
 ```
+
+Final `--require-ready` plans reject documentation, example, local, or reserved
+origin hosts such as `reviewbot.example.com`; replace them with the production
+6529.io origin, bot origin, and auth-check URL before using the handoff as
+release evidence.
 
 For automation that wants JSON instead of Markdown:
 
 ```bash
-npm run dashboard:deployment-plan -- -- --frontend-origin https://6529.io --bot-origin https://reviewbot.example.com --operator-workspace <private-workspace-dir> --auth-check-url https://6529.io/api/auth/reviewbot --release v0.1.0 --require-ready --json
+npm run dashboard:deployment-plan -- -- --frontend-origin <6529-io-origin> --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --auth-check-url <6529-auth-check-url> --release v0.1.0 --require-ready --json
 ```
 
 The output can include private deployment origins, auth endpoint paths, and

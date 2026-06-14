@@ -33,7 +33,9 @@ npm run alerts:delivery-plan -- -- --bot-origin https://reviewbot.example.com --
 Use `--require-ready` for the final alert delivery handoff gate. This exits
 non-zero unless the production bot origin, private operator workspace,
 production notify mode, and public-safe operator alert channel label are
-provided:
+provided. Final ready plans reject documentation, example, local, or reserved
+origin hosts such as `reviewbot.example.com`; replace them with the production
+bot origin before using the handoff as release evidence:
 
 ```bash
 npm run alerts:delivery-plan -- -- --bot-origin <production-bot-origin> --operator-workspace <private-workspace-dir> --notify-mode <webhook|sns|ses> --alert-channel <operator-alert-channel> --require-ready
