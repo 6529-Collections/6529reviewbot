@@ -494,14 +494,16 @@ function getChangedFiles(settings) {
 
 function getPrComments(settings) {
   const pr = ghJson(["pr", "view", settings.prNumber, "--repo", settings.repo, "--json", "comments,reviews"]);
-  const comments = Array.isArray(pr.comments) ? pr.comments : [];
+  const fallbackComments = Array.isArray(pr.comments) ? pr.comments : [];
+  const issueComments = getIssueComments(settings);
+  const comments = issueComments || fallbackComments;
   const reviews = Array.isArray(pr.reviews) ? pr.reviews : [];
   const inlineReviewComments = getInlineReviewComments(settings);
   return [
     ...comments.map((comment) => ({
       kind: "comment",
-      author: comment.author?.login || "unknown",
-      createdAt: comment.createdAt || "",
+      author: comment.user?.login || comment.author?.login || "unknown",
+      createdAt: comment.created_at || comment.createdAt || "",
       body: comment.body || "",
     })),
     ...reviews
@@ -526,6 +528,28 @@ function getPrComments(settings) {
         ].join("\n"),
       })),
   ].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+function getIssueComments(settings) {
+  try {
+    const pages = ghJson(issueCommentsCommandArgs(settings));
+    if (!Array.isArray(pages)) {
+      return [];
+    }
+    return pages.flatMap((page) => (Array.isArray(page) ? page : [page])).filter(Boolean);
+  } catch (error) {
+    warn(`could not load issue comments: ${safeCommandError(error)}`);
+    return null;
+  }
+}
+
+function issueCommentsCommandArgs(settings) {
+  return [
+    "api",
+    `repos/${settings.repo}/issues/${settings.prNumber}/comments`,
+    "--paginate",
+    "--slurp",
+  ];
 }
 
 function getInlineReviewComments(settings) {
@@ -1456,6 +1480,7 @@ module.exports = {
   buildBudgetSkipComment,
   reviewLane,
   commentCommandArgs,
+  issueCommentsCommandArgs,
   commentMarker,
   budgetSkipMarker,
   findPreviousReview,
