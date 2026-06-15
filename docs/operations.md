@@ -168,12 +168,14 @@ alerts, and release-decision blockers stay synchronized.
 Private operator dashboards can call:
 
 ```text
+GET /api/admin/usage/summary?days=30
 GET /api/admin/status?profile=server
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
 ```
 
-to show the same no-network preflight checks and stale run-control claims
-without exposing runtime secrets or direct database access to the browser.
+to show cost per PR, repo, requestor, provider/model, review kind, the same
+no-network preflight checks, and stale run-control claims without exposing
+runtime secrets or direct database access to the browser.
 
 ## If Reviews Stop Posting
 
@@ -301,6 +303,8 @@ operator evidence record, then apply the backpressure controls in
 Check:
 
 - `GET /api/public/usage/summary?days=30`;
+- `GET /api/admin/usage/summary?days=30` for cost per PR, requestor, repo,
+  provider/model, and review kind;
 - `GET /api/admin/usage/events/recent?days=7&limit=50`;
 - the bot API data loader or Aurora reader;
 - `REVIEWBOT_USAGE_API_PUBLIC_ENABLED`;
@@ -314,8 +318,15 @@ Check:
 
 Check:
 
+- sample recent bot comments during dogfood and classify each as useful,
+  harmless/noisy, wrong, too vague, or missed an obvious issue;
 - whether the finding is grounded in diff/context;
+- whether the comment marker head SHA matches the current reviewed PR head;
 - prior comments included in prompt;
 - hidden metadata marker lane;
 - provider/model used;
 - whether target PR content attempted prompt injection.
+
+Treat this as release evidence, not only debugging. Before broadening rollout,
+operators should have a small reviewed sample across the target repositories
+showing the bot is useful, concise, and not repeatedly wrong or noisy.

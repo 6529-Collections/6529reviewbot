@@ -66,8 +66,8 @@ function checkActiveContext(text, findings) {
     "Current local changes:",
     "Current local validation:",
     "Use signed commits for 6529 repos.",
-    "Keep frontend public/private dashboard PRs current",
-    "GitHub App credentials and deployment target are not created yet.",
+    "Stabilize limited live dogfood",
+    "Webhook acknowledgement latency and burst workflow-dispatch resilience still need hardening",
   ]) {
     if (!text.includes(snippet)) {
       findings.push(`${activeContextPath} must include '${snippet}'.`);

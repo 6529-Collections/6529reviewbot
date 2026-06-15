@@ -111,6 +111,9 @@ function summarizeUsageSummary(body = {}) {
     costUsd: nullableNumber(totals.costUsd) || 0,
     totalTokens: wholeNumber(totals.totalTokens),
     budgetSkippedRuns: wholeNumber(totals.budgetSkippedRuns),
+    uniquePrs: wholeNumber(totals.uniquePrs),
+    averageCostPerReviewRunUsd: nullableNumber(totals.averageCostPerReviewRunUsd) || 0,
+    averageCostPerPrUsd: nullableNumber(totals.averageCostPerPrUsd) || 0,
     requestorGroups: Array.isArray(body.byRequestor) ? body.byRequestor.length : 0,
     prGroups: Array.isArray(body.byPr) ? body.byPr.length : 0,
   };

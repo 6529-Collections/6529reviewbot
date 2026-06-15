@@ -180,8 +180,53 @@ function createGitHubAppIntegration(options = {}) {
     });
   }
 
+  async function hydratePullRequestContext(event) {
+    if (!event?.shouldEnqueue || event.kind !== "comment_command" || event.headSha) {
+      return event;
+    }
+    if (!event.repository?.fullName || !event.prNumber || !event.installationId) {
+      return {
+        ...event,
+        shouldEnqueue: false,
+        reason: "Comment command is missing repository, PR number, or installation context.",
+      };
+    }
+
+    let pullRequest;
+    try {
+      const token = await getInstallationToken(event.installationId);
+      pullRequest = await readPullRequest(
+        fetchImpl,
+        settings,
+        token,
+        event.repository.fullName,
+        event.prNumber
+      );
+    } catch (_error) {
+      return {
+        ...event,
+        shouldEnqueue: false,
+        reason: "Could not load the current pull request context for the comment command.",
+      };
+    }
+    const context = pullRequestContext(pullRequest, event);
+    if (!context.headSha) {
+      return {
+        ...event,
+        ...context,
+        shouldEnqueue: false,
+        reason: "Could not resolve the current pull request head SHA for the comment command.",
+      };
+    }
+    return {
+      ...event,
+      ...context,
+    };
+  }
+
   return {
     getInstallationToken,
+    hydratePullRequestContext,
     loadRepositoryConfig,
     resolveActorContext,
   };
@@ -250,6 +295,41 @@ async function readOrgMembership(fetchImpl, settings, token, org, login) {
     throw new Error(`GitHub org membership API returned HTTP ${response.status}.`);
   }
   return false;
+}
+
+async function readPullRequest(fetchImpl, settings, token, repoFullName, prNumber) {
+  const [owner, repo] = splitRepo(repoFullName);
+  const url = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${encodeURIComponent(String(prNumber))}`;
+  const response = await fetchWithTimeout(
+    fetchImpl,
+    url,
+    {
+      headers: githubHeaders(token),
+    },
+    settings.fetchTimeoutMs
+  );
+  if (!response.ok) {
+    throw new Error(`GitHub pull request API returned HTTP ${response.status}.`);
+  }
+  return await response.json();
+}
+
+function pullRequestContext(pullRequest = {}, event = {}) {
+  return {
+    prAuthor: pullRequest.user?.login || event.prAuthor || "",
+    headSha: pullRequest.head?.sha || event.headSha || "",
+    headRepoFullName: pullRequest.head?.repo?.full_name || event.headRepoFullName || "",
+    baseSha: pullRequest.base?.sha || event.baseSha || "",
+    baseRepoFullName:
+      pullRequest.base?.repo?.full_name ||
+      event.baseRepoFullName ||
+      event.repository?.fullName ||
+      "",
+    draft:
+      pullRequest.draft === undefined || pullRequest.draft === null
+        ? Boolean(event.draft)
+        : Boolean(pullRequest.draft),
+  };
 }
 
 async function githubFetchJson(fetchImpl, url, options, timeoutMs) {
@@ -345,4 +425,6 @@ module.exports = {
   normalizePrivateKey,
   readCollaboratorPermission,
   readOrgMembership,
+  readPullRequest,
+  pullRequestContext,
 };

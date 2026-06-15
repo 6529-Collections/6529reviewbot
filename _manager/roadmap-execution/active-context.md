@@ -669,28 +669,33 @@ merged PRs.
 - Sensitive-header redaction PR: merged as PR #342, merge commit `624a790`;
   post-merge CI and OpenSSF Scorecard completed successfully.
   Latest run-log merge commit: `624a790`.
-- Current branch: `codex/reject-github-output-token-newlines`.
-- Current local changes: reject empty or multiline GitHub Actions
-  installation-token output values before masking or writing `token=<value>` to
-  `GITHUB_OUTPUT`; add GitHub App auth contract coverage, update smoke tests,
-  docs, changelog, and durable manager memory.
+- Current branch: `codex/live-dogfood-operator-surfaces`.
+- Current local changes: hydrate command-triggered review events from the
+  current GitHub Pull Request API before admission and dispatch; fail closed
+  when no current head SHA can be established; persist `REVIEWBOT_REQUESTOR`
+  into usage metadata; expose unique PR counts, average cost per review run,
+  average cost per PR, and enriched admin per-PR rows; update admin snapshot,
+  operations guidance, roadmap, changelog, and durable manager memory for
+  limited live dogfood monitoring.
 - Current local validation:
-  - `gh run list --repo 6529-Collections/6529reviewbot --commit 624a790b1e1b0c052f82fad5997d35ac22a1e249 --limit 10` passed by showing PR #342 post-merge CI run `27507064476` and OpenSSF Scorecard run `27507064481` completed successfully;
-  - `npm run check:github-app-auth` passed with 7 auth cases, 6 CLI cases,
-    and 7 docs checked;
-  - `npm run check:public-artifacts` passed with 120 files checked;
-  - `npm test` passed after adding GitHub Actions output newline rejection
-    coverage;
+  - `npm run check:comment-commands` passed with command hydration and current
+    PR head-SHA documentation coverage;
+  - `npm run check:usage-api-routes` passed with enriched cost-per-PR usage
+    rows;
+  - `npm run check:operations-runbook` passed with admin usage, cost-per-PR,
+    dogfood comment sampling, and marker head-SHA contract coverage;
   - `npm run check:docs` passed with 76 files checked;
-  - `npm run check:production-deployment-plan` passed with 8 plan cases and 6
-    docs checked;
-  - `npm run check:release-operations` passed with 7 phases and 115 tools;
-  - `npm run check:manager-memory` passed with 6 sections, latest PR #342, and
-    5 docs checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #342,
+    and 5 docs checked;
+  - `node -e "JSON.parse(require('fs').readFileSync('docs/usage-api.openapi.json','utf8')); console.log('openapi json ok')"` passed;
+  - `npm test` passed after adding command hydration, requestor metadata,
+    admin snapshot, and cost-per-PR smoke coverage;
   - `git diff --check` passed;
-  - `npm run check` passed with 184 CommonJS files;
-  - `npm run release:check` passed with 184 CommonJS files checked and the
-    GitHub App auth output-value guard exercised.
+  - `npm run check` passed with 185 CommonJS files checked;
+  - `npm run release:check` passed with 185 CommonJS files checked and the
+    command hydration, usage API, operations, manager memory, self-dogfood, and
+    smoke coverage exercised.
 
 ## Key Decisions
 
@@ -1308,23 +1313,25 @@ merged PRs.
 
 ## Next Actions
 
-1. Keep frontend public/private dashboard PRs current after merge by tracking
-   production deployment/configuration evidence in the central roadmap and
-   cutover gates.
-2. Continue hardening release and dogfood runbooks, checks, and operator
-   guardrails in focused PRs.
-3. Prepare production deployment/configuration evidence for the merged
-   6529.io dashboard routes through the dashboard deployment-plan and cutover
-   status flow.
-4. Prepare production alert routing evidence through the alert delivery plan
-   before enabling webhook, SNS, or SES delivery.
-5. Keep conservative dogfood rollout evidence ready for a trusted target repo.
+1. Stabilize limited live dogfood on real allowlisted-author PR traffic across
+   the five installed repositories.
+2. Land the command-event head-SHA hydration and cost-per-PR reporting
+   surfaces, then observe the next natural command and initial-review events.
+3. Harden webhook acknowledgement latency and central workflow-dispatch retry
+   behavior before widening traffic.
+4. Finish production alert routing and 6529.io production dashboard
+   configuration using operator-owned secrets and evidence.
+5. Keep release gates, dogfood go-live evidence, and bot-comment quality
+   sampling aligned before cutting a public dogfood tag.
 
 ## Open Risks
 
-- GitHub App credentials and deployment target are not created yet.
-- 6529.io auth integration contract is defined but not yet wired into
-  6529.io production.
+- Limited live dogfood is running on real target-repository PR traffic; keep
+  author allowlists, conservative fanout, and rollback controls in place until
+  comment quality, failure, denial, and cost evidence are clean.
+- Webhook acknowledgement latency and burst workflow-dispatch resilience still need hardening before traffic widens.
+- 6529.io auth integration contract is defined, but production dashboard
+  configuration and operator verification still need completion.
 - Budget admission now runs per job so provider, model, and review-kind caps
   can differ.
 - Public usage summaries enforce explicit repo/org allowlists before repo names
@@ -1344,10 +1351,10 @@ merged PRs.
   subject/audience scope, database grants, secret-store access principals,
   rotation owners, target-repo/browser secret exclusion, and break-glass
   revoke paths before use.
-- The GitHub App manifest still needs production-host rendering, actual App
-  creation in GitHub, private conversion evidence, App id/slug custody,
-  webhook ping evidence, selected-repository allowlist review, and rotation
-  owner review before production use.
+- The production GitHub App now exists and is installed for dogfood, but App
+  id/slug custody, selected-repository review, webhook delivery evidence, and
+  credential rotation ownership still need to remain recorded in private
+  operator evidence.
 - Live operator Aurora ledger schema has been applied and read-only verified
   with expected base tables and daily aggregate views. Keep unredacted resource
   identifiers in the private operator runbook, not in this public repo.
@@ -1361,11 +1368,12 @@ merged PRs.
 - Public support still requires maintainer moderation if a reporter
   accidentally pastes sensitive data.
 - v0 gates still require external operator evidence before tagging.
-- The central App server container image exists locally in source but still
-  needs an operator-owned registry publish, image vulnerability scan, and
-  production deployment evidence before broad release.
-- Native workflow dispatch still needs production creation of the central-only
-  dispatch GitHub App, or an explicitly reviewed fallback dispatch token.
+- The central App server is deployed for dogfood, but registry publish, image
+  vulnerability scan, App Runner deployment evidence, and rollback evidence
+  still need to be preserved before broad release.
+- Native workflow dispatch is enabled for live dogfood; permission drift,
+  transient GitHub API failures, dedupe windows, and retry visibility still
+  need production hardening.
 - Merged 6529.io dashboard routes still need production configuration,
   deployment, and operator verification before release evidence can mark them
   ready.

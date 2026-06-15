@@ -229,7 +229,9 @@ The skeleton normalizes these GitHub events:
   - `reopened`
   - `ready_for_review`
 - `issue_comment.created` on pull requests when the comment contains a
-  `6529bot` command
+  `6529bot` command. Command events are hydrated from GitHub's pull request API
+  before dispatch so review jobs are pinned to the current PR head SHA instead
+  of relying on the issue-comment payload.
 
 Unsupported events are acknowledged without queueing review work.
 

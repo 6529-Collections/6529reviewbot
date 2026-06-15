@@ -510,6 +510,14 @@ function summarizeUsageEvents(events, options = {}) {
     totalTokens: sum(normalized, (event) => event.totalTokens),
     budgetSkippedRuns: normalized.filter((event) => event.budgetSkipped).length,
   };
+  const uniquePrs = new Set(
+    normalized.map((event) => prKey(event)).filter((key) => key !== "unknown")
+  ).size;
+  totals.uniquePrs = uniquePrs;
+  totals.averageCostPerReviewRunUsd = totals.reviewRuns
+    ? roundUsd(totals.costUsd / totals.reviewRuns)
+    : 0;
+  totals.averageCostPerPrUsd = uniquePrs ? roundUsd(totals.costUsd / uniquePrs) : 0;
 
   const summary = {
     range,
@@ -528,7 +536,7 @@ function summarizeUsageEvents(events, options = {}) {
 
   if (visibility === "admin") {
     summary.byRequestor = sortedGroups(normalized, (event) => event.requestor || "unknown", maxItems);
-    summary.byPr = sortedGroups(normalized, (event) => prKey(event), maxItems);
+    summary.byPr = sortedPrGroups(normalized, maxItems);
   }
 
   return summary;
@@ -726,6 +734,48 @@ function groupedUsage(events, keyFn) {
     current.costUsd = roundUsd(current.costUsd + event.costUsd);
     current.totalTokens += event.totalTokens;
     current.budgetSkippedRuns += event.budgetSkipped ? 1 : 0;
+    groups.set(key, current);
+  }
+  return Array.from(groups.values()).map((group) => ({
+    ...group,
+    averageCostUsd: group.reviewRuns ? roundUsd(group.costUsd / group.reviewRuns) : 0,
+  }));
+}
+
+function sortedPrGroups(events, maxItems) {
+  return groupedPrUsage(events)
+    .sort((a, b) => b.costUsd - a.costUsd || b.reviewRuns - a.reviewRuns || a.key.localeCompare(b.key))
+    .slice(0, maxItems);
+}
+
+function groupedPrUsage(events) {
+  const groups = new Map();
+  for (const event of events) {
+    const key = prKey(event);
+    const current =
+      groups.get(key) || {
+        key,
+        repoFullName: event.repoFullName || "",
+        prNumber: event.prNumber || null,
+        prAuthor: event.prAuthor || "",
+        latestHeadSha: event.prHeadSha || "",
+        lastReviewAt: event.createdAt || "",
+        reviewRuns: 0,
+        costUsd: 0,
+        totalTokens: 0,
+        budgetSkippedRuns: 0,
+      };
+    current.reviewRuns += 1;
+    current.costUsd = roundUsd(current.costUsd + event.costUsd);
+    current.totalTokens += event.totalTokens;
+    current.budgetSkippedRuns += event.budgetSkipped ? 1 : 0;
+    if (event.createdAt && (!current.lastReviewAt || String(event.createdAt) > String(current.lastReviewAt))) {
+      current.lastReviewAt = event.createdAt;
+      current.latestHeadSha = event.prHeadSha || current.latestHeadSha;
+    }
+    if (!current.prAuthor && event.prAuthor) {
+      current.prAuthor = event.prAuthor;
+    }
     groups.set(key, current);
   }
   return Array.from(groups.values()).map((group) => ({

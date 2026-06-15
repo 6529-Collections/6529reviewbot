@@ -156,6 +156,7 @@ const settings = withEnv(
     GH_REPO: "6529-Collections/example",
     PR_NUMBER: "7",
     REVIEW_PROVIDER: "anthropic",
+    REVIEWBOT_REQUESTOR: "maintainer",
     REVIEW_USAGE_ENABLED: "false",
   },
   () => reviewBot.readSettings({}, "general")
@@ -163,8 +164,13 @@ const settings = withEnv(
 
 assert.equal(settings.provider, "anthropic");
 assert.equal(settings.model, "claude-opus-4-8");
+assert.equal(settings.requestor, "maintainer");
 assert.equal(settings.providerTimeoutMs, 120000);
 assert.deepEqual(settings.trustedMarkerAuthors, ["6529bot[bot]", "github-actions[bot]"]);
+assert.deepEqual(
+  reviewBot.usageMetadata(settings, { changedFiles: 1 }),
+  { changedFiles: 1, requestor: "maintainer" }
+);
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 5);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(
@@ -3444,6 +3450,25 @@ const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
     if (urlText.includes("/orgs/6529-Collections/members/maintainer")) {
       return { ok: true, status: 204, json: async () => ({}) };
     }
+    if (urlText.includes("/repos/6529-Collections/example/pulls/12")) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          number: 12,
+          user: { login: "current-author" },
+          head: {
+            sha: "current-command-head",
+            repo: { full_name: "6529-Collections/example" },
+          },
+          base: {
+            sha: "current-command-base",
+            repo: { full_name: "6529-Collections/example" },
+          },
+          draft: false,
+        }),
+      };
+    }
     if (urlText.includes("/contents/")) {
       return {
         ok: true,
@@ -3613,6 +3638,7 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
   {
     action: "created",
     repository: { full_name: "6529-Collections/example" },
+    installation: { id: 99 },
     sender: { login: "maintainer" },
     issue: {
       number: 12,
@@ -3628,6 +3654,28 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
 );
 assert.equal(commentEvent.kind, "comment_command");
 assert.deepEqual(commentEvent.reviewKinds, ["security"]);
+const hydratedCommentEventPromise = githubAppIntegration.hydratePullRequestContext(commentEvent);
+const missingCommentEvent = githubWebhook.normalizeGitHubWebhook(
+  { "x-github-event": "issue_comment" },
+  {
+    action: "created",
+    repository: { full_name: "6529-Collections/example" },
+    installation: { id: 99 },
+    sender: { login: "maintainer" },
+    issue: {
+      number: 99,
+      pull_request: { url: "https://api.github.com/repos/6529-Collections/example/pulls/99" },
+      user: { login: "author" },
+    },
+    comment: {
+      id: 457,
+      body: "/6529bot security",
+      user: { login: "maintainer" },
+    },
+  }
+);
+const failedHydratedCommentEventPromise =
+  githubAppIntegration.hydratePullRequestContext(missingCommentEvent);
 
 const defaultJobPolicy = reviewJob.reviewJobPolicyFromEnv({
   REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8",
@@ -4257,6 +4305,8 @@ const usageEvents = [
     createdAt: "2026-06-10T01:00:00.000Z",
     repoFullName: "6529-Collections/public-repo",
     prNumber: 10,
+    prAuthor: "author",
+    prHeadSha: "public-head",
     requestor: "maintainer",
     reviewKind: "general",
     provider: "anthropic",
@@ -4285,6 +4335,9 @@ const publicUsageSummary = usageApi.summarizeUsageEvents(usageEvents, {
 });
 assert.equal(publicUsageSummary.totals.reviewRuns, 2);
 assert.equal(publicUsageSummary.totals.costUsd, 2);
+assert.equal(publicUsageSummary.totals.uniquePrs, 2);
+assert.equal(publicUsageSummary.totals.averageCostPerReviewRunUsd, 1);
+assert.equal(publicUsageSummary.totals.averageCostPerPrUsd, 1);
 assert.equal(publicUsageSummary.byDay[0].averageCostUsd, 1);
 assert.equal(publicUsageSummary.byRepo.some((item) => item.key === "private"), true);
 assert.equal(
@@ -4349,6 +4402,16 @@ assert.equal(
   adminUsageSummary.byPr.find((item) => item.key === "6529-Collections/public-repo#10")
     .averageCostUsd,
   1.25
+);
+assert.equal(
+  adminUsageSummary.byPr.find((item) => item.key === "6529-Collections/public-repo#10")
+    .repoFullName,
+  "6529-Collections/public-repo"
+);
+assert.equal(
+  adminUsageSummary.byPr.find((item) => item.key === "6529-Collections/public-repo#10")
+    .latestHeadSha,
+  "public-head"
 );
 const unsafeAdminUsageEvent = usageApi.normalizeAdminUsageEvent({
   createdAt: "2026-06-10T01:00:00.000Z",
@@ -5107,6 +5170,9 @@ const adminSnapshotPromise = adminSnapshot.collectAdminSnapshot({
         costUsd: 3.5,
         totalTokens: 1234,
         budgetSkippedRuns: 1,
+        uniquePrs: 2,
+        averageCostPerReviewRunUsd: 0.875,
+        averageCostPerPrUsd: 1.75,
       },
       byRequestor: [{ key: "operator" }],
       byPr: [{ key: "6529-Collections/private#1" }],
@@ -5366,6 +5432,17 @@ appServer.handleGitHubWebhook({
   const githubRepoConfig = await githubRepoConfigPromise;
   assert.equal(githubRepoConfig.status, "loaded");
   assert.equal(githubRepoConfig.config.enabled, false);
+  const hydratedCommentEvent = await hydratedCommentEventPromise;
+  assert.equal(hydratedCommentEvent.headSha, "current-command-head");
+  assert.equal(hydratedCommentEvent.baseSha, "current-command-base");
+  assert.equal(hydratedCommentEvent.prAuthor, "current-author");
+  assert.equal(
+    repositoryConfig.repositoryConfigRefForEvent(hydratedCommentEvent),
+    "current-command-base"
+  );
+  const failedHydratedCommentEvent = await failedHydratedCommentEventPromise;
+  assert.equal(failedHydratedCommentEvent.shouldEnqueue, false);
+  assert.match(failedHydratedCommentEvent.reason, /Could not load the current pull request context/);
   const disabledGithubRepoConfig = await disabledGithubRepoConfigPromise;
   assert.equal(disabledGithubRepoConfig.status, "not_configured");
   assert.equal(disabledConfigRequestedToken, false);
@@ -6024,6 +6101,10 @@ appServer.handleGitHubWebhook({
   assert.equal(
     adminSnapshotResult.checks.find((check) => check.name === "admin_usage_summary").summary.reviewRuns,
     4
+  );
+  assert.equal(
+    adminSnapshotResult.checks.find((check) => check.name === "admin_usage_summary").summary.averageCostPerPrUsd,
+    1.75
   );
   assert(adminSnapshotResult.warnings.includes("budget_status: over-budget periods present"));
   assert(adminSnapshotResult.warnings.includes("model_price_status: staleRows=1"));
@@ -6927,6 +7008,71 @@ appServer.handleGitHubWebhook({
     ["general:anthropic", "general:openai", "security:anthropic", "security:openai"]
   );
   assert.equal(webhookResult.body.configuration.status, "loaded");
+  const commandWebhookBody = Buffer.from(JSON.stringify({
+    action: "created",
+    repository: {
+      id: 1,
+      full_name: "6529-Collections/example",
+      private: false,
+      default_branch: "main",
+    },
+    installation: { id: 99 },
+    sender: { login: "maintainer" },
+    issue: {
+      number: 12,
+      pull_request: { url: "https://api.github.com/repos/6529-Collections/example/pulls/12" },
+      user: { login: "author" },
+    },
+    comment: {
+      id: 789,
+      body: "/6529bot security",
+      user: { login: "maintainer" },
+    },
+  }));
+  let commandJobs = null;
+  const commandWebhookResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": githubWebhook.signGitHubWebhook(webhookSecret, commandWebhookBody),
+      "x-github-event": "issue_comment",
+      "x-github-delivery": "delivery-command",
+    },
+    rawBody: commandWebhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    hydrateEvent: async (event) => ({
+      ...event,
+      headSha: "hydrated-command-head",
+      baseSha: "hydrated-command-base",
+      headRepoFullName: "6529-Collections/example",
+      baseRepoFullName: "6529-Collections/example",
+      draft: false,
+    }),
+    enqueueReviewJobs: async (jobs) => {
+      commandJobs = jobs;
+      return { accepted: true, jobId: "command-job" };
+    },
+    recordJobEvent: async () => {},
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadRepositoryConfig: async () => ({
+      status: "loaded",
+      source: "test",
+      config: parsedRepoConfig,
+    }),
+    resolveBudgetSnapshot: async () => ({ unavailable: false, totals: {} }),
+    estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
+    jobPolicy: twoLanePolicy,
+  });
+  assert.equal(commandWebhookResult.statusCode, 202);
+  assert.equal(commandWebhookResult.body.event.headSha, "hydrated-command-head");
+  assert.equal(commandJobs.length, 2);
+  assert.equal(commandJobs.every((job) => job.headSha === "hydrated-command-head"), true);
+  assert.deepEqual(
+    commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
+    ["security:anthropic", "security:openai"]
+  );
   const defaultQueueResult = await appServer.handleGitHubWebhook({
     headers: {
       "x-hub-signature-256": webhookSignature,

@@ -115,6 +115,12 @@ GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=10
 GET /api/admin/status?profile=server
 ```
 
+Use `GET /api/admin/usage/summary?days=30` as the primary cost dashboard
+source. Its totals include unique PR count, average cost per review run, and
+average cost per PR. Its `byPr` rows include repo, PR number, author, latest
+head SHA, latest review time, total cost, and average cost per review run
+without requiring the page to fetch raw usage events.
+
 For the first private admin page, use these client methods:
 
 ```text
@@ -162,8 +168,10 @@ npm run admin:snapshot -- -- --json --require-ok
 ```
 
 The snapshot command reduces endpoint responses into counts and posture flags.
-It does not print raw usage events, private repo names, budget scope values,
-provider responses, prompts, diffs, webhook payloads, or credentials. Use it
-for private dashboard bring-up, release evidence, and quick incident checks.
+For usage, it includes total cost, review runs, unique PRs, average cost per
+review run, and average cost per PR. It does not print raw usage events,
+private repo names, budget scope values, provider responses, prompts, diffs,
+webhook payloads, or credentials. Use it for private dashboard bring-up,
+release evidence, and quick incident checks.
 `--require-ok` exits non-zero when any endpoint is unavailable or any warning
 posture is present.

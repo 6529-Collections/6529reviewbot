@@ -49,6 +49,7 @@ REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
 The public summary is safe for a public 6529.io transparency page. It includes:
 
 - totals for review runs, cost, tokens, and budget-skipped runs;
+- unique PR count, average cost per review run, and average cost per PR;
 - daily aggregates;
 - repo aggregates, with private and unallowlisted repos collapsed into a
   `private` bucket;
@@ -69,6 +70,8 @@ summary fields plus:
 - requester aggregates;
 - PR-level aggregates, where each `byPr` row's `costUsd` is the total cost for
   that PR and `averageCostUsd` is the average cost per review run on that PR;
+- PR-level metadata for each `byPr` row, including repo, PR number, PR author,
+  latest head SHA, and latest review timestamp;
 - private repo names, when the data loader supplies them.
 
 Admin endpoints fail closed unless the server is given an admin authorizer.

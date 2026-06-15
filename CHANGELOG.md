@@ -8,6 +8,18 @@ stabilized.
 
 ## Unreleased
 
+- Hydrated command-triggered review events from the current GitHub Pull Request
+  API before admission and dispatch, so `/6529bot review` jobs pin the live
+  head/base repository and SHA context and fail closed when the current head
+  cannot be established.
+- Persisted the worker-provided requestor into usage metadata so requestor
+  budget and cost views can attribute live review spend consistently.
+- Extended usage summaries, admin usage rows, and admin snapshots with unique
+  PR counts, average cost per review run, average cost per PR, and enriched
+  per-PR metadata for production dogfood cost dashboards.
+- Updated dogfood operations guidance and contract checks so live monitoring
+  includes admin usage cost-per-PR views, bot-comment quality sampling, and
+  command marker head-SHA verification.
 - Rejected empty or multiline GitHub Actions installation-token output values
   before writing `token=<value>` to `GITHUB_OUTPUT`, preventing accidental
   output injection in the token helper.
