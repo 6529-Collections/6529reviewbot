@@ -1317,13 +1317,13 @@ function postComment(settings, body) {
 
 function commentCommandArgs(settings, bodyPath) {
   return [
-    "issue",
-    "comment",
-    settings.prNumber,
-    "--repo",
-    settings.repo,
-    "--body-file",
-    bodyPath,
+    "api",
+    "--method",
+    "POST",
+    "--silent",
+    `repos/${settings.repo}/issues/${settings.prNumber}/comments`,
+    "-F",
+    `body=@${bodyPath}`,
   ];
 }
 
