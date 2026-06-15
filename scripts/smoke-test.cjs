@@ -3656,6 +3656,9 @@ const commentEvent = githubWebhook.normalizeGitHubWebhook(
 );
 assert.equal(commentEvent.kind, "comment_command");
 assert.deepEqual(commentEvent.reviewKinds, ["security"]);
+const inboxCommentEvent = webhookInbox.normalizeInboxEvent(commentEvent);
+assert.equal(inboxCommentEvent.repository.fullName, "6529-Collections/example");
+assert.deepEqual(inboxCommentEvent.reviewKinds, ["security"]);
 const hydratedCommentEventPromise = githubAppIntegration.hydratePullRequestContext(commentEvent);
 const missingCommentEvent = githubWebhook.normalizeGitHubWebhook(
   { "x-github-event": "issue_comment" },
