@@ -4,6 +4,7 @@
 
 const { execFileSync } = require("child_process");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const {
   usageLedgerSettingsFromEnv,
@@ -406,12 +407,16 @@ function parseBool(value) {
 }
 
 function command(commandName, args, options = {}) {
-  return execFileSync(commandName, args, {
-    encoding: "utf8",
-    maxBuffer: 128 * 1024 * 1024,
-    stdio: ["pipe", "pipe", "pipe"],
-    ...options,
-  });
+  try {
+    return execFileSync(commandName, args, {
+      encoding: "utf8",
+      maxBuffer: 128 * 1024 * 1024,
+      stdio: ["pipe", "pipe", "pipe"],
+      ...options,
+    });
+  } catch (error) {
+    throw commandError(error);
+  }
 }
 
 function git(args, settings) {
@@ -430,6 +435,23 @@ function ghJson(args) {
 function safeCommandError(error) {
   const message = error && error.message ? error.message : String(error);
   return truncate(message.split(/\r?\n/)[0], 300);
+}
+
+function commandError(error) {
+  const message = error && error.message ? error.message : String(error);
+  const firstLine = message.split(/\r?\n/)[0];
+  const stderr = commandOutputText(error?.stderr || error?.output?.[2]).trim();
+  const stdout = commandOutputText(error?.stdout || error?.output?.[1]).trim();
+  const details = [stderr, stdout].filter(Boolean).join("\n");
+  const redactedDetails = truncate(redactSensitiveText(details), 1000);
+  return new Error(redactedDetails ? `${firstLine}: ${redactedDetails}` : firstLine);
+}
+
+function commandOutputText(value) {
+  if (Buffer.isBuffer(value)) {
+    return value.toString("utf8");
+  }
+  return value === undefined || value === null ? "" : String(value);
 }
 
 function getPrInfo(settings) {
@@ -1283,7 +1305,26 @@ function countMarker(comments, marker, settings) {
 }
 
 function postComment(settings, body) {
-  gh(["pr", "comment", settings.prNumber, "--repo", settings.repo, "--body-file", "-"], { input: body });
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-review-comment-"));
+  const bodyPath = path.join(tmpDir, "comment.md");
+  try {
+    fs.writeFileSync(bodyPath, body, "utf8");
+    gh(commentCommandArgs(settings, bodyPath));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+}
+
+function commentCommandArgs(settings, bodyPath) {
+  return [
+    "issue",
+    "comment",
+    settings.prNumber,
+    "--repo",
+    settings.repo,
+    "--body-file",
+    bodyPath,
+  ];
 }
 
 function recordUsage(settings, input) {
@@ -1414,6 +1455,7 @@ module.exports = {
   buildComment,
   buildBudgetSkipComment,
   reviewLane,
+  commentCommandArgs,
   commentMarker,
   budgetSkipMarker,
   findPreviousReview,

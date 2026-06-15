@@ -1558,6 +1558,10 @@ assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-8"), false)
 assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-7"), false);
 assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-6"), true);
 assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-sonnet-4-6"), true);
+assert.deepEqual(
+  reviewBot.commentCommandArgs({ prNumber: "12", repo: "6529-Collections/example" }, "comment.md"),
+  ["issue", "comment", "12", "--repo", "6529-Collections/example", "--body-file", "comment.md"]
+);
 const cliSecret = "sk-proj-abcdefghijklmnopqrstuvwx123456";
 const cliFatal = runCliForSmoke(["bin/preflight.cjs", cliSecret]);
 assert.equal(cliFatal.status, 1);
