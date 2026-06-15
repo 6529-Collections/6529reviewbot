@@ -122,6 +122,10 @@ the durable table intended for run-control dedupe and concurrency claims. Keep
 claims separate from append-only lifecycle events: claims represent current
 work ownership, while job events preserve audit history.
 
+The schema also includes `reviewbot.ai_review_webhook_inbox` for normalized
+webhook delivery retry state before hydration. It is operational queue state,
+not a raw webhook archive.
+
 Minimal claim table shape:
 
 ```sql

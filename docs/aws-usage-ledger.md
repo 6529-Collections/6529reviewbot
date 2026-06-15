@@ -17,6 +17,7 @@ Auth from GitHub Actions: AWS OIDC
 reviewbot.ai_review_usage_events
 reviewbot.ai_review_job_events
 reviewbot.ai_review_run_claims
+reviewbot.ai_review_webhook_inbox
 reviewbot.ai_model_prices
 reviewbot.ai_review_budget_policies
 ```
@@ -63,10 +64,15 @@ data, not cost accounting. See [job-ledger.md](job-ledger.md).
 concurrency. It represents active or recently completed job ownership, not
 prompt or provider data. See [run-control.md](run-control.md).
 
+`ai_review_webhook_inbox` stores normalized GitHub delivery metadata before
+hydration so transient GitHub API failures and command-burst backpressure can
+be retried. It does not store raw webhook bodies.
+
 ## Ledger Privacy
 
 Usage, job, and run-control ledgers normalize custom metadata before
-persistence. The shared normalizer keeps safe scalar audit fields, bounds and
+persistence. The webhook inbox applies the same normalization to delivery
+metadata before persistence. The shared normalizer keeps safe scalar audit fields, bounds and
 redacts string values, drops nested values and unsafe keys, and rejects keys
 that look like prompts, diffs, provider payloads, webhook payloads, worker
 stdout/stderr, credentials, secrets, tokens, or authorization headers.

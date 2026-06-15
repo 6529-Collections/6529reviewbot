@@ -2,7 +2,10 @@
 
 "use strict";
 
-const { createReviewbotServer } = require("../src/app-server.cjs");
+const {
+  createReviewbotServer,
+  startWebhookInboxProcessor,
+} = require("../src/app-server.cjs");
 const {
   adminAuthSettingsFromEnv,
   createUsageApiAdminAuthorizer,
@@ -35,6 +38,10 @@ const {
   usageApiLedgerLoadersFromEnv,
 } = require("../src/usage-api-ledger.cjs");
 const { usageLedgerSettingsFromEnv } = require("../src/usage-ledger.cjs");
+const {
+  createWebhookInbox,
+  webhookInboxSettingsFromEnv,
+} = require("../src/webhook-inbox.cjs");
 const {
   createReviewJobEnqueuer,
   enqueueReviewJobsWithAdapter,
@@ -98,6 +105,10 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
   if (adminAuthSettings.mode !== "disabled") {
     serverOptions.authorizeUsageApiAdmin = createUsageApiAdminAuthorizer(adminAuthSettings);
   }
+  const webhookInboxSettings = webhookInboxSettingsFromEnv(env);
+  if (webhookInboxSettings.enabled) {
+    serverOptions.webhookInbox = createWebhookInbox(webhookInboxSettings);
+  }
   const githubAppAuthSettings = githubAppAuthSettingsFromEnv(env);
   if (isGitHubAppAuthConfigured(githubAppAuthSettings)) {
     const githubApp = createGitHubAppIntegration({
@@ -147,7 +158,13 @@ function serverPortFromEnv(env = process.env) {
 
 function startServer(env = process.env) {
   const port = serverPortFromEnv(env);
-  const server = createReviewbotServer(createServerOptionsFromEnv(env));
+  const serverOptions = createServerOptionsFromEnv(env);
+  const server = createReviewbotServer(serverOptions);
+  const webhookInboxProcessor = startWebhookInboxProcessor({
+    ...serverOptions,
+    logger: console,
+  });
+  server.on("close", () => webhookInboxProcessor.stop());
   server.listen(port, () => {
     console.log(`[reviewbot-app] listening on port ${port}`);
   });

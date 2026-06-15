@@ -12,6 +12,8 @@ const WORKER_MODES = ["noop", "local", "github_actions"];
 const GITHUB_DISPATCH_MODES = ["auto", "api", "gh"];
 const DEFAULT_LOCAL_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_GITHUB_FETCH_TIMEOUT_MS = 10000;
+const DEFAULT_GITHUB_FETCH_RETRIES = 2;
+const DEFAULT_GITHUB_RETRY_BASE_DELAY_MS = 500;
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
 const REVIEW_KIND_BINS = {
   general: "general-pr-review.cjs",
@@ -58,6 +60,16 @@ function workerAdapterPolicyFromEnv(env = process.env) {
       env.REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS,
       DEFAULT_GITHUB_FETCH_TIMEOUT_MS,
       "REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS"
+    ),
+    githubFetchRetries: nonNegativeInt(
+      env.REVIEWBOT_WORKER_GITHUB_FETCH_RETRIES,
+      DEFAULT_GITHUB_FETCH_RETRIES,
+      "REVIEWBOT_WORKER_GITHUB_FETCH_RETRIES"
+    ),
+    githubRetryBaseDelayMs: positiveInt(
+      env.REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS,
+      DEFAULT_GITHUB_RETRY_BASE_DELAY_MS,
+      "REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS"
     ),
     ghBin: env.REVIEWBOT_WORKER_GH_BIN || env.GH_BIN || "gh",
   };
@@ -241,14 +253,12 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
     });
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), policy.githubFetchTimeoutMs);
   const fields = githubWorkflowFields(job);
   const url =
     `${policy.githubApiUrl}/repos/${repoPath}/actions/workflows/` +
     `${encodeURIComponent(policy.githubWorkflow)}/dispatches`;
   try {
-    const response = await fetchImpl(url, {
+    const response = await githubApiFetchWithRetry(fetchImpl, policy, url, {
       method: "POST",
       headers: {
         accept: "application/vnd.github+json",
@@ -261,7 +271,6 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
         ref: policy.githubRef,
         inputs: fields,
       }),
-      signal: controller.signal,
     });
     const bodyText = await safeResponseText(response);
     return workerResult(job, response.status === 204, {
@@ -285,8 +294,6 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
       workflowRepo: policy.githubRepo,
       workflowRef: policy.githubRef,
     });
-  } finally {
-    clearTimeout(timeout);
   }
 }
 
@@ -398,6 +405,17 @@ function positiveInt(value, fallback, name) {
   return parsed;
 }
 
+function nonNegativeInt(value, fallback, name) {
+  if (value === undefined || value === "") {
+    return fallback;
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isSafeInteger(parsed) || parsed < 0 || String(parsed) !== String(value)) {
+    throw new Error(`${name} must be a non-negative integer.`);
+  }
+  return parsed;
+}
+
 function safeError(error) {
   return diagnosticTail(error && error.message ? error.message : String(error), 500);
 }
@@ -445,6 +463,74 @@ async function safeResponseText(response) {
   }
 }
 
+async function githubApiFetchWithRetry(fetchImpl, policy, url, options = {}) {
+  const maxAttempts = (policy.githubFetchRetries || 0) + 1;
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const response = await fetchWithTimeout(
+        fetchImpl,
+        url,
+        options,
+        policy.githubFetchTimeoutMs
+      );
+      if (!isRetryableGitHubStatus(response.status) || attempt >= maxAttempts) {
+        return response;
+      }
+      await sleep(retryDelayMs(policy, attempt, response));
+    } catch (error) {
+      lastError = error;
+      if (attempt >= maxAttempts) {
+        throw error;
+      }
+      await sleep(retryDelayMs(policy, attempt));
+    }
+  }
+  throw lastError;
+}
+
+async function fetchWithTimeout(fetchImpl, url, options = {}, timeoutMs = DEFAULT_GITHUB_FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  if (typeof timeout.unref === "function") {
+    timeout.unref();
+  }
+  try {
+    return await fetchImpl(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (controller.signal.aborted || error?.name === "AbortError") {
+      throw new Error(`GitHub API dispatch timed out after ${timeoutMs}ms.`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function isRetryableGitHubStatus(status) {
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function retryDelayMs(policy, attempt, response) {
+  const retryAfter = Number.parseInt(response?.headers?.get?.("retry-after") || "", 10);
+  if (Number.isSafeInteger(retryAfter) && retryAfter > 0) {
+    return retryAfter * 1000;
+  }
+  return Math.min(policy.githubRetryBaseDelayMs * 2 ** Math.max(0, attempt - 1), 5000);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    if (typeof timer.unref === "function") {
+      timer.unref();
+    }
+  });
+}
+
 function trimTrailingSlash(value) {
   return String(value || "").replace(/\/+$/, "");
 }
@@ -453,6 +539,7 @@ module.exports = {
   DEFAULT_LOCAL_TIMEOUT_MS,
   DEFAULT_GITHUB_API_URL,
   DEFAULT_GITHUB_FETCH_TIMEOUT_MS,
+  DEFAULT_GITHUB_FETCH_RETRIES,
   GITHUB_DISPATCH_MODES,
   REVIEW_KIND_BINS,
   WORKER_MODES,
