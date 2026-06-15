@@ -911,6 +911,15 @@ function requireProviderReviewText(providerResult, settings) {
 
 async function callAnthropic(settings, prompt) {
   const key = requiredSecret("ANTHROPIC_API_KEY", settings.provider);
+  const body = {
+    model: settings.model,
+    max_tokens: settings.maxOutputTokens,
+    system: prompt.system,
+    messages: [{ role: "user", content: prompt.user }],
+  };
+  if (shouldSendAnthropicTemperature(settings.model)) {
+    body.temperature = settings.temperature;
+  }
   const response = await httpJson(
     "https://api.anthropic.com/v1/messages",
     {
@@ -920,13 +929,7 @@ async function callAnthropic(settings, prompt) {
         "anthropic-version": "2023-06-01",
         "x-api-key": key,
       },
-      body: JSON.stringify({
-        model: settings.model,
-        max_tokens: settings.maxOutputTokens,
-        temperature: settings.temperature,
-        system: prompt.system,
-        messages: [{ role: "user", content: prompt.user }],
-      }),
+      body: JSON.stringify(body),
     },
     settings.providerTimeoutMs
   );
@@ -939,6 +942,10 @@ async function callAnthropic(settings, prompt) {
     usage: normalizeAnthropicUsage(response.usage),
     providerResponseId: response.id,
   };
+}
+
+function shouldSendAnthropicTemperature(model) {
+  return !/^claude-opus-4-[78](?:$|[-._])/.test(String(model || ""));
 }
 
 async function callOpenAI(settings, prompt) {
@@ -1410,6 +1417,7 @@ module.exports = {
   commentMarker,
   budgetSkipMarker,
   findPreviousReview,
+  shouldSendAnthropicTemperature,
   openAIModelCapabilities,
   shouldSendOpenAIOption,
   providerErrorSummary,

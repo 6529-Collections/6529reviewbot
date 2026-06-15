@@ -525,6 +525,10 @@ REVIEW_TEMPERATURE=0
 The engine enforces hard maximums above these configurable values. Repository
 variables cannot make requests unbounded.
 
+For Anthropic Claude Opus 4.8 and 4.7, the bot omits `temperature` because
+those Messages API models reject non-default sampling parameters. Other
+Anthropic models keep using `REVIEW_TEMPERATURE`.
+
 ## OpenAI Options
 
 ```text
@@ -558,11 +562,15 @@ REVIEW_USAGE_DB_SECRET_ARN=arn:aws:secretsmanager:...
 REVIEW_USAGE_DB_NAME=reviewbot
 REVIEW_USAGE_DB_SCHEMA=reviewbot
 REVIEW_USAGE_FAIL_CLOSED=false
+REVIEWBOT_DATA_API_CLIENT=auto
 AWS_CLI_BIN=
 ```
 
 When `REVIEW_USAGE_FAIL_CLOSED=false`, a failed ledger write logs a warning but
 does not fail the PR review.
 
-`AWS_CLI_BIN` is optional. Set it only when the runtime needs a specific AWS
-CLI binary path.
+`REVIEWBOT_DATA_API_CLIENT` supports `auto`, `aws-cli`, or `node`. `auto` uses
+the AWS CLI when it is present and falls back to the built-in signed HTTPS
+client when the binary is unavailable, such as in the production App Runner
+image. `AWS_CLI_BIN` is optional. Set it only when the runtime needs a specific
+AWS CLI binary path.
