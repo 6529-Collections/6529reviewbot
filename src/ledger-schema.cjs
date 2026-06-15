@@ -135,6 +135,12 @@ alter table ${schemaIdent}.ai_model_prices
   add column if not exists source_url text`,
     },
     {
+      name: "alter_model_prices_add_effective_to",
+      sql: `
+alter table ${schemaIdent}.ai_model_prices
+  add column if not exists effective_to timestamptz`,
+    },
+    {
       name: "alter_model_prices_add_source_checked_at",
       sql: `
 alter table ${schemaIdent}.ai_model_prices
