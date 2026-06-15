@@ -1753,6 +1753,7 @@ assert.match(renderedLedgerSchema, /ai_review_job_events/);
 assert.match(renderedLedgerSchema, /ai_review_run_claims/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_model_prices/);
 assert.match(renderedLedgerSchema, /add column if not exists source_url text/);
+assert.match(renderedLedgerSchema, /add column if not exists effective_to timestamptz/);
 assert.match(renderedLedgerSchema, /add column if not exists source_checked_at timestamptz/);
 assert.match(renderedLedgerSchema, /alter table "reviewbot"\.ai_review_budget_policies/);
 assert.match(renderedLedgerSchema, /set scope_type = 'requestor'\s+where scope_type = 'requester'/);
