@@ -20,8 +20,8 @@ Minimum repository permissions:
 - Issues: read and write
 - Pull requests: read
 
-The bot posts top-level PR comments. It does not need write access to source
-code.
+The bot posts top-level PR comments as issue comments through the GitHub REST
+API. It does not need write access to pull requests or source code.
 
 ## 2. Trigger And Workflow Runner
 
