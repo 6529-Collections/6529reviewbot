@@ -40,6 +40,8 @@ REVIEWBOT_GITHUB_APP_PRIVATE_KEY=
 REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_GITHUB_APP_API_URL=https://api.github.com
 REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS=10000
+REVIEWBOT_GITHUB_APP_FETCH_RETRIES=2
+REVIEWBOT_GITHUB_APP_RETRY_BASE_DELAY_MS=500
 REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS=540
 REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS=60
 ```
@@ -48,9 +50,34 @@ When the App id and private key are configured, `bin/server.cjs` resolves actor
 repository permissions and repository config through GitHub App installation
 tokens. The private key may be supplied as a PEM string with escaped newlines or
 as base64. GitHub API calls made by this auth bridge use the configured timeout
-and fail closed when token or collaborator-permission reads cannot complete.
+and bounded retry settings, then fail closed when token or
+collaborator-permission reads cannot complete.
 Run `npm run check:github-app-auth` after changing GitHub App auth env parsing,
 JWT TTL, installation-token refresh buffering, or token profile behavior.
+
+## Webhook Inbox
+
+```text
+REVIEWBOT_WEBHOOK_INBOX_ENABLED=false
+REVIEWBOT_WEBHOOK_INBOX_FAIL_CLOSED=false
+REVIEWBOT_WEBHOOK_INBOX_AWS_REGION=
+REVIEWBOT_WEBHOOK_INBOX_DB_NAME=
+REVIEWBOT_WEBHOOK_INBOX_DB_RESOURCE_ARN=
+REVIEWBOT_WEBHOOK_INBOX_DB_SCHEMA=
+REVIEWBOT_WEBHOOK_INBOX_DB_SECRET_ARN=
+REVIEWBOT_WEBHOOK_INBOX_RETRY_DELAY_SECONDS=90
+REVIEWBOT_WEBHOOK_INBOX_MAX_ATTEMPTS=6
+REVIEWBOT_WEBHOOK_INBOX_POLL_INTERVAL_MS=15000
+REVIEWBOT_WEBHOOK_INBOX_BATCH_SIZE=2
+```
+
+When enabled, the App server records a normalized webhook event before PR
+hydration, repository config reads, run-control admission, or worker dispatch.
+Transient hydration failures and run-control concurrency denials are marked for
+retry and drained in small batches by the server process. The inbox reuses
+`REVIEW_USAGE_*` Data API settings when the inbox-specific database variables
+are blank. Keep `FAIL_CLOSED=false` for production availability unless the
+operator wants webhook delivery to fail whenever the inbox write fails.
 
 ## Admission Policy
 
@@ -297,6 +324,8 @@ REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY=
 REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
 REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
+REVIEWBOT_WORKER_GITHUB_FETCH_RETRIES=2
+REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS=500
 REVIEWBOT_WORKER_GH_BIN=gh
 REVIEWBOT_WORKER_INCLUDE_OUTPUT=false
 ```
@@ -314,7 +343,9 @@ App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN` is the explicit bot-owned
 token fallback. `auto` uses API dispatch when either token source is present
 and falls back to `gh` otherwise. The node binary, working directory, GitHub
 API URL, timeout, and `gh` binary overrides are advanced options with sensible
-defaults; set them only for non-standard worker environments. Set
+defaults. API dispatch retries transient network, 429, and GitHub 5xx failures
+using the configured retry count and base delay; set these only for
+non-standard worker environments. Set
 `REVIEWBOT_WORKER_INCLUDE_OUTPUT=true` only for controlled diagnostics; worker
 stdout/stderr summaries are redacted and tail-limited, but they still belong in
 operator-owned logs.

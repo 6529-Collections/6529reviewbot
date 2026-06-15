@@ -9,6 +9,8 @@ const {
 
 const DEFAULT_GITHUB_API_URL = "https://api.github.com";
 const DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS = 10000;
+const DEFAULT_GITHUB_APP_FETCH_RETRIES = 2;
+const DEFAULT_GITHUB_APP_RETRY_BASE_DELAY_MS = 500;
 const DEFAULT_JWT_TTL_SECONDS = 540;
 const DEFAULT_TOKEN_REFRESH_BUFFER_SECONDS = 60;
 
@@ -35,6 +37,16 @@ function githubAppAuthSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS,
       DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS,
       "REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS"
+    ),
+    fetchRetries: nonNegativeInt(
+      env.REVIEWBOT_GITHUB_APP_FETCH_RETRIES,
+      DEFAULT_GITHUB_APP_FETCH_RETRIES,
+      "REVIEWBOT_GITHUB_APP_FETCH_RETRIES"
+    ),
+    retryBaseDelayMs: positiveInt(
+      env.REVIEWBOT_GITHUB_APP_RETRY_BASE_DELAY_MS,
+      DEFAULT_GITHUB_APP_RETRY_BASE_DELAY_MS,
+      "REVIEWBOT_GITHUB_APP_RETRY_BASE_DELAY_MS"
     ),
     tokenRefreshBufferSeconds: positiveInt(
       env.REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS,
@@ -67,6 +79,12 @@ function githubAppAuthSettingsFromWorkerDispatchEnv(env = process.env) {
     REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS:
       env.REVIEWBOT_WORKER_GITHUB_APP_FETCH_TIMEOUT_MS ||
       env.REVIEWBOT_GITHUB_APP_FETCH_TIMEOUT_MS,
+    REVIEWBOT_GITHUB_APP_FETCH_RETRIES:
+      env.REVIEWBOT_WORKER_GITHUB_APP_FETCH_RETRIES ||
+      env.REVIEWBOT_GITHUB_APP_FETCH_RETRIES,
+    REVIEWBOT_GITHUB_APP_RETRY_BASE_DELAY_MS:
+      env.REVIEWBOT_WORKER_GITHUB_APP_RETRY_BASE_DELAY_MS ||
+      env.REVIEWBOT_GITHUB_APP_RETRY_BASE_DELAY_MS,
     REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS:
       env.REVIEWBOT_WORKER_GITHUB_APP_JWT_TTL_SECONDS ||
       env.REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS,
@@ -93,7 +111,7 @@ function createGitHubAppIntegration(options = {}) {
   const fetchImpl = options.fetchImpl || fetch;
   const tokenCache = new Map();
   const fetchWithGitHubAppTimeout = (url, requestOptions) =>
-    fetchWithTimeout(fetchImpl, url, requestOptions, settings.fetchTimeoutMs);
+    githubFetchWithRetry(fetchImpl, settings, url, requestOptions);
 
   async function getInstallationToken(installationId) {
     if (!isGitHubAppAuthConfigured(settings)) {
@@ -112,12 +130,12 @@ function createGitHubAppIntegration(options = {}) {
 
     const response = await githubFetchJson(
       fetchImpl,
+      settings,
       `${settings.apiUrl}/app/installations/${installationId}/access_tokens`,
       {
         method: "POST",
         headers: githubHeaders(createGitHubAppJwt(settings)),
-      },
-      settings.fetchTimeoutMs
+      }
     );
     if (!response.token) {
       throw new Error("GitHub installation token response did not include a token.");
@@ -207,6 +225,7 @@ function createGitHubAppIntegration(options = {}) {
         ...event,
         shouldEnqueue: false,
         reason: "Could not load the current pull request context for the comment command.",
+        retryable: true,
       };
     }
     const context = pullRequestContext(pullRequest, event);
@@ -254,13 +273,13 @@ function createGitHubAppJwt(settings = githubAppAuthSettingsFromEnv(), now = new
 async function readCollaboratorPermission(fetchImpl, settings, token, repoFullName, login) {
   const [owner, repo] = splitRepo(repoFullName);
   const url = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/collaborators/${encodeURIComponent(login)}/permission`;
-  const response = await fetchWithTimeout(
+  const response = await githubFetchWithRetry(
     fetchImpl,
+    settings,
     url,
     {
       headers: githubHeaders(token),
-    },
-    settings.fetchTimeoutMs
+    }
   );
   if (response.status === 404) {
     return "none";
@@ -277,13 +296,13 @@ async function readOrgMembership(fetchImpl, settings, token, org, login) {
     return false;
   }
   const url = `${settings.apiUrl}/orgs/${encodeURIComponent(org)}/members/${encodeURIComponent(login)}`;
-  const response = await fetchWithTimeout(
+  const response = await githubFetchWithRetry(
     fetchImpl,
+    settings,
     url,
     {
       headers: githubHeaders(token),
-    },
-    settings.fetchTimeoutMs
+    }
   );
   if (response.status === 204) {
     return true;
@@ -300,13 +319,13 @@ async function readOrgMembership(fetchImpl, settings, token, org, login) {
 async function readPullRequest(fetchImpl, settings, token, repoFullName, prNumber) {
   const [owner, repo] = splitRepo(repoFullName);
   const url = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${encodeURIComponent(String(prNumber))}`;
-  const response = await fetchWithTimeout(
+  const response = await githubFetchWithRetry(
     fetchImpl,
+    settings,
     url,
     {
       headers: githubHeaders(token),
-    },
-    settings.fetchTimeoutMs
+    }
   );
   if (!response.ok) {
     throw new Error(`GitHub pull request API returned HTTP ${response.status}.`);
@@ -332,12 +351,38 @@ function pullRequestContext(pullRequest = {}, event = {}) {
   };
 }
 
-async function githubFetchJson(fetchImpl, url, options, timeoutMs) {
-  const response = await fetchWithTimeout(fetchImpl, url, options, timeoutMs);
+async function githubFetchJson(fetchImpl, settings, url, options) {
+  const response = await githubFetchWithRetry(fetchImpl, settings, url, options);
   if (!response.ok) {
     throw new Error(`GitHub API returned HTTP ${response.status}.`);
   }
   return await response.json();
+}
+
+async function githubFetchWithRetry(fetchImpl, settings, url, options = {}) {
+  const maxAttempts = (settings.fetchRetries || 0) + 1;
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const response = await fetchWithTimeout(
+        fetchImpl,
+        url,
+        options,
+        settings.fetchTimeoutMs
+      );
+      if (!isRetryableGitHubStatus(response.status) || attempt >= maxAttempts) {
+        return response;
+      }
+      await sleep(retryDelayMs(settings, attempt, response));
+    } catch (error) {
+      lastError = error;
+      if (attempt >= maxAttempts) {
+        throw error;
+      }
+      await sleep(retryDelayMs(settings, attempt));
+    }
+  }
+  throw lastError;
 }
 
 async function fetchWithTimeout(fetchImpl, url, options = {}, timeoutMs = DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS) {
@@ -413,8 +458,41 @@ function positiveInt(value, fallback, name) {
   return parsed;
 }
 
+function nonNegativeInt(value, fallback, name) {
+  if (value === undefined || value === "") {
+    return fallback;
+  }
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isSafeInteger(parsed) || parsed < 0 || String(parsed) !== String(value)) {
+    throw new Error(`${name} must be a non-negative integer.`);
+  }
+  return parsed;
+}
+
+function isRetryableGitHubStatus(status) {
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function retryDelayMs(settings, attempt, response) {
+  const retryAfter = Number.parseInt(response?.headers?.get?.("retry-after") || "", 10);
+  if (Number.isSafeInteger(retryAfter) && retryAfter > 0) {
+    return retryAfter * 1000;
+  }
+  return Math.min(settings.retryBaseDelayMs * 2 ** Math.max(0, attempt - 1), 5000);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    if (typeof timer.unref === "function") {
+      timer.unref();
+    }
+  });
+}
+
 module.exports = {
   DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS,
+  DEFAULT_GITHUB_APP_FETCH_RETRIES,
   DEFAULT_GITHUB_API_URL,
   createGitHubAppIntegration,
   createGitHubAppJwt,

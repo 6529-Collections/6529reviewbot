@@ -156,7 +156,10 @@ If reviews stop while webhooks are admitted:
    worker environment.
 5. Confirm `REVIEWBOT_WORKER_TIMEOUT_MINUTES` is not too short for the review
    kind and model.
-6. If claims are stuck because workers crashed, let TTL expire or update
+6. Confirm `REVIEWBOT_WEBHOOK_INBOX_ENABLED=true` is running when command
+   bursts are expected; concurrency denials should move to retry-pending
+   inbox rows instead of requiring users to re-comment manually.
+7. If claims are stuck because workers crashed, let TTL expire or update
    terminal status from the private operator runbook after preserving evidence.
 
 Do not delete run-control rows from a public incident thread. Keep exact run

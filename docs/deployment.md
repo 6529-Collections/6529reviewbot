@@ -371,6 +371,9 @@ or GitHub App private keys.
 - Run-control claims dedupe replayed deliveries before queue work.
 - `REVIEWBOT_RUN_CONTROL_LEDGER_ENABLED=true` has been tested before
   `REVIEWBOT_RUN_CONTROL_MODE=enforce`.
+- The webhook inbox table is migrated and
+  `REVIEWBOT_WEBHOOK_INBOX_ENABLED=true` is verified before command bursts or
+  live multi-repo traffic.
 - `noop` mode returns jobs without dispatching workers.
 - Worker dispatch credential posture is reviewed before non-noop traffic:
   dispatch-only GitHub App preferred, `Actions: write` scope confirmed, and

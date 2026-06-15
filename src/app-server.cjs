@@ -62,6 +62,10 @@ const {
   jobEventFromReviewJob,
 } = require("./job-ledger.cjs");
 const {
+  shouldRetryWebhookResult,
+  webhookResultReason,
+} = require("./webhook-inbox.cjs");
+const {
   redactSensitiveText,
   safeErrorLine,
 } = require("./diagnostics.cjs");
@@ -89,6 +93,7 @@ function createReviewbotServer(options = {}) {
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
   const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
   const updateRunClaimStatus = options.updateRunClaimStatus || defaultUpdateRunClaimStatus;
+  const webhookInbox = options.webhookInbox || null;
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -112,6 +117,7 @@ function createReviewbotServer(options = {}) {
         usageApiSettings,
         recordJobEvent,
         updateRunClaimStatus,
+        webhookInbox,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
         loadBudgetStatus: options.loadBudgetStatus,
@@ -202,6 +208,7 @@ async function handleHttpRequest(request, options) {
     loadRepositoryConfig: options.loadRepositoryConfig,
     recordJobEvent: options.recordJobEvent,
     updateRunClaimStatus: options.updateRunClaimStatus,
+    webhookInbox: options.webhookInbox,
   });
 }
 
@@ -211,6 +218,29 @@ async function handleGitHubWebhook(input) {
 
   const payload = parseWebhookJson(input.rawBody);
   const normalizedEvent = normalizeGitHubWebhook(input.headers, payload);
+  if (input.webhookInbox && normalizedEvent.deliveryId) {
+    await input.webhookInbox.recordReceived(normalizedEvent);
+  }
+
+  let result;
+  try {
+    result = await processNormalizedGitHubWebhook(normalizedEvent, input);
+  } catch (error) {
+    if (input.webhookInbox && normalizedEvent.deliveryId) {
+      await input.webhookInbox.markRetryPending(
+        normalizedEvent.deliveryId,
+        safeError(error)
+      );
+    }
+    throw error;
+  }
+  if (input.webhookInbox && normalizedEvent.deliveryId) {
+    await updateWebhookInboxFromResult(input.webhookInbox, normalizedEvent, result);
+  }
+  return result;
+}
+
+async function processNormalizedGitHubWebhook(normalizedEvent, input) {
   const hydrateEvent = input.hydrateEvent || defaultHydrateEvent;
   const event = await hydrateEvent(normalizedEvent);
   if (!event.shouldEnqueue) {
@@ -498,6 +528,105 @@ async function handleGitHubWebhook(input) {
   };
 }
 
+async function updateWebhookInboxFromResult(webhookInbox, event, result, options = {}) {
+  const deliveryId = event.deliveryId;
+  if (!webhookInbox || !deliveryId) {
+    return { skipped: true };
+  }
+  const reason = webhookResultReason(result);
+  if (shouldRetryWebhookResult(result)) {
+    const maxAttempts = options.maxAttempts || webhookInbox.settings?.maxAttempts || 1;
+    if (options.attemptCount && options.attemptCount >= maxAttempts) {
+      await webhookInbox.markFailed(deliveryId, reason || "Webhook retry attempts exhausted.");
+      return { status: "failed" };
+    }
+    await webhookInbox.markRetryPending(deliveryId, reason || "Webhook processing should be retried.");
+    return { status: "retry_pending" };
+  }
+  if (result?.body?.enqueued) {
+    await webhookInbox.markProcessed(deliveryId, { reason: "Review jobs enqueued." });
+    return { status: "processed" };
+  }
+  await webhookInbox.markIgnored(deliveryId, reason || "Webhook did not enqueue review jobs.");
+  return { status: "ignored" };
+}
+
+async function processWebhookInboxOnce(options = {}) {
+  const webhookInbox = options.webhookInbox;
+  if (!webhookInbox?.settings?.enabled) {
+    return { ok: true, processed: 0, retried: 0, failed: 0 };
+  }
+  const deliveries = await webhookInbox.claimDue(options.limit || webhookInbox.settings.batchSize);
+  const summary = { ok: true, processed: 0, retried: 0, failed: 0 };
+  for (const delivery of deliveries) {
+    const event = {
+      ...(delivery.event || {}),
+      deliveryId: delivery.deliveryId || delivery.event?.deliveryId,
+    };
+    try {
+      const result = await processNormalizedGitHubWebhook(event, options);
+      const status = await updateWebhookInboxFromResult(webhookInbox, event, result, {
+        attemptCount: delivery.attemptCount,
+        maxAttempts: webhookInbox.settings.maxAttempts,
+      });
+      if (status.status === "retry_pending") {
+        summary.retried += 1;
+      } else if (status.status === "failed") {
+        summary.failed += 1;
+      } else {
+        summary.processed += 1;
+      }
+    } catch (error) {
+      const reason = safeError(error);
+      if (delivery.attemptCount >= webhookInbox.settings.maxAttempts) {
+        await webhookInbox.markFailed(event.deliveryId, reason);
+        summary.failed += 1;
+      } else {
+        await webhookInbox.markRetryPending(event.deliveryId, reason);
+        summary.retried += 1;
+      }
+    }
+  }
+  return summary;
+}
+
+function startWebhookInboxProcessor(options = {}) {
+  const webhookInbox = options.webhookInbox;
+  if (!webhookInbox?.settings?.enabled) {
+    return { stop() {} };
+  }
+  const logger = options.logger || console;
+  let running = false;
+  let stopped = false;
+  const run = async () => {
+    if (running || stopped) {
+      return;
+    }
+    running = true;
+    try {
+      const summary = await processWebhookInboxOnce(options);
+      if (summary.processed || summary.retried || summary.failed) {
+        logger.log?.(`[reviewbot-app] webhook inbox pass ${JSON.stringify(summary)}`);
+      }
+    } catch (error) {
+      logger.warn?.(`[reviewbot-app] webhook inbox pass failed: ${safeError(error)}`);
+    } finally {
+      running = false;
+    }
+  };
+  const timer = setInterval(run, webhookInbox.settings.pollIntervalMs);
+  if (typeof timer.unref === "function") {
+    timer.unref();
+  }
+  setTimeout(run, 0).unref?.();
+  return {
+    stop() {
+      stopped = true;
+      clearInterval(timer);
+    },
+  };
+}
+
 async function defaultResolveActorContext(event) {
   return {
     login: requestorForEvent(event),
@@ -705,6 +834,7 @@ function publicEventSummary(event) {
     actor: event.actor,
     reviewKinds: event.reviewKinds || [],
     reason: event.reason,
+    retryable: Boolean(event.retryable),
   };
 }
 
@@ -773,6 +903,10 @@ module.exports = {
   githubAppOperatorResponse,
   isGitHubAppOperatorPath,
   normalizeConfigLoadResult,
+  processNormalizedGitHubWebhook,
+  processWebhookInboxOnce,
   publicEventSummary,
   redactSensitiveText,
+  startWebhookInboxProcessor,
+  updateWebhookInboxFromResult,
 };

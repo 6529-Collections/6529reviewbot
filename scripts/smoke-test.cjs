@@ -48,6 +48,7 @@ const dogfoodStatusContractCheck = require("./check-dogfood-status-contract.cjs"
 const diagnosticsRedactionCheck = require("./check-diagnostics-redaction.cjs");
 const workerCapacityContractCheck = require("./check-worker-capacity-contract.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
+const webhookInbox = require("../src/webhook-inbox.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
 const githubAppManifest = require("../src/github-app-manifest.cjs");
@@ -3388,6 +3389,7 @@ const githubAppSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
 });
 assert.equal(githubAppAuth.isGitHubAppAuthConfigured(githubAppSettings), true);
 assert.equal(githubAppSettings.fetchTimeoutMs, 5000);
+assert.equal(githubAppSettings.fetchRetries, 2);
 assert.equal(githubAppAuth.createGitHubAppJwt(githubAppSettings).split(".").length, 3);
 assert.equal(githubAppInstallationToken.parseArgs([]).profile, "main");
 assert.deepEqual(
@@ -3880,6 +3882,7 @@ assert.equal(dispatchedWorkflow.args.includes(`run_key=${forkReviewJob.runKey}`)
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
 let apiDispatchRequest = null;
+let apiDispatchAttempts = 0;
 const apiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
     REVIEWBOT_WORKER_ADAPTER: "github_actions",
@@ -3890,13 +3893,19 @@ const apiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(
     REVIEWBOT_WORKER_GITHUB_TOKEN: "dispatch-token",
     REVIEWBOT_WORKER_GITHUB_API_URL: "https://api.github.test/",
     REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS: "1234",
+    REVIEWBOT_WORKER_GITHUB_FETCH_RETRIES: "1",
+    REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS: "1",
   }),
   fetchImpl: async (url, options) => {
+    apiDispatchAttempts += 1;
     apiDispatchRequest = {
       url,
       options,
       body: JSON.parse(options.body),
     };
+    if (apiDispatchAttempts === 1) {
+      return { status: 503, headers: new Map(), text: async () => "busy" };
+    }
     return { status: 204, text: async () => "" };
   },
   spawnSync: () => {
@@ -3978,6 +3987,17 @@ const serverUsageReaderOptions = serverCli.createServerOptionsFromEnv({
   REVIEWBOT_MODEL_PRICE_MAX_SOURCE_AGE_DAYS: "14",
 });
 assert.equal(typeof serverUsageReaderOptions.loadModelPriceStatus, "function");
+const serverWebhookInboxOptions = serverCli.createServerOptionsFromEnv({
+  REVIEWBOT_WORKER_ADAPTER: "noop",
+  REVIEW_USAGE_ENABLED: "false",
+  REVIEWBOT_WEBHOOK_INBOX_ENABLED: "true",
+  REVIEWBOT_WEBHOOK_INBOX_AWS_REGION: "us-east-1",
+  REVIEWBOT_WEBHOOK_INBOX_DB_RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+  REVIEWBOT_WEBHOOK_INBOX_DB_SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+  REVIEWBOT_WEBHOOK_INBOX_DB_NAME: "reviewbot",
+  REVIEWBOT_WEBHOOK_INBOX_DB_SCHEMA: "reviewbot",
+});
+assert.equal(serverWebhookInboxOptions.webhookInbox.settings.enabled, true);
 let serverDispatchRequest = null;
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
@@ -5452,6 +5472,7 @@ appServer.handleGitHubWebhook({
   const failedHydratedCommentEvent = await failedHydratedCommentEventPromise;
   assert.equal(failedHydratedCommentEvent.shouldEnqueue, false);
   assert.match(failedHydratedCommentEvent.reason, /Could not load the current pull request context/);
+  assert.equal(failedHydratedCommentEvent.retryable, true);
   const disabledGithubRepoConfig = await disabledGithubRepoConfigPromise;
   assert.equal(disabledGithubRepoConfig.status, "not_configured");
   assert.equal(disabledConfigRequestedToken, false);
@@ -6150,6 +6171,7 @@ appServer.handleGitHubWebhook({
   assert.equal(apiDispatchResult.accepted, true);
   assert.equal(apiDispatchResult.dispatchMode, "api");
   assert.equal(apiDispatchResult.statusCode, 204);
+  assert.equal(apiDispatchAttempts, 2);
   assert.equal(
     apiDispatchRequest.url,
     "https://api.github.test/repos/6529-Collections/6529reviewbot/actions/workflows/review-job.yml/dispatches"
@@ -7082,6 +7104,113 @@ appServer.handleGitHubWebhook({
     commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
     ["security:anthropic", "security:openai"]
   );
+  const inboxCalls = [];
+  const fakeWebhookInbox = {
+    settings: { enabled: true, batchSize: 2, maxAttempts: 3 },
+    recordReceived: async (event) => {
+      inboxCalls.push(["received", event.deliveryId, event.kind]);
+    },
+    markRetryPending: async (deliveryId, reason) => {
+      inboxCalls.push(["retry_pending", deliveryId, reason]);
+    },
+    markProcessed: async (deliveryId) => {
+      inboxCalls.push(["processed", deliveryId]);
+    },
+    markIgnored: async (deliveryId, reason) => {
+      inboxCalls.push(["ignored", deliveryId, reason]);
+    },
+    markFailed: async (deliveryId, reason) => {
+      inboxCalls.push(["failed", deliveryId, reason]);
+    },
+  };
+  const transientCommandResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": githubWebhook.signGitHubWebhook(webhookSecret, commandWebhookBody),
+      "x-github-event": "issue_comment",
+      "x-github-delivery": "delivery-command-transient",
+    },
+    rawBody: commandWebhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    webhookInbox: fakeWebhookInbox,
+    hydrateEvent: async (event) => ({
+      ...event,
+      shouldEnqueue: false,
+      reason: "Could not load the current pull request context for the comment command.",
+      retryable: true,
+    }),
+  });
+  assert.equal(transientCommandResult.body.event.retryable, true);
+  assert.deepEqual(inboxCalls.map((call) => call[0]), ["received", "retry_pending"]);
+  assert.equal(inboxCalls[0][1], "delivery-command-transient");
+  assert.match(inboxCalls[1][2], /Could not load/);
+  assert.equal(
+    webhookInbox.shouldRetryWebhookResult({
+      body: {
+        deniedJobs: [{
+          runControl: { code: "concurrency_limit_exceeded" },
+        }],
+      },
+    }),
+    true
+  );
+  const inboxProcessed = [];
+  let inboxProcessorJobs = null;
+  const processorSummary = await appServer.processWebhookInboxOnce({
+    webhookInbox: {
+      settings: { enabled: true, batchSize: 2, maxAttempts: 3 },
+      claimDue: async () => [{
+        deliveryId: "delivery-command-due",
+        attemptCount: 1,
+        event: {
+          ...commentEvent,
+          deliveryId: "delivery-command-due",
+        },
+      }],
+      markProcessed: async (deliveryId) => {
+        inboxProcessed.push(["processed", deliveryId]);
+      },
+      markRetryPending: async (deliveryId, reason) => {
+        inboxProcessed.push(["retry_pending", deliveryId, reason]);
+      },
+      markIgnored: async (deliveryId, reason) => {
+        inboxProcessed.push(["ignored", deliveryId, reason]);
+      },
+      markFailed: async (deliveryId, reason) => {
+        inboxProcessed.push(["failed", deliveryId, reason]);
+      },
+    },
+    hydrateEvent: async (event) => ({
+      ...event,
+      headSha: "inbox-head",
+      baseSha: "inbox-base",
+      headRepoFullName: "6529-Collections/example",
+      baseRepoFullName: "6529-Collections/example",
+      draft: false,
+    }),
+    enqueueReviewJobs: async (jobs) => {
+      inboxProcessorJobs = jobs;
+      return { accepted: true, jobId: "inbox-job" };
+    },
+    recordJobEvent: async () => {},
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadRepositoryConfig: async () => ({
+      status: "loaded",
+      source: "test",
+      config: parsedRepoConfig,
+    }),
+    resolveBudgetSnapshot: async () => ({ unavailable: false, totals: {} }),
+    estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
+    jobPolicy: twoLanePolicy,
+  });
+  assert.equal(processorSummary.processed, 1);
+  assert.equal(processorSummary.retried, 0);
+  assert.equal(inboxProcessed[0][0], "processed");
+  assert.equal(inboxProcessorJobs.length, 2);
+  assert.equal(inboxProcessorJobs[0].headSha, "inbox-head");
   const defaultQueueResult = await appServer.handleGitHubWebhook({
     headers: {
       "x-hub-signature-256": webhookSignature,

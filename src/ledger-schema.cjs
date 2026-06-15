@@ -97,6 +97,30 @@ create table if not exists ${schemaIdent}.ai_review_run_claims (
 )`,
     },
     {
+      name: "create_webhook_inbox",
+      sql: `
+create table if not exists ${schemaIdent}.ai_review_webhook_inbox (
+  id bigserial primary key,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  processed_at timestamptz,
+  next_attempt_at timestamptz,
+  delivery_id text not null unique,
+  event_name text,
+  event_kind text,
+  repository_full_name text,
+  pr_number bigint,
+  comment_id bigint,
+  actor text,
+  installation_id bigint,
+  status text not null default 'received',
+  attempt_count integer not null default 0,
+  reason text,
+  last_error text,
+  normalized_event jsonb not null default '{}'::jsonb
+)`,
+    },
+    {
       name: "create_model_prices",
       sql: `
 create table if not exists ${schemaIdent}.ai_model_prices (
@@ -262,6 +286,18 @@ create index if not exists ai_review_run_claims_requestor_status_idx
       sql: `
 create index if not exists ai_review_run_claims_provider_model_status_idx
   on ${schemaIdent}.ai_review_run_claims (provider, model, status, created_at desc)`,
+    },
+    {
+      name: "index_webhook_inbox_status_next_attempt",
+      sql: `
+create index if not exists ai_review_webhook_inbox_status_next_attempt_idx
+  on ${schemaIdent}.ai_review_webhook_inbox (status, next_attempt_at, updated_at)`,
+    },
+    {
+      name: "index_webhook_inbox_repo_pr_created",
+      sql: `
+create index if not exists ai_review_webhook_inbox_repo_pr_created_idx
+  on ${schemaIdent}.ai_review_webhook_inbox (repository_full_name, pr_number, created_at desc)`,
     },
     {
       name: "index_model_prices_provider_model_effective",
