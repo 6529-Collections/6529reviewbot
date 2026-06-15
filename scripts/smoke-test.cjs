@@ -1570,6 +1570,12 @@ assert.deepEqual(
     "body=@comment.md",
   ]
 );
+assert.deepEqual(reviewBot.issueCommentsCommandArgs({ prNumber: "12", repo: "6529-Collections/example" }), [
+  "api",
+  "repos/6529-Collections/example/issues/12/comments",
+  "--paginate",
+  "--slurp",
+]);
 const cliSecret = "sk-proj-abcdefghijklmnopqrstuvwx123456";
 const cliFatal = runCliForSmoke(["bin/preflight.cjs", cliSecret]);
 assert.equal(cliFatal.status, 1);
