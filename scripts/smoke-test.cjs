@@ -4338,6 +4338,11 @@ assert.equal(publicUsageSummary.totals.costUsd, 2);
 assert.equal(publicUsageSummary.totals.uniquePrs, 2);
 assert.equal(publicUsageSummary.totals.averageCostPerReviewRunUsd, 1);
 assert.equal(publicUsageSummary.totals.averageCostPerPrUsd, 1);
+assert.equal(publicUsageSummary.analysis.budgetSkipRate, 50);
+assert.equal(publicUsageSummary.analysis.averageTokensPerReviewRun, 875);
+assert.equal(publicUsageSummary.analysis.averageTokensPerPr, 875);
+assert.equal(publicUsageSummary.analysis.topCostProviderModel.key, "anthropic:claude-opus-4-8");
+assert.equal(publicUsageSummary.analysis.topCostProviderModel.costSharePercent, 62.5);
 assert.equal(publicUsageSummary.byDay[0].averageCostUsd, 1);
 assert.equal(publicUsageSummary.byRepo.some((item) => item.key === "private"), true);
 assert.equal(
@@ -4398,6 +4403,10 @@ assert.equal(
   true
 );
 assert.equal(adminUsageSummary.byRequestor.some((item) => item.key === "admin"), true);
+assert.equal(adminUsageSummary.byPrAuthor.some((item) => item.key === "author"), true);
+assert.equal(adminUsageSummary.analysis.topCostRequestor.key, "maintainer");
+assert.equal(adminUsageSummary.analysis.topCostPrAuthor.key, "author");
+assert.equal(adminUsageSummary.analysis.topCostPr.key, "6529-Collections/public-repo#10");
 assert.equal(
   adminUsageSummary.byPr.find((item) => item.key === "6529-Collections/public-repo#10")
     .averageCostUsd,

@@ -8,6 +8,9 @@ stabilized.
 
 ## Unreleased
 
+- Added derived usage analysis fields to public and admin usage summaries,
+  including budget skip rate, average tokens per review run and PR, top-cost
+  visible dimensions, and admin-only top requestor, PR author, and PR rollups.
 - Hydrated command-triggered review events from the current GitHub Pull Request
   API before admission and dispatch, so `/6529bot review` jobs pin the live
   head/base repository and SHA context and fail closed when the current head
