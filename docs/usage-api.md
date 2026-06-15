@@ -50,6 +50,9 @@ The public summary is safe for a public 6529.io transparency page. It includes:
 
 - totals for review runs, cost, tokens, and budget-skipped runs;
 - unique PR count, average cost per review run, and average cost per PR;
+- analysis fields for budget skip rate, average tokens per review run, average
+  tokens per PR, and the highest-cost visible repo, provider/model, and review
+  kind with spend-share percentages;
 - daily aggregates;
 - repo aggregates, with private and unallowlisted repos collapsed into a
   `private` bucket;
@@ -68,10 +71,13 @@ The admin summary is for authenticated 6529 operators. It includes the public
 summary fields plus:
 
 - requester aggregates;
+- PR-author aggregates;
 - PR-level aggregates, where each `byPr` row's `costUsd` is the total cost for
   that PR and `averageCostUsd` is the average cost per review run on that PR;
 - PR-level metadata for each `byPr` row, including repo, PR number, PR author,
   latest head SHA, and latest review timestamp;
+- admin-only analysis fields for the highest-cost requestor, PR author, and
+  PR with spend-share percentages;
 - private repo names, when the data loader supplies them.
 
 Admin endpoints fail closed unless the server is given an admin authorizer.

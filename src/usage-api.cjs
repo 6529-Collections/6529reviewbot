@@ -533,10 +533,13 @@ function summarizeUsageEvents(events, options = {}) {
     ),
     byReviewKind: sortedGroups(normalized, (event) => event.reviewKind || "unknown", maxItems),
   };
+  summary.analysis = publicUsageAnalysis(summary, totals);
 
   if (visibility === "admin") {
     summary.byRequestor = sortedGroups(normalized, (event) => event.requestor || "unknown", maxItems);
+    summary.byPrAuthor = sortedGroups(normalized, (event) => event.prAuthor || "unknown", maxItems);
     summary.byPr = sortedPrGroups(normalized, maxItems);
+    summary.analysis = adminUsageAnalysis(summary, totals);
   }
 
   return summary;
@@ -782,6 +785,41 @@ function groupedPrUsage(events) {
     ...group,
     averageCostUsd: group.reviewRuns ? roundUsd(group.costUsd / group.reviewRuns) : 0,
   }));
+}
+
+function publicUsageAnalysis(summary, totals) {
+  return {
+    budgetSkipRate: totals.reviewRuns
+      ? roundPercent((totals.budgetSkippedRuns / totals.reviewRuns) * 100)
+      : 0,
+    averageTokensPerReviewRun: totals.reviewRuns
+      ? Math.round(totals.totalTokens / totals.reviewRuns)
+      : 0,
+    averageTokensPerPr: totals.uniquePrs ? Math.round(totals.totalTokens / totals.uniquePrs) : 0,
+    topCostRepo: topGroup(summary.byRepo, totals.costUsd),
+    topCostProviderModel: topGroup(summary.byProviderModel, totals.costUsd),
+    topCostReviewKind: topGroup(summary.byReviewKind, totals.costUsd),
+  };
+}
+
+function adminUsageAnalysis(summary, totals) {
+  return {
+    ...publicUsageAnalysis(summary, totals),
+    topCostRequestor: topGroup(summary.byRequestor, totals.costUsd),
+    topCostPrAuthor: topGroup(summary.byPrAuthor, totals.costUsd),
+    topCostPr: topGroup(summary.byPr, totals.costUsd),
+  };
+}
+
+function topGroup(groups = [], totalCostUsd = 0) {
+  const [group] = groups;
+  if (!group) {
+    return null;
+  }
+  return {
+    ...group,
+    costSharePercent: totalCostUsd > 0 ? roundPercent((group.costUsd / totalCostUsd) * 100) : 0,
+  };
 }
 
 function dayKey(value) {

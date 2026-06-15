@@ -470,7 +470,7 @@
       },
       "UsageSummary": {
         "type": "object",
-        "required": ["ok", "visibility", "kind", "range", "totals", "byDay", "byRepo", "byProviderModel", "byReviewKind"],
+        "required": ["ok", "visibility", "kind", "range", "totals", "analysis", "byDay", "byRepo", "byProviderModel", "byReviewKind"],
         "properties": {
           "ok": {
             "type": "boolean",
@@ -489,6 +489,9 @@
           },
           "totals": {
             "$ref": "#/components/schemas/UsageTotals"
+          },
+          "analysis": {
+            "$ref": "#/components/schemas/UsageAnalysis"
           },
           "byDay": {
             "type": "array",
@@ -520,11 +523,140 @@
               "$ref": "#/components/schemas/UsageGroup"
             }
           },
+          "byPrAuthor": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageGroup"
+            }
+          },
           "byPr": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UsagePrGroup"
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsageAnalysis": {
+        "type": "object",
+        "required": ["budgetSkipRate", "averageTokensPerReviewRun", "averageTokensPerPr", "topCostRepo", "topCostProviderModel", "topCostReviewKind"],
+        "properties": {
+          "budgetSkipRate": {
+            "type": "number"
+          },
+          "averageTokensPerReviewRun": {
+            "type": "integer"
+          },
+          "averageTokensPerPr": {
+            "type": "integer"
+          },
+          "topCostRepo": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisGroup" },
+              { "type": "null" }
+            ]
+          },
+          "topCostProviderModel": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisGroup" },
+              { "type": "null" }
+            ]
+          },
+          "topCostReviewKind": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisGroup" },
+              { "type": "null" }
+            ]
+          },
+          "topCostRequestor": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisGroup" },
+              { "type": "null" }
+            ]
+          },
+          "topCostPrAuthor": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisGroup" },
+              { "type": "null" }
+            ]
+          },
+          "topCostPr": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/UsageAnalysisPrGroup" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsageAnalysisGroup": {
+        "type": "object",
+        "required": ["key", "reviewRuns", "costUsd", "averageCostUsd", "totalTokens", "budgetSkippedRuns", "costSharePercent"],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "reviewRuns": {
+            "type": "integer"
+          },
+          "costUsd": {
+            "type": "number"
+          },
+          "averageCostUsd": {
+            "type": "number"
+          },
+          "totalTokens": {
+            "type": "integer"
+          },
+          "budgetSkippedRuns": {
+            "type": "integer"
+          },
+          "costSharePercent": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsageAnalysisPrGroup": {
+        "type": "object",
+        "required": ["key", "repoFullName", "prNumber", "prAuthor", "latestHeadSha", "lastReviewAt", "reviewRuns", "costUsd", "averageCostUsd", "totalTokens", "budgetSkippedRuns", "costSharePercent"],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "repoFullName": {
+            "type": "string"
+          },
+          "prNumber": {
+            "type": ["integer", "null"]
+          },
+          "prAuthor": {
+            "type": "string"
+          },
+          "latestHeadSha": {
+            "type": "string"
+          },
+          "lastReviewAt": {
+            "type": "string"
+          },
+          "reviewRuns": {
+            "type": "integer"
+          },
+          "costUsd": {
+            "type": "number"
+          },
+          "averageCostUsd": {
+            "type": "number"
+          },
+          "totalTokens": {
+            "type": "integer"
+          },
+          "budgetSkippedRuns": {
+            "type": "integer"
+          },
+          "costSharePercent": {
+            "type": "number"
           }
         },
         "additionalProperties": false
