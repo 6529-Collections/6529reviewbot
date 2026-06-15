@@ -2,7 +2,6 @@
 
 const { executeStatement, fieldValue, stringParam, longParam } = require("./data-api.cjs");
 const { safeErrorLine } = require("./diagnostics.cjs");
-const { normalizeLedgerMetadata } = require("./ledger-metadata.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
 const RETRYABLE_STATUSES = ["received", "retry_pending", "processing"];
@@ -298,18 +297,37 @@ function recordToDelivery(record = []) {
 }
 
 function normalizeInboxEvent(event = {}) {
-  return normalizeLedgerMetadata(
-    {
-      ...event,
-      repository: {
-        id: event.repository?.id || null,
-        fullName: event.repository?.fullName || "",
-        private: Boolean(event.repository?.private),
-        defaultBranch: event.repository?.defaultBranch || "",
-      },
+  return {
+    deliveryId: boundedString(event.deliveryId),
+    eventName: boundedString(event.eventName),
+    action: boundedString(event.action),
+    kind: boundedString(event.kind),
+    trigger: boundedString(event.trigger),
+    shouldEnqueue: Boolean(event.shouldEnqueue),
+    reason: boundedString(event.reason),
+    retryable: Boolean(event.retryable),
+    repository: {
+      id: nullableNumber(event.repository?.id),
+      fullName: boundedString(event.repository?.fullName),
+      private: Boolean(event.repository?.private),
+      defaultBranch: boundedString(event.repository?.defaultBranch),
     },
-    { includeNull: true, maxStringChars: 2000 }
-  );
+    installationId: nullableNumber(event.installationId),
+    prNumber: nullableNumber(event.prNumber),
+    prAuthor: boundedString(event.prAuthor),
+    actor: boundedString(event.actor),
+    sender: boundedString(event.sender),
+    headSha: boundedString(event.headSha),
+    baseSha: boundedString(event.baseSha),
+    headRepoFullName: boundedString(event.headRepoFullName),
+    baseRepoFullName: boundedString(event.baseRepoFullName),
+    draft: Boolean(event.draft),
+    commentId: nullableNumber(event.commentId),
+    commandName: boundedString(event.commandName),
+    reviewKinds: Array.isArray(event.reviewKinds)
+      ? event.reviewKinds.map((kind) => boundedString(kind)).filter(Boolean).slice(0, 10)
+      : [],
+  };
 }
 
 function shouldRetryWebhookResult(result = {}) {
@@ -406,6 +424,21 @@ function nullParam(name) {
   return { name, value: { isNull: true } };
 }
 
+function boundedString(value, maxLength = 2000) {
+  if (value === undefined || value === null) {
+    return "";
+  }
+  return String(value).slice(0, maxLength);
+}
+
+function nullableNumber(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+}
+
 function safeError(error) {
   return safeErrorLine(error);
 }
@@ -413,6 +446,7 @@ function safeError(error) {
 module.exports = {
   assertWebhookInboxConfigured,
   createWebhookInbox,
+  normalizeInboxEvent,
   shouldRetryWebhookResult,
   webhookInboxSettingsFromEnv,
   webhookResultReason,
