@@ -3762,6 +3762,11 @@ const failedLocalWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0],
 assert.equal(failedLocalWorkerResult.accepted, false);
 assert.equal(failedLocalWorkerResult.claimStatus, "failed");
 const workerClaimUpdates = [];
+assert.equal(
+  runReviewJobCli.workerOptionsFromEnv({ REVIEWBOT_WORKER_INCLUDE_OUTPUT: "true" }).includeOutput,
+  true
+);
+assert.equal(runReviewJobCli.workerOptionsFromEnv({}).includeOutput, false);
 const lifecycleWorkerResult = runReviewJobCli.runJobWithClaimStatus(reviewJobs[0], {
   runControlSettings: { enabled: false },
   runReviewJobLocally: () => ({

@@ -18,15 +18,17 @@ function main() {
 }
 
 function runJobWithClaimStatus(job, options = {}) {
+  const env = options.env || process.env;
   const settings =
-    options.runControlSettings || runControlLedgerSettingsFromEnv(options.env || process.env);
+    options.runControlSettings || runControlLedgerSettingsFromEnv(env);
   const runJob = options.runReviewJobLocally || runReviewJobLocally;
   const updateClaim = options.updateWorkerRunClaim || updateWorkerRunClaim;
+  const workerOptions = options.workerOptions || workerOptionsFromEnv(env);
   updateClaim(settings, job, "running", {
     worker: "run-review-job",
   });
   try {
-    const result = runJob(job, options.workerOptions || {});
+    const result = runJob(job, workerOptions);
     updateClaim(settings, job, result.accepted ? "completed" : "failed", {
       worker: "run-review-job",
       adapter: result.adapter || "",
@@ -41,6 +43,12 @@ function runJobWithClaimStatus(job, options = {}) {
     });
     throw error;
   }
+}
+
+function workerOptionsFromEnv(env = process.env) {
+  return {
+    includeOutput: parseBool(env.REVIEWBOT_WORKER_INCLUDE_OUTPUT || "false"),
+  };
 }
 
 function updateWorkerRunClaim(settings, job, status, metadata) {
@@ -79,8 +87,13 @@ module.exports = {
   readJob,
   runJobWithClaimStatus,
   updateWorkerRunClaim,
+  workerOptionsFromEnv,
 };
 
 function safeError(error) {
   return safeErrorLine(error || "unknown error");
+}
+
+function parseBool(value) {
+  return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }

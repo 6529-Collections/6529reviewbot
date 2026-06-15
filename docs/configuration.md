@@ -298,6 +298,7 @@ REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY_BASE64=
 REVIEWBOT_WORKER_GITHUB_API_URL=https://api.github.com
 REVIEWBOT_WORKER_GITHUB_FETCH_TIMEOUT_MS=10000
 REVIEWBOT_WORKER_GH_BIN=gh
+REVIEWBOT_WORKER_INCLUDE_OUTPUT=false
 ```
 
 `noop` is the safe default. Use `local` for controlled local workers and
@@ -313,7 +314,10 @@ App is installed. `REVIEWBOT_WORKER_GITHUB_TOKEN` is the explicit bot-owned
 token fallback. `auto` uses API dispatch when either token source is present
 and falls back to `gh` otherwise. The node binary, working directory, GitHub
 API URL, timeout, and `gh` binary overrides are advanced options with sensible
-defaults; set them only for non-standard worker environments.
+defaults; set them only for non-standard worker environments. Set
+`REVIEWBOT_WORKER_INCLUDE_OUTPUT=true` only for controlled diagnostics; worker
+stdout/stderr summaries are redacted and tail-limited, but they still belong in
+operator-owned logs.
 See [worker-adapters.md](worker-adapters.md).
 
 Partial worker App credential overrides fail preflight. Set both
