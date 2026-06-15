@@ -35,12 +35,10 @@ Initial production admission is intentionally narrow:
 - the same five users are explicit trusted users for the dogfood window;
 - draft PRs are skipped.
 
-The remaining live-dispatch blocker is the GitHub App installation permission
-for central workflow dispatch. The installation token must show
-`actions: write`, and a workflow-dispatch permission probe should fail only on
-the deliberately fake ref, not with `Resource not accessible by integration`.
-Until that is true, keep the production worker adapter in `noop` and do not
-fall back to a personal token.
+The central worker dispatch path is now enabled for this limited dogfood
+window. Keep the author allowlist, conservative fanout, command head-SHA
+hydration, dedupe, and budget controls in place until live quality, failure,
+denial, and cost evidence supports widening traffic.
 
 ## Why Central Execution
 
@@ -392,27 +390,31 @@ Before broad community release:
 The original implementation sequence for the central App, trusted admission,
 budget admission, worker abstraction, usage APIs, repo config loading, worker
 adapters, alerting, release tooling, and public docs is now substantially
-implemented in this repository. The remaining near-term work is release
-execution and dogfood evidence:
+implemented in this repository. The production App and central server are now
+in limited live dogfood on trusted 6529 repositories, so the near-term work is
+operational hardening and evidence collection:
 
-1. Create the production GitHub App from the reviewed manifest packet.
-   Record the production bot origin, registration path, private conversion
-   summary, App id/slug custody, webhook ping, selected-repository allowlist,
-   and rotation ownership in operator evidence.
-2. Deploy the central App server and worker path in 6529-owned infrastructure.
-3. Apply and verify operator-owned ledger schema, budget policies, provider
-   console readiness, provider price rows, alert delivery, IAM/OIDC trust,
-   secret-store access, and runtime secrets outside this public repo.
-4. Run the dashboard deployment plan, then deploy and configure the merged
-   6529.io public usage dashboard and private admin dashboard.
-5. Install the App on one trusted 6529 target repository in command-only mode.
-6. Run the dogfood promotion and go-live packets from the private operator
-   workspace with strict preflight and conservative budgets.
-7. Keep command-only dogfood until usage, comments, budgets, alerts, support,
-   and rollback evidence are clean enough for limited initial reviews.
+1. Continue limited live dogfood on allowlisted PR authors only, using natural
+   target-repository PR traffic and avoiding synthetic PRs or stale webhook
+   replays.
+2. Keep command-triggered reviews pinned to the current PR head SHA before
+   dispatch, and fail closed whenever the current PR context cannot be
+   hydrated from GitHub.
+3. Reduce webhook handler latency so GitHub delivery acknowledgement is
+   consistently fast even when repository config, budget, run-control, or
+   dispatch dependencies are slow.
+4. Harden central workflow dispatch resilience for permission drift, transient
+   GitHub API failures, burst traffic, dedupe windows, and retry visibility.
+5. Track production spend by PR, repository, requestor, review kind, provider,
+   and model, including average cost per review run and average cost per PR.
+6. Finish production alert routing and 6529.io production dashboard
+   configuration from operator-owned secrets and evidence.
+7. Sample live bot comments for quality, grounding, false positives, and
+   comment marker/head-SHA correctness before widening traffic.
 8. Cut the first public dogfood tag only after the v0 release gates, release
-   notes, security review status, production cutover status, and go-live packet
-   are complete or explicitly deferred with named owners.
+   notes, security review status, production cutover status, go-live packet,
+   and live dogfood evidence are complete or explicitly deferred with named
+   owners.
 
 ## Current Progress
 
@@ -427,6 +429,8 @@ Completed in `6529reviewbot`:
   metadata, and budget-skip comments;
 - GitHub App installation-token handling for repository config and actor
   permission resolution;
+- central GitHub App command-event hydration from the current Pull Request API
+  before admission and dispatch, including head/base repository and SHA context;
 - budget admission against the AWS usage ledger;
 - production server budget spend snapshot wiring;
 - dry-run/apply tooling for central budget policies and production admission
@@ -438,9 +442,10 @@ Completed in `6529reviewbot`:
 - run-control claim status updates after dispatch attempts and worker
   completion;
 - public and admin usage API contracts;
-- usage aggregate APIs include both total and average cost fields so 6529.io
-  can show total cost per PR and average cost per review run without computing
-  those values in the browser;
+- usage aggregate APIs include total cost, unique PR counts, average cost per
+  review run, average cost per PR, and enriched admin per-PR rows so 6529.io
+  can show live dogfood cost views without computing those values in the
+  browser;
 - validated OpenAPI contract for 6529.io usage/admin API integration;
 - public-safe 6529.io dashboard env-name template validated against the
   OpenAPI usage/admin API contract;
@@ -456,6 +461,8 @@ Completed in `6529reviewbot`:
 - server-side 6529.io usage API client helper for signed admin calls and
   redacted API failures;
 - admin snapshot CLI for private dashboard bring-up and release evidence;
+- admin snapshots include unique PR and average cost-per-PR metrics for
+  production dogfood cost review;
 - production cutover checklist and validator for reviewed live-traffic
   go/no-go decisions, including provider-console readiness, IAM and
   secret-custody evidence, the dogfood promotion packet gate, and dashboard
@@ -528,6 +535,8 @@ Completed in `6529reviewbot`:
   stdout, webhook, SNS, and SES email delivery.
 - alerting runbook contract for scheduled runner posture, notification routing,
   dogfood evidence, and alert payload privacy.
+- operations runbook contract coverage for admin usage cost-per-PR checks,
+  live dogfood comment sampling, and command marker head-SHA verification.
 - dogfood runbook, conservative dogfood templates, and repository config
   validation.
 - dogfood readiness command for validating target config, central budget
@@ -838,23 +847,27 @@ Completed in `6529reviewbot`:
 - support runbooks contract for public support, maintainer triage, private
   escalation, incident containment, recovery, and sanitized public follow-up.
 - operator evidence template for public-safe deployment proof.
-- production App server deployed at `reviewbot.6529.io` in conservative no-op
-  worker mode, with repository config loading, PR author allowlist admission,
-  and real GitHub App webhook delivery returning `200` during the first
-  dogfood watch window.
+- production App server deployed at `reviewbot.6529.io`, initially verified in
+  conservative no-op mode, with repository config loading, PR author allowlist
+  admission, and real GitHub App webhook delivery returning `200` during the
+  first dogfood watch window.
+- production GitHub App registration, installation, and permission acceptance
+  completed for the target repositories, with the central worker dispatch path
+  enabled for allowlisted live PR traffic.
 - target repository configs merged on `6529-safe-app`, `6529Stream`,
   `6529seize-frontend`, `6529seize-backend`, and `6529reviewbot` with the
   conservative `anthropic:claude-opus-4-8` single-lane dogfood posture.
 
 In progress in `6529reviewbot`:
 
-- GitHub App installation permission acceptance for `actions: write`; until
-  installation tokens show that permission and a fake-ref workflow-dispatch
-  probe no longer returns `403 Resource not accessible by integration`, keep
-  production on the no-op worker adapter.
-- production dogfood operations, no-op delivery observation, release evidence
-  collection, dashboard production configuration, usage-ledger activation, and
-  production alert routing execution.
+- limited live dogfood operations on real allowlisted-author PR traffic across
+  the target repositories;
+- webhook acknowledgement latency and burst-dispatch resilience hardening;
+- production release evidence collection, 6529.io production dashboard
+  configuration, live usage-ledger review, cost-per-PR reporting, and alert
+  routing execution;
+- live bot-comment quality sampling, including grounding, false positives,
+  command marker parsing, and current head-SHA verification.
 
 Completed outside this repository:
 
@@ -871,13 +884,19 @@ Completed outside this repository:
   [6529seize-frontend#2646](https://github.com/6529-Collections/6529seize-frontend/pull/2646),
   and
   [6529seize-backend#1631](https://github.com/6529-Collections/6529seize-backend/pull/1631).
+- Production `6529bot` GitHub App created, installed on the dogfood
+  repositories, and wired to the App Runner service at `reviewbot.6529.io`.
+- Central review worker dispatch is running the normal review workflow with
+  the `anthropic:claude-opus-4-8` lane for trusted PR traffic.
 
 Next implementation focus:
 
-- accept and verify the GitHub App `actions: write` installation permission;
-- switch production from `noop` to the central `github_actions` worker only
-  after the dispatch probe proves installation-token dispatch works;
-- observe one real allowlisted-author PR delivery end to end before widening
-  traffic, with no synthetic PRs required;
-- enable production usage ledger writes, reviewed model-price rows, alert
-  routing, and 6529.io production environment wiring.
+- stabilize limited live dogfood before widening traffic;
+- deploy the command-event head-SHA hydration and cost-per-PR reporting
+  surfaces;
+- finish webhook acknowledgement and workflow-dispatch robustness work;
+- collect live review quality, denial, failure, and cost evidence from real PR
+  traffic;
+- finish production alert routing and 6529.io production environment wiring;
+- prepare the first public dogfood tag only after the release gates and live
+  evidence are clean enough to support it.

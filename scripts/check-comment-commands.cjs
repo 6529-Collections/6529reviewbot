@@ -56,6 +56,8 @@ function checkCommentCommands(options = {}) {
     "case-insensitive",
     "Unknown commands are ignored.",
     "`followup` is intentionally not included in `all`",
+    "current PR head SHA",
+    "no review jobs are enqueued",
     "commands.enabled: false",
     "trusted maintainer comments a command",
   ]) {

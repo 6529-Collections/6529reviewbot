@@ -6672,3 +6672,36 @@
   - `npm run check` passed with 184 CommonJS files;
   - `npm run release:check` passed with 184 CommonJS files checked and the
     GitHub App auth output-value guard exercised.
+- Opened draft cleanup PR #354 from `codex/cap-github-app-jwt-ttl`:
+  - caps GitHub App JWT TTL handling and keeps the credential helper output
+    path tight before the live-dogfood operator-surface work proceeds.
+- Started `codex/live-dogfood-operator-surfaces` increment:
+  - hydrate command-triggered review events from the current GitHub Pull
+    Request API before admission and dispatch, including head/base repository
+    and SHA context;
+  - fail closed when the current PR head SHA cannot be established;
+  - persist `REVIEWBOT_REQUESTOR` in usage metadata so requestor cost views
+    survive worker execution;
+  - expose unique PR counts, average cost per review run, average cost per PR,
+    and enriched admin per-PR rows in usage summaries and admin snapshots;
+  - update command, usage, operations, 6529.io, roadmap, changelog, and
+    durable manager memory docs for limited live dogfood monitoring.
+- Local validation for `codex/live-dogfood-operator-surfaces`:
+  - `npm run check:comment-commands` passed with command hydration and current
+    PR head-SHA documentation coverage;
+  - `npm run check:usage-api-routes` passed with enriched cost-per-PR usage
+    rows;
+  - `npm run check:operations-runbook` passed with admin usage, cost-per-PR,
+    dogfood comment sampling, and marker head-SHA contract coverage;
+  - `npm run check:docs` passed with 76 files checked;
+  - `npm run check:doc-index` passed with 62 docs indexed;
+  - `npm run check:manager-memory` passed with 6 sections, latest PR #342,
+    and 5 docs checked;
+  - `node -e "JSON.parse(require('fs').readFileSync('docs/usage-api.openapi.json','utf8')); console.log('openapi json ok')"` passed;
+  - `npm test` passed after adding command hydration, requestor metadata,
+    admin snapshot, and cost-per-PR smoke coverage;
+  - `git diff --check` passed;
+  - `npm run check` passed with 185 CommonJS files checked;
+  - `npm run release:check` passed with 185 CommonJS files checked and the
+    command hydration, usage API, operations, manager memory, self-dogfood, and
+    smoke coverage exercised.

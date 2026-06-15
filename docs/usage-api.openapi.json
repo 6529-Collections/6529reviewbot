@@ -523,7 +523,7 @@
           "byPr": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UsageGroup"
+              "$ref": "#/components/schemas/UsagePrGroup"
             }
           }
         },
@@ -548,7 +548,7 @@
       },
       "UsageTotals": {
         "type": "object",
-        "required": ["reviewRuns", "costUsd", "totalTokens", "budgetSkippedRuns"],
+        "required": ["reviewRuns", "costUsd", "totalTokens", "budgetSkippedRuns", "uniquePrs", "averageCostPerReviewRunUsd", "averageCostPerPrUsd"],
         "properties": {
           "reviewRuns": {
             "type": "integer"
@@ -561,6 +561,15 @@
           },
           "budgetSkippedRuns": {
             "type": "integer"
+          },
+          "uniquePrs": {
+            "type": "integer"
+          },
+          "averageCostPerReviewRunUsd": {
+            "type": "number"
+          },
+          "averageCostPerPrUsd": {
+            "type": "number"
           }
         },
         "additionalProperties": false
@@ -570,6 +579,46 @@
         "required": ["key", "reviewRuns", "costUsd", "averageCostUsd", "totalTokens", "budgetSkippedRuns"],
         "properties": {
           "key": {
+            "type": "string"
+          },
+          "reviewRuns": {
+            "type": "integer"
+          },
+          "costUsd": {
+            "type": "number"
+          },
+          "averageCostUsd": {
+            "type": "number"
+          },
+          "totalTokens": {
+            "type": "integer"
+          },
+          "budgetSkippedRuns": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsagePrGroup": {
+        "type": "object",
+        "required": ["key", "repoFullName", "prNumber", "prAuthor", "latestHeadSha", "lastReviewAt", "reviewRuns", "costUsd", "averageCostUsd", "totalTokens", "budgetSkippedRuns"],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "repoFullName": {
+            "type": "string"
+          },
+          "prNumber": {
+            "type": ["integer", "null"]
+          },
+          "prAuthor": {
+            "type": "string"
+          },
+          "latestHeadSha": {
+            "type": "string"
+          },
+          "lastReviewAt": {
             "type": "string"
           },
           "reviewRuns": {

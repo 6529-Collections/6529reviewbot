@@ -334,6 +334,7 @@ function readSettings(args, kind) {
     openrouterAppName: env("OPENROUTER_APP_NAME", "6529bot review"),
     workflowRunId: env("GITHUB_RUN_ID", ""),
     workflowJob: env("GITHUB_JOB", ""),
+    requestor: env("REVIEWBOT_REQUESTOR", ""),
     usageLedger: usageLedgerSettingsFromEnv(),
   };
 }
@@ -1381,10 +1382,17 @@ function recordUsage(settings, input) {
       actualCostUsd: input.actualCostUsd,
       currency: "USD",
       budgetSkipped: Boolean(input.budgetSkipped),
-      metadata: input.metadata || {},
+      metadata: usageMetadata(settings, input.metadata),
     },
     warn
   );
+}
+
+function usageMetadata(settings, metadata = {}) {
+  return {
+    ...metadata,
+    ...(settings.requestor ? { requestor: settings.requestor } : {}),
+  };
 }
 
 function estimateUsageCostForRecord(settings, usage, input = {}, options = {}) {
@@ -1502,4 +1510,5 @@ module.exports = {
   normalizeOpenAIUsage,
   normalizeOpenRouterUsage,
   estimateUsageCostForRecord,
+  usageMetadata,
 };

@@ -161,13 +161,17 @@ function checkWorkerAndLedgerTriage(text, findings) {
 function checkDashboardAndCommentTriage(text, findings) {
   for (const snippet of [
     "GET /api/public/usage/summary?days=30",
+    "GET /api/admin/usage/summary?days=30",
+    "cost per PR",
     "GET /api/admin/usage/events/recent?days=7&limit=50",
     "REVIEWBOT_USAGE_API_PUBLIC_REPOS",
     "REVIEWBOT_USAGE_API_PUBLIC_ORGS",
     "6529.io auth handoff",
     "GET /api/admin/status?profile=server",
     "whether private repo data is intentionally collapsed",
+    "sample recent bot comments during dogfood",
     "whether the finding is grounded in diff/context",
+    "comment marker head SHA matches the current reviewed PR head",
     "hidden metadata marker lane",
     "target PR content attempted prompt injection",
   ]) {

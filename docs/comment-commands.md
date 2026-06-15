@@ -74,6 +74,11 @@ comment format.
 Comment commands do not bypass policy:
 
 - the requestor is the comment author, not necessarily the PR author;
+- central App command events are hydrated from GitHub's pull request API before
+  dispatch so the worker gets the current PR head SHA, base SHA, head
+  repository, draft state, and PR author;
+- if the current PR context cannot be loaded, the command is acknowledged but
+  no review jobs are enqueued;
 - public repositories require a trusted actor by default;
 - repository config can disable commands with `commands.enabled: false`;
 - repository config can narrow allowed review kinds;

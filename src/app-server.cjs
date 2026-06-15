@@ -72,6 +72,7 @@ function createReviewbotServer(options = {}) {
   const enqueueReviewJobs = options.enqueueReviewJobs || options.enqueueReview || defaultEnqueueReviewJobs;
   const admissionPolicy = options.admissionPolicy || admissionPolicyFromEnv();
   const resolveActorContext = options.resolveActorContext || defaultResolveActorContext;
+  const hydrateEvent = options.hydrateEvent || defaultHydrateEvent;
   const budgetPolicy = options.budgetPolicy || budgetPolicyFromEnv();
   const loadBudgetPolicy = options.loadBudgetPolicy || defaultLoadBudgetPolicy;
   const resolveBudgetSnapshot = options.resolveBudgetSnapshot || defaultResolveBudgetSnapshot;
@@ -96,6 +97,7 @@ function createReviewbotServer(options = {}) {
         settings,
         enqueueReviewJobs,
         admissionPolicy,
+        hydrateEvent,
         resolveActorContext,
         budgetPolicy,
         loadBudgetPolicy,
@@ -186,6 +188,7 @@ async function handleHttpRequest(request, options) {
     settings: options.settings,
     enqueueReviewJobs: options.enqueueReviewJobs,
     admissionPolicy: options.admissionPolicy,
+    hydrateEvent: options.hydrateEvent,
     resolveActorContext: options.resolveActorContext,
     budgetPolicy: options.budgetPolicy,
     loadBudgetPolicy: options.loadBudgetPolicy,
@@ -207,7 +210,9 @@ async function handleGitHubWebhook(input) {
   assertGitHubWebhookSignature(input.settings.webhookSecret, input.rawBody, input.headers);
 
   const payload = parseWebhookJson(input.rawBody);
-  const event = normalizeGitHubWebhook(input.headers, payload);
+  const normalizedEvent = normalizeGitHubWebhook(input.headers, payload);
+  const hydrateEvent = input.hydrateEvent || defaultHydrateEvent;
+  const event = await hydrateEvent(normalizedEvent);
   if (!event.shouldEnqueue) {
     return {
       statusCode: 200,
@@ -500,6 +505,10 @@ async function defaultResolveActorContext(event) {
   };
 }
 
+async function defaultHydrateEvent(event) {
+  return event;
+}
+
 async function defaultResolveBudgetSnapshot() {
   return {
     unavailable: true,
@@ -692,6 +701,7 @@ function publicEventSummary(event) {
     action: event.action,
     repository: event.repository.fullName,
     prNumber: event.prNumber || null,
+    headSha: event.headSha || "",
     actor: event.actor,
     reviewKinds: event.reviewKinds || [],
     reason: event.reason,
@@ -751,6 +761,7 @@ module.exports = {
   createReviewbotServer,
   defaultEstimateBudgetCost,
   defaultEnqueueReviewJobs,
+  defaultHydrateEvent,
   defaultClaimReviewJob,
   defaultRecordJobEvent,
   defaultUpdateRunClaimStatus,

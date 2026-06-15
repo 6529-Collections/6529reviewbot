@@ -105,6 +105,7 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
       fetchImpl: options.githubFetchImpl || options.fetchImpl,
     });
     serverOptions.resolveActorContext = githubApp.resolveActorContext;
+    serverOptions.hydrateEvent = githubApp.hydratePullRequestContext;
     serverOptions.loadRepositoryConfig = githubApp.loadRepositoryConfig;
   }
   const workerDispatchGitHubAppSettings =
