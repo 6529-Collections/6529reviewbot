@@ -5,6 +5,8 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
+const DATA_API_CLIENTS = ["auto", "aws-cli", "node"];
+
 function assertDataApiSettings(settings, label = "Data API") {
   const missing = [];
   for (const key of ["region", "resourceArn", "secretArn", "database", "schema"]) {
@@ -25,14 +27,33 @@ function executeStatement(settings, sql, parameters = [], options = {}) {
     sql,
     parameters,
   };
+  const client = options.client || dataApiClientFromEnv();
+  if (client === "node") {
+    return executeStatementWithNodeClient(settings, payload, options);
+  }
+  if (client === "aws-cli") {
+    return executeStatementWithAwsCli(settings, payload, options);
+  }
+  try {
+    return executeStatementWithAwsCli(settings, payload, options);
+  } catch (error) {
+    if (isMissingAwsCliError(error)) {
+      return executeStatementWithNodeClient(settings, payload, options);
+    }
+    throw error;
+  }
+}
+
+function executeStatementWithAwsCli(settings, payload, options = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), options.tempPrefix || "6529-data-api-"));
   const payloadPath = path.join(tmpDir, "payload.json");
+  const execFile = options.execFileSync || execFileSync;
   try {
     fs.writeFileSync(payloadPath, JSON.stringify(payload), "utf8");
     const maxAttempts = options.maxAttempts || 3;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
-        const stdout = execFileSync(
+        const stdout = execFile(
           awsCliBin(),
           ["rds-data", "execute-statement", "--region", settings.region, "--cli-input-json", `file://${payloadPath}`],
           {
@@ -56,6 +77,44 @@ function executeStatement(settings, sql, parameters = [], options = {}) {
   }
 }
 
+function executeStatementWithNodeClient(settings, payload, options = {}) {
+  const childPath = path.join(__dirname, "data-api-node-client.cjs");
+  const execFile = options.execFileSync || execFileSync;
+  const input = JSON.stringify({
+    region: settings.region,
+    payload,
+    timeoutMs: options.requestTimeoutMs || options.fetchTimeoutMs || 30000,
+  });
+  const maxAttempts = options.maxAttempts || 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const stdout = execFile(process.execPath, [childPath], {
+        encoding: "utf8",
+        input,
+        maxBuffer: options.maxBuffer || 16 * 1024 * 1024,
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+      return JSON.parse(stdout || "{}");
+    } catch (error) {
+      if (attempt >= maxAttempts || !isRetriableDataApiError(error)) {
+        throw error;
+      }
+      sleepSync((options.retryDelayMs || 2000) * attempt);
+    }
+  }
+  return {};
+}
+
+function dataApiClientFromEnv(env = process.env) {
+  const value = String(env.REVIEWBOT_DATA_API_CLIENT || "auto").toLowerCase();
+  if (!DATA_API_CLIENTS.includes(value)) {
+    throw new Error(
+      `REVIEWBOT_DATA_API_CLIENT must be one of: ${DATA_API_CLIENTS.join(", ")}.`
+    );
+  }
+  return value;
+}
+
 function awsCliBin() {
   return process.env.AWS_CLI_BIN || "aws";
 }
@@ -71,6 +130,11 @@ function isRetriableDataApiError(error) {
     Array.isArray(error?.output) ? error.output.join("\n") : "",
   ].join("\n");
   return /DatabaseResumingException|ThrottlingException|TooManyRequestsException|ServiceUnavailable/i.test(text);
+}
+
+function isMissingAwsCliError(error) {
+  const text = [error?.code || "", error?.message || "", error?.stderr || ""].join("\n");
+  return /ENOENT|not found|not recognized/i.test(text);
 }
 
 function sleepSync(ms) {
@@ -118,8 +182,10 @@ function longParam(name, value) {
 module.exports = {
   assertDataApiSettings,
   awsCliBin,
+  dataApiClientFromEnv,
   executeStatement,
   fieldValue,
+  isMissingAwsCliError,
   isRetriableDataApiError,
   longParam,
   nullableNumber,

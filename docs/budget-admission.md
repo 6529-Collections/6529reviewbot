@@ -151,9 +151,12 @@ for an external contributor PR, the maintainer is the budget requestor.
   reservation totals from admitted decisions before later jobs in the same
   webhook delivery are evaluated
 
-`AWS_CLI_BIN` can be set when the runtime needs a specific AWS CLI binary path.
-On Windows, the ledger helpers invoke the AWS CLI through a shell when no
-explicit path is configured.
+`REVIEWBOT_DATA_API_CLIENT` can be set to `auto`, `aws-cli`, or `node`. `auto`
+uses the AWS CLI when it is present and falls back to the built-in signed HTTPS
+client when the binary is unavailable, such as in the production App Runner
+image. `AWS_CLI_BIN` can be set when the runtime needs a specific AWS CLI binary
+path. On Windows, the AWS CLI path invokes through a shell when no explicit path
+is configured.
 
 The GitHub App server passes provider/model context into each budget decision
 and passes the merged budget policy to the spend snapshot resolver. That lets

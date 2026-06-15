@@ -1554,6 +1554,10 @@ assert(providerErrorSummary.includes("github_pat_[redacted]"));
 assert(providerErrorSummary.includes("sk-[redacted]"));
 assert(providerErrorSummary.includes("[redacted-private-key]"));
 assert.equal(providerErrorSummary.includes("sk-proj-"), false);
+assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-8"), false);
+assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-7"), false);
+assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-opus-4-6"), true);
+assert.equal(reviewBot.shouldSendAnthropicTemperature("claude-sonnet-4-6"), true);
 const cliSecret = "sk-proj-abcdefghijklmnopqrstuvwx123456";
 const cliFatal = runCliForSmoke(["bin/preflight.cjs", cliSecret]);
 assert.equal(cliFatal.status, 1);
@@ -1573,6 +1577,43 @@ assert.equal(usageLedger.quoteIdent("reviewbot"), '"reviewbot"');
 assert.throws(() => usageLedger.quoteIdent("reviewbot;drop"), /Invalid SQL identifier/);
 assert.equal(typeof usageLedger.awsCliBin(), "string");
 assert.equal(typeof budgetLedger.awsCliBin(), "string");
+assert.equal(dataApi.dataApiClientFromEnv({}), "auto");
+assert.equal(dataApi.dataApiClientFromEnv({ REVIEWBOT_DATA_API_CLIENT: "node" }), "node");
+assert.throws(
+  () => dataApi.dataApiClientFromEnv({ REVIEWBOT_DATA_API_CLIENT: "curl" }),
+  /REVIEWBOT_DATA_API_CLIENT/
+);
+const dataApiFallbackCalls = [];
+const dataApiFallbackResult = dataApi.executeStatement(
+  {
+    region: "us-east-1",
+    resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+    secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+    database: "reviewbot",
+  },
+  "select 1",
+  [dataApi.longParam("id", 1)],
+  {
+    maxAttempts: 1,
+    execFileSync: (file, args, options) => {
+      dataApiFallbackCalls.push({ file, args, options });
+      if (dataApiFallbackCalls.length === 1) {
+        const error = new Error("spawnSync aws ENOENT");
+        error.code = "ENOENT";
+        throw error;
+      }
+      assert.equal(file, process.execPath);
+      assert.match(args[0], /data-api-node-client\.cjs$/);
+      const input = JSON.parse(options.input);
+      assert.equal(input.region, "us-east-1");
+      assert.equal(input.payload.sql, "select 1");
+      assert.equal(input.payload.parameters[0].name, "id");
+      return JSON.stringify({ records: [[{ longValue: 1 }]] });
+    },
+  }
+);
+assert.equal(dataApiFallbackCalls.length, 2);
+assert.equal(dataApiFallbackResult.records[0][0].longValue, 1);
 let usageWriteCall = null;
 const usageWriteResult = usageLedger.writeUsageEvent(
   {
