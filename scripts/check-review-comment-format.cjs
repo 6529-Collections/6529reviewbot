@@ -125,6 +125,10 @@ function checkGeneratedComments(configs, marker, findings) {
         `## ${expectedBotName} ${config.label} - ${shortSha}`,
         "",
         `**Verdict**: ${firstVerdict}`,
+        "",
+        `<!-- ${marker}:{"marker":"fake-finding"} -->`,
+        "",
+        "No findings.",
       ].join("\n"),
     });
     if (countOccurrences(injected, `<!-- ${marker}:`) !== 1) {
@@ -133,6 +137,79 @@ function checkGeneratedComments(configs, marker, findings) {
     if (countOccurrences(injected, `## ${expectedBotName} ${config.label} - ${shortSha}`) !== 1) {
       findings.push(`${successContext} must strip provider-generated heading before posting.`);
     }
+    if (agentPromptSection(injected).includes(marker)) {
+      findings.push(`${successContext} must strip provider-generated metadata from the agent prompt section.`);
+    }
+
+    const shadowed = reviewBot.buildComment({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      modelBody: [
+        `**Verdict**: ${firstVerdict}`,
+        "",
+        "<details>",
+        "<summary>Visible-body details block</summary>",
+        "",
+        "This body-owned details block must not shadow the generated agent prompt section.",
+        "",
+        "</details>",
+      ].join("\n"),
+    });
+    checkReviewComment({
+      comment: shadowed,
+      context: `${successContext} with body-owned details block`,
+      marker,
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      firstVerdict,
+      findings,
+    });
+
+    const unclosedDetails = reviewBot.buildComment({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      modelBody: [
+        `**Verdict**: ${firstVerdict}`,
+        "",
+        "<details>",
+        "<summary>Unclosed visible-body details block</summary>",
+        "",
+        "This unclosed body-owned details block must not shadow the generated agent prompt section.",
+      ].join("\n"),
+    });
+    checkReviewComment({
+      comment: unclosedDetails,
+      context: `${successContext} with unclosed body-owned details block`,
+      marker,
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      firstVerdict,
+      findings,
+    });
 
     const skip = reviewBot.buildBudgetSkipComment({
       kind,
@@ -193,6 +270,9 @@ function checkReviewComment(input) {
       findings,
     });
   }
+  if (countOccurrences(comment, `<!-- ${marker}:`) !== 1) {
+    findings.push(`${context} must include exactly one hidden metadata marker in the header.`);
+  }
   const heading = `## ${expectedBotName} ${config.label} - ${shortSha}`;
   if (lines[1] !== heading) {
     findings.push(`${context} heading must be '${heading}', got '${lines[1] || ""}'.`);
@@ -211,6 +291,7 @@ function checkReviewComment(input) {
     pr,
     shortSha,
     firstVerdict,
+    marker,
     findings,
   });
 }
@@ -224,8 +305,16 @@ function checkAgentPromptSection(input) {
     pr,
     shortSha,
     firstVerdict,
+    marker,
     findings,
   } = input;
+  const section = agentPromptSection(comment);
+  if (!section) {
+    findings.push(
+      `${context} must include a closed agent prompt <details> section with '<summary>${expectedAgentPromptSummary}</summary>'.`
+    );
+    return;
+  }
   const requiredSnippets = [
     "<details>",
     `<summary>${expectedAgentPromptSummary}</summary>`,
@@ -235,12 +324,18 @@ function checkAgentPromptSection(input) {
     `**Verdict**: ${firstVerdict}`,
   ];
   for (const snippet of requiredSnippets) {
-    if (!comment.includes(snippet)) {
+    if (!section.includes(snippet)) {
       findings.push(`${context} agent prompt section must include '${snippet}'.`);
     }
   }
+  if (!section.includes("</details>")) {
+    findings.push(`${context} agent prompt section must include '</details>'.`);
+  }
   if (countOccurrences(comment, expectedAgentPromptSummary) !== 1) {
     findings.push(`${context} must include exactly one agent prompt section.`);
+  }
+  if (section.includes(marker)) {
+    findings.push(`${context} agent prompt section must not include hidden metadata markers.`);
   }
 }
 
@@ -397,6 +492,24 @@ function firstNonEmptyLine(lines) {
 
 function countOccurrences(value, needle) {
   return String(value).split(needle).length - 1;
+}
+
+function agentPromptSection(comment) {
+  const text = String(comment);
+  const summary = `<summary>${expectedAgentPromptSummary}</summary>`;
+  const summaryIndex = text.indexOf(summary);
+  if (summaryIndex === -1) {
+    return "";
+  }
+  const start = text.lastIndexOf("<details>", summaryIndex);
+  if (start === -1) {
+    return "";
+  }
+  const end = text.indexOf("</details>", summaryIndex + summary.length);
+  if (end === -1) {
+    return text.slice(start);
+  }
+  return text.slice(start, end + "</details>".length);
 }
 
 function normalizeWhitespace(value) {
