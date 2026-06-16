@@ -17,6 +17,7 @@ const {
   DEFAULT_ADMIN_STATUS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
   DEFAULT_ADMIN_USAGE_EVENTS_PATH,
+  DEFAULT_ADMIN_WEBHOOK_INBOX_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
 } = require("./usage-api.cjs");
 
@@ -145,6 +146,17 @@ function createUsageApiClient(options = {}) {
         ...requestOptions,
         admin: true,
         path: DEFAULT_ADMIN_RUN_CLAIMS_PATH,
+        query,
+        baseUrl,
+        fetchImpl,
+        settings,
+      }),
+    webhookInbox: (query, requestOptions) =>
+      requestUsageApiJson({
+        ...options,
+        ...requestOptions,
+        admin: true,
+        path: DEFAULT_ADMIN_WEBHOOK_INBOX_PATH,
         query,
         baseUrl,
         fetchImpl,

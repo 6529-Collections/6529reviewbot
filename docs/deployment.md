@@ -318,6 +318,7 @@ GET /api/admin/model-prices/status
 GET /api/admin/alerts/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+GET /api/admin/webhook-inbox/recent?status=failed&limit=50
 GET /api/admin/status?profile=server
 ```
 

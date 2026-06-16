@@ -102,6 +102,16 @@ const routeContracts = [
     openapiSecurity: true,
   },
   {
+    key: "adminWebhookInboxPath",
+    envKey: "REVIEWBOT_USAGE_API_ADMIN_WEBHOOK_INBOX_PATH",
+    defaultExport: "DEFAULT_ADMIN_WEBHOOK_INBOX_PATH",
+    path: "/api/admin/webhook-inbox/recent",
+    clientMethod: "webhookInbox",
+    visibility: "admin",
+    kind: "webhook_inbox",
+    openapiSecurity: true,
+  },
+  {
     key: "adminStatusPath",
     envKey: "REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH",
     defaultExport: "DEFAULT_ADMIN_STATUS_PATH",
@@ -204,6 +214,7 @@ async function checkRouteHandling(contracts, findings) {
       loadAlertStatus: async () => ({ status: alertStatusFixture() }),
       loadJobEvents: async () => ({ events: [] }),
       loadRunClaims: async () => ({ claims: [] }),
+      loadWebhookInbox: async () => ({ deliveries: [] }),
       loadAdminStatus: async () => ({ preflight: { ok: true, checks: [] } }),
       now: new Date("2026-06-13T12:00:00.000Z"),
     });
@@ -377,6 +388,7 @@ function checkDocs(contracts, docTexts, findings) {
     "client.runtimeStatus({ profile: \"server\" })",
     "client.jobEvents({ status: \"dispatch_failed\", limit: 10 })",
     "client.runClaims({ active: true, staleMinutes: 120, limit: 10 })",
+    "client.webhookInbox({ status: \"failed\", limit: 10 })",
   ];
   for (const snippet of requiredClientSnippets) {
     if (!adminIntegration.includes(snippet)) {
@@ -398,6 +410,9 @@ function callClientMethod(method, kind) {
   if (kind === "run_claims") {
     return method({ active: true, staleMinutes: 120, limit: 10 });
   }
+  if (kind === "webhook_inbox") {
+    return method({ status: "failed", limit: 10 });
+  }
   if (kind === "runtime_status") {
     return method({ profile: "server", strict: false });
   }
@@ -416,6 +431,9 @@ function queryFor(kind) {
   }
   if (kind === "run_claims") {
     return "?active=1&staleMinutes=120&limit=10";
+  }
+  if (kind === "webhook_inbox") {
+    return "?status=failed&limit=10";
   }
   if (kind === "runtime_status") {
     return "?profile=server&strict=false";

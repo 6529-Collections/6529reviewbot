@@ -16,6 +16,7 @@ const REQUIRED_PATHS = [
   "/api/admin/alerts/status",
   "/api/admin/jobs/recent",
   "/api/admin/run-claims/recent",
+  "/api/admin/webhook-inbox/recent",
   "/api/admin/status",
 ];
 

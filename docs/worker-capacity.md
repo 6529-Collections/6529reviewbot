@@ -151,15 +151,22 @@ If reviews stop while webhooks are admitted:
    GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
    ```
 
-3. Confirm the worker workflow is enabled and has available runner capacity.
-4. Confirm provider keys and AWS OIDC variables are present in the central
+3. Check failed or retry-pending webhook inbox rows:
+
+   ```text
+   GET /api/admin/webhook-inbox/recent?status=active&limit=50
+   GET /api/admin/webhook-inbox/recent?status=failed&limit=50
+   ```
+
+4. Confirm the worker workflow is enabled and has available runner capacity.
+5. Confirm provider keys and AWS OIDC variables are present in the central
    worker environment.
-5. Confirm `REVIEWBOT_WORKER_TIMEOUT_MINUTES` is not too short for the review
+6. Confirm `REVIEWBOT_WORKER_TIMEOUT_MINUTES` is not too short for the review
    kind and model.
-6. Confirm `REVIEWBOT_WEBHOOK_INBOX_ENABLED=true` is running when command
+7. Confirm `REVIEWBOT_WEBHOOK_INBOX_ENABLED=true` is running when command
    bursts are expected; concurrency denials should move to retry-pending
    inbox rows instead of requiring users to re-comment manually.
-7. If claims are stuck because workers crashed, let TTL expire or update
+8. If claims are stuck because workers crashed, let TTL expire or update
    terminal status from the private operator runbook after preserving evidence.
 
 Do not delete run-control rows from a public incident thread. Keep exact run

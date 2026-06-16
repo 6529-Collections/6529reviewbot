@@ -258,7 +258,7 @@ assert.throws(
 );
 const reviewContextBoundaryResult = reviewContextBoundaryCheck.checkReviewContextBoundary();
 assert.equal(reviewContextBoundaryResult.pathCases, 11);
-assert.equal(reviewContextBoundaryResult.hardLimits, 9);
+assert.equal(reviewContextBoundaryResult.hardLimits, 10);
 assert.throws(
   () =>
     reviewContextBoundaryCheck.checkReviewContextBoundary({
@@ -348,6 +348,7 @@ assert.deepEqual(
     "/api/admin/alerts/status",
     "/api/admin/jobs/recent",
     "/api/admin/run-claims/recent",
+    "/api/admin/webhook-inbox/recent",
     "/api/admin/status",
   ]
 );
@@ -430,7 +431,7 @@ assert.equal(
   envTemplateCheck.parseEnvTemplate("A=1\n# comment\nB=\n").B,
   ""
 );
-assert.equal(envTemplateCheck.check6529IoEnvTemplate().pathCount, 8);
+assert.equal(envTemplateCheck.check6529IoEnvTemplate().pathCount, 9);
 assert.equal(envTemplatesCheck.checkEnvTemplates().files.length, 3);
 assert.equal(envTemplatesCheck.isSensitiveTemplateKey("REVIEWBOT_ALERTS_WEBHOOK_URL"), true);
 assert.equal(envTemplatesCheck.isSensitiveTemplateKey("REVIEWBOT_GITHUB_APP_TOKEN_REFRESH_BUFFER_SECONDS"), false);
@@ -6493,6 +6494,52 @@ appServer.handleGitHubWebhook({
     Object.prototype.hasOwnProperty.call(adminRunClaimsRouteResult.body.claims[0].metadata, "nested"),
     false
   );
+  const adminWebhookInboxRouteUrl = new URL(
+    "http://localhost/api/admin/webhook-inbox/recent?status=failed&repository=6529-Collections/private&prNumber=42&limit=1"
+  );
+  const adminWebhookInboxRouteResult = await appServer.handleHttpRequest({
+    method: "GET",
+    url: "/api/admin/webhook-inbox/recent?status=failed&repository=6529-Collections/private&prNumber=42&limit=1",
+    headers: signedAdminHeadersFor(adminWebhookInboxRouteUrl),
+  }, {
+    usageApiSettings,
+    authorizeUsageApiAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadWebhookInbox: async ({ query }) => {
+      assert.equal(query.limit, 1);
+      assert.deepEqual(query.statuses, ["failed"]);
+      assert.equal(query.repository, "6529-Collections/private");
+      assert.equal(query.prNumber, 42);
+      return {
+        deliveries: [{
+          inboxId: 7,
+          deliveryId: "delivery-sk-proj-abcdefghijklmnopqrstuvwx123456",
+          status: "failed",
+          attemptCount: 6,
+          reason:
+            "hydrate failed with github_pat_abcdefghijklmnopqrstuvwxyz1234567890 and sk-proj-abcdefghijklmnopqrstuvwx123456",
+          lastError: "Bearer abcdefghijklmnopqrstuvwxyz123456",
+          normalizedEvent: {
+            repository: { fullName: "6529-Collections/private" },
+            nested: { token: "sk-proj-should-not-pass" },
+          },
+        }],
+      };
+    },
+  });
+  assert.equal(adminWebhookInboxRouteResult.statusCode, 200);
+  assert.equal(adminWebhookInboxRouteResult.body.kind, "webhook_inbox");
+  assert.equal(adminWebhookInboxRouteResult.body.deliveries[0].attemptCount, 6);
+  assert(adminWebhookInboxRouteResult.body.deliveries[0].reason.includes("github_pat_[redacted]"));
+  assert(adminWebhookInboxRouteResult.body.deliveries[0].lastError.includes("Bearer [redacted]"));
+  assert.equal(adminWebhookInboxRouteResult.body.deliveries[0].deliveryId.includes("sk-proj-"), false);
+  assert.equal(
+    adminWebhookInboxRouteResult.body.deliveries[0].normalizedEvent.nested.token.includes("sk-[redacted]"),
+    true
+  );
+  assert.equal(
+    adminWebhookInboxRouteResult.body.deliveries[0].normalizedEvent.nested.token.includes("sk-proj-"),
+    false
+  );
   const adminDenied = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/admin/usage/summary"),
@@ -6515,6 +6562,43 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(adminAllowed.statusCode, 200);
   assert.equal(adminAllowed.body.policies[0].scopeType, "global");
+  const responseCache = usageApi.createUsageApiResponseCache({
+    cacheTtlMs: 1000,
+    cacheMaxEntries: 5,
+  });
+  let cachedLoaderCalls = 0;
+  let cachedAuthCalls = 0;
+  const cachedSummaryUrl = new URL("http://localhost/api/admin/usage/summary?days=7");
+  const cachedSummaryRequest = {
+    method: "GET",
+    url: cachedSummaryUrl,
+    headers: signedAdminHeadersFor(cachedSummaryUrl),
+  };
+  const cachedSummaryOptions = {
+    settings: usageApiSettings,
+    responseCache,
+    authorizeAdmin: async () => {
+      cachedAuthCalls += 1;
+      return { allowed: true };
+    },
+    loadUsageEvents: async () => {
+      cachedLoaderCalls += 1;
+      return { events: usageEvents };
+    },
+    now: new Date("2026-06-13T12:00:00.000Z"),
+  };
+  const cachedSummaryFirst = await usageApi.handleUsageApiRequest(
+    cachedSummaryRequest,
+    cachedSummaryOptions
+  );
+  const cachedSummarySecond = await usageApi.handleUsageApiRequest(
+    cachedSummaryRequest,
+    cachedSummaryOptions
+  );
+  assert.equal(cachedSummaryFirst.statusCode, 200);
+  assert.equal(cachedSummarySecond.statusCode, 200);
+  assert.equal(cachedAuthCalls, 2);
+  assert.equal(cachedLoaderCalls, 1);
   const adminBudgetStatus = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/admin/budget/status"),
@@ -6721,6 +6805,37 @@ appServer.handleGitHubWebhook({
   assert.equal(adminRunClaims.statusCode, 200);
   assert.equal(adminRunClaims.body.status, "running");
   assert.equal(adminRunClaims.body.claims[0].metadata.worker, "review-job");
+  const adminWebhookInboxUrl = new URL(
+    "http://localhost/api/admin/webhook-inbox/recent?status=active&limit=2"
+  );
+  const adminWebhookInbox = await usageApi.handleUsageApiRequest({
+    method: "GET",
+    url: adminWebhookInboxUrl,
+    headers: signedAdminHeadersFor(adminWebhookInboxUrl),
+  }, {
+    settings: usageApiSettings,
+    authorizeAdmin: adminAuth.createUsageApiAdminAuthorizer(hmacAuthSettings),
+    loadWebhookInbox: async ({ query }) => {
+      assert.deepEqual(query.statuses, ["received", "retry_pending", "processing"]);
+      assert.equal(query.limit, 2);
+      return {
+        deliveries: [{
+          inboxId: 8,
+          deliveryId: "delivery-active",
+          eventName: "issue_comment",
+          eventKind: "command",
+          repoFullName: "6529-Collections/private",
+          prNumber: 43,
+          status: "retry_pending",
+          attemptCount: 2,
+          normalizedEvent: { commandName: "review" },
+        }],
+      };
+    },
+  });
+  assert.equal(adminWebhookInbox.statusCode, 200);
+  assert.equal(adminWebhookInbox.body.status, "active");
+  assert.equal(adminWebhookInbox.body.deliveries[0].status, "retry_pending");
   const unavailableUsageApi = await usageApi.handleUsageApiRequest({
     method: "GET",
     url: new URL("http://localhost/api/public/usage/summary"),

@@ -41,8 +41,13 @@ requests.
   operator job ledger when enabled.
 - Adds run-control claims for duplicate-job and concurrency protection before
   worker dispatch.
+- Records GitHub webhook deliveries in a durable inbox with retry/backpressure
+  handling before hydration and dispatch.
 - Exposes a read-side usage API contract for public transparency and
   6529.io-authenticated admin dashboards.
+- Caches successful read-side API responses briefly after admin authorization
+  and exposes admin views for failed inbox rows, job events, run claims, spend,
+  alerts, and runtime status.
 - Verifies private admin API calls through a server-side `6529.io` auth bridge
   instead of a separate login system.
 - Runs scheduled operator alerts for budget utilization, unusual spend spikes,
@@ -51,16 +56,17 @@ requests.
 
 ## Repository Status
 
-This repository is public and MIT licensed. It is pre-v1 infrastructure: the
-core review engine, GitHub App skeleton, admission and budget policy, worker
-adapters, usage APIs, admin auth bridge, and scheduled operator alerts are
-present, but production deployment, dogfooding, and release tags are still
-pending.
+This repository is public and MIT licensed. It is still pre-v1, but the core
+production path is live for selected 6529 repositories: the `6529bot` GitHub
+App receives PR/comment events, applies trusted-actor admission, expands review
+jobs, enforces run-control and budget policy, dispatches the central
+`review-job.yml` worker, posts PR comments as the App, and writes usage/job
+telemetry to the AWS ledger.
 
-The repository includes a command-only `.github/6529bot.yml` dogfood config.
-It enables trusted maintainer comment commands only; automatic initial and
-follow-up reviews stay disabled until the production App, worker path, budget
-ledger, run-control, alerts, and private dogfood status evidence are ready.
+The repository includes its own `.github/6529bot.yml` dogfood config and the
+central worker workflow used by production. Broader community release,
+semver-stable configuration guarantees, and public release tags are still
+tracked through the release-readiness and v0 plans.
 
 For the current release gates, see
 [docs/release-readiness.md](docs/release-readiness.md).
@@ -709,7 +715,11 @@ REVIEWBOT_USAGE_API_ADMIN_BUDGET_STATUS_PATH=/api/admin/budget/status
 REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH=/api/admin/alerts/status
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
+REVIEWBOT_USAGE_API_ADMIN_WEBHOOK_INBOX_PATH=/api/admin/webhook-inbox/recent
 REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
+REVIEWBOT_USAGE_API_CACHE_ENABLED=true
+REVIEWBOT_USAGE_API_CACHE_TTL_MS=15000
+REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES=100
 REVIEWBOT_USAGE_API_PUBLIC_ORGS=6529-Collections
 ```
 

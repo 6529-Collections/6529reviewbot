@@ -178,7 +178,7 @@ async function main(forcedKind) {
     kind === "followup" && previousReview?.headSha
       ? getDiffSince(previousReview.headSha, diff, settings)
       : "";
-  const context = buildFileContext(diff, changedFiles, settings, kind);
+  const context = buildFileContextBundle(diff, changedFiles, settings, kind);
   const prompt = buildPrompt({
     kind,
     config,
@@ -192,7 +192,8 @@ async function main(forcedKind) {
     commentsBefore,
     reviewHistory,
     previousReview,
-    context,
+    context: context.text,
+    contextSummary: context.summary,
   });
   const finalPrompt = enforceInputLimit(prompt, settings.maxInputChars);
 
@@ -305,11 +306,16 @@ function readSettings(args, kind) {
     dryRun: parseBool(args.dryRun || env("REVIEW_DRY_RUN", "false")),
     printPrompt: parseBool(args.printPrompt || env("REVIEW_PRINT_PROMPT", "false")),
     printComment: parseBool(args.printComment || env("REVIEW_PRINT_COMMENT", "false")),
-    maxChangedFiles: boundedPositiveInt("REVIEW_MAX_CHANGED_FILES", 80, HARD_LIMITS.maxChangedFiles),
-    maxChangedLines: boundedPositiveInt("REVIEW_MAX_CHANGED_LINES", 3500, HARD_LIMITS.maxChangedLines),
-    maxDiffChars: boundedPositiveInt("REVIEW_MAX_DIFF_CHARS", 90000, HARD_LIMITS.maxDiffChars),
-    maxContextChars: boundedPositiveInt("REVIEW_MAX_CONTEXT_CHARS", 45000, HARD_LIMITS.maxContextChars),
-    maxInputChars: boundedPositiveInt("REVIEW_MAX_INPUT_CHARS", 160000, HARD_LIMITS.maxInputChars),
+    maxChangedFiles: boundedPositiveInt("REVIEW_MAX_CHANGED_FILES", 160, HARD_LIMITS.maxChangedFiles),
+    maxChangedLines: boundedPositiveInt("REVIEW_MAX_CHANGED_LINES", 12000, HARD_LIMITS.maxChangedLines),
+    largePrChangedLines: boundedPositiveInt(
+      "REVIEW_LARGE_PR_CHANGED_LINES",
+      3500,
+      HARD_LIMITS.maxChangedLines
+    ),
+    maxDiffChars: boundedPositiveInt("REVIEW_MAX_DIFF_CHARS", 250000, HARD_LIMITS.maxDiffChars),
+    maxContextChars: boundedPositiveInt("REVIEW_MAX_CONTEXT_CHARS", 100000, HARD_LIMITS.maxContextChars),
+    maxInputChars: boundedPositiveInt("REVIEW_MAX_INPUT_CHARS", 350000, HARD_LIMITS.maxInputChars),
     maxOutputTokens: boundedPositiveInt("REVIEW_MAX_OUTPUT_TOKENS", 4000, HARD_LIMITS.maxOutputTokens),
     contextLines: boundedPositiveInt("REVIEW_CONTEXT_LINES", 60, HARD_LIMITS.contextLines),
     maxCommentsChars: boundedPositiveInt(
@@ -667,13 +673,20 @@ function getDiffSince(previousHeadSha, fallbackDiff, settings) {
 }
 
 function buildFileContext(diff, changedFiles, settings, kind) {
+  return buildFileContextBundle(diff, changedFiles, settings, kind).text;
+}
+
+function buildFileContextBundle(diff, changedFiles, settings, kind) {
   const changedLinesByFile = parseChangedLineRanges(diff);
   const relevantFiles = changedFiles.filter((file) => isRelevantFile(file, kind));
   const sections = [];
   let usedChars = 0;
+  let includedFiles = 0;
+  let truncated = false;
 
   for (const file of relevantFiles) {
     if (usedChars >= settings.maxContextChars) {
+      truncated = true;
       break;
     }
     if (!isSafeRepositoryPath(file)) {
@@ -702,11 +715,29 @@ function buildFileContext(diff, changedFiles, settings, kind) {
     if (!excerpt) {
       continue;
     }
+    if (hasTruncationMarker(excerpt)) {
+      truncated = true;
+    }
     usedChars += excerpt.length;
+    includedFiles += 1;
     sections.push(excerpt);
   }
 
-  return sections.join("\n\n");
+  if (includedFiles < relevantFiles.length) {
+    truncated = true;
+  }
+
+  return {
+    text: sections.join("\n\n"),
+    summary: {
+      relevantFiles: relevantFiles.length,
+      includedFiles,
+      omittedRelevantFiles: Math.max(0, relevantFiles.length - includedFiles),
+      maxContextChars: settings.maxContextChars,
+      usedChars,
+      truncated,
+    },
+  };
 }
 
 function isSafeRepositoryPath(file) {
@@ -832,6 +863,7 @@ function buildPrompt(input) {
     reviewHistory,
     previousReview,
     context,
+    contextSummary,
   } = input;
   const system = [
     "You are 6529bot, a senior code reviewer for 6529 repositories.",
@@ -844,11 +876,24 @@ function buildPrompt(input) {
 
   const priorComments = summarizeComments(commentsBefore, settings.maxCommentsChars);
   const priorBotReviews = summarizeReviewHistory(reviewHistory, settings.maxCommentsChars);
-  const diffForPrompt = truncate(kind === "followup" && followupDiff ? followupDiff : diff, settings.maxDiffChars);
-  const fullDiffNote =
+  const promptDiff = kind === "followup" && followupDiff ? followupDiff : diff;
+  const diffForPrompt = truncateWithInfo(promptDiff, settings.maxDiffChars);
+  const largePrMode = changedLineCount > settings.largePrChangedLines;
+  const contextBoundaryLines = reviewContextBoundaryLines({
+    kind,
+    followupDiff,
+    changedLineCount,
+    settings,
+    diffForPrompt,
+    priorComments,
+    priorBotReviews,
+    contextSummary,
+    largePrMode,
+  });
+  const diffNote =
     kind === "followup" && followupDiff
-      ? "The diff below is the best available diff since the prior same-lane 6529bot marker. Use the full PR metadata and prior comments for context."
-      : "The diff below is the current full PR diff.";
+      ? "The diff below is the best available diff since the prior same-lane 6529bot marker."
+      : "The diff below is the current PR diff.";
 
   const user = [
     `Review kind: ${config.label}`,
@@ -861,9 +906,13 @@ function buildPrompt(input) {
     `Changed lines: ${changedLineCount}`,
     `Provider/model: ${settings.provider}/${settings.model}`,
     `Budget: ${settings.maxChangedFiles} files, ${settings.maxChangedLines} changed lines, ${settings.maxOutputTokens} output tokens`,
+    `Large PR soft threshold: ${settings.largePrChangedLines} changed lines`,
     previousReview
       ? `Previous same-kind/same-lane bot review head: ${previousReview.headSha}`
       : "Previous same-kind/same-lane bot review head: none found",
+    "",
+    "Context boundaries:",
+    ...contextBoundaryLines.map((item) => `- ${item}`),
     "",
     "Shared comment rules:",
     `- Start with a verdict line: **Verdict**: ${config.verdicts}.`,
@@ -872,6 +921,7 @@ function buildPrompt(input) {
     "- Do not repeat findings already raised in prior comments or prior bot reviews.",
     "- If a prior issue is clearly fixed, mention it briefly under `### Resolved since last review`.",
     "- Omit empty sections. Keep the total comment compact enough for a PR conversation.",
+    "- When context is partial or this is large PR mode, do not claim exhaustive coverage; prioritize high-confidence findings grounded in the included diff/context.",
     "- Use `### Critical`, `### Important`, and `### Nice-to-have` only when those sections have items.",
     "- Use `**Suggested next steps**` only when the verdict is not the no-finding/good verdict.",
     "",
@@ -887,9 +937,9 @@ function buildPrompt(input) {
     "Changed files:",
     changedFiles.map((file) => `- ${file}`).join("\n") || "(none)",
     "",
-    fullDiffNote,
+    diffNote,
     "```diff",
-    diffForPrompt,
+    diffForPrompt.text,
     "```",
     "",
     "Changed-file context excerpts:",
@@ -897,6 +947,44 @@ function buildPrompt(input) {
   ].join("\n");
 
   return { system, user };
+}
+
+function reviewContextBoundaryLines(input = {}) {
+  const {
+    kind,
+    followupDiff,
+    changedLineCount,
+    settings,
+    diffForPrompt,
+    priorComments,
+    priorBotReviews,
+    contextSummary = {},
+    largePrMode,
+  } = input;
+  const lines = [
+    largePrMode
+      ? `Large PR mode is active because ${changedLineCount} changed lines exceeds the ${settings.largePrChangedLines} soft threshold.`
+      : `Large PR mode is inactive because ${changedLineCount} changed lines is within the ${settings.largePrChangedLines} soft threshold.`,
+    diffForPrompt.truncated
+      ? `Diff context is partial: ${diffForPrompt.originalChars} chars were truncated to ${diffForPrompt.maxChars} chars.`
+      : `Diff context is complete within the ${settings.maxDiffChars} char diff cap.`,
+    `Changed-file excerpts include ${Number(contextSummary.includedFiles || 0)}/${Number(contextSummary.relevantFiles || 0)} relevant files with a ${Number(contextSummary.maxContextChars || settings.maxContextChars)} char context cap.`,
+  ];
+  if (contextSummary.truncated) {
+    lines.push(
+      `Changed-file excerpts are partial; ${Number(contextSummary.omittedRelevantFiles || 0)} relevant files were omitted after context limits, unavailable files, or safety filters.`
+    );
+  }
+  if (hasTruncationMarker(priorComments) || hasTruncationMarker(priorBotReviews)) {
+    lines.push("Prior comments or prior bot-review history are truncated for prompt budget.");
+  }
+  if (kind === "followup" && followupDiff) {
+    lines.push("Follow-up mode uses the best available diff since the prior same-lane review marker.");
+  }
+  lines.push(
+    "Generated files, lockfiles, binary assets, unsafe paths, directories, and symlinks are excluded from changed-file excerpts."
+  );
+  return lines;
 }
 
 function summarizeComments(comments, maxChars) {
@@ -1438,17 +1526,43 @@ function dryRunBody(config, settings, changedFiles, changedLineCount) {
 }
 
 function truncate(value, maxChars) {
+  return truncateWithInfo(value, maxChars).text;
+}
+
+function truncateWithInfo(value, maxChars) {
   const text = String(value || "");
   if (maxChars <= 0) {
-    return "";
+    return {
+      text: "",
+      truncated: text.length > 0,
+      originalChars: text.length,
+      maxChars,
+    };
   }
   if (text.length <= maxChars) {
-    return text;
+    return {
+      text,
+      truncated: false,
+      originalChars: text.length,
+      maxChars,
+    };
   }
+  let truncatedText;
   if (maxChars <= 80) {
-    return text.slice(0, maxChars);
+    truncatedText = text.slice(0, maxChars);
+  } else {
+    truncatedText = `${text.slice(0, Math.max(0, maxChars - 80))}\n\n[truncated to ${maxChars} chars]`;
   }
-  return `${text.slice(0, Math.max(0, maxChars - 80))}\n\n[truncated to ${maxChars} chars]`;
+  return {
+    text: truncatedText,
+    truncated: true,
+    originalChars: text.length,
+    maxChars,
+  };
+}
+
+function hasTruncationMarker(value) {
+  return /\[truncated to \d+ chars\]/.test(String(value || ""));
 }
 
 function escapeRegExp(value) {

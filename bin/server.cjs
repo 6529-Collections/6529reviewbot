@@ -108,6 +108,11 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
   const webhookInboxSettings = webhookInboxSettingsFromEnv(env);
   if (webhookInboxSettings.enabled) {
     serverOptions.webhookInbox = createWebhookInbox(webhookInboxSettings);
+    if (!serverOptions.loadWebhookInbox) {
+      serverOptions.loadWebhookInbox = createUsageApiLedgerLoaders({
+        ledgerSettings: webhookInboxSettings,
+      }).loadWebhookInbox;
+    }
   }
   const githubAppAuthSettings = githubAppAuthSettingsFromEnv(env);
   if (isGitHubAppAuthConfigured(githubAppAuthSettings)) {

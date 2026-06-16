@@ -112,6 +112,7 @@ GET /api/admin/model-prices/status
 GET /api/admin/alerts/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=10
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=10
+GET /api/admin/webhook-inbox/recent?status=failed&limit=10
 GET /api/admin/status?profile=server
 ```
 
@@ -131,6 +132,7 @@ client.modelPriceStatus()
 client.alertStatus()
 client.jobEvents({ status: "dispatch_failed", limit: 10 })
 client.runClaims({ active: true, staleMinutes: 120, limit: 10 })
+client.webhookInbox({ status: "failed", limit: 10 })
 client.runtimeStatus({ profile: "server" })
 client.runtimeStatus({ profile: "worker" })
 ```

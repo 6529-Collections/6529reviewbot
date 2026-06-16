@@ -171,11 +171,13 @@ Private operator dashboards can call:
 GET /api/admin/usage/summary?days=30
 GET /api/admin/status?profile=server
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+GET /api/admin/webhook-inbox/recent?status=failed&limit=50
 ```
 
 to show cost per PR, repo, requestor, provider/model, review kind, the same
-no-network preflight checks, and stale run-control claims without exposing
-runtime secrets or direct database access to the browser.
+no-network preflight checks, stale run-control claims, and failed webhook
+inbox deliveries without exposing runtime secrets or direct database access to
+the browser.
 
 ## If Reviews Stop Posting
 
@@ -188,6 +190,8 @@ Check:
   `dispatch_error`;
 - recent `reviewbot.ai_review_run_claims` rows for active duplicate or
   over-concurrency claims;
+- recent `reviewbot.ai_review_webhook_inbox` rows for failed or retry-pending
+  deliveries;
 - [Worker Capacity And Backpressure](worker-capacity.md) for current caps and
   scale-up rules;
 - `GH_TOKEN` scope;
@@ -256,6 +260,9 @@ Check:
 - `REVIEW_BOT_INITIAL_KINDS`;
 - provider/model overrides;
 - `REVIEW_MAX_OUTPUT_TOKENS`;
+- `REVIEW_MAX_CHANGED_FILES`;
+- `REVIEW_MAX_CHANGED_LINES`;
+- `REVIEW_LARGE_PR_CHANGED_LINES`;
 - `REVIEW_MAX_DIFF_CHARS`;
 - `REVIEW_MAX_CONTEXT_CHARS`;
 - `REVIEW_MAX_PRIOR_COMMENTS_CHARS`;
@@ -288,6 +295,7 @@ Check:
   `npm run alerts:operator -- -- --dry-run --force`;
 - `GET /api/admin/jobs/recent?status=dispatch_failed&limit=50`;
 - `GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50`;
+- `GET /api/admin/webhook-inbox/recent?status=failed&limit=50`;
 - worker workflow status, runner capacity, and provider keys.
 
 Run `npm run check:alerting-runbook` after editing alerting guidance so the
