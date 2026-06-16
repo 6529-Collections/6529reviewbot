@@ -1,4 +1,5 @@
 name: 6529bot Review Job
+run-name: "${{ inputs.target_repo }}#${{ inputs.pr_number }} ${{ inputs.review_kind }} @ ${{ inputs.head_ref || inputs.head_sha }}"
 
 on:
   workflow_dispatch:
@@ -23,6 +24,12 @@ on:
         type: string
       head_sha:
         required: true
+        type: string
+      base_sha:
+        required: false
+        type: string
+      head_ref:
+        required: false
         type: string
       review_kind:
         required: true
@@ -113,6 +120,8 @@ jobs:
           HEAD_REPO: ${{ inputs.head_repo }}
           PR_NUMBER: ${{ inputs.pr_number }}
           HEAD_SHA: ${{ inputs.head_sha }}
+          BASE_SHA: ${{ inputs.base_sha }}
+          HEAD_REF: ${{ inputs.head_ref }}
           REVIEW_KIND: ${{ inputs.review_kind }}
           PROVIDER: ${{ inputs.provider }}
           MODEL: ${{ inputs.model }}
@@ -132,6 +141,8 @@ jobs:
                 headRepoFullName: process.env.HEAD_REPO,
                 prNumber: process.env.PR_NUMBER,
                 headSha: process.env.HEAD_SHA,
+                baseSha: process.env.BASE_SHA,
+                headRefName: process.env.HEAD_REF,
                 reviewKind: process.env.REVIEW_KIND,
                 provider: process.env.PROVIDER,
                 model: process.env.MODEL,
@@ -151,6 +162,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           REVIEW_WORKSPACE: ${{ github.workspace }}/target
+          PR_BASE_SHA: ${{ inputs.base_sha }}
+          PR_HEAD_REF: ${{ inputs.head_ref }}
+          PR_HEAD_REPO: ${{ inputs.head_repo }}
           REVIEW_USAGE_ENABLED: true
           REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION }}
           REVIEW_USAGE_DB_RESOURCE_ARN: ${{ vars.REVIEW_USAGE_DB_RESOURCE_ARN }}

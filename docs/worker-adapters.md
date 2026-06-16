@@ -105,6 +105,8 @@ target_repo
 head_repo
 pr_number
 head_sha
+base_sha
+head_ref
 review_kind
 provider
 model
@@ -125,7 +127,10 @@ or dispatch App credential handling.
 
 `target_repo` is the repository that owns the PR and receives comments.
 `head_repo` is the repository that owns the submitted head SHA, which can differ
-for fork PRs.
+for fork PRs. `base_sha` is the target repository base commit used by the
+worker's local diff fallback when GitHub's pull request diff API refuses a very
+large patch. `head_ref` is a sanitized display-only branch name for the Actions
+run name; workers must use immutable SHAs for checkout and diffing.
 
 The receiving workflow should validate the inputs, mint a short-lived
 installation token, check out `head_repo` at `head_sha` read-only, set
@@ -179,6 +184,9 @@ GITHUB_REPOSITORY
 PR_NUMBER
 GITHUB_PR_NUMBER
 PR_HEAD_SHA
+PR_BASE_SHA
+PR_HEAD_REF
+PR_HEAD_REPO
 REVIEW_KIND
 REVIEW_PROVIDER
 REVIEW_MODEL

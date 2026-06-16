@@ -569,6 +569,7 @@ REVIEW_CONTEXT_LINES=60
 REVIEW_DRAFT_PR_MODE=skip
 REVIEW_OVERSIZE_BEHAVIOR=skip
 REVIEW_POST_SKIP_COMMENT=true
+REVIEW_POST_FAILURE_COMMENT=true
 REVIEW_PROVIDER_TIMEOUT_MS=120000
 REVIEW_TEMPERATURE=0
 ```
@@ -585,6 +586,12 @@ already decided whether draft work is allowed. Standalone workflows default to
 `REVIEW_OVERSIZE_BEHAVIOR=skip`. `REVIEW_LARGE_PR_CHANGED_LINES` is a softer
 prompt threshold: above it, 6529bot tells the model that large-PR mode is active
 and warns when diff, prior-comment, or changed-file context was truncated.
+When GitHub's PR diff API refuses a very large patch, the central worker tries
+a local `git diff` fallback using immutable base and head SHAs from the job
+payload. If diff hydration still fails before a provider call,
+`REVIEW_POST_FAILURE_COMMENT=true` posts a bounded operational-failure comment
+on the PR so maintainers can see why the command or automatic review did not
+produce a model-backed comment.
 
 For Anthropic Claude Opus 4.8 and 4.7, the bot omits `temperature` because
 those Messages API models reject non-default sampling parameters. Other
