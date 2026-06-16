@@ -339,6 +339,7 @@ function pullRequestContext(pullRequest = {}, event = {}) {
   return {
     prAuthor: pullRequest.user?.login || event.prAuthor || "",
     headSha: pullRequest.head?.sha || event.headSha || "",
+    headRefName: pullRequest.head?.ref || event.headRefName || "",
     headRepoFullName: pullRequest.head?.repo?.full_name || event.headRepoFullName || "",
     baseSha: pullRequest.base?.sha || event.baseSha || "",
     baseRepoFullName:

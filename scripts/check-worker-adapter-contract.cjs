@@ -21,6 +21,7 @@ const expectedDispatchFields = [
   "head_repo",
   "pr_number",
   "head_sha",
+  "head_ref",
   "review_kind",
   "provider",
   "model",
@@ -33,6 +34,7 @@ const expectedLocalEnvKeys = [
   "PR_NUMBER",
   "GITHUB_PR_NUMBER",
   "PR_HEAD_SHA",
+  "PR_HEAD_REF",
   "REVIEW_KIND",
   "REVIEW_PROVIDER",
   "REVIEW_MODEL",
@@ -229,10 +231,13 @@ function checkWorkflowTemplate(workflowText, findings) {
   if (!arraysEqual(inputNames, expectedDispatchFields)) {
     findings.push(`review-job workflow inputs must be ${JSON.stringify(expectedDispatchFields)}, got ${JSON.stringify(inputNames)}.`);
   }
-  for (const field of expectedDispatchFields.filter((field) => field !== "requestor")) {
+  for (const field of expectedDispatchFields.filter((field) => !["head_ref", "requestor"].includes(field))) {
     if (inputs[field]?.required !== true) {
       findings.push(`review-job workflow input ${field} must be required.`);
     }
+  }
+  if (inputs.head_ref?.required !== false) {
+    findings.push("review-job workflow input head_ref must remain optional.");
   }
   if (inputs.requestor?.required !== false) {
     findings.push("review-job workflow input requestor must remain optional.");

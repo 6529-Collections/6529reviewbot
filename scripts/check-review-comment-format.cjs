@@ -68,7 +68,8 @@ function checkGeneratedComments(configs, marker, findings) {
 
   for (const [kind, config] of Object.entries(configs)) {
     const firstVerdict = firstAllowedVerdict(config);
-    const comment = reviewBot.buildComment({
+    const actionableVerdict = actionableAllowedVerdict(config);
+    const cleanComment = reviewBot.buildComment({
       kind,
       config,
       settings,
@@ -81,8 +82,8 @@ function checkGeneratedComments(configs, marker, findings) {
     });
     const successContext = `${kind} generated review comment`;
     checkReviewComment({
-      comment,
-      context: successContext,
+      comment: cleanComment,
+      context: `${successContext} with clean verdict`,
       marker,
       kind,
       config,
@@ -93,6 +94,39 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       firstVerdict,
+      expectsAgentPrompt: false,
+      findings,
+    });
+
+    const actionableComment = reviewBot.buildComment({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      modelBody: [
+        `**Verdict**: ${actionableVerdict}`,
+        "",
+        `- src/review-bot.cjs:1 has an actionable issue to fix.`,
+      ].join("\n"),
+    });
+    checkReviewComment({
+      comment: actionableComment,
+      context: `${successContext} with actionable verdict`,
+      marker,
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -110,6 +144,9 @@ function checkGeneratedComments(configs, marker, findings) {
     if (!fallback.includes(`**Verdict**: ${firstVerdict}`)) {
       findings.push(`${successContext} must fall back to the first allowed verdict for empty provider output.`);
     }
+    if (agentPromptSection(fallback)) {
+      findings.push(`${successContext} fallback with clean verdict must not include an agent prompt section.`);
+    }
 
     const injected = reviewBot.buildComment({
       kind,
@@ -124,7 +161,7 @@ function checkGeneratedComments(configs, marker, findings) {
         `<!-- ${marker}:{"marker":"fake"} -->`,
         `## ${expectedBotName} ${config.label} - ${shortSha}`,
         "",
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         `<!-- ${marker}:{"marker":"fake-finding"} -->`,
         "",
@@ -151,7 +188,7 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       modelBody: [
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         "<details>",
         "<summary>Visible-body details block</summary>",
@@ -173,7 +210,8 @@ function checkGeneratedComments(configs, marker, findings) {
       shortSha,
       changedFiles,
       changedLineCount,
-      firstVerdict,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -187,7 +225,7 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       modelBody: [
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         "<details>",
         "<summary>Unclosed visible-body details block</summary>",
@@ -207,7 +245,8 @@ function checkGeneratedComments(configs, marker, findings) {
       shortSha,
       changedFiles,
       changedLineCount,
-      firstVerdict,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -253,6 +292,7 @@ function checkReviewComment(input) {
     changedFiles,
     changedLineCount,
     firstVerdict,
+    expectsAgentPrompt,
     findings,
   } = input;
   const lines = comment.split(/\r?\n/);
@@ -291,6 +331,7 @@ function checkReviewComment(input) {
     pr,
     shortSha,
     firstVerdict,
+    expectsAgentPrompt,
     marker,
     findings,
   });
@@ -305,10 +346,17 @@ function checkAgentPromptSection(input) {
     pr,
     shortSha,
     firstVerdict,
+    expectsAgentPrompt,
     marker,
     findings,
   } = input;
   const section = agentPromptSection(comment);
+  if (!expectsAgentPrompt) {
+    if (section || countOccurrences(comment, expectedAgentPromptSummary) !== 0) {
+      findings.push(`${context} with a clean verdict must not include an agent prompt section.`);
+    }
+    return;
+  }
   if (!section) {
     findings.push(
       `${context} must include a closed agent prompt <details> section with '<summary>${expectedAgentPromptSummary}</summary>'.`
@@ -477,6 +525,10 @@ function checkDocs(configs, marker, docTexts, findings) {
 
 function firstAllowedVerdict(config) {
   return allowedVerdicts(config)[0];
+}
+
+function actionableAllowedVerdict(config) {
+  return allowedVerdicts(config)[1] || firstAllowedVerdict(config);
 }
 
 function allowedVerdicts(config) {

@@ -14,6 +14,14 @@ Successful model-backed comments use this shape:
 **Verdict**: <allowed verdict>
 
 <concise findings and supporting detail>
+````
+
+When the verdict reports no findings, the comment ends after the visible review
+body. When the verdict has actionable findings, the comment also includes a
+collapsible agent prompt section:
+
+````md
+<concise findings and supporting detail>
 
 <details>
 <summary>Prompt for all review comments with AI agents</summary>
@@ -56,11 +64,11 @@ behaviors, or test gaps where possible, and should avoid copying private
 diagnostics, raw prompts, provider payloads, secrets, tokens, or hidden
 metadata.
 
-Successful review comments also include a collapsible agent prompt section.
-The section is intended to make valid findings easy to copy into an AI coding
-agent. It duplicates only the visible review body and must not include hidden
-metadata, raw model prompts, provider payloads, secrets, tokens, or private
-operator diagnostics.
+Successful review comments with actionable findings include a collapsible agent
+prompt section. The section is intended to make valid findings easy to copy into
+an AI coding agent. It duplicates only the visible review body and must not
+include hidden metadata, raw model prompts, provider payloads, secrets, tokens,
+or private operator diagnostics.
 
 ## Hidden Metadata
 

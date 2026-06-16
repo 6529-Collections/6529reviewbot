@@ -105,6 +105,7 @@ target_repo
 head_repo
 pr_number
 head_sha
+head_ref
 review_kind
 provider
 model
@@ -125,7 +126,9 @@ or dispatch App credential handling.
 
 `target_repo` is the repository that owns the PR and receives comments.
 `head_repo` is the repository that owns the submitted head SHA, which can differ
-for fork PRs.
+for fork PRs. `head_ref` is the PR head branch name when GitHub provides it; the
+central review-job workflow uses it in the Actions run name for operator
+scanning and falls back to `head_sha` when it is blank.
 
 The receiving workflow should validate the inputs, mint a short-lived
 installation token, check out `head_repo` at `head_sha` read-only, set
@@ -179,6 +182,7 @@ GITHUB_REPOSITORY
 PR_NUMBER
 GITHUB_PR_NUMBER
 PR_HEAD_SHA
+PR_HEAD_REF
 REVIEW_KIND
 REVIEW_PROVIDER
 REVIEW_MODEL

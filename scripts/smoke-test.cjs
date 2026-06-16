@@ -3368,6 +3368,7 @@ const webhookBody = Buffer.from(JSON.stringify({
     user: { login: "author" },
     head: {
       sha: "abc123",
+      ref: "feature/branch",
       repo: { full_name: "6529-Collections/example" },
     },
     base: {
@@ -3402,6 +3403,7 @@ const normalizedPullRequest = githubWebhook.normalizeGitHubWebhook(
 );
 assert.equal(normalizedPullRequest.kind, "pull_request");
 assert.equal(normalizedPullRequest.shouldEnqueue, true);
+assert.equal(normalizedPullRequest.headRefName, "feature/branch");
 assert.deepEqual(normalizedPullRequest.reviewKinds, ["general", "wcag", "i18n", "security"]);
 assert.equal(
   repositoryConfig.repositoryConfigRefForEvent(normalizedPullRequest),
@@ -3488,6 +3490,7 @@ const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
           user: { login: "current-author" },
           head: {
             sha: "current-command-head",
+            ref: "current-command-branch",
             repo: { full_name: "6529-Collections/example" },
           },
           base: {
@@ -3742,6 +3745,7 @@ const reviewJobs = reviewJob.createReviewJobs(
 assert.equal(reviewJobs.length, 8);
 assert.equal(reviewJobs.filter((job) => job.reviewKind === "general").length, 2);
 assert.equal(reviewJobs[0].requestor, "maintainer");
+assert.equal(reviewJobs[0].headRefName, "feature/branch");
 assert.equal(reviewJobs[0].provider, "anthropic");
 assert.equal(reviewJobs[1].provider, "openai");
 const globallyDisabledRuntime = runtimeControl.applyRuntimeControlToEvent(
@@ -3904,6 +3908,7 @@ assert.deepEqual(
   "6529-Collections/example"
 );
 assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
+assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).head_ref, "feature/branch");
 assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).installation_id, "99");
 assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).run_key, forkReviewJob.runKey);
 assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
@@ -3911,6 +3916,7 @@ assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/exam
 assert.equal(dispatchedWorkflow.args.includes(`run_key=${forkReviewJob.runKey}`), true);
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+assert.equal(dispatchedWorkflow.args.includes("head_ref=feature/branch"), true);
 let apiDispatchRequest = null;
 let apiDispatchAttempts = 0;
 const apiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
@@ -5516,6 +5522,7 @@ appServer.handleGitHubWebhook({
   assert.equal(githubRepoConfig.config.enabled, false);
   const hydratedCommentEvent = await hydratedCommentEventPromise;
   assert.equal(hydratedCommentEvent.headSha, "current-command-head");
+  assert.equal(hydratedCommentEvent.headRefName, "current-command-branch");
   assert.equal(hydratedCommentEvent.baseSha, "current-command-base");
   assert.equal(hydratedCommentEvent.prAuthor, "current-author");
   assert.equal(
@@ -6235,6 +6242,7 @@ appServer.handleGitHubWebhook({
   assert.equal(apiDispatchRequest.body.ref, "main");
   assert.equal(apiDispatchRequest.body.inputs.target_repo, "6529-Collections/example");
   assert.equal(apiDispatchRequest.body.inputs.head_repo, "external/fork");
+  assert.equal(apiDispatchRequest.body.inputs.head_ref, "feature/branch");
   assert.equal(apiDispatchRequest.body.inputs.installation_id, "99");
   const missingApiTokenResult = await missingApiTokenResultPromise;
   assert.equal(missingApiTokenResult.accepted, false);
@@ -7243,6 +7251,7 @@ appServer.handleGitHubWebhook({
     hydrateEvent: async (event) => ({
       ...event,
       headSha: "hydrated-command-head",
+      headRefName: "hydrated-command-branch",
       baseSha: "hydrated-command-base",
       headRepoFullName: "6529-Collections/example",
       baseRepoFullName: "6529-Collections/example",
@@ -7265,8 +7274,10 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(commandWebhookResult.statusCode, 202);
   assert.equal(commandWebhookResult.body.event.headSha, "hydrated-command-head");
+  assert.equal(commandWebhookResult.body.event.headRefName, "hydrated-command-branch");
   assert.equal(commandJobs.length, 2);
   assert.equal(commandJobs.every((job) => job.headSha === "hydrated-command-head"), true);
+  assert.equal(commandJobs.every((job) => job.headRefName === "hydrated-command-branch"), true);
   assert.deepEqual(
     commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
     ["security:anthropic", "security:openai"]

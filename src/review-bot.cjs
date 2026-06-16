@@ -1340,20 +1340,41 @@ function buildComment({ kind, config, settings, pr, headSha, shortSha, changedFi
   };
   const cleanBody = stripGeneratedHeading(modelBody, config, shortSha).trim();
   const visibleBody = cleanBody || `**Verdict**: ${config.verdicts.split("|")[0].trim()}`;
+  const agentPromptSection = shouldIncludeAgentPromptSection(config, visibleBody)
+    ? [
+        "",
+        buildAgentPromptSection({
+          config,
+          settings,
+          pr,
+          shortSha,
+          visibleBody,
+        }),
+      ]
+    : [];
   return [
     `<!-- ${BOT_MARKER}:${JSON.stringify(metadata)} -->`,
     `## 6529bot ${config.label} - ${shortSha}`,
     "",
     visibleBody,
-    "",
-    buildAgentPromptSection({
-      config,
-      settings,
-      pr,
-      shortSha,
-      visibleBody,
-    }),
+    ...agentPromptSection,
   ].join("\n");
+}
+
+function shouldIncludeAgentPromptSection(config, visibleBody) {
+  const cleanVerdict = firstAllowedVerdict(config);
+  const firstLine = String(visibleBody || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find(Boolean);
+  return firstLine !== `**Verdict**: ${cleanVerdict}`;
+}
+
+function firstAllowedVerdict(config) {
+  return String(config.verdicts || "")
+    .split("|")
+    .map((item) => item.trim())
+    .filter(Boolean)[0];
 }
 
 function buildAgentPromptSection({ config, settings, pr, shortSha, visibleBody }) {
