@@ -8,13 +8,26 @@ is meant only for bot history, dedupe, and follow-up review state.
 
 Successful model-backed comments use this shape:
 
-```md
+````md
 ## 6529bot <review label> - <short-sha>
 
 **Verdict**: <allowed verdict>
 
 <concise findings and supporting detail>
+
+<details>
+<summary>Prompt for all review comments with AI agents</summary>
+
+```text
+Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.
+
+Review comments:
+From 6529bot <review label> on <repo>#<pr> (<short-sha>):
+<same visible review body>
 ```
+
+</details>
+````
 
 The review label and allowed verdicts are tied to the review kind:
 
@@ -42,6 +55,12 @@ Empty sections should be omitted. Findings should cite concrete files, lines,
 behaviors, or test gaps where possible, and should avoid copying private
 diagnostics, raw prompts, provider payloads, secrets, tokens, or hidden
 metadata.
+
+Successful review comments also include a collapsible agent prompt section.
+The section is intended to make valid findings easy to copy into an AI coding
+agent. It duplicates only the visible review body and must not include hidden
+metadata, raw model prompts, provider payloads, secrets, tokens, or private
+operator diagnostics.
 
 ## Hidden Metadata
 
