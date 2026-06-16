@@ -336,7 +336,7 @@ function readSettings(args, kind) {
     dryRun: parseBool(args.dryRun || env("REVIEW_DRY_RUN", "false")),
     printPrompt: parseBool(args.printPrompt || env("REVIEW_PRINT_PROMPT", "false")),
     printComment: parseBool(args.printComment || env("REVIEW_PRINT_COMMENT", "false")),
-    maxChangedFiles: boundedPositiveInt("REVIEW_MAX_CHANGED_FILES", 160, HARD_LIMITS.maxChangedFiles),
+    maxChangedFiles: boundedPositiveInt("REVIEW_MAX_CHANGED_FILES", 300, HARD_LIMITS.maxChangedFiles),
     maxChangedLines: boundedPositiveInt("REVIEW_MAX_CHANGED_LINES", 30000, HARD_LIMITS.maxChangedLines),
     largePrChangedLines: boundedPositiveInt(
       "REVIEW_LARGE_PR_CHANGED_LINES",
