@@ -8,17 +8,18 @@ const path = require("path");
 const root = path.resolve(__dirname, "..");
 
 const codeownersPath = ".github/CODEOWNERS";
+const maintainerOwners = "@punk6529 @ragnep @gelatogenesis @simo6529 @prxt6529";
 const requiredRules = [
-  "* @punk6529",
-  "/.github/ @punk6529",
-  "/bin/ @punk6529",
-  "/docs/ @punk6529",
-  "/infra/ @punk6529",
-  "/scripts/ @punk6529",
-  "/src/ @punk6529",
-  "/templates/ @punk6529",
-  "/Dockerfile @punk6529",
-  "/package.json @punk6529",
+  `* ${maintainerOwners}`,
+  `/.github/ ${maintainerOwners}`,
+  `/bin/ ${maintainerOwners}`,
+  `/docs/ ${maintainerOwners}`,
+  `/infra/ ${maintainerOwners}`,
+  `/scripts/ ${maintainerOwners}`,
+  `/src/ ${maintainerOwners}`,
+  `/templates/ ${maintainerOwners}`,
+  `/Dockerfile ${maintainerOwners}`,
+  `/package.json ${maintainerOwners}`,
 ];
 
 const requiredByFile = {
@@ -88,9 +89,10 @@ function checkCodeownersContract(options = {}) {
 
 function isValidCodeownersRule(rule) {
   const owner = "@[A-Za-z0-9-]+(?:/[A-Za-z0-9_.-]+)?";
+  const owners = `${owner}(?:\\s+${owner})*`;
   return (
-    new RegExp(`^/?[^#\\s]+\\s+${owner}$`).test(rule) ||
-    new RegExp(`^\\*\\s+${owner}$`).test(rule)
+    new RegExp(`^/?[^#\\s]+\\s+${owners}$`).test(rule) ||
+    new RegExp(`^\\*\\s+${owners}$`).test(rule)
   );
 }
 

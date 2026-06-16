@@ -22,10 +22,11 @@ in the PR and update the relevant docs.
 
 ## Review Ownership
 
-`.github/CODEOWNERS` assigns default review ownership to `@punk6529` until a
-dedicated 6529 maintainer team is configured. Before broad community release,
-maintainers should either keep that file current or replace the default owner
-with the dedicated 6529 maintainer team and update the checked governance docs.
+`.github/CODEOWNERS` assigns default review ownership to the active 6529
+maintainer set: `@punk6529`, `@ragnep`, `@gelatogenesis`, `@simo6529`, and
+`@prxt6529`. Before broad community release, maintainers should either keep
+that file current or replace the individual owners with the dedicated 6529
+maintainer team and update the checked governance docs.
 
 ## Releases
 
