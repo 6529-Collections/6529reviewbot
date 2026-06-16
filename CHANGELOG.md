@@ -8,6 +8,8 @@ stabilized.
 
 ## Unreleased
 
+- Capped configurable GitHub App JWT TTLs at GitHub's documented 600-second
+  maximum while keeping the default at 540 seconds.
 - Added derived usage analysis fields to public and admin usage summaries,
   including budget skip rate, average tokens per review run and PR, top-cost
   visible dimensions, and admin-only top requestor, PR author, and PR rollups.

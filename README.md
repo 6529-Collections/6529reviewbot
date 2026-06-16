@@ -524,6 +524,9 @@ npm run github-app:token -- -- --profile worker-dispatch --installation-id <disp
 npm run check:github-app-auth
 ```
 
+GitHub App JWTs default to a 540-second TTL and configurable TTLs are capped at
+GitHub's documented 600-second maximum.
+
 Print the Aurora ledger schema without touching AWS:
 
 ```bash

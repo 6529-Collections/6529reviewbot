@@ -5812,7 +5812,7 @@ appServer.handleGitHubWebhook({
   );
   const githubAppAuthContractResult =
     await githubAppAuthContractCheck.checkGitHubAppAuthContract();
-  assert.equal(githubAppAuthContractResult.authCases, 7);
+  assert.equal(githubAppAuthContractResult.authCases, 8);
   assert.equal(githubAppAuthContractResult.cliCases, 6);
   await assert.rejects(
     () =>
