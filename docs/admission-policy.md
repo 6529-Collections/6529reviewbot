@@ -17,7 +17,8 @@ Default behavior:
 
 - public repositories require trusted actors by default;
 - private repos allow review requests by default;
-- draft PRs are skipped until ready for review;
+- automatic draft PR events are skipped, but trusted comment commands may
+  explicitly request a draft review;
 - PR authors are not allowlisted by default;
 - actors with `write`, `maintain`, or `admin` repository permission are trusted.
 
@@ -38,6 +39,20 @@ Use `trusted` for public open-source repositories to prevent arbitrary PR
 authors or commenters from burning model budget. This keeps external PRs
 visible for review while requiring a maintainer or other trusted actor before
 provider spend can occur.
+
+`REVIEWBOT_DRAFT_PR_MODE` supports the full automatic/manual matrix:
+
+```text
+skip_all   Skip automatic draft events and explicit draft review commands.
+skip       Skip automatic draft events, allow explicit draft review commands.
+auto_only  Allow automatic draft events, skip explicit draft review commands.
+allow      Allow automatic draft events and explicit draft review commands.
+```
+
+Use `skip` when draft PRs should not consume automatic budget but maintainers
+may still ask for a targeted review. Use `allow` for trusted internal
+repositories where drafts should receive the same automatic coverage as ready
+PRs.
 
 ## Trusted Actors
 

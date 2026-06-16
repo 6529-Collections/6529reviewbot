@@ -16,7 +16,7 @@ const repoConfigTemplates = [
   "templates/repository-config.yml",
 ];
 const expectedRepoModes = ["trusted", "off", "open"];
-const expectedDraftPrModes = ["skip", "allow"];
+const expectedDraftPrModes = ["skip_all", "skip", "auto_only", "allow"];
 const expectedTrustedPermissions = ["none", "read", "triage", "write", "maintain", "admin"];
 const expectedDefaults = {
   publicRepoMode: "trusted",
@@ -155,6 +155,13 @@ function checkAdmissionDecisions(findings) {
   const publicEvent = normalizedEvent({ privateRepo: false });
   const privateEvent = normalizedEvent({ privateRepo: true });
   const draftEvent = normalizedEvent({ privateRepo: false, draft: true });
+  const draftCommandEvent = {
+    ...draftEvent,
+    kind: "comment_command",
+    trigger: "comment",
+    actor: "maintainer",
+    commentAuthor: "maintainer",
+  };
 
   expectDecision(
     "default public untrusted actor",
@@ -175,9 +182,51 @@ function checkAdmissionDecisions(findings) {
     findings
   );
   expectDecision(
-    "default draft PR",
+    "default automatic draft PR",
     admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, defaultPolicy),
     { status: "skipped", allowed: false, code: "draft_pull_request", requestor: "external" },
+    findings
+  );
+  expectDecision(
+    "default explicit draft PR command",
+    admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, defaultPolicy),
+    { status: "allowed", allowed: true, code: "trusted_actor", requestor: "maintainer", trustedActor: true },
+    findings
+  );
+
+  const skipAllDraftPolicy = admissionPolicy.admissionPolicyFromEnv({
+    REVIEWBOT_DRAFT_PR_MODE: "skip_all",
+  });
+  expectDecision(
+    "skip_all explicit draft PR command",
+    admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, skipAllDraftPolicy),
+    { status: "skipped", allowed: false, code: "draft_pull_request", requestor: "maintainer" },
+    findings
+  );
+
+  const autoOnlyDraftPolicy = admissionPolicy.admissionPolicyFromEnv({
+    REVIEWBOT_DRAFT_PR_MODE: "auto_only",
+  });
+  expectDecision(
+    "auto_only automatic draft PR",
+    admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, autoOnlyDraftPolicy),
+    { status: "allowed", allowed: true, code: "trusted_actor", requestor: "external", trustedActor: true },
+    findings
+  );
+  expectDecision(
+    "auto_only explicit draft PR command",
+    admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, autoOnlyDraftPolicy),
+    { status: "skipped", allowed: false, code: "draft_pull_request", requestor: "maintainer" },
+    findings
+  );
+
+  const allowDraftPolicy = admissionPolicy.admissionPolicyFromEnv({
+    REVIEWBOT_DRAFT_PR_MODE: "allow",
+  });
+  expectDecision(
+    "allow automatic draft PR",
+    admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, allowDraftPolicy),
+    { status: "allowed", allowed: true, code: "trusted_actor", requestor: "external", trustedActor: true },
     findings
   );
 
@@ -298,9 +347,13 @@ function checkRepoConfigs(repoConfigTexts, findings) {
     const text = repoConfigTexts[configPath] || readText(configPath);
     const config = YAML.parse(text);
     const admission = config?.admission || {};
-    for (const [key, expected] of Object.entries(expectedDefaults)) {
-      if (admission[key] !== expected) {
-        findings.push(`${configPath} admission.${key} must be ${expected}, got ${admission[key]}.`);
+    const expected = {
+      ...expectedDefaults,
+      draftPrMode: configPath === ".github/6529bot.yml" ? "allow" : expectedDefaults.draftPrMode,
+    };
+    for (const [key, expectedValue] of Object.entries(expected)) {
+      if (admission[key] !== expectedValue) {
+        findings.push(`${configPath} admission.${key} must be ${expectedValue}, got ${admission[key]}.`);
       }
     }
     for (const key of ["trustedUsers", "trustedTeams", "trustedOrganizations", "denyUsers"]) {

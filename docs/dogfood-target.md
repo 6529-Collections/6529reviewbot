@@ -75,7 +75,7 @@ dogfood traffic:
   follow-up review;
 - at least one explicit provider/model lane exists;
 - `maxJobsPerDelivery` stays within the conservative mode cap;
-- public repos require trusted actors, draft PRs are skipped, and trusted
+- public repos require trusted actors, draft PR mode is explicit, and trusted
   permission is write, maintain, or admin;
 - budget mode is `enforce`, with daily repo, requestor, PR, and review-kind
   caps.

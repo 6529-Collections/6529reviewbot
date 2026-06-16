@@ -19,6 +19,10 @@ const {
   readCurrentModelPrice,
 } = require("./model-prices.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
+const {
+  DRAFT_PR_MODES,
+  draftPrModeCapabilities,
+} = require("./admission-policy.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
@@ -326,6 +330,7 @@ function readSettings(args, kind) {
       50000,
       HARD_LIMITS.maxCommentsChars
     ),
+    draftPrMode: enumEnv("REVIEW_DRAFT_PR_MODE", "skip", DRAFT_PR_MODES),
     oversizeBehavior: enumEnv("REVIEW_OVERSIZE_BEHAVIOR", "skip", ["skip", "warn"]),
     postSkipComment: parseBool(args.postSkipComment || env("REVIEW_POST_SKIP_COMMENT", "true")),
     trustedMarkerAuthors: csvEnv("REVIEW_TRUSTED_MARKER_AUTHORS", DEFAULT_TRUSTED_MARKER_AUTHORS),
@@ -581,7 +586,7 @@ function getInlineReviewComments(settings) {
 }
 
 function enforcePrSource(pr, settings) {
-  if (pr.isDraft) {
+  if (pr.isDraft && !draftPrModeCapabilities(settings.draftPrMode).automatic) {
     log("skipping draft PR");
     process.exit(0);
   }

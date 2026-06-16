@@ -156,8 +156,17 @@ Admission modes are merged restrictively:
 off > trusted > open
 ```
 
-Draft PR mode is restrictive too: if either central policy or repo config says
-`skip`, drafts are skipped.
+Draft PR modes merge by intersecting automatic and command permissions:
+
+```text
+skip_all   automatic: no,  commands: no
+skip       automatic: no,  commands: yes
+auto_only  automatic: yes, commands: no
+allow      automatic: yes, commands: yes
+```
+
+Repository config can narrow either side of the matrix, but it cannot make
+draft reviews more permissive than central App policy.
 
 Budget modes are merged restrictively:
 

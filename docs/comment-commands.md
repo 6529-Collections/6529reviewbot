@@ -77,6 +77,8 @@ Comment commands do not bypass policy:
 - central App command events are hydrated from GitHub's pull request API before
   dispatch so the worker gets the current PR head SHA, base SHA, head
   repository, draft state, and PR author;
+- `REVIEWBOT_DRAFT_PR_MODE=skip` still allows trusted commands on draft PRs,
+  while `skip_all` blocks draft commands too;
 - if the current PR context cannot be loaded, the command is acknowledged but
   no review jobs are enqueued;
 - public repositories require a trusted actor by default;
