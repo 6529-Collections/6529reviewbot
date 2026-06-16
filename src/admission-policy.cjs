@@ -1,7 +1,13 @@
 "use strict";
 
 const ADMISSION_REPO_MODES = ["trusted", "off", "open"];
-const DRAFT_PR_MODES = ["skip", "allow"];
+const DRAFT_PR_MODES = ["skip_all", "skip", "auto_only", "allow"];
+const DRAFT_PR_MODE_CAPABILITIES = Object.freeze({
+  skip_all: Object.freeze({ automatic: false, commands: false }),
+  skip: Object.freeze({ automatic: false, commands: true }),
+  auto_only: Object.freeze({ automatic: true, commands: false }),
+  allow: Object.freeze({ automatic: true, commands: true }),
+});
 const TRUSTED_PERMISSION_ORDER = ["none", "read", "triage", "write", "maintain", "admin"];
 const DEFAULT_ADMISSION_POLICY = {
   publicRepoMode: "trusted",
@@ -59,8 +65,25 @@ function evaluateAdmission(event, actorContext = {}, policy = admissionPolicyFro
     return skipped("no_review_kinds", "Event does not request model review work.", requestor, policy);
   }
 
-  if (event.draft && policy.draftPrMode === "skip") {
-    return skipped("draft_pull_request", "Draft pull requests are skipped until ready for review.", requestor, policy);
+  if (event.draft) {
+    const draftCapabilities = draftPrModeCapabilities(policy.draftPrMode);
+    if (isExplicitReviewRequest(event)) {
+      if (!draftCapabilities.commands) {
+        return skipped(
+          "draft_pull_request",
+          "Explicit draft pull request review commands are disabled by policy.",
+          requestor,
+          policy
+        );
+      }
+    } else if (!draftCapabilities.automatic) {
+      return skipped(
+        "draft_pull_request",
+        "Automatic draft pull request reviews are skipped until ready for review.",
+        requestor,
+        policy
+      );
+    }
   }
 
   if (policy.allowedPrAuthors.size) {
@@ -145,6 +168,42 @@ function requestorForEvent(event) {
   return event.actor || event.prAuthor || "";
 }
 
+function isExplicitReviewRequest(event) {
+  return event?.trigger === "comment";
+}
+
+function draftPrModeCapabilities(mode) {
+  const capabilities = DRAFT_PR_MODE_CAPABILITIES[mode];
+  if (!capabilities) {
+    throw new Error(`draft PR mode must be one of: ${DRAFT_PR_MODES.join(", ")}`);
+  }
+  return capabilities;
+}
+
+function draftPrModeFromCapabilities(capabilities) {
+  const automatic = Boolean(capabilities?.automatic);
+  const commands = Boolean(capabilities?.commands);
+  if (!automatic && !commands) {
+    return "skip_all";
+  }
+  if (!automatic && commands) {
+    return "skip";
+  }
+  if (automatic && !commands) {
+    return "auto_only";
+  }
+  return "allow";
+}
+
+function restrictiveDraftPrMode(baseMode, configuredMode) {
+  const base = draftPrModeCapabilities(baseMode || DEFAULT_ADMISSION_POLICY.draftPrMode);
+  const configured = draftPrModeCapabilities(configuredMode || baseMode || DEFAULT_ADMISSION_POLICY.draftPrMode);
+  return draftPrModeFromCapabilities({
+    automatic: base.automatic && configured.automatic,
+    commands: base.commands && configured.commands,
+  });
+}
+
 function permissionAtLeast(actual, required) {
   const actualIndex = TRUSTED_PERMISSION_ORDER.indexOf(normalizePermission(actual));
   const requiredIndex = TRUSTED_PERMISSION_ORDER.indexOf(normalizePermission(required));
@@ -204,12 +263,17 @@ function decision(status, allowedValue, code, reason, requestor, policy, extra) 
 module.exports = {
   ADMISSION_REPO_MODES,
   DEFAULT_ADMISSION_POLICY,
+  DRAFT_PR_MODE_CAPABILITIES,
   DRAFT_PR_MODES,
   TRUSTED_PERMISSION_ORDER,
   admissionPolicyFromEnv,
+  draftPrModeCapabilities,
+  draftPrModeFromCapabilities,
   evaluateAdmission,
+  isExplicitReviewRequest,
   isTrustedActor,
   normalizeActorContext,
   permissionAtLeast,
   requestorForEvent,
+  restrictiveDraftPrMode,
 };

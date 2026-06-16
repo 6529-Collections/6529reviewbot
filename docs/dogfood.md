@@ -226,7 +226,7 @@ jobs. Switch to `github_actions` or `local` only after the dry path is clean.
 - Keep a single Anthropic lane unless explicitly testing multi-lane behavior.
 - Open a small PR and confirm only `general` and `security` initial jobs run.
 - Push a follow-up commit and confirm only the `followup` review runs.
-- Check that draft PRs are skipped.
+- Check that draft PR handling matches the configured rollout mode.
 - Check that oversized diffs skip or truncate according to central settings.
 
 ### Phase 3: Broader Coverage

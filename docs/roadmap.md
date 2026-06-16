@@ -33,7 +33,9 @@ Initial production admission is intentionally narrow:
   `punk6529,ragnep,gelatogenesis,simo6529,prxt6529`;
 - public and private repo modes require trusted actors;
 - the same five users are explicit trusted users for the dogfood window;
-- draft PRs are skipped.
+- draft PRs can run automatically in trusted 6529 dogfood repos, while the
+  draft policy still supports automatic-only, command-only, all-on, and all-off
+  modes.
 
 The central worker dispatch path is now enabled for this limited dogfood
 window. Keep the author allowlist, conservative fanout, command head-SHA

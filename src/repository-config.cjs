@@ -2,7 +2,11 @@
 
 const YAML = require("yaml");
 const { REVIEW_KINDS, INITIAL_REVIEW_KINDS } = require("./github-webhook.cjs");
-const { TRUSTED_PERMISSION_ORDER } = require("./admission-policy.cjs");
+const {
+  DRAFT_PR_MODES,
+  TRUSTED_PERMISSION_ORDER,
+  restrictiveDraftPrMode,
+} = require("./admission-policy.cjs");
 const { BUDGET_SCOPES } = require("./budget-admission.cjs");
 const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 const { parseReviewLanes } = require("./review-job.cjs");
@@ -304,10 +308,7 @@ function mergeRepositoryAdmissionPolicy(basePolicy, config = defaultRepositoryCo
     ...basePolicy,
     publicRepoMode: restrictiveRepoMode(basePolicy.publicRepoMode, admission.publicRepoMode),
     privateRepoMode: restrictiveRepoMode(basePolicy.privateRepoMode, admission.privateRepoMode),
-    draftPrMode:
-      basePolicy.draftPrMode === "skip" || admission.draftPrMode === "skip"
-        ? "skip"
-        : basePolicy.draftPrMode,
+    draftPrMode: restrictiveDraftPrMode(basePolicy.draftPrMode, admission.draftPrMode),
     trustedUsers: unionSet(basePolicy.trustedUsers, admission.trustedUsers),
     trustedTeams: unionSet(basePolicy.trustedTeams, admission.trustedTeams),
     trustedOrganizations: unionSet(
@@ -475,7 +476,7 @@ function normalizeAdmissionConfig(raw) {
     draftPrMode:
       raw.draftPrMode === undefined
         ? undefined
-        : enumValue(raw.draftPrMode, ["skip", "allow"], "admission.draftPrMode"),
+        : enumValue(raw.draftPrMode, DRAFT_PR_MODES, "admission.draftPrMode"),
     trustedUsers: stringSet(raw.trustedUsers, "admission.trustedUsers"),
     trustedTeams: stringSet(raw.trustedTeams, "admission.trustedTeams"),
     trustedOrganizations: stringSet(

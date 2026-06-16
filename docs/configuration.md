@@ -98,7 +98,9 @@ REVIEWBOT_DENY_USERS=
 Public repositories require trusted actors by default. Private repositories are
 open by default. `REVIEWBOT_ALLOWED_PR_AUTHORS`, when set, is a comma-separated
 PR author allowlist that must match before trusted-actor checks can admit model
-work. See [admission-policy.md](admission-policy.md).
+work. `REVIEWBOT_DRAFT_PR_MODE=skip` skips automatic draft PR events but still
+allows trusted comment commands; use `skip_all`, `auto_only`, or `allow` for the
+other draft-review combinations. See [admission-policy.md](admission-policy.md).
 
 ## Budget Admission
 
@@ -564,6 +566,7 @@ REVIEW_MAX_CONTEXT_CHARS=100000
 REVIEW_MAX_INPUT_CHARS=350000
 REVIEW_MAX_PRIOR_COMMENTS_CHARS=50000
 REVIEW_CONTEXT_LINES=60
+REVIEW_DRAFT_PR_MODE=skip
 REVIEW_OVERSIZE_BEHAVIOR=skip
 REVIEW_POST_SKIP_COMMENT=true
 REVIEW_PROVIDER_TIMEOUT_MS=120000
@@ -572,6 +575,11 @@ REVIEW_TEMPERATURE=0
 
 The engine enforces hard maximums above these configurable values. Repository
 variables cannot make requests unbounded.
+
+`REVIEW_DRAFT_PR_MODE` controls the worker's final source check for draft PRs.
+The central `review-job.yml` sets it to `allow` because webhook admission has
+already decided whether draft work is allowed. Standalone workflows default to
+`skip`.
 
 `REVIEW_MAX_CHANGED_LINES` remains a skip gate when
 `REVIEW_OVERSIZE_BEHAVIOR=skip`. `REVIEW_LARGE_PR_CHANGED_LINES` is a softer

@@ -4688,8 +4688,31 @@ assert.equal(
   "allowed"
 );
 const draftEvent = { ...normalizedPullRequest, draft: true };
+const draftCommandEvent = { ...commentEvent, draft: true };
 assert.equal(
   admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, publicPolicy).code,
+  "draft_pull_request"
+);
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, publicPolicy).status,
+  "allowed"
+);
+const skipAllDraftPolicy = admissionPolicy.admissionPolicyFromEnv({
+  REVIEWBOT_DRAFT_PR_MODE: "skip_all",
+});
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, skipAllDraftPolicy).code,
+  "draft_pull_request"
+);
+const autoOnlyDraftPolicy = admissionPolicy.admissionPolicyFromEnv({
+  REVIEWBOT_DRAFT_PR_MODE: "auto_only",
+});
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftEvent, { login: "maintainer", permission: "admin" }, autoOnlyDraftPolicy).status,
+  "allowed"
+);
+assert.equal(
+  admissionPolicy.evaluateAdmission(draftCommandEvent, { login: "maintainer", permission: "admin" }, autoOnlyDraftPolicy).code,
   "draft_pull_request"
 );
 const denyPolicy = admissionPolicy.admissionPolicyFromEnv({

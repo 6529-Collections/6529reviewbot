@@ -179,6 +179,28 @@ function checkAdmissionBoundary(findings) {
     findings.push("merged admission deny users must include repository-level deny users.");
   }
 
+  const draftMergeCases = [
+    ["allow", "skip_all", "skip_all"],
+    ["allow", "skip", "skip"],
+    ["allow", "auto_only", "auto_only"],
+    ["skip", "allow", "skip"],
+    ["skip", "auto_only", "skip_all"],
+    ["auto_only", "skip", "skip_all"],
+  ];
+  for (const [centralMode, repoMode, expectedMode] of draftMergeCases) {
+    const centralPolicy = admissionPolicyFromEnv({ REVIEWBOT_DRAFT_PR_MODE: centralMode });
+    const repoConfig = repositoryConfig.parseRepositoryConfigText(
+      `version: 1\nadmission:\n  draftPrMode: ${repoMode}\n`,
+      "boundary.yml"
+    );
+    const mergedPolicy = repositoryConfig.mergeRepositoryAdmissionPolicy(centralPolicy, repoConfig);
+    if (mergedPolicy.draftPrMode !== expectedMode) {
+      findings.push(
+        `draftPrMode merge ${centralMode} + ${repoMode} must be ${expectedMode}, got ${mergedPolicy.draftPrMode}.`
+      );
+    }
+  }
+
   const offConfig = repositoryConfig.parseRepositoryConfigText(
     "version: 1\nadmission:\n  publicRepoMode: off\n",
     "boundary.yml"
@@ -258,6 +280,7 @@ function checkDocs(docTexts, findings) {
     "raise central budget caps",
     "make central admission policy less restrictive",
     "off > trusted > open",
+    "Draft PR modes merge by intersecting automatic and command permissions",
     "enforce > warn > off",
     "taking the lower non-empty cap",
     "taking the lower value between central policy and repo config",

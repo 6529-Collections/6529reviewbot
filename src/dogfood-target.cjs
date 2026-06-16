@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { redactSensitiveText } = require("./diagnostics.cjs");
+const { DRAFT_PR_MODES } = require("./admission-policy.cjs");
 const { parseRepositoryConfigText } = require("./repository-config.cjs");
 
 const DEFAULT_COMMAND_ONLY_CONFIG = "templates/dogfood-command-only-config.yml";
@@ -225,15 +226,20 @@ function admissionCheck(config) {
   if (admission.publicRepoMode !== "trusted") {
     errors.push("publicRepoMode should be trusted");
   }
-  if (admission.draftPrMode !== "skip") {
-    errors.push("draftPrMode should be skip");
+  if (!DRAFT_PR_MODES.includes(admission.draftPrMode)) {
+    errors.push(`draftPrMode should be one of: ${DRAFT_PR_MODES.join(", ")}`);
   }
   if (!["write", "maintain", "admin"].includes(admission.trustedPermission || "")) {
     errors.push("trustedPermission should be write, maintain, or admin");
   }
   return errors.length
     ? check("admission", "Admission policy", "error", errors.join("; "))
-    : check("admission", "Admission policy", "ok", "Public repos require trusted actors and draft PRs are skipped.");
+    : check(
+        "admission",
+        "Admission policy",
+        "ok",
+        `Public repos require trusted actors and draft mode is ${admission.draftPrMode}.`
+      );
 }
 
 function budgetCheck(config) {
