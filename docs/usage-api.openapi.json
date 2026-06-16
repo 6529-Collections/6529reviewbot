@@ -361,6 +361,74 @@
         }
       }
     },
+    "/api/admin/webhook-inbox/recent": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Recent webhook inbox deliveries",
+        "security": [
+          {
+            "adminHmac": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 50
+            },
+            "description": "Maximum rows to return, capped by REVIEWBOT_USAGE_API_MAX_ITEMS."
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["failed", "active", "all", "received", "retry_pending", "processing", "processed", "ignored"],
+              "default": "failed"
+            },
+            "description": "Inbox status filter. active includes received, retry_pending, and processing."
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional owner/name repository filter."
+          },
+          {
+            "name": "prNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Optional pull request number filter."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recent webhook inbox deliveries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookInboxResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/api/admin/status": {
       "get": {
         "tags": ["Admin"],
@@ -1560,6 +1628,106 @@
             "additionalProperties": {
               "type": ["string", "number", "boolean", "null"]
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookInboxResponse": {
+        "type": "object",
+        "required": ["ok", "visibility", "kind", "limit", "status", "repository", "prNumber", "deliveries"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "visibility": {
+            "type": "string",
+            "const": "admin"
+          },
+          "kind": {
+            "type": "string",
+            "const": "webhook_inbox"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "status": {
+            "type": ["string", "null"]
+          },
+          "repository": {
+            "type": ["string", "null"]
+          },
+          "prNumber": {
+            "type": ["integer", "null"]
+          },
+          "deliveries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookInboxDelivery"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookInboxDelivery": {
+        "type": "object",
+        "required": ["inboxId", "createdAt", "updatedAt", "deliveryId", "status", "attemptCount", "reason", "lastError", "normalizedEvent"],
+        "properties": {
+          "inboxId": {
+            "type": ["number", "null"]
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "processedAt": {
+            "type": "string"
+          },
+          "nextAttemptAt": {
+            "type": "string"
+          },
+          "deliveryId": {
+            "type": "string"
+          },
+          "eventName": {
+            "type": "string"
+          },
+          "eventKind": {
+            "type": "string"
+          },
+          "repoFullName": {
+            "type": "string"
+          },
+          "prNumber": {
+            "type": ["number", "null"]
+          },
+          "commentId": {
+            "type": ["number", "null"]
+          },
+          "actor": {
+            "type": "string"
+          },
+          "installationId": {
+            "type": ["number", "null"]
+          },
+          "status": {
+            "type": "string"
+          },
+          "attemptCount": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "lastError": {
+            "type": "string"
+          },
+          "normalizedEvent": {
+            "type": ["object", "null"],
+            "description": "Sanitized bounded delivery metadata. Common secret-shaped strings are redacted and deeply nested or unsafe-keyed diagnostic values are omitted.",
+            "additionalProperties": true
           }
         },
         "additionalProperties": false

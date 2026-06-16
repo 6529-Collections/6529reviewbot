@@ -45,6 +45,7 @@ const {
   repositoryConfigPolicyFromEnv,
 } = require("./repository-config.cjs");
 const {
+  createUsageApiResponseCache,
   handleUsageApiRequest,
   isUsageApiPath,
   usageApiSettingsFromEnv,
@@ -91,6 +92,8 @@ function createReviewbotServer(options = {}) {
     options.loadRepositoryConfig ||
     ((event) => loadRepositoryConfigForEvent(event, { policy: repositoryConfigPolicy }));
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
+  const usageApiResponseCache =
+    options.usageApiResponseCache || createUsageApiResponseCache(usageApiSettings);
   const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
   const updateRunClaimStatus = options.updateRunClaimStatus || defaultUpdateRunClaimStatus;
   const webhookInbox = options.webhookInbox || null;
@@ -125,7 +128,9 @@ function createReviewbotServer(options = {}) {
         loadAlertStatus: options.loadAlertStatus,
         loadJobEvents: options.loadJobEvents,
         loadRunClaims: options.loadRunClaims,
+        loadWebhookInbox: options.loadWebhookInbox,
         loadAdminStatus: options.loadAdminStatus,
+        usageApiResponseCache,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
         logger,
       });
@@ -173,7 +178,9 @@ async function handleHttpRequest(request, options) {
         loadAlertStatus: options.loadAlertStatus,
         loadJobEvents: options.loadJobEvents,
         loadRunClaims: options.loadRunClaims,
+        loadWebhookInbox: options.loadWebhookInbox,
         loadAdminStatus: options.loadAdminStatus,
+        responseCache: options.usageApiResponseCache,
         authorizeAdmin: options.authorizeUsageApiAdmin,
       }
     );

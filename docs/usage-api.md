@@ -26,6 +26,7 @@ GET /api/admin/model-prices/status
 GET /api/admin/alerts/status
 GET /api/admin/jobs/recent?status=dispatch_failed&limit=50
 GET /api/admin/run-claims/recent?active=1&staleMinutes=120&limit=50
+GET /api/admin/webhook-inbox/recent?status=failed&limit=50
 GET /api/admin/status?profile=server&strict=false
 ```
 
@@ -41,8 +42,17 @@ REVIEWBOT_USAGE_API_ADMIN_MODEL_PRICE_STATUS_PATH=/api/admin/model-prices/status
 REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH=/api/admin/alerts/status
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
+REVIEWBOT_USAGE_API_ADMIN_WEBHOOK_INBOX_PATH=/api/admin/webhook-inbox/recent
 REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
+REVIEWBOT_USAGE_API_CACHE_ENABLED=true
+REVIEWBOT_USAGE_API_CACHE_TTL_MS=15000
+REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES=100
 ```
+
+Successful usage API `GET` responses are cached after authorization when
+`REVIEWBOT_USAGE_API_CACHE_ENABLED=true`. The cache is per App server process,
+bounded by `REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES`, and short-lived through
+`REVIEWBOT_USAGE_API_CACHE_TTL_MS`.
 
 ## Public Summary
 
@@ -491,6 +501,76 @@ Example response:
 }
 ```
 
+## Webhook Inbox
+
+Webhook inbox rows live in `reviewbot.ai_review_webhook_inbox` when the durable
+inbox is enabled. They show GitHub deliveries that were received, deferred,
+processed, ignored, or failed before or during hydration/dispatch. They are
+operational data, not public transparency data.
+
+`GET /api/admin/webhook-inbox/recent` returns recent normalized inbox rows for
+the private 6529.io admin surface. It accepts:
+
+- `limit`: positive integer up to `REVIEWBOT_USAGE_API_MAX_ITEMS`;
+- `status`: defaults to `failed`; may be `active`, `all`, or an exact inbox
+  status such as `retry_pending`;
+- `repository`: optional `owner/name` filter;
+- `prNumber`: optional positive pull request number filter.
+
+`status=active` returns `received`, `retry_pending`, and `processing` rows.
+Use the default failed view for dead-letter triage and the active view for
+backpressure or stuck-delivery dashboards.
+
+The endpoint is admin-only because it can include private repository names,
+actors, PR numbers, installation ids, delivery ids, and operational failure
+details. It still sanitizes loader output before responding: strings are
+bounded, common secret-shaped values are redacted, and `normalizedEvent` is
+passed through the bounded admin diagnostic sanitizer.
+
+Example failed-delivery query:
+
+```text
+GET /api/admin/webhook-inbox/recent?status=failed&limit=50
+```
+
+Example response:
+
+```json
+{
+  "ok": true,
+  "visibility": "admin",
+  "kind": "webhook_inbox",
+  "limit": 50,
+  "status": "failed",
+  "repository": null,
+  "prNumber": null,
+  "deliveries": [
+    {
+      "inboxId": 7,
+      "createdAt": "2026-06-15 14:01:00+00",
+      "updatedAt": "2026-06-15 14:08:00+00",
+      "processedAt": "2026-06-15 14:08:00+00",
+      "nextAttemptAt": "",
+      "deliveryId": "delivery-1",
+      "eventName": "issue_comment",
+      "eventKind": "command",
+      "repoFullName": "6529-Collections/private-repo",
+      "prNumber": 12,
+      "commentId": 123,
+      "actor": "maintainer",
+      "installationId": 140321060,
+      "status": "failed",
+      "attemptCount": 6,
+      "reason": "hydration failed",
+      "lastError": "GitHub API timeout",
+      "normalizedEvent": {
+        "commandName": "review"
+      }
+    }
+  ]
+}
+```
+
 ## Loader Contract
 
 The HTTP server accepts injectable loaders:
@@ -503,6 +583,7 @@ loadModelPriceStatus({ request, settings })
 loadAlertStatus({ request, settings })
 loadJobEvents({ request, settings, query })
 loadRunClaims({ request, settings, query })
+loadWebhookInbox({ request, settings, query })
 loadAdminStatus({ request, settings, query })
 authorizeUsageApiAdmin(request)
 ```

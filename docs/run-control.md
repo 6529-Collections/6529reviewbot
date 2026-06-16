@@ -163,6 +163,14 @@ The route uses the same admin-auth bridge as other usage/admin endpoints and
 sanitizes claim strings and metadata again before returning JSON. Dashboards
 should use this endpoint instead of reading Aurora directly.
 
+When command bursts hit run-control concurrency limits before dispatch, the
+durable webhook inbox should move retryable deliveries to `retry_pending`.
+Operators can inspect those rows with:
+
+```text
+GET /api/admin/webhook-inbox/recent?status=active&limit=50
+```
+
 ## Durable Table
 
 Print the canonical schema:

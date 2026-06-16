@@ -443,7 +443,11 @@ REVIEWBOT_USAGE_API_ADMIN_MODEL_PRICE_STATUS_PATH=/api/admin/model-prices/status
 REVIEWBOT_USAGE_API_ADMIN_ALERT_STATUS_PATH=/api/admin/alerts/status
 REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH=/api/admin/jobs/recent
 REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH=/api/admin/run-claims/recent
+REVIEWBOT_USAGE_API_ADMIN_WEBHOOK_INBOX_PATH=/api/admin/webhook-inbox/recent
 REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH=/api/admin/status
+REVIEWBOT_USAGE_API_CACHE_ENABLED=true
+REVIEWBOT_USAGE_API_CACHE_TTL_MS=15000
+REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES=100
 REVIEWBOT_USAGE_API_DEFAULT_DAYS=30
 REVIEWBOT_USAGE_API_MAX_DAYS=365
 REVIEWBOT_USAGE_API_MAX_ITEMS=50
@@ -461,9 +465,14 @@ authorizer. Production should use the existing 6529.io auth system. See
 [usage-api.md](usage-api.md).
 
 `REVIEWBOT_USAGE_API_MAX_ITEMS` caps grouped usage summary rows and recent
-job-event rows returned by admin endpoints. For raw admin usage-event reads it
-sets the default page size when it is lower than
+job-event, run-claim, and webhook-inbox rows returned by admin endpoints. For
+raw admin usage-event reads it sets the default page size when it is lower than
 `REVIEWBOT_USAGE_API_MAX_EVENTS`.
+
+The App server caches successful usage API `GET` responses after authorization.
+`REVIEWBOT_USAGE_API_CACHE_TTL_MS` keeps the cache short-lived for dashboards,
+and `REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES` bounds each App Runner instance's
+in-memory cache.
 
 `REVIEWBOT_USAGE_API_MAX_EVENTS` caps raw usage-event reads, including the
 admin recent usage-events endpoint and summary loaders. Keep both limits low
@@ -544,11 +553,12 @@ alerts through stdout, a webhook, SNS, or SES email. See
 
 ```text
 REVIEW_MAX_OUTPUT_TOKENS=4000
-REVIEW_MAX_CHANGED_FILES=80
-REVIEW_MAX_CHANGED_LINES=3500
-REVIEW_MAX_DIFF_CHARS=90000
-REVIEW_MAX_CONTEXT_CHARS=45000
-REVIEW_MAX_INPUT_CHARS=160000
+REVIEW_MAX_CHANGED_FILES=160
+REVIEW_MAX_CHANGED_LINES=12000
+REVIEW_LARGE_PR_CHANGED_LINES=3500
+REVIEW_MAX_DIFF_CHARS=250000
+REVIEW_MAX_CONTEXT_CHARS=100000
+REVIEW_MAX_INPUT_CHARS=350000
 REVIEW_MAX_PRIOR_COMMENTS_CHARS=50000
 REVIEW_CONTEXT_LINES=60
 REVIEW_OVERSIZE_BEHAVIOR=skip
@@ -559,6 +569,11 @@ REVIEW_TEMPERATURE=0
 
 The engine enforces hard maximums above these configurable values. Repository
 variables cannot make requests unbounded.
+
+`REVIEW_MAX_CHANGED_LINES` remains a skip gate when
+`REVIEW_OVERSIZE_BEHAVIOR=skip`. `REVIEW_LARGE_PR_CHANGED_LINES` is a softer
+prompt threshold: above it, 6529bot tells the model that large-PR mode is active
+and warns when diff, prior-comment, or changed-file context was truncated.
 
 For Anthropic Claude Opus 4.8 and 4.7, the bot omits `temperature` because
 those Messages API models reject non-default sampling parameters. Other

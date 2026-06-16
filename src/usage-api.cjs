@@ -12,13 +12,25 @@ const DEFAULT_ADMIN_MODEL_PRICE_STATUS_PATH = "/api/admin/model-prices/status";
 const DEFAULT_ADMIN_ALERT_STATUS_PATH = "/api/admin/alerts/status";
 const DEFAULT_ADMIN_JOB_EVENTS_PATH = "/api/admin/jobs/recent";
 const DEFAULT_ADMIN_RUN_CLAIMS_PATH = "/api/admin/run-claims/recent";
+const DEFAULT_ADMIN_WEBHOOK_INBOX_PATH = "/api/admin/webhook-inbox/recent";
 const DEFAULT_ADMIN_STATUS_PATH = "/api/admin/status";
 const DEFAULT_DAYS = 30;
 const DEFAULT_MAX_DAYS = 365;
 const DEFAULT_MAX_ITEMS = 50;
+const DEFAULT_CACHE_TTL_MS = 15000;
+const DEFAULT_CACHE_MAX_ENTRIES = 100;
 const DEFAULT_ADMIN_TEXT_MAX_CHARS = 1000;
 const MAX_STALE_MINUTES = 7 * 24 * 60;
 const ACTIVE_RUN_CLAIM_STATUSES = ["claimed", "dispatching", "running"];
+const WEBHOOK_INBOX_STATUSES = [
+  "received",
+  "retry_pending",
+  "processing",
+  "processed",
+  "ignored",
+  "failed",
+];
+const ACTIVE_WEBHOOK_INBOX_STATUSES = ["received", "retry_pending", "processing"];
 const ADMIN_STATUS_MAX_ARRAY_ITEMS = 100;
 const ADMIN_STATUS_MAX_OBJECT_KEYS = 100;
 const ADMIN_STATUS_MAX_DEPTH = 6;
@@ -45,7 +57,16 @@ function usageApiSettingsFromEnv(env = process.env) {
       env.REVIEWBOT_USAGE_API_ADMIN_JOB_EVENTS_PATH || DEFAULT_ADMIN_JOB_EVENTS_PATH,
     adminRunClaimsPath:
       env.REVIEWBOT_USAGE_API_ADMIN_RUN_CLAIMS_PATH || DEFAULT_ADMIN_RUN_CLAIMS_PATH,
+    adminWebhookInboxPath:
+      env.REVIEWBOT_USAGE_API_ADMIN_WEBHOOK_INBOX_PATH || DEFAULT_ADMIN_WEBHOOK_INBOX_PATH,
     adminStatusPath: env.REVIEWBOT_USAGE_API_ADMIN_STATUS_PATH || DEFAULT_ADMIN_STATUS_PATH,
+    cacheEnabled: parseBool(env.REVIEWBOT_USAGE_API_CACHE_ENABLED || "true"),
+    cacheTtlMs: positiveIntEnv(env.REVIEWBOT_USAGE_API_CACHE_TTL_MS, DEFAULT_CACHE_TTL_MS, "REVIEWBOT_USAGE_API_CACHE_TTL_MS"),
+    cacheMaxEntries: positiveIntEnv(
+      env.REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES,
+      DEFAULT_CACHE_MAX_ENTRIES,
+      "REVIEWBOT_USAGE_API_CACHE_MAX_ENTRIES"
+    ),
     defaultDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_DEFAULT_DAYS, DEFAULT_DAYS, "REVIEWBOT_USAGE_API_DEFAULT_DAYS"),
     maxDays: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_DAYS, DEFAULT_MAX_DAYS, "REVIEWBOT_USAGE_API_MAX_DAYS"),
     maxItems: positiveIntEnv(env.REVIEWBOT_USAGE_API_MAX_ITEMS, DEFAULT_MAX_ITEMS, "REVIEWBOT_USAGE_API_MAX_ITEMS"),
@@ -66,6 +87,7 @@ function isUsageApiPath(pathname, settings = usageApiSettingsFromEnv()) {
     settings.adminAlertStatusPath,
     settings.adminJobEventsPath,
     settings.adminRunClaimsPath,
+    settings.adminWebhookInboxPath,
     settings.adminStatusPath,
   ].includes(pathname);
 }
@@ -98,12 +120,24 @@ async function handleUsageApiRequest(request, options = {}) {
     }
   }
 
+  const responseCache = options.responseCache || options.usageApiCache || null;
+  const cacheKey = responseCache && settings.cacheEnabled
+    ? usageApiResponseCacheKey(request, route)
+    : "";
+  if (cacheKey) {
+    const cached = responseCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+  }
+  const finish = (result) => cacheUsageApiResponse(responseCache, cacheKey, result);
+
   if (route.kind === "budget_policies") {
     const result = await (options.loadBudgetPolicies || defaultLoadBudgetPolicies)({ request, settings });
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Budget policies are unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -111,7 +145,7 @@ async function handleUsageApiRequest(request, options = {}) {
         kind: "budget_policies",
         policies: (result.policies || []).map(publicBudgetPolicy),
       },
-    };
+    });
   }
 
   if (route.kind === "budget_status") {
@@ -119,7 +153,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Budget status is unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -128,7 +162,7 @@ async function handleUsageApiRequest(request, options = {}) {
         generatedAt: new Date().toISOString(),
         policies: (result.policies || []).map(publicBudgetPolicyStatus),
       },
-    };
+    });
   }
 
   if (route.kind === "model_price_status") {
@@ -139,7 +173,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Model price status is unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -150,7 +184,7 @@ async function handleUsageApiRequest(request, options = {}) {
           sanitizeAdminDiagnosticPayload(result.status || result.modelPriceStatus || {})
         ),
       },
-    };
+    });
   }
 
   if (route.kind === "alert_status") {
@@ -158,7 +192,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Alert status is unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -169,7 +203,7 @@ async function handleUsageApiRequest(request, options = {}) {
           sanitizeAdminDiagnosticPayload(result.status || result.alertStatus || {})
         ),
       },
-    };
+    });
   }
 
   if (route.kind === "usage_events") {
@@ -184,7 +218,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Usage events are unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -194,7 +228,7 @@ async function handleUsageApiRequest(request, options = {}) {
         limit: query.limit,
         events: (result.events || []).map(normalizeAdminUsageEvent),
       },
-    };
+    });
   }
 
   if (route.kind === "job_events") {
@@ -207,7 +241,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Job events are unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -217,7 +251,7 @@ async function handleUsageApiRequest(request, options = {}) {
         status: query.status || null,
         events: (result.events || []).map(normalizeJobEvent),
       },
-    };
+    });
   }
 
   if (route.kind === "run_claims") {
@@ -230,7 +264,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Run claims are unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -243,7 +277,32 @@ async function handleUsageApiRequest(request, options = {}) {
         updatedBefore: query.updatedBefore || null,
         claims: (result.claims || []).map(normalizeRunClaim),
       },
-    };
+    });
+  }
+
+  if (route.kind === "webhook_inbox") {
+    const query = webhookInboxQueryFromRequest(request, settings);
+    const result = await (options.loadWebhookInbox || defaultLoadWebhookInbox)({
+      request,
+      settings,
+      query,
+    });
+    if (result.unavailable) {
+      return unavailableResponse(result.reason || "Webhook inbox is unavailable.");
+    }
+    return finish({
+      statusCode: 200,
+      body: {
+        ok: true,
+        visibility: "admin",
+        kind: "webhook_inbox",
+        limit: query.limit,
+        status: query.status || null,
+        repository: query.repository || null,
+        prNumber: query.prNumber,
+        deliveries: (result.deliveries || []).map(normalizeWebhookInboxDelivery),
+      },
+    });
   }
 
   if (route.kind === "runtime_status") {
@@ -256,7 +315,7 @@ async function handleUsageApiRequest(request, options = {}) {
     if (result.unavailable) {
       return unavailableResponse(result.reason || "Runtime status is unavailable.");
     }
-    return {
+    return finish({
       statusCode: 200,
       body: {
         ok: true,
@@ -267,7 +326,7 @@ async function handleUsageApiRequest(request, options = {}) {
         strict: query.strict,
         preflight: normalizeAdminStatusPayload(result),
       },
-    };
+    });
   }
 
   const range = usageRangeFromRequest(request, settings, options.now || new Date());
@@ -288,7 +347,7 @@ async function handleUsageApiRequest(request, options = {}) {
     publicRepos: settings.publicRepos,
     publicOrganizations: settings.publicOrganizations,
   });
-  return {
+  return finish({
     statusCode: 200,
     body: {
       ok: true,
@@ -296,7 +355,7 @@ async function handleUsageApiRequest(request, options = {}) {
       kind: "usage_summary",
       ...summary,
     },
-  };
+  });
 }
 
 function usageApiRoute(pathname, settings) {
@@ -326,6 +385,9 @@ function usageApiRoute(pathname, settings) {
   }
   if (pathname === settings.adminRunClaimsPath) {
     return { visibility: "admin", kind: "run_claims" };
+  }
+  if (pathname === settings.adminWebhookInboxPath) {
+    return { visibility: "admin", kind: "webhook_inbox" };
   }
   if (pathname === settings.adminStatusPath) {
     return { visibility: "admin", kind: "runtime_status" };
@@ -492,6 +554,66 @@ function runClaimsQueryFromRequest(request, settings, now = new Date()) {
   };
 }
 
+function webhookInboxQueryFromRequest(request, settings) {
+  const requestedLimit = request.url.searchParams.get("limit");
+  let limit;
+  try {
+    limit = requestedLimit
+      ? positiveIntEnv(requestedLimit, settings.maxItems, "limit")
+      : settings.maxItems;
+  } catch (error) {
+    error.statusCode = 400;
+    throw error;
+  }
+  if (limit > settings.maxItems) {
+    const error = new Error(`limit must be <= ${settings.maxItems}.`);
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const status = String(request.url.searchParams.get("status") || "failed").trim();
+  let statuses = [];
+  if (status === "all") {
+    statuses = [];
+  } else if (status === "active") {
+    statuses = ACTIVE_WEBHOOK_INBOX_STATUSES;
+  } else if (WEBHOOK_INBOX_STATUSES.includes(status)) {
+    statuses = [status];
+  } else {
+    const error = new Error(
+      `status must be one of: all, active, ${WEBHOOK_INBOX_STATUSES.join(", ")}.`
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const repository = String(request.url.searchParams.get("repository") || "").trim();
+  if (repository && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) {
+    const error = new Error("repository must be owner/name.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const prNumberParam = request.url.searchParams.get("prNumber");
+  let prNumber = null;
+  if (prNumberParam !== null && prNumberParam !== "") {
+    try {
+      prNumber = positiveIntEnv(prNumberParam, null, "prNumber");
+    } catch (error) {
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  return {
+    limit,
+    status,
+    statuses,
+    repository,
+    prNumber,
+  };
+}
+
 function parseQueryBool(value) {
   if (value === null || value === undefined || value === "") {
     return false;
@@ -622,6 +744,31 @@ function normalizeRunClaim(claim = {}) {
     deliveryId: adminText(claim.deliveryId || claim.delivery_id || ""),
     commandName: adminText(claim.commandName || claim.command_name || ""),
     metadata: normalizeJobMetadata(claim.metadata),
+  };
+}
+
+function normalizeWebhookInboxDelivery(delivery = {}) {
+  return {
+    inboxId: nullableNumber(delivery.inboxId ?? delivery.id),
+    createdAt: adminText(delivery.createdAt || delivery.created_at || ""),
+    updatedAt: adminText(delivery.updatedAt || delivery.updated_at || ""),
+    processedAt: adminText(delivery.processedAt || delivery.processed_at || ""),
+    nextAttemptAt: adminText(delivery.nextAttemptAt || delivery.next_attempt_at || ""),
+    deliveryId: adminText(delivery.deliveryId || delivery.delivery_id || ""),
+    eventName: adminText(delivery.eventName || delivery.event_name || ""),
+    eventKind: adminText(delivery.eventKind || delivery.event_kind || ""),
+    repoFullName: adminText(delivery.repoFullName || delivery.repositoryFullName || delivery.repository_full_name || ""),
+    prNumber: nullableNumber(delivery.prNumber ?? delivery.pr_number),
+    commentId: nullableNumber(delivery.commentId ?? delivery.comment_id),
+    actor: adminText(delivery.actor || ""),
+    installationId: nullableNumber(delivery.installationId ?? delivery.installation_id),
+    status: adminText(delivery.status || ""),
+    attemptCount: nullableNumber(delivery.attemptCount ?? delivery.attempt_count) || 0,
+    reason: adminText(delivery.reason || ""),
+    lastError: adminText(delivery.lastError || delivery.last_error || ""),
+    normalizedEvent: sanitizeAdminDiagnosticPayload(
+      normalizeMetadata(delivery.normalizedEvent || delivery.normalized_event)
+    ),
   };
 }
 
@@ -912,6 +1059,80 @@ function unavailableResponse(reason) {
   };
 }
 
+function createUsageApiResponseCache(settings = usageApiSettingsFromEnv()) {
+  const ttlMs = positiveIntEnv(settings.cacheTtlMs, DEFAULT_CACHE_TTL_MS, "cacheTtlMs");
+  const maxEntries = positiveIntEnv(
+    settings.cacheMaxEntries,
+    DEFAULT_CACHE_MAX_ENTRIES,
+    "cacheMaxEntries"
+  );
+  const entries = new Map();
+  return {
+    get(key, now = Date.now()) {
+      const entry = entries.get(key);
+      if (!entry) {
+        return null;
+      }
+      if (entry.expiresAt <= now) {
+        entries.delete(key);
+        return null;
+      }
+      return cloneUsageApiResponse(entry.response);
+    },
+    set(key, response, now = Date.now()) {
+      if (!key || !response || response.statusCode !== 200) {
+        return;
+      }
+      if (entries.size >= maxEntries && !entries.has(key)) {
+        entries.delete(entries.keys().next().value);
+      }
+      entries.set(key, {
+        expiresAt: now + ttlMs,
+        response: cloneUsageApiResponse(response),
+      });
+    },
+    clear() {
+      entries.clear();
+    },
+    stats(now = Date.now()) {
+      let liveEntries = 0;
+      for (const [key, entry] of entries) {
+        if (entry.expiresAt <= now) {
+          entries.delete(key);
+        } else {
+          liveEntries += 1;
+        }
+      }
+      return { liveEntries, maxEntries, ttlMs };
+    },
+  };
+}
+
+function usageApiResponseCacheKey(request, route) {
+  const url = request.url;
+  const query = Array.from(url.searchParams.entries())
+    .sort(([leftKey, leftValue], [rightKey, rightValue]) =>
+      leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue)
+    )
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join("&");
+  return `${String(request.method || "GET").toUpperCase()} ${route.visibility}:${route.kind} ${url.pathname}?${query}`;
+}
+
+function cacheUsageApiResponse(cache, key, result) {
+  if (cache && key && result?.statusCode === 200) {
+    cache.set(key, result);
+  }
+  return result;
+}
+
+function cloneUsageApiResponse(response) {
+  return {
+    statusCode: response.statusCode,
+    body: JSON.parse(JSON.stringify(response.body || null)),
+  };
+}
+
 function normalizeAdminStatusPayload(result = {}) {
   const sanitized = sanitizeAdminDiagnosticPayload(result.preflight ?? result.status ?? null);
   return normalizeAdminStatusObject(sanitized);
@@ -1021,6 +1242,13 @@ async function defaultLoadRunClaims() {
   };
 }
 
+async function defaultLoadWebhookInbox() {
+  return {
+    unavailable: true,
+    reason: "No webhook inbox loader configured.",
+  };
+}
+
 async function defaultLoadAdminStatus() {
   return {
     unavailable: true,
@@ -1077,11 +1305,13 @@ module.exports = {
   DEFAULT_ADMIN_MODEL_PRICE_STATUS_PATH,
   DEFAULT_ADMIN_JOB_EVENTS_PATH,
   DEFAULT_ADMIN_RUN_CLAIMS_PATH,
+  DEFAULT_ADMIN_WEBHOOK_INBOX_PATH,
   DEFAULT_ADMIN_STATUS_PATH,
   DEFAULT_ADMIN_SUMMARY_PATH,
   DEFAULT_ADMIN_USAGE_EVENTS_PATH,
   DEFAULT_PUBLIC_SUMMARY_PATH,
   adminStatusQueryFromRequest,
+  createUsageApiResponseCache,
   handleUsageApiRequest,
   isPublicUsageRepo,
   isUsageApiPath,
@@ -1089,6 +1319,7 @@ module.exports = {
   normalizeAdminUsageEvent,
   normalizeJobEvent,
   normalizeRunClaim,
+  normalizeWebhookInboxDelivery,
   normalizeUsageEvent,
   publicBudgetPolicy,
   publicBudgetPolicyStatus,
@@ -1097,5 +1328,6 @@ module.exports = {
   summarizeUsageEvents,
   usageApiSettingsFromEnv,
   usageEventsQueryFromRequest,
+  webhookInboxQueryFromRequest,
   usageRangeFromRequest,
 };

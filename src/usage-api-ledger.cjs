@@ -57,6 +57,9 @@ function createUsageApiLedgerLoaders(options = {}) {
     loadRunClaims: async ({ query }) => ({
       claims: readRunClaims(ledgerSettings, { query }),
     }),
+    loadWebhookInbox: async ({ query }) => ({
+      deliveries: readWebhookInboxDeliveries(ledgerSettings, { query }),
+    }),
   };
 }
 
@@ -262,6 +265,69 @@ limit :limit
   };
 }
 
+function readWebhookInboxDeliveries(settings, options = {}) {
+  assertDataApiSettings(settings, "Webhook inbox API ledger");
+  const query = buildWebhookInboxQuery(settings.schema, options.query || {});
+  const response = executeStatement(settings, query.sql, query.parameters, {
+    tempPrefix: "6529-webhook-inbox-api-",
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return (response.records || []).map(webhookInboxRecordToDelivery);
+}
+
+function buildWebhookInboxQuery(schema, options = {}) {
+  const limit = positiveLimit(options.limit ?? 50);
+  const statuses = normalizeStringList(options.statuses);
+  const whereParts = [];
+  const parameters = [];
+  if (statuses.length === 1) {
+    whereParts.push("status = :status");
+    parameters.push(stringParam("status", statuses[0]));
+  } else if (statuses.length > 1) {
+    whereParts.push(
+      `status in (${statuses.map((_, index) => `:status_${index}`).join(", ")})`
+    );
+    parameters.push(...statuses.map((item, index) => stringParam(`status_${index}`, item)));
+  }
+  if (options.repository) {
+    whereParts.push("repository_full_name = :repository_full_name");
+    parameters.push(stringParam("repository_full_name", options.repository));
+  }
+  if (options.prNumber) {
+    whereParts.push("pr_number = :pr_number");
+    parameters.push(longParam("pr_number", options.prNumber));
+  }
+  const where = whereParts.length ? `\nwhere ${whereParts.join("\n  and ")}` : "";
+  parameters.push(longParam("limit", limit));
+  return {
+    sql: `
+select
+  id,
+  created_at::text,
+  updated_at::text,
+  processed_at::text,
+  next_attempt_at::text,
+  delivery_id,
+  event_name,
+  event_kind,
+  repository_full_name,
+  pr_number,
+  comment_id,
+  actor,
+  installation_id,
+  status,
+  attempt_count,
+  reason,
+  last_error,
+  normalized_event::text
+from ${quoteIdent(schema)}.ai_review_webhook_inbox${where}
+order by updated_at desc, id desc
+limit :limit
+`,
+    parameters,
+  };
+}
+
 function assertUsageRange(range) {
   if (!range.from || !range.to) {
     throw new Error("Usage API ledger reads require bounded range.from and range.to values.");
@@ -315,6 +381,29 @@ function runClaimRecordToClaim(record) {
     deliveryId: fieldValue(record[17]),
     commandName: fieldValue(record[18]),
     metadata: safeJson(fieldValue(record[19])),
+  };
+}
+
+function webhookInboxRecordToDelivery(record) {
+  return {
+    inboxId: nullableNumber(fieldValue(record[0])),
+    createdAt: fieldValue(record[1]),
+    updatedAt: fieldValue(record[2]),
+    processedAt: fieldValue(record[3]),
+    nextAttemptAt: fieldValue(record[4]),
+    deliveryId: fieldValue(record[5]),
+    eventName: fieldValue(record[6]),
+    eventKind: fieldValue(record[7]),
+    repoFullName: fieldValue(record[8]),
+    prNumber: nullableNumber(fieldValue(record[9])),
+    commentId: nullableNumber(fieldValue(record[10])),
+    actor: fieldValue(record[11]),
+    installationId: nullableNumber(fieldValue(record[12])),
+    status: fieldValue(record[13]),
+    attemptCount: nullableNumber(fieldValue(record[14])) || 0,
+    reason: fieldValue(record[15]),
+    lastError: fieldValue(record[16]),
+    normalizedEvent: safeJson(fieldValue(record[17])),
   };
 }
 
@@ -384,14 +473,17 @@ function safeJson(value) {
 module.exports = {
   buildJobEventsQuery,
   buildRunClaimsQuery,
+  buildWebhookInboxQuery,
   buildUsageEventsQuery,
   createUsageApiLedgerLoaders,
   isPublicUsageRepo,
   jobEventRecordToEvent,
   readJobEvents,
   readRunClaims,
+  readWebhookInboxDeliveries,
   readUsageEvents,
   runClaimRecordToClaim,
+  webhookInboxRecordToDelivery,
   assertUsageRange,
   usageApiLedgerLoadersFromEnv,
   usageRecordToEvent,

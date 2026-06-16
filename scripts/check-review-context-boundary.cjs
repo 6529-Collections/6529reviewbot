@@ -26,6 +26,7 @@ const pathCases = [
 const hardLimitCases = [
   ["REVIEW_MAX_CHANGED_FILES", "501", "REVIEW_MAX_CHANGED_FILES must be <= 500."],
   ["REVIEW_MAX_CHANGED_LINES", "20001", "REVIEW_MAX_CHANGED_LINES must be <= 20000."],
+  ["REVIEW_LARGE_PR_CHANGED_LINES", "20001", "REVIEW_LARGE_PR_CHANGED_LINES must be <= 20000."],
   ["REVIEW_MAX_DIFF_CHARS", "500001", "REVIEW_MAX_DIFF_CHARS must be <= 500000."],
   ["REVIEW_MAX_CONTEXT_CHARS", "250001", "REVIEW_MAX_CONTEXT_CHARS must be <= 250000."],
   ["REVIEW_MAX_INPUT_CHARS", "750001", "REVIEW_MAX_INPUT_CHARS must be <= 750000."],
@@ -214,6 +215,7 @@ function checkDocs(docTexts, findings) {
     "docs/configuration.md": [
       "## Cost And Context Controls",
       "REVIEW_MAX_OUTPUT_TOKENS=4000",
+      "REVIEW_LARGE_PR_CHANGED_LINES=3500",
       "Repository variables cannot make requests unbounded.",
     ],
     "docs/security-model.md": [
