@@ -31,7 +31,7 @@ const AGENT_PROMPT_INTRO =
   "Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.";
 const HARD_LIMITS = {
   maxChangedFiles: 500,
-  maxChangedLines: 20000,
+  maxChangedLines: 30000,
   maxDiffChars: 500000,
   maxContextChars: 250000,
   maxInputChars: 750000,
@@ -314,7 +314,7 @@ function readSettings(args, kind) {
     printPrompt: parseBool(args.printPrompt || env("REVIEW_PRINT_PROMPT", "false")),
     printComment: parseBool(args.printComment || env("REVIEW_PRINT_COMMENT", "false")),
     maxChangedFiles: boundedPositiveInt("REVIEW_MAX_CHANGED_FILES", 160, HARD_LIMITS.maxChangedFiles),
-    maxChangedLines: boundedPositiveInt("REVIEW_MAX_CHANGED_LINES", 12000, HARD_LIMITS.maxChangedLines),
+    maxChangedLines: boundedPositiveInt("REVIEW_MAX_CHANGED_LINES", 30000, HARD_LIMITS.maxChangedLines),
     largePrChangedLines: boundedPositiveInt(
       "REVIEW_LARGE_PR_CHANGED_LINES",
       3500,
