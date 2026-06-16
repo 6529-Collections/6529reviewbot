@@ -54,7 +54,7 @@ async function checkGitHubAppAuthContract(options = {}) {
   }
 
   return {
-    authCases: 7,
+    authCases: 8,
     cliCases: 6,
     docs: targetDocs.length,
   };
@@ -87,6 +87,23 @@ function checkSettingsContract(findings) {
   ) {
     findings.push("GitHub App auth settings must parse timeout, JWT TTL, and refresh buffer.");
   }
+  const maxTtlSettings = githubAppAuth.githubAppAuthSettingsFromEnv({
+    REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS: "600",
+  });
+  if (
+    githubAppAuth.MAX_GITHUB_APP_JWT_TTL_SECONDS !== 600 ||
+    maxTtlSettings.jwtTtlSeconds !== 600
+  ) {
+    findings.push("GitHub App auth settings must expose and accept the documented 600-second JWT TTL maximum.");
+  }
+  expectError(
+    () =>
+      githubAppAuth.githubAppAuthSettingsFromEnv({
+        REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS: "601",
+      }),
+    "REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS must be <= 600.",
+    findings
+  );
   expectError(
     () =>
       githubAppAuth.githubAppAuthSettingsFromEnv({
@@ -298,6 +315,7 @@ function checkSourceInvariants(sourceTexts, findings) {
   const sourceText = sourceTexts[sourcePath] || readText(sourcePath);
   for (const snippet of [
     "DEFAULT_JWT_TTL_SECONDS",
+    "MAX_GITHUB_APP_JWT_TTL_SECONDS",
     "DEFAULT_TOKEN_REFRESH_BUFFER_SECONDS",
     "createGitHubAppJwt",
     "tokenCache",

@@ -52,6 +52,8 @@ tokens. The private key may be supplied as a PEM string with escaped newlines or
 as base64. GitHub API calls made by this auth bridge use the configured timeout
 and bounded retry settings, then fail closed when token or
 collaborator-permission reads cannot complete.
+`REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS` defaults to 540 seconds and must not
+exceed GitHub's 600-second App JWT limit.
 Run `npm run check:github-app-auth` after changing GitHub App auth env parsing,
 JWT TTL, installation-token refresh buffering, or token profile behavior.
 

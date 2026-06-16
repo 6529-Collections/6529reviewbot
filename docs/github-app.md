@@ -187,6 +187,9 @@ for installation tokens, and uses those tokens to:
 - resolve the requestor's repository collaborator permission;
 - best-effort check organization membership.
 
+`REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS` defaults to 540 seconds and is capped at
+GitHub's documented 600-second App JWT maximum.
+
 The central GitHub Actions worker template also mints a short-lived installation
 token for the target repository. It uses the `installation_id` dispatched with
 each review job, so target repositories do not need a long-lived bot token.
@@ -218,7 +221,8 @@ npm run check:github-app-auth
 Run `npm run check:github-app-auth` after changing GitHub App auth settings,
 installation-token minting, profile routing, or GitHub Actions token output.
 The installation token contract verifies env parsing, JWT shape, token
-caching, CLI profiles, output masking, output newline rejection, and docs.
+caching, the 600-second GitHub App JWT TTL ceiling, CLI profiles, output
+masking, output newline rejection, and docs.
 
 ## Supported Events
 

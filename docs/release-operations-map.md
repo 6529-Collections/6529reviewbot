@@ -162,8 +162,9 @@ review, private conversion summary, App id/slug custody, webhook ping,
 selected-repository allowlist/count, rotation ownership, redacted summaries,
 and docs aligned.
 `npm run check:github-app-auth` keeps GitHub App auth env parsing, JWT shape,
-installation-token caching, CLI profiles, GitHub Actions token output masking,
-output newline rejection, source invariants, and docs aligned.
+the 600-second GitHub App JWT TTL ceiling, installation-token caching, CLI
+profiles, GitHub Actions token output masking, output newline rejection, source
+invariants, and docs aligned.
 `npm run check:github-app-routes` keeps GitHub App browser handoff routes
 GET-only public-safe guidance surfaces that do not echo manifest codes,
 generated credentials, private repo details, or trigger review work.

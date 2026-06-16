@@ -12,6 +12,7 @@ const DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS = 10000;
 const DEFAULT_GITHUB_APP_FETCH_RETRIES = 2;
 const DEFAULT_GITHUB_APP_RETRY_BASE_DELAY_MS = 500;
 const DEFAULT_JWT_TTL_SECONDS = 540;
+const MAX_GITHUB_APP_JWT_TTL_SECONDS = 600;
 const DEFAULT_TOKEN_REFRESH_BUFFER_SECONDS = 60;
 
 function githubAppAuthSettingsFromEnv(env = process.env) {
@@ -28,9 +29,10 @@ function githubAppAuthSettingsFromEnv(env = process.env) {
         env.GITHUB_API_URL ||
         DEFAULT_GITHUB_API_URL
     ),
-    jwtTtlSeconds: positiveInt(
+    jwtTtlSeconds: positiveIntAtMost(
       env.REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS,
       DEFAULT_JWT_TTL_SECONDS,
+      MAX_GITHUB_APP_JWT_TTL_SECONDS,
       "REVIEWBOT_GITHUB_APP_JWT_TTL_SECONDS"
     ),
     fetchTimeoutMs: positiveInt(
@@ -458,6 +460,14 @@ function positiveInt(value, fallback, name) {
   return parsed;
 }
 
+function positiveIntAtMost(value, fallback, max, name) {
+  const parsed = positiveInt(value, fallback, name);
+  if (parsed > max) {
+    throw new Error(`${name} must be <= ${max}.`);
+  }
+  return parsed;
+}
+
 function nonNegativeInt(value, fallback, name) {
   if (value === undefined || value === "") {
     return fallback;
@@ -494,6 +504,7 @@ module.exports = {
   DEFAULT_GITHUB_APP_FETCH_TIMEOUT_MS,
   DEFAULT_GITHUB_APP_FETCH_RETRIES,
   DEFAULT_GITHUB_API_URL,
+  MAX_GITHUB_APP_JWT_TTL_SECONDS,
   createGitHubAppIntegration,
   createGitHubAppJwt,
   githubAppAuthSettingsFromEnv,
