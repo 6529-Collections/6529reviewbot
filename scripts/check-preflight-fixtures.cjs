@@ -94,7 +94,7 @@ const fixtures = [
       },
     },
     expectedWarnings: [
-      "github_actions provider keys must be configured as central worker secrets.",
+      "github_actions provider keys are expected as central worker secrets, not App Runner env: ANTHROPIC_API_KEY.",
     ],
   },
   {

@@ -1903,6 +1903,32 @@ assert(
     warning.message.includes("reuse the main GitHub App credentials")
   )
 );
+const appDispatchWorkerProfilePreflight = preflight.runPreflight({
+  profile: "worker",
+  env: {
+    ...preflightEnv,
+    REVIEWBOT_GITHUB_APP_ID: "12345",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: "configured",
+    REVIEWBOT_WORKER_ADAPTER: "github_actions",
+    REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+    REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+    REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+  },
+});
+assert.equal(
+  appDispatchWorkerProfilePreflight.errors.some((error) => error.name === "provider_keys"),
+  false
+);
+assert.deepEqual(
+  appDispatchWorkerProfilePreflight.checks.find((check) => check.name === "provider_keys")
+    .expectedCentralWorkerSecrets,
+  ["ANTHROPIC_API_KEY"]
+);
+assert(
+  appDispatchWorkerProfilePreflight.warnings.some((warning) =>
+    warning.message.includes("ANTHROPIC_API_KEY")
+  )
+);
 const splitDispatchAppPreflight = preflight.runPreflight({
   env: {
     ...preflightEnv,

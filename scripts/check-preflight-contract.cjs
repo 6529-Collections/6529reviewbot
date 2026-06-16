@@ -167,6 +167,29 @@ function checkStrictAndProfileBehavior(findings) {
   if (worker.errors.some((error) => error.name === "provider_keys")) {
     findings.push("worker profile with local worker and provider key must not fail provider_keys.");
   }
+
+  const dispatchWorker = runPreflight({
+    profile: "worker",
+    env: contractEnv({
+      REVIEWBOT_WORKER_ADAPTER: "github_actions",
+      REVIEWBOT_WORKER_GITHUB_REPO: "6529-Collections/6529reviewbot",
+      REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE: "api",
+      REVIEWBOT_GITHUB_APP_ID: "12345",
+      REVIEWBOT_GITHUB_APP_PRIVATE_KEY: "configured-for-preflight",
+      REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID: "777",
+    }),
+  });
+  if (dispatchWorker.errors.some((error) => error.name === "provider_keys")) {
+    findings.push("github_actions worker profile must not require provider keys in the dispatcher process.");
+  }
+  const providerKeyCheck = dispatchWorker.checks.find((check) => check.name === "provider_keys");
+  if (
+    !providerKeyCheck ||
+    providerKeyCheck.checkedLocally !== false ||
+    !providerKeyCheck.expectedCentralWorkerSecrets?.includes("ANTHROPIC_API_KEY")
+  ) {
+    findings.push("github_actions provider_keys check must report expected central worker secrets.");
+  }
 }
 
 function checkRedactedDiagnostics(findings) {
@@ -223,6 +246,7 @@ function checkDocs(docTexts, findings) {
     ],
     "docs/configuration.md": [
       "npm run preflight -- -- --json",
+      "central worker secrets, not App Runner environment variables",
       "`npm run check:preflight` runs deterministic no-network fixtures",
       "`npm run check:preflight-contract` keeps the preflight check order",
     ],

@@ -410,8 +410,9 @@ run control, repository config, worker adapter, usage/job ledgers, usage API,
 admin auth, and alerts.
 
 Warnings describe intentionally disabled or external pieces, such as `noop`
-workers or `github_actions` provider secrets that live in the central worker
-environment. `--strict` treats warnings as failures for release gates.
+workers or `github_actions` provider secrets that live as central worker
+secrets, not App Runner environment variables. `--strict` treats warnings as
+failures for release gates.
 
 `npm run check:preflight` runs deterministic no-network fixtures for the
 central App server and worker postures. It is included in
