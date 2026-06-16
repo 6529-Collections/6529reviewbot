@@ -13,6 +13,9 @@ const expectedMarker = "6529-review-bot";
 const expectedSkipVerdict = "Review skipped due to configured budget.";
 const expectedSkipTail =
   "No model provider was called. Adjust the review-bot budget variables or run a narrower review if this PR still needs AI review.";
+const expectedAgentPromptSummary = "Prompt for all review comments with AI agents";
+const expectedAgentPromptIntro =
+  "Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.";
 
 function main() {
   const result = checkReviewCommentFormat();
@@ -200,6 +203,45 @@ function checkReviewComment(input) {
       `${context} first visible body line must be '**Verdict**: ${firstVerdict}', got '${firstVisibleBodyLine || ""}'.`
     );
   }
+  checkAgentPromptSection({
+    comment,
+    context,
+    config,
+    settings,
+    pr,
+    shortSha,
+    firstVerdict,
+    findings,
+  });
+}
+
+function checkAgentPromptSection(input) {
+  const {
+    comment,
+    context,
+    config,
+    settings,
+    pr,
+    shortSha,
+    firstVerdict,
+    findings,
+  } = input;
+  const requiredSnippets = [
+    "<details>",
+    `<summary>${expectedAgentPromptSummary}</summary>`,
+    expectedAgentPromptIntro,
+    "Review comments:",
+    `From 6529bot ${config.label} on ${settings.repo}#${Number(pr.number)} (${shortSha}):`,
+    `**Verdict**: ${firstVerdict}`,
+  ];
+  for (const snippet of requiredSnippets) {
+    if (!comment.includes(snippet)) {
+      findings.push(`${context} agent prompt section must include '${snippet}'.`);
+    }
+  }
+  if (countOccurrences(comment, expectedAgentPromptSummary) !== 1) {
+    findings.push(`${context} must include exactly one agent prompt section.`);
+  }
 }
 
 function checkBudgetSkipComment(input) {
@@ -308,6 +350,9 @@ function checkDocs(configs, marker, docTexts, findings) {
   const requiredSnippets = [
     `## ${expectedBotName} <review label> - <short-sha>`,
     "**Verdict**: <allowed verdict>",
+    `<summary>${expectedAgentPromptSummary}</summary>`,
+    expectedAgentPromptIntro,
+    "Review comments:",
     `<!-- ${marker}:{"version":1,"marker":"..."} -->`,
     `## ${expectedBotName} <review label> skipped - <short-sha>`,
     `**Verdict**: ${expectedSkipVerdict}`,

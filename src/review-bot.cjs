@@ -22,6 +22,9 @@ const { redactSensitiveText, safeErrorLine } = require("./diagnostics.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
+const AGENT_PROMPT_SUMMARY = "Prompt for all review comments with AI agents";
+const AGENT_PROMPT_INTRO =
+  "Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.";
 const HARD_LIMITS = {
   maxChangedFiles: 500,
   maxChangedLines: 20000,
@@ -1243,11 +1246,41 @@ function buildComment({ kind, config, settings, pr, headSha, shortSha, changedFi
     createdAt: new Date().toISOString(),
   };
   const cleanBody = stripGeneratedHeading(modelBody, config, shortSha).trim();
+  const visibleBody = cleanBody || `**Verdict**: ${config.verdicts.split("|")[0].trim()}`;
   return [
     `<!-- ${BOT_MARKER}:${JSON.stringify(metadata)} -->`,
     `## 6529bot ${config.label} - ${shortSha}`,
     "",
-    cleanBody || `**Verdict**: ${config.verdicts.split("|")[0].trim()}`,
+    visibleBody,
+    "",
+    buildAgentPromptSection({
+      config,
+      settings,
+      pr,
+      shortSha,
+      visibleBody,
+    }),
+  ].join("\n");
+}
+
+function buildAgentPromptSection({ config, settings, pr, shortSha, visibleBody }) {
+  const promptText = [
+    AGENT_PROMPT_INTRO,
+    "",
+    "Review comments:",
+    `From 6529bot ${config.label} on ${settings.repo}#${Number(pr.number)} (${shortSha}):`,
+    stripReviewBotMetadata(visibleBody),
+  ].join("\n");
+  const fence = markdownFenceFor(promptText);
+  return [
+    "<details>",
+    `<summary>${AGENT_PROMPT_SUMMARY}</summary>`,
+    "",
+    fence,
+    promptText,
+    fence,
+    "",
+    "</details>",
   ].join("\n");
 }
 
@@ -1320,6 +1353,12 @@ function markerHasLane(marker, lane) {
 
 function markerHasAnyLane(marker) {
   return typeof marker === "string" && marker.split(":").length >= 5;
+}
+
+function markdownFenceFor(value) {
+  const matches = String(value || "").match(/`+/g) || [];
+  const longest = matches.reduce((max, item) => Math.max(max, item.length), 0);
+  return "`".repeat(Math.max(3, longest + 1));
 }
 
 function countMarker(comments, marker, settings) {
