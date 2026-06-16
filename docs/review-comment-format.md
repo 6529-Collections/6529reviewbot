@@ -14,6 +14,18 @@ Successful model-backed comments use this shape:
 **Verdict**: <allowed verdict>
 
 <concise findings and supporting detail>
+````
+
+When the verdict is the review kind's clean verdict, the successful comment
+ends after the visible review body. When the verdict is actionable, the comment
+also includes a collapsible agent prompt section:
+
+````md
+## 6529bot <review label> - <short-sha>
+
+**Verdict**: <allowed verdict>
+
+<concise findings and supporting detail>
 
 <details>
 <summary>Prompt for all review comments with AI agents</summary>
@@ -56,11 +68,11 @@ behaviors, or test gaps where possible, and should avoid copying private
 diagnostics, raw prompts, provider payloads, secrets, tokens, or hidden
 metadata.
 
-Successful review comments also include a collapsible agent prompt section.
-The section is intended to make valid findings easy to copy into an AI coding
-agent. It duplicates only the visible review body and must not include hidden
-metadata, raw model prompts, provider payloads, secrets, tokens, or private
-operator diagnostics.
+Successful review comments with actionable verdicts include a collapsible
+agent prompt section. The section is intended to make valid findings easy to
+copy into an AI coding agent. It duplicates only the visible review body and
+must not include hidden metadata, raw model prompts, provider payloads,
+secrets, tokens, or private operator diagnostics.
 
 ## Hidden Metadata
 
@@ -98,6 +110,26 @@ narrower review if this PR still needs AI review.
 
 Budget-skip comments also include hidden metadata, but `kind` is
 `budget-skip` and the original review kind is recorded separately as
+`reviewKind`.
+
+## Operational-Failure Comments
+
+If the worker cannot hydrate a PR diff before calling a provider, the bot posts
+a bounded operational-failure comment instead of silently failing in Actions:
+
+```md
+## 6529bot <review label> could not run - <short-sha>
+
+**Verdict**: Review did not run due to an operational failure.
+
+Reason: <redacted failure reason>
+
+No model provider was called before this failure. The bot will need the workflow
+or operator to rerun this review after the diff can be hydrated.
+```
+
+Operational-failure comments also include hidden metadata, but `kind` is
+`operational-failure` and the original review kind is recorded separately as
 `reviewKind`.
 
 ## Compatibility

@@ -305,6 +305,9 @@ function jobEnv(job) {
     PR_NUMBER: String(job.prNumber),
     GITHUB_PR_NUMBER: String(job.prNumber),
     PR_HEAD_SHA: job.headSha || "",
+    PR_BASE_SHA: job.baseSha || "",
+    PR_HEAD_REF: job.headRefName || "",
+    PR_HEAD_REPO: headRepoFullNameForJob(job),
     REVIEW_KIND: job.reviewKind,
     REVIEW_PROVIDER: job.provider,
     REVIEW_MODEL: job.model,
@@ -330,6 +333,8 @@ function githubWorkflowFields(job) {
     head_repo: headRepoFullNameForJob(job),
     pr_number: String(job.prNumber),
     head_sha: job.headSha || "",
+    base_sha: job.baseSha || "",
+    head_ref: safeHeadRefDisplayName(job.headRefName || ""),
     review_kind: job.reviewKind,
     provider: job.provider,
     model: job.model,
@@ -347,6 +352,14 @@ function headRepoFullNameForJob(job) {
     job.headRepo?.nameWithOwner ||
     job.repository.fullName
   );
+}
+
+function safeHeadRefDisplayName(value) {
+  return String(value || "")
+    .replace(/[\u0000-\u001f\u007f]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 80);
 }
 
 function reviewCommandArgs(job) {
@@ -556,6 +569,7 @@ module.exports = {
   redactSensitiveText,
   reviewCommandArgs,
   runReviewJobLocally,
+  safeHeadRefDisplayName,
   shouldUseGitHubApiDispatch,
   workerAdapterPolicyFromEnv,
 };

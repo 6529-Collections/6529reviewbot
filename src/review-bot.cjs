@@ -59,6 +59,7 @@ const OPENAI_MODEL_CAPABILITIES = [
 const KIND_CONFIGS = {
   general: {
     label: "general PR review",
+    cleanVerdict: "Good to merge",
     verdicts: "Good to merge | Needs changes | Blocking issues",
     objective:
       "Find concrete correctness, reliability, security, data integrity, and maintainability issues introduced by this PR.",
@@ -72,6 +73,7 @@ const KIND_CONFIGS = {
   },
   followup: {
     label: "follow-up commit review",
+    cleanVerdict: "No new findings",
     verdicts: "No new findings | Needs changes | Blocking issues",
     objective:
       "Review the newest commit set in context, using prior bot and human review comments as history. Do not repeat old findings.",
@@ -84,6 +86,7 @@ const KIND_CONFIGS = {
   },
   wcag: {
     label: "WCAG 2.2 AA analysis",
+    cleanVerdict: "No WCAG findings",
     verdicts: "No WCAG findings | Needs changes | Blocking issues",
     objective:
       "Review changed user interface code for WCAG 2.2 AA accessibility regressions and practical usability barriers.",
@@ -97,6 +100,7 @@ const KIND_CONFIGS = {
   },
   i18n: {
     label: "i18n analysis",
+    cleanVerdict: "No i18n findings",
     verdicts: "No i18n findings | Needs changes | Blocking issues",
     objective:
       "Review changed user-facing text and locale-sensitive behavior for internationalization and localization regressions.",
@@ -110,6 +114,7 @@ const KIND_CONFIGS = {
   },
   security: {
     label: "crypto security analysis",
+    cleanVerdict: "No security findings",
     verdicts: "No security findings | Needs changes | Blocking issues",
     objective:
       "Review changed code for security issues, with extra scrutiny on wallet, auth, signature, token, and crypto/web3 behavior.",
@@ -135,8 +140,23 @@ async function main(forcedKind) {
 
   const headSha = settings.headSha || pr.headRefOid || git(["rev-parse", "HEAD"], settings).trim();
   const shortSha = headSha.slice(0, 12);
-  const diff = getPrDiff(settings);
-  const changedFiles = getChangedFiles(settings);
+  let diffBundle;
+  try {
+    diffBundle = getPrDiffBundle(settings, pr, headSha);
+  } catch (error) {
+    handleDiffHydrationFailure({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      error,
+    });
+    throw error;
+  }
+  const diff = diffBundle.diff;
+  const changedFiles = diffBundle.changedFiles;
   const changedLineCount = countChangedLines(diff);
 
   const budgetResult = checkBudget(settings, changedFiles.length, changedLineCount);
@@ -308,6 +328,9 @@ function readSettings(args, kind) {
     repo,
     prNumber: String(prNumber),
     headSha: env("PR_HEAD_SHA", ""),
+    baseSha: env("PR_BASE_SHA", ""),
+    headRepoFullName: env("PR_HEAD_REPO", ""),
+    githubToken: env("GH_TOKEN", "") || env("GITHUB_TOKEN", ""),
     workspace: path.resolve(args.workspace || env("REVIEW_WORKSPACE", process.cwd())),
     allowExternalPrs: parseBool(env("REVIEW_ALLOW_EXTERNAL_PRS", "false")),
     dryRun: parseBool(args.dryRun || env("REVIEW_DRY_RUN", "false")),
@@ -333,6 +356,7 @@ function readSettings(args, kind) {
     draftPrMode: enumEnv("REVIEW_DRAFT_PR_MODE", "skip", DRAFT_PR_MODES),
     oversizeBehavior: enumEnv("REVIEW_OVERSIZE_BEHAVIOR", "skip", ["skip", "warn"]),
     postSkipComment: parseBool(args.postSkipComment || env("REVIEW_POST_SKIP_COMMENT", "true")),
+    postFailureComment: parseBool(args.postFailureComment || env("REVIEW_POST_FAILURE_COMMENT", "true")),
     trustedMarkerAuthors: csvEnv("REVIEW_TRUSTED_MARKER_AUTHORS", DEFAULT_TRUSTED_MARKER_AUTHORS),
     reasoningEffort: env("REVIEW_REASONING_EFFORT", "low"),
     verbosity: env("REVIEW_VERBOSITY", "low"),
@@ -483,6 +507,7 @@ function getPrInfo(settings) {
       "body",
       "author",
       "baseRefName",
+      "baseRefOid",
       "headRefName",
       "headRefOid",
       "headRepository",
@@ -496,15 +521,191 @@ function getPrInfo(settings) {
   ]);
 }
 
-function getPrDiff(settings) {
-  return gh(["pr", "diff", settings.prNumber, "--repo", settings.repo, "--patch"]);
+function getPrDiffBundle(settings, pr, headSha) {
+  let diffError;
+  try {
+    const diff = gh(["pr", "diff", settings.prNumber, "--repo", settings.repo, "--patch"]);
+    return {
+      diff,
+      changedFiles: getChangedFilesFromGitHub(settings, diff),
+      source: "github",
+    };
+  } catch (error) {
+    diffError = error;
+    warn(`could not load PR diff through GitHub API; trying local git fallback: ${safeCommandError(error)}`);
+  }
+
+  try {
+    const bundle = getLocalPrDiffBundle(settings, pr, headSha);
+    warn(
+      `using local git diff fallback for ${settings.repo}#${settings.prNumber}; ` +
+        `source=${bundle.source}, changedFiles=${bundle.changedFiles.length}`
+    );
+    return bundle;
+  } catch (localError) {
+    throw new Error(
+      [
+        "Could not load the pull request diff from GitHub or the local checkout.",
+        `GitHub diff error: ${safeCommandError(diffError)}`,
+        `Local diff error: ${safeCommandError(localError)}`,
+      ].join(" ")
+    );
+  }
 }
 
-function getChangedFiles(settings) {
-  return gh(["pr", "diff", settings.prNumber, "--repo", settings.repo, "--name-only"])
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
+function getChangedFilesFromGitHub(settings, diff) {
+  try {
+    const files = gh(["pr", "diff", settings.prNumber, "--repo", settings.repo, "--name-only"])
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    return files.length ? files : changedFilesFromPatch(diff);
+  } catch (error) {
+    warn(`could not load changed-file names through GitHub API: ${safeCommandError(error)}`);
+    return changedFilesFromPatch(diff);
+  }
+}
+
+function getLocalPrDiffBundle(settings, pr, headSha) {
+  assertInsideGitWorkspace(settings);
+  const baseSha = settings.baseSha || pr.baseRefOid || "";
+  const effectiveHeadSha = headSha || pr.headRefOid || "";
+  if (!isCommitSha(baseSha)) {
+    throw new Error("A 40-character PR base commit SHA is required for local diff fallback.");
+  }
+  if (!isCommitSha(effectiveHeadSha)) {
+    throw new Error("A 40-character PR head commit SHA is required for local diff fallback.");
+  }
+
+  ensureCommitAvailable(settings, baseSha, settings.repo);
+  ensureCommitAvailable(settings, effectiveHeadSha, settings.headRepoFullName || headRepositoryFullName(pr) || settings.repo);
+
+  const range = `${baseSha}..${effectiveHeadSha}`;
+  return {
+    diff: git(["diff", "--patch", "--no-ext-diff", range], settings),
+    changedFiles: git(["diff", "--name-only", "--no-ext-diff", range], settings)
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+    source: "local-git",
+  };
+}
+
+function assertInsideGitWorkspace(settings) {
+  const result = git(["rev-parse", "--is-inside-work-tree"], settings).trim();
+  if (result !== "true") {
+    throw new Error(`${settings.workspace} is not a git worktree.`);
+  }
+}
+
+function ensureCommitAvailable(settings, sha, repoFullName) {
+  if (hasCommit(settings, sha)) {
+    return;
+  }
+  const repo = repoFullName || settings.repo;
+  const fetchUrl = githubRepositoryUrl(repo);
+  const fetchArgs = ["fetch", "--no-tags", "--depth=1", fetchUrl, sha];
+  runGitFetch(settings, fetchArgs);
+  if (!hasCommit(settings, sha)) {
+    throw new Error(`Commit ${sha.slice(0, 12)} was not available after fetching ${repo}.`);
+  }
+}
+
+function hasCommit(settings, sha) {
+  try {
+    git(["cat-file", "-e", `${sha}^{commit}`], settings);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function runGitFetch(settings, args) {
+  const token = settings.githubToken || "";
+  if (!token) {
+    git(args, settings);
+    return;
+  }
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-review-git-askpass-"));
+  const askPassPath = path.join(tmpDir, process.platform === "win32" ? "askpass.cmd" : "askpass.sh");
+  try {
+    if (process.platform === "win32") {
+      fs.writeFileSync(
+        askPassPath,
+        [
+          "@echo off",
+          "echo %1 | findstr /I Username >nul",
+          "if not errorlevel 1 (echo x-access-token& exit /b 0)",
+          "echo %GIT_ASKPASS_TOKEN%",
+        ].join("\r\n"),
+        "utf8"
+      );
+    } else {
+      fs.writeFileSync(
+        askPassPath,
+        [
+          "#!/bin/sh",
+          "case \"$1\" in",
+          "  *Username*) printf '%s\\n' 'x-access-token' ;;",
+          "  *) printf '%s\\n' \"$GIT_ASKPASS_TOKEN\" ;;",
+          "esac",
+        ].join("\n"),
+        { encoding: "utf8", mode: 0o700 }
+      );
+    }
+    if (process.platform !== "win32") {
+      fs.chmodSync(askPassPath, 0o700);
+    }
+    command("git", args, {
+      cwd: settings.workspace,
+      env: {
+        ...process.env,
+        GIT_ASKPASS: askPassPath,
+        GIT_ASKPASS_TOKEN: token,
+        GIT_TERMINAL_PROMPT: "0",
+      },
+    });
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+}
+
+function githubRepositoryUrl(repoFullName) {
+  const repo = String(repoFullName || "");
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) {
+    throw new Error(`Repository must be in owner/name form for local diff fallback. Got '${repo}'.`);
+  }
+  return `https://github.com/${repo}.git`;
+}
+
+function headRepositoryFullName(pr) {
+  const nameWithOwner = pr?.headRepository?.nameWithOwner || "";
+  if (nameWithOwner) {
+    return nameWithOwner;
+  }
+  const owner = pr?.headRepositoryOwner?.login || "";
+  const name = pr?.headRepository?.name || "";
+  return owner && name ? `${owner}/${name}` : "";
+}
+
+function isCommitSha(value) {
+  return /^[0-9a-f]{40}$/i.test(String(value || ""));
+}
+
+function changedFilesFromPatch(diff) {
+  const files = [];
+  for (const line of String(diff || "").split(/\r?\n/)) {
+    const match = /^diff --git a\/(.+?) b\/(.+)$/.exec(line);
+    if (match) {
+      files.push(unquoteDiffPath(match[2]));
+    }
+  }
+  return [...new Set(files)];
+}
+
+function unquoteDiffPath(value) {
+  return String(value || "").replace(/^"|"$/g, "");
 }
 
 function getPrComments(settings) {
@@ -1339,21 +1540,50 @@ function buildComment({ kind, config, settings, pr, headSha, shortSha, changedFi
     createdAt: new Date().toISOString(),
   };
   const cleanBody = stripGeneratedHeading(modelBody, config, shortSha).trim();
-  const visibleBody = cleanBody || `**Verdict**: ${config.verdicts.split("|")[0].trim()}`;
+  const visibleBody = cleanBody || `**Verdict**: ${cleanVerdict(config)}`;
+  const agentPromptSection = shouldIncludeAgentPromptSection(config, visibleBody)
+    ? [
+        "",
+        buildAgentPromptSection({
+          config,
+          settings,
+          pr,
+          shortSha,
+          visibleBody,
+        }),
+      ]
+    : [];
   return [
     `<!-- ${BOT_MARKER}:${JSON.stringify(metadata)} -->`,
     `## 6529bot ${config.label} - ${shortSha}`,
     "",
     visibleBody,
-    "",
-    buildAgentPromptSection({
-      config,
-      settings,
-      pr,
-      shortSha,
-      visibleBody,
-    }),
+    ...agentPromptSection,
   ].join("\n");
+}
+
+function shouldIncludeAgentPromptSection(config, visibleBody) {
+  return firstVisibleVerdict(visibleBody) !== cleanVerdict(config);
+}
+
+function firstVisibleVerdict(visibleBody) {
+  const firstLine = String(visibleBody || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find(Boolean);
+  const match = /^\*\*Verdict\*\*:\s*(.+)$/.exec(firstLine || "");
+  return match ? match[1].trim() : "";
+}
+
+function cleanVerdict(config) {
+  return config.cleanVerdict || firstAllowedVerdict(config);
+}
+
+function firstAllowedVerdict(config) {
+  return String(config.verdicts || "")
+    .split("|")
+    .map((item) => item.trim())
+    .filter(Boolean)[0];
 }
 
 function buildAgentPromptSection({ config, settings, pr, shortSha, visibleBody }) {
@@ -1406,6 +1636,68 @@ function buildBudgetSkipComment({ kind, config, settings, pr, headSha, shortSha,
   ].join("\n");
 }
 
+function handleDiffHydrationFailure({ kind, config, settings, pr, headSha, shortSha, error }) {
+  const reason = safeOneLineError(error);
+  warn(`diff hydration failed: ${reason}`);
+  if (
+    settings.dryRun ||
+    settings.printPrompt ||
+    settings.printComment ||
+    !settings.postFailureComment
+  ) {
+    return;
+  }
+
+  try {
+    const marker = operationalFailureMarker(kind, settings, shortSha);
+    const commentsBefore = getPrComments(settings);
+    if (countMarker(commentsBefore, marker, settings) > 0) {
+      return;
+    }
+    postComment(
+      settings,
+      buildOperationalFailureComment({
+        kind,
+        config,
+        settings,
+        pr,
+        headSha,
+        shortSha,
+        reason,
+      })
+    );
+  } catch (commentError) {
+    warn(`could not post diff failure comment: ${safeOneLineError(commentError)}`);
+  }
+}
+
+function buildOperationalFailureComment({ kind, config, settings, pr, headSha, shortSha, reason }) {
+  const lane = reviewLane(settings);
+  const metadata = {
+    version: 1,
+    marker: operationalFailureMarker(kind, settings, shortSha),
+    kind: "operational-failure",
+    reviewKind: kind,
+    lane,
+    provider: settings.provider,
+    model: settings.model,
+    headSha,
+    repo: settings.repo,
+    pr: Number(pr.number),
+    createdAt: new Date().toISOString(),
+  };
+  return [
+    `<!-- ${BOT_MARKER}:${JSON.stringify(metadata)} -->`,
+    `## 6529bot ${config.label} could not run - ${shortSha}`,
+    "",
+    "**Verdict**: Review did not run due to an operational failure.",
+    "",
+    `Reason: ${reason}`,
+    "",
+    "No model provider was called before this failure. The bot will need the workflow or operator to rerun this review after the diff can be hydrated.",
+  ].join("\n");
+}
+
 function stripGeneratedHeading(body, config, shortSha) {
   const heading = `## 6529bot ${config.label} - ${shortSha}`;
   return stripReviewBotMetadata(body)
@@ -1424,6 +1716,10 @@ function commentMarker(kind, settings, shortSha) {
 
 function budgetSkipMarker(kind, settings, shortSha) {
   return `${BOT_MARKER}:budget-skip:${kind}:${reviewLane(settings)}:${shortSha}`;
+}
+
+function operationalFailureMarker(kind, settings, shortSha) {
+  return `${BOT_MARKER}:operational-failure:${kind}:${reviewLane(settings)}:${shortSha}`;
 }
 
 function reviewLane(settings) {
@@ -1644,12 +1940,15 @@ module.exports = {
   readSettings,
   buildComment,
   buildBudgetSkipComment,
+  buildOperationalFailureComment,
   reviewLane,
   commentCommandArgs,
   issueCommentsCommandArgs,
   commentMarker,
   budgetSkipMarker,
+  operationalFailureMarker,
   findPreviousReview,
+  getLocalPrDiffBundle,
   shouldSendAnthropicTemperature,
   openAIModelCapabilities,
   shouldSendOpenAIOption,
@@ -1660,7 +1959,9 @@ module.exports = {
   isTrustedMarkerAuthor,
   isSafeRepositoryPath,
   safeWorkspacePath,
+  changedFilesFromPatch,
   stripReviewBotMetadata,
+  shouldIncludeAgentPromptSection,
   httpJson,
   enforceInputLimit,
   truncate,

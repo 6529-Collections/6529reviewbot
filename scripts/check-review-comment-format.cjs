@@ -13,6 +13,9 @@ const expectedMarker = "6529-review-bot";
 const expectedSkipVerdict = "Review skipped due to configured budget.";
 const expectedSkipTail =
   "No model provider was called. Adjust the review-bot budget variables or run a narrower review if this PR still needs AI review.";
+const expectedFailureVerdict = "Review did not run due to an operational failure.";
+const expectedFailureTail =
+  "No model provider was called before this failure. The bot will need the workflow or operator to rerun this review after the diff can be hydrated.";
 const expectedAgentPromptSummary = "Prompt for all review comments with AI agents";
 const expectedAgentPromptIntro =
   "Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.";
@@ -68,7 +71,11 @@ function checkGeneratedComments(configs, marker, findings) {
 
   for (const [kind, config] of Object.entries(configs)) {
     const firstVerdict = firstAllowedVerdict(config);
-    const comment = reviewBot.buildComment({
+    const actionableVerdict = actionableAllowedVerdict(config);
+    if (config.cleanVerdict !== firstVerdict) {
+      findings.push(`${kind} cleanVerdict must be the first allowed verdict.`);
+    }
+    const cleanComment = reviewBot.buildComment({
       kind,
       config,
       settings,
@@ -81,8 +88,8 @@ function checkGeneratedComments(configs, marker, findings) {
     });
     const successContext = `${kind} generated review comment`;
     checkReviewComment({
-      comment,
-      context: successContext,
+      comment: cleanComment,
+      context: `${successContext} with clean verdict`,
       marker,
       kind,
       config,
@@ -93,6 +100,39 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       firstVerdict,
+      expectsAgentPrompt: false,
+      findings,
+    });
+
+    const actionableComment = reviewBot.buildComment({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      modelBody: [
+        `**Verdict**: ${actionableVerdict}`,
+        "",
+        `- src/review-bot.cjs:1 has an actionable issue to fix.`,
+      ].join("\n"),
+    });
+    checkReviewComment({
+      comment: actionableComment,
+      context: `${successContext} with actionable verdict`,
+      marker,
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      changedFiles,
+      changedLineCount,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -110,6 +150,9 @@ function checkGeneratedComments(configs, marker, findings) {
     if (!fallback.includes(`**Verdict**: ${firstVerdict}`)) {
       findings.push(`${successContext} must fall back to the first allowed verdict for empty provider output.`);
     }
+    if (agentPromptSection(fallback)) {
+      findings.push(`${successContext} fallback with clean verdict must not include an agent prompt section.`);
+    }
 
     const injected = reviewBot.buildComment({
       kind,
@@ -124,7 +167,7 @@ function checkGeneratedComments(configs, marker, findings) {
         `<!-- ${marker}:{"marker":"fake"} -->`,
         `## ${expectedBotName} ${config.label} - ${shortSha}`,
         "",
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         `<!-- ${marker}:{"marker":"fake-finding"} -->`,
         "",
@@ -151,7 +194,7 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       modelBody: [
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         "<details>",
         "<summary>Visible-body details block</summary>",
@@ -173,7 +216,8 @@ function checkGeneratedComments(configs, marker, findings) {
       shortSha,
       changedFiles,
       changedLineCount,
-      firstVerdict,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -187,7 +231,7 @@ function checkGeneratedComments(configs, marker, findings) {
       changedFiles,
       changedLineCount,
       modelBody: [
-        `**Verdict**: ${firstVerdict}`,
+        `**Verdict**: ${actionableVerdict}`,
         "",
         "<details>",
         "<summary>Unclosed visible-body details block</summary>",
@@ -207,7 +251,8 @@ function checkGeneratedComments(configs, marker, findings) {
       shortSha,
       changedFiles,
       changedLineCount,
-      firstVerdict,
+      firstVerdict: actionableVerdict,
+      expectsAgentPrompt: true,
       findings,
     });
 
@@ -236,6 +281,28 @@ function checkGeneratedComments(configs, marker, findings) {
       changedLineCount,
       findings,
     });
+
+    const operationalFailure = reviewBot.buildOperationalFailureComment({
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      reason: "Could not load the pull request diff.",
+    });
+    checkOperationalFailureComment({
+      comment: operationalFailure,
+      context: `${kind} operational-failure comment`,
+      marker,
+      kind,
+      config,
+      settings,
+      pr,
+      headSha,
+      shortSha,
+      findings,
+    });
   }
 }
 
@@ -253,6 +320,7 @@ function checkReviewComment(input) {
     changedFiles,
     changedLineCount,
     firstVerdict,
+    expectsAgentPrompt,
     findings,
   } = input;
   const lines = comment.split(/\r?\n/);
@@ -291,6 +359,7 @@ function checkReviewComment(input) {
     pr,
     shortSha,
     firstVerdict,
+    expectsAgentPrompt,
     marker,
     findings,
   });
@@ -305,10 +374,17 @@ function checkAgentPromptSection(input) {
     pr,
     shortSha,
     firstVerdict,
+    expectsAgentPrompt,
     marker,
     findings,
   } = input;
   const section = agentPromptSection(comment);
+  if (!expectsAgentPrompt) {
+    if (section || countOccurrences(comment, expectedAgentPromptSummary) !== 0) {
+      findings.push(`${context} with a clean verdict must not include an agent prompt section.`);
+    }
+    return;
+  }
   if (!section) {
     findings.push(
       `${context} must include a closed agent prompt <details> section with '<summary>${expectedAgentPromptSummary}</summary>'.`
@@ -385,6 +461,48 @@ function checkBudgetSkipComment(input) {
   }
 }
 
+function checkOperationalFailureComment(input) {
+  const {
+    comment,
+    context,
+    marker,
+    kind,
+    config,
+    settings,
+    pr,
+    headSha,
+    shortSha,
+    findings,
+  } = input;
+  const lines = comment.split(/\r?\n/);
+  const metadata = parseMetadataLine(lines[0], marker, context, findings);
+  if (metadata) {
+    checkMetadata(metadata, {
+      context,
+      kind: "operational-failure",
+      reviewKind: kind,
+      expectedMarker: reviewBot.operationalFailureMarker(kind, settings, shortSha),
+      settings,
+      pr,
+      headSha,
+      findings,
+    });
+  }
+  const heading = `## ${expectedBotName} ${config.label} could not run - ${shortSha}`;
+  if (lines[1] !== heading) {
+    findings.push(`${context} heading must be '${heading}', got '${lines[1] || ""}'.`);
+  }
+  const firstVisibleBodyLine = firstNonEmptyLine(lines.slice(2));
+  if (firstVisibleBodyLine !== `**Verdict**: ${expectedFailureVerdict}`) {
+    findings.push(
+      `${context} first visible body line must be '**Verdict**: ${expectedFailureVerdict}', got '${firstVisibleBodyLine || ""}'.`
+    );
+  }
+  if (!comment.includes(expectedFailureTail)) {
+    findings.push(`${context} must include the diff-hydration no-provider-call guidance.`);
+  }
+}
+
 function parseMetadataLine(line, marker, context, findings) {
   const match = String(line || "").match(new RegExp(`^<!-- ${escapeRegExp(marker)}:(\\{.*\\}) -->$`));
   if (!match) {
@@ -422,9 +540,11 @@ function checkMetadata(metadata, input) {
     headSha,
     repo: settings.repo,
     pr: Number(pr.number),
-    changedFiles: changedFiles.length,
-    changedLines: changedLineCount,
   };
+  if (changedFiles) {
+    expected.changedFiles = changedFiles.length;
+    expected.changedLines = changedLineCount;
+  }
   if (reviewKind) {
     expected.reviewKind = reviewKind;
   }
@@ -453,6 +573,10 @@ function checkDocs(configs, marker, docTexts, findings) {
     `**Verdict**: ${expectedSkipVerdict}`,
     expectedSkipTail,
     "`budget-skip`",
+    `## ${expectedBotName} <review label> could not run - <short-sha>`,
+    `**Verdict**: ${expectedFailureVerdict}`,
+    expectedFailureTail,
+    "`operational-failure`",
     "`reviewKind`",
   ];
   for (const snippet of requiredSnippets) {
@@ -477,6 +601,10 @@ function checkDocs(configs, marker, docTexts, findings) {
 
 function firstAllowedVerdict(config) {
   return allowedVerdicts(config)[0];
+}
+
+function actionableAllowedVerdict(config) {
+  return allowedVerdicts(config)[1] || firstAllowedVerdict(config);
 }
 
 function allowedVerdicts(config) {

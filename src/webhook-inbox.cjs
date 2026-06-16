@@ -318,6 +318,7 @@ function normalizeInboxEvent(event = {}) {
     actor: boundedString(event.actor),
     sender: boundedString(event.sender),
     headSha: boundedString(event.headSha),
+    headRefName: boundedString(event.headRefName),
     baseSha: boundedString(event.baseSha),
     headRepoFullName: boundedString(event.headRepoFullName),
     baseRepoFullName: boundedString(event.baseRepoFullName),

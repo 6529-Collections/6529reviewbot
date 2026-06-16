@@ -1545,6 +1545,53 @@ assert.equal(reviewBot.isSafeRepositoryPath("/etc/passwd"), false);
 assert.equal(reviewBot.isSafeRepositoryPath(".git/config"), false);
 assert.equal(reviewBot.stripReviewBotMetadata('hello <!-- 6529-review-bot:{"x":1} --> world'), "hello  world");
 assert.equal(reviewBot.truncate("abcdef", 0), "");
+assert.deepEqual(
+  reviewBot.changedFilesFromPatch([
+    "diff --git a/src/one.cjs b/src/one.cjs",
+    "index 1..2 100644",
+    "diff --git a/docs/two.md b/docs/two.md",
+  ].join("\n")),
+  ["src/one.cjs", "docs/two.md"]
+);
+const localDiffWorkspace = fs.mkdtempSync(path.join(os.tmpdir(), "6529-review-local-diff-"));
+try {
+  const gitLocal = (args) =>
+    childProcess.execFileSync("git", args, {
+      cwd: localDiffWorkspace,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }).trim();
+  gitLocal(["init"]);
+  gitLocal(["config", "user.email", "reviewbot@example.test"]);
+  gitLocal(["config", "user.name", "6529reviewbot smoke"]);
+  fs.mkdirSync(path.join(localDiffWorkspace, "src"));
+  fs.writeFileSync(path.join(localDiffWorkspace, "src", "example.txt"), "first\n", "utf8");
+  gitLocal(["add", "."]);
+  gitLocal(["commit", "-m", "base"]);
+  const baseSha = gitLocal(["rev-parse", "HEAD"]);
+  fs.writeFileSync(path.join(localDiffWorkspace, "src", "example.txt"), "first\nsecond\n", "utf8");
+  gitLocal(["commit", "-am", "head"]);
+  const headSha = gitLocal(["rev-parse", "HEAD"]);
+  const localDiffBundle = reviewBot.getLocalPrDiffBundle(
+    {
+      workspace: localDiffWorkspace,
+      repo: "6529-Collections/example",
+      prNumber: "1",
+      githubToken: "",
+    },
+    {
+      baseRefOid: baseSha,
+      headRefOid: headSha,
+      headRepository: { nameWithOwner: "6529-Collections/example" },
+    },
+    headSha
+  );
+  assert.equal(localDiffBundle.source, "local-git");
+  assert.deepEqual(localDiffBundle.changedFiles, ["src/example.txt"]);
+  assert(localDiffBundle.diff.includes("+second"));
+} finally {
+  fs.rmSync(localDiffWorkspace, { recursive: true, force: true });
+}
 assert.equal(reviewBot.enforceInputLimit({ system: "system", user: "abcdef" }, 3).user, "");
 const providerErrorSummary = reviewBot.providerErrorSummary({
   error: {
@@ -3368,6 +3415,7 @@ const webhookBody = Buffer.from(JSON.stringify({
     user: { login: "author" },
     head: {
       sha: "abc123",
+      ref: "feature/branch",
       repo: { full_name: "6529-Collections/example" },
     },
     base: {
@@ -3402,6 +3450,7 @@ const normalizedPullRequest = githubWebhook.normalizeGitHubWebhook(
 );
 assert.equal(normalizedPullRequest.kind, "pull_request");
 assert.equal(normalizedPullRequest.shouldEnqueue, true);
+assert.equal(normalizedPullRequest.headRefName, "feature/branch");
 assert.deepEqual(normalizedPullRequest.reviewKinds, ["general", "wcag", "i18n", "security"]);
 assert.equal(
   repositoryConfig.repositoryConfigRefForEvent(normalizedPullRequest),
@@ -3488,6 +3537,7 @@ const githubAppIntegration = githubAppAuth.createGitHubAppIntegration({
           user: { login: "current-author" },
           head: {
             sha: "current-command-head",
+            ref: "current-command-branch",
             repo: { full_name: "6529-Collections/example" },
           },
           base: {
@@ -3742,6 +3792,8 @@ const reviewJobs = reviewJob.createReviewJobs(
 assert.equal(reviewJobs.length, 8);
 assert.equal(reviewJobs.filter((job) => job.reviewKind === "general").length, 2);
 assert.equal(reviewJobs[0].requestor, "maintainer");
+assert.equal(reviewJobs[0].headRefName, "feature/branch");
+assert.equal(reviewJobs[0].baseSha, "def456");
 assert.equal(reviewJobs[0].provider, "anthropic");
 assert.equal(reviewJobs[1].provider, "openai");
 const globallyDisabledRuntime = runtimeControl.applyRuntimeControlToEvent(
@@ -3808,6 +3860,11 @@ assert.equal(workerAdapter.jobEnv(reviewJobs[0]).GH_REPO, "6529-Collections/exam
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEW_KIND, "general");
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEWBOT_GITHUB_INSTALLATION_ID, "99");
 assert.equal(workerAdapter.jobEnv(reviewJobs[0]).REVIEWBOT_RUN_KEY, reviewJobs[0].runKey);
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).PR_BASE_SHA, "def456");
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).PR_HEAD_REF, "feature/branch");
+assert.equal(workerAdapter.jobEnv(reviewJobs[0]).PR_HEAD_REPO, "6529-Collections/example");
+assert.equal(workerAdapter.safeHeadRefDisplayName("feature/a\r\nfake"), "feature/a fake");
+assert.equal(workerAdapter.safeHeadRefDisplayName("x".repeat(100)).length, 80);
 assert.match(workerAdapter.reviewCommandArgs(reviewJobs[0])[0], /general-pr-review\.cjs$/);
 const localWorkerResult = workerAdapter.runReviewJobLocally(reviewJobs[0], {
   policy: workerAdapter.workerAdapterPolicyFromEnv({
@@ -3904,6 +3961,8 @@ assert.deepEqual(
   "6529-Collections/example"
 );
 assert.deepEqual(workerAdapter.githubWorkflowFields(forkReviewJob).head_repo, "external/fork");
+assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).base_sha, "def456");
+assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).head_ref, "feature/branch");
 assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).installation_id, "99");
 assert.equal(workerAdapter.githubWorkflowFields(forkReviewJob).run_key, forkReviewJob.runKey);
 assert.equal(dispatchedWorkflow.args.includes("workflow"), true);
@@ -3911,6 +3970,8 @@ assert.equal(dispatchedWorkflow.args.includes("target_repo=6529-Collections/exam
 assert.equal(dispatchedWorkflow.args.includes(`run_key=${forkReviewJob.runKey}`), true);
 assert.equal(dispatchedWorkflow.args.includes("installation_id=99"), true);
 assert.equal(dispatchedWorkflow.args.includes("head_repo=external/fork"), true);
+assert.equal(dispatchedWorkflow.args.includes("base_sha=def456"), true);
+assert.equal(dispatchedWorkflow.args.includes("head_ref=feature/branch"), true);
 let apiDispatchRequest = null;
 let apiDispatchAttempts = 0;
 const apiDispatchResultPromise = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
@@ -5516,6 +5577,7 @@ appServer.handleGitHubWebhook({
   assert.equal(githubRepoConfig.config.enabled, false);
   const hydratedCommentEvent = await hydratedCommentEventPromise;
   assert.equal(hydratedCommentEvent.headSha, "current-command-head");
+  assert.equal(hydratedCommentEvent.headRefName, "current-command-branch");
   assert.equal(hydratedCommentEvent.baseSha, "current-command-base");
   assert.equal(hydratedCommentEvent.prAuthor, "current-author");
   assert.equal(
@@ -6235,6 +6297,8 @@ appServer.handleGitHubWebhook({
   assert.equal(apiDispatchRequest.body.ref, "main");
   assert.equal(apiDispatchRequest.body.inputs.target_repo, "6529-Collections/example");
   assert.equal(apiDispatchRequest.body.inputs.head_repo, "external/fork");
+  assert.equal(apiDispatchRequest.body.inputs.base_sha, "def456");
+  assert.equal(apiDispatchRequest.body.inputs.head_ref, "feature/branch");
   assert.equal(apiDispatchRequest.body.inputs.installation_id, "99");
   const missingApiTokenResult = await missingApiTokenResultPromise;
   assert.equal(missingApiTokenResult.accepted, false);
@@ -7243,6 +7307,7 @@ appServer.handleGitHubWebhook({
     hydrateEvent: async (event) => ({
       ...event,
       headSha: "hydrated-command-head",
+      headRefName: "hydrated-command-branch",
       baseSha: "hydrated-command-base",
       headRepoFullName: "6529-Collections/example",
       baseRepoFullName: "6529-Collections/example",
@@ -7265,8 +7330,10 @@ appServer.handleGitHubWebhook({
   });
   assert.equal(commandWebhookResult.statusCode, 202);
   assert.equal(commandWebhookResult.body.event.headSha, "hydrated-command-head");
+  assert.equal(commandWebhookResult.body.event.headRefName, "hydrated-command-branch");
   assert.equal(commandJobs.length, 2);
   assert.equal(commandJobs.every((job) => job.headSha === "hydrated-command-head"), true);
+  assert.equal(commandJobs.every((job) => job.headRefName === "hydrated-command-branch"), true);
   assert.deepEqual(
     commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
     ["security:anthropic", "security:openai"]
@@ -7353,6 +7420,7 @@ appServer.handleGitHubWebhook({
     hydrateEvent: async (event) => ({
       ...event,
       headSha: "inbox-head",
+      headRefName: "inbox-branch",
       baseSha: "inbox-base",
       headRepoFullName: "6529-Collections/example",
       baseRepoFullName: "6529-Collections/example",
@@ -7378,6 +7446,7 @@ appServer.handleGitHubWebhook({
   assert.equal(inboxProcessed[0][0], "processed");
   assert.equal(inboxProcessorJobs.length, 2);
   assert.equal(inboxProcessorJobs[0].headSha, "inbox-head");
+  assert.equal(inboxProcessorJobs[0].headRefName, "inbox-branch");
   const defaultQueueResult = await appServer.handleGitHubWebhook({
     headers: {
       "x-hub-signature-256": webhookSignature,

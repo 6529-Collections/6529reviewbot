@@ -21,6 +21,8 @@ const expectedDispatchFields = [
   "head_repo",
   "pr_number",
   "head_sha",
+  "base_sha",
+  "head_ref",
   "review_kind",
   "provider",
   "model",
@@ -33,6 +35,9 @@ const expectedLocalEnvKeys = [
   "PR_NUMBER",
   "GITHUB_PR_NUMBER",
   "PR_HEAD_SHA",
+  "PR_BASE_SHA",
+  "PR_HEAD_REF",
+  "PR_HEAD_REPO",
   "REVIEW_KIND",
   "REVIEW_PROVIDER",
   "REVIEW_MODEL",
@@ -154,12 +159,27 @@ function checkJobContracts(findings) {
   if (!arraysEqual(Object.keys(env), expectedLocalEnvKeys)) {
     findings.push(`jobEnv keys must be ${JSON.stringify(expectedLocalEnvKeys)}, got ${JSON.stringify(Object.keys(env))}.`);
   }
+  if (env.PR_BASE_SHA !== job.baseSha) {
+    findings.push(`jobEnv PR_BASE_SHA must use job baseSha, got ${env.PR_BASE_SHA}.`);
+  }
+  if (env.PR_HEAD_REF !== job.headRefName) {
+    findings.push(`jobEnv PR_HEAD_REF must use job headRefName, got ${env.PR_HEAD_REF}.`);
+  }
+  if (env.PR_HEAD_REPO !== job.headRepoFullName) {
+    findings.push(`jobEnv PR_HEAD_REPO must use the job head repo, got ${env.PR_HEAD_REPO}.`);
+  }
   const fields = workerAdapter.githubWorkflowFields(job);
   if (!arraysEqual(Object.keys(fields), expectedDispatchFields)) {
     findings.push(`github workflow fields must be ${JSON.stringify(expectedDispatchFields)}, got ${JSON.stringify(Object.keys(fields))}.`);
   }
   if (fields.head_repo !== job.headRepoFullName) {
     findings.push(`github workflow head_repo must use job headRepoFullName, got ${fields.head_repo}.`);
+  }
+  if (fields.base_sha !== job.baseSha) {
+    findings.push(`github workflow base_sha must use job baseSha, got ${fields.base_sha}.`);
+  }
+  if (fields.head_ref !== workerAdapter.safeHeadRefDisplayName(job.headRefName)) {
+    findings.push(`github workflow head_ref must use sanitized job headRefName, got ${fields.head_ref}.`);
   }
   if (fields.installation_id !== String(job.installationId)) {
     findings.push(`github workflow installation_id must be stringified, got ${fields.installation_id}.`);
@@ -229,10 +249,16 @@ function checkWorkflowTemplate(workflowText, findings) {
   if (!arraysEqual(inputNames, expectedDispatchFields)) {
     findings.push(`review-job workflow inputs must be ${JSON.stringify(expectedDispatchFields)}, got ${JSON.stringify(inputNames)}.`);
   }
-  for (const field of expectedDispatchFields.filter((field) => field !== "requestor")) {
+  for (const field of expectedDispatchFields.filter((field) => !["base_sha", "head_ref", "requestor"].includes(field))) {
     if (inputs[field]?.required !== true) {
       findings.push(`review-job workflow input ${field} must be required.`);
     }
+  }
+  if (inputs.base_sha?.required !== false) {
+    findings.push("review-job workflow input base_sha must remain optional.");
+  }
+  if (inputs.head_ref?.required !== false) {
+    findings.push("review-job workflow input head_ref must remain optional.");
   }
   if (inputs.requestor?.required !== false) {
     findings.push("review-job workflow input requestor must remain optional.");
@@ -263,6 +289,8 @@ function checkWorkflowTemplate(workflowText, findings) {
     "node bin/github-app-installation-token.cjs",
     "npm run worker:job -- -- --job-file job.json",
     "REVIEW_WORKSPACE: ${{ github.workspace }}/target",
+    "PR_BASE_SHA: ${{ inputs.base_sha }}",
+    "run-name: \"${{ inputs.target_repo }}#${{ inputs.pr_number }} ${{ inputs.review_kind }} @ ${{ inputs.head_ref || inputs.head_sha }}\"",
   ];
   for (const snippet of requiredSnippets) {
     if (!normalized.includes(normalizeWhitespace(snippet))) {
@@ -317,6 +345,8 @@ function sampleReviewJob() {
     headRepoFullName: "6529-Collections/fork-repo",
     prNumber: 42,
     headSha: "abcdef1234567890abcdef1234567890abcdef12",
+    baseSha: "1234567890abcdef1234567890abcdef12345678",
+    headRefName: "feature/review-job-run-name\nignored",
     reviewKind: "security",
     provider: "anthropic",
     model: "claude-opus-4-8",

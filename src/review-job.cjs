@@ -132,6 +132,7 @@ function createReviewJob(event, reviewKind, lane, controls = {}) {
     prNumber: event.prNumber || null,
     prAuthor: event.prAuthor || "",
     headSha: event.headSha || "",
+    headRefName: event.headRefName || "",
     baseSha: event.baseSha || "",
     headRepoFullName: event.headRepoFullName || "",
     baseRepoFullName: event.baseRepoFullName || event.repository?.fullName || "",

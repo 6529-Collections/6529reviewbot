@@ -30,6 +30,8 @@ Each job contains only routing and audit data:
   "trigger": "pull_request",
   "prNumber": 12,
   "headSha": "abc123...",
+  "baseSha": "def456...",
+  "headRefName": "feature/review-target",
   "requestor": "maintainer",
   "reviewKind": "security",
   "provider": "anthropic",
@@ -129,6 +131,9 @@ environment:
 GH_REPO=<job.repository.fullName>
 PR_NUMBER=<job.prNumber>
 PR_HEAD_SHA=<job.headSha>
+PR_BASE_SHA=<job.baseSha>
+PR_HEAD_REF=<job.headRefName>
+PR_HEAD_REPO=<job.headRepoFullName>
 REVIEW_KIND=<job.reviewKind>
 REVIEW_PROVIDER=<job.provider>
 REVIEW_MODEL=<job.model>

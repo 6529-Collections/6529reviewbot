@@ -180,6 +180,7 @@ function normalizePullRequestEvent(base, pullRequest) {
     prNumber: pullRequest.number || null,
     prAuthor: pullRequest.user?.login || "",
     headSha: pullRequest.head?.sha || "",
+    headRefName: pullRequest.head?.ref || "",
     headRepoFullName: pullRequest.head?.repo?.full_name || "",
     baseSha: pullRequest.base?.sha || "",
     baseRepoFullName: pullRequest.base?.repo?.full_name || base.repository.fullName,
