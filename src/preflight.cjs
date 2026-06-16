@@ -255,14 +255,20 @@ function runPreflight(options = {}) {
     if (missing.length) {
       throw new Error(`Missing provider keys for executable local work: ${missing.join(", ")}`);
     }
+    const expectedKeys = providers.map((provider) => PROVIDER_KEYS[provider]).filter(Boolean);
     if (state.workerPolicy?.mode === "github_actions") {
       addWarning(
         result,
         "provider_keys",
-        "github_actions provider keys must be configured as central worker secrets."
+        `github_actions provider keys are expected as central worker secrets, not App Runner env: ${expectedKeys.join(", ") || "none"}.`
       );
     }
-    return { providers, checkedLocally: missing.length === 0 };
+    return {
+      providers,
+      checkedLocally: state.workerPolicy?.mode !== "github_actions",
+      expectedCentralWorkerSecrets:
+        state.workerPolicy?.mode === "github_actions" ? expectedKeys : [],
+    };
   });
 
   check(result, "usage_ledger", () => {
@@ -396,7 +402,7 @@ function shouldRequireProviderKey(provider, workerPolicy = {}, profile = "server
   if (!PROVIDER_KEYS[provider]) {
     return false;
   }
-  return workerPolicy.mode === "local" || profile === "worker";
+  return workerPolicy.mode === "local";
 }
 
 function formatPreflightResult(result) {
