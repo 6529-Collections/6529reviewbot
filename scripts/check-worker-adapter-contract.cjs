@@ -156,12 +156,18 @@ function checkJobContracts(findings) {
   if (!arraysEqual(Object.keys(env), expectedLocalEnvKeys)) {
     findings.push(`jobEnv keys must be ${JSON.stringify(expectedLocalEnvKeys)}, got ${JSON.stringify(Object.keys(env))}.`);
   }
+  if (env.PR_HEAD_REF !== job.headRefName) {
+    findings.push(`jobEnv PR_HEAD_REF must use job headRefName, got ${env.PR_HEAD_REF}.`);
+  }
   const fields = workerAdapter.githubWorkflowFields(job);
   if (!arraysEqual(Object.keys(fields), expectedDispatchFields)) {
     findings.push(`github workflow fields must be ${JSON.stringify(expectedDispatchFields)}, got ${JSON.stringify(Object.keys(fields))}.`);
   }
   if (fields.head_repo !== job.headRepoFullName) {
     findings.push(`github workflow head_repo must use job headRepoFullName, got ${fields.head_repo}.`);
+  }
+  if (fields.head_ref !== job.headRefName) {
+    findings.push(`github workflow head_ref must use job headRefName, got ${fields.head_ref}.`);
   }
   if (fields.installation_id !== String(job.installationId)) {
     findings.push(`github workflow installation_id must be stringified, got ${fields.installation_id}.`);
@@ -322,6 +328,7 @@ function sampleReviewJob() {
     headRepoFullName: "6529-Collections/fork-repo",
     prNumber: 42,
     headSha: "abcdef1234567890abcdef1234567890abcdef12",
+    headRefName: "feature/review-job-run-name",
     reviewKind: "security",
     provider: "anthropic",
     model: "claude-opus-4-8",
