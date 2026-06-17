@@ -319,6 +319,7 @@ REVIEWBOT_WORKER_CWD=
 REVIEWBOT_WORKER_LOCAL_TIMEOUT_MS=900000
 REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW=responsiveness-review.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
 REVIEWBOT_WORKER_GITHUB_TOKEN=
@@ -332,6 +333,7 @@ REVIEWBOT_WORKER_GITHUB_FETCH_RETRIES=2
 REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS=500
 REVIEWBOT_WORKER_GH_BIN=gh
 REVIEWBOT_WORKER_INCLUDE_OUTPUT=false
+REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD=1
 ```
 
 `noop` is the safe default. Use `local` for controlled local workers and
@@ -353,6 +355,12 @@ non-standard worker environments. Set
 `REVIEWBOT_WORKER_INCLUDE_OUTPUT=true` only for controlled diagnostics; worker
 stdout/stderr summaries are redacted and tail-limited, but they still belong in
 operator-owned logs.
+Provider-backed jobs dispatch to `REVIEWBOT_WORKER_GITHUB_WORKFLOW`.
+Responsiveness jobs dispatch to
+`REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW`, record provider `github`,
+model `actions-ubuntu-latest`, and use
+`REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD` for budget admission and usage
+events.
 See [worker-adapters.md](worker-adapters.md).
 
 Partial worker App credential overrides fail preflight. Set both

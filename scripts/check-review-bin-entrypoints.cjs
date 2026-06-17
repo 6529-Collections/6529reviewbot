@@ -43,7 +43,10 @@ function checkReviewBinEntrypoints(options = {}) {
       continue;
     }
     const binText = options.binTexts?.[bin] || fs.readFileSync(binPath, "utf8");
-    const expectedCall = `require("../src/review-bot.cjs").main("${reviewKind}")`;
+    const expectedCall =
+      reviewKind === "responsiveness"
+        ? 'require("../src/responsiveness-review.cjs").main()'
+        : `require("../src/review-bot.cjs").main("${reviewKind}")`;
     if (!binText.includes(expectedCall)) {
       findings.push(`bin/${bin} must call ${expectedCall}.`);
     }

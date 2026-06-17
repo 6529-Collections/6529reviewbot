@@ -1,9 +1,11 @@
 # Review Workflows
 
-The bot supports five review modes.
+The bot supports six review modes.
 
 In the central GitHub App, a trigger becomes one or more review jobs. Each job
-has one review mode and one provider/model lane. See
+has one review mode and one lane. Model-backed jobs use provider/model lanes;
+the responsiveness job uses the deterministic `github:actions-ubuntu-latest`
+lane for GitHub Actions budget accounting. See
 [review-jobs.md](review-jobs.md).
 
 Maintainer comment triggers are documented in
@@ -93,6 +95,29 @@ Focus:
 - JWT and session handling;
 - transaction integrity;
 - XSS, SSRF, redirects, injection, and untrusted media.
+
+## Responsiveness Review
+
+Entrypoint:
+
+```bash
+node bin/responsiveness-review.cjs
+```
+
+The central worker dispatches responsiveness jobs to
+`.github/workflows/responsiveness-review.yml`. The benchmark job runs target PR
+frontend code on GitHub-hosted `ubuntu-latest` without model provider keys. A
+separate comment job posts the 6529bot result with provider `github`, model
+`actions-ubuntu-latest`, and zero token usage.
+
+Focus:
+
+- changed-route web desktop and mobile viewport regressions;
+- native mobile shell behavior under Capacitor shims;
+- Electron desktop shell behavior under Electron user-agent shims;
+- horizontal overflow, visible framework error overlays, navigation failures,
+  and fatal console errors;
+- deterministic runner findings only.
 
 ## Comment Format
 

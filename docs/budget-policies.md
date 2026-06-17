@@ -76,7 +76,12 @@ Supported scopes:
 - `pr`, with `owner/repo#123`;
 - `provider`, with `anthropic`, `openai`, or `openrouter`;
 - `model`, with an exact configured model id;
-- `review_kind`, with `general`, `followup`, `wcag`, `i18n`, or `security`.
+- `review_kind`, with `general`, `followup`, `wcag`, `i18n`, `security`, or
+  `responsiveness`.
+
+Responsiveness jobs also record provider `github` and model
+`actions-ubuntu-latest` for GitHub Actions compute budget accounting. That is
+not a model-provider lane and does not require a provider API key.
 
 Older dogfood ledgers may still have a database check constraint from before
 `org`, `requestor`, and `pr` were finalized. Before applying budget policies

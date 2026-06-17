@@ -1,33 +1,36 @@
 # Responsiveness Runner
 
-The responsiveness runner is a manual, non-production benchmark lane for
-frontend pull requests. It checks a target PR by installing the target
+The responsiveness runner checks frontend pull requests by installing the target
 repository, starting its local Next.js server, and running a temporary
 Playwright harness across web desktop, web mobile, native mobile, and Electron
 desktop contexts.
 
-It is intentionally not wired into target repositories yet. Use it from this
-repository's manual `6529bot Responsiveness` workflow while evaluating speed,
-signal quality, and failure modes.
+There are two workflow entrypoints:
+
+- `.github/workflows/responsiveness-review.yml` is the central production
+  review workflow. The benchmark job runs target PR code on GitHub-hosted
+  `ubuntu-latest` without model provider keys. A separate comment job posts a
+  normal 6529bot PR comment and writes usage with provider `github`, model
+  `actions-ubuntu-latest`.
+- `.github/workflows/responsiveness.yml` is a manual benchmark workflow for
+  speed, signal-quality, and route-inference experiments.
 
 ## Runner Size
 
-The workflow defaults to the GitHub larger-runner label:
+The manual workflow defaults to the GitHub-hosted runner label:
 
 ```text
-ubuntu-latest-8-cores
+ubuntu-latest
 ```
 
-For 6529, that label currently maps to a repo-scoped self-hosted Ubuntu runner
-for `6529reviewbot` with 8 vCPU, 32 GB RAM, and a 300 GB encrypted gp3 root
-volume. If the organization later uses a GitHub-hosted larger runner or a
-different self-hosted label, pass that label through the workflow's
-`runner_label` input.
+The production workflow also uses GitHub-hosted `ubuntu-latest`. If the
+organization later provisions a larger GitHub-hosted runner label, pass that
+label through the manual workflow's `runner_label` input first and only wire it
+into production after measuring signal and cost.
 
-Keep this workflow manual-only until the runner isolation story is stronger.
-The benchmark installs dependencies and runs the target frontend PR, so it
-executes target repository code on the selected runner. Do not put production
-provider keys, AWS app credentials, or other privileged secrets on this runner.
+The benchmark installs dependencies and runs target repository code, so keep
+provider keys and AWS app credentials out of the benchmark job. The production
+workflow posts comments and writes ledgers from a separate job.
 
 ## Manual Workflow
 
@@ -36,7 +39,7 @@ Run `.github/workflows/responsiveness.yml` from the Actions tab with:
 ```text
 target_repo: 6529-Collections/6529seize-frontend
 pr_number:  <existing frontend PR number>
-runner_label: ubuntu-latest-8-cores
+runner_label: ubuntu-latest
 contexts: web-desktop,web-mobile,native-mobile,electron-desktop
 max_pages: 12
 workers: 4

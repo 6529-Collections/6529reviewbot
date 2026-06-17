@@ -69,7 +69,7 @@ version: 1
 enabled: true
 
 reviewKinds:
-  allowed: [general, followup, wcag, i18n, security]
+  allowed: [general, followup, wcag, i18n, security, responsiveness]
   initial: [general, wcag, i18n, security]
   followup: [followup]
 
@@ -127,7 +127,12 @@ followup
 wcag
 i18n
 security
+responsiveness
 ```
+
+`reviewKinds.initial` may include any allowed kind except `followup`.
+`responsiveness` runs the deterministic GitHub Actions viewport workflow, not
+a model provider lane.
 
 `lanes` may be written as objects:
 

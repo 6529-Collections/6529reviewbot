@@ -21,6 +21,10 @@ const REVIEW_KIND_BINS = {
   wcag: "wcag-aa-analysis.cjs",
   i18n: "i18n-analysis.cjs",
   security: "security-analysis.cjs",
+  responsiveness: "responsiveness-review.cjs",
+};
+const REVIEW_KIND_WORKFLOWS = {
+  responsiveness: "responsiveness-review.yml",
 };
 
 function workerAdapterPolicyFromEnv(env = process.env) {
@@ -39,6 +43,9 @@ function workerAdapterPolicyFromEnv(env = process.env) {
     ),
     githubRepo: env.REVIEWBOT_WORKER_GITHUB_REPO || env.GITHUB_REPOSITORY || "",
     githubWorkflow: env.REVIEWBOT_WORKER_GITHUB_WORKFLOW || "review-job.yml",
+    githubResponsivenessWorkflow:
+      env.REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW ||
+      REVIEW_KIND_WORKFLOWS.responsiveness,
     githubRef: env.REVIEWBOT_WORKER_GITHUB_REF || "main",
     githubDispatchMode: enumValue(
       env.REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE || "auto",
@@ -184,11 +191,12 @@ function dispatchReviewJobToGitHubActions(job, options = {}) {
 function dispatchReviewJobToGitHubActionsCli(job, options = {}) {
   const policy = options.policy || workerAdapterPolicyFromEnv(options.env);
   const runner = options.spawnSync || spawnSync;
+  const workflow = githubWorkflowForJob(job, policy);
   const fields = githubWorkflowFields(job);
   const args = [
     "workflow",
     "run",
-    policy.githubWorkflow,
+    workflow,
     "--repo",
     policy.githubRepo,
     "--ref",
@@ -220,7 +228,7 @@ function dispatchReviewJobToGitHubActionsCli(job, options = {}) {
     dispatchMode: "gh",
     exitCode: result.status,
     ...outputSummary(result, options.includeOutput),
-    workflow: policy.githubWorkflow,
+    workflow,
     workflowRepo: policy.githubRepo,
     workflowRef: policy.githubRef,
   });
@@ -254,9 +262,10 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
   }
 
   const fields = githubWorkflowFields(job);
+  const workflow = githubWorkflowForJob(job, policy);
   const url =
     `${policy.githubApiUrl}/repos/${repoPath}/actions/workflows/` +
-    `${encodeURIComponent(policy.githubWorkflow)}/dispatches`;
+    `${encodeURIComponent(workflow)}/dispatches`;
   try {
     const response = await githubApiFetchWithRetry(fetchImpl, policy, url, {
       method: "POST",
@@ -281,7 +290,7 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
         response.status === 204
           ? ""
           : `GitHub API dispatch failed: ${response.status} ${diagnosticTail(bodyText, 500)}`.trim(),
-      workflow: policy.githubWorkflow,
+      workflow,
       workflowRepo: policy.githubRepo,
       workflowRef: policy.githubRef,
     });
@@ -290,7 +299,7 @@ async function dispatchReviewJobToGitHubActionsApi(job, options = {}) {
       adapter: "github_actions",
       dispatchMode: "api",
       reason: safeError(error),
-      workflow: policy.githubWorkflow,
+      workflow,
       workflowRepo: policy.githubRepo,
       workflowRef: policy.githubRef,
     });
@@ -365,6 +374,14 @@ function safeHeadRefDisplayName(value) {
 function reviewCommandArgs(job) {
   assertReviewJob(job);
   return [path.join(ROOT, "bin", REVIEW_KIND_BINS[job.reviewKind])];
+}
+
+function githubWorkflowForJob(job, policy = workerAdapterPolicyFromEnv()) {
+  assertReviewJob(job);
+  if (job.reviewKind === "responsiveness") {
+    return policy.githubResponsivenessWorkflow || REVIEW_KIND_WORKFLOWS.responsiveness;
+  }
+  return policy.githubWorkflow;
 }
 
 function assertReviewJob(job) {
@@ -555,6 +572,7 @@ module.exports = {
   DEFAULT_GITHUB_FETCH_RETRIES,
   GITHUB_DISPATCH_MODES,
   REVIEW_KIND_BINS,
+  REVIEW_KIND_WORKFLOWS,
   WORKER_MODES,
   createReviewJobEnqueuer,
   dispatchReviewJobToGitHubActions,
@@ -562,6 +580,7 @@ module.exports = {
   dispatchReviewJobToGitHubActionsCli,
   enqueueReviewJobsWithAdapter,
   githubRepoApiPath,
+  githubWorkflowForJob,
   githubWorkflowFields,
   headRepoFullNameForJob,
   jobEnv,

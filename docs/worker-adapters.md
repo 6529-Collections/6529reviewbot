@@ -41,6 +41,7 @@ followup -> bin/followup-commit-review.cjs
 wcag     -> bin/wcag-aa-analysis.cjs
 i18n     -> bin/i18n-analysis.cjs
 security -> bin/security-analysis.cjs
+responsiveness -> bin/responsiveness-review.cjs
 ```
 
 Workers must provide a safe `REVIEW_WORKSPACE` containing the target checkout.
@@ -53,6 +54,7 @@ path limits.
 REVIEWBOT_WORKER_ADAPTER=github_actions
 REVIEWBOT_WORKER_GITHUB_REPO=6529-Collections/6529reviewbot
 REVIEWBOT_WORKER_GITHUB_WORKFLOW=review-job.yml
+REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW=responsiveness-review.yml
 REVIEWBOT_WORKER_GITHUB_REF=main
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=auto|api|gh
 REVIEWBOT_WORKER_GITHUB_TOKEN=
@@ -132,7 +134,12 @@ worker's local diff fallback when GitHub's pull request diff API refuses a very
 large patch. `head_ref` is a sanitized display-only branch name for the Actions
 run name; workers must use immutable SHAs for checkout and diffing.
 
-The receiving workflow should validate the inputs, mint a short-lived
+Provider-backed review jobs dispatch to `REVIEWBOT_WORKER_GITHUB_WORKFLOW`.
+Responsiveness jobs dispatch to
+`REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW` and use provider `github`,
+model `actions-ubuntu-latest` for budget accounting.
+
+The receiving provider-backed workflow should validate the inputs, mint a short-lived
 installation token, check out `head_repo` at `head_sha` read-only, set
 provider/AWS secrets from the central bot environment, and run:
 

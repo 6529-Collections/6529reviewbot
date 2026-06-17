@@ -172,7 +172,7 @@ assert.deepEqual(
   reviewBot.usageMetadata(settings, { changedFiles: 1 }),
   { changedFiles: 1, requestor: "maintainer" }
 );
-assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 5);
+assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 6);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(
   budgetScopesCheck.dogfoodExampleScopes,
@@ -244,7 +244,7 @@ assert.throws(
     }),
   /alert notifier mode check found/
 );
-assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 5);
+assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 6);
 assert.equal(reviewCommentFormatCheck.expectedMarker, "6529-review-bot");
 assert.throws(
   () =>
@@ -3616,12 +3616,12 @@ assert.deepEqual(githubWebhook.parseReviewCommand("@6529bot review all").reviewK
 ]);
 assert.equal(githubWebhook.parseReviewCommand("/6529bot help").reviewKinds.length, 0);
 assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
-assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 12);
+assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 14);
 assert.throws(
   () => commentCommandsCheck.checkCommentCommands({ quiet: true, text: "# Comment Commands\n" }),
   /comment command docs check found/
 );
-assert.equal(reviewWorkflowKindsCheck.checkReviewWorkflowKinds().reviewKinds, 5);
+assert.equal(reviewWorkflowKindsCheck.checkReviewWorkflowKinds().reviewKinds, 6);
 assert.deepEqual(
   reviewWorkflowKindsCheck.fallbackJsonArrayForVariable(
     "vars.REVIEW_BOT_INITIAL_KINDS || '[\"general\",\"security\"]'",

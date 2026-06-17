@@ -13,6 +13,9 @@ const root = path.resolve(__dirname, "..");
 const workerDocs = ["docs/worker-adapters.md", "docs/deployment.md", "docs/architecture.md"];
 const expectedWorkerModes = ["noop", "local", "github_actions"];
 const expectedDispatchModes = ["auto", "api", "gh"];
+const expectedProviderReviewKinds = Object.keys(REVIEW_KIND_CONFIGS).filter(
+  (kind) => kind !== "responsiveness"
+);
 const expectedDispatchFields = [
   "job_id",
   "run_key",
@@ -103,6 +106,7 @@ function checkPolicyParsing(findings) {
   const expectedDefaults = {
     mode: "noop",
     githubWorkflow: "review-job.yml",
+    githubResponsivenessWorkflow: "responsiveness-review.yml",
     githubRef: "main",
     githubDispatchMode: "auto",
     githubApiUrl: workerAdapter.DEFAULT_GITHUB_API_URL,
@@ -192,6 +196,23 @@ function checkJobContracts(findings) {
   if (!workerAdapter.reviewCommandArgs(job)[0].endsWith(path.join("bin", "security-analysis.cjs"))) {
     findings.push("security review jobs must route to bin/security-analysis.cjs.");
   }
+  const responsivenessJob = {
+    ...job,
+    reviewKind: "responsiveness",
+    provider: "github",
+    model: "actions-ubuntu-latest",
+    lane: "github:actions-ubuntu-latest",
+  };
+  if (!workerAdapter.reviewCommandArgs(responsivenessJob)[0].endsWith(path.join("bin", "responsiveness-review.cjs"))) {
+    findings.push("responsiveness review jobs must route to bin/responsiveness-review.cjs.");
+  }
+  const workflowPolicy = workerAdapter.workerAdapterPolicyFromEnv({});
+  if (workerAdapter.githubWorkflowForJob(job, workflowPolicy) !== "review-job.yml") {
+    findings.push("provider-backed review jobs must use review-job.yml.");
+  }
+  if (workerAdapter.githubWorkflowForJob(responsivenessJob, workflowPolicy) !== "responsiveness-review.yml") {
+    findings.push("responsiveness review jobs must use responsiveness-review.yml.");
+  }
 }
 
 function checkAdapterBehavior(findings) {
@@ -263,9 +284,8 @@ function checkWorkflowTemplate(workflowText, findings) {
   if (inputs.requestor?.required !== false) {
     findings.push("review-job workflow input requestor must remain optional.");
   }
-  const reviewKinds = Object.keys(REVIEW_KIND_CONFIGS);
-  if (!arraysEqual(inputs.review_kind?.options || [], reviewKinds)) {
-    findings.push(`review-job workflow review_kind options must be ${JSON.stringify(reviewKinds)}.`);
+  if (!arraysEqual(inputs.review_kind?.options || [], expectedProviderReviewKinds)) {
+    findings.push(`review-job workflow review_kind options must be ${JSON.stringify(expectedProviderReviewKinds)}.`);
   }
   if (!arraysEqual(inputs.provider?.options || [], PROVIDERS)) {
     findings.push(`review-job workflow provider options must be ${JSON.stringify(PROVIDERS)}.`);
