@@ -459,7 +459,7 @@ module.exports = defineConfig({
       IPFS_GATEWAY_ENDPOINT: process.env.IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
       ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true",
       SEIZE_6529_COMMAND: "1",
-      USE_TURBO: process.env.USE_TURBO || "false",
+      USE_TURBO: process.env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
     },
   },
 });
