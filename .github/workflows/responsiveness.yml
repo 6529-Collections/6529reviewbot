@@ -1,0 +1,173 @@
+name: 6529bot Responsiveness
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: Target repository in owner/name form.
+        required: true
+        default: 6529-Collections/6529seize-frontend
+        type: string
+      pr_number:
+        description: Existing target repository PR number to benchmark.
+        required: true
+        type: string
+      runner_label:
+        description: GitHub larger runner label for 8 vCPU / 32 GB / 300 GB.
+        required: true
+        default: ubuntu-latest-8-cores
+        type: string
+      contexts:
+        description: Comma-separated responsiveness contexts.
+        required: true
+        default: web-desktop,web-mobile,native-mobile,electron-desktop
+        type: string
+      max_pages:
+        description: Maximum inferred routes to check.
+        required: true
+        default: "12"
+        type: string
+      workers:
+        description: Playwright worker count.
+        required: true
+        default: "4"
+        type: string
+      plan_only:
+        description: Only infer routes and write the plan; skip Playwright.
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  responsiveness:
+    name: Responsiveness benchmark
+    runs-on: ${{ inputs.runner_label }}
+    timeout-minutes: 20
+    env:
+      TARGET_REPO: ${{ inputs.target_repo }}
+      PR_NUMBER: ${{ inputs.pr_number }}
+      API_ENDPOINT: https://api.6529.io
+      WS_ENDPOINT: wss://ws.6529.io
+      ALLOWLIST_API_ENDPOINT: https://allowlist-api.6529.io
+      MOBILE_APP_SCHEME: mobile6529
+      CORE_SCHEME: core6529
+      NEXTGEN_CHAIN_ID: "1"
+      IPFS_API_ENDPOINT: https://api-ipfs.6529.io
+      IPFS_GATEWAY_ENDPOINT: https://ipfs.6529.io
+      ASSETS_FROM_S3: "true"
+    steps:
+      - name: Checkout bot
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          path: bot
+          persist-credentials: false
+
+      - name: Resolve target PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .reviewbot
+          gh api "repos/${TARGET_REPO}/pulls/${PR_NUMBER}" > .reviewbot/pr.json
+          node <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs = require("fs");
+          const pr = JSON.parse(fs.readFileSync(".reviewbot/pr.json", "utf8"));
+          const fields = {
+            base_sha: pr.base.sha,
+            head_sha: pr.head.sha,
+            base_repo: pr.base.repo.full_name,
+            head_repo: pr.head.repo.full_name,
+            base_ref: pr.base.ref,
+            head_ref: pr.head.ref,
+          };
+          for (const [key, value] of Object.entries(fields)) {
+            if (!value || String(value).includes("\n")) {
+              throw new Error(`invalid ${key}`);
+            }
+            console.log(`${key}=${value}`);
+          }
+          NODE
+
+      - name: Checkout target PR head
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          repository: ${{ steps.pr.outputs.head_repo }}
+          ref: ${{ steps.pr.outputs.head_sha }}
+          path: target
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Fetch target PR base commit
+        run: |
+          set -euo pipefail
+          git -C target remote add base "https://github.com/${{ steps.pr.outputs.base_repo }}.git" || \
+            git -C target remote set-url base "https://github.com/${{ steps.pr.outputs.base_repo }}.git"
+          git -C target fetch --no-tags --depth=1 base "${{ steps.pr.outputs.base_sha }}"
+          git -C target cat-file -e "${{ steps.pr.outputs.base_sha }}^{commit}"
+
+      - name: Set up Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: target/pnpm-lock.yaml
+
+      - name: Activate pinned pnpm
+        working-directory: target
+        run: |
+          corepack enable pnpm
+          corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
+          pnpm --version
+
+      - name: Install Socket Firewall
+        id: socket_firewall
+        uses: SocketDev/action@2d3f25590c6ed6ba11a9a14c064d962a3a04698f # v1.3.1
+        with:
+          mode: firewall
+
+      - name: Install target dependencies
+        working-directory: target
+        env:
+          SFW_BIN: ${{ steps.socket_firewall.outputs.firewall-path-binary }}
+        run: ./bin/6529 install:frozen
+
+      - name: Install Chromium for Playwright
+        if: ${{ !inputs.plan_only }}
+        working-directory: target
+        run: ./bin/6529 exec playwright install chromium
+
+      - name: Run responsiveness benchmark
+        id: responsiveness
+        env:
+          PLAN_ONLY: ${{ inputs.plan_only && '--plan-only' || '' }}
+        run: |
+          set -euo pipefail
+          node bot/bin/responsiveness-runner.cjs \
+            --target target \
+            --base-ref "${{ steps.pr.outputs.base_sha }}" \
+            --head-ref HEAD \
+            --output-dir target/.reviewbot-responsiveness \
+            --contexts "${{ inputs.contexts }}" \
+            --max-pages "${{ inputs.max_pages }}" \
+            --workers "${{ inputs.workers }}" \
+            $PLAN_ONLY
+
+      - name: Write job summary
+        if: always()
+        run: |
+          if [ -f target/.reviewbot-responsiveness/summary.md ]; then
+            cat target/.reviewbot-responsiveness/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload responsiveness artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: responsiveness-${{ inputs.target_repo }}-${{ inputs.pr_number }}
+          path: target/.reviewbot-responsiveness
+          if-no-files-found: warn

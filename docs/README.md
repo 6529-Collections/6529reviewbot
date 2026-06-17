@@ -32,6 +32,8 @@ be linked here before they are considered release-ready.
 - [Comment Commands](comment-commands.md): maintainer trigger contract.
 - [Review Workflows](review-workflows.md): review kinds and prompt intent.
 - [Review Jobs](review-jobs.md): job fanout, lanes, and worker inputs.
+- [Responsiveness Runner](responsiveness-runner.md): manual frontend visual
+  responsiveness benchmark lane.
 - [Review Comment Format](review-comment-format.md): visible comments and
   hidden metadata.
 - [Reusable Workflow](reusable-workflow.md): compatibility workflow path.
