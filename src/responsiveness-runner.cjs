@@ -1,0 +1,866 @@
+"use strict";
+
+const childProcess = require("child_process");
+const fs = require("fs");
+const path = require("path");
+
+const DEFAULT_CONTEXTS = [
+  "web-desktop",
+  "web-mobile",
+  "native-mobile",
+  "electron-desktop",
+];
+
+const CONTEXTS = {
+  "web-desktop": {
+    label: "Web desktop",
+    viewport: { width: 1440, height: 900 },
+    isMobile: false,
+    hasTouch: false,
+    userAgentSuffix: "",
+  },
+  "web-mobile": {
+    label: "Web mobile",
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    userAgentSuffix: "",
+  },
+  "native-mobile": {
+    label: "Native mobile app",
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    nativePlatform: "ios",
+    userAgentSuffix: " 6529NativeShell/1.0",
+  },
+  "electron-desktop": {
+    label: "Electron desktop",
+    viewport: { width: 1280, height: 800 },
+    isMobile: false,
+    hasTouch: false,
+    userAgentSuffix: " Electron/37.0.0 6529Core/1.0",
+  },
+};
+
+const SHELL_CANARY_ROUTES = ["/", "/waves"];
+const FALLBACK_ROUTES = ["/", "/waves", "/network", "/the-memes", "/meme-lab", "/rememes"];
+const GLOBAL_ROUTES = [
+  "/",
+  "/waves",
+  "/network",
+  "/the-memes",
+  "/meme-lab",
+  "/rememes",
+  "/notifications",
+  "/open-mobile?path=%2Fwaves",
+];
+
+const ROUTE_MAPPINGS = [
+  { pattern: /^components[\/\\]waves[\/\\]/, routes: ["/waves"] },
+  { pattern: /^app[\/\\]waves(?:[\/\\]|$)/, routes: ["/waves"] },
+  { pattern: /^components[\/\\]brain[\/\\]/, routes: ["/waves", "/my-stream"] },
+  { pattern: /^components[\/\\]the-memes[\/\\]/, routes: ["/the-memes"] },
+  { pattern: /^app[\/\\]the-memes(?:[\/\\]|$)/, routes: ["/the-memes"] },
+  { pattern: /^components[\/\\]memelab[\/\\]/, routes: ["/meme-lab"] },
+  { pattern: /^app[\/\\]meme-lab(?:[\/\\]|$)/, routes: ["/meme-lab"] },
+  { pattern: /^components[\/\\]rememes[\/\\]/, routes: ["/rememes"] },
+  { pattern: /^app[\/\\]rememes(?:[\/\\]|$)/, routes: ["/rememes"] },
+  { pattern: /^components[\/\\]network[\/\\]/, routes: ["/network"] },
+  { pattern: /^app[\/\\]network(?:[\/\\]|$)/, routes: ["/network"] },
+  { pattern: /^components[\/\\]notifications[\/\\]/, routes: ["/notifications"] },
+  { pattern: /^app[\/\\]notifications(?:[\/\\]|$)/, routes: ["/notifications"] },
+  { pattern: /^components[\/\\]nextGen[\/\\]/, routes: ["/nextgen"] },
+  { pattern: /^app[\/\\]nextgen(?:[\/\\]|$)/, routes: ["/nextgen"] },
+  { pattern: /^components[\/\\]6529Gradient[\/\\]/, routes: ["/6529-gradient"] },
+  { pattern: /^app[\/\\]6529-gradient(?:[\/\\]|$)/, routes: ["/6529-gradient"] },
+  { pattern: /^components[\/\\]header[\/\\]share[\/\\]/, routes: ["/", "/waves"] },
+  { pattern: /^app[\/\\]open-mobile(?:[\/\\]|$)/, routes: ["/open-mobile?path=%2Fwaves"] },
+];
+
+const GLOBAL_PATTERNS = [
+  /^app[\/\\]layout\./,
+  /^app[\/\\]global-error\./,
+  /^app[\/\\]error\./,
+  /^components[\/\\]layout[\/\\]/,
+  /^components[\/\\]providers[\/\\]/,
+  /^components[\/\\]navigation[\/\\]/,
+  /^components[\/\\]header[\/\\]/,
+  /^components[\/\\]auth[\/\\]/,
+  /^components[\/\\]mobile-wrapper-dialog[\/\\]/,
+  /^hooks[\/\\]useCapacitor\./,
+  /^hooks[\/\\]useAndroidKeyboard\./,
+  /^hooks[\/\\]useElectron\./,
+  /^styles[\/\\]/,
+  /^tailwind\.config\./,
+  /^next\.config\./,
+  /^package\.json$/,
+  /^pnpm-lock\.yaml$/,
+];
+
+function parseArgs(argv = []) {
+  const options = {
+    target: process.cwd(),
+    baseRef: "origin/main",
+    headRef: "HEAD",
+    outputDir: "",
+    baseUrl: "http://127.0.0.1:3001",
+    port: 3001,
+    maxPages: 12,
+    contexts: DEFAULT_CONTEXTS,
+    workers: 4,
+    planOnly: false,
+    changedFilesPath: "",
+    pages: [],
+    failOnWarning: false,
+    installCommand: "",
+    reuseExistingServer: false,
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    const next = () => {
+      index += 1;
+      if (index >= argv.length) {
+        throw new Error(`${arg} requires a value.`);
+      }
+      return argv[index];
+    };
+
+    if (arg === "--target") {
+      options.target = next();
+    } else if (arg === "--base-ref") {
+      options.baseRef = next();
+    } else if (arg === "--head-ref") {
+      options.headRef = next();
+    } else if (arg === "--output-dir") {
+      options.outputDir = next();
+    } else if (arg === "--base-url") {
+      options.baseUrl = next();
+    } else if (arg === "--port") {
+      options.port = positiveInt(next(), arg);
+    } else if (arg === "--max-pages") {
+      options.maxPages = positiveInt(next(), arg);
+    } else if (arg === "--contexts") {
+      options.contexts = splitCsv(next());
+    } else if (arg === "--workers") {
+      options.workers = positiveInt(next(), arg);
+    } else if (arg === "--changed-files") {
+      options.changedFilesPath = next();
+    } else if (arg === "--pages") {
+      options.pages = splitCsv(next());
+    } else if (arg === "--install-command") {
+      options.installCommand = next();
+    } else if (arg === "--reuse-existing-server") {
+      options.reuseExistingServer = true;
+    } else if (arg === "--plan-only") {
+      options.planOnly = true;
+    } else if (arg === "--fail-on-warning") {
+      options.failOnWarning = true;
+    } else if (arg === "--help" || arg === "-h") {
+      options.help = true;
+    } else {
+      throw new Error(`Unknown argument: ${arg}`);
+    }
+  }
+
+  return normalizeOptions(options);
+}
+
+function normalizeOptions(options) {
+  const target = path.resolve(options.target);
+  const outputDir = path.resolve(
+    options.outputDir || path.join(target, ".reviewbot-responsiveness")
+  );
+  const contexts = options.contexts.map((context) => {
+    if (!CONTEXTS[context]) {
+      throw new Error(`Unknown responsiveness context: ${context}`);
+    }
+    return context;
+  });
+  return {
+    ...options,
+    target,
+    outputDir,
+    contexts,
+  };
+}
+
+function splitCsv(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function positiveInt(value, name) {
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0 || String(parsed) !== String(value)) {
+    throw new Error(`${name} must be a positive integer.`);
+  }
+  return parsed;
+}
+
+function collectChangedFiles(options) {
+  if (options.changedFilesPath) {
+    return readChangedFiles(options.changedFilesPath);
+  }
+
+  const result = childProcess.spawnSync(
+    "git",
+    [
+      "-C",
+      options.target,
+      "diff",
+      "--name-only",
+      "--diff-filter=ACMR",
+      `${options.baseRef}...${options.headRef}`,
+    ],
+    {
+      encoding: "utf8",
+      shell: process.platform === "win32",
+    }
+  );
+
+  if (result.status !== 0) {
+    return [];
+  }
+
+  return result.stdout
+    .split(/\r?\n/)
+    .map((file) => file.trim())
+    .filter(Boolean);
+}
+
+function readChangedFiles(filePath) {
+  return fs
+    .readFileSync(path.resolve(filePath), "utf8")
+    .split(/\r?\n/)
+    .map((file) => file.trim())
+    .filter(Boolean);
+}
+
+function buildPlan(options) {
+  const changedFiles = collectChangedFiles(options);
+  const inferred = options.pages.length
+    ? {
+        routes: options.pages,
+        reasons: options.pages.map((route) => ({
+          route,
+          reason: "explicit --pages input",
+        })),
+        fallback: false,
+      }
+    : inferRoutes(changedFiles, options.maxPages);
+
+  return {
+    target: options.target,
+    baseRef: options.baseRef,
+    headRef: options.headRef,
+    baseUrl: options.baseUrl,
+    outputDir: options.outputDir,
+    contexts: options.contexts.map((name) => ({ name, ...CONTEXTS[name] })),
+    changedFiles,
+    routes: inferred.routes.slice(0, options.maxPages),
+    routeReasons: inferred.reasons,
+    fallback: inferred.fallback,
+    maxPages: options.maxPages,
+    workers: options.workers,
+  };
+}
+
+function inferRoutes(changedFiles, maxPages) {
+  const routes = new Map();
+  const reasons = [];
+
+  const add = (route, reason) => {
+    if (!route || routes.has(route)) {
+      return;
+    }
+    routes.set(route, true);
+    reasons.push({ route, reason });
+  };
+
+  for (const route of SHELL_CANARY_ROUTES) {
+    add(route, "shell canary");
+  }
+
+  for (const file of changedFiles) {
+    const normalized = file.replace(/\\/g, "/");
+    const appRoute = routeFromAppPage(normalized);
+    if (appRoute) {
+      add(appRoute, `${file} maps to app route`);
+    }
+
+    for (const mapping of ROUTE_MAPPINGS) {
+      if (mapping.pattern.test(normalized)) {
+        for (const route of mapping.routes) {
+          add(route, `${file} matched ${mapping.pattern}`);
+        }
+      }
+    }
+
+    if (GLOBAL_PATTERNS.some((pattern) => pattern.test(normalized))) {
+      for (const route of GLOBAL_ROUTES) {
+        add(route, `${file} is shared/global UI`);
+      }
+    }
+  }
+
+  if (routes.size <= SHELL_CANARY_ROUTES.length && changedFiles.length > 0) {
+    for (const route of FALLBACK_ROUTES) {
+      add(route, "changed files had no precise route mapping");
+    }
+  }
+
+  if (changedFiles.length === 0) {
+    for (const route of FALLBACK_ROUTES) {
+      add(route, "no changed files available");
+    }
+  }
+
+  return {
+    routes: Array.from(routes.keys()).slice(0, maxPages),
+    reasons,
+    fallback: changedFiles.length === 0 || routes.size <= SHELL_CANARY_ROUTES.length,
+  };
+}
+
+function routeFromAppPage(file) {
+  const match = file.match(/^app\/(.+)\/page\.(?:client\.)?(?:tsx|ts|jsx|js)$/);
+  if (!match) {
+    if (/^app\/page\.(?:tsx|ts|jsx|js)$/.test(file)) {
+      return "/";
+    }
+    return "";
+  }
+
+  const segments = match[1].split("/");
+  if (segments.some((segment) => segment.startsWith("[") || segment.startsWith("("))) {
+    return routeForDynamicAppSegments(segments);
+  }
+
+  return `/${segments.join("/")}`.replace(/\/+/g, "/");
+}
+
+function routeForDynamicAppSegments(segments) {
+  const root = segments[0];
+  if (root === "the-memes") {
+    return "/the-memes";
+  }
+  if (root === "meme-lab") {
+    return "/meme-lab";
+  }
+  if (root === "rememes") {
+    return "/rememes";
+  }
+  if (root === "nextgen") {
+    return "/nextgen";
+  }
+  if (root === "6529-gradient") {
+    return "/6529-gradient";
+  }
+  if (root === "waves") {
+    return "/waves";
+  }
+  return `/${root}`;
+}
+
+function prepareHarness(plan, options) {
+  const harnessDir = path.join(options.outputDir, "harness");
+  const testsDir = path.join(harnessDir, "tests");
+  const resultsDir = path.join(options.outputDir, "results");
+  const screenshotsDir = path.join(options.outputDir, "screenshots");
+  const playwrightOutputDir = path.join(options.outputDir, "playwright-output");
+
+  fs.rmSync(options.outputDir, { recursive: true, force: true });
+  fs.mkdirSync(testsDir, { recursive: true });
+  fs.mkdirSync(resultsDir, { recursive: true });
+  fs.mkdirSync(screenshotsDir, { recursive: true });
+  fs.mkdirSync(playwrightOutputDir, { recursive: true });
+
+  fs.writeFileSync(path.join(options.outputDir, "plan.json"), `${JSON.stringify(plan, null, 2)}\n`);
+  fs.writeFileSync(path.join(harnessDir, "routes.json"), `${JSON.stringify(plan.routes, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(harnessDir, "contexts.json"),
+    `${JSON.stringify(plan.contexts, null, 2)}\n`
+  );
+  fs.writeFileSync(path.join(harnessDir, "playwright.config.cjs"), buildPlaywrightConfig(plan, options));
+  fs.writeFileSync(path.join(testsDir, "responsiveness.spec.cjs"), buildPlaywrightSpec());
+
+  return {
+    harnessDir,
+    configPath: path.join(harnessDir, "playwright.config.cjs"),
+    resultsDir,
+    screenshotsDir,
+  };
+}
+
+function buildPlaywrightConfig(plan, options) {
+  return `${headerComment()}
+const path = require("node:path");
+const { defineConfig, devices } = require("@playwright/test");
+const contexts = require("./contexts.json");
+
+const outputRoot = ${JSON.stringify(options.outputDir)};
+const baseURL = ${JSON.stringify(options.baseUrl)};
+const target = ${JSON.stringify(options.target)};
+const port = ${JSON.stringify(String(options.port))};
+
+module.exports = defineConfig({
+  testDir: path.join(__dirname, "tests"),
+  testMatch: /responsiveness\\.spec\\.cjs$/,
+  fullyParallel: true,
+  workers: ${JSON.stringify(options.workers)},
+  retries: 0,
+  timeout: 45000,
+  reporter: [
+    ["list"],
+    ["json", { outputFile: path.join(outputRoot, "playwright-report.json") }],
+  ],
+  outputDir: path.join(outputRoot, "playwright-output"),
+  use: {
+    baseURL,
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
+    screenshot: "only-on-failure",
+    trace: "retain-on-failure",
+    video: "off",
+  },
+  projects: contexts.map((context) => ({
+    name: context.name,
+    use: {
+      ...devices["Desktop Chrome"],
+      viewport: context.viewport,
+      isMobile: context.isMobile,
+      hasTouch: context.hasTouch,
+      deviceScaleFactor: context.isMobile ? 3 : 1,
+      userAgent: \`\${devices["Desktop Chrome"].userAgent}\${context.userAgentSuffix || ""}\`,
+    },
+    metadata: context,
+  })),
+  webServer: {
+    command: ${JSON.stringify(options.installCommand || "./bin/6529 run dev")},
+    cwd: target,
+    url: baseURL,
+    reuseExistingServer: ${JSON.stringify(options.reuseExistingServer)},
+    timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_SERVER_TIMEOUT_MS || 180000),
+    env: {
+      PORT: port,
+      PORT_SEARCH_LIMIT: "1",
+      API_ENDPOINT: process.env.API_ENDPOINT || "https://api.6529.io",
+      WS_ENDPOINT: process.env.WS_ENDPOINT || "wss://ws.6529.io",
+      ALLOWLIST_API_ENDPOINT: process.env.ALLOWLIST_API_ENDPOINT || "https://allowlist-api.6529.io",
+      BASE_ENDPOINT: baseURL,
+      MOBILE_APP_SCHEME: process.env.MOBILE_APP_SCHEME || "mobile6529",
+      CORE_SCHEME: process.env.CORE_SCHEME || "core6529",
+      NEXTGEN_CHAIN_ID: process.env.NEXTGEN_CHAIN_ID || "1",
+      IPFS_API_ENDPOINT: process.env.IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
+      IPFS_GATEWAY_ENDPOINT: process.env.IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
+      ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true",
+      SEIZE_6529_COMMAND: "1",
+      USE_TURBO: process.env.USE_TURBO || "false",
+    },
+  },
+});
+`;
+}
+
+function buildPlaywrightSpec() {
+  return `${headerComment()}
+const fs = require("node:fs");
+const path = require("node:path");
+const { test } = require("@playwright/test");
+
+const routes = require("../routes.json");
+const outputRoot = path.resolve(__dirname, "..", "..");
+const resultsDir = path.join(outputRoot, "results");
+const screenshotsDir = path.join(outputRoot, "screenshots");
+
+test.describe.configure({ mode: "parallel" });
+
+for (const route of routes) {
+  test(route, async ({ page }, testInfo) => {
+    const mode = testInfo.project.name;
+    const metadata = testInfo.project.metadata || {};
+    if (mode === "native-mobile") {
+      await installCapacitorShim(page, metadata.nativePlatform || "ios");
+    }
+
+    const consoleErrors = [];
+    const pageErrors = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        consoleErrors.push(sanitizeMessage(message.text()));
+      }
+    });
+    page.on("pageerror", (error) => {
+      pageErrors.push(sanitizeMessage(error.message || String(error)));
+    });
+
+    const startedAt = Date.now();
+    let responseStatus = null;
+    let responseUrl = "";
+    try {
+      const response = await page.goto(route, { waitUntil: "domcontentloaded" });
+      responseStatus = response ? response.status() : null;
+      responseUrl = response ? response.url() : page.url();
+      await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    } catch (error) {
+      pageErrors.push(sanitizeMessage(error.message || String(error)));
+    }
+
+    const metrics = await page.evaluate(() => {
+      const doc = document.documentElement;
+      const body = document.body;
+      const scrollWidth = Math.max(doc?.scrollWidth || 0, body?.scrollWidth || 0);
+      const clientWidth = doc?.clientWidth || window.innerWidth;
+      const scrollHeight = Math.max(doc?.scrollHeight || 0, body?.scrollHeight || 0);
+      const clientHeight = doc?.clientHeight || window.innerHeight;
+      const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "";
+      const visible = (selector) => {
+        const element = document.querySelector(selector);
+        if (!element) return false;
+        const rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
+      };
+      return {
+        title: document.title,
+        url: window.location.href,
+        bodyClass: body?.className || "",
+        viewportMeta,
+        scrollWidth,
+        clientWidth,
+        scrollHeight,
+        clientHeight,
+        horizontalOverflow: Math.max(0, scrollWidth - clientWidth),
+        verticalOverflow: Math.max(0, scrollHeight - clientHeight),
+        hasMain: visible("main") || visible('[role="main"]'),
+        hasHeader: visible("header") || visible('[role="banner"]'),
+        hasFooter: visible("footer") || visible('[role="contentinfo"]'),
+        hasNavigation: visible("nav") || visible('[role="navigation"]'),
+        nextErrorOverlay: Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]")),
+      };
+    });
+
+    const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
+    await page.screenshot({ path: screenshotPath, fullPage: true }).catch((error) => {
+      pageErrors.push(\`screenshot failed: \${sanitizeMessage(error.message || String(error))}\`);
+    });
+
+    const warnings = [];
+    const failures = [];
+    if (responseStatus === null) {
+      failures.push("navigation did not produce a response");
+    } else if (responseStatus >= 500) {
+      failures.push(\`HTTP \${responseStatus}\`);
+    } else if (responseStatus >= 400) {
+      warnings.push(\`HTTP \${responseStatus}\`);
+    }
+    if (metrics.horizontalOverflow > 3) {
+      failures.push(\`horizontal overflow \${metrics.horizontalOverflow}px\`);
+    }
+    if (metrics.nextErrorOverlay) {
+      failures.push("Next.js error overlay is visible");
+    }
+    if (pageErrors.length > 0) {
+      failures.push(\`\${pageErrors.length} page error(s)\`);
+    }
+    if (mode === "native-mobile" && !String(metrics.bodyClass).includes("capacitor-native")) {
+      failures.push("native Capacitor layout did not activate");
+    }
+    if (mode === "electron-desktop") {
+      const isElectron = await page.evaluate(() => navigator.userAgent.includes("Electron"));
+      if (!isElectron) {
+        failures.push("Electron user agent did not activate");
+      }
+    }
+    if (consoleErrors.some((message) => /hydration|uncaught|runtime error/i.test(message))) {
+      failures.push("fatal console error detected");
+    } else if (consoleErrors.length > 0) {
+      warnings.push(\`\${consoleErrors.length} console error(s)\`);
+    }
+
+    const result = {
+      mode,
+      route,
+      responseStatus,
+      responseUrl,
+      durationMs: Date.now() - startedAt,
+      metrics,
+      warnings,
+      failures,
+      consoleErrors: consoleErrors.slice(0, 20),
+      pageErrors: pageErrors.slice(0, 20),
+      screenshot: path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/"),
+    };
+    fs.writeFileSync(
+      path.join(resultsDir, \`\${safeName(mode)}--\${safeName(route)}.json\`),
+      \`\${JSON.stringify(result, null, 2)}\\n\`
+    );
+
+    if (failures.length > 0) {
+      throw new Error(failures.join("; "));
+    }
+  });
+}
+
+async function installCapacitorShim(page, platform) {
+  await page.addInitScript((nativePlatform) => {
+    const listeners = new Map();
+    let listenerId = 0;
+    const pluginResult = {
+      addListener: async (eventName, callback) => {
+        const id = String(++listenerId);
+        listeners.set(id, { eventName, callback });
+        return { remove: async () => listeners.delete(id) };
+      },
+      removeAllListeners: async () => {
+        listeners.clear();
+      },
+    };
+    window.CapacitorCustomPlatform = {
+      name: nativePlatform,
+      plugins: {},
+    };
+    window.Capacitor = {
+      ...window.Capacitor,
+      getPlatform: () => nativePlatform,
+      isNativePlatform: () => true,
+      isPluginAvailable: () => false,
+      convertFileSrc: (value) => value,
+      Plugins: {
+        App: {
+          ...pluginResult,
+          getState: async () => ({ isActive: true }),
+        },
+        Keyboard: pluginResult,
+        Device: {
+          getId: async () => ({ identifier: "reviewbot-device" }),
+          getInfo: async () => ({ platform: nativePlatform }),
+        },
+      },
+    };
+    if (nativePlatform === "ios") {
+      window.webkit = window.webkit || { messageHandlers: {} };
+      window.webkit.messageHandlers = window.webkit.messageHandlers || {};
+      window.webkit.messageHandlers.bridge = window.webkit.messageHandlers.bridge || {
+        postMessage: () => {},
+      };
+    }
+    if (nativePlatform === "android") {
+      window.androidBridge = window.androidBridge || {
+        postMessage: () => {},
+      };
+    }
+  }, platform);
+}
+
+function sanitizeMessage(value) {
+  return String(value || "").replace(/\\s+/g, " ").slice(0, 1000);
+}
+
+function safeName(value) {
+  return String(value || "root")
+    .replace(/^\\/+/, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120) || "root";
+}
+`;
+}
+
+function runResponsiveness(options) {
+  const startedAt = Date.now();
+  const plan = buildPlan(options);
+  fs.mkdirSync(options.outputDir, { recursive: true });
+  fs.writeFileSync(path.join(options.outputDir, "plan.json"), `${JSON.stringify(plan, null, 2)}\n`);
+
+  if (options.planOnly) {
+    const summary = summarizePlan(plan);
+    fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
+    return { plan, exitCode: 0, summary, durationMs: Date.now() - startedAt };
+  }
+
+  const harness = prepareHarness(plan, options);
+  const env = {
+    ...process.env,
+    REVIEWBOT_RESPONSIVENESS_OUTPUT_DIR: options.outputDir,
+  };
+  const result = childProcess.spawnSync(
+    resolvePnpmCommand(),
+    ["exec", "playwright", "test", "--config", harness.configPath],
+    {
+      cwd: options.target,
+      env,
+      stdio: "inherit",
+      shell: process.platform === "win32",
+    }
+  );
+
+  const checkResults = readCheckResults(harness.resultsDir);
+  const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
+  const summary = summarizeRun({
+    plan,
+    results: checkResults,
+    runErrors,
+    exitCode: result.status ?? 1,
+    durationMs: Date.now() - startedAt,
+  });
+  fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
+
+  return {
+    plan,
+    exitCode: result.status ?? 1,
+    summary,
+    durationMs: Date.now() - startedAt,
+    results: checkResults,
+  };
+}
+
+function resolvePnpmCommand() {
+  return process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+}
+
+function readCheckResults(resultsDir) {
+  if (!fs.existsSync(resultsDir)) {
+    return [];
+  }
+  return fs
+    .readdirSync(resultsDir)
+    .filter((file) => file.endsWith(".json"))
+    .sort()
+    .map((file) => JSON.parse(fs.readFileSync(path.join(resultsDir, file), "utf8")));
+}
+
+function readPlaywrightErrors(reportPath) {
+  if (!fs.existsSync(reportPath)) {
+    return [];
+  }
+  try {
+    const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+    return (report.errors || [])
+      .map((error) => String(error.message || error.stack || error).trim())
+      .filter(Boolean)
+      .slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
+function summarizePlan(plan) {
+  const lines = [
+    "# 6529bot Responsiveness Plan",
+    "",
+    `Target: ${plan.target}`,
+    `Base: \`${plan.baseRef}\``,
+    `Head: \`${plan.headRef}\``,
+    `Base URL: ${plan.baseUrl}`,
+    `Contexts: ${plan.contexts.map((context) => `\`${context.name}\``).join(", ")}`,
+    `Routes (${plan.routes.length}/${plan.maxPages}): ${plan.routes.map((route) => `\`${route}\``).join(", ")}`,
+    `Changed files: ${plan.changedFiles.length}`,
+    "",
+  ];
+  if (plan.fallback) {
+    lines.push("Fallback routing was used because changed files were unavailable or imprecise.", "");
+  }
+  lines.push("## Route Reasons", "");
+  for (const reason of plan.routeReasons) {
+    if (plan.routes.includes(reason.route)) {
+      lines.push(`- \`${reason.route}\`: ${reason.reason}`);
+    }
+  }
+  lines.push("");
+  return `${lines.join("\n")}\n`;
+}
+
+function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
+  const failures = results.filter((result) => result.failures.length > 0);
+  const warnings = results.filter((result) => result.warnings.length > 0);
+  const lines = [
+    "# 6529bot Responsiveness Summary",
+    "",
+    `Status: ${exitCode === 0 ? "pass" : "fail"}`,
+    `Duration: ${(durationMs / 1000).toFixed(1)}s`,
+    `Contexts: ${plan.contexts.map((context) => `\`${context.name}\``).join(", ")}`,
+    `Routes: ${plan.routes.map((route) => `\`${route}\``).join(", ")}`,
+    `Checks completed: ${results.length}/${plan.routes.length * plan.contexts.length}`,
+    `Failures: ${failures.length + runErrors.length}`,
+    `Warnings: ${warnings.length}`,
+    "",
+  ];
+
+  if (runErrors.length > 0) {
+    lines.push("## Run Errors", "");
+    for (const error of runErrors) {
+      lines.push(`- ${error}`);
+    }
+    lines.push("");
+  }
+
+  if (failures.length > 0) {
+    lines.push("## Failures", "");
+    for (const result of failures) {
+      lines.push(`- \`${result.mode}\` \`${result.route}\`: ${result.failures.join("; ")}`);
+    }
+    lines.push("");
+  }
+
+  if (warnings.length > 0) {
+    lines.push("## Warnings", "");
+    for (const result of warnings.slice(0, 20)) {
+      lines.push(`- \`${result.mode}\` \`${result.route}\`: ${result.warnings.join("; ")}`);
+    }
+    lines.push("");
+  }
+
+  lines.push("## Slowest Checks", "");
+  for (const result of [...results].sort((a, b) => b.durationMs - a.durationMs).slice(0, 10)) {
+    lines.push(
+      `- \`${result.mode}\` \`${result.route}\`: ${(result.durationMs / 1000).toFixed(1)}s, screenshot \`${result.screenshot}\``
+    );
+  }
+  lines.push("");
+
+  return `${lines.join("\n")}\n`;
+}
+
+function headerComment() {
+  return "// Generated by 6529reviewbot responsiveness runner. Do not commit.\n";
+}
+
+function printHelp() {
+  console.log(`Run a temporary Playwright responsiveness sweep against a checked-out frontend PR.
+
+Usage:
+  node bin/responsiveness-runner.cjs --target <repo> [options]
+
+Options:
+  --target <dir>          Target frontend repo checkout. Default: cwd.
+  --base-ref <ref>        Base ref/SHA for changed-file inference. Default: origin/main.
+  --head-ref <ref>        Head ref/SHA for changed-file inference. Default: HEAD.
+  --output-dir <dir>      Output directory. Default: <target>/.reviewbot-responsiveness.
+  --base-url <url>        Local app URL. Default: http://127.0.0.1:3001.
+  --port <number>         App port. Default: 3001.
+  --contexts <csv>        Contexts. Default: ${DEFAULT_CONTEXTS.join(",")}.
+  --max-pages <number>    Maximum routes to check. Default: 12.
+  --workers <number>      Playwright workers. Default: 4.
+  --changed-files <file>  Newline-separated changed file list.
+  --pages <csv>           Explicit route list, bypassing inference.
+  --install-command <cmd> Web server command. Default: ./bin/6529 run dev.
+  --reuse-existing-server Reuse a server already listening at --base-url.
+  --plan-only             Write plan and skip Playwright.
+`);
+}
+
+module.exports = {
+  CONTEXTS,
+  DEFAULT_CONTEXTS,
+  buildPlan,
+  collectChangedFiles,
+  inferRoutes,
+  parseArgs,
+  runResponsiveness,
+};

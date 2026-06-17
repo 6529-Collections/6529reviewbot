@@ -26,6 +26,7 @@
     "review:i18n": "node bin/i18n-analysis.cjs",
     "review:security": "node bin/security-analysis.cjs",
     "worker:job": "node bin/run-review-job.cjs",
+    "responsiveness:run": "node bin/responsiveness-runner.cjs",
     "alerts:spend": "node bin/run-spend-alert-check.cjs",
     "alerts:operator": "node bin/run-spend-alert-check.cjs",
     "alerts:delivery-plan": "node bin/alert-delivery-plan.cjs",
