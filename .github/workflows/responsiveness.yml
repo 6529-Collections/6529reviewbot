@@ -177,6 +177,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: responsiveness-${{ inputs.target_repo }}-${{ inputs.pr_number }}
+          name: responsiveness-pr-${{ inputs.pr_number }}
           path: target/.reviewbot-responsiveness
           if-no-files-found: warn
+          include-hidden-files: true

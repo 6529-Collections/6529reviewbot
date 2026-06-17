@@ -505,45 +505,16 @@ for (const route of routes) {
       const response = await page.goto(route, { waitUntil: "domcontentloaded" });
       responseStatus = response ? response.status() : null;
       responseUrl = response ? response.url() : page.url();
-      await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
-      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await settlePage(page, pageErrors);
     } catch (error) {
       pageErrors.push(sanitizeMessage(error.message || String(error)));
     }
 
-    const metrics = await page.evaluate(() => {
-      const doc = document.documentElement;
-      const body = document.body;
-      const scrollWidth = Math.max(doc?.scrollWidth || 0, body?.scrollWidth || 0);
-      const clientWidth = doc?.clientWidth || window.innerWidth;
-      const scrollHeight = Math.max(doc?.scrollHeight || 0, body?.scrollHeight || 0);
-      const clientHeight = doc?.clientHeight || window.innerHeight;
-      const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "";
-      const visible = (selector) => {
-        const element = document.querySelector(selector);
-        if (!element) return false;
-        const rect = element.getBoundingClientRect();
-        const style = window.getComputedStyle(element);
-        return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
-      };
-      return {
-        title: document.title,
-        url: window.location.href,
-        bodyClass: body?.className || "",
-        viewportMeta,
-        scrollWidth,
-        clientWidth,
-        scrollHeight,
-        clientHeight,
-        horizontalOverflow: Math.max(0, scrollWidth - clientWidth),
-        verticalOverflow: Math.max(0, scrollHeight - clientHeight),
-        hasMain: visible("main") || visible('[role="main"]'),
-        hasHeader: visible("header") || visible('[role="banner"]'),
-        hasFooter: visible("footer") || visible('[role="contentinfo"]'),
-        hasNavigation: visible("nav") || visible('[role="navigation"]'),
-        nextErrorOverlay: Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]")),
-      };
-    });
+    const metricsResult = await readMetrics(page);
+    if (!metricsResult.ok) {
+      pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
+    }
+    const metrics = metricsResult.metrics || fallbackMetrics(page);
 
     const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
     await page.screenshot({ path: screenshotPath, fullPage: true }).catch((error) => {
@@ -572,7 +543,7 @@ for (const route of routes) {
       failures.push("native Capacitor layout did not activate");
     }
     if (mode === "electron-desktop") {
-      const isElectron = await page.evaluate(() => navigator.userAgent.includes("Electron"));
+      const isElectron = String(metrics.userAgent || "").includes("Electron");
       if (!isElectron) {
         failures.push("Electron user agent did not activate");
       }
@@ -605,6 +576,101 @@ for (const route of routes) {
       throw new Error(failures.join("; "));
     }
   });
+}
+
+async function settlePage(page, pageErrors) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await page.waitForLoadState("domcontentloaded", { timeout: 5000 }).catch(() => {});
+      await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      return;
+    } catch (error) {
+      if (isNavigationRace(error)) {
+        await page.waitForTimeout(500);
+        continue;
+      }
+      pageErrors.push(sanitizeMessage(error.message || String(error)));
+      return;
+    }
+  }
+  pageErrors.push("page did not settle after client navigation");
+}
+
+async function readMetrics(page) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const metrics = await page.evaluate(() => {
+        const doc = document.documentElement;
+        const body = document.body;
+        const scrollWidth = Math.max(doc?.scrollWidth || 0, body?.scrollWidth || 0);
+        const clientWidth = doc?.clientWidth || window.innerWidth;
+        const scrollHeight = Math.max(doc?.scrollHeight || 0, body?.scrollHeight || 0);
+        const clientHeight = doc?.clientHeight || window.innerHeight;
+        const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "";
+        const visible = (selector) => {
+          const element = document.querySelector(selector);
+          if (!element) return false;
+          const rect = element.getBoundingClientRect();
+          const style = window.getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
+        };
+        return {
+          title: document.title,
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+          bodyClass: body?.className || "",
+          viewportMeta,
+          scrollWidth,
+          clientWidth,
+          scrollHeight,
+          clientHeight,
+          horizontalOverflow: Math.max(0, scrollWidth - clientWidth),
+          verticalOverflow: Math.max(0, scrollHeight - clientHeight),
+          hasMain: visible("main") || visible('[role="main"]'),
+          hasHeader: visible("header") || visible('[role="banner"]'),
+          hasFooter: visible("footer") || visible('[role="contentinfo"]'),
+          hasNavigation: visible("nav") || visible('[role="navigation"]'),
+          nextErrorOverlay: Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]")),
+        };
+      });
+      return { ok: true, metrics };
+    } catch (error) {
+      if (isNavigationRace(error)) {
+        await page.waitForTimeout(500);
+        continue;
+      }
+      return { ok: false, error: error.message || String(error) };
+    }
+  }
+  return { ok: false, error: "page kept navigating while metrics were collected" };
+}
+
+function fallbackMetrics(page) {
+  return {
+    title: "",
+    url: page.url(),
+    userAgent: "",
+    bodyClass: "",
+    viewportMeta: "",
+    scrollWidth: 0,
+    clientWidth: 0,
+    scrollHeight: 0,
+    clientHeight: 0,
+    horizontalOverflow: 0,
+    verticalOverflow: 0,
+    hasMain: false,
+    hasHeader: false,
+    hasFooter: false,
+    hasNavigation: false,
+    nextErrorOverlay: false,
+  };
+}
+
+function isNavigationRace(error) {
+  return /execution context was destroyed|most likely because of a navigation|cannot find context|navigation/i.test(
+    error?.message || String(error)
+  );
 }
 
 async function installCapacitorShim(page, platform) {
@@ -741,13 +807,42 @@ function readPlaywrightErrors(reportPath) {
   }
   try {
     const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
-    return (report.errors || [])
-      .map((error) => String(error.message || error.stack || error).trim())
-      .filter(Boolean)
-      .slice(0, 10);
+    const errors = (report.errors || [])
+      .map((error) => summarizeErrorMessage(error.message || error.stack || error))
+      .filter(Boolean);
+    for (const suite of report.suites || []) {
+      collectPlaywrightTestErrors(suite, errors);
+    }
+    return errors.slice(0, 20);
   } catch {
     return [];
   }
+}
+
+function collectPlaywrightTestErrors(suite, errors) {
+  for (const spec of suite.specs || []) {
+    for (const test of spec.tests || []) {
+      for (const result of test.results || []) {
+        for (const error of result.errors || []) {
+          const message = summarizeErrorMessage(error.message || error.stack || error);
+          if (message) {
+            errors.push(`${spec.title}: ${message}`);
+          }
+        }
+      }
+    }
+  }
+  for (const child of suite.suites || []) {
+    collectPlaywrightTestErrors(child, errors);
+  }
+}
+
+function summarizeErrorMessage(value) {
+  return String(value || "")
+    .replace(/\u001b\[[0-9;]*m/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 1000);
 }
 
 function summarizePlan(plan) {
