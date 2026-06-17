@@ -108,6 +108,26 @@ function checkSpecialWorkflow(workflowPath, workflowText, findings) {
   if (!workflowText.includes("node bot/bin/responsiveness-review.cjs")) {
     findings.push(`${workflowPath} must post through bin/responsiveness-review.cjs.`);
   }
+  checkResponsivenessBenchmarkDependencyInstall(workflowPath, workflowText, findings);
+}
+
+function checkResponsivenessBenchmarkDependencyInstall(workflowPath, workflowText, findings) {
+  const normalized = normalizeWhitespace(workflowText);
+  const requiredSnippets = [
+    "cache-dependency-path: bot/package-lock.json",
+    "working-directory: bot run: npm ci",
+    "node bot/bin/github-app-installation-token.cjs",
+  ];
+  for (const snippet of requiredSnippets) {
+    if (!normalized.includes(normalizeWhitespace(snippet))) {
+      findings.push(`${workflowPath} must include '${snippet}'.`);
+    }
+  }
+  const installIndex = normalized.indexOf(normalizeWhitespace("working-directory: bot run: npm ci"));
+  const tokenIndex = normalized.indexOf(normalizeWhitespace("node bot/bin/github-app-installation-token.cjs"));
+  if (installIndex < 0 || tokenIndex < 0 || installIndex > tokenIndex) {
+    findings.push(`${workflowPath} benchmark job must install bot dependencies before minting a GitHub App token.`);
+  }
 }
 
 function checkReviewKindBins(reviewKinds, reviewKindBins, findings) {
@@ -210,6 +230,10 @@ function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function normalizeWhitespace(value) {
+  return String(value).replace(/\s+/g, " ").trim();
+}
+
 if (require.main === module) {
   try {
     main();
@@ -225,4 +249,5 @@ module.exports = {
   arraysEqual,
   checkReviewWorkflowKinds,
   fallbackJsonArrayForVariable,
+  normalizeWhitespace,
 };
