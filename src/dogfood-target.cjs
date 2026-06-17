@@ -9,7 +9,7 @@ const { parseRepositoryConfigText } = require("./repository-config.cjs");
 const DEFAULT_COMMAND_ONLY_CONFIG = "templates/dogfood-command-only-config.yml";
 const DEFAULT_LIMITED_INITIAL_CONFIG = "templates/dogfood-repository-config.yml";
 const DOGFOOD_TARGET_MODES = ["auto", "command-only", "limited-initial"];
-const ALL_REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security"];
+const ALL_REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security", "responsiveness"];
 const DOGFOOD_TARGET_TEXT_MAX_CHARS = 1000;
 
 function collectDogfoodTargetPacket(options = {}) {

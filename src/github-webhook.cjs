@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const DEFAULT_WEBHOOK_PATH = "/webhooks/github";
 const DEFAULT_MAX_BODY_BYTES = 2 * 1024 * 1024;
 const MIN_WEBHOOK_SECRET_LENGTH = 32;
-const REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security"];
+const REVIEW_KINDS = ["general", "followup", "wcag", "i18n", "security", "responsiveness"];
 const INITIAL_REVIEW_KINDS = ["general", "wcag", "i18n", "security"];
 
 function webhookSettingsFromEnv(env = process.env) {

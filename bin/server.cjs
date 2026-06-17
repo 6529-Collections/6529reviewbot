@@ -52,6 +52,15 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
   const serverOptions = {};
   const workerFetchImpl = options.workerFetchImpl || options.fetchImpl;
   const workerPolicy = workerAdapterPolicyFromEnv(env);
+  serverOptions.estimateBudgetCost =
+    options.estimateBudgetCost || ((jobEvent, admission, job) => {
+      if (job?.reviewKind === "responsiveness") {
+        return {
+          estimatedCostUsd: responsivenessEstimatedCostUsdFromEnv(env),
+        };
+      }
+      return {};
+    });
   serverOptions.enqueueReviewJobs = createReviewJobEnqueuer({
     env,
     fetchImpl: workerFetchImpl,
@@ -180,6 +189,24 @@ function parseBool(value) {
   return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
 }
 
+function responsivenessEstimatedCostUsdFromEnv(env = process.env) {
+  return nonNegativeNumberEnv(
+    env.REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD ||
+      env.REVIEWBOT_GITHUB_ACTIONS_ESTIMATED_COST_USD ||
+      env.REVIEWBOT_BUDGET_DEFAULT_ESTIMATED_COST_USD ||
+      "1",
+    "REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD"
+  );
+}
+
+function nonNegativeNumberEnv(value, name) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error(`${name} must be a non-negative number.`);
+  }
+  return parsed;
+}
+
 if (require.main === module) {
   startServer();
 }
@@ -187,6 +214,7 @@ if (require.main === module) {
 module.exports = {
   createServerOptionsFromEnv,
   parseBool,
+  responsivenessEstimatedCostUsdFromEnv,
   serverPortFromEnv,
   startServer,
 };

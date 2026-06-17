@@ -7,14 +7,18 @@ They make fanout explicit before any provider call happens.
 
 A single GitHub event can request more than one unit of work:
 
-- an opened PR can request general, WCAG, i18n, and security reviews;
+- an opened PR can request general, WCAG, i18n, security, and configured
+  responsiveness reviews;
 - a synchronize event can request a follow-up review;
 - a maintainer comment can request one kind, multiple kinds, or all default
   kinds;
-- the same review kind can run through more than one provider/model lane.
+- the same model-backed review kind can run through more than one
+  provider/model lane.
 
 `src/review-job.cjs` expands that event into concrete jobs. Each job has one
-review kind and one provider/model lane.
+review kind and one lane. Model-backed review kinds use provider/model lanes.
+`responsiveness` uses the deterministic `github:actions-ubuntu-latest` lane so
+GitHub Actions compute is visible to budget and run-control dimensions.
 
 ## Job Shape
 

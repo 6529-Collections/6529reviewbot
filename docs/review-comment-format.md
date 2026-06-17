@@ -50,6 +50,7 @@ The review label and allowed verdicts are tied to the review kind:
 | `wcag` | `WCAG 2.2 AA analysis` | `No WCAG findings`, `Needs changes`, `Blocking issues` |
 | `i18n` | `i18n analysis` | `No i18n findings`, `Needs changes`, `Blocking issues` |
 | `security` | `crypto security analysis` | `No security findings`, `Needs changes`, `Blocking issues` |
+| `responsiveness` | `responsiveness review` | `Responsive checks passed`, `Needs changes`, `Review did not run` |
 
 The first visible body line should be a verdict and should use one of the
 allowed verdicts for the review kind.
@@ -73,6 +74,12 @@ agent prompt section. The section is intended to make valid findings easy to
 copy into an AI coding agent. It duplicates only the visible review body and
 must not include hidden metadata, raw model prompts, provider payloads,
 secrets, tokens, or private operator diagnostics.
+
+Responsiveness comments use the same heading and hidden-marker contract, but
+the visible body is generated from deterministic Playwright artifacts rather
+than a model response. They record provider `github`, model
+`actions-ubuntu-latest`, zero token usage, and an estimated GitHub Actions cost
+so budgets can account for the compute lane.
 
 ## Hidden Metadata
 

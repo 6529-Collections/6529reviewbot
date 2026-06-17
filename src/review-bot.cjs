@@ -126,6 +126,20 @@ const KIND_CONFIGS = {
       "Only report realistic exploit paths in changed code; avoid theoretical issues already guarded by authoritative downstream checks.",
     ],
   },
+  responsiveness: {
+    label: "responsiveness review",
+    cleanVerdict: "Responsive checks passed",
+    verdicts: "Responsive checks passed | Needs changes | Review did not run",
+    objective:
+      "Run deterministic viewport checks for changed frontend routes and report concrete responsive layout, runtime, and shell-mode failures.",
+    focus: [
+      "Desktop and mobile web viewport regressions on changed routes.",
+      "Mobile app shell behavior under native Capacitor shims.",
+      "Electron desktop shell behavior under Electron user-agent shims.",
+      "Horizontal overflow, visible framework error overlays, navigation failures, and fatal console errors.",
+      "Only report deterministic runner findings from the captured route/context checks.",
+    ],
+  },
 };
 
 async function main(forcedKind) {
@@ -1563,7 +1577,8 @@ function buildComment({ kind, config, settings, pr, headSha, shortSha, changedFi
 }
 
 function shouldIncludeAgentPromptSection(config, visibleBody) {
-  return firstVisibleVerdict(visibleBody) !== cleanVerdict(config);
+  const verdict = firstVisibleVerdict(visibleBody);
+  return verdict && verdict !== cleanVerdict(config) && verdict !== "Review did not run";
 }
 
 function firstVisibleVerdict(visibleBody) {
@@ -1943,6 +1958,7 @@ module.exports = {
   buildOperationalFailureComment,
   reviewLane,
   commentCommandArgs,
+  postComment,
   issueCommentsCommandArgs,
   commentMarker,
   budgetSkipMarker,

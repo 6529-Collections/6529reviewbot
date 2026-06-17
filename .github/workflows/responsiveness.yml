@@ -13,9 +13,9 @@ on:
         required: true
         type: string
       runner_label:
-        description: GitHub larger runner label for 8 vCPU / 32 GB / 300 GB.
+        description: GitHub runner label.
         required: true
-        default: ubuntu-latest-8-cores
+        default: ubuntu-latest
         type: string
       contexts:
         description: Comma-separated responsiveness contexts.

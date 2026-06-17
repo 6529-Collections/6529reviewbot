@@ -19,6 +19,8 @@ const requiredCommandCases = [
   { command: "/6529bot wcag", reviewKinds: ["wcag"] },
   { command: "/6529bot i18n", reviewKinds: ["i18n"] },
   { command: "/6529bot security", reviewKinds: ["security"] },
+  { command: "/6529bot responsiveness", reviewKinds: ["responsiveness"] },
+  { command: "/6529bot review responsiveness", reviewKinds: ["responsiveness"] },
   { command: "/6529bot help", reviewKinds: [] },
   { command: "@6529bot review wcag i18n", reviewKinds: ["wcag", "i18n"] },
 ];

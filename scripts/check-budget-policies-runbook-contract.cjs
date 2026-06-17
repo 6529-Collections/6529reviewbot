@@ -94,7 +94,7 @@ function checkScopesAndLedger(text, findings) {
     "`pr`, with `owner/repo#123`",
     "`provider`, with `anthropic`, `openai`, or `openrouter`",
     "`model`, with an exact configured model id",
-    "`review_kind`, with `general`, `followup`, `wcag`, `i18n`, or `security`",
+    "`review_kind`, with `general`, `followup`, `wcag`, `i18n`, `security`, or",
     "npm run ledger:schema -- -- --apply",
     "normalizes the legacy `requester` spelling to `requestor`",
     "Enabled policies must include at least one of `dailyUsd`, `weeklyUsd`, or `monthlyUsd`.",

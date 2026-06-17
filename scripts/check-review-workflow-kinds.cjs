@@ -11,6 +11,7 @@ const {
 } = require("../src/github-webhook.cjs");
 const {
   REVIEW_KIND_BINS,
+  REVIEW_KIND_WORKFLOWS,
 } = require("../src/worker-adapter.cjs");
 
 const root = path.resolve(__dirname, "..");
@@ -20,6 +21,7 @@ const dispatchWorkflowPaths = [
 ];
 const reusableWorkflowPath = ".github/workflows/review.yml";
 const SYNCHRONIZE_REVIEW_KINDS = ["followup"];
+const SPECIAL_WORKFLOW_REVIEW_KINDS = ["responsiveness"];
 
 function main() {
   const result = checkReviewWorkflowKinds();
@@ -31,6 +33,9 @@ function main() {
 function checkReviewWorkflowKinds(options = {}) {
   const findings = [];
   const reviewKinds = options.reviewKinds || REVIEW_KINDS;
+  const providerReviewKinds =
+    options.providerReviewKinds ||
+    reviewKinds.filter((kind) => !SPECIAL_WORKFLOW_REVIEW_KINDS.includes(kind));
   const initialReviewKinds = options.initialReviewKinds || INITIAL_REVIEW_KINDS;
   const reviewKindBins = options.reviewKindBins || REVIEW_KIND_BINS;
   const dispatchWorkflows = options.dispatchWorkflows || dispatchWorkflowPaths;
@@ -44,8 +49,14 @@ function checkReviewWorkflowKinds(options = {}) {
     const workflowText =
       options.dispatchWorkflowTexts?.[workflowPath] ||
       fs.readFileSync(path.join(root, workflowPath), "utf8");
-    checkDispatchWorkflow(workflowPath, workflowText, reviewKinds, findings);
+    checkDispatchWorkflow(workflowPath, workflowText, providerReviewKinds, findings);
   }
+  checkSpecialWorkflow(
+    ".github/workflows/responsiveness-review.yml",
+    options.specialWorkflowText ||
+      fs.readFileSync(path.join(root, ".github/workflows/responsiveness-review.yml"), "utf8"),
+    findings
+  );
 
   checkReusableWorkflowFallback(
     reusableText,
@@ -59,7 +70,7 @@ function checkReviewWorkflowKinds(options = {}) {
     SYNCHRONIZE_REVIEW_KINDS,
     findings
   );
-  checkReusableWorkflowCaseStatement(reusableText, reviewKinds, reviewKindBins, findings);
+  checkReusableWorkflowCaseStatement(reusableText, providerReviewKinds, reviewKindBins, findings);
 
   if (findings.length) {
     if (!options.quiet) {
@@ -74,6 +85,29 @@ function checkReviewWorkflowKinds(options = {}) {
     dispatchWorkflows: dispatchWorkflows.length,
     reviewKinds: reviewKinds.length,
   };
+}
+
+function checkSpecialWorkflow(workflowPath, workflowText, findings) {
+  let workflow;
+  try {
+    workflow = YAML.parse(workflowText);
+  } catch (error) {
+    findings.push(`${workflowPath} must be valid YAML: ${error.message}`);
+    return;
+  }
+  const reviewKindInput =
+    workflow?.on?.workflow_dispatch?.inputs?.review_kind ||
+    workflow?.true?.workflow_dispatch?.inputs?.review_kind;
+  if (!reviewKindInput) {
+    findings.push(`${workflowPath} must define workflow_dispatch input review_kind.`);
+    return;
+  }
+  if (!arraysEqual(reviewKindInput.options || [], ["responsiveness"])) {
+    findings.push(`${workflowPath} review_kind options must be ["responsiveness"].`);
+  }
+  if (!workflowText.includes("node bot/bin/responsiveness-review.cjs")) {
+    findings.push(`${workflowPath} must post through bin/responsiveness-review.cjs.`);
+  }
 }
 
 function checkReviewKindBins(reviewKinds, reviewKindBins, findings) {
@@ -187,6 +221,7 @@ if (require.main === module) {
 
 module.exports = {
   SYNCHRONIZE_REVIEW_KINDS,
+  SPECIAL_WORKFLOW_REVIEW_KINDS,
   arraysEqual,
   checkReviewWorkflowKinds,
   fallbackJsonArrayForVariable,

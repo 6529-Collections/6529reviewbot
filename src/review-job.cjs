@@ -8,6 +8,12 @@ const {
   normalizeProvider,
 } = require("./model-catalog.cjs");
 const DEFAULT_MAX_JOBS_PER_DELIVERY = 8;
+const RESPONSIVENESS_REVIEW_KIND = "responsiveness";
+const GITHUB_ACTIONS_REVIEW_LANE = Object.freeze({
+  provider: "github",
+  model: "actions-ubuntu-latest",
+  lane: "github:actions-ubuntu-latest",
+});
 
 function reviewJobPolicyFromEnv(env = process.env) {
   return {
@@ -97,7 +103,7 @@ function createReviewJobs(event, controls = {}, policy = reviewJobPolicyFromEnv(
   const jobs = [];
   const lanes = policy.lanes && policy.lanes.length ? policy.lanes : reviewJobPolicyFromEnv().lanes;
   for (const reviewKind of reviewKinds) {
-    for (const lane of lanes) {
+    for (const lane of lanesForReviewKind(reviewKind, lanes)) {
       jobs.push(createReviewJob(event, reviewKind, lane, controls));
     }
   }
@@ -115,7 +121,7 @@ function createReviewJobs(event, controls = {}, policy = reviewJobPolicyFromEnv(
 }
 
 function createReviewJob(event, reviewKind, lane, controls = {}) {
-  const normalizedLane = normalizeReviewLane(lane);
+  const normalizedLane = normalizeReviewLaneForKind(reviewKind, lane);
   const requestor =
     controls.admission?.requestor || event.commentAuthor || event.actor || event.prAuthor || "";
   const job = {
@@ -148,6 +154,20 @@ function createReviewJob(event, reviewKind, lane, controls = {}) {
     createdAt: controls.createdAt || new Date().toISOString(),
   };
   return controls.admission ? { ...job, admission: controls.admission } : job;
+}
+
+function lanesForReviewKind(reviewKind, lanes) {
+  if (reviewKind === RESPONSIVENESS_REVIEW_KIND) {
+    return [GITHUB_ACTIONS_REVIEW_LANE];
+  }
+  return lanes;
+}
+
+function normalizeReviewLaneForKind(reviewKind, lane) {
+  if (reviewKind === RESPONSIVENESS_REVIEW_KIND) {
+    return { ...GITHUB_ACTIONS_REVIEW_LANE };
+  }
+  return normalizeReviewLane(lane);
 }
 
 function eventForReviewJob(event, job) {
@@ -333,11 +353,14 @@ function slugPart(value) {
 
 module.exports = {
   DEFAULT_MAX_JOBS_PER_DELIVERY,
+  GITHUB_ACTIONS_REVIEW_LANE,
   PROVIDERS,
+  RESPONSIVENESS_REVIEW_KIND,
   attachBudgetToReviewJob,
   budgetSummaryForJobs,
   createReviewJobs,
   eventForReviewJob,
+  lanesForReviewKind,
   parseReviewLanes,
   publicReviewJobSummary,
   reviewJobPolicyFromEnv,

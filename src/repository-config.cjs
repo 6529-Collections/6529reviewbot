@@ -22,6 +22,9 @@ const DEFAULT_CONFIG_PATHS = [
 ];
 const DEFAULT_MAX_CONFIG_BYTES = 64 * 1024;
 const DEFAULT_FOLLOWUP_REVIEW_KINDS = ["followup"];
+const CONFIGURABLE_INITIAL_REVIEW_KINDS = REVIEW_KINDS.filter(
+  (kind) => kind !== "followup"
+);
 const TOP_LEVEL_KEYS = new Set([
   "version",
   "enabled",
@@ -392,7 +395,7 @@ function normalizeReviewKindsConfig(raw) {
   return {
     allowed,
     initial: filterAllowedReviewKinds(
-      reviewKindList(raw.initial, INITIAL_REVIEW_KINDS, "reviewKinds.initial"),
+      reviewKindList(raw.initial, CONFIGURABLE_INITIAL_REVIEW_KINDS, "reviewKinds.initial"),
       allowed
     ),
     followup: filterAllowedReviewKinds(
@@ -768,6 +771,7 @@ function encodePath(filePath) {
 }
 
 module.exports = {
+  CONFIGURABLE_INITIAL_REVIEW_KINDS,
   CONFIG_VERSION,
   DEFAULT_CONFIG_PATHS,
   DEFAULT_MAX_CONFIG_BYTES,
