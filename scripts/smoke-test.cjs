@@ -132,6 +132,7 @@ const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const releaseCandidateContractCheck = require("./check-release-candidate-contract.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const repositoryConfigBoundaryCheck = require("./check-repository-config-boundary.cjs");
+const responsivenessReview = require("../src/responsiveness-review.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const reviewBinEntrypointsCheck = require("./check-review-bin-entrypoints.cjs");
@@ -172,6 +173,20 @@ assert.deepEqual(
   reviewBot.usageMetadata(settings, { changedFiles: 1 }),
   { changedFiles: 1, requestor: "maintainer" }
 );
+const responsivenessSettings = responsivenessReview.readSettings(
+  {},
+  {
+    GH_REPO: "6529-Collections/example",
+    PR_NUMBER: "7",
+    REVIEWBOT_REQUESTOR: "maintainer",
+    REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD: "0.37",
+    REVIEW_USAGE_ENABLED: "false",
+  }
+);
+assert.equal(responsivenessSettings.provider, "github");
+assert.equal(responsivenessSettings.model, "actions-ubuntu-latest");
+assert.equal(responsivenessSettings.lane, "github:actions-ubuntu-latest");
+assert.equal(responsivenessSettings.estimatedCostUsd, 0.37);
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 6);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(
@@ -3796,6 +3811,30 @@ assert.equal(reviewJobs[0].headRefName, "feature/branch");
 assert.equal(reviewJobs[0].baseSha, "def456");
 assert.equal(reviewJobs[0].provider, "anthropic");
 assert.equal(reviewJobs[1].provider, "openai");
+const responsivenessJobs = reviewJob.createReviewJobs(
+  { ...normalizedPullRequest, reviewKinds: ["responsiveness"] },
+  {
+    admission: { requestor: "maintainer" },
+    createdAt: "2026-06-11T00:00:00.000Z",
+  },
+  twoLanePolicy
+);
+assert.equal(responsivenessJobs.length, 1);
+assert.equal(responsivenessJobs[0].reviewKind, "responsiveness");
+assert.equal(responsivenessJobs[0].provider, "github");
+assert.equal(responsivenessJobs[0].model, "actions-ubuntu-latest");
+assert.equal(responsivenessJobs[0].lane, "github:actions-ubuntu-latest");
+const responsivenessServerOptions = serverCli.createServerOptionsFromEnv({
+  REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD: "0.37",
+});
+assert.deepEqual(
+  responsivenessServerOptions.estimateBudgetCost({}, {}, responsivenessJobs[0]),
+  { estimatedCostUsd: 0.37 }
+);
+assert.deepEqual(
+  responsivenessServerOptions.estimateBudgetCost({}, {}, reviewJobs[0]),
+  {}
+);
 const globallyDisabledRuntime = runtimeControl.applyRuntimeControlToEvent(
   normalizedPullRequest,
   runtimeControl.runtimeControlPolicyFromEnv({
