@@ -65,7 +65,7 @@ Unknown commands are ignored.
 general   correctness, regressions, production bugs, and meaningful tests
 followup  newest commits plus prior human and bot review comments
 wcag      WCAG 2.2 AA accessibility risks
-i18n      localization, translated labels, pluralization, and locale risks
+i18n      6529 FE message keys, locale helpers, fallbacks, and copy migration
 security  crypto/security, auth, injection, replay, and wallet risks
 responsiveness  deterministic changed-route viewport and app-shell checks
 ```

@@ -71,11 +71,19 @@ node bin/i18n-analysis.cjs
 
 Focus:
 
-- hardcoded strings;
-- translated labels, aria labels, alt text, and validation messages;
-- pluralization and interpolation;
-- locale-sensitive dates, numbers, currencies, addresses, and wallet labels;
-- RTL assumptions.
+- 6529 frontend progressive i18n policy;
+- `en-US` source/default locale with `en-GB`, `fr-FR`, `es-ES`, and `de-DE`
+  fallback dictionaries;
+- message-backed visible copy and accessible names through
+  `i18n/messages.ts` and `t(locale, key, params)`;
+- product-meaning message keys, interpolation, and no translated sentence
+  concatenation;
+- locale-aware helpers from `i18n/format.ts` and `i18n/locales.ts`, including
+  `normalizeLocale`, number/date/percent/relative-time formatting, and
+  `compareLocalized`;
+- no broad `app/[lang]` migration request during component-level migration;
+- no user-generated content translation unless a feature explicitly adds it;
+- fallback-debt notes for touched surfaces that are not fully migrated.
 
 ## Crypto Security Analysis
 

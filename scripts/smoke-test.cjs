@@ -261,6 +261,28 @@ assert.throws(
 );
 assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 6);
 assert.equal(reviewCommentFormatCheck.expectedMarker, "6529-review-bot");
+const i18nFocusContract = reviewBot.REVIEW_KIND_CONFIGS.i18n.focus.join("\n");
+for (const requiredI18nGuidance of [
+  "en-US",
+  "en-GB",
+  "fr-FR",
+  "es-ES",
+  "de-DE",
+  "i18n/messages/en-US.ts",
+  "t(locale, key, params)",
+  "formatNumber",
+  "formatDate",
+  "compareLocalized",
+  "toLocaleString()",
+  "app/[lang]",
+  "user-generated content",
+  "fallback-debt note",
+]) {
+  assert(
+    i18nFocusContract.includes(requiredI18nGuidance),
+    `i18n review focus should include ${requiredI18nGuidance}`
+  );
+}
 assert.throws(
   () =>
     reviewCommentFormatCheck.checkReviewCommentFormat({
