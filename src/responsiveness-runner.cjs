@@ -383,6 +383,7 @@ function prepareHarness(plan, options) {
     path.join(harnessDir, "contexts.json"),
     `${JSON.stringify(plan.contexts, null, 2)}\n`
   );
+  fs.writeFileSync(path.join(harnessDir, "global-setup.cjs"), buildPlaywrightGlobalSetup());
   fs.writeFileSync(path.join(harnessDir, "playwright.config.cjs"), buildPlaywrightConfig(plan, options));
   fs.writeFileSync(path.join(testsDir, "responsiveness.spec.cjs"), buildPlaywrightSpec());
 
@@ -408,6 +409,7 @@ const port = ${JSON.stringify(String(options.port))};
 module.exports = defineConfig({
   testDir: path.join(__dirname, "tests"),
   testMatch: /responsiveness\\.spec\\.cjs$/,
+  globalSetup: path.join(__dirname, "global-setup.cjs"),
   fullyParallel: true,
   workers: ${JSON.stringify(options.workers)},
   retries: 0,
@@ -461,6 +463,36 @@ module.exports = defineConfig({
     },
   },
 });
+`;
+}
+
+function buildPlaywrightGlobalSetup() {
+  return `${headerComment()}
+const routes = require("./routes.json");
+
+module.exports = async (config) => {
+  const baseURL = config.projects?.[0]?.use?.baseURL || "http://127.0.0.1:3001";
+  for (const route of routes) {
+    const url = new URL(route, baseURL).toString();
+    await fetchWithTimeout(url, 20000).catch(() => {});
+  }
+};
+
+async function fetchWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    await fetch(url, {
+      redirect: "follow",
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "6529reviewbot-responsiveness-prewarm",
+      },
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 `;
 }
 
