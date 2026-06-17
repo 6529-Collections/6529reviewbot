@@ -206,30 +206,28 @@ function collectChangedFiles(options) {
     return readChangedFiles(options.changedFilesPath);
   }
 
-  const result = childProcess.spawnSync(
-    "git",
-    [
-      "-C",
-      options.target,
-      "diff",
-      "--name-only",
-      "--diff-filter=ACMR",
-      `${options.baseRef}...${options.headRef}`,
-    ],
-    {
-      encoding: "utf8",
-      shell: process.platform === "win32",
+  for (const range of [`${options.baseRef}...${options.headRef}`, `${options.baseRef}..${options.headRef}`]) {
+    const result = childProcess.spawnSync(
+      "git",
+      ["-C", options.target, "diff", "--name-only", "--diff-filter=ACMR", range],
+      {
+        encoding: "utf8",
+        shell: process.platform === "win32",
+      }
+    );
+    if (result.status !== 0) {
+      continue;
     }
-  );
-
-  if (result.status !== 0) {
-    return [];
+    const files = result.stdout
+      .split(/\r?\n/)
+      .map((file) => file.trim())
+      .filter(Boolean);
+    if (files.length > 0) {
+      return files;
+    }
   }
 
-  return result.stdout
-    .split(/\r?\n/)
-    .map((file) => file.trim())
-    .filter(Boolean);
+  return [];
 }
 
 function readChangedFiles(filePath) {
@@ -413,7 +411,7 @@ module.exports = defineConfig({
   fullyParallel: true,
   workers: ${JSON.stringify(options.workers)},
   retries: 0,
-  timeout: 45000,
+  timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 25000),
   reporter: [
     ["list"],
     ["json", { outputFile: path.join(outputRoot, "playwright-report.json") }],
@@ -421,8 +419,8 @@ module.exports = defineConfig({
   outputDir: path.join(outputRoot, "playwright-output"),
   use: {
     baseURL,
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    actionTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_ACTION_TIMEOUT_MS || 8000),
+    navigationTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 12000),
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
     video: "off",
@@ -502,7 +500,10 @@ for (const route of routes) {
     let responseStatus = null;
     let responseUrl = "";
     try {
-      const response = await page.goto(route, { waitUntil: "domcontentloaded" });
+      const response = await page.goto(route, {
+        waitUntil: "commit",
+        timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_GOTO_TIMEOUT_MS || 12000),
+      });
       responseStatus = response ? response.status() : null;
       responseUrl = response ? response.url() : page.url();
       await settlePage(page, pageErrors);
@@ -581,8 +582,8 @@ for (const route of routes) {
 async function settlePage(page, pageErrors) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      await page.waitForLoadState("domcontentloaded", { timeout: 5000 }).catch(() => {});
-      await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => {});
+      await page.waitForLoadState("domcontentloaded", { timeout: 3000 }).catch(() => {});
+      await page.waitForLoadState("networkidle", { timeout: 3000 }).catch(() => {});
       await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       return;
     } catch (error) {
