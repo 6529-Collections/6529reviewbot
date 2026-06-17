@@ -18,9 +18,16 @@ The workflow defaults to the GitHub larger-runner label:
 ubuntu-latest-8-cores
 ```
 
-That label is expected to map to an Ubuntu larger runner with 8 vCPU, 32 GB RAM,
-and 300 GB SSD. If the organization uses a different larger-runner label, pass
-that label through the workflow's `runner_label` input.
+For 6529, that label currently maps to a repo-scoped self-hosted Ubuntu runner
+for `6529reviewbot` with 8 vCPU, 32 GB RAM, and a 300 GB encrypted gp3 root
+volume. If the organization later uses a GitHub-hosted larger runner or a
+different self-hosted label, pass that label through the workflow's
+`runner_label` input.
+
+Keep this workflow manual-only until the runner isolation story is stronger.
+The benchmark installs dependencies and runs the target frontend PR, so it
+executes target repository code on the selected runner. Do not put production
+provider keys, AWS app credentials, or other privileged secrets on this runner.
 
 ## Manual Workflow
 
