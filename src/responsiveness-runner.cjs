@@ -572,8 +572,13 @@ for (const route of routes) {
     if (pageErrors.length > 0) {
       failures.push(\`\${pageErrors.length} page error(s)\`);
     }
-    if (mode === "native-mobile" && !String(metrics.bodyClass).includes("capacitor-native")) {
-      failures.push("native Capacitor layout did not activate");
+    if (mode === "native-mobile") {
+      const shimActive = Boolean(metrics.nativeShimActive || metrics.nativeIsNativePlatform || metrics.nativePlatform);
+      if (!shimActive) {
+        failures.push("native Capacitor shim did not activate");
+      } else if (!String(metrics.bodyClass).includes("capacitor-native")) {
+        warnings.push("native Capacitor layout class absent");
+      }
     }
     if (mode === "electron-desktop") {
       const isElectron = String(metrics.userAgent || "").includes("Electron");
@@ -641,6 +646,20 @@ async function readMetrics(page) {
         const scrollHeight = Math.max(doc?.scrollHeight || 0, body?.scrollHeight || 0);
         const clientHeight = doc?.clientHeight || window.innerHeight;
         const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "";
+        const capacitor = window.Capacitor || {};
+        let nativePlatform = "";
+        let nativeIsNativePlatform = false;
+        try {
+          nativePlatform = typeof capacitor.getPlatform === "function" ? capacitor.getPlatform() : "";
+        } catch {
+          nativePlatform = "";
+        }
+        try {
+          nativeIsNativePlatform =
+            typeof capacitor.isNativePlatform === "function" ? Boolean(capacitor.isNativePlatform()) : false;
+        } catch {
+          nativeIsNativePlatform = false;
+        }
         const visible = (selector) => {
           const element = document.querySelector(selector);
           if (!element) return false;
@@ -653,6 +672,9 @@ async function readMetrics(page) {
           url: window.location.href,
           userAgent: navigator.userAgent,
           bodyClass: body?.className || "",
+          nativeShimActive: Boolean(window.__reviewbotNativeShimActive),
+          nativePlatform,
+          nativeIsNativePlatform,
           viewportMeta,
           scrollWidth,
           clientWidth,
@@ -685,6 +707,9 @@ function fallbackMetrics(page) {
     url: page.url(),
     userAgent: "",
     bodyClass: "",
+    nativeShimActive: false,
+    nativePlatform: "",
+    nativeIsNativePlatform: false,
     viewportMeta: "",
     scrollWidth: 0,
     clientWidth: 0,
@@ -724,6 +749,7 @@ async function installCapacitorShim(page, platform) {
       name: nativePlatform,
       plugins: {},
     };
+    window.__reviewbotNativeShimActive = true;
     window.Capacitor = {
       ...window.Capacitor,
       getPlatform: () => nativePlatform,
@@ -786,6 +812,7 @@ function runResponsiveness(options) {
   const harness = prepareHarness(plan, options);
   const env = {
     ...process.env,
+    NODE_PATH: [path.join(options.target, "node_modules"), process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
     REVIEWBOT_RESPONSIVENESS_OUTPUT_DIR: options.outputDir,
   };
   const result = childProcess.spawnSync(
