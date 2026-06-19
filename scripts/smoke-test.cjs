@@ -304,7 +304,13 @@ const responsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
     reuseExistingServer: false,
   }
 );
-assert(!responsivenessSpec.includes("capacitor-native"));
+assert(responsivenessSpec.includes("body.capacitor-native was not applied"));
+assert(responsivenessSpec.includes("viewport-fit=cover is missing"));
+assert(responsivenessSpec.includes("nativePluginAvailableKeyboard"));
+assert(responsivenessSpec.includes("bottomNavigationVisible"));
+assert(responsivenessSpec.includes("__reviewbotCapacitorEmit"));
+assert(responsivenessSpec.includes('isPluginAvailable: (name) => ["App", "Keyboard", "Device"].includes'));
+assert(responsivenessSpec.includes("profileAwareProbe"));
 assert(
   responsivenessSpec.includes(
     "6529 app shell did not render meaningful content"
@@ -322,13 +328,42 @@ assert(responsivenessSpec.includes("nextErrorOverlayText"));
 assert(responsivenessSpec.includes("summarizeOverlayText"));
 assert(responsivenessSpec.includes("skipTextElement"));
 assert(responsivenessSpec.includes('"STYLE", "SCRIPT", "NOSCRIPT", "TEMPLATE", "SVG", "PATH"'));
+assert(responsivenessSpec.includes("expandNextOverlayDiagnostics"));
+assert(responsivenessSpec.includes("candidate.click()"));
 assert(responsivenessSpec.includes('const visibleText = (body?.innerText || "")'));
 assert(!responsivenessSpec.includes("body?.innerText || body?.textContent"));
+const seizeResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.find(
+  (profile) => profile.id === "6529seize-frontend"
+);
+assert(seizeResponsivenessProfile);
+const inferredSeizeRoutes = responsivenessRunner.inferRoutes(
+  [
+    "components/user/collected/UserPageCollectedStats.tsx",
+    "hooks/useDeepLinkNavigation.ts",
+  ],
+  20,
+  seizeResponsivenessProfile
+);
+assert(inferredSeizeRoutes.routes.includes("/6529er/collected"));
+assert(inferredSeizeRoutes.routes.includes("/open-mobile?path=%2Fwaves"));
+const profileTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-profile-target-"));
+fs.writeFileSync(
+  path.join(profileTempDir, "package.json"),
+  `${JSON.stringify({ name: "6529seize" })}\n`
+);
+assert.equal(
+  responsivenessRunner.detectResponsivenessProfile(profileTempDir).id,
+  "6529seize-frontend"
+);
 const responsivenessScreenshotManifest =
   responsivenessRunner.buildScreenshotManifest({
     plan: {
       baseRef: "origin/main",
       headRef: "HEAD",
+      profile: {
+        id: "6529seize-frontend",
+        label: "6529 Seize frontend",
+      },
       contexts: [{ name: "web-desktop" }],
       routes: ["/"],
     },
@@ -344,6 +379,15 @@ const responsivenessScreenshotManifest =
         metrics: {
           contentReady: false,
           contentSignals: [],
+          hasCapacitorNativeClass: true,
+          electronDetected: false,
+          viewportMeta: "width=device-width, initial-scale=1, viewport-fit=cover",
+          layoutRootDataMobile: "false",
+          layoutRootDataNarrow: "false",
+          layoutRootDataSmall: "false",
+          bottomNavigationVisible: false,
+          bottomNavigationHeight: 0,
+          androidKeyboardHeight: "0px",
           visibleTextLength: 0,
           visibleInteractiveElements: 0,
           visibleAppShellElements: 0,
@@ -355,6 +399,10 @@ const responsivenessScreenshotManifest =
           available: true,
           blankLike: true,
           luminanceStdDev: 0.2,
+        },
+        profileProbe: {
+          warnings: [],
+          failures: ["6529 native profile: body.capacitor-native was not applied"],
         },
         nextAssetFailures: [
           {
@@ -390,6 +438,62 @@ assert(
     "Module not found"
   )
 );
+assert.equal(responsivenessScreenshotManifest.profile.id, "6529seize-frontend");
+assert.equal(responsivenessScreenshotManifest.screenshots[0].hasCapacitorNativeClass, true);
+assert.equal(
+  responsivenessScreenshotManifest.screenshots[0].viewportMeta,
+  "width=device-width, initial-scale=1, viewport-fit=cover"
+);
+assert.equal(
+  responsivenessScreenshotManifest.screenshots[0].profileProbe.failures[0],
+  "6529 native profile: body.capacitor-native was not applied"
+);
+const visualPrompt = responsivenessReview.buildVisualReviewPrompt(
+  { repo: "6529-Collections/6529seize-frontend", workflowJob: "responsiveness-review" },
+  {
+    verdict: "Needs changes",
+    plan: {
+      profile: {
+        id: "6529seize-frontend",
+        label: "6529 Seize frontend",
+        platformNotes: [
+          "native-mobile/native-ios/native-android are fast browser-level Capacitor simulations.",
+        ],
+        deterministicChecks: ["native-capacitor-contract"],
+      },
+      contexts: [{ name: "native-mobile" }],
+      routes: ["/waves"],
+      routeReasons: [{ route: "/waves", reason: "shell canary" }],
+    },
+    metrics: { checksCompleted: "1/1", failures: 1, warnings: 0 },
+    summary: "Status: fail",
+  },
+  { number: 2715, title: "Test responsiveness" },
+  [
+    {
+      context: "native-mobile",
+      route: "/waves",
+      path: "screenshots/native-mobile--waves.png",
+      url: "https://reviewbot.example.test/artifacts/responsiveness/token/screenshots/native-mobile--waves.png",
+      contentReady: false,
+      hasCapacitorNativeClass: false,
+      viewportMeta: "",
+      bottomNavigationVisible: false,
+      screenshotAnalysis: { available: true, blankLike: true, luminanceStdDev: 0.2 },
+      profileProbe: {
+        failures: ["6529 native profile: body.capacitor-native was not applied"],
+        warnings: [],
+      },
+      failures: ["6529 app shell did not render meaningful content"],
+      warnings: [],
+    },
+  ]
+);
+const visualPromptText = visualPrompt.user[0].text;
+assert(visualPromptText.includes("Platform context:"));
+assert(visualPromptText.includes("browser-level Capacitor simulation"));
+assert(visualPromptText.includes("hasCapacitorNativeClass=false"));
+assert(visualPromptText.includes("profileProbeFailures=6529 native profile: body.capacitor-native was not applied"));
 const responsivenessDevToolsOnlyManifest =
   responsivenessRunner.buildScreenshotManifest({
     plan: {
