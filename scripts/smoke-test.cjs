@@ -5333,6 +5333,69 @@ const usageEventsQuery = usageApiLedger.buildUsageEventsQuery("reviewbot", {
 assert.match(usageEventsQuery.sql, /ai_review_usage_events/);
 assert.match(usageEventsQuery.sql, /created_at >= cast\(:from_ts as timestamptz\)/);
 assert.equal(usageEventsQuery.parameters[2].value.longValue, 25);
+assert.equal(usageEventsQuery.parameters[3].value.longValue, 0);
+assert.match(usageEventsQuery.sql, /offset :offset/);
+const usageEventRecordForPaging = (index) => [
+  { stringValue: `2026-06-12T12:0${index}:00.000Z` },
+  { stringValue: "6529-Collections/example" },
+  { longValue: index },
+  { stringValue: "author" },
+  { stringValue: "head-sha" },
+  { stringValue: "123" },
+  { stringValue: "review-job" },
+  { stringValue: "general" },
+  { stringValue: "anthropic" },
+  { stringValue: "claude-opus-4-8" },
+  { stringValue: "anthropic:claude-opus-4-8" },
+  { longValue: 10 },
+  { longValue: 0 },
+  { longValue: 20 },
+  { longValue: 0 },
+  { longValue: 30 },
+  { stringValue: "1.25" },
+  { isNull: true },
+  { stringValue: "USD" },
+  { booleanValue: false },
+  { stringValue: "{}" },
+];
+const pagedUsageCalls = [];
+const pagedUsageEvents = usageApiLedger.readUsageEvents(
+  {
+    enabled: true,
+    region: "us-east-1",
+    resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:reviewbot",
+    secretArn: "arn:aws:secretsmanager:us-east-1:123456789012:secret:reviewbot",
+    database: "reviewbot",
+    schema: "reviewbot",
+  },
+  {
+    range: {
+      from: "2026-06-12T00:00:00.000Z",
+      to: "2026-06-13T00:00:00.000Z",
+    },
+    apiSettings: usageApi.usageApiSettingsFromEnv({ REVIEWBOT_USAGE_API_MAX_EVENTS: "5" }),
+    limit: 5,
+    pageSize: 2,
+    executeStatement: (_settings, _sql, parameters) => {
+      const pageLimit = parameters[2].value.longValue;
+      const offset = parameters[3].value.longValue;
+      pagedUsageCalls.push({ pageLimit, offset });
+      const count = Math.min(pageLimit, 5 - offset);
+      return {
+        records: Array.from({ length: count }, (_item, index) =>
+          usageEventRecordForPaging(offset + index + 1)
+        ),
+      };
+    },
+  }
+);
+assert.deepEqual(pagedUsageCalls, [
+  { pageLimit: 2, offset: 0 },
+  { pageLimit: 2, offset: 2 },
+  { pageLimit: 1, offset: 4 },
+]);
+assert.equal(pagedUsageEvents.length, 5);
+assert.equal(pagedUsageEvents[4].prNumber, 5);
 const recentUsageEventsApiQuery = usageApi.usageEventsQueryFromRequest(
   { url: new URL("http://localhost/api/admin/usage/events/recent?days=7&limit=3") },
   usageApi.usageApiSettingsFromEnv({
