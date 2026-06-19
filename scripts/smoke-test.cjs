@@ -293,12 +293,29 @@ assert.equal(
   ""
 );
 const responsivenessSpec = responsivenessRunner.buildPlaywrightSpec();
+const responsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
+  { contexts: [], routes: [] },
+  {
+    outputDir: "/tmp/reviewbot-responsiveness",
+    baseUrl: "http://127.0.0.1:3001",
+    target: "/tmp/target",
+    port: 3001,
+    workers: 4,
+    reuseExistingServer: false,
+  }
+);
 assert(!responsivenessSpec.includes("capacitor-native"));
 assert(
   responsivenessSpec.includes(
     "6529 app shell did not render meaningful content"
   )
 );
+assert(responsivenessSpec.includes("Next.js asset request(s) failed or were blocked"));
+assert(responsivenessSpec.includes("summarizeRequestFailure"));
+assert(responsivenessSpec.includes("nextAssetFailures"));
+assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
+assert(responsivenessConfig.includes('ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false"'));
+assert(!responsivenessConfig.includes('ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true"'));
 assert(responsivenessSpec.includes("visibleAppShellElements"));
 assert(responsivenessSpec.includes("analyzeScreenshot"));
 assert(responsivenessSpec.includes('const visibleText = (body?.innerText || "")'));
@@ -332,6 +349,20 @@ const responsivenessScreenshotManifest =
           blankLike: true,
           luminanceStdDev: 0.2,
         },
+        nextAssetFailures: [
+          {
+            url: "https://dnclu2fna0b2b.cloudfront.net/web_build/sha/_next/static/chunks/app.js",
+            resourceType: "script",
+            failure: "net::ERR_BLOCKED_BY_ORB",
+          },
+        ],
+        networkFailures: [
+          {
+            url: "https://dnclu2fna0b2b.cloudfront.net/web_build/sha/_next/static/chunks/app.js",
+            resourceType: "script",
+            failure: "net::ERR_BLOCKED_BY_ORB",
+          },
+        ],
       },
     ],
   });
@@ -344,6 +375,8 @@ assert.equal(
   responsivenessScreenshotManifest.screenshots[0].screenshotAnalysis.blankLike,
   true
 );
+assert.equal(responsivenessScreenshotManifest.screenshots[0].nextAssetFailures.length, 1);
+assert.equal(responsivenessScreenshotManifest.screenshots[0].networkFailures.length, 1);
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION: "us-east-1",

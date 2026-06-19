@@ -457,7 +457,7 @@ module.exports = defineConfig({
       NEXTGEN_CHAIN_ID: process.env.NEXTGEN_CHAIN_ID || "1",
       IPFS_API_ENDPOINT: process.env.IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
       IPFS_GATEWAY_ENDPOINT: process.env.IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
-      ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true",
+      ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
       SEIZE_6529_COMMAND: "1",
       USE_TURBO: process.env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
     },
@@ -526,6 +526,8 @@ for (const route of routes) {
 
     const consoleErrors = [];
     const pageErrors = [];
+    const networkFailures = [];
+    const networkResponses = [];
     page.on("console", (message) => {
       if (message.type() === "error") {
         consoleErrors.push(sanitizeMessage(message.text()));
@@ -533,6 +535,18 @@ for (const route of routes) {
     });
     page.on("pageerror", (error) => {
       pageErrors.push(sanitizeMessage(error.message || String(error)));
+    });
+    page.on("requestfailed", (request) => {
+      const failure = summarizeRequestFailure(request);
+      if (failure) {
+        networkFailures.push(failure);
+      }
+    });
+    page.on("response", (response) => {
+      const problem = summarizeProblemResponse(response);
+      if (problem) {
+        networkResponses.push(problem);
+      }
     });
 
     const startedAt = Date.now();
@@ -583,6 +597,10 @@ for (const route of routes) {
       available: false,
       error: sanitizeMessage(error.message || String(error)),
     }));
+    const nextAssetProblems = [
+      ...networkFailures.filter(isNextAssetProblem),
+      ...networkResponses.filter(isNextAssetProblem),
+    ];
 
     const warnings = [];
     const failures = [];
@@ -605,6 +623,11 @@ for (const route of routes) {
     if (screenshotAnalysis.blankLike) {
       failures.push(
         \`screenshot appears blank or near-uniform despite app readiness; nonWhiteRatio=\${screenshotAnalysis.nonWhiteRatio}, luminanceStdDev=\${screenshotAnalysis.luminanceStdDev}\`
+      );
+    }
+    if (nextAssetProblems.length > 0) {
+      failures.push(
+        \`\${nextAssetProblems.length} Next.js asset request(s) failed or were blocked; 6529 PR-local responsiveness runs must use local _next assets with ASSETS_FROM_S3=false; examples: \${summarizeNextAssetProblems(nextAssetProblems)}\`
       );
     }
     if (pageErrors.length > 0) {
@@ -643,6 +666,9 @@ for (const route of routes) {
       failures,
       consoleErrors: consoleErrors.slice(0, 20),
       pageErrors: pageErrors.slice(0, 20),
+      networkFailures: networkFailures.slice(0, 30),
+      networkResponses: networkResponses.slice(0, 30),
+      nextAssetFailures: nextAssetProblems.slice(0, 20),
       contentReadiness: {
         ok: Boolean(contentReadiness.ok),
         reason: contentReadiness.reason,
@@ -911,6 +937,65 @@ function isNavigationRace(error) {
   );
 }
 
+function summarizeRequestFailure(request) {
+  const resourceType = request.resourceType();
+  const url = request.url();
+  if (!isInterestingNetworkResource(resourceType, url)) {
+    return null;
+  }
+  return {
+    url: sanitizeUrl(url),
+    resourceType,
+    failure: sanitizeMessage(request.failure()?.errorText || "request failed"),
+  };
+}
+
+function summarizeProblemResponse(response) {
+  const status = response.status();
+  if (status < 400) {
+    return null;
+  }
+  const request = response.request();
+  const resourceType = request.resourceType();
+  const url = response.url();
+  if (!isInterestingNetworkResource(resourceType, url)) {
+    return null;
+  }
+  return {
+    url: sanitizeUrl(url),
+    resourceType,
+    status,
+    statusText: sanitizeMessage(response.statusText() || ""),
+  };
+}
+
+function isInterestingNetworkResource(resourceType, url) {
+  return (
+    isNextAssetUrl(url) ||
+    ["document", "script", "stylesheet", "fetch", "xhr"].includes(resourceType)
+  );
+}
+
+function isNextAssetProblem(problem) {
+  return isNextAssetUrl(problem?.url || "");
+}
+
+function isNextAssetUrl(value) {
+  return /(?:\\/|%2F)_next(?:\\/|%2F)(?:static|webpack|image)|\\/web_build\\/[^/]+\\/_next\\//i.test(
+    String(value || "")
+  );
+}
+
+function summarizeNextAssetProblems(problems) {
+  return problems
+    .slice(0, 3)
+    .map((problem) => {
+      const reason = problem.status ? \`HTTP \${problem.status}\` : problem.failure || "failed";
+      return \`\${problem.resourceType || "resource"} \${reason} \${problem.url}\`;
+    })
+    .join("; ");
+}
+
 async function analyzeScreenshot(screenshotPath) {
   if (!sharp || !fs.existsSync(screenshotPath)) {
     return {
@@ -1029,6 +1114,20 @@ function sanitizeMessage(value) {
   return String(value || "").replace(/\\s+/g, " ").slice(0, 1000);
 }
 
+function sanitizeUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    for (const key of Array.from(url.searchParams.keys())) {
+      if (/(?:token|secret|signature|credential|key|auth|session|jwt)/i.test(key)) {
+        url.searchParams.set(key, "[redacted]");
+      }
+    }
+    return url.toString().slice(0, 500);
+  } catch {
+    return sanitizeMessage(value).slice(0, 500);
+  }
+}
+
 function safeName(value) {
   return String(value || "root")
     .replace(/^\\/+/, "")
@@ -1114,6 +1213,9 @@ function buildScreenshotManifest({ plan, results }) {
       visibleInteractiveElements: result.metrics?.visibleInteractiveElements || 0,
       visibleAppShellElements: result.metrics?.visibleAppShellElements || 0,
       screenshotAnalysis: result.screenshotAnalysis || null,
+      nextAssetFailures: result.nextAssetFailures || [],
+      networkFailures: (result.networkFailures || []).slice(0, 5),
+      networkResponses: (result.networkResponses || []).slice(0, 5),
       nextErrorOverlay: Boolean(result.metrics?.nextErrorOverlay),
     }));
   return {
@@ -1295,6 +1397,7 @@ module.exports = {
   CONTEXTS,
   DEFAULT_CONTEXTS,
   buildPlan,
+  buildPlaywrightConfig,
   buildPlaywrightSpec,
   collectChangedFiles,
   buildScreenshotManifest,
