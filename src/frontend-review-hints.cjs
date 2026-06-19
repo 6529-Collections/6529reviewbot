@@ -64,7 +64,7 @@ function parseAddedDiffLines(diff) {
       continue;
     }
 
-    if (rawLine.startsWith("+++") || rawLine.startsWith("---")) {
+    if (/^(?:\+\+\+|---)\s/.test(rawLine)) {
       continue;
     }
 

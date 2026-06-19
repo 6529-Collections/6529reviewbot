@@ -728,6 +728,17 @@ assert.equal(
   ).line,
   40
 );
+const incrementEdgeDiff = [
+  "diff --git a/components/example/Counter.tsx b/components/example/Counter.tsx",
+  "--- a/components/example/Counter.tsx",
+  "+++ b/components/example/Counter.tsx",
+  "@@ -1,0 +1,2 @@",
+  "+  ++index;",
+  "+  const node = <div onClick={noop}>x</div>;",
+].join("\n");
+const incrementEdgeLines = frontendReviewHints.parseAddedDiffLines(incrementEdgeDiff);
+assert.equal(incrementEdgeLines[0].text.trim(), "++index;");
+assert.equal(incrementEdgeLines[1].line, 2);
 const formattedFrontendHints = frontendReviewHints.formatReviewHintsForPrompt(wcagHints);
 assert(formattedFrontendHints.includes("wcag/no-clickable-noninteractive"));
 assert(formattedFrontendHints.includes("components/example/Dialog.tsx:40"));
