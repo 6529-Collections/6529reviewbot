@@ -322,6 +322,8 @@ assert(responsivenessSpec.includes("nextErrorOverlayText"));
 assert(responsivenessSpec.includes("summarizeOverlayText"));
 assert(responsivenessSpec.includes("skipTextElement"));
 assert(responsivenessSpec.includes('"STYLE", "SCRIPT", "NOSCRIPT", "TEMPLATE", "SVG", "PATH"'));
+assert(responsivenessSpec.includes("expandNextOverlayDiagnostics"));
+assert(responsivenessSpec.includes("candidate.click()"));
 assert(responsivenessSpec.includes('const visibleText = (body?.innerText || "")'));
 assert(!responsivenessSpec.includes("body?.innerText || body?.textContent"));
 const responsivenessScreenshotManifest =

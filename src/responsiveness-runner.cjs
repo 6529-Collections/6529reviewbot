@@ -727,6 +727,15 @@ async function waitForMeaningfulAppContent(page) {
         };
       }
       if (lastMetrics.nextErrorOverlay) {
+        if (!summarizeOverlayText(lastMetrics.nextErrorOverlayText)) {
+          const expanded = await expandNextOverlayDiagnostics(page);
+          if (expanded) {
+            const expandedMetrics = await readMetrics(page);
+            if (expandedMetrics.ok) {
+              lastMetrics = expandedMetrics.metrics;
+            }
+          }
+        }
         return {
           ok: false,
           reason: "Next.js error overlay is visible before content readiness",
@@ -751,6 +760,58 @@ async function waitForMeaningfulAppContent(page) {
     durationMs: Date.now() - startedAt,
     metrics: lastMetrics,
   };
+}
+
+async function expandNextOverlayDiagnostics(page) {
+  try {
+    const clicked = await page.evaluate(() => {
+      const overlayElements = Array.from(
+        document.querySelectorAll("nextjs-portal, [data-nextjs-dialog-overlay], [data-nextjs-dialog]")
+      );
+      const overlayRoots = [];
+      const visitRoots = (node, depth = 0) => {
+        if (!node || depth > 8) return;
+        overlayRoots.push(node);
+        if (node.shadowRoot) {
+          visitRoots(node.shadowRoot, depth + 1);
+        }
+        for (const child of Array.from(node.children || [])) {
+          if (child.shadowRoot) {
+            visitRoots(child.shadowRoot, depth + 1);
+          }
+        }
+      };
+      for (const element of overlayElements) {
+        visitRoots(element);
+      }
+      const labelFor = (element) =>
+        String(
+          element.getAttribute("aria-label") ||
+            element.getAttribute("title") ||
+            element.textContent ||
+            ""
+        )
+          .replace(/\\s+/g, " ")
+          .trim();
+      for (const root of overlayRoots) {
+        const candidates = Array.from(root.querySelectorAll?.("button, [role='button']") || []);
+        for (const candidate of candidates) {
+          const label = labelFor(candidate);
+          if (/open\\s+next|next\\.?j?s?\\s+dev\\s+tools?/i.test(label)) {
+            candidate.click();
+            return true;
+          }
+        }
+      }
+      return false;
+    });
+    if (clicked) {
+      await page.waitForTimeout(750);
+    }
+    return Boolean(clicked);
+  } catch {
+    return false;
+  }
 }
 
 function contentReadinessFailureReason(metrics, lastError, timeoutMs) {
@@ -1416,16 +1477,26 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
 
   if (runErrors.length > 0) {
     lines.push("## Run Errors", "");
-    for (const error of runErrors) {
-      lines.push(`- ${error}`);
+    const groupedRunErrors = compactRunErrors(runErrors);
+    for (const entry of groupedRunErrors.slice(0, 10)) {
+      lines.push(`- ${entry.count > 1 ? `${entry.count} checks: ` : ""}${entry.message}`);
+    }
+    if (groupedRunErrors.length > 10) {
+      lines.push(`- ${groupedRunErrors.length - 10} additional run error group(s) omitted from this summary.`);
     }
     lines.push("");
   }
 
   if (failures.length > 0) {
     lines.push("## Failures", "");
-    for (const result of failures) {
-      lines.push(`- \`${result.mode}\` \`${result.route}\`: ${result.failures.join("; ")}`);
+    const groupedFailures = groupResultFailures(failures);
+    for (const group of groupedFailures.slice(0, 20)) {
+      lines.push(
+        `- ${group.count} check(s): ${group.message}; examples: ${formatResultExamples(group.examples)}`
+      );
+    }
+    if (groupedFailures.length > 20) {
+      lines.push(`- ${groupedFailures.length - 20} additional failure group(s) omitted from this summary.`);
     }
     lines.push("");
   }
@@ -1477,6 +1548,47 @@ function distinctOverlayDiagnostics(results) {
     }
   }
   return diagnostics;
+}
+
+function compactRunErrors(errors) {
+  const groups = new Map();
+  for (const error of errors || []) {
+    const message = summarizeRunErrorForGrouping(error);
+    const existing = groups.get(message) || { message, count: 0 };
+    existing.count += 1;
+    groups.set(message, existing);
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count);
+}
+
+function summarizeRunErrorForGrouping(value) {
+  return String(value || "")
+    .replace(/^\/[^:]*:\s*/, "<route>: ")
+    .replace(/\s+\d+ \|.*$/g, "")
+    .replace(/\s+at \/home\/runner\/work\/.*$/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 1000);
+}
+
+function groupResultFailures(results) {
+  const groups = new Map();
+  for (const result of results || []) {
+    const message = (result.failures || []).join("; ");
+    const existing = groups.get(message) || { message, count: 0, examples: [] };
+    existing.count += 1;
+    if (existing.examples.length < 8) {
+      existing.examples.push(result);
+    }
+    groups.set(message, existing);
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count);
+}
+
+function formatResultExamples(results) {
+  return (results || [])
+    .map((result) => `\`${result.mode}\` \`${result.route}\``)
+    .join(", ");
 }
 
 function headerComment() {
