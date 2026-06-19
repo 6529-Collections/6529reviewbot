@@ -390,6 +390,30 @@ assert(
     "Module not found"
   )
 );
+const responsivenessDevToolsOnlyManifest =
+  responsivenessRunner.buildScreenshotManifest({
+    plan: {
+      baseRef: "origin/main",
+      headRef: "HEAD",
+      contexts: [{ name: "web-desktop" }],
+      routes: ["/"],
+    },
+    results: [
+      {
+        mode: "web-desktop",
+        route: "/",
+        screenshot: "screenshots/web-desktop--root.png",
+        metrics: {
+          nextErrorOverlay: true,
+          nextErrorOverlayText: "Open Next.j Dev Tool",
+        },
+      },
+    ],
+  });
+assert.equal(
+  responsivenessDevToolsOnlyManifest.screenshots[0].nextErrorOverlayText,
+  ""
+);
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION: "us-east-1",

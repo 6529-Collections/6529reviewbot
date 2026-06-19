@@ -1176,7 +1176,7 @@ function sanitizeMessage(value) {
 
 function summarizeOverlayText(value) {
   const text = sanitizeMessage(value)
-    .replace(/Open Next\\.js Dev Tools/gi, "")
+    .replace(/Open\\s+Next\\.?j?s?\\s+Dev\\s+Tools?/gi, "")
     .replace(/Compiling\\s*(?:\\.\\s*){1,}/gi, "Compiling")
     .trim();
   if (!text) {
@@ -1304,7 +1304,7 @@ function buildScreenshotManifest({ plan, results }) {
 function summarizeOverlayText(value) {
   const text = String(value || "")
     .replace(/\s+/g, " ")
-    .replace(/Open Next\.js Dev Tools/gi, "")
+    .replace(/Open\s+Next\.?j?s?\s+Dev\s+Tools?/gi, "")
     .replace(/Compiling\s*(?:\.\s*){1,}/gi, "Compiling")
     .trim();
   if (!text) {
