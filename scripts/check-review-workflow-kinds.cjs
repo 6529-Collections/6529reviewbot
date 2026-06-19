@@ -136,6 +136,10 @@ function checkResponsivenessArtifactUrlHandoff(workflowPath, workflowText, findi
   const requiredSnippets = [
     "outputs: artifact_url: ${{ steps.upload-responsiveness-artifacts.outputs.artifact-url }}",
     "id: upload-responsiveness-artifacts",
+    "node bot/bin/responsiveness-artifacts-upload.cjs",
+    "REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET }}",
+    "REVIEWBOT_RESPONSIVENESS_AI_MODEL: ${{ vars.REVIEWBOT_RESPONSIVENESS_AI_MODEL || vars.REVIEW_DEFAULT_ANTHROPIC_MODEL || 'claude-opus-4-8' }}",
+    "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
     "REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL: ${{ needs.benchmark.outputs.artifact_url }}",
   ];
   for (const snippet of requiredSnippets) {

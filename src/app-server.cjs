@@ -70,6 +70,10 @@ const {
   redactSensitiveText,
   safeErrorLine,
 } = require("./diagnostics.cjs");
+const {
+  handleResponsivenessArtifactRequest,
+  responsivenessArtifactSettingsFromEnv,
+} = require("./responsiveness-artifacts.cjs");
 
 function createReviewbotServer(options = {}) {
   const settings = options.settings || webhookSettingsFromEnv();
@@ -97,6 +101,8 @@ function createReviewbotServer(options = {}) {
   const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
   const updateRunClaimStatus = options.updateRunClaimStatus || defaultUpdateRunClaimStatus;
   const webhookInbox = options.webhookInbox || null;
+  const responsivenessArtifactSettings =
+    options.responsivenessArtifactSettings || responsivenessArtifactSettingsFromEnv();
   const logger = options.logger || console;
 
   return http.createServer(async (request, response) => {
@@ -132,9 +138,10 @@ function createReviewbotServer(options = {}) {
         loadAdminStatus: options.loadAdminStatus,
         usageApiResponseCache,
         authorizeUsageApiAdmin: options.authorizeUsageApiAdmin,
+        responsivenessArtifactSettings,
         logger,
       });
-      sendJson(response, result.statusCode, result.body);
+      sendHttpResult(response, result);
     } catch (error) {
       const statusCode = error.statusCode || 500;
       if (statusCode >= 500) {
@@ -159,6 +166,14 @@ async function handleHttpRequest(request, options) {
       statusCode: 200,
       body: githubAppOperatorResponse(url),
     };
+  }
+
+  const artifactResult = await handleResponsivenessArtifactRequest(request, {
+    settings:
+      options.responsivenessArtifactSettings || responsivenessArtifactSettingsFromEnv(),
+  });
+  if (artifactResult) {
+    return artifactResult;
   }
 
   const usageApiSettings = options.usageApiSettings || usageApiSettingsFromEnv();
@@ -884,6 +899,18 @@ function githubAppOperatorResponse(url) {
   };
 }
 
+function sendHttpResult(response, result) {
+  if (result?.headers?.location && result.statusCode >= 300 && result.statusCode < 400) {
+    response.statusCode = result.statusCode;
+    for (const [key, value] of Object.entries(result.headers || {})) {
+      response.setHeader(key, value);
+    }
+    response.end(result.body || "");
+    return;
+  }
+  sendJson(response, result.statusCode, result.body);
+}
+
 function sendJson(response, statusCode, body) {
   response.statusCode = statusCode;
   response.setHeader("content-type", "application/json; charset=utf-8");
@@ -914,6 +941,7 @@ module.exports = {
   processWebhookInboxOnce,
   publicEventSummary,
   redactSensitiveText,
+  sendHttpResult,
   startWebhookInboxProcessor,
   updateWebhookInboxFromResult,
 };

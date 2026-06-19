@@ -806,6 +806,10 @@ function runResponsiveness(options) {
   if (options.planOnly) {
     const summary = summarizePlan(plan);
     fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
+    fs.writeFileSync(
+      path.join(options.outputDir, "screenshots.json"),
+      `${JSON.stringify(buildScreenshotManifest({ plan, results: [] }), null, 2)}\n`
+    );
     return { plan, exitCode: 0, summary, durationMs: Date.now() - startedAt };
   }
 
@@ -836,6 +840,10 @@ function runResponsiveness(options) {
     durationMs: Date.now() - startedAt,
   });
   fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
+  fs.writeFileSync(
+    path.join(options.outputDir, "screenshots.json"),
+    `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
+  );
 
   return {
     plan,
@@ -843,6 +851,31 @@ function runResponsiveness(options) {
     summary,
     durationMs: Date.now() - startedAt,
     results: checkResults,
+  };
+}
+
+function buildScreenshotManifest({ plan, results }) {
+  const screenshots = (results || [])
+    .filter((result) => result.screenshot)
+    .map((result) => ({
+      context: result.mode,
+      route: result.route,
+      path: result.screenshot,
+      durationMs: result.durationMs,
+      responseStatus: result.responseStatus,
+      warnings: result.warnings || [],
+      failures: result.failures || [],
+      horizontalOverflow: result.metrics?.horizontalOverflow || 0,
+      nextErrorOverlay: Boolean(result.metrics?.nextErrorOverlay),
+    }));
+  return {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    baseRef: plan.baseRef,
+    headRef: plan.headRef,
+    contexts: plan.contexts.map((context) => context.name),
+    routes: plan.routes,
+    screenshots,
   };
 }
 
@@ -1015,6 +1048,7 @@ module.exports = {
   DEFAULT_CONTEXTS,
   buildPlan,
   collectChangedFiles,
+  buildScreenshotManifest,
   inferRoutes,
   parseArgs,
   runResponsiveness,

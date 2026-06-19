@@ -56,7 +56,9 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
     options.estimateBudgetCost || ((jobEvent, admission, job) => {
       if (job?.reviewKind === "responsiveness") {
         return {
-          estimatedCostUsd: responsivenessEstimatedCostUsdFromEnv(env),
+          estimatedCostUsd:
+            responsivenessEstimatedCostUsdFromEnv(env) +
+            responsivenessVisualEstimatedCostUsdFromEnv(env),
         };
       }
       return {};
@@ -199,6 +201,16 @@ function responsivenessEstimatedCostUsdFromEnv(env = process.env) {
   );
 }
 
+function responsivenessVisualEstimatedCostUsdFromEnv(env = process.env) {
+  if (!parseBool(env.REVIEWBOT_RESPONSIVENESS_AI_ENABLED || "false")) {
+    return 0;
+  }
+  return nonNegativeNumberEnv(
+    env.REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD || "5",
+    "REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD"
+  );
+}
+
 function nonNegativeNumberEnv(value, name) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < 0) {
@@ -215,6 +227,7 @@ module.exports = {
   createServerOptionsFromEnv,
   parseBool,
   responsivenessEstimatedCostUsdFromEnv,
+  responsivenessVisualEstimatedCostUsdFromEnv,
   serverPortFromEnv,
   startServer,
 };

@@ -132,6 +132,7 @@ const releaseOperationsMapCheck = require("./check-release-operations-map.cjs");
 const releaseCandidateContractCheck = require("./check-release-candidate-contract.cjs");
 const repositoryConfig = require("../src/repository-config.cjs");
 const repositoryConfigBoundaryCheck = require("./check-repository-config-boundary.cjs");
+const responsivenessArtifacts = require("../src/responsiveness-artifacts.cjs");
 const responsivenessReview = require("../src/responsiveness-review.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
@@ -232,9 +233,77 @@ assert(
     "screenshot [`screenshots/web-desktop--root.png`](https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456)"
   )
 );
+const responsivenessUploadManifest = {
+  files: [
+    {
+      path: "artifact-upload.json",
+      url: "https://reviewbot.example.test/artifacts/responsiveness/token123456789012345678901234/artifact-upload.json",
+    },
+  ],
+  screenshots: [
+    {
+      path: "screenshots/web-desktop--root.png",
+      url: "https://reviewbot.example.test/artifacts/responsiveness/token123456789012345678901234/screenshots/web-desktop--root.png",
+    },
+  ],
+};
+const responsivenessBodyWithViewer = responsivenessReview.buildVisibleBody(
+  {
+    workflowRunId: "123",
+    workflowJob: "responsiveness-review",
+    workflowRunUrl:
+      "https://github.com/6529-Collections/6529reviewbot/actions/runs/123",
+    artifactUrl:
+      "https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456",
+  },
+  {
+    verdict: "Responsive checks passed",
+    uploadManifest: responsivenessUploadManifest,
+    plan: { contexts: [{ name: "web-desktop" }], routes: ["/"] },
+    metrics: { checksCompleted: "1/1", failures: 0, warnings: 0 },
+    summary:
+      "- `web-desktop` `/`: 1.2s, screenshot `screenshots/web-desktop--root.png`",
+  }
+);
+assert(
+  responsivenessBodyWithViewer.includes(
+    "screenshot [`screenshots/web-desktop--root.png`](https://reviewbot.example.test/artifacts/responsiveness/token123456789012345678901234/screenshots/web-desktop--root.png)"
+  )
+);
+const responsivenessAiBody = responsivenessReview.buildVisibleBody(
+  { workflowRunId: "123", workflowJob: "responsiveness-review" },
+  {
+    verdict: "Responsive checks passed",
+    plan: { contexts: [{ name: "web-desktop" }], routes: ["/"] },
+    metrics: { checksCompleted: "1/1", failures: 0, warnings: 0 },
+    summary: "Status: pass",
+  },
+  {
+    enabled: true,
+    text: "**Verdict**: Responsive checks passed\n\nNo blocking visual issues found.",
+    images: [{ context: "web-desktop", route: "/", url: "https://example.test/s.png" }],
+  }
+);
+assert(responsivenessAiBody.startsWith("**Verdict**: Responsive checks passed"));
+assert(responsivenessAiBody.includes("<summary>Deterministic responsiveness details</summary>"));
 assert.equal(
   responsivenessReview.safeGitHubArtifactUrl("https://example.com/not-an-artifact"),
   ""
+);
+const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
+  REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
+  REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION: "us-east-1",
+  REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET: "example-bucket",
+  REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX: "reviewbot/responsiveness",
+  REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL: "https://reviewbot.example.test",
+});
+assert.equal(
+  responsivenessArtifacts.s3KeyForArtifact(
+    artifactSettings,
+    "token123456789012345678901234",
+    "screenshots/web-desktop--root.png"
+  ),
+  "reviewbot/responsiveness/token123456789012345678901234/screenshots/web-desktop--root.png"
 );
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 6);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);

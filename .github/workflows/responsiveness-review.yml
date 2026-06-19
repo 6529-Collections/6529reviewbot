@@ -267,12 +267,32 @@ jobs:
           name: responsiveness-${{ inputs.job_id }}
           path: .reviewbot-responsiveness
 
-      - name: Configure AWS credentials for reviewbot ledgers
-        if: ${{ vars.REVIEW_USAGE_AWS_ROLE_ARN != '' }}
+      - name: Configure AWS credentials for reviewbot ledgers and artifacts
+        if: ${{ (vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_ROLE_ARN || vars.REVIEW_USAGE_AWS_ROLE_ARN) != '' }}
         uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
-          aws-region: ${{ vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
-          role-to-assume: ${{ vars.REVIEW_USAGE_AWS_ROLE_ARN }}
+          aws-region: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION || vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
+          role-to-assume: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_ROLE_ARN || vars.REVIEW_USAGE_AWS_ROLE_ARN }}
+
+      - name: Upload visible responsiveness artifacts
+        id: visible-artifacts
+        if: always()
+        env:
+          REVIEWBOT_RESPONSIVENESS_WORKSPACE: ${{ github.workspace }}/.reviewbot-responsiveness
+          REVIEWBOT_JOB_ID: ${{ inputs.job_id }}
+          GH_REPO: ${{ inputs.target_repo }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PR_HEAD_SHA: ${{ inputs.head_sha }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED || 'false' }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION || vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX || 'responsiveness' }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL || vars.REVIEWBOT_PUBLIC_BASE_URL || '' }}
+          REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_PATH_PREFIX: ${{ vars.REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_PATH_PREFIX || '/artifacts/responsiveness' }}
+        run: |
+          node bot/bin/responsiveness-artifacts-upload.cjs \
+            --workspace "$REVIEWBOT_RESPONSIVENESS_WORKSPACE" \
+            --github-actions-output
 
       - name: Mint target installation token
         id: installation-token
@@ -300,6 +320,12 @@ jobs:
           REVIEWBOT_RESPONSIVENESS_WORKSPACE: ${{ github.workspace }}/.reviewbot-responsiveness
           REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL: ${{ needs.benchmark.outputs.artifact_url }}
           REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD: ${{ vars.REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD || vars.REVIEWBOT_BUDGET_DEFAULT_ESTIMATED_COST_USD || '1' }}
+          REVIEWBOT_RESPONSIVENESS_AI_ENABLED: ${{ vars.REVIEWBOT_RESPONSIVENESS_AI_ENABLED || 'true' }}
+          REVIEWBOT_RESPONSIVENESS_AI_MODEL: ${{ vars.REVIEWBOT_RESPONSIVENESS_AI_MODEL || vars.REVIEW_DEFAULT_ANTHROPIC_MODEL || 'claude-opus-4-8' }}
+          REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES: ${{ vars.REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES || '48' }}
+          REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS: ${{ vars.REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS || '1800' }}
+          REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD: ${{ vars.REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD || '5' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           REVIEW_USAGE_ENABLED: true
           REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION }}
           REVIEW_USAGE_DB_RESOURCE_ARN: ${{ vars.REVIEW_USAGE_DB_RESOURCE_ARN }}

@@ -68,6 +68,20 @@ Use database roles/grants for table-level least privilege:
 Keep the RDS-managed secret scoped to the role that actually needs it. Do not
 copy the secret ARN or AWS role trust into target repositories.
 
+## Responsiveness Artifact Storage
+
+If responsiveness screenshot upload is enabled, add private-prefix S3
+permissions to the reviewed bot-owned roles:
+
+- GitHub Actions comment job role: `s3:PutObject` on the configured
+  `REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET` and prefix.
+- App server runtime role: `s3:GetObject` on the same bucket and prefix so the
+  `/artifacts/responsiveness/...` viewer route can issue short-lived presigned
+  redirects.
+
+Do not make the bucket public. The PR comment should link only to the App
+server viewer URL containing the per-run opaque artifact token.
+
 ## Review Procedure
 
 Before a dogfood or release candidate:

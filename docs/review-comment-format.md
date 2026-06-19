@@ -75,13 +75,22 @@ copy into an AI coding agent. It duplicates only the visible review body and
 must not include hidden metadata, raw model prompts, provider payloads,
 secrets, tokens, or private operator diagnostics.
 
-Responsiveness comments use the same heading and hidden-marker contract, but
-the visible body is generated from deterministic Playwright artifacts rather
-than a model response. They record provider `github`, model
-`actions-ubuntu-latest`, zero token usage, and an estimated GitHub Actions cost
-so budgets can account for the compute lane. When the central workflow has an
-uploaded artifact URL, the visible body includes a screenshot artifact link and
-turns slowest-check screenshot paths into links to that artifact.
+Responsiveness comments use the same heading and hidden-marker contract. The
+deterministic Playwright runner always produces the underlying evidence. When
+the visual AI pass is enabled, the visible body starts with an Opus-written
+summary based on the deterministic findings and screenshots, followed by a
+collapsible deterministic details block. When the visual pass is disabled or
+unavailable, the deterministic summary is posted directly.
+
+Responsiveness jobs record provider `github`, model `actions-ubuntu-latest`,
+zero token usage, and an estimated GitHub Actions cost so budgets can account
+for the compute lane. If the visual pass runs, the worker also records a
+separate `responsiveness_visual` usage row for provider `anthropic` and the
+configured Opus model. When the central workflow has a GitHub artifact URL, the
+visible body includes a screenshot artifact link and turns slowest-check
+screenshot paths into links. When private S3 artifact upload is configured,
+those screenshot paths link to the App server viewer route for each individual
+screenshot.
 
 ## Hidden Metadata
 
