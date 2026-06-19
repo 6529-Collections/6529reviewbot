@@ -305,6 +305,19 @@ assert.equal(
   ),
   "reviewbot/responsiveness/token123456789012345678901234/screenshots/web-desktop--root.png"
 );
+const presignedS3Url = responsivenessArtifacts.presignS3ObjectWithCredentials(
+  artifactSettings,
+  "reviewbot/responsiveness/token123456789012345678901234/screenshots/web-desktop--root.png",
+  {
+    accessKeyId: "AKIAIOSFODNN7EXAMPLE",
+    secretAccessKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    sessionToken: "session-token",
+  },
+  { now: new Date("2026-06-19T00:00:00Z") }
+);
+assert(presignedS3Url.startsWith("https://example-bucket.s3.us-east-1.amazonaws.com/"));
+assert(presignedS3Url.includes("X-Amz-Security-Token=session-token"));
+assert(presignedS3Url.includes("X-Amz-Signature="));
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 6);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(
