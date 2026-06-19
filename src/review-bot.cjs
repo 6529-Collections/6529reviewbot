@@ -23,6 +23,11 @@ const {
   DRAFT_PR_MODES,
   draftPrModeCapabilities,
 } = require("./admission-policy.cjs");
+const {
+  FRONTEND_REPO,
+  collectFrontendReviewHints,
+  formatReviewHintsForPrompt,
+} = require("./frontend-review-hints.cjs");
 
 const BOT_MARKER = "6529-review-bot";
 const DEFAULT_TRUSTED_MARKER_AUTHORS = "6529bot[bot],github-actions[bot]";
@@ -40,6 +45,21 @@ const HARD_LIMITS = {
   maxCommentsChars: 200000,
   providerTimeoutMs: 600000,
 };
+const FRONTEND_POLICY_CONTEXT_KINDS = new Set(["wcag", "i18n"]);
+const FRONTEND_POLICY_CONTEXT_FILES = {
+  wcag: [
+    "ops/standards/frontend-accessibility-wcag-22-aa.md",
+    "ops/skills/wcag-22-aa/SKILL.md",
+    "ops/workstreams/frontend-a11y-i18n/combined-plan.md",
+  ],
+  i18n: [
+    "ops/standards/frontend-i18n-localization.md",
+    "ops/skills/i18n-localization/SKILL.md",
+    "ops/workstreams/frontend-a11y-i18n/combined-plan.md",
+  ],
+};
+const MAX_FRONTEND_POLICY_FILE_CHARS = 6000;
+const MAX_FRONTEND_POLICY_CONTEXT_CHARS = 18000;
 
 const OPENAI_MODEL_CAPABILITIES = [
   {
@@ -91,10 +111,14 @@ const KIND_CONFIGS = {
     objective:
       "Review changed user interface code for WCAG 2.2 AA accessibility regressions and practical usability barriers.",
     focus: [
-      "Keyboard access, focus order, focus visibility, and non-pointer alternatives.",
-      "Accessible names, labels, alt text, form errors, live regions, dialogs, and ARIA correctness.",
+      "Review against the 6529 frontend WCAG 2.2 AA standard when this PR targets `6529-Collections/6529seize-frontend`.",
+      "Keyboard access, focus order, focus visibility, no pointer-only controls, and no unexpected autofocus unless task-critical.",
+      "Use semantic interactive elements: clickable UI should be `button`, `Link`, or `a` as appropriate, not `div`/`span` handlers.",
+      "Accessible names, visible labels, alt text, form errors, live regions, dialogs, and ARIA correctness.",
+      "Prefer native dialog semantics where practical; custom dialogs must handle labels, focus movement, dismissal, background inertness, and focus restoration.",
       "Semantic structure, headings, landmarks, status messages, and dynamic content announcements.",
       "Color contrast, target size, text resizing, reduced motion, and responsive layout risks when visible from code.",
+      "Icon-only controls need stable accessible names, and decorative icons should be hidden from assistive technology when appropriate.",
       "Reference WCAG 2.2 AA success criteria only when you are confident.",
     ],
   },
@@ -1076,6 +1100,76 @@ function mergeRanges(ranges) {
   return merged;
 }
 
+function buildFrontendPolicyContext(input = {}) {
+  const kind = String(input.kind || "").toLowerCase();
+  const settings = input.settings || {};
+  const pr = input.pr || {};
+  if (!FRONTEND_POLICY_CONTEXT_KINDS.has(kind)) {
+    return { text: "", files: [], warning: "" };
+  }
+  if (String(settings.repo || "") !== FRONTEND_REPO) {
+    return { text: "", files: [], warning: "" };
+  }
+
+  const baseSha = String(settings.baseSha || pr.baseRefOid || "").trim();
+  if (!isCommitSha(baseSha)) {
+    return {
+      text: "Frontend policy context unavailable: no valid base SHA was provided. Use the built-in review focus and included diff/context.",
+      files: [],
+      warning: "no valid base SHA",
+      available: false,
+    };
+  }
+
+  try {
+    ensureCommitAvailable(settings, baseSha, settings.repo);
+  } catch (error) {
+    const warning = `could not fetch frontend policy base ${baseSha.slice(0, 12)}: ${safeCommandError(error)}`;
+    warn(warning);
+    return {
+      text: `Frontend policy context unavailable from base ${baseSha.slice(0, 12)}. Use the built-in review focus and included diff/context.`,
+      files: [],
+      warning,
+      available: false,
+    };
+  }
+
+  const sections = [`Base SHA: ${baseSha}`, "The following frontend standards were read from the PR base commit, not the PR head:"];
+  const files = [];
+  let remainingChars = MAX_FRONTEND_POLICY_CONTEXT_CHARS;
+  for (const file of FRONTEND_POLICY_CONTEXT_FILES[kind] || []) {
+    if (remainingChars <= 0) {
+      break;
+    }
+    try {
+      const raw = git(["show", `${baseSha}:${file}`], settings);
+      const maxFileChars = Math.min(MAX_FRONTEND_POLICY_FILE_CHARS, remainingChars);
+      const text = truncate(raw, maxFileChars);
+      sections.push(`### ${file}\n${text}`);
+      files.push(file);
+      remainingChars -= text.length;
+    } catch (error) {
+      sections.push(`### ${file}\n(unavailable at base ${baseSha.slice(0, 12)}: ${safeCommandError(error)})`);
+    }
+  }
+
+  if (files.length === 0) {
+    return {
+      text: `Frontend policy context unavailable from base ${baseSha.slice(0, 12)}. Use the built-in review focus and included diff/context.`,
+      files,
+      warning: "no frontend policy files found",
+      available: false,
+    };
+  }
+
+  return {
+    text: sections.join("\n\n"),
+    files,
+    warning: "",
+    available: true,
+  };
+}
+
 function buildPrompt(input) {
   const {
     kind,
@@ -1105,6 +1199,13 @@ function buildPrompt(input) {
   const priorComments = summarizeComments(commentsBefore, settings.maxCommentsChars);
   const priorBotReviews = summarizeReviewHistory(reviewHistory, settings.maxCommentsChars);
   const promptDiff = kind === "followup" && followupDiff ? followupDiff : diff;
+  const frontendPolicyContext = buildFrontendPolicyContext({ kind, settings, pr });
+  const deterministicHints = collectFrontendReviewHints({
+    kind,
+    repo: settings.repo,
+    diff: promptDiff,
+  });
+  const deterministicHintText = formatReviewHintsForPrompt(deterministicHints);
   const diffForPrompt = truncateWithInfo(promptDiff, settings.maxDiffChars);
   const largePrMode = changedLineCount > settings.largePrChangedLines;
   const contextBoundaryLines = reviewContextBoundaryLines({
@@ -1117,6 +1218,8 @@ function buildPrompt(input) {
     priorBotReviews,
     contextSummary,
     largePrMode,
+    frontendPolicyContext,
+    deterministicHints,
   });
   const diffNote =
     kind === "followup" && followupDiff
@@ -1147,6 +1250,8 @@ function buildPrompt(input) {
     "- Lead with findings if any. Order findings by severity and practical impact.",
     "- Include file:line references for every concrete finding.",
     "- Do not repeat findings already raised in prior comments or prior bot reviews.",
+    "- Treat deterministic hints as review leads, not automatic findings. Verify each hinted issue against the diff/context before reporting it; omit false positives.",
+    "- When reporting a deterministic-hint finding, include the rule ID in the finding text.",
     "- If a prior issue is clearly fixed, mention it briefly under `### Resolved since last review`.",
     "- Omit empty sections. Keep the total comment compact enough for a PR conversation.",
     "- When context is partial or this is large PR mode, do not claim exhaustive coverage; prioritize high-confidence findings grounded in the included diff/context.",
@@ -1155,6 +1260,12 @@ function buildPrompt(input) {
     "",
     "Review focus:",
     ...config.focus.map((item) => `- ${item}`),
+    "",
+    "Base-ref frontend policy context:",
+    frontendPolicyContext.text || "(not applicable)",
+    "",
+    "Deterministic changed-line review leads:",
+    deterministicHintText || "(none)",
     "",
     "Prior PR comments and bot reviews for dedupe:",
     priorComments || "(none)",
@@ -1188,6 +1299,8 @@ function reviewContextBoundaryLines(input = {}) {
     priorBotReviews,
     contextSummary = {},
     largePrMode,
+    frontendPolicyContext = {},
+    deterministicHints = [],
   } = input;
   const lines = [
     largePrMode
@@ -1198,6 +1311,22 @@ function reviewContextBoundaryLines(input = {}) {
       : `Diff context is complete within the ${settings.maxDiffChars} char diff cap.`,
     `Changed-file excerpts include ${Number(contextSummary.includedFiles || 0)}/${Number(contextSummary.relevantFiles || 0)} relevant files with a ${Number(contextSummary.maxContextChars || settings.maxContextChars)} char context cap.`,
   ];
+  if (frontendPolicyContext.available) {
+    lines.push(
+      `Frontend ${kind} policy context was read from the PR base ref; files included: ${
+        frontendPolicyContext.files && frontendPolicyContext.files.length
+          ? frontendPolicyContext.files.join(", ")
+          : "none"
+      }.`
+    );
+  } else if (frontendPolicyContext.warning) {
+    lines.push(`Frontend ${kind} policy context was unavailable: ${frontendPolicyContext.warning}.`);
+  }
+  if (deterministicHints.length) {
+    lines.push(
+      `Deterministic ${kind} review leads found ${deterministicHints.length} changed-line candidates; each must be independently verified before reporting.`
+    );
+  }
   if (contextSummary.truncated) {
     lines.push(
       `Changed-file excerpts are partial; ${Number(contextSummary.omittedRelevantFiles || 0)} relevant files were omitted after context limits, unavailable files, or safety filters.`
@@ -1987,6 +2116,9 @@ module.exports = {
   stripReviewBotMetadata,
   shouldIncludeAgentPromptSection,
   httpJson,
+  buildPrompt,
+  buildFrontendPolicyContext,
+  reviewContextBoundaryLines,
   enforceInputLimit,
   truncate,
   normalizeAnthropicUsage,

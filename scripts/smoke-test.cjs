@@ -49,6 +49,7 @@ const dogfoodStatusContractCheck = require("./check-dogfood-status-contract.cjs"
 const diagnosticsRedactionCheck = require("./check-diagnostics-redaction.cjs");
 const workerCapacityContractCheck = require("./check-worker-capacity-contract.cjs");
 const githubWebhook = require("../src/github-webhook.cjs");
+const frontendReviewHints = require("../src/frontend-review-hints.cjs");
 const webhookInbox = require("../src/webhook-inbox.cjs");
 const githubAppAuth = require("../src/github-app-auth.cjs");
 const applyLedgerSchemaCli = require("../bin/apply-ledger-schema.cjs");
@@ -642,6 +643,95 @@ for (const requiredI18nGuidance of [
     `i18n review focus should include ${requiredI18nGuidance}`
   );
 }
+const frontendHintDiff = [
+  "diff --git a/components/example/Panel.tsx b/components/example/Panel.tsx",
+  "--- a/components/example/Panel.tsx",
+  "+++ b/components/example/Panel.tsx",
+  "@@ -10,0 +10,9 @@",
+  '+  const formatted = new Intl.DateTimeFormat("en-US").format(date);',
+  '+  const sorted = names.sort((a, b) => a.localeCompare(b));',
+  '+  const label = "Hello there " + name;',
+  '+  const locale = "EN-UK";',
+  '+  return <button aria-label="Save changes"><span>Visible copy</span></button>;',
+  "diff --git a/components/example/Dialog.tsx b/components/example/Dialog.tsx",
+  "--- a/components/example/Dialog.tsx",
+  "+++ b/components/example/Dialog.tsx",
+  "@@ -40,0 +40,8 @@",
+  '+  return <div onClick={close}>Close</div>;',
+  '+  const input = <input value={value} onChange={setValue} />;',
+  '+  const icon = <button className="icon-only"><SaveIcon /></button>;',
+  '+  const modal = <div role="dialog">Dialog body</div>;',
+  '+  const focused = <input autoFocus value={value} />;',
+  '+  const css = ":focus { outline: none }";',
+].join("\n");
+const i18nHints = frontendReviewHints.collectFrontendReviewHints({
+  kind: "i18n",
+  repo: frontendReviewHints.FRONTEND_REPO,
+  diff: frontendHintDiff,
+});
+assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-direct-locale-formatting"));
+assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-sentence-concat"));
+assert(i18nHints.some((hint) => hint.ruleId === "i18n/supported-locale-id"));
+assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-hardcoded-accessible-name"));
+assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-new-hardcoded-jsx-text"));
+assert.equal(
+  frontendReviewHints.collectFrontendReviewHints({
+    kind: "i18n",
+    repo: "6529-Collections/other",
+    diff: frontendHintDiff,
+  }).length,
+  0
+);
+const wcagHints = frontendReviewHints.collectFrontendReviewHints({
+  kind: "wcag",
+  repo: frontendReviewHints.FRONTEND_REPO,
+  diff: frontendHintDiff,
+});
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/no-clickable-noninteractive"));
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/form-control-label"));
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/icon-button-accessible-name"));
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/dialog-focus-management"));
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/focus-order"));
+assert(wcagHints.some((hint) => hint.ruleId === "wcag/focus-visible-not-removed"));
+assert.equal(
+  frontendReviewHints.parseAddedDiffLines(frontendHintDiff).find((line) =>
+    line.text.includes("onClick")
+  ).line,
+  40
+);
+const formattedFrontendHints = frontendReviewHints.formatReviewHintsForPrompt(wcagHints);
+assert(formattedFrontendHints.includes("wcag/no-clickable-noninteractive"));
+assert(formattedFrontendHints.includes("components/example/Dialog.tsx:40"));
+const promptWithFrontendHints = reviewBot.buildPrompt({
+  kind: "wcag",
+  config: reviewBot.REVIEW_KIND_CONFIGS.wcag,
+  settings: {
+    repo: frontendReviewHints.FRONTEND_REPO,
+    provider: "anthropic",
+    model: "claude-opus-4-8",
+    maxCommentsChars: 10000,
+    maxDiffChars: 100000,
+    largePrChangedLines: 500,
+    maxChangedFiles: 500,
+    maxChangedLines: 30000,
+    maxOutputTokens: 32000,
+    maxContextChars: 250000,
+  },
+  pr: { number: 7, title: "Example", baseRefName: "main", headRefName: "feature" },
+  headSha: "abc123",
+  diff: frontendHintDiff,
+  followupDiff: "",
+  changedFiles: ["components/example/Panel.tsx", "components/example/Dialog.tsx"],
+  changedLineCount: 17,
+  commentsBefore: [],
+  reviewHistory: [],
+  previousReview: null,
+  context: "",
+  contextSummary: {},
+});
+assert(promptWithFrontendHints.user.includes("Deterministic changed-line review leads:"));
+assert(promptWithFrontendHints.user.includes("Treat deterministic hints as review leads"));
+assert(promptWithFrontendHints.user.includes("wcag/no-clickable-noninteractive"));
 assert.throws(
   () =>
     reviewCommentFormatCheck.checkReviewCommentFormat({
