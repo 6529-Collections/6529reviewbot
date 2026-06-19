@@ -652,13 +652,14 @@ const frontendHintDiff = [
   '+  const sorted = names.sort((a, b) => a.localeCompare(b));',
   '+  const label = "Hello there " + name;',
   '+  const locale = "EN-UK";',
+  '+  const comparison = count > manyItems && x < y;',
   '+  return <button aria-label="Save changes"><span>Visible copy</span></button>;',
   "diff --git a/components/example/Dialog.tsx b/components/example/Dialog.tsx",
   "--- a/components/example/Dialog.tsx",
   "+++ b/components/example/Dialog.tsx",
   "@@ -40,0 +40,8 @@",
   '+  return <div onClick={close}>Close</div>;',
-  '+  const input = <input value={value} onChange={setValue} />;',
+  '+  const input = <input id="name" value={value} onChange={setValue} />;',
   '+  const icon = <button className="icon-only"><SaveIcon /></button>;',
   '+  const modal = <div role="dialog">Dialog body</div>;',
   '+  const focused = <input autoFocus value={value} />;',
@@ -674,6 +675,27 @@ assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-sentence-concat"));
 assert(i18nHints.some((hint) => hint.ruleId === "i18n/supported-locale-id"));
 assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-hardcoded-accessible-name"));
 assert(i18nHints.some((hint) => hint.ruleId === "i18n/no-new-hardcoded-jsx-text"));
+assert(
+  !i18nHints.some(
+    (hint) =>
+      hint.ruleId === "i18n/no-new-hardcoded-jsx-text" &&
+      hint.sample.includes("count > manyItems")
+  )
+);
+assert.equal(
+  frontendReviewHints.collectFrontendReviewHints({
+    kind: "i18n",
+    repo: frontendReviewHints.FRONTEND_REPO,
+    diff: [
+      "diff --git a/i18n/format.ts b/i18n/format.ts",
+      "--- a/i18n/format.ts",
+      "+++ b/i18n/format.ts",
+      "@@ -1,0 +1,2 @@",
+      '+export const formatDate = (date) => new Intl.DateTimeFormat("en-US").format(date);',
+    ].join("\n"),
+  }).length,
+  0
+);
 assert.equal(
   frontendReviewHints.collectFrontendReviewHints({
     kind: "i18n",
@@ -689,6 +711,13 @@ const wcagHints = frontendReviewHints.collectFrontendReviewHints({
 });
 assert(wcagHints.some((hint) => hint.ruleId === "wcag/no-clickable-noninteractive"));
 assert(wcagHints.some((hint) => hint.ruleId === "wcag/form-control-label"));
+assert(
+  wcagHints.some(
+    (hint) =>
+      hint.ruleId === "wcag/form-control-label" &&
+      hint.sample.includes('id="name"')
+  )
+);
 assert(wcagHints.some((hint) => hint.ruleId === "wcag/icon-button-accessible-name"));
 assert(wcagHints.some((hint) => hint.ruleId === "wcag/dialog-focus-management"));
 assert(wcagHints.some((hint) => hint.ruleId === "wcag/focus-order"));
@@ -702,6 +731,34 @@ assert.equal(
 const formattedFrontendHints = frontendReviewHints.formatReviewHintsForPrompt(wcagHints);
 assert(formattedFrontendHints.includes("wcag/no-clickable-noninteractive"));
 assert(formattedFrontendHints.includes("components/example/Dialog.tsx:40"));
+const multilineWcagHints = frontendReviewHints.collectFrontendReviewHints({
+  kind: "wcag",
+  repo: frontendReviewHints.FRONTEND_REPO,
+  diff: [
+    "diff --git a/components/example/Multi.tsx b/components/example/Multi.tsx",
+    "--- a/components/example/Multi.tsx",
+    "+++ b/components/example/Multi.tsx",
+    "@@ -20,0 +20,10 @@",
+    "+  return <button>",
+    "+    <SaveIcon />",
+    "+  </button>;",
+    "+  const css = `",
+    "+    &:focus {",
+    "+      outline: none;",
+    "+    }",
+    "+  `;",
+  ].join("\n"),
+});
+assert(
+  multilineWcagHints.some(
+    (hint) => hint.ruleId === "wcag/icon-button-accessible-name" && hint.line === 20
+  )
+);
+assert(
+  multilineWcagHints.some(
+    (hint) => hint.ruleId === "wcag/focus-visible-not-removed" && hint.line === 25
+  )
+);
 const promptWithFrontendHints = reviewBot.buildPrompt({
   kind: "wcag",
   config: reviewBot.REVIEW_KIND_CONFIGS.wcag,

@@ -13,6 +13,7 @@ function collectFrontendReviewHints(input = {}) {
   }
 
   const addedLines = parseAddedDiffLines(input.diff || "");
+  const scannedLines = [];
   const hints = [];
   for (const added of addedLines) {
     if (hints.length >= MAX_HINTS_PER_KIND) {
@@ -21,9 +22,18 @@ function collectFrontendReviewHints(input = {}) {
     if (!shouldScanFile(added.file, kind)) {
       continue;
     }
+    scannedLines.push(added);
     const lineHints = kind === "i18n" ? i18nHintsForLine(added) : wcagHintsForLine(added);
     for (const hint of lineHints) {
-      hints.push(hint);
+      appendHint(hints, hint);
+      if (hints.length >= MAX_HINTS_PER_KIND) {
+        break;
+      }
+    }
+  }
+  if (kind === "wcag" && hints.length < MAX_HINTS_PER_KIND) {
+    for (const hint of wcagContextualHintsForAddedLines(scannedLines)) {
+      appendHint(hints, hint);
       if (hints.length >= MAX_HINTS_PER_KIND) {
         break;
       }
@@ -79,8 +89,9 @@ function i18nHintsForLine(added) {
   const text = added.text;
   const hints = [];
   if (
-    /\b(?:toLocaleString|toLocaleDateString|toLocaleTimeString|localeCompare)\s*\(/.test(text) ||
-    /\bnew\s+Intl\.[A-Za-z][A-Za-z0-9_]*\s*\(/.test(text)
+    !isI18nFormattingHelperPath(added.file) &&
+    (/\b(?:toLocaleString|toLocaleDateString|toLocaleTimeString|localeCompare)\s*\(/.test(text) ||
+      /\bnew\s+Intl\.[A-Za-z][A-Za-z0-9_]*\s*\(/.test(text))
   ) {
     hints.push(
       hint(added, {
@@ -114,7 +125,7 @@ function i18nHintsForLine(added) {
     );
   }
 
-  const jsxTextMatch = />\s*([A-Za-z][^<>{}\n]{2,80})\s*</.exec(text);
+  const jsxTextMatch = /(?:<>|<[A-Za-z][A-Za-z0-9.:-]*\b[^>]*>)\s*([A-Za-z][^<>{}\n]{2,80})\s*<\//.exec(text);
   if (jsxTextMatch && !isProbablyNonUserFacingLiteral(jsxTextMatch[1])) {
     hints.push(
       hint(added, {
@@ -183,7 +194,7 @@ function wcagHintsForLine(added) {
     );
   }
 
-  if (/<\s*(input|select|textarea)\b/i.test(text) && !/\b(?:aria-label|aria-labelledby|id|type=["']hidden["'])\b/i.test(text)) {
+  if (/<\s*(input|select|textarea)\b/i.test(text) && !hasInlineFormControlName(text)) {
     hints.push(
       hint(added, {
         ruleId: "wcag/form-control-label",
@@ -264,6 +275,103 @@ function wcagHintsForLine(added) {
   return hints;
 }
 
+function wcagContextualHintsForAddedLines(addedLines) {
+  const hints = [];
+  const byFile = new Map();
+  for (const added of addedLines) {
+    const list = byFile.get(added.file) || [];
+    list.push(added);
+    byFile.set(added.file, list);
+  }
+
+  for (const lines of byFile.values()) {
+    for (const hint of multilineIconControlHints(lines)) {
+      appendHint(hints, hint);
+    }
+    for (const hint of multilineFocusOutlineHints(lines)) {
+      appendHint(hints, hint);
+    }
+  }
+  return hints;
+}
+
+function multilineIconControlHints(lines) {
+  const hints = [];
+  let control = null;
+  for (const added of lines) {
+    const text = added.text;
+    const openMatch = /<\s*(button|a)\b([^>]*)>/.exec(text);
+    if (openMatch && !hasAccessibleControlName(openMatch[2] || "")) {
+      control = {
+        tag: openMatch[1],
+        start: added,
+        sawIcon: hasIconOnlySignal(text),
+        sawText: hasVisibleInlineText(text),
+        lineCount: 0,
+      };
+      if (new RegExp(`</\\s*${control.tag}\\s*>`).test(text)) {
+        if (control.sawIcon && !control.sawText) {
+          hints.push(iconButtonHint(control.start, "medium"));
+        }
+        control = null;
+      }
+      continue;
+    }
+
+    if (!control) {
+      continue;
+    }
+    control.lineCount += 1;
+    if (hasAccessibleControlName(text)) {
+      control = null;
+      continue;
+    }
+    if (hasIconOnlySignal(text)) {
+      control.sawIcon = true;
+    }
+    if (hasVisibleInlineText(text)) {
+      control.sawText = true;
+    }
+    if (new RegExp(`</\\s*${control.tag}\\s*>`).test(text)) {
+      if (control.sawIcon && !control.sawText) {
+        hints.push(iconButtonHint(control.start, "medium"));
+      }
+      control = null;
+      continue;
+    }
+    if (control.lineCount > 8) {
+      control = null;
+    }
+  }
+  return hints;
+}
+
+function multilineFocusOutlineHints(lines) {
+  const hints = [];
+  let focusRule = null;
+  for (const added of lines) {
+    const text = added.text;
+    if (/:\s*focus(?:-visible)?\b/.test(text)) {
+      focusRule = {
+        start: added,
+        lineCount: 0,
+      };
+    }
+    if (focusRule) {
+      focusRule.lineCount += 1;
+      if (/\boutline\s*:\s*(?:0|none)\b/.test(text)) {
+        hints.push(focusVisibleHint(added, "medium"));
+        focusRule = null;
+        continue;
+      }
+      if (text.includes("}") || focusRule.lineCount > 8) {
+        focusRule = null;
+      }
+    }
+  }
+  return hints;
+}
+
 function formatReviewHintsForPrompt(hints) {
   if (!Array.isArray(hints) || hints.length === 0) {
     return "";
@@ -284,6 +392,16 @@ function formatReviewHintsForPrompt(hints) {
     .join("\n");
 }
 
+function appendHint(hints, hint) {
+  if (!hint) {
+    return;
+  }
+  if (hints.some((item) => item.ruleId === hint.ruleId && item.file === hint.file && item.line === hint.line)) {
+    return;
+  }
+  hints.push(hint);
+}
+
 function hint(added, details) {
   return {
     blocking: false,
@@ -293,6 +411,32 @@ function hint(added, details) {
     line: added.line,
     sample: truncateSample(added.text),
   };
+}
+
+function iconButtonHint(added, confidence = "medium") {
+  return hint(added, {
+    ruleId: "wcag/icon-button-accessible-name",
+    category: "wcag",
+    severity: "major",
+    confidence,
+    message: "Icon-only controls need a stable accessible name.",
+    why: "Users of assistive technology need the control purpose exposed independently from the icon graphic.",
+    suggestedFix: "Add a localized aria-label or visible text, and hide decorative SVGs from assistive tech when needed.",
+    standardReference: "ops/standards/frontend-accessibility-wcag-22-aa.md",
+  });
+}
+
+function focusVisibleHint(added, confidence = "medium-high") {
+  return hint(added, {
+    ruleId: "wcag/focus-visible-not-removed",
+    category: "wcag",
+    severity: "major",
+    confidence,
+    message: "Focus styles should not be removed without an accessible replacement.",
+    why: "Keyboard users need a visible focus indicator to understand where actions will occur.",
+    suggestedFix: "Preserve the default outline or add a clearly visible :focus-visible replacement.",
+    standardReference: "ops/standards/frontend-accessibility-wcag-22-aa.md",
+  });
 }
 
 function shouldScanFile(file, kind) {
@@ -331,6 +475,30 @@ function isProbablyNonUserFacingLiteral(value) {
     return true;
   }
   return false;
+}
+
+function isI18nFormattingHelperPath(file) {
+  const normalized = String(file || "").replace(/\\/g, "/");
+  return /^i18n\/(?:format|locales)\.[tj]sx?$/.test(normalized);
+}
+
+function hasInlineFormControlName(text) {
+  return (
+    /\b(?:aria-label|aria-labelledby|type=["']hidden["'])\b/i.test(text) ||
+    /<\s*label\b/i.test(text)
+  );
+}
+
+function hasAccessibleControlName(text) {
+  return /\b(?:aria-label|aria-labelledby|title)\s*=/.test(text);
+}
+
+function hasIconOnlySignal(text) {
+  return /<\s*(?:[A-Z][A-Za-z0-9]*Icon|svg)\b|className=["'][^"']*\bicon\b/.test(text);
+}
+
+function hasVisibleInlineText(text) {
+  return />(?!\s*<)\s*[A-Za-z][^<>{}\n]{1,80}\s*</.test(text);
 }
 
 function unquoteDiffPath(value) {
