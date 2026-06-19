@@ -732,6 +732,58 @@ const promptWithFrontendHints = reviewBot.buildPrompt({
 assert(promptWithFrontendHints.user.includes("Deterministic changed-line review leads:"));
 assert(promptWithFrontendHints.user.includes("Treat deterministic hints as review leads"));
 assert(promptWithFrontendHints.user.includes("wcag/no-clickable-noninteractive"));
+const invalidFrontendPolicyContext = reviewBot.buildFrontendPolicyContext({
+  kind: "wcag",
+  settings: { repo: frontendReviewHints.FRONTEND_REPO },
+  pr: { baseRefOid: "not-a-sha" },
+});
+assert.equal(invalidFrontendPolicyContext.available, false);
+assert.equal(invalidFrontendPolicyContext.warning, "no valid base SHA");
+const frontendPolicyRepo = fs.mkdtempSync(path.join(os.tmpdir(), "reviewbot-policy-context-"));
+const frontendPolicyFiles = new Map([
+  [
+    "ops/standards/frontend-i18n-localization.md",
+    "# i18n standard\n\nCanonical source locale is en-US; supported fallbacks include en-GB, fr-FR, es-ES, and de-DE.\n",
+  ],
+  [
+    "ops/skills/i18n-localization/SKILL.md",
+    "# i18n skill\n\nUse t(locale, key, params) and compareLocalized for changed frontend UI.\n",
+  ],
+  [
+    "ops/workstreams/frontend-a11y-i18n/combined-plan.md",
+    "# Combined plan\n\nKeep touched UI aligned with the progressive localization plan.\n",
+  ],
+]);
+for (const [file, contents] of frontendPolicyFiles) {
+  const fullPath = path.join(frontendPolicyRepo, ...file.split("/"));
+  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+  fs.writeFileSync(fullPath, contents);
+}
+for (const args of [
+  ["init"],
+  ["config", "user.name", "Review Bot Test"],
+  ["config", "user.email", "reviewbot@example.test"],
+  ["add", "."],
+  ["commit", "-m", "Add frontend policy docs"],
+]) {
+  childProcess.execFileSync("git", args, { cwd: frontendPolicyRepo, stdio: "ignore" });
+}
+const frontendPolicyBaseSha = childProcess
+  .execFileSync("git", ["rev-parse", "HEAD"], { cwd: frontendPolicyRepo, encoding: "utf8" })
+  .trim();
+const frontendPolicyContext = reviewBot.buildFrontendPolicyContext({
+  kind: "i18n",
+  settings: {
+    repo: frontendReviewHints.FRONTEND_REPO,
+    workspace: frontendPolicyRepo,
+  },
+  pr: { baseRefOid: frontendPolicyBaseSha },
+});
+assert.equal(frontendPolicyContext.available, true);
+assert(frontendPolicyContext.files.includes("ops/standards/frontend-i18n-localization.md"));
+assert(frontendPolicyContext.files.includes("ops/skills/i18n-localization/SKILL.md"));
+assert(frontendPolicyContext.text.includes(`Base SHA: ${frontendPolicyBaseSha}`));
+assert(frontendPolicyContext.text.includes("Canonical source locale is en-US"));
 assert.throws(
   () =>
     reviewCommentFormatCheck.checkReviewCommentFormat({
