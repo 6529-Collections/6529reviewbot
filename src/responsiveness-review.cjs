@@ -127,6 +127,9 @@ function readSettings(args, env = process.env) {
     workflowRunUrl:
       args.workflowRunUrl ||
       workflowRunUrl(env.GITHUB_SERVER_URL, env.GITHUB_REPOSITORY, env.GITHUB_RUN_ID),
+    artifactUrl: safeGitHubArtifactUrl(
+      args.artifactUrl || env.REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL || ""
+    ),
     jobId: args.jobId || env.REVIEWBOT_JOB_ID || "",
     runKey: args.runKey || env.REVIEWBOT_RUN_KEY || "",
     workspace,
@@ -219,6 +222,9 @@ function buildVisibleBody(settings, artifacts) {
     `- Failures: ${artifacts.metrics.failures}`,
     `- Warnings: ${artifacts.metrics.warnings}`,
   ];
+  if (settings.artifactUrl) {
+    lines.splice(3, 0, `- Screenshots: [responsiveness artifact](${settings.artifactUrl})`);
+  }
 
   if (!artifacts.summary) {
     lines.push(
@@ -228,7 +234,9 @@ function buildVisibleBody(settings, artifacts) {
     return lines.join("\n");
   }
 
-  const summary = sanitizeSummary(artifacts.summary);
+  const summary = sanitizeSummary(artifacts.summary, {
+    artifactUrl: settings.artifactUrl,
+  });
   lines.push(
     "",
     "<details>",
@@ -328,8 +336,38 @@ function inlineList(items) {
   return (items || []).filter(Boolean).map((item) => `\`${item}\``).join(", ");
 }
 
-function sanitizeSummary(summary) {
-  return truncate(stripReviewBotMetadata(String(summary || "")).trim(), MAX_SUMMARY_CHARS);
+function sanitizeSummary(summary, options = {}) {
+  const clean = truncate(
+    stripReviewBotMetadata(String(summary || "")).trim(),
+    MAX_SUMMARY_CHARS
+  );
+  return linkScreenshotPaths(clean, options.artifactUrl);
+}
+
+function linkScreenshotPaths(summary, artifactUrl) {
+  const url = safeGitHubArtifactUrl(artifactUrl);
+  if (!url) {
+    return summary;
+  }
+  return String(summary || "").replace(
+    /screenshot `((?:screenshots\/)[^`\r\n]+\.png)`/g,
+    (_match, screenshotPath) => `screenshot [\`${screenshotPath}\`](${url})`
+  );
+}
+
+function safeGitHubArtifactUrl(value) {
+  const url = String(value || "").trim();
+  if (!url) {
+    return "";
+  }
+  if (
+    !/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/actions\/runs\/\d+\/artifacts\/\d+(?:[?#][^\s]*)?$/.test(
+      url
+    )
+  ) {
+    return "";
+  }
+  return url;
 }
 
 function readText(file) {
@@ -385,9 +423,12 @@ if (require.main === module) {
 
 module.exports = {
   buildVisibleBody,
+  linkScreenshotPaths,
   main,
   metricsFromSummary,
   readArtifacts,
   readSettings,
+  safeGitHubArtifactUrl,
+  sanitizeSummary,
   verdictFromArtifacts,
 };

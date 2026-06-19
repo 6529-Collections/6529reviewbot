@@ -79,7 +79,9 @@ Responsiveness comments use the same heading and hidden-marker contract, but
 the visible body is generated from deterministic Playwright artifacts rather
 than a model response. They record provider `github`, model
 `actions-ubuntu-latest`, zero token usage, and an estimated GitHub Actions cost
-so budgets can account for the compute lane.
+so budgets can account for the compute lane. When the central workflow has an
+uploaded artifact URL, the visible body includes a screenshot artifact link and
+turns slowest-check screenshot paths into links to that artifact.
 
 ## Hidden Metadata
 

@@ -179,6 +179,8 @@ const responsivenessSettings = responsivenessReview.readSettings(
     GH_REPO: "6529-Collections/example",
     PR_NUMBER: "7",
     REVIEWBOT_REQUESTOR: "maintainer",
+    REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL:
+      "https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456",
     REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD: "0.37",
     REVIEW_USAGE_ENABLED: "false",
   }
@@ -187,6 +189,53 @@ assert.equal(responsivenessSettings.provider, "github");
 assert.equal(responsivenessSettings.model, "actions-ubuntu-latest");
 assert.equal(responsivenessSettings.lane, "github:actions-ubuntu-latest");
 assert.equal(responsivenessSettings.estimatedCostUsd, 0.37);
+assert.equal(
+  responsivenessSettings.artifactUrl,
+  "https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456"
+);
+const responsivenessBody = responsivenessReview.buildVisibleBody(
+  {
+    workflowRunId: "123",
+    workflowJob: "responsiveness-review",
+    workflowRunUrl:
+      "https://github.com/6529-Collections/6529reviewbot/actions/runs/123",
+    artifactUrl:
+      "https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456",
+  },
+  {
+    verdict: "Responsive checks passed",
+    plan: {
+      contexts: [{ name: "web-desktop" }],
+      routes: ["/"],
+    },
+    metrics: {
+      checksCompleted: "1/1",
+      failures: 0,
+      warnings: 0,
+    },
+    summary: [
+      "# 6529bot Responsiveness Summary",
+      "",
+      "## Slowest Checks",
+      "",
+      "- `web-desktop` `/`: 1.2s, screenshot `screenshots/web-desktop--root.png`",
+    ].join("\n"),
+  }
+);
+assert(
+  responsivenessBody.includes(
+    "- Screenshots: [responsiveness artifact](https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456)"
+  )
+);
+assert(
+  responsivenessBody.includes(
+    "screenshot [`screenshots/web-desktop--root.png`](https://github.com/6529-Collections/6529reviewbot/actions/runs/123/artifacts/456)"
+  )
+);
+assert.equal(
+  responsivenessReview.safeGitHubArtifactUrl("https://example.com/not-an-artifact"),
+  ""
+);
 assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 6);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(

@@ -59,6 +59,8 @@ jobs:
   benchmark:
     name: Responsiveness benchmark
     runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.upload-responsiveness-artifacts.outputs.artifact-url }}
     permissions:
       contents: read
       pull-requests: read
@@ -220,6 +222,7 @@ jobs:
           fi
 
       - name: Upload responsiveness artifacts
+        id: upload-responsiveness-artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -295,6 +298,7 @@ jobs:
           REVIEWBOT_REQUESTOR: ${{ inputs.requestor }}
           REVIEWBOT_WORKFLOW_JOB: responsiveness-review
           REVIEWBOT_RESPONSIVENESS_WORKSPACE: ${{ github.workspace }}/.reviewbot-responsiveness
+          REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL: ${{ needs.benchmark.outputs.artifact_url }}
           REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD: ${{ vars.REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD || vars.REVIEWBOT_BUDGET_DEFAULT_ESTIMATED_COST_USD || '1' }}
           REVIEW_USAGE_ENABLED: true
           REVIEW_USAGE_AWS_REGION: ${{ vars.REVIEW_USAGE_AWS_REGION }}

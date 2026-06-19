@@ -61,6 +61,11 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
 - `screenshots/*.png`: one full-page screenshot per completed check.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
 
+Production PR comments include a link to the uploaded artifact when GitHub
+returns one from `actions/upload-artifact`. Screenshot paths in the slowest
+checks section link to that artifact; GitHub does not currently expose stable
+per-file links inside the artifact zip.
+
 ## Contexts
 
 The default reference mode runs these four contexts in parallel:
