@@ -95,7 +95,12 @@ deterministic summary plus the screenshot set to Anthropic Opus
 summary becomes the top of the PR comment and the deterministic runner output
 moves into an expandable details block. The workflow still records the GitHub
 Actions compute row, and records the Opus call separately as
-`responsiveness_visual` usage.
+`responsiveness_visual` usage. Full-resolution PNGs stay in the GitHub/S3
+artifacts for humans and bots that need exact evidence. The Opus request uses
+local resized JPEG copies, controlled by
+`REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION` and
+`REVIEWBOT_RESPONSIVENESS_AI_IMAGE_QUALITY`, so full-page screenshots remain
+under provider many-image limits.
 
 ## Contexts
 

@@ -246,6 +246,10 @@ Optional repository variables for the Opus visual pass:
 REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true
 REVIEWBOT_RESPONSIVENESS_AI_MODEL=claude-opus-4-8
 REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES=48
+REVIEWBOT_RESPONSIVENESS_AI_MAX_SOURCE_IMAGE_BYTES=40000000
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_BYTES=8000000
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION=1600
+REVIEWBOT_RESPONSIVENESS_AI_IMAGE_QUALITY=82
 REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS=1800
 REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
 ```
@@ -253,7 +257,10 @@ REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
 The worker uses `ANTHROPIC_API_KEY` from repository secrets. The central server
 adds the visual estimate to responsiveness budget admission when
 `REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true`; the worker writes the actual token
-usage as a separate `responsiveness_visual` usage event.
+usage as a separate `responsiveness_visual` usage event. Full-resolution PNGs
+remain linked from S3 for humans; the provider request uses resized JPEG copies
+bounded by `REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION` so many-image
+requests do not exceed Anthropic image limits.
 
 Required repository variables when durable run-control claims should be closed
 by the worker:

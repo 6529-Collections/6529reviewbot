@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const sharp = require("sharp");
 const adminAuth = require("../src/admin-auth.cjs");
 const adminAuthContractCheck = require("./check-admin-auth-contract.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
@@ -5754,6 +5755,31 @@ appServer.handleGitHubWebhook({
   estimateBudgetCost: async () => ({ estimatedCostUsd: 1 }),
   jobPolicy: twoLanePolicy,
 }).then(async (webhookResult) => {
+  const visualImageDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-visual-image-"));
+  const oversizedScreenshotPath = path.join(visualImageDir, "oversized.png");
+  await sharp({
+    create: {
+      width: 2400,
+      height: 3200,
+      channels: 3,
+      background: { r: 248, g: 250, b: 252 },
+    },
+  })
+    .png()
+    .toFile(oversizedScreenshotPath);
+  const preparedVisualImage = await responsivenessReview.prepareVisualImage(
+    oversizedScreenshotPath,
+    {
+      maxImageDimension: 1600,
+      imageQuality: 82,
+    }
+  );
+  assert.equal(preparedVisualImage.mediaType, "image/jpeg");
+  assert.equal(preparedVisualImage.originalWidth, 2400);
+  assert.equal(preparedVisualImage.originalHeight, 3200);
+  assert(preparedVisualImage.preparedWidth <= 1600);
+  assert(preparedVisualImage.preparedHeight <= 1600);
+  assert(preparedVisualImage.base64.length > 0);
   const manifestConversionSummary = await runManifestConversionSmoke();
   assert.equal(manifestConversionSummary.credentials.webhookSecret, "set");
   const githubActorContext = await githubActorContextPromise;
