@@ -109,6 +109,7 @@ function checkSpecialWorkflow(workflowPath, workflowText, findings) {
     findings.push(`${workflowPath} must post through bin/responsiveness-review.cjs.`);
   }
   checkResponsivenessBenchmarkDependencyInstall(workflowPath, workflowText, findings);
+  checkResponsivenessArtifactUrlHandoff(workflowPath, workflowText, findings);
 }
 
 function checkResponsivenessBenchmarkDependencyInstall(workflowPath, workflowText, findings) {
@@ -127,6 +128,20 @@ function checkResponsivenessBenchmarkDependencyInstall(workflowPath, workflowTex
   const tokenIndex = normalized.indexOf(normalizeWhitespace("node bot/bin/github-app-installation-token.cjs"));
   if (installIndex < 0 || tokenIndex < 0 || installIndex > tokenIndex) {
     findings.push(`${workflowPath} benchmark job must install bot dependencies before minting a GitHub App token.`);
+  }
+}
+
+function checkResponsivenessArtifactUrlHandoff(workflowPath, workflowText, findings) {
+  const normalized = normalizeWhitespace(workflowText);
+  const requiredSnippets = [
+    "outputs: artifact_url: ${{ steps.upload-responsiveness-artifacts.outputs.artifact-url }}",
+    "id: upload-responsiveness-artifacts",
+    "REVIEWBOT_RESPONSIVENESS_ARTIFACT_URL: ${{ needs.benchmark.outputs.artifact_url }}",
+  ];
+  for (const snippet of requiredSnippets) {
+    if (!normalized.includes(normalizeWhitespace(snippet))) {
+      findings.push(`${workflowPath} must include '${snippet}'.`);
+    }
   }
 }
 
