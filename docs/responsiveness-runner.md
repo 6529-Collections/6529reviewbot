@@ -160,7 +160,9 @@ Each context/route check records:
 - HTTP status.
 - page errors and fatal console/hydration signals.
 - horizontal document overflow.
-- Next.js error overlay presence.
+- Next.js error overlay presence and concise overlay text, including open
+  shadow-DOM text when available, capped before it is written to artifacts or
+  sent to visual review.
 - content readiness before screenshot capture. A route must render meaningful
   visible 6529 app content or shell evidence, such as visible text,
   interactive elements, media, landmarks, or known 6529 layout markers. Blank
