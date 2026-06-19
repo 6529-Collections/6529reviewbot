@@ -300,6 +300,9 @@ assert(
   )
 );
 assert(responsivenessSpec.includes("visibleAppShellElements"));
+assert(responsivenessSpec.includes("analyzeScreenshot"));
+assert(responsivenessSpec.includes('const visibleText = (body?.innerText || "")'));
+assert(!responsivenessSpec.includes("body?.innerText || body?.textContent"));
 const responsivenessScreenshotManifest =
   responsivenessRunner.buildScreenshotManifest({
     plan: {
@@ -324,6 +327,11 @@ const responsivenessScreenshotManifest =
           visibleInteractiveElements: 0,
           visibleAppShellElements: 0,
         },
+        screenshotAnalysis: {
+          available: true,
+          blankLike: true,
+          luminanceStdDev: 0.2,
+        },
       },
     ],
   });
@@ -331,6 +339,10 @@ assert.equal(responsivenessScreenshotManifest.screenshots[0].contentReady, false
 assert.deepEqual(
   responsivenessScreenshotManifest.screenshots[0].contentSignals,
   []
+);
+assert.equal(
+  responsivenessScreenshotManifest.screenshots[0].screenshotAnalysis.blankLike,
+  true
 );
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
