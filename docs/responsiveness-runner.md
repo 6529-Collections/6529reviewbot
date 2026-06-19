@@ -70,6 +70,11 @@ returns one from `actions/upload-artifact`. Screenshot paths in the slowest
 checks section link to that artifact; GitHub does not currently expose stable
 per-file links inside the artifact zip.
 
+The production workflow preserves artifacts and posts the 6529bot comment even
+when deterministic checks fail, then fails the benchmark job after artifact
+upload. This keeps the required GitHub check aligned with the review verdict
+without losing debugging evidence.
+
 When `REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=true`, the comment job also
 uploads a bounded public-comment-safe subset to private S3:
 
