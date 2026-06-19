@@ -54,12 +54,24 @@ node bin/wcag-aa-analysis.cjs
 
 Focus:
 
+- the 6529 frontend WCAG 2.2 AA standard, read from the PR base ref for
+  `6529-Collections/6529seize-frontend` reviews;
 - keyboard access;
 - focus order and focus visibility;
+- semantic buttons/links instead of clickable non-interactive elements;
 - accessible names and labels;
+- icon-only control names;
 - semantic structure;
-- dialogs, live regions, and ARIA correctness;
+- dialogs, live regions, and ARIA correctness, including focus movement,
+  dismissal, background inertness, and focus restoration;
 - contrast, target size, reduced motion, and responsive layout risks.
+
+For 6529 frontend PRs, the prompt also includes deterministic changed-line
+review leads for common WCAG hazards such as clickable `div`/`span` elements,
+unlabeled form controls, icon-only controls without names, custom dialog
+semantics, removed focus outlines, and new autofocus. These leads are not
+automatic findings; the model must verify each one against the diff and file
+context before reporting it.
 
 ## i18n Analysis
 
@@ -71,6 +83,8 @@ node bin/i18n-analysis.cjs
 
 Focus:
 
+- the 6529 frontend i18n standard, read from the PR base ref for
+  `6529-Collections/6529seize-frontend` reviews;
 - 6529 frontend progressive i18n policy;
 - `en-US` source/default locale with `en-GB`, `fr-FR`, `es-ES`, and `de-DE`
   fallback dictionaries;
@@ -84,6 +98,13 @@ Focus:
 - no broad `app/[lang]` migration request during component-level migration;
 - no user-generated content translation unless a feature explicitly adds it;
 - fallback-debt notes for touched surfaces that are not fully migrated.
+
+For 6529 frontend PRs, the prompt also includes deterministic changed-line
+review leads for common localization hazards such as new hardcoded JSX copy,
+hardcoded accessible names, direct locale APIs, sentence concatenation, and
+unsupported locale identifiers. These leads are not automatic findings; the
+model must verify each one against the diff and file context before reporting
+it.
 
 ## Crypto Security Analysis
 
