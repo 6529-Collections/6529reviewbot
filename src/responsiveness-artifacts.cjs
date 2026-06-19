@@ -232,7 +232,7 @@ async function handleResponsivenessArtifactRequest(request, options = {}) {
     return { statusCode: 404, body: { ok: false, error: "Artifact not found." } };
   }
   const key = s3KeyForArtifact(settings, parsed.token, parsed.artifactPath);
-  const location = presignS3Object(settings, key, options);
+  const location = await presignS3Object(settings, key, options);
   return {
     statusCode: 302,
     headers: {
@@ -272,7 +272,133 @@ function s3KeyForArtifact(settings, token, artifactPath) {
   return parts.join("/");
 }
 
-function presignS3Object(settings, key, options = {}) {
+async function presignS3Object(settings, key, options = {}) {
+  if (options.presignS3Object) {
+    return await options.presignS3Object(settings, key);
+  }
+  const credentials = await resolveAwsCredentials(options);
+  if (credentials) {
+    return presignS3ObjectWithCredentials(settings, key, credentials, options);
+  }
+  return presignS3ObjectWithAwsCli(settings, key, options);
+}
+
+async function resolveAwsCredentials(options = {}) {
+  const env = options.env || process.env;
+  if (options.credentials) {
+    return normalizeAwsCredentials(options.credentials);
+  }
+  const envCredentials = normalizeAwsCredentials({
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    sessionToken: env.AWS_SESSION_TOKEN,
+  });
+  if (envCredentials) {
+    return envCredentials;
+  }
+
+  const credentialsUrl = containerCredentialsUrl(env);
+  if (!credentialsUrl) {
+    return null;
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    options.credentialsTimeoutMs || 3000
+  );
+  try {
+    const headers = {};
+    if (env.AWS_CONTAINER_AUTHORIZATION_TOKEN) {
+      headers.authorization = env.AWS_CONTAINER_AUTHORIZATION_TOKEN;
+    }
+    const response = await fetch(credentialsUrl, {
+      headers,
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error(`container credential endpoint returned HTTP ${response.status}`);
+    }
+    return normalizeAwsCredentials(await response.json());
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function containerCredentialsUrl(env = process.env) {
+  if (env.AWS_CONTAINER_CREDENTIALS_FULL_URI) {
+    const value = String(env.AWS_CONTAINER_CREDENTIALS_FULL_URI);
+    if (/^https?:\/\/(?:169\.254\.170\.2|127\.0\.0\.1|localhost|[\w.-]+)(?::\d+)?\//.test(value)) {
+      return value;
+    }
+    return "";
+  }
+  if (env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI) {
+    const relative = String(env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI);
+    if (/^\/[A-Za-z0-9._~/?&=:+%-]+$/.test(relative)) {
+      return `http://169.254.170.2${relative}`;
+    }
+  }
+  return "";
+}
+
+function normalizeAwsCredentials(value = {}) {
+  const accessKeyId = value.accessKeyId || value.AccessKeyId || value.AccessKeyID || "";
+  const secretAccessKey = value.secretAccessKey || value.SecretAccessKey || "";
+  const sessionToken = value.sessionToken || value.Token || value.SessionToken || "";
+  if (!accessKeyId || !secretAccessKey) {
+    return null;
+  }
+  return {
+    accessKeyId: String(accessKeyId),
+    secretAccessKey: String(secretAccessKey),
+    sessionToken: sessionToken ? String(sessionToken) : "",
+  };
+}
+
+function presignS3ObjectWithCredentials(settings, key, credentials, options = {}) {
+  const now = options.now || new Date();
+  const amzDate = amzDateFromDate(now);
+  const dateStamp = amzDate.slice(0, 8);
+  const host = `${settings.bucket}.s3.${settings.region}.amazonaws.com`;
+  const credentialScope = `${dateStamp}/${settings.region}/s3/aws4_request`;
+  const query = {
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": `${credentials.accessKeyId}/${credentialScope}`,
+    "X-Amz-Date": amzDate,
+    "X-Amz-Expires": String(settings.presignSeconds),
+    "X-Amz-SignedHeaders": "host",
+  };
+  if (credentials.sessionToken) {
+    query["X-Amz-Security-Token"] = credentials.sessionToken;
+  }
+  const canonicalUri = `/${String(key).split("/").map(encodeRfc3986).join("/")}`;
+  const canonicalQuery = canonicalQueryString(query);
+  const canonicalRequest = [
+    "GET",
+    canonicalUri,
+    canonicalQuery,
+    `host:${host}`,
+    "",
+    "host",
+    "UNSIGNED-PAYLOAD",
+  ].join("\n");
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+  const signingKey = sigV4SigningKey(
+    credentials.secretAccessKey,
+    dateStamp,
+    settings.region,
+    "s3"
+  );
+  const signature = hmac(signingKey, stringToSign, "hex");
+  return `https://${host}${canonicalUri}?${canonicalQuery}&X-Amz-Signature=${signature}`;
+}
+
+function presignS3ObjectWithAwsCli(settings, key, options = {}) {
   const execFileSync = options.execFileSync || childProcess.execFileSync;
   const stdout = execFileSync(
     awsCliBin(),
@@ -297,6 +423,38 @@ function presignS3Object(settings, key, options = {}) {
     throw new Error("aws s3 presign did not return an HTTPS URL.");
   }
   return url;
+}
+
+function sigV4SigningKey(secretAccessKey, dateStamp, region, service) {
+  const kDate = hmac(`AWS4${secretAccessKey}`, dateStamp);
+  const kRegion = hmac(kDate, region);
+  const kService = hmac(kRegion, service);
+  return hmac(kService, "aws4_request");
+}
+
+function hmac(key, value, encoding) {
+  return crypto.createHmac("sha256", key).update(value, "utf8").digest(encoding);
+}
+
+function sha256Hex(value) {
+  return crypto.createHash("sha256").update(value, "utf8").digest("hex");
+}
+
+function canonicalQueryString(query) {
+  return Object.keys(query)
+    .sort()
+    .map((key) => `${encodeRfc3986(key)}=${encodeRfc3986(query[key])}`)
+    .join("&");
+}
+
+function encodeRfc3986(value) {
+  return encodeURIComponent(String(value)).replace(/[!'()*]/g, (char) =>
+    `%${char.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+}
+
+function amzDateFromDate(date) {
+  return date.toISOString().replace(/[:-]|\.\d{3}/g, "");
 }
 
 function awsS3Cp(settings, absolutePath, key, contentType) {
@@ -509,6 +667,7 @@ module.exports = {
   isResponsivenessArtifactPath,
   isUploadArtifactPath,
   parseArtifactViewerPath,
+  presignS3ObjectWithCredentials,
   readArtifactUploadManifest,
   responsivenessArtifactSettingsFromEnv,
   screenshotUrlForPath,
