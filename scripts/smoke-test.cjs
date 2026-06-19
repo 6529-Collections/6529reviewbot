@@ -297,7 +297,7 @@ const responsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
   { contexts: [], routes: [] },
   {
     outputDir: "/tmp/reviewbot-responsiveness",
-    baseUrl: "http://127.0.0.1:3001",
+    baseUrl: "http://localhost:3001",
     target: "/tmp/target",
     port: 3001,
     workers: 4,
