@@ -115,7 +115,11 @@ electron-desktop 1280x800 desktop Chrome with an Electron user-agent suffix
 
 The native context is a browser-level Capacitor shim, not a real iOS or Android
 simulator. It is meant to catch app-shell layout regressions quickly before a
-deeper device/simulator setup exists.
+deeper device/simulator setup exists. For 6529 frontend repositories the
+native assertion follows the actual app contract: `Capacitor.isNativePlatform()`
+and `Capacitor.getPlatform()` must report the shimmed native platform. The
+runner does not require a global body class such as `capacitor-native`, because
+6529 FE selects native layout through hooks and component-level shell classes.
 
 ## Route Inference
 
@@ -152,7 +156,13 @@ Each context/route check records:
 - page errors and fatal console/hydration signals.
 - horizontal document overflow.
 - Next.js error overlay presence.
-- title, URL, viewport meta, body class, and navigation/header/main presence.
+- content readiness before screenshot capture. A route must render meaningful
+  visible 6529 app content or shell evidence, such as visible text,
+  interactive elements, media, landmarks, or known 6529 layout markers. Blank
+  or near-empty captures fail instead of being passed to the visual reviewer as
+  useful screenshots.
+- title, URL, viewport meta, body class, navigation/header/main presence, and
+  content-readiness diagnostics.
 - a full-page screenshot.
 
 Hard failures fail the workflow. Non-fatal console errors and 4xx responses are

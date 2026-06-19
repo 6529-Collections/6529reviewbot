@@ -543,7 +543,26 @@ for (const route of routes) {
       pageErrors.push(sanitizeMessage(error.message || String(error)));
     }
 
-    const metricsResult = await readMetrics(page);
+    let contentReadiness = {
+      ok: false,
+      reason: "content readiness was not checked",
+      durationMs: 0,
+      metrics: null,
+    };
+    try {
+      contentReadiness = await waitForMeaningfulAppContent(page);
+    } catch (error) {
+      contentReadiness = {
+        ok: false,
+        reason: \`content readiness check failed: \${sanitizeMessage(error.message || String(error))}\`,
+        durationMs: 0,
+        metrics: null,
+      };
+    }
+
+    const metricsResult = contentReadiness.metrics
+      ? { ok: true, metrics: contentReadiness.metrics }
+      : await readMetrics(page);
     if (!metricsResult.ok) {
       pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
     }
@@ -569,6 +588,9 @@ for (const route of routes) {
     if (metrics.nextErrorOverlay) {
       failures.push("Next.js error overlay is visible");
     }
+    if (!metrics.contentReady) {
+      failures.push(contentReadiness.reason || "6529 app shell did not render meaningful content");
+    }
     if (pageErrors.length > 0) {
       failures.push(\`\${pageErrors.length} page error(s)\`);
     }
@@ -576,8 +598,10 @@ for (const route of routes) {
       const shimActive = Boolean(metrics.nativeShimActive || metrics.nativeIsNativePlatform || metrics.nativePlatform);
       if (!shimActive) {
         failures.push("native Capacitor shim did not activate");
-      } else if (!String(metrics.bodyClass).includes("capacitor-native")) {
-        warnings.push("native Capacitor layout class absent");
+      } else if (!metrics.nativeIsNativePlatform || metrics.nativePlatform !== (metadata.nativePlatform || "ios")) {
+        failures.push(
+          \`native Capacitor shim did not report expected platform \${metadata.nativePlatform || "ios"}\`
+        );
       }
     }
     if (mode === "electron-desktop") {
@@ -603,6 +627,11 @@ for (const route of routes) {
       failures,
       consoleErrors: consoleErrors.slice(0, 20),
       pageErrors: pageErrors.slice(0, 20),
+      contentReadiness: {
+        ok: Boolean(contentReadiness.ok),
+        reason: contentReadiness.reason,
+        durationMs: contentReadiness.durationMs,
+      },
       screenshot: path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/"),
     };
     fs.writeFileSync(
@@ -633,6 +662,69 @@ async function settlePage(page, pageErrors) {
     }
   }
   pageErrors.push("page did not settle after client navigation");
+}
+
+async function waitForMeaningfulAppContent(page) {
+  const timeoutMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_CONTENT_TIMEOUT_MS || 15000);
+  const startedAt = Date.now();
+  let lastMetrics = null;
+  let lastError = "";
+
+  while (Date.now() - startedAt <= timeoutMs) {
+    const metricsResult = await readMetrics(page);
+    if (metricsResult.ok) {
+      lastMetrics = metricsResult.metrics;
+      if (lastMetrics.contentReady) {
+        return {
+          ok: true,
+          reason: "6529 app shell rendered meaningful content",
+          durationMs: Date.now() - startedAt,
+          metrics: lastMetrics,
+        };
+      }
+      if (lastMetrics.nextErrorOverlay) {
+        return {
+          ok: false,
+          reason: "Next.js error overlay is visible before content readiness",
+          durationMs: Date.now() - startedAt,
+          metrics: lastMetrics,
+        };
+      }
+    } else {
+      lastError = metricsResult.error || "";
+    }
+
+    const remainingMs = timeoutMs - (Date.now() - startedAt);
+    if (remainingMs <= 0) {
+      break;
+    }
+    await page.waitForTimeout(Math.min(500, remainingMs));
+  }
+
+  return {
+    ok: false,
+    reason: contentReadinessFailureReason(lastMetrics, lastError, timeoutMs),
+    durationMs: Date.now() - startedAt,
+    metrics: lastMetrics,
+  };
+}
+
+function contentReadinessFailureReason(metrics, lastError, timeoutMs) {
+  if (!metrics) {
+    return lastError
+      ? \`6529 app shell metrics were unavailable before screenshot: \${sanitizeMessage(lastError)}\`
+      : "6529 app shell metrics were unavailable before screenshot";
+  }
+
+  const seconds = (timeoutMs / 1000).toFixed(1);
+  const signals = (metrics.contentSignals || []).join(", ") || "none";
+  return [
+    \`6529 app shell did not render meaningful content within \${seconds}s\`,
+    \`visibleTextLength=\${metrics.visibleTextLength || 0}\`,
+    \`visibleInteractiveElements=\${metrics.visibleInteractiveElements || 0}\`,
+    \`visibleAppShellElements=\${metrics.visibleAppShellElements || 0}\`,
+    \`signals=\${signals}\`,
+  ].join("; ");
 }
 
 async function readMetrics(page) {
@@ -667,6 +759,62 @@ async function readMetrics(page) {
           const style = window.getComputedStyle(element);
           return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
         };
+        const visibleElement = (element) => {
+          if (!element) return false;
+          const rect = element.getBoundingClientRect();
+          const style = window.getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
+        };
+        const visibleCount = (selector) =>
+          Array.from(document.querySelectorAll(selector)).filter(visibleElement).length;
+        const bodyText = (body?.innerText || body?.textContent || "").replace(/\\s+/g, " ").trim();
+        const visibleInteractiveElements = visibleCount(
+          'a[href], button, input, select, textarea, [role="button"], [role="link"], [tabindex]:not([tabindex="-1"])'
+        );
+        const visibleMediaElements = visibleCount("img, picture, video, canvas, svg");
+        const visibleAppShellElements = visibleCount(
+          [
+            "main",
+            '[role="main"]',
+            "header",
+            '[role="banner"]',
+            "nav",
+            '[role="navigation"]',
+            "footer",
+            '[role="contentinfo"]',
+            ".layout-root",
+            ".layout-main",
+            ".tailwind-scope",
+            '[class*="headerPlaceholder"]',
+            '[class*="capacitorPlaceholder"]',
+            '[class*="capacitorHeaderRow"]',
+            '[class*="capacitorMainContainer"]',
+          ].join(",")
+        );
+        const contentSignals = [];
+        const hasMain = visible("main") || visible('[role="main"]');
+        const hasHeader = visible("header") || visible('[role="banner"]');
+        const hasFooter = visible("footer") || visible('[role="contentinfo"]');
+        const hasNavigation = visible("nav") || visible('[role="navigation"]');
+        if (hasMain) contentSignals.push("main");
+        if (hasHeader) contentSignals.push("header");
+        if (hasNavigation) contentSignals.push("navigation");
+        if (hasFooter) contentSignals.push("footer");
+        if (visibleAppShellElements > 0) contentSignals.push("6529-shell-marker");
+        if (bodyText.length >= 20) contentSignals.push("visible-text");
+        if (visibleInteractiveElements >= 2) contentSignals.push("interactive-elements");
+        if (visibleMediaElements > 0) contentSignals.push("media-elements");
+        const nextErrorOverlay = Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]"));
+        const contentReady =
+          !nextErrorOverlay &&
+          (hasMain ||
+            hasHeader ||
+            hasNavigation ||
+            hasFooter ||
+            visibleAppShellElements > 0 ||
+            bodyText.length >= 20 ||
+            visibleInteractiveElements >= 2 ||
+            visibleMediaElements > 0);
         return {
           title: document.title,
           url: window.location.href,
@@ -682,11 +830,18 @@ async function readMetrics(page) {
           clientHeight,
           horizontalOverflow: Math.max(0, scrollWidth - clientWidth),
           verticalOverflow: Math.max(0, scrollHeight - clientHeight),
-          hasMain: visible("main") || visible('[role="main"]'),
-          hasHeader: visible("header") || visible('[role="banner"]'),
-          hasFooter: visible("footer") || visible('[role="contentinfo"]'),
-          hasNavigation: visible("nav") || visible('[role="navigation"]'),
-          nextErrorOverlay: Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]")),
+          hasMain,
+          hasHeader,
+          hasFooter,
+          hasNavigation,
+          bodyTextLength: bodyText.length,
+          visibleTextLength: bodyText.length,
+          visibleInteractiveElements,
+          visibleMediaElements,
+          visibleAppShellElements,
+          contentReady,
+          contentSignals,
+          nextErrorOverlay,
         };
       });
       return { ok: true, metrics };
@@ -721,6 +876,13 @@ function fallbackMetrics(page) {
     hasHeader: false,
     hasFooter: false,
     hasNavigation: false,
+    bodyTextLength: 0,
+    visibleTextLength: 0,
+    visibleInteractiveElements: 0,
+    visibleMediaElements: 0,
+    visibleAppShellElements: 0,
+    contentReady: false,
+    contentSignals: [],
     nextErrorOverlay: false,
   };
 }
@@ -866,6 +1028,11 @@ function buildScreenshotManifest({ plan, results }) {
       warnings: result.warnings || [],
       failures: result.failures || [],
       horizontalOverflow: result.metrics?.horizontalOverflow || 0,
+      contentReady: Boolean(result.metrics?.contentReady),
+      contentSignals: result.metrics?.contentSignals || [],
+      visibleTextLength: result.metrics?.visibleTextLength || 0,
+      visibleInteractiveElements: result.metrics?.visibleInteractiveElements || 0,
+      visibleAppShellElements: result.metrics?.visibleAppShellElements || 0,
       nextErrorOverlay: Boolean(result.metrics?.nextErrorOverlay),
     }));
   return {
@@ -1047,6 +1214,7 @@ module.exports = {
   CONTEXTS,
   DEFAULT_CONTEXTS,
   buildPlan,
+  buildPlaywrightSpec,
   collectChangedFiles,
   buildScreenshotManifest,
   inferRoutes,
