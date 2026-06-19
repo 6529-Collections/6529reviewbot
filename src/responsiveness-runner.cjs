@@ -861,9 +861,16 @@ async function readMetrics(page) {
           )
         );
         const compactText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+        const skipTextElement = (node) => {
+          const tagName = String(node?.tagName || "").toUpperCase();
+          return ["STYLE", "SCRIPT", "NOSCRIPT", "TEMPLATE", "SVG", "PATH"].includes(tagName);
+        };
         const collectNodeText = (node, parts, state, depth = 0) => {
           if (!node || state.length >= 2000 || depth > 12) return;
           if (node.nodeType === Node.TEXT_NODE) {
+            if (skipTextElement(node.parentElement)) {
+              return;
+            }
             const text = compactText(node.textContent);
             if (text) {
               parts.push(text);
@@ -875,6 +882,9 @@ async function readMetrics(page) {
             return;
           }
           if (node.nodeType === Node.ELEMENT_NODE) {
+            if (skipTextElement(node)) {
+              return;
+            }
             const ariaLabel = compactText(node.getAttribute("aria-label"));
             if (ariaLabel) {
               parts.push(ariaLabel);
