@@ -502,6 +502,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("@playwright/test");
 
+let sharp = null;
+try {
+  sharp = require("sharp");
+} catch {
+  sharp = null;
+}
+
 const routes = require("../routes.json");
 const outputRoot = path.resolve(__dirname, "..", "..");
 const resultsDir = path.join(outputRoot, "results");
@@ -572,6 +579,10 @@ for (const route of routes) {
     await page.screenshot({ path: screenshotPath, fullPage: true }).catch((error) => {
       pageErrors.push(\`screenshot failed: \${sanitizeMessage(error.message || String(error))}\`);
     });
+    const screenshotAnalysis = await analyzeScreenshot(screenshotPath).catch((error) => ({
+      available: false,
+      error: sanitizeMessage(error.message || String(error)),
+    }));
 
     const warnings = [];
     const failures = [];
@@ -590,6 +601,11 @@ for (const route of routes) {
     }
     if (!metrics.contentReady) {
       failures.push(contentReadiness.reason || "6529 app shell did not render meaningful content");
+    }
+    if (screenshotAnalysis.blankLike) {
+      failures.push(
+        \`screenshot appears blank or near-uniform despite app readiness; nonWhiteRatio=\${screenshotAnalysis.nonWhiteRatio}, luminanceStdDev=\${screenshotAnalysis.luminanceStdDev}\`
+      );
     }
     if (pageErrors.length > 0) {
       failures.push(\`\${pageErrors.length} page error(s)\`);
@@ -632,6 +648,7 @@ for (const route of routes) {
         reason: contentReadiness.reason,
         durationMs: contentReadiness.durationMs,
       },
+      screenshotAnalysis,
       screenshot: path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/"),
     };
     fs.writeFileSync(
@@ -767,7 +784,8 @@ async function readMetrics(page) {
         };
         const visibleCount = (selector) =>
           Array.from(document.querySelectorAll(selector)).filter(visibleElement).length;
-        const bodyText = (body?.innerText || body?.textContent || "").replace(/\\s+/g, " ").trim();
+        const visibleText = (body?.innerText || "").replace(/\\s+/g, " ").trim();
+        const bodyText = (body?.textContent || "").replace(/\\s+/g, " ").trim();
         const visibleInteractiveElements = visibleCount(
           'a[href], button, input, select, textarea, [role="button"], [role="link"], [tabindex]:not([tabindex="-1"])'
         );
@@ -801,7 +819,7 @@ async function readMetrics(page) {
         if (hasNavigation) contentSignals.push("navigation");
         if (hasFooter) contentSignals.push("footer");
         if (visibleAppShellElements > 0) contentSignals.push("6529-shell-marker");
-        if (bodyText.length >= 20) contentSignals.push("visible-text");
+        if (visibleText.length >= 20) contentSignals.push("visible-text");
         if (visibleInteractiveElements >= 2) contentSignals.push("interactive-elements");
         if (visibleMediaElements > 0) contentSignals.push("media-elements");
         const nextErrorOverlay = Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]"));
@@ -812,7 +830,7 @@ async function readMetrics(page) {
             hasNavigation ||
             hasFooter ||
             visibleAppShellElements > 0 ||
-            bodyText.length >= 20 ||
+            visibleText.length >= 20 ||
             visibleInteractiveElements >= 2 ||
             visibleMediaElements > 0);
         return {
@@ -835,7 +853,7 @@ async function readMetrics(page) {
           hasFooter,
           hasNavigation,
           bodyTextLength: bodyText.length,
-          visibleTextLength: bodyText.length,
+          visibleTextLength: visibleText.length,
           visibleInteractiveElements,
           visibleMediaElements,
           visibleAppShellElements,
@@ -891,6 +909,68 @@ function isNavigationRace(error) {
   return /execution context was destroyed|most likely because of a navigation|cannot find context|navigation/i.test(
     error?.message || String(error)
   );
+}
+
+async function analyzeScreenshot(screenshotPath) {
+  if (!sharp || !fs.existsSync(screenshotPath)) {
+    return {
+      available: false,
+      blankLike: false,
+      reason: sharp ? "screenshot file missing" : "sharp unavailable",
+    };
+  }
+
+  const image = sharp(screenshotPath).rotate().resize({
+    width: 96,
+    height: 96,
+    fit: "inside",
+    withoutEnlargement: true,
+  });
+  const { data, info } = await image.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const pixels = Math.max(1, info.width * info.height);
+  let opaquePixels = 0;
+  let nonWhitePixels = 0;
+  let luminanceSum = 0;
+  let luminanceSquaredSum = 0;
+
+  for (let offset = 0; offset < data.length; offset += 4) {
+    const red = data[offset];
+    const green = data[offset + 1];
+    const blue = data[offset + 2];
+    const alpha = data[offset + 3];
+    if (alpha < 8) {
+      continue;
+    }
+    opaquePixels += 1;
+    if (red < 245 || green < 245 || blue < 245) {
+      nonWhitePixels += 1;
+    }
+    const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+    luminanceSum += luminance;
+    luminanceSquaredSum += luminance * luminance;
+  }
+
+  const denominator = Math.max(1, opaquePixels);
+  const meanLuminance = luminanceSum / denominator;
+  const variance = Math.max(0, luminanceSquaredSum / denominator - meanLuminance * meanLuminance);
+  const luminanceStdDev = Math.sqrt(variance);
+  const nonWhiteRatio = nonWhitePixels / denominator;
+  const opaqueRatio = opaquePixels / pixels;
+  const nearWhiteBlank = opaqueRatio > 0.98 && meanLuminance >= 248 && nonWhiteRatio < 0.003;
+  const nearUniformBlank = opaqueRatio > 0.98 && luminanceStdDev < 1.5;
+
+  return {
+    available: true,
+    blankLike: nearWhiteBlank || nearUniformBlank,
+    nearWhiteBlank,
+    nearUniformBlank,
+    width: info.width,
+    height: info.height,
+    opaqueRatio: Number(opaqueRatio.toFixed(4)),
+    nonWhiteRatio: Number(nonWhiteRatio.toFixed(4)),
+    meanLuminance: Number(meanLuminance.toFixed(2)),
+    luminanceStdDev: Number(luminanceStdDev.toFixed(2)),
+  };
 }
 
 async function installCapacitorShim(page, platform) {
@@ -1033,6 +1113,7 @@ function buildScreenshotManifest({ plan, results }) {
       visibleTextLength: result.metrics?.visibleTextLength || 0,
       visibleInteractiveElements: result.metrics?.visibleInteractiveElements || 0,
       visibleAppShellElements: result.metrics?.visibleAppShellElements || 0,
+      screenshotAnalysis: result.screenshotAnalysis || null,
       nextErrorOverlay: Boolean(result.metrics?.nextErrorOverlay),
     }));
   return {

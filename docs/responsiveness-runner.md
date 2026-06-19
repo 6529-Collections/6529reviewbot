@@ -161,6 +161,10 @@ Each context/route check records:
   interactive elements, media, landmarks, or known 6529 layout markers. Blank
   or near-empty captures fail instead of being passed to the visual reviewer as
   useful screenshots.
+- screenshot evidence quality when `sharp` is available in the target
+  checkout. Near-white or near-uniform PNGs fail deterministically, even if the
+  DOM reports content readiness, because humans and bots cannot use blank
+  artifacts as visual evidence.
 - title, URL, viewport meta, body class, navigation/header/main presence, and
   content-readiness diagnostics.
 - a full-page screenshot.
