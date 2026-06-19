@@ -18,6 +18,7 @@ const CONTEXTS = {
     isMobile: false,
     hasTouch: false,
     userAgentSuffix: "",
+    platformFamily: "web-desktop",
   },
   "web-mobile": {
     label: "Web mobile",
@@ -25,6 +26,23 @@ const CONTEXTS = {
     isMobile: true,
     hasTouch: true,
     userAgentSuffix: "",
+    platformFamily: "web-mobile",
+  },
+  "web-narrow": {
+    label: "Web narrow desktop",
+    viewport: { width: 1279, height: 900 },
+    isMobile: false,
+    hasTouch: false,
+    userAgentSuffix: "",
+    platformFamily: "web-narrow",
+  },
+  "web-tablet-touch": {
+    label: "Web tablet touch",
+    viewport: { width: 1024, height: 768 },
+    isMobile: true,
+    hasTouch: true,
+    userAgentSuffix: "",
+    platformFamily: "web-tablet",
   },
   "native-mobile": {
     label: "Native mobile app",
@@ -33,6 +51,28 @@ const CONTEXTS = {
     hasTouch: true,
     nativePlatform: "ios",
     userAgentSuffix: " 6529NativeShell/1.0",
+    platformFamily: "native",
+    simulated: true,
+  },
+  "native-ios": {
+    label: "Native iOS app",
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    nativePlatform: "ios",
+    userAgentSuffix: " 6529NativeShell/1.0",
+    platformFamily: "native",
+    simulated: true,
+  },
+  "native-android": {
+    label: "Native Android app",
+    viewport: { width: 412, height: 915 },
+    isMobile: true,
+    hasTouch: true,
+    nativePlatform: "android",
+    userAgentSuffix: " 6529NativeShell/1.0 Android",
+    platformFamily: "native",
+    simulated: true,
   },
   "electron-desktop": {
     label: "Electron desktop",
@@ -40,6 +80,8 @@ const CONTEXTS = {
     isMobile: false,
     hasTouch: false,
     userAgentSuffix: " Electron/37.0.0 6529Core/1.0",
+    platformFamily: "electron",
+    simulated: true,
   },
 };
 
@@ -98,6 +140,102 @@ const GLOBAL_PATTERNS = [
   /^pnpm-lock\.yaml$/,
 ];
 
+const DEFAULT_PROFILE = {
+  id: "generic-next-frontend",
+  label: "Generic Next.js frontend",
+  packageNames: [],
+  shellCanaryRoutes: SHELL_CANARY_ROUTES,
+  fallbackRoutes: FALLBACK_ROUTES,
+  globalRoutes: GLOBAL_ROUTES,
+  routeMappings: ROUTE_MAPPINGS,
+  globalPatterns: GLOBAL_PATTERNS,
+  platformNotes: [
+    "web-desktop is real Chromium at desktop size.",
+    "web-mobile is real Chromium with mobile/touch emulation.",
+    "native-mobile/native-ios/native-android are browser-level Capacitor simulations.",
+    "electron-desktop is Chromium with an Electron user-agent simulation.",
+  ],
+  deterministicChecks: [],
+};
+
+const PROFILE_6529_SEIZE_FRONTEND = {
+  id: "6529seize-frontend",
+  label: "6529 Seize frontend",
+  packageNames: ["6529seize"],
+  shellCanaryRoutes: ["/", "/waves"],
+  fallbackRoutes: [
+    "/",
+    "/waves",
+    "/network",
+    "/the-memes",
+    "/meme-lab",
+    "/rememes",
+    "/meme-calendar",
+    "/discover",
+  ],
+  globalRoutes: [
+    "/",
+    "/waves",
+    "/messages",
+    "/network",
+    "/the-memes",
+    "/meme-lab",
+    "/rememes",
+    "/meme-calendar",
+    "/notifications",
+    "/open-mobile?path=%2Fwaves",
+  ],
+  routeMappings: [
+    ...ROUTE_MAPPINGS,
+    { pattern: /^components[\/\\]messages[\/\\]/, routes: ["/messages"] },
+    { pattern: /^app[\/\\]messages(?:[\/\\]|$)/, routes: ["/messages"] },
+    { pattern: /^components[\/\\]user[\/\\]/, routes: ["/6529er/collected", "/6529er"] },
+    { pattern: /^app[\/\\]\[user\][\/\\]collected(?:[\/\\]|$)/, routes: ["/6529er/collected"] },
+    { pattern: /^app[\/\\]\[user\](?:[\/\\]|$)/, routes: ["/6529er"] },
+    { pattern: /^components[\/\\]mobile-wrapper-dialog[\/\\]/, routes: ["/", "/open-mobile?path=%2Fwaves"] },
+    { pattern: /^components[\/\\]app-wallets[\/\\]/, routes: ["/tools/app-wallets"] },
+    { pattern: /^app[\/\\]tools[\/\\]app-wallets(?:[\/\\]|$)/, routes: ["/tools/app-wallets"] },
+    { pattern: /^components[\/\\]drops[\/\\]create[\/\\]/, routes: ["/waves/create"] },
+    { pattern: /^components[\/\\]waves[\/\\]create-wave[\/\\]/, routes: ["/waves/create"] },
+    { pattern: /^app[\/\\]drop-forge(?:[\/\\]|$)/, routes: ["/drop-forge"] },
+    { pattern: /^components[\/\\]drop-forge[\/\\]/, routes: ["/drop-forge"] },
+    { pattern: /^app[\/\\]meme-calendar(?:[\/\\]|$)/, routes: ["/meme-calendar"] },
+    { pattern: /^components[\/\\]meme-calendar[\/\\]/, routes: ["/meme-calendar"] },
+    { pattern: /^app[\/\\]discover(?:[\/\\]|$)/, routes: ["/discover"] },
+    { pattern: /^components[\/\\]community-curations[\/\\]/, routes: ["/waves", "/discover"] },
+    { pattern: /^components[\/\\]header[\/\\]share[\/\\]/, routes: ["/", "/open-mobile?path=%2Fwaves"] },
+  ],
+  globalPatterns: [
+    ...GLOBAL_PATTERNS,
+    /^contexts[\/\\]/,
+    /^helpers[\/\\]navigation\./,
+    /^hooks[\/\\]useDeviceInfo\./,
+    /^hooks[\/\\]isMobileScreen\./,
+    /^hooks[\/\\]useDeepLinkNavigation\./,
+    /^utils[\/\\]monitoring[\/\\]mobileLaunchTiming/,
+    /^config[\/\\]nextConfig\./,
+    /^config[\/\\]env\./,
+  ],
+  platformNotes: [
+    "web-desktop should exercise WebLayout/sidebar at 1440x900.",
+    "web-mobile should exercise SmallScreenLayout, not the native AppLayout.",
+    "native-mobile/native-ios/native-android are fast browser-level Capacitor simulations of AppLayout, bottom navigation, viewport-fit, keyboard/app/deep-link plugins, and body class.",
+    "electron-desktop is a fast browser-level Electron renderer simulation using the Electron user-agent branch; it is not a packaged desktop app launch.",
+    "Access/restricted pages intentionally bypass the standard app layout shell.",
+  ],
+  deterministicChecks: [
+    "native-capacitor-contract",
+    "electron-user-agent-contract",
+    "6529-layout-branch-metrics",
+    "open-mobile-deeplink-route",
+  ],
+};
+
+const RESPONSIVENESS_PROFILES = [
+  PROFILE_6529_SEIZE_FRONTEND,
+  DEFAULT_PROFILE,
+];
+
 function parseArgs(argv = []) {
   const options = {
     target: process.cwd(),
@@ -109,6 +247,7 @@ function parseArgs(argv = []) {
     maxPages: 12,
     contexts: DEFAULT_CONTEXTS,
     workers: 4,
+    profile: "",
     planOnly: false,
     changedFilesPath: "",
     pages: [],
@@ -145,6 +284,8 @@ function parseArgs(argv = []) {
       options.contexts = splitCsv(next());
     } else if (arg === "--workers") {
       options.workers = positiveInt(next(), arg);
+    } else if (arg === "--profile") {
+      options.profile = next();
     } else if (arg === "--changed-files") {
       options.changedFilesPath = next();
     } else if (arg === "--pages") {
@@ -183,6 +324,7 @@ function normalizeOptions(options) {
     target,
     outputDir,
     contexts,
+    profile: String(options.profile || ""),
   };
 }
 
@@ -199,6 +341,44 @@ function positiveInt(value, name) {
     throw new Error(`${name} must be a positive integer.`);
   }
   return parsed;
+}
+
+function detectResponsivenessProfile(target, explicitProfile = "") {
+  const requested = String(explicitProfile || "").trim();
+  if (requested) {
+    const found = RESPONSIVENESS_PROFILES.find((profile) => profile.id === requested);
+    if (!found) {
+      throw new Error(`Unknown responsiveness profile: ${requested}`);
+    }
+    return found;
+  }
+
+  const packageName = packageNameForTarget(target);
+  return (
+    RESPONSIVENESS_PROFILES.find((profile) =>
+      (profile.packageNames || []).includes(packageName)
+    ) || DEFAULT_PROFILE
+  );
+}
+
+function packageNameForTarget(target) {
+  try {
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(target, "package.json"), "utf8")
+    );
+    return String(packageJson.name || "");
+  } catch {
+    return "";
+  }
+}
+
+function publicProfile(profile) {
+  return {
+    id: profile.id,
+    label: profile.label,
+    platformNotes: profile.platformNotes || [],
+    deterministicChecks: profile.deterministicChecks || [],
+  };
 }
 
 function collectChangedFiles(options) {
@@ -239,6 +419,7 @@ function readChangedFiles(filePath) {
 }
 
 function buildPlan(options) {
+  const profile = detectResponsivenessProfile(options.target, options.profile);
   const changedFiles = collectChangedFiles(options);
   const inferred = options.pages.length
     ? {
@@ -249,7 +430,7 @@ function buildPlan(options) {
         })),
         fallback: false,
       }
-    : inferRoutes(changedFiles, options.maxPages);
+    : inferRoutes(changedFiles, options.maxPages, profile);
 
   return {
     target: options.target,
@@ -257,6 +438,7 @@ function buildPlan(options) {
     headRef: options.headRef,
     baseUrl: options.baseUrl,
     outputDir: options.outputDir,
+    profile: publicProfile(profile),
     contexts: options.contexts.map((name) => ({ name, ...CONTEXTS[name] })),
     changedFiles,
     routes: inferred.routes.slice(0, options.maxPages),
@@ -267,9 +449,14 @@ function buildPlan(options) {
   };
 }
 
-function inferRoutes(changedFiles, maxPages) {
+function inferRoutes(changedFiles, maxPages, profile = DEFAULT_PROFILE) {
   const routes = new Map();
   const reasons = [];
+  const shellCanaryRoutes = profile.shellCanaryRoutes || SHELL_CANARY_ROUTES;
+  const fallbackRoutes = profile.fallbackRoutes || FALLBACK_ROUTES;
+  const routeMappings = profile.routeMappings || ROUTE_MAPPINGS;
+  const globalPatterns = profile.globalPatterns || GLOBAL_PATTERNS;
+  const globalRoutes = profile.globalRoutes || GLOBAL_ROUTES;
 
   const add = (route, reason) => {
     if (!route || routes.has(route)) {
@@ -279,7 +466,7 @@ function inferRoutes(changedFiles, maxPages) {
     reasons.push({ route, reason });
   };
 
-  for (const route of SHELL_CANARY_ROUTES) {
+  for (const route of shellCanaryRoutes) {
     add(route, "shell canary");
   }
 
@@ -290,7 +477,7 @@ function inferRoutes(changedFiles, maxPages) {
       add(appRoute, `${file} maps to app route`);
     }
 
-    for (const mapping of ROUTE_MAPPINGS) {
+    for (const mapping of routeMappings) {
       if (mapping.pattern.test(normalized)) {
         for (const route of mapping.routes) {
           add(route, `${file} matched ${mapping.pattern}`);
@@ -298,21 +485,21 @@ function inferRoutes(changedFiles, maxPages) {
       }
     }
 
-    if (GLOBAL_PATTERNS.some((pattern) => pattern.test(normalized))) {
-      for (const route of GLOBAL_ROUTES) {
+    if (globalPatterns.some((pattern) => pattern.test(normalized))) {
+      for (const route of globalRoutes) {
         add(route, `${file} is shared/global UI`);
       }
     }
   }
 
-  if (routes.size <= SHELL_CANARY_ROUTES.length && changedFiles.length > 0) {
-    for (const route of FALLBACK_ROUTES) {
+  if (routes.size <= shellCanaryRoutes.length && changedFiles.length > 0) {
+    for (const route of fallbackRoutes) {
       add(route, "changed files had no precise route mapping");
     }
   }
 
   if (changedFiles.length === 0) {
-    for (const route of FALLBACK_ROUTES) {
+    for (const route of fallbackRoutes) {
       add(route, "no changed files available");
     }
   }
@@ -320,7 +507,7 @@ function inferRoutes(changedFiles, maxPages) {
   return {
     routes: Array.from(routes.keys()).slice(0, maxPages),
     reasons,
-    fallback: changedFiles.length === 0 || routes.size <= SHELL_CANARY_ROUTES.length,
+    fallback: changedFiles.length === 0 || routes.size <= shellCanaryRoutes.length,
   };
 }
 
@@ -379,6 +566,10 @@ function prepareHarness(plan, options) {
 
   fs.writeFileSync(path.join(options.outputDir, "plan.json"), `${JSON.stringify(plan, null, 2)}\n`);
   fs.writeFileSync(path.join(harnessDir, "routes.json"), `${JSON.stringify(plan.routes, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(harnessDir, "profile.json"),
+    `${JSON.stringify(plan.profile || publicProfile(DEFAULT_PROFILE), null, 2)}\n`
+  );
   fs.writeFileSync(
     path.join(harnessDir, "contexts.json"),
     `${JSON.stringify(plan.contexts, null, 2)}\n`
@@ -510,6 +701,7 @@ try {
 }
 
 const routes = require("../routes.json");
+const profile = require("../profile.json");
 const outputRoot = path.resolve(__dirname, "..", "..");
 const resultsDir = path.join(outputRoot, "results");
 const screenshotsDir = path.join(outputRoot, "screenshots");
@@ -650,6 +842,9 @@ for (const route of routes) {
         failures.push("Electron user agent did not activate");
       }
     }
+    const profileProbe = profileAwareProbe({ profile, mode, route, metadata, metrics });
+    warnings.push(...profileProbe.warnings);
+    failures.push(...profileProbe.failures);
     if (consoleErrors.some((message) => /hydration|uncaught|runtime error/i.test(message))) {
       failures.push("fatal console error detected");
     } else if (consoleErrors.length > 0) {
@@ -675,6 +870,7 @@ for (const route of routes) {
         reason: contentReadiness.reason,
         durationMs: contentReadiness.durationMs,
       },
+      profileProbe,
       screenshotAnalysis,
       screenshot: path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/"),
     };
@@ -687,6 +883,55 @@ for (const route of routes) {
       throw new Error(failures.join("; "));
     }
   });
+}
+
+function profileAwareProbe({ profile, mode, route, metadata, metrics }) {
+  const warnings = [];
+  const failures = [];
+  if (profile?.id !== "6529seize-frontend") {
+    return { warnings, failures };
+  }
+
+  const normalizedRoute = String(route || "");
+  const isNativeContext =
+    metadata.platformFamily === "native" || /^native(?:-|$)/.test(String(mode || ""));
+  const isElectronContext =
+    metadata.platformFamily === "electron" || String(mode || "") === "electron-desktop";
+  const isOpenMobileRoute = normalizedRoute.startsWith("/open-mobile");
+  const shellBypassRoute =
+    normalizedRoute.startsWith("/access") || normalizedRoute.startsWith("/restricted");
+
+  if (isNativeContext && !metrics.nextErrorOverlay) {
+    if (!metrics.hasCapacitorNativeClass) {
+      failures.push("6529 native profile: body.capacitor-native was not applied");
+    }
+    if (!String(metrics.viewportMeta || "").includes("viewport-fit=cover")) {
+      failures.push("6529 native profile: viewport-fit=cover is missing");
+    }
+    if (!metrics.nativePluginAvailableKeyboard) {
+      warnings.push("6529 native profile: Keyboard plugin shim is unavailable");
+    }
+    if (!metrics.nativePluginAvailableApp) {
+      warnings.push("6529 native profile: App plugin shim is unavailable");
+    }
+    if (!shellBypassRoute && !isOpenMobileRoute && !metrics.bottomNavigationVisible) {
+      warnings.push("6529 native profile: bottom navigation was not visible");
+    }
+  }
+
+  if (isElectronContext && !metrics.electronDetected) {
+    failures.push("6529 electron profile: Electron user-agent branch was not active");
+  }
+
+  if (mode === "web-narrow" && metrics.layoutRootDataNarrow !== "true" && !shellBypassRoute) {
+    warnings.push("6529 web profile: narrow desktop layout marker was not active");
+  }
+
+  if (isOpenMobileRoute && metrics.openMobilePromptVisible === false && !metrics.nextErrorOverlay) {
+    warnings.push("6529 open-mobile profile: mobile handoff prompt was not visible");
+  }
+
+  return { warnings, failures };
 }
 
 async function settlePage(page, pageErrors) {
@@ -846,6 +1091,9 @@ async function readMetrics(page) {
         const capacitor = window.Capacitor || {};
         let nativePlatform = "";
         let nativeIsNativePlatform = false;
+        let nativePluginAvailableKeyboard = false;
+        let nativePluginAvailableApp = false;
+        let nativePluginAvailableDevice = false;
         try {
           nativePlatform = typeof capacitor.getPlatform === "function" ? capacitor.getPlatform() : "";
         } catch {
@@ -856,6 +1104,24 @@ async function readMetrics(page) {
             typeof capacitor.isNativePlatform === "function" ? Boolean(capacitor.isNativePlatform()) : false;
         } catch {
           nativeIsNativePlatform = false;
+        }
+        try {
+          nativePluginAvailableKeyboard =
+            typeof capacitor.isPluginAvailable === "function"
+              ? Boolean(capacitor.isPluginAvailable("Keyboard"))
+              : false;
+          nativePluginAvailableApp =
+            typeof capacitor.isPluginAvailable === "function"
+              ? Boolean(capacitor.isPluginAvailable("App"))
+              : false;
+          nativePluginAvailableDevice =
+            typeof capacitor.isPluginAvailable === "function"
+              ? Boolean(capacitor.isPluginAvailable("Device"))
+              : false;
+        } catch {
+          nativePluginAvailableKeyboard = false;
+          nativePluginAvailableApp = false;
+          nativePluginAvailableDevice = false;
         }
         const visible = (selector) => {
           const element = document.querySelector(selector);
@@ -872,6 +1138,24 @@ async function readMetrics(page) {
         };
         const visibleCount = (selector) =>
           Array.from(document.querySelectorAll(selector)).filter(visibleElement).length;
+        const visibleTextIncludes = (value) =>
+          (document.body?.innerText || "").toLowerCase().includes(String(value || "").toLowerCase());
+        const layoutRoot = document.querySelector(".layout-root");
+        const bottomNavigation = Array.from(document.querySelectorAll("nav")).find((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = window.getComputedStyle(element);
+          return (
+            rect.width > 0 &&
+            rect.height >= 40 &&
+            Math.abs(window.innerHeight - rect.bottom) <= 8 &&
+            style.position === "fixed" &&
+            style.visibility !== "hidden" &&
+            style.display !== "none" &&
+            style.opacity !== "0"
+          );
+        });
+        const androidKeyboardHeight =
+          window.getComputedStyle(document.documentElement).getPropertyValue("--android-keyboard-height").trim();
         const visibleText = (body?.innerText || "").replace(/\\s+/g, " ").trim();
         const bodyText = (body?.textContent || "").replace(/\\s+/g, " ").trim();
         const visibleInteractiveElements = visibleCount(
@@ -983,10 +1267,22 @@ async function readMetrics(page) {
           url: window.location.href,
           userAgent: navigator.userAgent,
           bodyClass: body?.className || "",
+          hasCapacitorNativeClass: body?.classList?.contains("capacitor-native") || false,
+          electronDetected: navigator.userAgent.includes("Electron"),
           nativeShimActive: Boolean(window.__reviewbotNativeShimActive),
           nativePlatform,
           nativeIsNativePlatform,
+          nativePluginAvailableKeyboard,
+          nativePluginAvailableApp,
+          nativePluginAvailableDevice,
           viewportMeta,
+          layoutRootDataMobile: layoutRoot?.getAttribute("data-mobile") || "",
+          layoutRootDataNarrow: layoutRoot?.getAttribute("data-narrow") || "",
+          layoutRootDataSmall: layoutRoot?.getAttribute("data-small") || "",
+          bottomNavigationVisible: Boolean(bottomNavigation),
+          bottomNavigationHeight: bottomNavigation ? Math.round(bottomNavigation.getBoundingClientRect().height) : 0,
+          androidKeyboardHeight,
+          openMobilePromptVisible: visibleTextIncludes("Opening 6529 Mobile"),
           scrollWidth,
           clientWidth,
           scrollHeight,
@@ -1026,10 +1322,22 @@ function fallbackMetrics(page) {
     url: page.url(),
     userAgent: "",
     bodyClass: "",
+    hasCapacitorNativeClass: false,
+    electronDetected: false,
     nativeShimActive: false,
     nativePlatform: "",
     nativeIsNativePlatform: false,
+    nativePluginAvailableKeyboard: false,
+    nativePluginAvailableApp: false,
+    nativePluginAvailableDevice: false,
     viewportMeta: "",
+    layoutRootDataMobile: "",
+    layoutRootDataNarrow: "",
+    layoutRootDataSmall: "",
+    bottomNavigationVisible: false,
+    bottomNavigationHeight: 0,
+    androidKeyboardHeight: "",
+    openMobilePromptVisible: false,
     scrollWidth: 0,
     clientWidth: 0,
     scrollHeight: 0,
@@ -1193,16 +1501,28 @@ async function installCapacitorShim(page, platform) {
         listeners.clear();
       },
     };
+    const emit = (eventName, payload = {}) => {
+      for (const listener of listeners.values()) {
+        if (listener.eventName === eventName && typeof listener.callback === "function") {
+          try {
+            listener.callback(payload);
+          } catch {
+            // Test harness event delivery should not crash the app under review.
+          }
+        }
+      }
+    };
     window.CapacitorCustomPlatform = {
       name: nativePlatform,
       plugins: {},
     };
     window.__reviewbotNativeShimActive = true;
+    window.__reviewbotCapacitorEmit = emit;
     window.Capacitor = {
       ...window.Capacitor,
       getPlatform: () => nativePlatform,
       isNativePlatform: () => true,
-      isPluginAvailable: () => false,
+      isPluginAvailable: (name) => ["App", "Keyboard", "Device"].includes(String(name || "")),
       convertFileSrc: (value) => value,
       Plugins: {
         App: {
@@ -1212,7 +1532,15 @@ async function installCapacitorShim(page, platform) {
         Keyboard: pluginResult,
         Device: {
           getId: async () => ({ identifier: "reviewbot-device" }),
-          getInfo: async () => ({ platform: nativePlatform }),
+          getInfo: async () => ({
+            platform: nativePlatform,
+            operatingSystem: nativePlatform === "android" ? "android" : "ios",
+            osVersion: nativePlatform === "android" ? "15" : "18.0",
+            model: nativePlatform === "android" ? "Pixel 9" : "iPhone",
+            manufacturer: nativePlatform === "android" ? "Google" : "Apple",
+            isVirtual: true,
+            webViewVersion: "reviewbot",
+          }),
         },
       },
     };
@@ -1339,6 +1667,16 @@ function buildScreenshotManifest({ plan, results }) {
       warnings: result.warnings || [],
       failures: result.failures || [],
       horizontalOverflow: result.metrics?.horizontalOverflow || 0,
+      hasCapacitorNativeClass: Boolean(result.metrics?.hasCapacitorNativeClass),
+      electronDetected: Boolean(result.metrics?.electronDetected),
+      viewportMeta: result.metrics?.viewportMeta || "",
+      layoutRootDataMobile: result.metrics?.layoutRootDataMobile || "",
+      layoutRootDataNarrow: result.metrics?.layoutRootDataNarrow || "",
+      layoutRootDataSmall: result.metrics?.layoutRootDataSmall || "",
+      bottomNavigationVisible: Boolean(result.metrics?.bottomNavigationVisible),
+      bottomNavigationHeight: result.metrics?.bottomNavigationHeight || 0,
+      androidKeyboardHeight: result.metrics?.androidKeyboardHeight || "",
+      profileProbe: result.profileProbe || null,
       contentReady: Boolean(result.metrics?.contentReady),
       contentSignals: result.metrics?.contentSignals || [],
       visibleTextLength: result.metrics?.visibleTextLength || 0,
@@ -1356,6 +1694,7 @@ function buildScreenshotManifest({ plan, results }) {
     generatedAt: new Date().toISOString(),
     baseRef: plan.baseRef,
     headRef: plan.headRef,
+    profile: plan.profile || null,
     contexts: plan.contexts.map((context) => context.name),
     routes: plan.routes,
     screenshots,
@@ -1438,6 +1777,7 @@ function summarizePlan(plan) {
     "# 6529bot Responsiveness Plan",
     "",
     `Target: ${plan.target}`,
+    `Profile: ${plan.profile?.label || plan.profile?.id || "none"}`,
     `Base: \`${plan.baseRef}\``,
     `Head: \`${plan.headRef}\``,
     `Base URL: ${plan.baseUrl}`,
@@ -1448,6 +1788,13 @@ function summarizePlan(plan) {
   ];
   if (plan.fallback) {
     lines.push("Fallback routing was used because changed files were unavailable or imprecise.", "");
+  }
+  if (plan.profile?.platformNotes?.length) {
+    lines.push("## Platform Notes", "");
+    for (const note of plan.profile.platformNotes) {
+      lines.push(`- ${note}`);
+    }
+    lines.push("");
   }
   lines.push("## Route Reasons", "");
   for (const reason of plan.routeReasons) {
@@ -1467,6 +1814,7 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
     "",
     `Status: ${exitCode === 0 ? "pass" : "fail"}`,
     `Duration: ${(durationMs / 1000).toFixed(1)}s`,
+    `Profile: ${plan.profile?.label || plan.profile?.id || "none"}`,
     `Contexts: ${plan.contexts.map((context) => `\`${context.name}\``).join(", ")}`,
     `Routes: ${plan.routes.map((route) => `\`${route}\``).join(", ")}`,
     `Checks completed: ${results.length}/${plan.routes.length * plan.contexts.length}`,
@@ -1483,6 +1831,25 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
     }
     if (groupedRunErrors.length > 10) {
       lines.push(`- ${groupedRunErrors.length - 10} additional run error group(s) omitted from this summary.`);
+    }
+    lines.push("");
+  }
+
+  if (plan.profile?.platformNotes?.length) {
+    lines.push("## Platform Context", "");
+    for (const note of plan.profile.platformNotes) {
+      lines.push(`- ${note}`);
+    }
+    lines.push("");
+  }
+
+  const platformMatrix = summarizePlatformMatrix(results);
+  if (platformMatrix.length > 0) {
+    lines.push("## Platform Matrix", "");
+    for (const row of platformMatrix) {
+      lines.push(
+        `- \`${row.mode}\`: ${row.completed} check(s), failures=${row.failures}, warnings=${row.warnings}, avg=${row.averageSeconds}s`
+      );
     }
     lines.push("");
   }
@@ -1591,6 +1958,32 @@ function formatResultExamples(results) {
     .join(", ");
 }
 
+function summarizePlatformMatrix(results) {
+  const groups = new Map();
+  for (const result of results || []) {
+    const mode = result.mode || "unknown";
+    const existing = groups.get(mode) || {
+      mode,
+      completed: 0,
+      failures: 0,
+      warnings: 0,
+      durationMs: 0,
+    };
+    existing.completed += 1;
+    existing.failures += result.failures?.length ? 1 : 0;
+    existing.warnings += result.warnings?.length ? 1 : 0;
+    existing.durationMs += Number(result.durationMs || 0);
+    groups.set(mode, existing);
+  }
+  return [...groups.values()]
+    .sort((left, right) => left.mode.localeCompare(right.mode))
+    .map((group) => ({
+      ...group,
+      averageSeconds:
+        group.completed > 0 ? (group.durationMs / group.completed / 1000).toFixed(1) : "0.0",
+    }));
+}
+
 function headerComment() {
   return "// Generated by 6529reviewbot responsiveness runner. Do not commit.\n";
 }
@@ -1609,6 +2002,7 @@ Options:
   --base-url <url>        Local app URL. Default: http://localhost:3001.
   --port <number>         App port. Default: 3001.
   --contexts <csv>        Contexts. Default: ${DEFAULT_CONTEXTS.join(",")}.
+  --profile <id>          Responsiveness profile. Default: auto-detect from package.json.
   --max-pages <number>    Maximum routes to check. Default: 12.
   --workers <number>      Playwright workers. Default: 4.
   --changed-files <file>  Newline-separated changed file list.
@@ -1622,12 +2016,15 @@ Options:
 module.exports = {
   CONTEXTS,
   DEFAULT_CONTEXTS,
+  RESPONSIVENESS_PROFILES,
   buildPlan,
   buildPlaywrightConfig,
   buildPlaywrightSpec,
   collectChangedFiles,
+  detectResponsivenessProfile,
   buildScreenshotManifest,
   inferRoutes,
   parseArgs,
+  publicProfile,
   runResponsiveness,
 };

@@ -106,6 +106,13 @@ local resized JPEG copies, controlled by
 `REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION` and
 `REVIEWBOT_RESPONSIVENESS_AI_IMAGE_QUALITY`, so full-page screenshots remain
 under provider many-image limits.
+For 6529 frontend runs, the prompt includes the selected profile, route
+reasons, platform notes, profile-specific deterministic probes, and per-image
+metadata such as layout-root markers, `body.capacitor-native`, Electron
+detection, bottom-navigation visibility, content readiness, blank-image
+signals, and Next.js overlay/asset errors. The visible comment starts with the
+Opus-authored summary and keeps the deterministic detail in an expandable
+block.
 
 ## Contexts
 
@@ -118,13 +125,47 @@ native-mobile    390x844 mobile/touch with a Capacitor native-platform shim
 electron-desktop 1280x800 desktop Chrome with an Electron user-agent suffix
 ```
 
+Additional contexts are available for focused/manual runs:
+
+```text
+web-narrow        1279x900 desktop Chrome for the 6529 narrow layout boundary
+web-tablet-touch  1024x768 touch Chrome
+native-ios        390x844 native iOS simulation
+native-android    412x915 native Android simulation
+```
+
 The native context is a browser-level Capacitor shim, not a real iOS or Android
 simulator. It is meant to catch app-shell layout regressions quickly before a
-deeper device/simulator setup exists. For 6529 frontend repositories the
-native assertion follows the actual app contract: `Capacitor.isNativePlatform()`
-and `Capacitor.getPlatform()` must report the shimmed native platform. The
-runner does not require a global body class such as `capacitor-native`, because
-6529 FE selects native layout through hooks and component-level shell classes.
+deeper device/simulator setup exists. For 6529 frontend repositories, the
+native assertion follows the actual app contract:
+`Capacitor.isNativePlatform()` and `Capacitor.getPlatform()` must report the
+shimmed native platform, `Capacitor.isPluginAvailable()` must expose the App,
+Keyboard, and Device plugins used by the app shell, `viewport-fit=cover` must
+be present, and `CapacitorSetup` should apply `body.capacitor-native`.
+The native checks also record whether a bottom navigation is visible on normal
+app-shell routes. Electron checks are also browser-level: they verify that the
+renderer takes the Electron user-agent branch, but do not launch a packaged
+desktop app.
+
+## Profiles
+
+The runner auto-detects a responsiveness profile from the target
+`package.json`; pass `--profile <id>` to override it.
+
+The `6529seize-frontend` profile is tuned to the 6529 web, Capacitor, and
+Electron code paths:
+
+- shell canaries: `/` and `/waves`;
+- global smoke routes: `/`, `/waves`, `/messages`, `/network`, `/the-memes`,
+  `/meme-lab`, `/rememes`, `/meme-calendar`, `/notifications`, and
+  `/open-mobile?path=%2Fwaves`;
+- route mappings for user pages, messages, app wallets, wave creation,
+  Drop Forge, Meme Calendar, Discover, community curations, and mobile wrapper
+  dialogs;
+- global-pattern expansion for layout/context/navigation/device/deep-link/env
+  changes;
+- profile probes for the native Capacitor contract, Electron branch, 6529
+  layout branch markers, and open-mobile handoff route.
 
 ## Route Inference
 
@@ -180,6 +221,10 @@ Each context/route check records:
   the browser blocks them, the runner reports that as an app-boot failure.
 - title, URL, viewport meta, body class, navigation/header/main presence, and
   content-readiness diagnostics.
+- 6529 profile diagnostics when applicable: native shim/plugin state,
+  `body.capacitor-native`, layout-root mobile/narrow/small markers, Electron
+  branch detection, bottom navigation visibility, Android keyboard CSS
+  variable, open-mobile handoff prompt, and profile-probe failures/warnings.
 - a full-page screenshot.
 
 Hard failures fail the workflow. Non-fatal console errors and 4xx responses are
