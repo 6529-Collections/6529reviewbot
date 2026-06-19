@@ -104,7 +104,7 @@ function parseArgs(argv = []) {
     baseRef: "origin/main",
     headRef: "HEAD",
     outputDir: "",
-    baseUrl: "http://127.0.0.1:3001",
+    baseUrl: "http://localhost:3001",
     port: 3001,
     maxPages: 12,
     contexts: DEFAULT_CONTEXTS,
@@ -471,7 +471,7 @@ function buildPlaywrightGlobalSetup() {
 const routes = require("./routes.json");
 
 module.exports = async (config) => {
-  const baseURL = config.projects?.[0]?.use?.baseURL || "http://127.0.0.1:3001";
+  const baseURL = config.projects?.[0]?.use?.baseURL || "http://localhost:3001";
   for (const route of routes) {
     const url = new URL(route, baseURL).toString();
     await fetchWithTimeout(url, 20000).catch(() => {});
@@ -1380,7 +1380,7 @@ Options:
   --base-ref <ref>        Base ref/SHA for changed-file inference. Default: origin/main.
   --head-ref <ref>        Head ref/SHA for changed-file inference. Default: HEAD.
   --output-dir <dir>      Output directory. Default: <target>/.reviewbot-responsiveness.
-  --base-url <url>        Local app URL. Default: http://127.0.0.1:3001.
+  --base-url <url>        Local app URL. Default: http://localhost:3001.
   --port <number>         App port. Default: 3001.
   --contexts <csv>        Contexts. Default: ${DEFAULT_CONTEXTS.join(",")}.
   --max-pages <number>    Maximum routes to check. Default: 12.

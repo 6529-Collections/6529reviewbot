@@ -216,7 +216,7 @@ npm run responsiveness:run -- \
   --target ../6529seize-frontend \
   --base-ref origin/main \
   --head-ref HEAD \
-  --base-url http://127.0.0.1:3001 \
+  --base-url http://localhost:3001 \
   --reuse-existing-server
 ```
 
