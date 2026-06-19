@@ -135,6 +135,7 @@ const repositoryConfig = require("../src/repository-config.cjs");
 const repositoryConfigBoundaryCheck = require("./check-repository-config-boundary.cjs");
 const responsivenessArtifacts = require("../src/responsiveness-artifacts.cjs");
 const responsivenessReview = require("../src/responsiveness-review.cjs");
+const responsivenessRunner = require("../src/responsiveness-runner.cjs");
 const reviewJob = require("../src/review-job.cjs");
 const reviewBot = require("../src/review-bot.cjs");
 const reviewBinEntrypointsCheck = require("./check-review-bin-entrypoints.cjs");
@@ -290,6 +291,46 @@ assert(responsivenessAiBody.includes("<summary>Deterministic responsiveness deta
 assert.equal(
   responsivenessReview.safeGitHubArtifactUrl("https://example.com/not-an-artifact"),
   ""
+);
+const responsivenessSpec = responsivenessRunner.buildPlaywrightSpec();
+assert(!responsivenessSpec.includes("capacitor-native"));
+assert(
+  responsivenessSpec.includes(
+    "6529 app shell did not render meaningful content"
+  )
+);
+assert(responsivenessSpec.includes("visibleAppShellElements"));
+const responsivenessScreenshotManifest =
+  responsivenessRunner.buildScreenshotManifest({
+    plan: {
+      baseRef: "origin/main",
+      headRef: "HEAD",
+      contexts: [{ name: "web-desktop" }],
+      routes: ["/"],
+    },
+    results: [
+      {
+        mode: "web-desktop",
+        route: "/",
+        screenshot: "screenshots/web-desktop--root.png",
+        durationMs: 1234,
+        responseStatus: 200,
+        warnings: [],
+        failures: ["6529 app shell did not render meaningful content"],
+        metrics: {
+          contentReady: false,
+          contentSignals: [],
+          visibleTextLength: 0,
+          visibleInteractiveElements: 0,
+          visibleAppShellElements: 0,
+        },
+      },
+    ],
+  });
+assert.equal(responsivenessScreenshotManifest.screenshots[0].contentReady, false);
+assert.deepEqual(
+  responsivenessScreenshotManifest.screenshots[0].contentSignals,
+  []
 );
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
