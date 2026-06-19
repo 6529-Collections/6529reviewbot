@@ -22,6 +22,8 @@ const {
 } = require("./usage-api.cjs");
 const { quoteIdent, usageLedgerSettingsFromEnv } = require("./usage-ledger.cjs");
 
+const DEFAULT_USAGE_EVENTS_PAGE_SIZE = 250;
+
 function usageApiLedgerLoadersFromEnv(env = process.env) {
   return createUsageApiLedgerLoaders({
     ledgerSettings: usageLedgerSettingsFromEnv(env),
@@ -73,27 +75,46 @@ function readUsageEvents(settings, options = {}) {
   if (limit > maxLimit) {
     throw new Error(`Usage event query limit must be <= ${maxLimit}.`);
   }
-  const query = buildUsageEventsQuery(
-    settings.schema,
-    range,
-    limit
+  const executor = options.executeStatement || executeStatement;
+  const pageSize = Math.min(
+    limit,
+    positiveLimit(options.pageSize || DEFAULT_USAGE_EVENTS_PAGE_SIZE)
   );
-  const response = executeStatement(settings, query.sql, query.parameters, {
-    tempPrefix: "6529-usage-api-",
-    maxBuffer: 32 * 1024 * 1024,
-  });
-  return (response.records || []).map((record) =>
-    usageRecordToEvent(record, {
-      visibility: options.visibility || "public",
-      apiSettings,
-    })
-  );
+  const events = [];
+  for (let offset = 0; offset < limit; offset += pageSize) {
+    const query = buildUsageEventsQuery(
+      settings.schema,
+      range,
+      Math.min(pageSize, limit - offset),
+      offset
+    );
+    const response = executor(settings, query.sql, query.parameters, {
+      tempPrefix: "6529-usage-api-",
+      maxBuffer: 8 * 1024 * 1024,
+    });
+    const records = response.records || [];
+    events.push(
+      ...records.map((record) =>
+        usageRecordToEvent(record, {
+          visibility: options.visibility || "public",
+          apiSettings,
+        })
+      )
+    );
+    if (records.length < query.pageLimit) {
+      break;
+    }
+  }
+  return events;
 }
 
-function buildUsageEventsQuery(schema, range = {}, limit = 5000) {
+function buildUsageEventsQuery(schema, range = {}, limit = 5000, offset = 0) {
   assertUsageRange(range);
   const safeLimit = positiveLimit(limit);
+  const safeOffset = nonNegativeInteger(offset);
   return {
+    pageLimit: safeLimit,
+    offset: safeOffset,
     sql: `
 select
   created_at::text,
@@ -122,11 +143,13 @@ where created_at >= cast(:from_ts as timestamptz)
   and created_at < cast(:to_ts as timestamptz)
 order by created_at desc
 limit :limit
+offset :offset
 `,
     parameters: [
       stringParam("from_ts", range.from),
       stringParam("to_ts", range.to),
       longParam("limit", safeLimit),
+      longParam("offset", safeOffset),
     ],
   };
 }
@@ -441,6 +464,14 @@ function positiveLimit(value) {
   const parsed = Number.parseInt(value, 10);
   if (!Number.isSafeInteger(parsed) || parsed <= 0) {
     throw new Error("Job event query limit must be a positive integer.");
+  }
+  return parsed;
+}
+
+function nonNegativeInteger(value) {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isSafeInteger(parsed) || parsed < 0) {
+    throw new Error("Query offset must be a non-negative integer.");
   }
   return parsed;
 }
