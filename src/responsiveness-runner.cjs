@@ -588,6 +588,7 @@ for (const route of routes) {
       pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
     }
     const metrics = metricsResult.metrics || fallbackMetrics(page);
+    metrics.nextErrorOverlayText = summarizeOverlayText(metrics.nextErrorOverlayText);
 
     const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
     await page.screenshot({ path: screenshotPath, fullPage: true }).catch((error) => {
@@ -848,7 +849,54 @@ async function readMetrics(page) {
         if (visibleText.length >= 20) contentSignals.push("visible-text");
         if (visibleInteractiveElements >= 2) contentSignals.push("interactive-elements");
         if (visibleMediaElements > 0) contentSignals.push("media-elements");
-        const nextErrorOverlay = Boolean(document.querySelector("nextjs-portal, [data-nextjs-dialog-overlay]"));
+        const nextOverlayElements = Array.from(
+          document.querySelectorAll(
+            [
+              "nextjs-portal",
+              "[data-nextjs-dialog-overlay]",
+              "[data-nextjs-dialog]",
+              "[data-nextjs-toast]",
+              "[data-nextjs-errors-dialog]",
+            ].join(",")
+          )
+        );
+        const compactText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+        const collectNodeText = (node, parts, state, depth = 0) => {
+          if (!node || state.length >= 2000 || depth > 12) return;
+          if (node.nodeType === Node.TEXT_NODE) {
+            const text = compactText(node.textContent);
+            if (text) {
+              parts.push(text);
+              state.length += text.length + 1;
+            }
+            return;
+          }
+          if (node.nodeType !== Node.ELEMENT_NODE && node.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) {
+            return;
+          }
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const ariaLabel = compactText(node.getAttribute("aria-label"));
+            if (ariaLabel) {
+              parts.push(ariaLabel);
+              state.length += ariaLabel.length + 1;
+            }
+            if (node.shadowRoot) {
+              collectNodeText(node.shadowRoot, parts, state, depth + 1);
+            }
+          }
+          for (const child of Array.from(node.childNodes || [])) {
+            collectNodeText(child, parts, state, depth + 1);
+            if (state.length >= 2000) break;
+          }
+        };
+        const overlayParts = [];
+        const overlayState = { length: 0 };
+        for (const element of nextOverlayElements) {
+          collectNodeText(element, overlayParts, overlayState);
+          if (overlayState.length >= 2000) break;
+        }
+        const nextErrorOverlay = nextOverlayElements.length > 0;
+        const nextErrorOverlayText = compactText(overlayParts.join(" ")).slice(0, 2000);
         const contentReady =
           !nextErrorOverlay &&
           (hasMain ||
@@ -886,6 +934,7 @@ async function readMetrics(page) {
           contentReady,
           contentSignals,
           nextErrorOverlay,
+          nextErrorOverlayText,
         };
       });
       return { ok: true, metrics };
@@ -928,6 +977,7 @@ function fallbackMetrics(page) {
     contentReady: false,
     contentSignals: [],
     nextErrorOverlay: false,
+    nextErrorOverlayText: "",
   };
 }
 
@@ -1114,6 +1164,17 @@ function sanitizeMessage(value) {
   return String(value || "").replace(/\\s+/g, " ").slice(0, 1000);
 }
 
+function summarizeOverlayText(value) {
+  const text = sanitizeMessage(value)
+    .replace(/Open Next\\.js Dev Tools/gi, "")
+    .replace(/Compiling\\s*(?:\\.\\s*){1,}/gi, "Compiling")
+    .trim();
+  if (!text) {
+    return "";
+  }
+  return text.slice(0, 500);
+}
+
 function sanitizeUrl(value) {
   try {
     const url = new URL(String(value || ""));
@@ -1217,6 +1278,7 @@ function buildScreenshotManifest({ plan, results }) {
       networkFailures: (result.networkFailures || []).slice(0, 5),
       networkResponses: (result.networkResponses || []).slice(0, 5),
       nextErrorOverlay: Boolean(result.metrics?.nextErrorOverlay),
+      nextErrorOverlayText: summarizeOverlayText(result.metrics?.nextErrorOverlayText),
     }));
   return {
     version: 1,
@@ -1227,6 +1289,18 @@ function buildScreenshotManifest({ plan, results }) {
     routes: plan.routes,
     screenshots,
   };
+}
+
+function summarizeOverlayText(value) {
+  const text = String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/Open Next\.js Dev Tools/gi, "")
+    .replace(/Compiling\s*(?:\.\s*){1,}/gi, "Compiling")
+    .trim();
+  if (!text) {
+    return "";
+  }
+  return text.slice(0, 500);
 }
 
 function resolvePnpmCommand() {
@@ -1346,6 +1420,15 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
     lines.push("");
   }
 
+  const overlayDiagnostics = distinctOverlayDiagnostics(results);
+  if (overlayDiagnostics.length > 0) {
+    lines.push("## Next.js Overlay Diagnostics", "");
+    for (const diagnostic of overlayDiagnostics) {
+      lines.push(`- \`${diagnostic.mode}\` \`${diagnostic.route}\`: ${diagnostic.text}`);
+    }
+    lines.push("");
+  }
+
   if (warnings.length > 0) {
     lines.push("## Warnings", "");
     for (const result of warnings.slice(0, 20)) {
@@ -1363,6 +1446,27 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
   lines.push("");
 
   return `${lines.join("\n")}\n`;
+}
+
+function distinctOverlayDiagnostics(results) {
+  const seen = new Set();
+  const diagnostics = [];
+  for (const result of results || []) {
+    const text = summarizeOverlayText(result.metrics?.nextErrorOverlayText);
+    if (!text || seen.has(text)) {
+      continue;
+    }
+    seen.add(text);
+    diagnostics.push({
+      mode: result.mode,
+      route: result.route,
+      text,
+    });
+    if (diagnostics.length >= 5) {
+      break;
+    }
+  }
+  return diagnostics;
 }
 
 function headerComment() {

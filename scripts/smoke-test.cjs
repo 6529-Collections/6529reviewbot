@@ -318,6 +318,8 @@ assert(responsivenessConfig.includes('ASSETS_FROM_S3: process.env.REVIEWBOT_RESP
 assert(!responsivenessConfig.includes('ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true"'));
 assert(responsivenessSpec.includes("visibleAppShellElements"));
 assert(responsivenessSpec.includes("analyzeScreenshot"));
+assert(responsivenessSpec.includes("nextErrorOverlayText"));
+assert(responsivenessSpec.includes("summarizeOverlayText"));
 assert(responsivenessSpec.includes('const visibleText = (body?.innerText || "")'));
 assert(!responsivenessSpec.includes("body?.innerText || body?.textContent"));
 const responsivenessScreenshotManifest =
@@ -343,6 +345,9 @@ const responsivenessScreenshotManifest =
           visibleTextLength: 0,
           visibleInteractiveElements: 0,
           visibleAppShellElements: 0,
+          nextErrorOverlay: true,
+          nextErrorOverlayText:
+            "Error: Module not found: Can't resolve '@/components/missing-widget'",
         },
         screenshotAnalysis: {
           available: true,
@@ -377,6 +382,12 @@ assert.equal(
 );
 assert.equal(responsivenessScreenshotManifest.screenshots[0].nextAssetFailures.length, 1);
 assert.equal(responsivenessScreenshotManifest.screenshots[0].networkFailures.length, 1);
+assert.equal(responsivenessScreenshotManifest.screenshots[0].nextErrorOverlay, true);
+assert(
+  responsivenessScreenshotManifest.screenshots[0].nextErrorOverlayText.includes(
+    "Module not found"
+  )
+);
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION: "us-east-1",
