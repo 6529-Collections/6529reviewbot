@@ -170,6 +170,12 @@ Each context/route check records:
   checkout. Near-white or near-uniform PNGs fail deterministically, even if the
   DOM reports content readiness, because humans and bots cannot use blank
   artifacts as visual evidence.
+- failed or blocked Next.js asset requests. For 6529 PR-local dev-server runs
+  the runner forces `ASSETS_FROM_S3=false` through
+  `REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3=false`, so checked-out PR assets are
+  loaded from the local `_next` server instead of a production CloudFront
+  `web_build` prefix. If a repo override points `_next` assets back at S3 and
+  the browser blocks them, the runner reports that as an app-boot failure.
 - title, URL, viewport meta, body class, navigation/header/main presence, and
   content-readiness diagnostics.
 - a full-page screenshot.
