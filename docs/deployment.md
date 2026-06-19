@@ -150,6 +150,11 @@ REVIEWBOT_WORKER_ADAPTER=noop
 REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api
 REVIEWBOT_WORKER_GITHUB_TOKEN=
 REVIEWBOT_WORKER_GITHUB_INSTALLATION_ID=
+REVIEWBOT_RESPONSIVENESS_AI_ENABLED=false
+REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=false
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET=
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL=
 ```
 
 Start with `noop` worker mode for the first webhook pass. Switch to
@@ -216,6 +221,39 @@ REVIEW_USAGE_DB_SCHEMA
 central worker and alert templates. The role should be scoped to the bot
 repository or protected environment and to the reviewed Aurora/SNS/SES
 resources.
+
+Optional repository variables for responsiveness screenshot storage:
+
+```text
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=true
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_ROLE_ARN
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_PATH_PREFIX
+```
+
+If `REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_ROLE_ARN` is blank, the
+responsiveness workflow reuses `REVIEW_USAGE_AWS_ROLE_ARN`. The role needs
+`s3:PutObject` for the configured prefix. The production App server role needs
+`s3:GetObject` for the same prefix so `/artifacts/responsiveness/...` can
+redirect humans and model providers to short-lived presigned screenshot URLs.
+
+Optional repository variables for the Opus visual pass:
+
+```text
+REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true
+REVIEWBOT_RESPONSIVENESS_AI_MODEL=claude-opus-4-8
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES=48
+REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS=1800
+REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
+```
+
+The worker uses `ANTHROPIC_API_KEY` from repository secrets. The central server
+adds the visual estimate to responsiveness budget admission when
+`REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true`; the worker writes the actual token
+usage as a separate `responsiveness_visual` usage event.
 
 Required repository variables when durable run-control claims should be closed
 by the worker:

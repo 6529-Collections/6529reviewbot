@@ -1274,11 +1274,12 @@ function requireProviderReviewText(providerResult, settings) {
 
 async function callAnthropic(settings, prompt) {
   const key = requiredSecret("ANTHROPIC_API_KEY", settings.provider);
+  const userContent = Array.isArray(prompt.user) ? prompt.user : String(prompt.user || "");
   const body = {
     model: settings.model,
     max_tokens: settings.maxOutputTokens,
     system: prompt.system,
-    messages: [{ role: "user", content: prompt.user }],
+    messages: [{ role: "user", content: userContent }],
   };
   if (shouldSendAnthropicTemperature(settings.model)) {
     body.temperature = settings.temperature;
@@ -1975,6 +1976,8 @@ module.exports = {
   shouldSendOpenAIOption,
   providerErrorSummary,
   requireProviderReviewText,
+  callAnthropic,
+  callProvider,
   extractReviewHistory,
   countMarker,
   isTrustedMarkerAuthor,

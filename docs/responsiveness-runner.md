@@ -11,7 +11,9 @@ There are two workflow entrypoints:
   review workflow. The benchmark job runs target PR code on GitHub-hosted
   `ubuntu-latest` without model provider keys. A separate comment job posts a
   normal 6529bot PR comment and writes usage with provider `github`, model
-  `actions-ubuntu-latest`.
+  `actions-ubuntu-latest`. The comment job can also upload safe runner
+  artifacts to private S3 and call Anthropic Opus for a screenshot-aware visual
+  summary.
 - `.github/workflows/responsiveness.yml` is a manual benchmark workflow for
   speed, signal-quality, and route-inference experiments.
 
@@ -57,6 +59,8 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
 
 - `plan.json`: changed files, inferred routes, contexts, and route reasons.
 - `summary.md`: pass/fail, duration, failures, warnings, and slowest checks.
+- `screenshots.json`: machine-readable screenshot index with route, context,
+  warning, failure, and timing metadata.
 - `results/*.json`: per-route/per-context deterministic check results.
 - `screenshots/*.png`: one full-page screenshot per completed check.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
@@ -65,6 +69,33 @@ Production PR comments include a link to the uploaded artifact when GitHub
 returns one from `actions/upload-artifact`. Screenshot paths in the slowest
 checks section link to that artifact; GitHub does not currently expose stable
 per-file links inside the artifact zip.
+
+When `REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=true`, the comment job also
+uploads a bounded public-comment-safe subset to private S3:
+
+- `summary.md`, `plan.json`, `pr.json`, `screenshots.json`, and
+  `artifact-upload.json`.
+- `results/*.json`.
+- `screenshots/*.png`.
+
+The S3 bucket should stay private. PR comments link through the central App
+server viewer route, defaulting to:
+
+```text
+/artifacts/responsiveness/<opaque-token>/<artifact-path>
+```
+
+The viewer route validates the opaque token and artifact path shape, then
+redirects to a short-lived presigned S3 URL. The opaque token is generated per
+run and stored only in the artifact URL, so the route does not need a database.
+
+When `REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true`, the comment job sends the
+deterministic summary plus the screenshot set to Anthropic Opus
+(`REVIEWBOT_RESPONSIVENESS_AI_MODEL`, default `claude-opus-4-8`). The AI
+summary becomes the top of the PR comment and the deterministic runner output
+moves into an expandable details block. The workflow still records the GitHub
+Actions compute row, and records the Opus call separately as
+`responsiveness_visual` usage.
 
 ## Contexts
 

@@ -334,6 +334,18 @@ REVIEWBOT_WORKER_GITHUB_RETRY_BASE_DELAY_MS=500
 REVIEWBOT_WORKER_GH_BIN=gh
 REVIEWBOT_WORKER_INCLUDE_OUTPUT=false
 REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD=1
+REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
+REVIEWBOT_RESPONSIVENESS_AI_ENABLED=false
+REVIEWBOT_RESPONSIVENESS_AI_MODEL=claude-opus-4-8
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES=48
+REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS=1800
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=false
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION=
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_ROLE_ARN=
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET=
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX=responsiveness
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL=
+REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_PATH_PREFIX=/artifacts/responsiveness
 ```
 
 `noop` is the safe default. Use `local` for controlled local workers and
@@ -360,7 +372,15 @@ Responsiveness jobs dispatch to
 `REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW`, record provider `github`,
 model `actions-ubuntu-latest`, and use
 `REVIEWBOT_RESPONSIVENESS_ESTIMATED_COST_USD` for budget admission and usage
-events.
+events. When `REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true`, the central server
+also reserves `REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD` for the
+Opus screenshot pass, and the worker records a second usage row with
+review kind `responsiveness_visual`, provider `anthropic`, and the configured
+visual model. The S3 artifact variables are optional: when enabled, the
+comment job uploads screenshots and safe runner JSON to private S3 and links
+them through the App server viewer path. The viewer route redirects to
+short-lived presigned S3 URLs; target repositories still do not receive AWS
+credentials.
 See [worker-adapters.md](worker-adapters.md).
 
 Partial worker App credential overrides fail preflight. Set both
