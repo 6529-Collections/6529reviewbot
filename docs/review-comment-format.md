@@ -79,8 +79,10 @@ Responsiveness comments use the same heading and hidden-marker contract. The
 deterministic Playwright runner always produces the underlying evidence. When
 the visual AI pass is enabled, the visible body starts with an Opus-written
 summary based on the deterministic findings and screenshots, followed by a
-collapsible deterministic details block. When the visual pass is disabled or
-unavailable, the deterministic summary is posted directly.
+collapsible deterministic details block. Full-resolution screenshot links stay
+visible for humans and bots; Opus receives resized local JPEG copies so
+many-image requests stay within provider image limits. When the visual pass is
+disabled or unavailable, the deterministic summary is posted directly.
 
 Responsiveness jobs record provider `github`, model `actions-ubuntu-latest`,
 zero token usage, and an estimated GitHub Actions cost so budgets can account

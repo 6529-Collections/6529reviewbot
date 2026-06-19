@@ -338,6 +338,10 @@ REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD=5
 REVIEWBOT_RESPONSIVENESS_AI_ENABLED=false
 REVIEWBOT_RESPONSIVENESS_AI_MODEL=claude-opus-4-8
 REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGES=48
+REVIEWBOT_RESPONSIVENESS_AI_MAX_SOURCE_IMAGE_BYTES=40000000
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_BYTES=8000000
+REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION=1600
+REVIEWBOT_RESPONSIVENESS_AI_IMAGE_QUALITY=82
 REVIEWBOT_RESPONSIVENESS_AI_MAX_OUTPUT_TOKENS=1800
 REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED=false
 REVIEWBOT_RESPONSIVENESS_ARTIFACTS_AWS_REGION=
@@ -376,10 +380,18 @@ events. When `REVIEWBOT_RESPONSIVENESS_AI_ENABLED=true`, the central server
 also reserves `REVIEWBOT_RESPONSIVENESS_VISUAL_ESTIMATED_COST_USD` for the
 Opus screenshot pass, and the worker records a second usage row with
 review kind `responsiveness_visual`, provider `anthropic`, and the configured
-visual model. The S3 artifact variables are optional: when enabled, the
-comment job uploads screenshots and safe runner JSON to private S3 and links
-them through the App server viewer path. The viewer route redirects to
-short-lived presigned S3 URLs; target repositories still do not receive AWS
+visual model. The comment job keeps full-resolution screenshots in the
+artifact store for humans, but resizes local provider copies to
+`REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_DIMENSION` and encodes them as JPEG at
+`REVIEWBOT_RESPONSIVENESS_AI_IMAGE_QUALITY` before calling Opus. This keeps
+many-image requests inside provider dimension limits while preserving links to
+the original screenshots. `REVIEWBOT_RESPONSIVENESS_AI_MAX_SOURCE_IMAGE_BYTES`
+bounds source PNGs before image processing, while
+`REVIEWBOT_RESPONSIVENESS_AI_MAX_IMAGE_BYTES` bounds each resized provider
+image. The S3 artifact variables are optional: when
+enabled, the comment job uploads screenshots and safe runner JSON to private S3
+and links them through the App server viewer path. The viewer route redirects
+to short-lived presigned S3 URLs; target repositories still do not receive AWS
 credentials.
 See [worker-adapters.md](worker-adapters.md).
 
