@@ -231,6 +231,18 @@ jobs:
           if-no-files-found: warn
           include-hidden-files: true
 
+      - name: Enforce responsiveness result
+        if: always()
+        run: |
+          code=1
+          if [ -f target/.reviewbot-responsiveness/exit-code.txt ]; then
+            code="$(cat target/.reviewbot-responsiveness/exit-code.txt)"
+          fi
+          if [ "$code" != "0" ]; then
+            echo "Responsiveness benchmark failed with exit code $code after artifacts were uploaded."
+            exit "$code"
+          fi
+
   comment:
     name: Post responsiveness review
     if: always()
