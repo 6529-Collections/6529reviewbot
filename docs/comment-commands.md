@@ -27,9 +27,9 @@ Runs the default comment review kind: `general`.
 
 Runs the initial-review set: `general`, `wcag`, `i18n`, and `security`.
 `followup` is intentionally not included in `all`; it is for commit follow-up
-work. `responsiveness` is also intentionally not included in `all`; repos opt
-it into automatic initial reviews with repository config, or maintainers can
-request it explicitly.
+work. `responsiveness` and `glm-swarm` are also intentionally not included in
+`all`; repos opt them into automatic initial reviews with repository config,
+or maintainers can request them explicitly.
 
 ```text
 /6529bot review general security
@@ -45,6 +45,7 @@ kind is listed, the command falls back to `general`.
 /6529bot wcag
 /6529bot i18n
 /6529bot security
+/6529bot glm-swarm
 /6529bot responsiveness
 ```
 
@@ -67,6 +68,7 @@ followup  newest commits plus prior human and bot review comments
 wcag      WCAG 2.2 AA accessibility risks
 i18n      6529 FE message keys, locale helpers, fallbacks, and copy migration
 security  crypto/security, auth, injection, replay, and wallet risks
+glm-swarm  advisory OpenRouter GLM 5.2 swarm synthesis for Codex feedback
 responsiveness  deterministic changed-route viewport and app-shell checks
 ```
 
@@ -135,4 +137,11 @@ Frontend responsiveness only:
 
 ```text
 /6529bot review responsiveness
+```
+
+Advisory GLM swarm only:
+
+```text
+/6529bot glm-swarm
+/6529bot review glm-swarm
 ```

@@ -11,12 +11,14 @@ requests.
 ## What It Does
 
 - Reviews pull requests with Anthropic, OpenAI, or OpenRouter models.
-- Supports five review modes:
+- Supports seven review modes:
   - general PR review
   - follow-up commit review
   - WCAG 2.2 AA accessibility analysis
   - i18n analysis
   - crypto/security analysis
+  - advisory GLM 5.2 swarm synthesis through OpenRouter
+  - deterministic responsiveness review
 - Posts one top-level PR comment per review run.
 - Uses hidden metadata so follow-up reviews can find prior bot reviews without
   depending on visible comment text.

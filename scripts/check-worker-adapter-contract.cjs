@@ -13,7 +13,7 @@ const root = path.resolve(__dirname, "..");
 const workerDocs = ["docs/worker-adapters.md", "docs/deployment.md", "docs/architecture.md"];
 const expectedWorkerModes = ["noop", "local", "github_actions"];
 const expectedDispatchModes = ["auto", "api", "gh"];
-const expectedProviderReviewKinds = Object.keys(REVIEW_KIND_CONFIGS).filter(
+const expectedProviderReviewKinds = Object.keys(workerAdapter.REVIEW_KIND_BINS).filter(
   (kind) => kind !== "responsiveness"
 );
 const expectedDispatchFields = [
@@ -195,6 +195,16 @@ function checkJobContracts(findings) {
   );
   if (!workerAdapter.reviewCommandArgs(job)[0].endsWith(path.join("bin", "security-analysis.cjs"))) {
     findings.push("security review jobs must route to bin/security-analysis.cjs.");
+  }
+  const glmSwarmJob = {
+    ...job,
+    reviewKind: "glm-swarm",
+    provider: "openrouter",
+    model: "z-ai/glm-5.2",
+    lane: "openrouter:z-ai-glm-5.2",
+  };
+  if (!workerAdapter.reviewCommandArgs(glmSwarmJob)[0].endsWith(path.join("bin", "glm-swarm-review.cjs"))) {
+    findings.push("glm-swarm review jobs must route to bin/glm-swarm-review.cjs.");
   }
   const responsivenessJob = {
     ...job,

@@ -21,6 +21,7 @@ const REVIEW_KIND_BINS = {
   wcag: "wcag-aa-analysis.cjs",
   i18n: "i18n-analysis.cjs",
   security: "security-analysis.cjs",
+  "glm-swarm": "glm-swarm-review.cjs",
   responsiveness: "responsiveness-review.cjs",
 };
 const REVIEW_KIND_WORKFLOWS = {

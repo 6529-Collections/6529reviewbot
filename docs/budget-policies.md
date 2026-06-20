@@ -76,8 +76,8 @@ Supported scopes:
 - `pr`, with `owner/repo#123`;
 - `provider`, with `anthropic`, `openai`, or `openrouter`;
 - `model`, with an exact configured model id;
-- `review_kind`, with `general`, `followup`, `wcag`, `i18n`, `security`, or
-  `responsiveness`.
+- `review_kind`, with `general`, `followup`, `wcag`, `i18n`, `security`,
+  `glm-swarm`, or `responsiveness`.
 
 Responsiveness jobs also record provider `github` and model
 `actions-ubuntu-latest` for GitHub Actions compute budget accounting. That is

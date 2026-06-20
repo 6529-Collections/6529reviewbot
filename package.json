@@ -25,6 +25,7 @@
     "review:wcag": "node bin/wcag-aa-analysis.cjs",
     "review:i18n": "node bin/i18n-analysis.cjs",
     "review:security": "node bin/security-analysis.cjs",
+    "review:glm-swarm": "node bin/glm-swarm-review.cjs",
     "review:responsiveness": "node bin/responsiveness-review.cjs",
     "worker:job": "node bin/run-review-job.cjs",
     "responsiveness:run": "node bin/responsiveness-runner.cjs",
