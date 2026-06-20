@@ -999,7 +999,7 @@ for (const route of routes) {
       },
       profileProbe,
       screenshotAnalysis,
-      screenshot: path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/"),
+      screenshot: screenshotResult.ok ? path.relative(outputRoot, screenshotPath).replace(/\\\\/g, "/") : "",
     };
     fs.writeFileSync(
       path.join(resultsDir, \`\${safeName(mode)}--\${safeName(route)}.json\`),
@@ -2111,8 +2111,9 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
 
   lines.push("## Slowest Checks", "");
   for (const result of [...results].sort((a, b) => b.durationMs - a.durationMs).slice(0, 10)) {
+    const screenshotLabel = result.screenshot ? `screenshot \`${result.screenshot}\`` : "screenshot unavailable";
     lines.push(
-      `- \`${result.mode}\` \`${result.route}\`: ${(result.durationMs / 1000).toFixed(1)}s, screenshot \`${result.screenshot}\``
+      `- \`${result.mode}\` \`${result.route}\`: ${(result.durationMs / 1000).toFixed(1)}s, ${screenshotLabel}`
     );
   }
   lines.push("");
