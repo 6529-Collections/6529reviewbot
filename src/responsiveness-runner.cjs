@@ -867,8 +867,7 @@ for (const route of routes) {
 
     const startedAt = Date.now();
     const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
-    const routeAttemptLimit = Number(process.env.REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS || 2) || 2;
-    const maxRouteAttempts = Math.max(1, routeAttemptLimit);
+    const maxRouteAttempts = readPositiveIntegerEnv("REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS", 2);
     const retryWarnings = [];
     let responseStatus = null;
     let responseUrl = "";
@@ -963,11 +962,12 @@ for (const route of routes) {
             summarizeRouteAttemptFailure({ route, pageErrors, contentReadiness })
         );
         fs.rmSync(screenshotPath, { force: true });
+        await page.goto("about:blank", { waitUntil: "commit", timeout: 5000 }).catch(() => {});
+        await page.waitForTimeout(250);
         consoleErrors.length = 0;
         pageErrors.length = 0;
         networkFailures.length = 0;
         networkResponses.length = 0;
-        await page.goto("about:blank", { waitUntil: "commit", timeout: 5000 }).catch(() => {});
         continue;
       }
       break;
@@ -1135,18 +1135,28 @@ async function settlePage(page, pageErrors) {
   pageErrors.push("page did not settle after client navigation");
 }
 
+function readPositiveIntegerEnv(name, fallback) {
+  const value = Number(process.env[name]);
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+  return Math.max(1, Math.floor(value));
+}
+
 function isTransientRouteAttemptFailure({ responseStatus, metrics, screenshotAnalysis, pageErrors }) {
   if (responseStatus !== null || metrics.contentReady || metrics.nextErrorOverlay) {
     return false;
   }
-  if (!screenshotAnalysis.blankLike) {
+  const hasBlankEvidence = screenshotAnalysis.blankLike || screenshotAnalysis.available === false;
+  if (!hasBlankEvidence) {
     return false;
   }
   return pageErrors.some(isGotoCommitTimeout);
 }
 
 function isGotoCommitTimeout(message) {
-  return /page\\.goto: Timeout .* waiting until ["']commit["']/.test(String(message || ""));
+  const text = String(message || "");
+  return /page\\.goto/i.test(text) && /Timeout/i.test(text) && /commit/i.test(text);
 }
 
 function summarizeRouteAttemptFailure({ route, pageErrors, contentReadiness }) {
