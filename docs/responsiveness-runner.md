@@ -213,12 +213,19 @@ Each context/route check records:
   checkout. Near-white or near-uniform PNGs fail deterministically, even if the
   DOM reports content readiness, because humans and bots cannot use blank
   artifacts as visual evidence.
-- failed or blocked Next.js asset requests. For 6529 PR-local dev-server runs
-  the runner forces `ASSETS_FROM_S3=false` through
-  `REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3=false`, so checked-out PR assets are
-  loaded from the local `_next` server instead of a production CloudFront
-  `web_build` prefix. If a repo override points `_next` assets back at S3 and
-  the browser blocks them, the runner reports that as an app-boot failure.
+- failed or blocked Next.js build asset requests. For 6529 PR-local dev-server
+  runs the runner forces `ASSETS_FROM_S3=false` through
+  `REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3=false`, so checked-out PR
+  `_next/static` and webpack assets are loaded from the local `_next` server
+  instead of a production CloudFront `web_build` prefix. Local `/_next/image`
+  optimizer requests for remote content images are not treated as build-asset
+  leaks.
+- browser-based prewarm before assertions. The runner first performs lightweight
+  HTTP prewarm and then visits each planned route/context in Chromium before
+  parallel checks start. This lets Next.js/Turbopack finish route and client
+  chunk compilation before screenshots are used as evidence. Set
+  `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
+  debugging.
 - target app endpoint isolation. The generated Playwright web server ignores
   ambient target-repo `API_ENDPOINT` / `WS_ENDPOINT` values and supplies safe
   remote defaults through `REVIEWBOT_RESPONSIVENESS_API_ENDPOINT`,

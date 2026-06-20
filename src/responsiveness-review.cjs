@@ -510,7 +510,7 @@ function buildVisualReviewPrompt(settings, artifacts, pr, images) {
         "- Do not invent UI problems that are not visible in screenshots or deterministic findings.",
         "- For 6529 frontend runs, contentReady=false means the app shell did not render enough visible content before capture; treat blank/near-white screenshots as evidence of that deterministic failure, not as a normal clean page.",
         "- For 6529 frontend runs, screenshotBlankLike=true means the captured PNG is near-white or near-uniform; treat it as blocking evidence quality unless deterministic failures already explain it.",
-        "- If Next.js asset requests failed or were blocked, call that out as the likely app-boot/root-cause evidence before discussing downstream blank screenshots.",
+        "- If Next.js build asset requests failed or were blocked, call that out as likely app-boot/root-cause evidence before discussing downstream blank screenshots. Do not treat local /_next/image optimizer requests for remote content images as build-asset leaks.",
         "- If Next.js overlay text is provided, quote the concise overlay diagnostic as the root cause before discussing blank screenshots.",
         "- For 6529 native contexts, the run is a browser-level Capacitor simulation. Do not claim real iOS/Android packaged-app behavior, but do treat missing body.capacitor-native, missing viewport-fit=cover, missing plugin shim, and missing bottom navigation as violations of the simulated app-shell contract.",
         "- For 6529 Electron context, the run is a Chromium renderer simulation with an Electron user-agent. Do not claim packaged desktop behavior, but do treat electronDetected=false as the simulated Electron branch failing to activate.",
