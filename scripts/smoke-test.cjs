@@ -329,6 +329,8 @@ assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_
 assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_VIEWPORT_SCREENSHOT_TIMEOUT_MS || 10000"));
 assert(responsivenessSpec.includes("full-page screenshot failed; used viewport fallback"));
 assert(responsivenessSpec.includes("screenshot unavailable after content rendered"));
+assert(responsivenessSpec.includes("nearBlackBlank"));
+assert(responsivenessSpec.includes("nearWhiteBlank || nearBlackBlank || nearUniformBlank"));
 assert(responsivenessSpec.includes("fs.rmSync(screenshotPath, { force: true })"));
 assert(responsivenessSpec.includes("screenshotResult.ok ? path.relative"));
 assert(responsivenessSpec.includes('readPositiveIntegerEnv("REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS", 2)'));
