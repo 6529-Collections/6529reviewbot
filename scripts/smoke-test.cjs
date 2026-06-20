@@ -9,6 +9,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const sharp = require("sharp");
+const vm = require("node:vm");
 const adminAuth = require("../src/admin-auth.cjs");
 const adminAuthContractCheck = require("./check-admin-auth-contract.cjs");
 const adminSnapshot = require("../src/admin-snapshot.cjs");
@@ -327,9 +328,83 @@ assert(responsivenessSpec.includes("captureScreenshotWithFallback"));
 assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000"));
 assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_VIEWPORT_SCREENSHOT_TIMEOUT_MS || 10000"));
 assert(responsivenessSpec.includes("full-page screenshot failed; used viewport fallback"));
+assert(responsivenessSpec.includes("screenshot unavailable after content rendered"));
 assert(responsivenessSpec.includes("fs.rmSync(screenshotPath, { force: true })"));
 assert(responsivenessSpec.includes("screenshotResult.ok ? path.relative"));
+assert(responsivenessSpec.includes('readPositiveIntegerEnv("REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS", 2)'));
+assert(responsivenessSpec.includes("isTransientRouteAttemptFailure"));
+assert(responsivenessSpec.includes("route check retried after transient blank dev-server attempt"));
+assert(responsivenessSpec.includes("screenshotAnalysis.available === false"));
+assert(responsivenessSpec.includes("await page.waitForTimeout(250);"));
 assert(fs.readFileSync(path.join(__dirname, "..", "src", "responsiveness-runner.cjs"), "utf8").includes("screenshot unavailable"));
+const retryHelpersSource = responsivenessSpec
+  .match(/function readPositiveIntegerEnv[\s\S]*?\nasync function captureScreenshotWithFallback/)[0]
+  .replace(/\nasync function captureScreenshotWithFallback$/, "");
+const retryHelpersContext = { process: { env: {} } };
+vm.runInNewContext(
+  `${retryHelpersSource}
+globalThis.__isTransientRouteAttemptFailure = isTransientRouteAttemptFailure;
+globalThis.__readPositiveIntegerEnv = readPositiveIntegerEnv;`,
+  retryHelpersContext
+);
+const transientRouteAttempt = retryHelpersContext.__isTransientRouteAttemptFailure;
+const gotoCommitTimeout =
+  'page.goto: Timeout 12000ms exceeded. Call log: - navigating to "http://localhost:3001/rememes", waiting until "commit"';
+assert.equal(
+  transientRouteAttempt({
+    responseStatus: null,
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: true },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  true
+);
+assert.equal(
+  transientRouteAttempt({
+    responseStatus: null,
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  true
+);
+assert.equal(
+  transientRouteAttempt({
+    responseStatus: 200,
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: true },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+assert.equal(
+  transientRouteAttempt({
+    responseStatus: null,
+    metrics: { contentReady: true, nextErrorOverlay: false },
+    screenshotAnalysis: { available: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+assert.equal(
+  transientRouteAttempt({
+    responseStatus: null,
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+retryHelpersContext.process.env.REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS = "0";
+assert.equal(
+  retryHelpersContext.__readPositiveIntegerEnv("REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS", 2),
+  1
+);
+retryHelpersContext.process.env.REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS = "abc";
+assert.equal(
+  retryHelpersContext.__readPositiveIntegerEnv("REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS", 2),
+  2
+);
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
 assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
