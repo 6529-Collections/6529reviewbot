@@ -907,13 +907,12 @@ for (const route of routes) {
     metrics.nextErrorOverlayText = summarizeOverlayText(metrics.nextErrorOverlayText);
 
     const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
-    await page.screenshot({
-      path: screenshotPath,
-      fullPage: true,
-      timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000),
-    }).catch((error) => {
-      pageErrors.push(\`screenshot failed: \${sanitizeMessage(error.message || String(error))}\`);
-    });
+    const screenshotWarnings = [];
+    const screenshotResult = await captureScreenshotWithFallback(page, screenshotPath);
+    screenshotWarnings.push(...screenshotResult.warnings);
+    if (!screenshotResult.ok) {
+      pageErrors.push(screenshotResult.error);
+    }
     const screenshotAnalysis = await analyzeScreenshot(screenshotPath).catch((error) => ({
       available: false,
       error: sanitizeMessage(error.message || String(error)),
@@ -923,7 +922,7 @@ for (const route of routes) {
       ...networkResponses.filter(isNextAssetProblem),
     ];
 
-    const warnings = [];
+    const warnings = [...screenshotWarnings];
     const failures = [];
     if (responseStatus === null) {
       failures.push("navigation did not produce a response");
@@ -1079,6 +1078,38 @@ async function settlePage(page, pageErrors) {
     }
   }
   pageErrors.push("page did not settle after client navigation");
+}
+
+async function captureScreenshotWithFallback(page, screenshotPath) {
+  const fullPageTimeoutMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000);
+  const viewportTimeoutMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_VIEWPORT_SCREENSHOT_TIMEOUT_MS || 10000);
+  try {
+    await page.screenshot({
+      path: screenshotPath,
+      fullPage: true,
+      timeout: fullPageTimeoutMs,
+    });
+    return { ok: true, warnings: [] };
+  } catch (error) {
+    const fullPageError = sanitizeMessage(error.message || String(error));
+    try {
+      await page.screenshot({
+        path: screenshotPath,
+        fullPage: false,
+        timeout: viewportTimeoutMs,
+      });
+      return {
+        ok: true,
+        warnings: [\`full-page screenshot failed; used viewport fallback: \${fullPageError}\`],
+      };
+    } catch (fallbackError) {
+      return {
+        ok: false,
+        error: \`screenshot failed: \${fullPageError}; viewport fallback failed: \${sanitizeMessage(fallbackError.message || String(fallbackError))}\`,
+        warnings: [],
+      };
+    }
+  }
 }
 
 async function waitForMeaningfulAppContent(page) {

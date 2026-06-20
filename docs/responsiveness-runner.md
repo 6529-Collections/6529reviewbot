@@ -62,7 +62,9 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
 - `screenshots.json`: machine-readable screenshot index with route, context,
   warning, failure, and timing metadata.
 - `results/*.json`: per-route/per-context deterministic check results.
-- `screenshots/*.png`: one full-page screenshot per completed check.
+- `screenshots/*.png`: one full-page screenshot per completed check when
+  possible; if full-page capture times out, the runner stores a viewport
+  screenshot and reports the fallback as a warning.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
 
 Production PR comments include a link to the uploaded artifact when GitHub
@@ -213,6 +215,11 @@ Each context/route check records:
   checkout. Near-white or near-uniform PNGs fail deterministically, even if the
   DOM reports content readiness, because humans and bots cannot use blank
   artifacts as visual evidence.
+- screenshot capture fallback. Full-page screenshots are preferred, but a
+  content-ready page is not failed solely because Chromium times out while
+  stitching a full-page screenshot. The runner retries with a viewport
+  screenshot and reports that fallback as a warning; if both captures fail, the
+  missing evidence remains a hard page error.
 - failed or blocked Next.js build asset requests. For 6529 PR-local dev-server
   runs the runner forces `ASSETS_FROM_S3=false` through
   `REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3=false`, so checked-out PR
@@ -242,7 +249,8 @@ Each context/route check records:
   `body.capacitor-native`, layout-root mobile/narrow/small markers, Electron
   branch detection, bottom navigation visibility, Android keyboard CSS
   variable, open-mobile handoff prompt, and profile-probe failures/warnings.
-- a full-page screenshot.
+- a full-page screenshot when possible, otherwise a viewport screenshot with a
+  fallback warning.
 
 Hard failures fail the workflow. Non-fatal console errors and 4xx responses are
 reported as warnings.
