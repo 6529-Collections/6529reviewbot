@@ -639,15 +639,15 @@ module.exports = defineConfig({
     env: {
       PORT: port,
       PORT_SEARCH_LIMIT: "1",
-      API_ENDPOINT: process.env.API_ENDPOINT || "https://api.6529.io",
-      WS_ENDPOINT: process.env.WS_ENDPOINT || "wss://ws.6529.io",
-      ALLOWLIST_API_ENDPOINT: process.env.ALLOWLIST_API_ENDPOINT || "https://allowlist-api.6529.io",
+      API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io",
+      WS_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT || "wss://ws.6529.io",
+      ALLOWLIST_API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_ALLOWLIST_API_ENDPOINT || "https://allowlist-api.6529.io",
       BASE_ENDPOINT: baseURL,
-      MOBILE_APP_SCHEME: process.env.MOBILE_APP_SCHEME || "mobile6529",
-      CORE_SCHEME: process.env.CORE_SCHEME || "core6529",
-      NEXTGEN_CHAIN_ID: process.env.NEXTGEN_CHAIN_ID || "1",
-      IPFS_API_ENDPOINT: process.env.IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
-      IPFS_GATEWAY_ENDPOINT: process.env.IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
+      MOBILE_APP_SCHEME: process.env.REVIEWBOT_RESPONSIVENESS_MOBILE_APP_SCHEME || "mobile6529",
+      CORE_SCHEME: process.env.REVIEWBOT_RESPONSIVENESS_CORE_SCHEME || "core6529",
+      NEXTGEN_CHAIN_ID: process.env.REVIEWBOT_RESPONSIVENESS_NEXTGEN_CHAIN_ID || "1",
+      IPFS_API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
+      IPFS_GATEWAY_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
       ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
       SEIZE_6529_COMMAND: "1",
       USE_TURBO: process.env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
@@ -1205,7 +1205,40 @@ async function readMetrics(page) {
             ].join(",")
           )
         );
-        const compactText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+        const nextErrorDialogElements = Array.from(
+          document.querySelectorAll(
+            [
+              "[data-nextjs-dialog-overlay]",
+              "[data-nextjs-dialog]",
+              "[data-nextjs-errors-dialog]",
+            ].join(",")
+          )
+        );
+        const compactText = (value) => String(value || "").replace(/\\s+/g, " ").trim();
+        const nextDevToolsOnlyText = (value) => {
+          const normalized = compactText(value)
+            .toLowerCase()
+            .replace(/next\\.?\\s*j\\.?\\s*s?/g, "nextjs ")
+            .replace(/\\bclo\\s+e\\b/g, "close")
+            .replace(/[^a-z0-9]+/g, " ")
+            .trim();
+          if (!normalized) return false;
+          // Single-letter and digit tokens are Next Dev Tools extraction noise
+          // from "Next.js" and issue-count badges, not standalone diagnostics.
+          const residual = normalized
+            .replace(
+              /\\b(nextjs|next|js|j|dev|tool|tools|item|route|static|dynamic|bundler|turbopack|info|preference|preferences|close|clo|open|issue|issues|overlay|collapse|badge|0|1)\\b/g,
+              " "
+            )
+            .replace(/\\s+/g, "")
+            .trim();
+          return residual === "";
+        };
+        const looksLikeNextErrorOverlayText = (value) => {
+          const text = compactText(value);
+          if (!text || nextDevToolsOnlyText(text)) return false;
+          return /build error|runtime error|module not found|failed to compile|unhandled|uncaught|hydration|error:/i.test(text);
+        };
         const skipTextElement = (node) => {
           const tagName = String(node?.tagName || "").toUpperCase();
           return ["STYLE", "SCRIPT", "NOSCRIPT", "TEMPLATE", "SVG", "PATH"].includes(tagName);
@@ -1250,8 +1283,15 @@ async function readMetrics(page) {
           collectNodeText(element, overlayParts, overlayState);
           if (overlayState.length >= 2000) break;
         }
-        const nextErrorOverlay = nextOverlayElements.length > 0;
         const nextErrorOverlayText = compactText(overlayParts.join(" ")).slice(0, 2000);
+        const hasNextErrorDialog = nextErrorDialogElements.some((element) => {
+          const parts = [];
+          const state = { length: 0 };
+          collectNodeText(element, parts, state);
+          return looksLikeNextErrorOverlayText(parts.join(" "));
+        });
+        const nextErrorOverlay =
+          hasNextErrorDialog || looksLikeNextErrorOverlayText(nextErrorOverlayText);
         const contentReady =
           !nextErrorOverlay &&
           (hasMain ||
@@ -1707,10 +1747,34 @@ function summarizeOverlayText(value) {
     .replace(/Open\s+Next\.?j?s?\s+Dev\s+Tools?/gi, "")
     .replace(/Compiling\s*(?:\.\s*){1,}/gi, "Compiling")
     .trim();
-  if (!text) {
+  if (!text || isNextDevToolsOnlyText(text)) {
     return "";
   }
   return text.slice(0, 500);
+}
+
+function isNextDevToolsOnlyText(value) {
+  const normalized = String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .replace(/next\.?\s*j\.?\s*s?/g, "nextjs ")
+    .replace(/\bclo\s+e\b/g, "close")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  if (!normalized) {
+    return false;
+  }
+  // Single-letter and digit tokens are Next Dev Tools extraction noise from
+  // "Next.js" and issue-count badges, not standalone diagnostics.
+  const residual = normalized
+    .replace(
+      /\b(nextjs|next|js|j|dev|tool|tools|item|route|static|dynamic|bundler|turbopack|info|preference|preferences|close|clo|open|issue|issues|overlay|collapse|badge|0|1)\b/g,
+      " "
+    )
+    .replace(/\s+/g, "")
+    .trim();
+  return residual === "";
 }
 
 function resolvePnpmCommand() {
@@ -2024,7 +2088,9 @@ module.exports = {
   detectResponsivenessProfile,
   buildScreenshotManifest,
   inferRoutes,
+  isNextDevToolsOnlyText,
   parseArgs,
   publicProfile,
   runResponsiveness,
+  summarizeOverlayText,
 };
