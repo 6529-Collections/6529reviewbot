@@ -219,6 +219,12 @@ Each context/route check records:
   loaded from the local `_next` server instead of a production CloudFront
   `web_build` prefix. If a repo override points `_next` assets back at S3 and
   the browser blocks them, the runner reports that as an app-boot failure.
+- target app endpoint isolation. The generated Playwright web server ignores
+  ambient target-repo `API_ENDPOINT` / `WS_ENDPOINT` values and supplies safe
+  remote defaults through `REVIEWBOT_RESPONSIVENESS_API_ENDPOINT`,
+  `REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT`, and related namespaced overrides.
+  This keeps local development shells that point at `localhost` from hijacking
+  responsiveness runs.
 - title, URL, viewport meta, body class, navigation/header/main presence, and
   content-readiness diagnostics.
 - 6529 profile diagnostics when applicable: native shim/plugin state,
@@ -253,6 +259,19 @@ npm run responsiveness:run -- \
   --contexts web-desktop,web-mobile,native-mobile,electron-desktop \
   --max-pages 12 \
   --workers 4
+```
+
+Use the namespaced `REVIEWBOT_RESPONSIVENESS_*` variables when a local run must
+target a non-default API or websocket endpoint. Do not rely on ambient
+target-repo `API_ENDPOINT` values:
+
+```bash
+REVIEWBOT_RESPONSIVENESS_API_ENDPOINT=https://api.6529.io \
+REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT=wss://ws.6529.io \
+npm run responsiveness:run -- \
+  --target ../6529seize-frontend \
+  --base-ref origin/main \
+  --head-ref HEAD
 ```
 
 When a frontend server is already hot locally, reuse it instead of having

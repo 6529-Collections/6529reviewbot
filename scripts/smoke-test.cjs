@@ -321,12 +321,19 @@ assert(responsivenessSpec.includes("Next.js asset request(s) failed or were bloc
 assert(responsivenessSpec.includes("summarizeRequestFailure"));
 assert(responsivenessSpec.includes("nextAssetFailures"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
+assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_API_ENDPOINT"));
+assert(responsivenessConfig.includes('API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io"'));
+assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT"));
+assert(!responsivenessConfig.includes("API_ENDPOINT: process.env.API_ENDPOINT"));
 assert(responsivenessConfig.includes('ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false"'));
 assert(!responsivenessConfig.includes('ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true"'));
 assert(responsivenessSpec.includes("visibleAppShellElements"));
 assert(responsivenessSpec.includes("analyzeScreenshot"));
 assert(responsivenessSpec.includes("nextErrorOverlayText"));
 assert(responsivenessSpec.includes("summarizeOverlayText"));
+assert(responsivenessSpec.includes("nextDevToolsOnlyText"));
+assert(responsivenessSpec.includes("looksLikeNextErrorOverlayText"));
+assert(responsivenessSpec.includes("const hasNextErrorDialog"));
 assert(responsivenessSpec.includes("skipTextElement"));
 assert(responsivenessSpec.includes('"STYLE", "SCRIPT", "NOSCRIPT", "TEMPLATE", "SVG", "PATH"'));
 assert(responsivenessSpec.includes("expandNextOverlayDiagnostics"));
@@ -518,6 +525,61 @@ const responsivenessDevToolsOnlyManifest =
 assert.equal(
   responsivenessDevToolsOnlyManifest.screenshots[0].nextErrorOverlayText,
   ""
+);
+assert.equal(
+  responsivenessRunner.summarizeOverlayText(
+    "Next.j Dev Tool Item Route Static Bundler Turbopack Route Info Preference Clo e Next.j Dev Tool"
+  ),
+  ""
+);
+assert.equal(
+  responsivenessRunner.summarizeOverlayText(
+    "Open issue overlay 0 1 Issue Collapse issue badge"
+  ),
+  ""
+);
+assert(
+  responsivenessRunner
+    .summarizeOverlayText("Error: Module not found: Can't resolve '@/components/missing-widget'")
+    .includes("Module not found")
+);
+assert.equal(
+  responsivenessRunner.isNextDevToolsOnlyText(
+    "Next.j Dev Tool Item Route Bundler Turbopack Route Info Preference Clo e Next.j Dev Tool"
+  ),
+  true
+);
+const generatedOverlayDetectorSnippet = responsivenessSpec.match(
+  /const compactText =[\s\S]*?const skipTextElement =/
+)?.[0]?.replace(/\n\s*const skipTextElement =$/, "");
+assert(generatedOverlayDetectorSnippet);
+const generatedOverlayDetector = Function(
+  `${generatedOverlayDetectorSnippet}
+return { nextDevToolsOnlyText, looksLikeNextErrorOverlayText };`
+)();
+assert.equal(
+  generatedOverlayDetector.nextDevToolsOnlyText(
+    "Next.j Dev Tool Item Route Static Bundler Turbopack Route Info Preference Clo e Next.j Dev Tool"
+  ),
+  true
+);
+assert.equal(
+  generatedOverlayDetector.looksLikeNextErrorOverlayText(
+    "Next.j Dev Tool Item Route Static Bundler Turbopack Route Info Preference Clo e Next.j Dev Tool"
+  ),
+  false
+);
+assert.equal(
+  generatedOverlayDetector.looksLikeNextErrorOverlayText(
+    "Error: Module not found: Can't resolve '@/components/missing-widget'"
+  ),
+  true
+);
+assert.equal(
+  generatedOverlayDetector.looksLikeNextErrorOverlayText(
+    "Build Error Failed to compile ./app/page.tsx"
+  ),
+  true
 );
 const artifactSettings = responsivenessArtifacts.responsivenessArtifactSettingsFromEnv({
   REVIEWBOT_RESPONSIVENESS_ARTIFACTS_ENABLED: "true",
