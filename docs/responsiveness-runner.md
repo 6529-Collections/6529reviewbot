@@ -214,6 +214,12 @@ Each context/route check records:
   interactive elements, media, landmarks, or known 6529 layout markers. Blank
   or near-empty captures fail instead of being passed to the visual reviewer as
   useful screenshots.
+- late content recovery after screenshot capture. If the first readiness probe
+  races route compilation but the screenshot is clearly nonblank, the runner
+  re-reads DOM metrics after capture. When that late read confirms meaningful
+  content and no Next.js error overlay, the route is reported with warnings for
+  the late recovery and transient navigation timeout instead of a hard false
+  failure.
 - screenshot evidence quality when `sharp` is available in the target
   checkout. Near-white or near-uniform PNGs fail deterministically, even if the
   DOM reports content readiness, because humans and bots cannot use blank

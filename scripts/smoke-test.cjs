@@ -336,6 +336,10 @@ assert(responsivenessSpec.includes("isTransientRouteAttemptFailure"));
 assert(responsivenessSpec.includes("route check retried after transient blank dev-server attempt"));
 assert(responsivenessSpec.includes("screenshotAnalysis.available === false"));
 assert(responsivenessSpec.includes("await page.waitForTimeout(250);"));
+assert(responsivenessSpec.includes("hasMeaningfulScreenshotEvidence"));
+assert(responsivenessSpec.includes("isRecoverableRenderedNavigationTimeout"));
+assert(responsivenessSpec.includes("content readiness recovered after screenshot capture"));
+assert(responsivenessSpec.includes("navigation response unavailable after commit timeout, but meaningful content rendered"));
 assert(fs.readFileSync(path.join(__dirname, "..", "src", "responsiveness-runner.cjs"), "utf8").includes("screenshot unavailable"));
 const retryHelpersSource = responsivenessSpec
   .match(/function readPositiveIntegerEnv[\s\S]*?\nasync function captureScreenshotWithFallback/)[0]
@@ -344,10 +348,15 @@ const retryHelpersContext = { process: { env: {} } };
 vm.runInNewContext(
   `${retryHelpersSource}
 globalThis.__isTransientRouteAttemptFailure = isTransientRouteAttemptFailure;
+globalThis.__hasMeaningfulScreenshotEvidence = hasMeaningfulScreenshotEvidence;
+globalThis.__isRecoverableRenderedNavigationTimeout = isRecoverableRenderedNavigationTimeout;
 globalThis.__readPositiveIntegerEnv = readPositiveIntegerEnv;`,
   retryHelpersContext
 );
 const transientRouteAttempt = retryHelpersContext.__isTransientRouteAttemptFailure;
+const meaningfulScreenshot = retryHelpersContext.__hasMeaningfulScreenshotEvidence;
+const recoverableRenderedNavigationTimeout =
+  retryHelpersContext.__isRecoverableRenderedNavigationTimeout;
 const gotoCommitTimeout =
   'page.goto: Timeout 12000ms exceeded. Call log: - navigating to "http://localhost:3001/rememes", waiting until "commit"';
 assert.equal(
@@ -391,6 +400,41 @@ assert.equal(
     responseStatus: null,
     metrics: { contentReady: false, nextErrorOverlay: false },
     screenshotAnalysis: { available: true, blankLike: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+assert.equal(meaningfulScreenshot({ available: true, blankLike: false }), true);
+assert.equal(meaningfulScreenshot({ available: true, blankLike: true }), false);
+assert.equal(meaningfulScreenshot({ available: false, blankLike: false }), false);
+assert.equal(
+  recoverableRenderedNavigationTimeout({
+    metrics: { contentReady: true, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  true
+);
+assert.equal(
+  recoverableRenderedNavigationTimeout({
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+assert.equal(
+  recoverableRenderedNavigationTimeout({
+    metrics: { contentReady: true, nextErrorOverlay: true },
+    screenshotAnalysis: { available: true, blankLike: false },
+    pageErrors: [gotoCommitTimeout],
+  }),
+  false
+);
+assert.equal(
+  recoverableRenderedNavigationTimeout({
+    metrics: { contentReady: true, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: true },
     pageErrors: [gotoCommitTimeout],
   }),
   false

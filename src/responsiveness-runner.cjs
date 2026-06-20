@@ -949,6 +949,39 @@ for (const route of routes) {
       }));
 
       if (
+        !metrics.contentReady &&
+        !metrics.nextErrorOverlay &&
+        hasMeaningfulScreenshotEvidence(screenshotAnalysis)
+      ) {
+        const lateMetricsResult = await readMetrics(page);
+        if (lateMetricsResult.ok) {
+          const lateMetrics = lateMetricsResult.metrics || fallbackMetrics(page);
+          lateMetrics.nextErrorOverlayText = summarizeOverlayText(lateMetrics.nextErrorOverlayText);
+          if (lateMetrics.nextErrorOverlay || lateMetrics.contentReady) {
+            metrics = lateMetrics;
+            contentReadiness = {
+              ok: Boolean(lateMetrics.contentReady),
+              reason: lateMetrics.contentReady
+                ? "6529 app shell rendered meaningful content after screenshot capture"
+                : "Next.js error overlay became visible after screenshot capture",
+              durationMs: contentReadiness.durationMs,
+              metrics: lateMetrics,
+            };
+            if (lateMetrics.contentReady) {
+              screenshotWarnings.push(
+                "content readiness recovered after screenshot capture; first readiness probe likely raced route compilation"
+              );
+            }
+          }
+        } else {
+          screenshotWarnings.push(
+            "late content readiness recovery skipped because metrics were unavailable: " +
+              sanitizeMessage(lateMetricsResult.error)
+          );
+        }
+      }
+
+      if (
         attempt < maxRouteAttempts &&
         isTransientRouteAttemptFailure({
           responseStatus,
@@ -979,8 +1012,18 @@ for (const route of routes) {
 
     const warnings = [...retryWarnings, ...screenshotWarnings];
     const failures = [];
+    const contentRenderedWithScreenshot = hasRenderedContentEvidence({ metrics, screenshotAnalysis });
+    const recoverableRenderedNavigationTimeout = isRecoverableRenderedNavigationTimeout({
+      metrics,
+      screenshotAnalysis,
+      pageErrors,
+    });
     if (responseStatus === null) {
-      failures.push("navigation did not produce a response");
+      if (recoverableRenderedNavigationTimeout) {
+        warnings.push("navigation response unavailable after commit timeout, but meaningful content rendered");
+      } else {
+        failures.push("navigation did not produce a response");
+      }
     } else if (responseStatus >= 500) {
       failures.push(\`HTTP \${responseStatus}\`);
     } else if (responseStatus >= 400) {
@@ -1005,8 +1048,14 @@ for (const route of routes) {
         \`\${nextAssetProblems.length} Next.js build asset request(s) failed or were blocked; 6529 PR-local responsiveness runs must load _next/static and webpack assets locally with ASSETS_FROM_S3=false; examples: \${summarizeNextAssetProblems(nextAssetProblems)}\`
       );
     }
-    if (pageErrors.length > 0) {
-      failures.push(\`\${pageErrors.length} page error(s)\`);
+    const hardPageErrors = pageErrors.filter(
+      (error) => !(recoverableRenderedNavigationTimeout && isGotoCommitTimeout(error))
+    );
+    if (hardPageErrors.length > 0) {
+      failures.push(\`\${hardPageErrors.length} page error(s)\`);
+    }
+    if (hardPageErrors.length < pageErrors.length) {
+      warnings.push(\`\${pageErrors.length - hardPageErrors.length} transient navigation timeout(s) after content rendered\`);
     }
     if (mode === "native-mobile") {
       const shimActive = Boolean(metrics.nativeShimActive || metrics.nativeIsNativePlatform || metrics.nativePlatform);
@@ -1141,6 +1190,18 @@ function readPositiveIntegerEnv(name, fallback) {
     return fallback;
   }
   return Math.max(1, Math.floor(value));
+}
+
+function hasMeaningfulScreenshotEvidence(screenshotAnalysis) {
+  return Boolean(screenshotAnalysis?.available && screenshotAnalysis.blankLike === false);
+}
+
+function hasRenderedContentEvidence({ metrics, screenshotAnalysis }) {
+  return Boolean(metrics?.contentReady && hasMeaningfulScreenshotEvidence(screenshotAnalysis) && !metrics.nextErrorOverlay);
+}
+
+function isRecoverableRenderedNavigationTimeout({ metrics, screenshotAnalysis, pageErrors }) {
+  return hasRenderedContentEvidence({ metrics, screenshotAnalysis }) && pageErrors.some(isGotoCommitTimeout);
 }
 
 function isTransientRouteAttemptFailure({ responseStatus, metrics, screenshotAnalysis, pageErrors }) {
