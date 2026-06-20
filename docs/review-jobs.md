@@ -14,11 +14,16 @@ A single GitHub event can request more than one unit of work:
   kinds;
 - the same model-backed review kind can run through more than one
   provider/model lane.
+- the advisory `glm-swarm` kind always runs through its fixed
+  `openrouter:z-ai/glm-5.2` lane and then fans out internally into bounded
+  GLM reviewer threads before posting one synthesized comment.
 
 `src/review-job.cjs` expands that event into concrete jobs. Each job has one
 review kind and one lane. Model-backed review kinds use provider/model lanes.
 `responsiveness` uses the deterministic `github:actions-ubuntu-latest` lane so
 GitHub Actions compute is visible to budget and run-control dimensions.
+`glm-swarm` uses a fixed `openrouter:z-ai/glm-5.2` lane so it can be enabled
+without changing existing Opus-backed lanes.
 
 ## Job Shape
 
@@ -81,6 +86,11 @@ OpenRouter lanes should name an explicit model:
 ```text
 REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 ```
+
+The `glm-swarm` review kind is the exception to ordinary lane fanout: it is
+always pinned to `openrouter:z-ai/glm-5.2`. Repository lane config cannot turn
+that review kind into an Anthropic or OpenAI job, and central Opus lanes remain
+unchanged.
 
 Repository config may specify `lanes`, but those lanes are intersected with
 central `REVIEWBOT_REVIEW_LANES`. A target repo can opt into fewer allowed
@@ -146,6 +156,9 @@ REVIEWBOT_RUN_KEY=<job.runKey>
 
 Workers must still enforce engine-level context, token, timeout, and source
 path limits. Job admission is not a substitute for provider-call guardrails.
+The GLM swarm runner adds its own internal thread, per-thread output token,
+synthesis output token, total output token, prompt input, and actual-cost caps
+before and during the internal OpenRouter calls.
 If a live provider call returns no visible review text, the worker fails the
 job instead of posting a generic no-finding comment. Empty model output should
 be investigated as a provider, prompt, or adapter failure.

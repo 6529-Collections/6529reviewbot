@@ -150,6 +150,8 @@ REVIEW_DEFAULT_OPENROUTER_MODEL=
 ```
 
 OpenRouter has no built-in default. Configure it explicitly.
+The advisory GLM swarm path pins its own explicit OpenRouter model,
+`z-ai/glm-5.2`, and does not change `REVIEW_DEFAULT_OPENROUTER_MODEL`.
 Built-in defaults live in [Model Catalog](model-catalog.md).
 Model price rows are maintained separately through
 [Model Pricing](model-pricing.md).
@@ -218,6 +220,13 @@ REVIEWBOT_DISABLED_REPOS=6529-Collections/example
 REVIEWBOT_DISABLED_PROVIDERS=openrouter
 REVIEWBOT_DISABLED_MODELS=gpt-5.5
 REVIEWBOT_DISABLED_REVIEW_KINDS=wcag,i18n
+```
+
+To stop the GLM swarm path specifically, either disable review kind
+`glm-swarm` through runtime control or set:
+
+```text
+REVIEW_GLM_SWARM_ENABLED=false
 ```
 
 Event-level org/repo/review-kind pauses happen before admission. Provider,
@@ -350,6 +359,22 @@ REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_BUCKET=
 REVIEWBOT_RESPONSIVENESS_ARTIFACTS_S3_PREFIX=responsiveness
 REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_BASE_URL=
 REVIEWBOT_RESPONSIVENESS_ARTIFACTS_VIEWER_PATH_PREFIX=/artifacts/responsiveness
+REVIEW_GLM_SWARM_ENABLED=true
+REVIEW_GLM_SWARM_MAX_REVIEWERS=4
+REVIEW_GLM_SWARM_MAX_FILES_PER_REVIEWER=12
+REVIEW_GLM_SWARM_REVIEWER_MAX_OUTPUT_TOKENS=1200
+REVIEW_GLM_SWARM_SYNTHESIS_MAX_OUTPUT_TOKENS=1800
+REVIEW_GLM_SWARM_MAX_TOTAL_OUTPUT_TOKENS=7000
+REVIEW_GLM_SWARM_MAX_REVIEWER_DIFF_CHARS=60000
+REVIEW_GLM_SWARM_MAX_REVIEWER_CONTEXT_CHARS=30000
+REVIEW_GLM_SWARM_MAX_SYNTHESIS_INPUT_CHARS=150000
+REVIEW_GLM_SWARM_MAX_COST_USD=2
+REVIEW_GLM_SWARM_OPENROUTER_CREDENTIAL_TARGET=OPENROUTER_API_KEY
+REVIEW_GLM_SWARM_RAW_OUTPUTS_MODE=off|s3
+REVIEW_GLM_SWARM_RAW_OUTPUTS_FAIL_CLOSED=false
+REVIEW_GLM_SWARM_RAW_OUTPUTS_AWS_REGION=
+REVIEW_GLM_SWARM_RAW_OUTPUTS_S3_BUCKET=
+REVIEW_GLM_SWARM_RAW_OUTPUTS_S3_PREFIX=glm-swarm
 ```
 
 `noop` is the safe default. Use `local` for controlled local workers and
@@ -393,6 +418,22 @@ enabled, the comment job uploads screenshots and safe runner JSON to private S3
 and links them through the App server viewer path. The viewer route redirects
 to short-lived presigned S3 URLs; target repositories still do not receive AWS
 credentials.
+The GLM swarm path is advisory and fixed to OpenRouter model `z-ai/glm-5.2`.
+It fans out internally to risk-selected reviewer prompts, then posts one
+comment titled `6529bot GLM Swarm Review`. It is a feedback loop for Codex and
+maintainers, not a replacement for existing tests, responsiveness runs, or
+existing Opus-backed reviewbot lanes. `REVIEW_GLM_SWARM_ENABLED=false` is a
+path-specific kill switch. The GLM-specific reviewer, synthesis, total output,
+input, and actual-cost caps are enforced inside the worker in addition to
+ordinary job budget admission. Local Windows workers may resolve the
+OpenRouter key from Credential Manager target `OPENROUTER_API_KEY` when the
+environment variable is absent; the secret is used only in-process and is never
+printed or written to raw-output artifacts.
+
+`REVIEW_GLM_SWARM_RAW_OUTPUTS_MODE=s3` stores raw internal reviewer and
+synthesis outputs in the configured private S3 bucket for approved operator
+infrastructure. `off` is the default. Git LFS and repository commits are not
+supported raw-output retention modes.
 See [worker-adapters.md](worker-adapters.md).
 
 Partial worker App credential overrides fail preflight. Set both

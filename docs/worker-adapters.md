@@ -41,6 +41,7 @@ followup -> bin/followup-commit-review.cjs
 wcag     -> bin/wcag-aa-analysis.cjs
 i18n     -> bin/i18n-analysis.cjs
 security -> bin/security-analysis.cjs
+glm-swarm -> bin/glm-swarm-review.cjs
 responsiveness -> bin/responsiveness-review.cjs
 ```
 
@@ -135,6 +136,9 @@ large patch. `head_ref` is a sanitized display-only branch name for the Actions
 run name; workers must use immutable SHAs for checkout and diffing.
 
 Provider-backed review jobs dispatch to `REVIEWBOT_WORKER_GITHUB_WORKFLOW`.
+The `glm-swarm` provider-backed job is fixed to provider `openrouter`, model
+`z-ai/glm-5.2`, and then performs bounded internal GLM reviewer fanout inside
+`bin/glm-swarm-review.cjs`.
 Responsiveness jobs dispatch to
 `REVIEWBOT_WORKER_GITHUB_RESPONSIVENESS_WORKFLOW` and use provider `github`,
 model `actions-ubuntu-latest` for budget accounting.

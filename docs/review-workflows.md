@@ -1,6 +1,6 @@
 # Review Workflows
 
-The bot supports six review modes.
+The bot supports seven review modes.
 
 In the central GitHub App, a trigger becomes one or more review jobs. Each job
 has one review mode and one lane. Model-backed jobs use provider/model lanes;
@@ -124,6 +124,35 @@ Focus:
 - JWT and session handling;
 - transaction integrity;
 - XSS, SSRF, redirects, injection, and untrusted media.
+
+## GLM Swarm Review
+
+Entrypoint:
+
+```bash
+node bin/glm-swarm-review.cjs
+```
+
+Focus:
+
+- advisory OpenRouter GLM 5.2 review fanout;
+- risk-selected narrow internal reviewer threads;
+- one synthesized GitHub comment titled `6529bot GLM Swarm Review`;
+- Codex feedback loops for focused deterministic checks;
+- no replacement of existing tests, responsiveness checks, or Opus-backed
+  reviewbot lanes.
+
+The GLM swarm kind is opt-in. It is not included in the default initial
+review set or `/6529bot review all`. Job fanout pins it to
+`openrouter:z-ai/glm-5.2` regardless of the configured Opus lanes, so enabling
+it does not modify or remove existing Anthropic reviewbot lanes.
+
+The runner applies the same untrusted-PR source restrictions as the main
+review engine, enforces PR-size, token, thread, and actual-cost caps, records
+prompt version and prompt hashes in hidden metadata, and can retain raw
+internal reviewer/synthesis outputs only in configured S3 operator
+infrastructure. Raw GLM outputs must not be committed or stored through Git
+LFS.
 
 ## Responsiveness Review
 

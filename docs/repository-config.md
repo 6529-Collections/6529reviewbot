@@ -69,7 +69,7 @@ version: 1
 enabled: true
 
 reviewKinds:
-  allowed: [general, followup, wcag, i18n, security, responsiveness]
+  allowed: [general, followup, wcag, i18n, security, glm-swarm, responsiveness]
   initial: [general, wcag, i18n, security]
   followup: [followup]
 
@@ -127,10 +127,14 @@ followup
 wcag
 i18n
 security
+glm-swarm
 responsiveness
 ```
 
 `reviewKinds.initial` may include any allowed kind except `followup`.
+`glm-swarm` is advisory and uses a fixed OpenRouter GLM 5.2 lane; it is not
+part of the default initial review set unless central or repository policy
+explicitly opts it in.
 `responsiveness` runs the deterministic GitHub Actions viewport workflow, not
 a model provider lane.
 

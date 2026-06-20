@@ -16,6 +16,11 @@ const {
 
 const root = path.resolve(__dirname, "..");
 const reviewWorkflowDocPath = "docs/review-workflows.md";
+const SPECIAL_BIN_CALLS = {
+  "glm-swarm": 'require("../src/glm-swarm-review.cjs").main()',
+  responsiveness: 'require("../src/responsiveness-review.cjs").main()',
+};
+const REVIEW_BOT_CONFIG_EXEMPT_KINDS = new Set(["glm-swarm"]);
 
 function main() {
   const result = checkReviewBinEntrypoints();
@@ -32,7 +37,12 @@ function checkReviewBinEntrypoints(options = {}) {
     options.reviewWorkflowDoc ||
     fs.readFileSync(path.join(root, reviewWorkflowDocPath), "utf8");
 
-  checkObjectKeys("src/review-bot.cjs REVIEW_KIND_CONFIGS", reviewKindConfigs, reviewKinds, findings);
+  checkObjectKeys(
+    "src/review-bot.cjs REVIEW_KIND_CONFIGS",
+    reviewKindConfigs,
+    reviewKinds.filter((kind) => !REVIEW_BOT_CONFIG_EXEMPT_KINDS.has(kind)),
+    findings
+  );
   checkObjectKeys("src/worker-adapter.cjs REVIEW_KIND_BINS", reviewKindBins, reviewKinds, findings);
 
   for (const reviewKind of reviewKinds) {
@@ -44,9 +54,8 @@ function checkReviewBinEntrypoints(options = {}) {
     }
     const binText = options.binTexts?.[bin] || fs.readFileSync(binPath, "utf8");
     const expectedCall =
-      reviewKind === "responsiveness"
-        ? 'require("../src/responsiveness-review.cjs").main()'
-        : `require("../src/review-bot.cjs").main("${reviewKind}")`;
+      SPECIAL_BIN_CALLS[reviewKind] ||
+      `require("../src/review-bot.cjs").main("${reviewKind}")`;
     if (!binText.includes(expectedCall)) {
       findings.push(`bin/${bin} must call ${expectedCall}.`);
     }

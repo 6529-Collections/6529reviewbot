@@ -9,6 +9,12 @@ const {
 } = require("./model-catalog.cjs");
 const DEFAULT_MAX_JOBS_PER_DELIVERY = 8;
 const RESPONSIVENESS_REVIEW_KIND = "responsiveness";
+const GLM_SWARM_REVIEW_KIND = "glm-swarm";
+const GLM_SWARM_REVIEW_LANE = Object.freeze({
+  provider: "openrouter",
+  model: "z-ai/glm-5.2",
+  lane: "openrouter:z-ai-glm-5.2",
+});
 const GITHUB_ACTIONS_REVIEW_LANE = Object.freeze({
   provider: "github",
   model: "actions-ubuntu-latest",
@@ -157,6 +163,9 @@ function createReviewJob(event, reviewKind, lane, controls = {}) {
 }
 
 function lanesForReviewKind(reviewKind, lanes) {
+  if (reviewKind === GLM_SWARM_REVIEW_KIND) {
+    return [GLM_SWARM_REVIEW_LANE];
+  }
   if (reviewKind === RESPONSIVENESS_REVIEW_KIND) {
     return [GITHUB_ACTIONS_REVIEW_LANE];
   }
@@ -164,6 +173,9 @@ function lanesForReviewKind(reviewKind, lanes) {
 }
 
 function normalizeReviewLaneForKind(reviewKind, lane) {
+  if (reviewKind === GLM_SWARM_REVIEW_KIND) {
+    return { ...GLM_SWARM_REVIEW_LANE };
+  }
   if (reviewKind === RESPONSIVENESS_REVIEW_KIND) {
     return { ...GITHUB_ACTIONS_REVIEW_LANE };
   }
@@ -353,6 +365,8 @@ function slugPart(value) {
 
 module.exports = {
   DEFAULT_MAX_JOBS_PER_DELIVERY,
+  GLM_SWARM_REVIEW_KIND,
+  GLM_SWARM_REVIEW_LANE,
   GITHUB_ACTIONS_REVIEW_LANE,
   PROVIDERS,
   RESPONSIVENESS_REVIEW_KIND,

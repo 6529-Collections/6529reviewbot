@@ -18,6 +18,9 @@ provider trust, latency, and cost. Configure OpenRouter with an explicit lane:
 REVIEWBOT_REVIEW_LANES=openrouter:anthropic/claude-sonnet-4
 ```
 
+The advisory `glm-swarm` review kind pins OpenRouter model `z-ai/glm-5.2`
+inside its own runner and does not make OpenRouter a default provider lane.
+
 ## Runtime Override Order
 
 The runtime resolves a default model in this order:

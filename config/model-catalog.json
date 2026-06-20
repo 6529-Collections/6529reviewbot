@@ -25,7 +25,12 @@
     "openrouter": {
       "defaultModel": "",
       "requireExplicitModel": true,
-      "models": {}
+      "models": {
+        "z-ai/glm-5.2": {
+          "status": "available",
+          "notes": "Explicit GLM 5.2 OpenRouter model used by the additive advisory GLM swarm lane."
+        }
+      }
     }
   }
 }
