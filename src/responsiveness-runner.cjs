@@ -604,7 +604,7 @@ module.exports = defineConfig({
   fullyParallel: true,
   workers: ${JSON.stringify(options.workers)},
   retries: 0,
-  timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 25000),
+  timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000),
   reporter: [
     ["list"],
     ["json", { outputFile: path.join(outputRoot, "playwright-report.json") }],
@@ -613,7 +613,7 @@ module.exports = defineConfig({
   use: {
     baseURL,
     actionTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_ACTION_TIMEOUT_MS || 8000),
-    navigationTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 12000),
+    navigationTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000),
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
     video: "off",
@@ -659,6 +659,8 @@ module.exports = defineConfig({
 
 function buildPlaywrightGlobalSetup() {
   return `${headerComment()}
+const { chromium, devices } = require("@playwright/test");
+const contexts = require("./contexts.json");
 const routes = require("./routes.json");
 
 module.exports = async (config) => {
@@ -666,6 +668,11 @@ module.exports = async (config) => {
   for (const route of routes) {
     const url = new URL(route, baseURL).toString();
     await fetchWithTimeout(url, 20000).catch(() => {});
+  }
+  if (!/^(?:1|true|yes)$/i.test(process.env.REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM || "")) {
+    await browserPrewarm(baseURL).catch((error) => {
+      console.warn("[responsiveness prewarm] browser prewarm skipped: " + sanitizeMessage(error.message || String(error)));
+    });
   }
 };
 
@@ -683,6 +690,123 @@ async function fetchWithTimeout(url, timeoutMs) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function browserPrewarm(baseURL) {
+  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000);
+  const deadline = Date.now() + budgetMs;
+  const prewarmContexts = selectPrewarmContexts(contexts);
+  const browser = await chromium.launch();
+  try {
+    for (const contextInfo of prewarmContexts) {
+      if (Date.now() >= deadline) {
+        console.warn("[responsiveness prewarm] budget exhausted before " + contextInfo.name);
+        return;
+      }
+      const context = await browser.newContext({
+        ...devices["Desktop Chrome"],
+        viewport: contextInfo.viewport,
+        isMobile: contextInfo.isMobile,
+        hasTouch: contextInfo.hasTouch,
+        deviceScaleFactor: contextInfo.isMobile ? 3 : 1,
+        userAgent: devices["Desktop Chrome"].userAgent + (contextInfo.userAgentSuffix || ""),
+      });
+      try {
+        const page = await context.newPage();
+        for (const route of routes) {
+          if (Date.now() >= deadline) {
+            console.warn("[responsiveness prewarm] budget exhausted after " + route);
+            return;
+          }
+          await visitForPrewarm(page, new URL(route, baseURL).toString(), route, deadline);
+        }
+      } finally {
+        await context.close().catch(() => {});
+      }
+    }
+  } finally {
+    await browser.close().catch(() => {});
+  }
+}
+
+function selectPrewarmContexts(allContexts) {
+  const requested = String(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS || "").trim();
+  if (/^all$/i.test(requested)) {
+    return allContexts;
+  }
+  if (requested) {
+    const names = new Set(requested.split(",").map((value) => value.trim()).filter(Boolean));
+    const selected = allContexts.filter((context) => names.has(context.name));
+    if (selected.length > 0) {
+      return selected;
+    }
+    console.warn("[responsiveness prewarm] no requested contexts matched; falling back to web-desktop");
+  }
+  const desktopContext = allContexts.filter((context) => context.name === "web-desktop").slice(0, 1);
+  return desktopContext.length > 0 ? desktopContext : allContexts.slice(0, 1);
+}
+
+async function visitForPrewarm(page, url, route, deadline) {
+  const remainingMs = Math.max(0, deadline - Date.now());
+  const timeoutMs = Math.min(
+    Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000),
+    remainingMs
+  );
+  if (timeoutMs <= 0) {
+    return;
+  }
+  try {
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
+    await waitForPrewarmReadiness(page, Math.min(timeoutMs, Math.max(0, deadline - Date.now())));
+    const networkIdleMs = Math.min(3000, Math.max(0, deadline - Date.now()));
+    if (networkIdleMs > 0) {
+      await page.waitForLoadState("networkidle", { timeout: networkIdleMs }).catch(() => {});
+    }
+  } catch (error) {
+    console.warn("[responsiveness prewarm] " + route + ": " + sanitizeMessage(error.message || String(error)));
+  }
+}
+
+async function waitForPrewarmReadiness(page, timeoutMs) {
+  const startedAt = Date.now();
+  let evaluateFailures = 0;
+  while (Date.now() - startedAt <= timeoutMs) {
+    const state = await page.evaluate(() => {
+      const compact = (value) => String(value || "").replace(/\\s+/g, " ").trim();
+      const overlayText = compact(
+        Array.from(document.querySelectorAll("nextjs-portal, [data-nextjs-dialog-overlay], [data-nextjs-dialog]"))
+          .map((element) => compact(element.textContent || element.getAttribute("aria-label") || ""))
+          .join(" ")
+      );
+      const bodyText = compact(document.body?.innerText || "");
+      const appSignals = Boolean(
+        document.querySelector("main, header, nav, footer, .layout-root, [data-testid], [data-cy]")
+      );
+      return {
+        appReady: appSignals || bodyText.length >= 20,
+        compiling: /\\bCompiling\\b/i.test(overlayText),
+      };
+    }).catch((error) => {
+      evaluateFailures += 1;
+      return {
+        appReady: false,
+        compiling: true,
+        fatal: evaluateFailures >= 3,
+        error: sanitizeMessage(error.message || String(error)),
+      };
+    });
+    if (state.fatal) {
+      throw new Error("prewarm metrics unavailable: " + state.error);
+    }
+    if (state.appReady && !state.compiling) {
+      return;
+    }
+    await page.waitForTimeout(500);
+  }
+}
+
+function sanitizeMessage(value) {
+  return String(value || "").replace(/\\s+/g, " ").slice(0, 1000);
 }
 `;
 }
@@ -783,7 +907,11 @@ for (const route of routes) {
     metrics.nextErrorOverlayText = summarizeOverlayText(metrics.nextErrorOverlayText);
 
     const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
-    await page.screenshot({ path: screenshotPath, fullPage: true }).catch((error) => {
+    await page.screenshot({
+      path: screenshotPath,
+      fullPage: true,
+      timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000),
+    }).catch((error) => {
       pageErrors.push(\`screenshot failed: \${sanitizeMessage(error.message || String(error))}\`);
     });
     const screenshotAnalysis = await analyzeScreenshot(screenshotPath).catch((error) => ({
@@ -820,7 +948,7 @@ for (const route of routes) {
     }
     if (nextAssetProblems.length > 0) {
       failures.push(
-        \`\${nextAssetProblems.length} Next.js asset request(s) failed or were blocked; 6529 PR-local responsiveness runs must use local _next assets with ASSETS_FROM_S3=false; examples: \${summarizeNextAssetProblems(nextAssetProblems)}\`
+        \`\${nextAssetProblems.length} Next.js build asset request(s) failed or were blocked; 6529 PR-local responsiveness runs must load _next/static and webpack assets locally with ASSETS_FROM_S3=false; examples: \${summarizeNextAssetProblems(nextAssetProblems)}\`
       );
     }
     if (pageErrors.length > 0) {
@@ -1450,7 +1578,7 @@ function isNextAssetProblem(problem) {
 }
 
 function isNextAssetUrl(value) {
-  return /(?:\\/|%2F)_next(?:\\/|%2F)(?:static|webpack|image)|\\/web_build\\/[^/]+\\/_next\\//i.test(
+  return /(?:\\/|%2F)_next(?:\\/|%2F)(?:static|webpack)|\\/web_build\\/[^/]+\\/_next\\//i.test(
     String(value || "")
   );
 }
@@ -2083,6 +2211,7 @@ module.exports = {
   RESPONSIVENESS_PROFILES,
   buildPlan,
   buildPlaywrightConfig,
+  buildPlaywrightGlobalSetup,
   buildPlaywrightSpec,
   collectChangedFiles,
   detectResponsivenessProfile,

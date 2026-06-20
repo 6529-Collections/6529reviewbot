@@ -294,6 +294,7 @@ assert.equal(
   ""
 );
 const responsivenessSpec = responsivenessRunner.buildPlaywrightSpec();
+const responsivenessGlobalSetup = responsivenessRunner.buildPlaywrightGlobalSetup();
 const responsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
   { contexts: [], routes: [] },
   {
@@ -317,9 +318,22 @@ assert(
     "6529 app shell did not render meaningful content"
   )
 );
-assert(responsivenessSpec.includes("Next.js asset request(s) failed or were blocked"));
+assert(responsivenessSpec.includes("Next.js build asset request(s) failed or were blocked"));
 assert(responsivenessSpec.includes("summarizeRequestFailure"));
 assert(responsivenessSpec.includes("nextAssetFailures"));
+assert(!responsivenessSpec.includes("(?:static|webpack|image)"));
+assert(responsivenessSpec.includes("(?:static|webpack)"));
+assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000"));
+assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000"));
+assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
+assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000"));
+assert(responsivenessGlobalSetup.includes("selectPrewarmContexts(contexts)"));
+assert(responsivenessGlobalSetup.includes('context.name === "web-desktop"'));
+assert(responsivenessGlobalSetup.includes('requested.split(",")'));
+assert(responsivenessGlobalSetup.includes("evaluateFailures >= 3"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_API_ENDPOINT"));
 assert(responsivenessConfig.includes('API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io"'));
