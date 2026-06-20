@@ -223,7 +223,9 @@ Each context/route check records:
 - screenshot evidence quality when `sharp` is available in the target
   checkout. Near-white or near-uniform PNGs fail deterministically, even if the
   DOM reports content readiness, because humans and bots cannot use blank
-  artifacts as visual evidence.
+  artifacts as visual evidence. Near-black screenshots with only a tiny
+  framework badge are also treated as blank evidence so first-hit dev-server
+  shells can use the transient route retry path.
 - screenshot capture fallback. Full-page screenshots are preferred, but a
   content-ready page is not failed solely because Chromium times out while
   stitching a full-page screenshot. The runner retries with a viewport

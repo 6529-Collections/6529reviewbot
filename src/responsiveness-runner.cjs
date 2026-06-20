@@ -1826,12 +1826,14 @@ async function analyzeScreenshot(screenshotPath) {
   const nonWhiteRatio = nonWhitePixels / denominator;
   const opaqueRatio = opaquePixels / pixels;
   const nearWhiteBlank = opaqueRatio > 0.98 && meanLuminance >= 248 && nonWhiteRatio < 0.003;
+  const nearBlackBlank = opaqueRatio > 0.98 && meanLuminance <= 4 && luminanceStdDev < 3;
   const nearUniformBlank = opaqueRatio > 0.98 && luminanceStdDev < 1.5;
 
   return {
     available: true,
-    blankLike: nearWhiteBlank || nearUniformBlank,
+    blankLike: nearWhiteBlank || nearBlackBlank || nearUniformBlank,
     nearWhiteBlank,
+    nearBlackBlank,
     nearUniformBlank,
     width: info.width,
     height: info.height,
