@@ -64,7 +64,10 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
 - `results/*.json`: per-route/per-context deterministic check results.
 - `screenshots/*.png`: one full-page screenshot per completed check when
   possible; if full-page capture times out, the runner stores a viewport
-  screenshot and reports the fallback as a warning.
+  screenshot and reports the fallback as a warning. If both captures fail after
+  the route has already rendered meaningful content, the run keeps the
+  deterministic DOM metrics and reports missing screenshot evidence as a
+  warning.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
 
 Production PR comments include a link to the uploaded artifact when GitHub
@@ -218,8 +221,10 @@ Each context/route check records:
 - screenshot capture fallback. Full-page screenshots are preferred, but a
   content-ready page is not failed solely because Chromium times out while
   stitching a full-page screenshot. The runner retries with a viewport
-  screenshot and reports that fallback as a warning; if both captures fail, the
-  missing evidence remains a hard page error.
+  screenshot and reports that fallback as a warning; if both captures fail after
+  content readiness, the missing evidence remains a warning with
+  `screenshot unavailable`. If content never became ready, screenshot capture
+  failure stays attached to the hard page failure.
 - failed or blocked Next.js build asset requests. For 6529 PR-local dev-server
   runs the runner forces `ASSETS_FROM_S3=false` through
   `REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3=false`, so checked-out PR
@@ -237,6 +242,12 @@ Each context/route check records:
   `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
   debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
   comma-separated context list only when debugging context-specific compilation.
+- transient route retry. After prewarm, a first assertion attempt can still race
+  a dev-server route compile. The runner retries only when the first attempt has
+  no navigation response, no meaningful content, a blank/near-uniform screenshot,
+  and a `page.goto` commit timeout. Persistent blanks still fail. The default
+  attempt limit is two and can be tuned with
+  `REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS`.
 - target app endpoint isolation. The generated Playwright web server ignores
   ambient target-repo `API_ENDPOINT` / `WS_ENDPOINT` values and supplies safe
   remote defaults through `REVIEWBOT_RESPONSIVENESS_API_ENDPOINT`,
@@ -250,7 +261,8 @@ Each context/route check records:
   branch detection, bottom navigation visibility, Android keyboard CSS
   variable, open-mobile handoff prompt, and profile-probe failures/warnings.
 - a full-page screenshot when possible, otherwise a viewport screenshot with a
-  fallback warning.
+  fallback warning, or `screenshot unavailable` when content rendered but both
+  capture modes timed out.
 
 Hard failures fail the workflow. Non-fatal console errors and 4xx responses are
 reported as warnings.

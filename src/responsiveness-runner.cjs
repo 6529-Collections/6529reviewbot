@@ -866,63 +866,118 @@ for (const route of routes) {
     });
 
     const startedAt = Date.now();
+    const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
+    const routeAttemptLimit = Number(process.env.REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS || 2) || 2;
+    const maxRouteAttempts = Math.max(1, routeAttemptLimit);
+    const retryWarnings = [];
     let responseStatus = null;
     let responseUrl = "";
-    try {
-      const response = await page.goto(route, {
-        waitUntil: "commit",
-        timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_GOTO_TIMEOUT_MS || 12000),
-      });
-      responseStatus = response ? response.status() : null;
-      responseUrl = response ? response.url() : page.url();
-      await settlePage(page, pageErrors);
-    } catch (error) {
-      pageErrors.push(sanitizeMessage(error.message || String(error)));
-    }
-
     let contentReadiness = {
       ok: false,
       reason: "content readiness was not checked",
       durationMs: 0,
       metrics: null,
     };
-    try {
-      contentReadiness = await waitForMeaningfulAppContent(page);
-    } catch (error) {
+    let metrics = fallbackMetrics(page);
+    let screenshotWarnings = [];
+    let screenshotResult = { ok: false, warnings: [], error: "screenshot was not attempted" };
+    let screenshotAnalysis = {
+      available: false,
+      reason: "screenshot analysis was not attempted",
+    };
+
+    for (let attempt = 1; attempt <= maxRouteAttempts; attempt += 1) {
+      responseStatus = null;
+      responseUrl = "";
       contentReadiness = {
         ok: false,
-        reason: \`content readiness check failed: \${sanitizeMessage(error.message || String(error))}\`,
+        reason: "content readiness was not checked",
         durationMs: 0,
         metrics: null,
       };
-    }
+      metrics = fallbackMetrics(page);
+      screenshotWarnings = [];
+      screenshotResult = { ok: false, warnings: [], error: "screenshot was not attempted" };
+      screenshotAnalysis = {
+        available: false,
+        reason: "screenshot analysis was not attempted",
+      };
 
-    const metricsResult = contentReadiness.metrics
-      ? { ok: true, metrics: contentReadiness.metrics }
-      : await readMetrics(page);
-    if (!metricsResult.ok) {
-      pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
-    }
-    const metrics = metricsResult.metrics || fallbackMetrics(page);
-    metrics.nextErrorOverlayText = summarizeOverlayText(metrics.nextErrorOverlayText);
+      try {
+        const response = await page.goto(route, {
+          waitUntil: "commit",
+          timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_GOTO_TIMEOUT_MS || 12000),
+        });
+        responseStatus = response ? response.status() : null;
+        responseUrl = response ? response.url() : page.url();
+        await settlePage(page, pageErrors);
+      } catch (error) {
+        pageErrors.push(sanitizeMessage(error.message || String(error)));
+      }
 
-    const screenshotPath = path.join(screenshotsDir, \`\${safeName(mode)}--\${safeName(route)}.png\`);
-    const screenshotWarnings = [];
-    const screenshotResult = await captureScreenshotWithFallback(page, screenshotPath);
-    screenshotWarnings.push(...screenshotResult.warnings);
-    if (!screenshotResult.ok) {
-      pageErrors.push(screenshotResult.error);
+      try {
+        contentReadiness = await waitForMeaningfulAppContent(page);
+      } catch (error) {
+        contentReadiness = {
+          ok: false,
+          reason: \`content readiness check failed: \${sanitizeMessage(error.message || String(error))}\`,
+          durationMs: 0,
+          metrics: null,
+        };
+      }
+
+      const metricsResult = contentReadiness.metrics
+        ? { ok: true, metrics: contentReadiness.metrics }
+        : await readMetrics(page);
+      if (!metricsResult.ok) {
+        pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
+      }
+      metrics = metricsResult.metrics || fallbackMetrics(page);
+      metrics.nextErrorOverlayText = summarizeOverlayText(metrics.nextErrorOverlayText);
+
+      screenshotResult = await captureScreenshotWithFallback(page, screenshotPath);
+      screenshotWarnings.push(...screenshotResult.warnings);
+      if (!screenshotResult.ok) {
+        if (metrics.contentReady) {
+          screenshotWarnings.push(\`screenshot unavailable after content rendered: \${screenshotResult.error}\`);
+        } else {
+          pageErrors.push(screenshotResult.error);
+        }
+      }
+      screenshotAnalysis = await analyzeScreenshot(screenshotPath).catch((error) => ({
+        available: false,
+        error: sanitizeMessage(error.message || String(error)),
+      }));
+
+      if (
+        attempt < maxRouteAttempts &&
+        isTransientRouteAttemptFailure({
+          responseStatus,
+          metrics,
+          screenshotAnalysis,
+          pageErrors,
+        })
+      ) {
+        retryWarnings.push(
+          "route check retried after transient blank dev-server attempt: " +
+            summarizeRouteAttemptFailure({ route, pageErrors, contentReadiness })
+        );
+        fs.rmSync(screenshotPath, { force: true });
+        consoleErrors.length = 0;
+        pageErrors.length = 0;
+        networkFailures.length = 0;
+        networkResponses.length = 0;
+        await page.goto("about:blank", { waitUntil: "commit", timeout: 5000 }).catch(() => {});
+        continue;
+      }
+      break;
     }
-    const screenshotAnalysis = await analyzeScreenshot(screenshotPath).catch((error) => ({
-      available: false,
-      error: sanitizeMessage(error.message || String(error)),
-    }));
     const nextAssetProblems = [
       ...networkFailures.filter(isNextAssetProblem),
       ...networkResponses.filter(isNextAssetProblem),
     ];
 
-    const warnings = [...screenshotWarnings];
+    const warnings = [...retryWarnings, ...screenshotWarnings];
     const failures = [];
     if (responseStatus === null) {
       failures.push("navigation did not produce a response");
@@ -1078,6 +1133,31 @@ async function settlePage(page, pageErrors) {
     }
   }
   pageErrors.push("page did not settle after client navigation");
+}
+
+function isTransientRouteAttemptFailure({ responseStatus, metrics, screenshotAnalysis, pageErrors }) {
+  if (responseStatus !== null || metrics.contentReady || metrics.nextErrorOverlay) {
+    return false;
+  }
+  if (!screenshotAnalysis.blankLike) {
+    return false;
+  }
+  return pageErrors.some(isGotoCommitTimeout);
+}
+
+function isGotoCommitTimeout(message) {
+  return /page\\.goto: Timeout .* waiting until ["']commit["']/.test(String(message || ""));
+}
+
+function summarizeRouteAttemptFailure({ route, pageErrors, contentReadiness }) {
+  const reasons = [];
+  if (contentReadiness.reason) {
+    reasons.push(contentReadiness.reason);
+  }
+  if (pageErrors.length > 0) {
+    reasons.push(pageErrors[0]);
+  }
+  return (String(route) + ": " + reasons.join("; ")).slice(0, 500);
 }
 
 async function captureScreenshotWithFallback(page, screenshotPath) {
