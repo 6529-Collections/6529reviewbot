@@ -337,6 +337,7 @@ assert(responsivenessSpec.includes("route check retried after transient blank de
 assert(responsivenessSpec.includes("screenshotAnalysis.available === false"));
 assert(responsivenessSpec.includes("await page.waitForTimeout(250);"));
 assert(responsivenessSpec.includes("hasMeaningfulScreenshotEvidence"));
+assert(responsivenessSpec.includes("shouldAttemptLateContentRecovery"));
 assert(responsivenessSpec.includes("isRecoverableRenderedNavigationTimeout"));
 assert(responsivenessSpec.includes("content readiness recovered after screenshot capture"));
 assert(responsivenessSpec.includes("navigation response unavailable after commit timeout, but meaningful content rendered"));
@@ -349,12 +350,15 @@ vm.runInNewContext(
   `${retryHelpersSource}
 globalThis.__isTransientRouteAttemptFailure = isTransientRouteAttemptFailure;
 globalThis.__hasMeaningfulScreenshotEvidence = hasMeaningfulScreenshotEvidence;
+globalThis.__shouldAttemptLateContentRecovery = shouldAttemptLateContentRecovery;
 globalThis.__isRecoverableRenderedNavigationTimeout = isRecoverableRenderedNavigationTimeout;
 globalThis.__readPositiveIntegerEnv = readPositiveIntegerEnv;`,
   retryHelpersContext
 );
 const transientRouteAttempt = retryHelpersContext.__isTransientRouteAttemptFailure;
 const meaningfulScreenshot = retryHelpersContext.__hasMeaningfulScreenshotEvidence;
+const shouldAttemptLateContentRecovery =
+  retryHelpersContext.__shouldAttemptLateContentRecovery;
 const recoverableRenderedNavigationTimeout =
   retryHelpersContext.__isRecoverableRenderedNavigationTimeout;
 const gotoCommitTimeout =
@@ -407,6 +411,27 @@ assert.equal(
 assert.equal(meaningfulScreenshot({ available: true, blankLike: false }), true);
 assert.equal(meaningfulScreenshot({ available: true, blankLike: true }), false);
 assert.equal(meaningfulScreenshot({ available: false, blankLike: false }), false);
+assert.equal(
+  shouldAttemptLateContentRecovery({
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: false },
+  }),
+  true
+);
+assert.equal(
+  shouldAttemptLateContentRecovery({
+    metrics: { contentReady: false, nextErrorOverlay: true },
+    screenshotAnalysis: { available: true, blankLike: false },
+  }),
+  false
+);
+assert.equal(
+  shouldAttemptLateContentRecovery({
+    metrics: { contentReady: false, nextErrorOverlay: false },
+    screenshotAnalysis: { available: true, blankLike: true },
+  }),
+  false
+);
 assert.equal(
   recoverableRenderedNavigationTimeout({
     metrics: { contentReady: true, nextErrorOverlay: false },

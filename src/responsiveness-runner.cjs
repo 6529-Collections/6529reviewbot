@@ -949,9 +949,10 @@ for (const route of routes) {
       }));
 
       if (
-        !metrics.contentReady &&
-        !metrics.nextErrorOverlay &&
-        hasMeaningfulScreenshotEvidence(screenshotAnalysis)
+        shouldAttemptLateContentRecovery({
+          metrics,
+          screenshotAnalysis,
+        })
       ) {
         const lateMetricsResult = await readMetrics(page);
         if (lateMetricsResult.ok) {
@@ -964,7 +965,7 @@ for (const route of routes) {
               reason: lateMetrics.contentReady
                 ? "6529 app shell rendered meaningful content after screenshot capture"
                 : "Next.js error overlay became visible after screenshot capture",
-              durationMs: contentReadiness.durationMs,
+              durationMs: Date.now() - startedAt,
               metrics: lateMetrics,
             };
             if (lateMetrics.contentReady) {
@@ -1012,7 +1013,6 @@ for (const route of routes) {
 
     const warnings = [...retryWarnings, ...screenshotWarnings];
     const failures = [];
-    const contentRenderedWithScreenshot = hasRenderedContentEvidence({ metrics, screenshotAnalysis });
     const recoverableRenderedNavigationTimeout = isRecoverableRenderedNavigationTimeout({
       metrics,
       screenshotAnalysis,
@@ -1198,6 +1198,10 @@ function hasMeaningfulScreenshotEvidence(screenshotAnalysis) {
 
 function hasRenderedContentEvidence({ metrics, screenshotAnalysis }) {
   return Boolean(metrics?.contentReady && hasMeaningfulScreenshotEvidence(screenshotAnalysis) && !metrics.nextErrorOverlay);
+}
+
+function shouldAttemptLateContentRecovery({ metrics, screenshotAnalysis }) {
+  return Boolean(!metrics?.contentReady && !metrics?.nextErrorOverlay && hasMeaningfulScreenshotEvidence(screenshotAnalysis));
 }
 
 function isRecoverableRenderedNavigationTimeout({ metrics, screenshotAnalysis, pageErrors }) {
