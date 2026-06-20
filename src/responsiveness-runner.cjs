@@ -1103,6 +1103,7 @@ async function captureScreenshotWithFallback(page, screenshotPath) {
         warnings: [\`full-page screenshot failed; used viewport fallback: \${fullPageError}\`],
       };
     } catch (fallbackError) {
+      fs.rmSync(screenshotPath, { force: true });
       return {
         ok: false,
         error: \`screenshot failed: \${fullPageError}; viewport fallback failed: \${sanitizeMessage(fallbackError.message || String(fallbackError))}\`,

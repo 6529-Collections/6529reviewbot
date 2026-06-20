@@ -327,6 +327,7 @@ assert(responsivenessSpec.includes("captureScreenshotWithFallback"));
 assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_SCREENSHOT_TIMEOUT_MS || 20000"));
 assert(responsivenessSpec.includes("REVIEWBOT_RESPONSIVENESS_VIEWPORT_SCREENSHOT_TIMEOUT_MS || 10000"));
 assert(responsivenessSpec.includes("full-page screenshot failed; used viewport fallback"));
+assert(responsivenessSpec.includes("fs.rmSync(screenshotPath, { force: true })"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
 assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
