@@ -220,12 +220,16 @@ Each context/route check records:
   instead of a production CloudFront `web_build` prefix. Local `/_next/image`
   optimizer requests for remote content images are not treated as build-asset
   leaks.
-- browser-based prewarm before assertions. The runner first performs lightweight
-  HTTP prewarm and then visits each planned route/context in Chromium before
-  parallel checks start. This lets Next.js/Turbopack finish route and client
-  chunk compilation before screenshots are used as evidence. Set
+- bounded browser-based prewarm before assertions. The runner first performs
+  lightweight HTTP prewarm and then visits planned routes in one Chromium
+  desktop context before parallel checks start. This lets Next.js/Turbopack
+  finish route and client chunk compilation before screenshots are used as
+  evidence without multiplying CI load by every viewport. The prewarm has a
+  default 120s wall-clock budget, a default 30s per-route timeout, and aborts
+  repeated metric-evaluation failures. Set
   `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
-  debugging.
+  debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
+  comma-separated context list only when debugging context-specific compilation.
 - target app endpoint isolation. The generated Playwright web server ignores
   ambient target-repo `API_ENDPOINT` / `WS_ENDPOINT` values and supplies safe
   remote defaults through `REVIEWBOT_RESPONSIVENESS_API_ENDPOINT`,

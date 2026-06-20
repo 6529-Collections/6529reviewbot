@@ -693,9 +693,16 @@ async function fetchWithTimeout(url, timeoutMs) {
 }
 
 async function browserPrewarm(baseURL) {
+  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000);
+  const deadline = Date.now() + budgetMs;
+  const prewarmContexts = selectPrewarmContexts(contexts);
   const browser = await chromium.launch();
   try {
-    for (const contextInfo of contexts) {
+    for (const contextInfo of prewarmContexts) {
+      if (Date.now() >= deadline) {
+        console.warn("[responsiveness prewarm] budget exhausted before " + contextInfo.name);
+        return;
+      }
       const context = await browser.newContext({
         ...devices["Desktop Chrome"],
         viewport: contextInfo.viewport,
@@ -707,7 +714,11 @@ async function browserPrewarm(baseURL) {
       try {
         const page = await context.newPage();
         for (const route of routes) {
-          await visitForPrewarm(page, new URL(route, baseURL).toString(), route);
+          if (Date.now() >= deadline) {
+            console.warn("[responsiveness prewarm] budget exhausted after " + route);
+            return;
+          }
+          await visitForPrewarm(page, new URL(route, baseURL).toString(), route, deadline);
         }
       } finally {
         await context.close().catch(() => {});
@@ -718,12 +729,39 @@ async function browserPrewarm(baseURL) {
   }
 }
 
-async function visitForPrewarm(page, url, route) {
-  const timeoutMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 45000);
+function selectPrewarmContexts(allContexts) {
+  const requested = String(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS || "").trim();
+  if (/^all$/i.test(requested)) {
+    return allContexts;
+  }
+  if (requested) {
+    const names = new Set(requested.split(",").map((value) => value.trim()).filter(Boolean));
+    const selected = allContexts.filter((context) => names.has(context.name));
+    if (selected.length > 0) {
+      return selected;
+    }
+    console.warn("[responsiveness prewarm] no requested contexts matched; falling back to web-desktop");
+  }
+  const desktopContext = allContexts.filter((context) => context.name === "web-desktop").slice(0, 1);
+  return desktopContext.length > 0 ? desktopContext : allContexts.slice(0, 1);
+}
+
+async function visitForPrewarm(page, url, route, deadline) {
+  const remainingMs = Math.max(0, deadline - Date.now());
+  const timeoutMs = Math.min(
+    Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000),
+    remainingMs
+  );
+  if (timeoutMs <= 0) {
+    return;
+  }
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
-    await waitForPrewarmReadiness(page, timeoutMs);
-    await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {});
+    await waitForPrewarmReadiness(page, Math.min(timeoutMs, Math.max(0, deadline - Date.now())));
+    const networkIdleMs = Math.min(3000, Math.max(0, deadline - Date.now()));
+    if (networkIdleMs > 0) {
+      await page.waitForLoadState("networkidle", { timeout: networkIdleMs }).catch(() => {});
+    }
   } catch (error) {
     console.warn("[responsiveness prewarm] " + route + ": " + sanitizeMessage(error.message || String(error)));
   }
@@ -731,6 +769,7 @@ async function visitForPrewarm(page, url, route) {
 
 async function waitForPrewarmReadiness(page, timeoutMs) {
   const startedAt = Date.now();
+  let evaluateFailures = 0;
   while (Date.now() - startedAt <= timeoutMs) {
     const state = await page.evaluate(() => {
       const compact = (value) => String(value || "").replace(/\\s+/g, " ").trim();
@@ -747,7 +786,18 @@ async function waitForPrewarmReadiness(page, timeoutMs) {
         appReady: appSignals || bodyText.length >= 20,
         compiling: /\\bCompiling\\b/i.test(overlayText),
       };
-    }).catch(() => ({ appReady: false, compiling: true }));
+    }).catch((error) => {
+      evaluateFailures += 1;
+      return {
+        appReady: false,
+        compiling: true,
+        fatal: evaluateFailures >= 3,
+        error: sanitizeMessage(error.message || String(error)),
+      };
+    });
+    if (state.fatal) {
+      throw new Error("prewarm metrics unavailable: " + state.error);
+    }
     if (state.appReady && !state.compiling) {
       return;
     }

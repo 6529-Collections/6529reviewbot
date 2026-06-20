@@ -328,7 +328,12 @@ assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS |
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
 assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM"));
-assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 45000"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000"));
+assert(responsivenessGlobalSetup.includes("selectPrewarmContexts(contexts)"));
+assert(responsivenessGlobalSetup.includes('context.name === "web-desktop"'));
+assert(responsivenessGlobalSetup.includes('requested.split(",")'));
+assert(responsivenessGlobalSetup.includes("evaluateFailures >= 3"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_API_ENDPOINT"));
 assert(responsivenessConfig.includes('API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io"'));
