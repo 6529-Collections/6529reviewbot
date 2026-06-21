@@ -1,6 +1,6 @@
 # Review Workflows
 
-The bot supports eleven review modes.
+The bot supports fifteen review modes.
 
 In the central GitHub App, a trigger becomes one or more review jobs. Each job
 has one review mode and one lane. Model-backed jobs use provider/model lanes;
@@ -202,6 +202,98 @@ Focus:
 - Sharp, ffmpeg, image/video/PDF/CSV parsing, malformed-media handling, and
   resource exhaustion;
 - retry, idempotency, receipt/status persistence, and hostile-input tests.
+
+## Safe Write Path Review
+
+Entrypoint:
+
+```bash
+node bin/safe-write-review.cjs
+```
+
+Focus:
+
+- Safe runtime gating, wallet connection, chain id, Safe address, and explicit
+  user intent before any write path;
+- typed and constrained transaction builders with allowlisted targets,
+  selectors, value, operation type, and argument encoders;
+- mainnet or configured-chain enforcement before transaction assembly,
+  simulation, copy-to-clipboard, or Safe SDK submission;
+- prevention of untrusted route params, query params, API responses, local
+  storage, or rendered copy from altering transaction facts;
+- consistency across UI text, copied calldata, decoded preview, simulation
+  input, and submitted Safe transaction;
+- stale owner, threshold, module, nonce, queue, Safe version, and simulation
+  preflight risks;
+- confused-deputy flows that turn read-only previews or helpers into
+  write-capable Safe operations.
+
+## Release And Deployment Review
+
+Entrypoint:
+
+```bash
+node bin/release-deploy-review.cjs
+```
+
+Focus:
+
+- GitHub Actions permissions, OIDC trust, environments, branch/tag filters,
+  reusable workflow inputs, and secret exposure;
+- pinned and auditable actions, install scripts, dependency fetches, and
+  release tooling for a security-sensitive app;
+- deployable artifact provenance such as commit, checksum, manifest, SBOM, or
+  equivalent evidence where the workflow expects it;
+- S3, CloudFront, Route53, WAF, CSP, CORS, cache invalidation, and origin
+  boundary changes;
+- wrong bucket or distribution targets, stale artifacts, accidental production
+  publishes, and silent fallback to local or default credentials;
+- staging versus production and canonical-origin ambiguity.
+
+## Privacy And Evidence Review
+
+Entrypoint:
+
+```bash
+node bin/privacy-evidence-review.cjs
+```
+
+Focus:
+
+- wallet addresses, Safe owners, thresholds, transaction hashes, signatures,
+  calldata, session identifiers, support artifacts, and public evidence;
+- logs, analytics, error reporting, screenshots, artifacts, model prompts, and
+  PR comments that could leak sensitive wallet or transaction material;
+- support bundles and audit evidence that must redact or minimize user-specific
+  data while preserving reproducible public facts;
+- privacy notices, retention controls, and exported records matching actual
+  collection behavior;
+- hidden telemetry, fingerprinting, broad local storage, or provider calls on
+  signer-critical paths;
+- accidental disclosure in markdown, runbooks, workflow logs, private
+  endpoints, raw provider responses, or internal evidence URLs.
+
+## Signer UX Review
+
+Entrypoint:
+
+```bash
+node bin/signer-ux-review.cjs
+```
+
+Focus:
+
+- signer-critical screens showing human meaning, affected collection or
+  contract, action, amount or value, chain, target address, and consequences;
+- warnings, disabled states, copy, decoded calldata, simulation summaries, and
+  final submit controls that must not contradict each other;
+- dangerous or irreversible action blockers and confirmations;
+- long, translated, responsive, and assistive-technology presentations of
+  signer-critical facts;
+- loading, error, stale data, unsupported Safe, wrong network, and simulation
+  failure states that should stop ambiguous signing;
+- keyboard, focus, and accessible-name behavior where it affects a signer
+  decision.
 
 ## GLM Swarm Review
 

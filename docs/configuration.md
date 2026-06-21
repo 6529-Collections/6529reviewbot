@@ -176,15 +176,17 @@ review kind and one provider/model lane.
 
 ```text
 REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=12
 ```
 
 Leave `REVIEWBOT_REVIEW_LANES` empty to create one lane from `REVIEW_PROVIDER`
 and `REVIEW_MODEL`, or from the provider default variables above.
 
-The default max-jobs cap is `8`, enough for the four default initial review
-kinds across two provider/model lanes. Raise it deliberately for trusted
-high-volume deployments after budgets and worker capacity have been reviewed.
+The default max-jobs cap is `12`, enough for the four default initial review
+kinds across two provider/model lanes, or for a one-lane specialist profile
+such as `6529-safe-app` with GLM swarm and responsiveness. Raise it
+deliberately for trusted high-volume deployments after budgets and worker
+capacity have been reviewed.
 
 Use explicit OpenRouter lanes because OpenRouter model routing affects cost and
 provider trust:
@@ -298,6 +300,26 @@ It can disable the bot, narrow review kinds, select from centrally allowed
 lanes, lower job fanout, add stricter admission rules, and add tighter budget
 caps. It cannot add a model lane that is not already allowed by central
 `REVIEWBOT_REVIEW_LANES`, and it cannot raise central budget caps.
+
+For `6529-safe-app`, enable the Safe App specialist lanes in the repository's
+base-ref config instead of the global initial set:
+
+```yaml
+version: 1
+enabled: true
+
+reviewKinds:
+  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, safe-write, release-deploy, privacy-evidence, signer-ux, glm-swarm, responsiveness]
+  initial: [general, i18n, security, safe-write, release-deploy, privacy-evidence, signer-ux, responsiveness, glm-swarm]
+  followup: [followup]
+
+limits:
+  maxJobsPerDelivery: 9
+```
+
+That profile assumes one configured provider/model lane for model-backed
+reviews. If central `REVIEWBOT_REVIEW_LANES` contains multiple ordinary lanes,
+raise or narrow caps deliberately after reviewing budget and worker capacity.
 
 See [repository-config.md](repository-config.md).
 

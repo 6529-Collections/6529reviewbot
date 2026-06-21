@@ -117,7 +117,7 @@ function checkConservativeRuntimeDefaults(installText, centralEnvText, findings)
     "REVIEWBOT_DRAFT_PR_MODE=skip",
     "REVIEWBOT_REPOSITORY_CONFIG_SOURCE=github",
     "REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8",
-    "REVIEWBOT_MAX_JOBS_PER_DELIVERY=8",
+    "REVIEWBOT_MAX_JOBS_PER_DELIVERY=12",
     "REVIEWBOT_WORKER_ADAPTER=noop",
     "REVIEWBOT_WORKER_GITHUB_DISPATCH_MODE=api",
     "REVIEWBOT_BUDGET_MODE=enforce",

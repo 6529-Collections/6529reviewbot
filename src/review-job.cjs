@@ -7,7 +7,7 @@ const {
   defaultProvider,
   normalizeProvider,
 } = require("./model-catalog.cjs");
-const DEFAULT_MAX_JOBS_PER_DELIVERY = 8;
+const DEFAULT_MAX_JOBS_PER_DELIVERY = 12;
 const RESPONSIVENESS_REVIEW_KIND = "responsiveness";
 const GLM_SWARM_REVIEW_KIND = "glm-swarm";
 const GLM_SWARM_REVIEW_LANE = Object.freeze({

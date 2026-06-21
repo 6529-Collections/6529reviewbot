@@ -11,12 +11,20 @@ requests.
 ## What It Does
 
 - Reviews pull requests with Anthropic, OpenAI, or OpenRouter models.
-- Supports seven review modes:
+- Supports fifteen review modes:
   - general PR review
   - follow-up commit review
   - WCAG 2.2 AA accessibility analysis
   - i18n analysis
   - crypto/security analysis
+  - backend deploy/actions analysis
+  - backend auth/API contract analysis
+  - DB/Lambda dataflow analysis
+  - media/external input analysis
+  - 6529 Safe App write-path analysis
+  - release and deployment analysis
+  - privacy and evidence handling analysis
+  - Safe App signer UX analysis
   - advisory GLM 5.2 swarm synthesis through OpenRouter
   - deterministic responsiveness review
 - Posts one top-level PR comment per review run.
@@ -641,12 +649,13 @@ Central App job fanout:
 
 ```text
 REVIEWBOT_REVIEW_LANES=anthropic:claude-opus-4-8,openai:gpt-5.5
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=12
 ```
 
-The default max-jobs cap is `8`, enough for the four standard review kinds
-across two provider/model lanes. Raise it only for trusted high-volume
-deployments with reviewed budgets and worker capacity.
+The default max-jobs cap is `12`, enough for the standard initial set across
+two provider/model lanes, or for a one-lane specialist profile such as
+`6529-safe-app` with GLM swarm and responsiveness. Raise it only for trusted
+high-volume deployments with reviewed budgets and worker capacity.
 
 Runtime control:
 

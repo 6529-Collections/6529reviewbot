@@ -7,8 +7,8 @@ They make fanout explicit before any provider call happens.
 
 A single GitHub event can request more than one unit of work:
 
-- an opened PR can request general, WCAG, i18n, security, configured
-  backend-specialized reviews, and configured responsiveness reviews;
+- an opened PR can request general, WCAG, i18n, security, configured backend
+  or Safe App specialist reviews, and configured responsiveness reviews;
 - a synchronize event can request a follow-up review;
 - a maintainer comment can request one kind, multiple kinds, or all default
   kinds;
@@ -101,12 +101,13 @@ lanes; it cannot introduce a new provider or model by editing repo config.
 Use this variable to cap accidental or malicious fanout:
 
 ```text
-REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
+REVIEWBOT_MAX_JOBS_PER_DELIVERY=12
 ```
 
 The app denies a delivery that would create more jobs than this limit. This is
-a pre-provider guardrail. The default is `8`, enough for the four default
-initial review kinds across two provider/model lanes. Raise it only for
+a pre-provider guardrail. The default is `12`, enough for the standard initial
+set across two provider/model lanes, or for a one-lane specialist profile such
+as `6529-safe-app` with GLM swarm and responsiveness. Raise it only for
 trusted high-volume deployments with reviewed budgets and worker capacity.
 
 `npm run check:self-dogfood-replay` exercises this guard through the webhook
