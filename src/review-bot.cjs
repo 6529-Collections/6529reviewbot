@@ -211,6 +211,70 @@ const KIND_CONFIGS = {
       "Receipt/status persistence, retry behavior, idempotency, user-visible error states, and tests around hostile or oversized inputs.",
     ],
   },
+  "safe-write": {
+    label: "Safe write path review",
+    cleanVerdict: "No Safe write findings",
+    verdicts: "No Safe write findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed code for 6529 Safe App transaction integrity: only explicitly reviewed, intended Safe writes should be buildable or submittable.",
+    focus: [
+      "Write paths must be gated by the expected Safe runtime state, wallet connection, chain id, Safe address, and explicit user intent.",
+      "Transaction builders should be typed and constrained, with allowlisted target contracts, selectors, value, operation type, and argument encoders.",
+      "Mainnet-only or configured-chain assumptions must be enforced before transaction assembly, simulation, copy-to-clipboard, or Safe SDK submission.",
+      "Changed code must not let untrusted route params, query params, API responses, local storage, or rendered copy alter calldata, target, value, nonce, operation, or chain.",
+      "The UI text, copied calldata, decoded transaction preview, simulation input, and submitted Safe transaction must describe the same action.",
+      "Preflight checks should catch stale Safe owner/threshold/module state, nonce drift, queue conflicts, unsupported Safe versions, and simulation failures where the app relies on them.",
+      "Reject confused-deputy flows that transform a read-only preview, test fixture, or helper into a write-capable Safe operation.",
+    ],
+  },
+  "release-deploy": {
+    label: "release and deployment review",
+    cleanVerdict: "No release/deployment findings",
+    verdicts: "No release/deployment findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed release, CI/CD, hosting, and deployment code for risks that could ship an unintended or unverifiable 6529 Safe App.",
+    focus: [
+      "GitHub Actions permissions, OIDC trust, environment protections, branch/tag filters, reusable workflow inputs, and secret exposure.",
+      "Third-party actions, install scripts, dependency fetches, and release tooling should be pinned, scoped, and auditable for a security-sensitive app.",
+      "Build artifacts should be reproducible enough to identify what was deployed, with clear commit, checksum, manifest, SBOM, or provenance evidence where the workflow expects it.",
+      "S3, CloudFront, Route53, WAF, CSP, CORS, cache invalidation, and origin configuration changes should not weaken the public app boundary.",
+      "Deployment scripts must avoid stale artifacts, wrong bucket or distribution targets, accidental production publishes, and silent fallback to local or default credentials.",
+      "Release notes, version metadata, and runtime config should make staging versus production and canonical origins unambiguous.",
+      "Do not request broad process changes unless the changed code creates a concrete release integrity or rollback risk.",
+    ],
+  },
+  "privacy-evidence": {
+    label: "privacy and evidence review",
+    cleanVerdict: "No privacy/evidence findings",
+    verdicts: "No privacy/evidence findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed code for privacy, logging, support, and evidence-handling risks around wallet users and Safe transactions.",
+    focus: [
+      "Wallet addresses, Safe owners, thresholds, transaction hashes, signatures, calldata, session identifiers, and support artifacts should be handled intentionally.",
+      "Logs, analytics, error reporting, screenshots, artifacts, model prompts, and PR comments must not leak sensitive wallet or transaction material beyond the documented boundary.",
+      "Support bundles and audit evidence should redact or minimize user-specific data while preserving enough public, reproducible facts for operators.",
+      "Privacy notices, retention controls, and exported records should match actual collection behavior when code adds telemetry, persistence, or external reporting.",
+      "Do not add hidden telemetry, fingerprinting, broad local storage, or provider calls on signer-critical paths without clear user and operator purpose.",
+      "Review markdown, runbooks, and workflow logs for accidental disclosure of secrets, private endpoints, raw provider responses, or internal evidence URLs.",
+      "Only flag privacy concerns grounded in changed code or changed documentation; avoid generic blockchain privacy commentary.",
+    ],
+  },
+  "signer-ux": {
+    label: "signer UX review",
+    cleanVerdict: "No signer UX findings",
+    verdicts: "No signer UX findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed user-facing Safe App flows for whether signers can understand exactly what they are about to approve or reject.",
+    focus: [
+      "Signer-critical screens should show the human meaning, affected collection or contract, action, amount/value, chain, target address, and consequences before any write action.",
+      "Warnings, disabled states, copy, decoded calldata, simulation summaries, and final submit controls must not contradict each other.",
+      "Dangerous or irreversible actions should have clear blockers or confirmations, not reassuring language that hides risk or uncertainty.",
+      "Long, translated, responsive, or assistive-technology presentations must not clip, obscure, or reorder signer-critical facts.",
+      "Loading, error, stale data, unsupported Safe, wrong network, and simulation failure states should make the signer stop rather than continue ambiguously.",
+      "Review whether changed components preserve keyboard, focus, and accessible-name behavior where it affects a signer decision.",
+      "Avoid subjective visual polish feedback unless it can mislead a signer or hide material transaction meaning.",
+    ],
+  },
   responsiveness: {
     label: "responsiveness review",
     cleanVerdict: "Responsive checks passed",

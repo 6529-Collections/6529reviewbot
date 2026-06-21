@@ -326,7 +326,7 @@ function normalizeInboxEvent(event = {}) {
     commentId: nullableNumber(event.commentId),
     commandName: boundedString(event.commandName),
     reviewKinds: Array.isArray(event.reviewKinds)
-      ? event.reviewKinds.map((kind) => boundedString(kind)).filter(Boolean).slice(0, 10)
+      ? event.reviewKinds.map((kind) => boundedString(kind)).filter(Boolean).slice(0, 16)
       : [],
   };
 }

@@ -261,6 +261,14 @@ Comment command routing:
 /6529bot wcag
 /6529bot i18n
 /6529bot security
+/6529bot deploy-actions
+/6529bot auth-api
+/6529bot db-lambda
+/6529bot media-external
+/6529bot safe-write
+/6529bot release-deploy
+/6529bot privacy-evidence
+/6529bot signer-ux
 @6529bot review all
 ```
 

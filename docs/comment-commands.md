@@ -28,7 +28,8 @@ Runs the default comment review kind: `general`.
 Runs the initial-review set: `general`, `wcag`, `i18n`, and `security`.
 `followup` is intentionally not included in `all`; it is for commit follow-up
 work. Specialized kinds such as `deploy-actions`, `auth-api`, `db-lambda`,
-`media-external`, `responsiveness`, and `glm-swarm` are also intentionally not
+`media-external`, `safe-write`, `release-deploy`, `privacy-evidence`,
+`signer-ux`, `responsiveness`, and `glm-swarm` are also intentionally not
 included in `all`; repos opt them into automatic initial reviews with
 repository config, or maintainers can request them explicitly.
 
@@ -39,6 +40,10 @@ repository config, or maintainers can request them explicitly.
 /6529bot review auth-api
 /6529bot review db-lambda
 /6529bot review media-external
+/6529bot review safe-write
+/6529bot review release-deploy
+/6529bot review privacy-evidence
+/6529bot review signer-ux
 ```
 
 Runs the listed review kinds. Unknown words are ignored. If no known review
@@ -54,6 +59,10 @@ kind is listed, the command falls back to `general`.
 /6529bot auth-api
 /6529bot db-lambda
 /6529bot media-external
+/6529bot safe-write
+/6529bot release-deploy
+/6529bot privacy-evidence
+/6529bot signer-ux
 /6529bot glm-swarm
 /6529bot responsiveness
 ```
@@ -81,6 +90,10 @@ deploy-actions  deployment, CI, GitHub Actions, AWS, and rollout controls
 auth-api  backend auth, route permissions, OpenAPI, and API compatibility
 db-lambda  database, migration, Lambda loop, queue, and event dataflow risks
 media-external  uploads, S3, media parsing, safe-fetch, and external ingest
+safe-write  Safe App transaction integrity and write-path constraints
+release-deploy  release, CI/CD, artifact, and hosting integrity risks
+privacy-evidence  privacy, redaction, support, and evidence handling risks
+signer-ux  signer decision clarity and transaction-meaning UX risks
 glm-swarm  advisory OpenRouter GLM 5.2 swarm synthesis for Codex feedback
 responsiveness  deterministic changed-route viewport and app-shell checks
 ```
@@ -126,6 +139,12 @@ Conservative dogfood command:
 
 ```text
 /6529bot security
+```
+
+Safe App specialist pass:
+
+```text
+/6529bot review safe-write release-deploy privacy-evidence signer-ux
 ```
 
 Full manual pass:

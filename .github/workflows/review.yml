@@ -149,6 +149,10 @@ jobs:
             auth-api) script="bot/bin/auth-api-review.cjs" ;;
             db-lambda) script="bot/bin/db-lambda-review.cjs" ;;
             media-external) script="bot/bin/media-external-review.cjs" ;;
+            safe-write) script="bot/bin/safe-write-review.cjs" ;;
+            release-deploy) script="bot/bin/release-deploy-review.cjs" ;;
+            privacy-evidence) script="bot/bin/privacy-evidence-review.cjs" ;;
+            signer-ux) script="bot/bin/signer-ux-review.cjs" ;;
             glm-swarm) script="bot/bin/glm-swarm-review.cjs" ;;
             *) echo "::error::Unsupported REVIEW_KIND '${REVIEW_KIND}'."; exit 1 ;;
           esac

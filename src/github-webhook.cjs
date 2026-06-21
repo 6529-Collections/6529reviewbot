@@ -15,6 +15,10 @@ const REVIEW_KINDS = [
   "auth-api",
   "db-lambda",
   "media-external",
+  "safe-write",
+  "release-deploy",
+  "privacy-evidence",
+  "signer-ux",
   "glm-swarm",
   "responsiveness",
 ];

@@ -124,7 +124,7 @@ function formatReleaseNotesMarkdown(draft) {
     "## Highlights",
     "",
     "- Central GitHub App and worker framework for PR review.",
-    "- Review modes: general, follow-up, WCAG 2.2 AA, i18n, crypto/security.",
+    "- Review modes: general, follow-up, WCAG 2.2 AA, i18n, crypto/security, backend specialists, Safe App specialists, GLM swarm, and responsiveness.",
     "- Provider lanes: Anthropic, OpenAI, and OpenRouter through explicit config.",
     "- Public-repo trusted-actor admission before model calls.",
     "- Budget admission and usage telemetry through the isolated reviewbot ledger.",

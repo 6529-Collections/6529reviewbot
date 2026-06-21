@@ -2,7 +2,7 @@ version: 1
 enabled: true
 
 reviewKinds:
-  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, glm-swarm, responsiveness]
+  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, safe-write, release-deploy, privacy-evidence, signer-ux, glm-swarm, responsiveness]
   initial: [general, security]
   followup: [followup]
 

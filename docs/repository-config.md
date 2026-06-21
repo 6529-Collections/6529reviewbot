@@ -69,7 +69,7 @@ version: 1
 enabled: true
 
 reviewKinds:
-  allowed: [general, followup, wcag, i18n, security, glm-swarm, responsiveness]
+  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, safe-write, release-deploy, privacy-evidence, signer-ux, glm-swarm, responsiveness]
   initial: [general, wcag, i18n, security]
   followup: [followup]
 
@@ -127,11 +127,23 @@ followup
 wcag
 i18n
 security
+deploy-actions
+auth-api
+db-lambda
+media-external
+safe-write
+release-deploy
+privacy-evidence
+signer-ux
 glm-swarm
 responsiveness
 ```
 
 `reviewKinds.initial` may include any allowed kind except `followup`.
+The backend specialist kinds are `deploy-actions`, `auth-api`, `db-lambda`,
+and `media-external`. The Safe App specialist kinds are `safe-write`,
+`release-deploy`, `privacy-evidence`, and `signer-ux`. Configure these per
+repository when their domain matches the target app.
 `glm-swarm` is advisory and uses a fixed OpenRouter GLM 5.2 lane; it is not
 part of the default initial review set unless central or repository policy
 explicitly opts it in.
