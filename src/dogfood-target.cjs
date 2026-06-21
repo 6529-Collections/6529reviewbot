@@ -15,6 +15,10 @@ const ALL_REVIEW_KINDS = [
   "wcag",
   "i18n",
   "security",
+  "deploy-actions",
+  "auth-api",
+  "db-lambda",
+  "media-external",
   "glm-swarm",
   "responsiveness",
 ];
@@ -213,7 +217,8 @@ function lanesCheck(config) {
 
 function limitsCheck(config, mode) {
   const maxJobs = config.limits.maxJobsPerDelivery;
-  const recommendedMax = mode === "command-only" ? 2 : 4;
+  const recommendedMax =
+    mode === "command-only" ? 2 : Math.max(4, config.reviewKinds.initial.length);
   if (!maxJobs) {
     return check("limits", "Max jobs per delivery", "error", "No maxJobsPerDelivery cap is configured.");
   }

@@ -11,6 +11,10 @@ const REVIEW_KINDS = [
   "wcag",
   "i18n",
   "security",
+  "deploy-actions",
+  "auth-api",
+  "db-lambda",
+  "media-external",
   "glm-swarm",
   "responsiveness",
 ];

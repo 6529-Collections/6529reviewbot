@@ -7,8 +7,8 @@ They make fanout explicit before any provider call happens.
 
 A single GitHub event can request more than one unit of work:
 
-- an opened PR can request general, WCAG, i18n, security, and configured
-  responsiveness reviews;
+- an opened PR can request general, WCAG, i18n, security, configured
+  backend-specialized reviews, and configured responsiveness reviews;
 - a synchronize event can request a follow-up review;
 - a maintainer comment can request one kind, multiple kinds, or all default
   kinds;
@@ -105,9 +105,9 @@ REVIEWBOT_MAX_JOBS_PER_DELIVERY=8
 ```
 
 The app denies a delivery that would create more jobs than this limit. This is
-a pre-provider guardrail. The default is `8`, enough for the four standard
-review kinds across two provider/model lanes. Raise it only for trusted
-high-volume deployments with reviewed budgets and worker capacity.
+a pre-provider guardrail. The default is `8`, enough for the four default
+initial review kinds across two provider/model lanes. Raise it only for
+trusted high-volume deployments with reviewed budgets and worker capacity.
 
 `npm run check:self-dogfood-replay` exercises this guard through the webhook
 replay path: a deliberate two-lane command creates distinct jobs and run keys,

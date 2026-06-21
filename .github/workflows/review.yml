@@ -145,6 +145,10 @@ jobs:
             wcag) script="bot/bin/wcag-aa-analysis.cjs" ;;
             i18n) script="bot/bin/i18n-analysis.cjs" ;;
             security) script="bot/bin/security-analysis.cjs" ;;
+            deploy-actions) script="bot/bin/deploy-actions-review.cjs" ;;
+            auth-api) script="bot/bin/auth-api-review.cjs" ;;
+            db-lambda) script="bot/bin/db-lambda-review.cjs" ;;
+            media-external) script="bot/bin/media-external-review.cjs" ;;
             glm-swarm) script="bot/bin/glm-swarm-review.cjs" ;;
             *) echo "::error::Unsupported REVIEW_KIND '${REVIEW_KIND}'."; exit 1 ;;
           esac

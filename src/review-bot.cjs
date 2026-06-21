@@ -155,6 +155,62 @@ const KIND_CONFIGS = {
       "Only report realistic exploit paths in changed code; avoid theoretical issues already guarded by authoritative downstream checks.",
     ],
   },
+  "deploy-actions": {
+    label: "deploy/actions review",
+    cleanVerdict: "No deploy/action findings",
+    verdicts: "No deploy/action findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed deployment, CI, GitHub Actions, and operational-control code for 6529 backend rollout risks.",
+    focus: [
+      "GitHub Actions permission scope, action pinning, checkout credentials, token lifetime, and workflow_dispatch or reusable-workflow input trust boundaries.",
+      "Staging/production deploy routing, branch/ref validation, environment selection, service allowlists, and deploy ordering.",
+      "Serverless, Lambda, EventBridge, SQS, IAM, ECR, Docker, and AWS credential handling changes that could overgrant, leak secrets, or deploy the wrong artifact.",
+      "Deploy UI and deploy API paths that gate privileged actions, especially authz, auditability, dry-run behavior, and operator confirmation semantics.",
+      "Generated deploy config drift, missing tests for deployment guardrails, and rollback or partial-failure paths.",
+    ],
+  },
+  "auth-api": {
+    label: "auth/API contract review",
+    cleanVerdict: "No auth/API findings",
+    verdicts: "No auth/API findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed 6529 backend API, auth, OpenAPI, and generated-client contract behavior for access-control and compatibility regressions.",
+    focus: [
+      "Route auth requirements, optional-auth behavior, admin or proxy permissions, request identity propagation, and cache interactions that could bypass checks.",
+      "JWT/session/refresh-token handling, wallet signature verification, Safe/EIP-1271 handling, nonce expiry, replay resistance, and address normalization.",
+      "OpenAPI route generation, request/response DTOs, generated models, error shapes, pagination, sorting, and backward-compatible API contracts.",
+      "CORS, rate limits, webhook/auth callbacks, public/private route boundaries, and validation of path, query, body, and header inputs.",
+      "Tests that should lock route contracts, authz decisions, signature edge cases, and generated-client drift.",
+    ],
+  },
+  "db-lambda": {
+    label: "DB/Lambda dataflow review",
+    cleanVerdict: "No DB/Lambda findings",
+    verdicts: "No DB/Lambda findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed database, migration, Lambda loop, queue, and event-flow code for data loss, duplication, and production reliability risks.",
+    focus: [
+      "TypeORM entities, migrations, generated tables, schema compatibility, nullable/default changes, destructive migrations, and shared table contracts.",
+      "Repository and service transaction boundaries, SQL parameterization, pagination stability, read/write pool selection, locking, retry, and idempotency.",
+      "Lambda loop scheduling, dbMigrationsLoop behavior, concurrency, checkpointing, batch sizing, timeout, and partial-failure recovery.",
+      "SQS, SNS, EventBridge, outbox, producer/consumer payload compatibility, dead-letter handling, duplicate delivery, and ordering assumptions.",
+      "Backfill, replay, and operational paths that need bounded runtime, resumability, metrics, or alertable failure modes.",
+    ],
+  },
+  "media-external": {
+    label: "media/external input review",
+    cleanVerdict: "No media/external input findings",
+    verdicts: "No media/external input findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed media, upload, external-fetch, and third-party-ingest code for untrusted-input security and reliability issues.",
+    focus: [
+      "S3 key construction, bucket privacy, presigned URL constraints, multipart upload completion, content-type trust, metadata leakage, and public/private asset boundaries.",
+      "Attachment, drop, wave, NFT link, minting-claim, IPFS, Arweave, OpenSea, Manifold, and other third-party ingestion flows that process untrusted URLs or metadata.",
+      "SSRF, redirect, DNS/IP allow or deny behavior, timeout, size, decompression, MIME sniffing, HTML/script sanitization, and safe-fetch usage.",
+      "Sharp, ffmpeg, image/video/PDF/CSV parsing, archive or malformed-media handling, resource exhaustion, and quarantining failed media.",
+      "Receipt/status persistence, retry behavior, idempotency, user-visible error states, and tests around hostile or oversized inputs.",
+    ],
+  },
   responsiveness: {
     label: "responsiveness review",
     cleanVerdict: "Responsive checks passed",
