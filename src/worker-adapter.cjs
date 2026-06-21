@@ -21,6 +21,10 @@ const REVIEW_KIND_BINS = {
   wcag: "wcag-aa-analysis.cjs",
   i18n: "i18n-analysis.cjs",
   security: "security-analysis.cjs",
+  "deploy-actions": "deploy-actions-review.cjs",
+  "auth-api": "auth-api-review.cjs",
+  "db-lambda": "db-lambda-review.cjs",
+  "media-external": "media-external-review.cjs",
   "glm-swarm": "glm-swarm-review.cjs",
   responsiveness: "responsiveness-review.cjs",
 };

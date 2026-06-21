@@ -9,6 +9,14 @@ const replayWebhook = require("../bin/replay-webhook.cjs");
 
 const repoRoot = path.resolve(__dirname, "..");
 const repositoryConfigPath = ".github/6529bot.yml";
+const expectedInitialReviewKinds = [
+  "general",
+  "wcag",
+  "i18n",
+  "security",
+  "responsiveness",
+  "glm-swarm",
+];
 const commandMatrix = [
   { body: "/6529bot", reviewKinds: ["general"] },
   { body: "/6529bot review", reviewKinds: ["general"] },
@@ -17,6 +25,10 @@ const commandMatrix = [
   { body: "/6529bot wcag", reviewKinds: ["wcag"] },
   { body: "/6529bot i18n", reviewKinds: ["i18n"] },
   { body: "/6529bot security", reviewKinds: ["security"] },
+  { body: "/6529bot deploy-actions", reviewKinds: ["deploy-actions"] },
+  { body: "/6529bot auth-api", reviewKinds: ["auth-api"] },
+  { body: "/6529bot db-lambda", reviewKinds: ["db-lambda"] },
+  { body: "/6529bot media-external", reviewKinds: ["media-external"] },
   { body: "@6529bot review wcag i18n", reviewKinds: ["wcag", "i18n"] },
 ];
 
@@ -29,14 +41,14 @@ async function main() {
   assert.equal(pullRequestReplay.body.enqueued, false);
   assert.equal(pullRequestReplay.body.configuration.status, "loaded");
   assert.equal(pullRequestReplay.body.event.trigger, "pull_request");
-  assert.deepEqual(pullRequestReplay.body.event.reviewKinds, ["general", "security"]);
+  assert.deepEqual(pullRequestReplay.body.event.reviewKinds, expectedInitialReviewKinds);
   assert.equal(pullRequestReplay.body.admission.allowed, true);
   assert.equal(pullRequestReplay.body.budget.allowed, true);
   assert.equal(pullRequestReplay.body.queue.adapter, "dry_run");
-  assert.equal(pullRequestReplay.body.queue.jobCount, 2);
+  assert.equal(pullRequestReplay.body.queue.jobCount, expectedInitialReviewKinds.length);
   assert.deepEqual(
     pullRequestReplay.body.jobs.map((job) => job.reviewKind),
-    ["general", "security"]
+    expectedInitialReviewKinds
   );
 
   const checkedCommands = await checkCommandMatrix();

@@ -1,6 +1,6 @@
 # Review Workflows
 
-The bot supports seven review modes.
+The bot supports eleven review modes.
 
 In the central GitHub App, a trigger becomes one or more review jobs. Each job
 has one review mode and one lane. Model-backed jobs use provider/model lanes;
@@ -124,6 +124,84 @@ Focus:
 - JWT and session handling;
 - transaction integrity;
 - XSS, SSRF, redirects, injection, and untrusted media.
+
+## Deploy/Actions Review
+
+Entrypoint:
+
+```bash
+node bin/deploy-actions-review.cjs
+```
+
+Focus:
+
+- GitHub Actions permissions, pinned actions, workflow inputs, and token scope;
+- staging/production deploy routing, branch/ref validation, and environment
+  selection;
+- Serverless, Lambda, EventBridge, SQS, IAM, ECR, Docker, and AWS credential
+  boundaries;
+- deploy UI and API guardrails for privileged operator actions;
+- generated deploy config drift, rollback, and partial-failure paths.
+
+## Auth/API Contract Review
+
+Entrypoint:
+
+```bash
+node bin/auth-api-review.cjs
+```
+
+Focus:
+
+- route auth requirements, optional-auth behavior, admin/proxy permissions, and
+  identity propagation;
+- JWT, session, refresh-token, wallet signature, Safe/EIP-1271, nonce, replay,
+  and address-normalization behavior;
+- OpenAPI generation, generated models, request/response DTOs, error shapes,
+  pagination, and compatibility;
+- CORS, rate limits, webhook callbacks, route validation, and public/private
+  API boundaries;
+- contract and authz tests for changed routes.
+
+## DB/Lambda Dataflow Review
+
+Entrypoint:
+
+```bash
+node bin/db-lambda-review.cjs
+```
+
+Focus:
+
+- TypeORM entities, migrations, generated tables, destructive schema changes,
+  and shared table contracts;
+- repository transactions, SQL parameterization, read/write pool selection,
+  locking, retry, and idempotency;
+- Lambda loop scheduling, `dbMigrationsLoop`, concurrency, checkpointing, batch
+  sizing, timeout, and recovery;
+- SQS, SNS, EventBridge, outbox, payload compatibility, duplicate delivery,
+  and dead-letter paths;
+- backfill, replay, metrics, and alertable failure modes.
+
+## Media/External Input Review
+
+Entrypoint:
+
+```bash
+node bin/media-external-review.cjs
+```
+
+Focus:
+
+- S3 keys, bucket privacy, presigned URL constraints, multipart completion,
+  content type, and metadata leakage;
+- attachment, drop, wave, NFT link, minting-claim, IPFS, Arweave, and
+  third-party ingest flows;
+- SSRF, redirects, DNS/IP controls, timeout, size, decompression, MIME sniffing,
+  HTML/script sanitization, and safe-fetch use;
+- Sharp, ffmpeg, image/video/PDF/CSV parsing, malformed-media handling, and
+  resource exhaustion;
+- retry, idempotency, receipt/status persistence, and hostile-input tests.
 
 ## GLM Swarm Review
 

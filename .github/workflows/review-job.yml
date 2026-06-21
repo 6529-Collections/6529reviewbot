@@ -40,6 +40,10 @@ on:
           - wcag
           - i18n
           - security
+          - deploy-actions
+          - auth-api
+          - db-lambda
+          - media-external
           - glm-swarm
       provider:
         required: true

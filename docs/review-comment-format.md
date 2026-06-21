@@ -50,6 +50,10 @@ The review label and allowed verdicts are tied to the review kind:
 | `wcag` | `WCAG 2.2 AA analysis` | `No WCAG findings`, `Needs changes`, `Blocking issues` |
 | `i18n` | `i18n analysis` | `No i18n findings`, `Needs changes`, `Blocking issues` |
 | `security` | `crypto security analysis` | `No security findings`, `Needs changes`, `Blocking issues` |
+| `deploy-actions` | `deploy/actions review` | `No deploy/action findings`, `Needs changes`, `Blocking issues` |
+| `auth-api` | `auth/API contract review` | `No auth/API findings`, `Needs changes`, `Blocking issues` |
+| `db-lambda` | `DB/Lambda dataflow review` | `No DB/Lambda findings`, `Needs changes`, `Blocking issues` |
+| `media-external` | `media/external input review` | `No media/external input findings`, `Needs changes`, `Blocking issues` |
 | `responsiveness` | `responsiveness review` | `Responsive checks passed`, `Needs changes`, `Review did not run` |
 
 The first visible body line should be a verdict and should use one of the

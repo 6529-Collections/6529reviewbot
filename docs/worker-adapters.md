@@ -41,6 +41,10 @@ followup -> bin/followup-commit-review.cjs
 wcag     -> bin/wcag-aa-analysis.cjs
 i18n     -> bin/i18n-analysis.cjs
 security -> bin/security-analysis.cjs
+deploy-actions -> bin/deploy-actions-review.cjs
+auth-api -> bin/auth-api-review.cjs
+db-lambda -> bin/db-lambda-review.cjs
+media-external -> bin/media-external-review.cjs
 glm-swarm -> bin/glm-swarm-review.cjs
 responsiveness -> bin/responsiveness-review.cjs
 ```

@@ -27,13 +27,18 @@ Runs the default comment review kind: `general`.
 
 Runs the initial-review set: `general`, `wcag`, `i18n`, and `security`.
 `followup` is intentionally not included in `all`; it is for commit follow-up
-work. `responsiveness` and `glm-swarm` are also intentionally not included in
-`all`; repos opt them into automatic initial reviews with repository config,
-or maintainers can request them explicitly.
+work. Specialized kinds such as `deploy-actions`, `auth-api`, `db-lambda`,
+`media-external`, `responsiveness`, and `glm-swarm` are also intentionally not
+included in `all`; repos opt them into automatic initial reviews with
+repository config, or maintainers can request them explicitly.
 
 ```text
 /6529bot review general security
 /6529bot review wcag i18n
+/6529bot review deploy-actions
+/6529bot review auth-api
+/6529bot review db-lambda
+/6529bot review media-external
 ```
 
 Runs the listed review kinds. Unknown words are ignored. If no known review
@@ -45,6 +50,10 @@ kind is listed, the command falls back to `general`.
 /6529bot wcag
 /6529bot i18n
 /6529bot security
+/6529bot deploy-actions
+/6529bot auth-api
+/6529bot db-lambda
+/6529bot media-external
 /6529bot glm-swarm
 /6529bot responsiveness
 ```
@@ -68,6 +77,10 @@ followup  newest commits plus prior human and bot review comments
 wcag      WCAG 2.2 AA accessibility risks
 i18n      6529 FE message keys, locale helpers, fallbacks, and copy migration
 security  crypto/security, auth, injection, replay, and wallet risks
+deploy-actions  deployment, CI, GitHub Actions, AWS, and rollout controls
+auth-api  backend auth, route permissions, OpenAPI, and API compatibility
+db-lambda  database, migration, Lambda loop, queue, and event dataflow risks
+media-external  uploads, S3, media parsing, safe-fetch, and external ingest
 glm-swarm  advisory OpenRouter GLM 5.2 swarm synthesis for Codex feedback
 responsiveness  deterministic changed-route viewport and app-shell checks
 ```
@@ -137,6 +150,12 @@ Frontend responsiveness only:
 
 ```text
 /6529bot review responsiveness
+```
+
+Backend deploy and contract passes:
+
+```text
+/6529bot review deploy-actions auth-api db-lambda media-external
 ```
 
 Advisory GLM swarm only:
