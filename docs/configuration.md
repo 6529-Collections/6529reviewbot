@@ -452,6 +452,11 @@ OpenRouter key from Credential Manager target `OPENROUTER_API_KEY` when the
 environment variable is absent; the secret is used only in-process and is never
 printed or written to raw-output artifacts.
 
+The `stream-contracts` review kind is an ordinary provider-backed job with a
+6529Stream-specific smart-contract prompt. Enable it only through repository
+config or explicit maintainer commands for `6529-Collections/6529Stream` or an
+intentionally equivalent contract repository.
+
 `REVIEW_GLM_SWARM_RAW_OUTPUTS_MODE=s3` stores raw internal reviewer and
 synthesis outputs in the configured private S3 bucket for approved operator
 infrastructure. `off` is the default. Git LFS and repository commits are not

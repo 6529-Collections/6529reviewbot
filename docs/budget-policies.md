@@ -77,8 +77,9 @@ Supported scopes:
 - `provider`, with `anthropic`, `openai`, or `openrouter`;
 - `model`, with an exact configured model id;
 - `review_kind`, with `general`, `followup`, `wcag`, `i18n`, `security`,
-  `deploy-actions`, `auth-api`, `db-lambda`, `media-external`, `safe-write`,
-  `release-deploy`, `privacy-evidence`, `signer-ux`, `glm-swarm`, or
+  `deploy-actions`, `auth-api`, `db-lambda`, `media-external`,
+  `stream-contracts`, `safe-write`, `release-deploy`, `privacy-evidence`,
+  `signer-ux`, `glm-swarm`, or
   `responsiveness`.
 
 Responsiveness jobs also record provider `github` and model

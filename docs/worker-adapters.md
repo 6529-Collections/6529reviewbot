@@ -45,6 +45,7 @@ deploy-actions -> bin/deploy-actions-review.cjs
 auth-api -> bin/auth-api-review.cjs
 db-lambda -> bin/db-lambda-review.cjs
 media-external -> bin/media-external-review.cjs
+stream-contracts -> bin/stream-contracts-review.cjs
 safe-write -> bin/safe-write-review.cjs
 release-deploy -> bin/release-deploy-review.cjs
 privacy-evidence -> bin/privacy-evidence-review.cjs

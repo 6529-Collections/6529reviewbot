@@ -28,9 +28,9 @@ Runs the default comment review kind: `general`.
 Runs the initial-review set: `general`, `wcag`, `i18n`, and `security`.
 `followup` is intentionally not included in `all`; it is for commit follow-up
 work. Specialized kinds such as `deploy-actions`, `auth-api`, `db-lambda`,
-`media-external`, `safe-write`, `release-deploy`, `privacy-evidence`,
-`signer-ux`, `responsiveness`, and `glm-swarm` are also intentionally not
-included in `all`; repos opt them into automatic initial reviews with
+`media-external`, `stream-contracts`, `safe-write`, `release-deploy`,
+`privacy-evidence`, `signer-ux`, `responsiveness`, and `glm-swarm` are also
+intentionally not included in `all`; repos opt them into automatic initial reviews with
 repository config, or maintainers can request them explicitly.
 
 ```text
@@ -40,6 +40,7 @@ repository config, or maintainers can request them explicitly.
 /6529bot review auth-api
 /6529bot review db-lambda
 /6529bot review media-external
+/6529bot review stream-contracts
 /6529bot review safe-write
 /6529bot review release-deploy
 /6529bot review privacy-evidence
@@ -59,6 +60,7 @@ kind is listed, the command falls back to `general`.
 /6529bot auth-api
 /6529bot db-lambda
 /6529bot media-external
+/6529bot stream-contracts
 /6529bot safe-write
 /6529bot release-deploy
 /6529bot privacy-evidence
@@ -90,6 +92,7 @@ deploy-actions  deployment, CI, GitHub Actions, AWS, and rollout controls
 auth-api  backend auth, route permissions, OpenAPI, and API compatibility
 db-lambda  database, migration, Lambda loop, queue, and event dataflow risks
 media-external  uploads, S3, media parsing, safe-fetch, and external ingest
+stream-contracts  6529Stream contract, invariant, and release-evidence risks
 safe-write  Safe App transaction integrity and write-path constraints
 release-deploy  release, CI/CD, artifact, and hosting integrity risks
 privacy-evidence  privacy, redaction, support, and evidence handling risks
@@ -175,6 +178,13 @@ Backend deploy and contract passes:
 
 ```text
 /6529bot review deploy-actions auth-api db-lambda media-external
+```
+
+6529Stream contract specialist only:
+
+```text
+/6529bot stream-contracts
+/6529bot review stream-contracts
 ```
 
 Advisory GLM swarm only:

@@ -25,6 +25,7 @@ const REVIEW_KIND_BINS = {
   "auth-api": "auth-api-review.cjs",
   "db-lambda": "db-lambda-review.cjs",
   "media-external": "media-external-review.cjs",
+  "stream-contracts": "stream-contracts-review.cjs",
   "safe-write": "safe-write-review.cjs",
   "release-deploy": "release-deploy-review.cjs",
   "privacy-evidence": "privacy-evidence-review.cjs",

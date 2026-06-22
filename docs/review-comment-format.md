@@ -54,6 +54,7 @@ The review label and allowed verdicts are tied to the review kind:
 | `auth-api` | `auth/API contract review` | `No auth/API findings`, `Needs changes`, `Blocking issues` |
 | `db-lambda` | `DB/Lambda dataflow review` | `No DB/Lambda findings`, `Needs changes`, `Blocking issues` |
 | `media-external` | `media/external input review` | `No media/external input findings`, `Needs changes`, `Blocking issues` |
+| `stream-contracts` | `6529Stream contract review` | `No 6529Stream contract findings`, `Needs changes`, `Blocking issues` |
 | `safe-write` | `Safe write path review` | `No Safe write findings`, `Needs changes`, `Blocking issues` |
 | `release-deploy` | `release and deployment review` | `No release/deployment findings`, `Needs changes`, `Blocking issues` |
 | `privacy-evidence` | `privacy and evidence review` | `No privacy/evidence findings`, `Needs changes`, `Blocking issues` |

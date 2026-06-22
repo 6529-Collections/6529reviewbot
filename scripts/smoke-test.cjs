@@ -891,7 +891,7 @@ const presignedS3Url = responsivenessArtifacts.presignS3ObjectWithCredentials(
 assert(presignedS3Url.startsWith("https://example-bucket.s3.us-east-1.amazonaws.com/"));
 assert(presignedS3Url.includes("X-Amz-Security-Token=session-token"));
 assert(presignedS3Url.includes("X-Amz-Signature="));
-assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 15);
+assert.equal(reviewBinEntrypointsCheck.checkReviewBinEntrypoints().reviewKinds, 16);
 assert.equal(budgetScopesCheck.checkBudgetScopes().scopes, 8);
 assert.deepEqual(
   budgetScopesCheck.dogfoodExampleScopes,
@@ -963,7 +963,7 @@ assert.throws(
     }),
   /alert notifier mode check found/
 );
-assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 14);
+assert.equal(reviewCommentFormatCheck.checkReviewCommentFormat().reviewKinds, 15);
 assert.equal(reviewCommentFormatCheck.expectedMarker, "6529-review-bot");
 const i18nFocusContract = reviewBot.REVIEW_KIND_CONFIGS.i18n.focus.join("\n");
 for (const requiredI18nGuidance of [
@@ -4572,12 +4572,12 @@ assert.deepEqual(githubWebhook.parseReviewCommand("/6529bot review glm-swarm").r
 ]);
 assert.equal(githubWebhook.parseReviewCommand("/6529bot help").reviewKinds.length, 0);
 assert.equal(githubWebhook.parseReviewCommand("looks good"), null);
-assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 32);
+assert.equal(commentCommandsCheck.checkCommentCommands().commandCases, 34);
 assert.throws(
   () => commentCommandsCheck.checkCommentCommands({ quiet: true, text: "# Comment Commands\n" }),
   /comment command docs check found/
 );
-assert.equal(reviewWorkflowKindsCheck.checkReviewWorkflowKinds().reviewKinds, 15);
+assert.equal(reviewWorkflowKindsCheck.checkReviewWorkflowKinds().reviewKinds, 16);
 assert.deepEqual(
   reviewWorkflowKindsCheck.fallbackJsonArrayForVariable(
     "vars.REVIEW_BOT_INITIAL_KINDS || '[\"general\",\"security\"]'",
