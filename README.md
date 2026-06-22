@@ -11,7 +11,7 @@ requests.
 ## What It Does
 
 - Reviews pull requests with Anthropic, OpenAI, or OpenRouter models.
-- Supports fifteen review modes:
+- Supports sixteen review modes:
   - general PR review
   - follow-up commit review
   - WCAG 2.2 AA accessibility analysis
@@ -21,6 +21,7 @@ requests.
   - backend auth/API contract analysis
   - DB/Lambda dataflow analysis
   - media/external input analysis
+  - 6529Stream contract analysis
   - 6529 Safe App write-path analysis
   - release and deployment analysis
   - privacy and evidence handling analysis

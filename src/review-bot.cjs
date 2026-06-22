@@ -211,6 +211,23 @@ const KIND_CONFIGS = {
       "Receipt/status persistence, retry behavior, idempotency, user-visible error states, and tests around hostile or oversized inputs.",
     ],
   },
+  "stream-contracts": {
+    label: "6529Stream contract review",
+    cleanVerdict: "No 6529Stream contract findings",
+    verdicts: "No 6529Stream contract findings | Needs changes | Blocking issues",
+    objective:
+      "Review changed 6529Stream smart contracts, Foundry tests, deployment scripts, release artifacts, and protocol docs for cross-contract invariant regressions.",
+    focus: [
+      "This review kind is specialized for `6529-Collections/6529Stream`; do not generalize its findings to unrelated repositories.",
+      "Drop authorization and replay invariants: EIP-712/ERC-1271 domain separation, signer epochs, consumed and cancelled drop IDs, payer/recipient binding, sale-mode fields, and token-data hashes.",
+      "Auction custody and payment invariants: escrowed NFT owner, active versus terminal status, exact end-time behavior, no-bid pending claims, outbid bidder credits, proceeds credits, `totalOwed`, `totalReserved`, `surplus`, and emergency-withdraw boundaries.",
+      "Randomness lifecycle invariants: provider request IDs, token and collection binding, randomizer epoch validation, pending request migration blocks, stale marking, bounded post-processing retries, raw-output hashes, and provider funding/request-health evidence.",
+      "Admin, pause, and signer-governance invariants: target-scoped function admins, pause/unpause separation, signer-manager target allowlists, nonzero/marker checks for contract updates, and new value-moving paths with missing pause coverage.",
+      "Core metadata, burn, freeze, dependency, and size-budget invariants: token-to-collection binding, burn audit state, pending metadata counts, freeze manifest stability, dependency pins/content hashes, `StreamCore` bytecode spend, and the repo's satellite-first policy.",
+      "Release and evidence coupling: if contract responsibilities, ABIs, bytecode, deployment manifests, address books, release checksums, ADRs, threat model, audit package, or known blocker claims change, require matching retained evidence or a clearly scoped follow-up.",
+      "Use existing CI as evidence instead of duplicating it: request targeted Forge, gas, size, Slither-delta, release-manifest, or evidence checks only when the changed surface needs that proof.",
+    ],
+  },
   "safe-write": {
     label: "Safe write path review",
     cleanVerdict: "No Safe write findings",

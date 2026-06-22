@@ -1,6 +1,6 @@
 # Review Workflows
 
-The bot supports fifteen review modes.
+The bot supports sixteen review modes.
 
 In the central GitHub App, a trigger becomes one or more review jobs. Each job
 has one review mode and one lane. Model-backed jobs use provider/model lanes;
@@ -202,6 +202,30 @@ Focus:
 - Sharp, ffmpeg, image/video/PDF/CSV parsing, malformed-media handling, and
   resource exhaustion;
 - retry, idempotency, receipt/status persistence, and hostile-input tests.
+
+## 6529Stream Contract Review
+
+Entrypoint:
+
+```bash
+node bin/stream-contracts-review.cjs
+```
+
+Focus:
+
+- 6529Stream-only smart contract and release-evidence review;
+- drop authorization, EIP-712/ERC-1271, signer epoch, replay, cancellation,
+  payer/recipient, sale-mode, and token-data hash invariants;
+- auction custody, bidding, settlement, pull-payment, owed/reserved/surplus,
+  and emergency-withdraw boundaries;
+- randomness provider, request, token, collection, epoch, stale, retry, and
+  funding/request-health evidence;
+- admin, pause, signer-manager, contract-update, and marker/nonzero
+  boundaries;
+- `StreamCore` metadata, burn audit, freeze manifest, dependency pin,
+  bytecode-spend, and satellite-first policy;
+- ABI, bytecode, manifest, checksum, ADR, audit-package, and known-blocker
+  evidence drift.
 
 ## Safe Write Path Review
 

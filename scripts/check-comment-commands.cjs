@@ -27,6 +27,8 @@ const requiredCommandCases = [
   { command: "/6529bot review db-lambda", reviewKinds: ["db-lambda"] },
   { command: "/6529bot media-external", reviewKinds: ["media-external"] },
   { command: "/6529bot review media-external", reviewKinds: ["media-external"] },
+  { command: "/6529bot stream-contracts", reviewKinds: ["stream-contracts"] },
+  { command: "/6529bot review stream-contracts", reviewKinds: ["stream-contracts"] },
   { command: "/6529bot safe-write", reviewKinds: ["safe-write"] },
   { command: "/6529bot review safe-write", reviewKinds: ["safe-write"] },
   { command: "/6529bot release-deploy", reviewKinds: ["release-deploy"] },

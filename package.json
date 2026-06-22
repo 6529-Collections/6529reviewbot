@@ -29,6 +29,7 @@
     "review:auth-api": "node bin/auth-api-review.cjs",
     "review:db-lambda": "node bin/db-lambda-review.cjs",
     "review:media-external": "node bin/media-external-review.cjs",
+    "review:stream-contracts": "node bin/stream-contracts-review.cjs",
     "review:safe-write": "node bin/safe-write-review.cjs",
     "review:release-deploy": "node bin/release-deploy-review.cjs",
     "review:privacy-evidence": "node bin/privacy-evidence-review.cjs",

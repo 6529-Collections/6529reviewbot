@@ -149,6 +149,7 @@ jobs:
             auth-api) script="bot/bin/auth-api-review.cjs" ;;
             db-lambda) script="bot/bin/db-lambda-review.cjs" ;;
             media-external) script="bot/bin/media-external-review.cjs" ;;
+            stream-contracts) script="bot/bin/stream-contracts-review.cjs" ;;
             safe-write) script="bot/bin/safe-write-review.cjs" ;;
             release-deploy) script="bot/bin/release-deploy-review.cjs" ;;
             privacy-evidence) script="bot/bin/privacy-evidence-review.cjs" ;;

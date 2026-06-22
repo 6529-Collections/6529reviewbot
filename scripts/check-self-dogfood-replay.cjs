@@ -29,6 +29,7 @@ const commandMatrix = [
   { body: "/6529bot auth-api", reviewKinds: ["auth-api"] },
   { body: "/6529bot db-lambda", reviewKinds: ["db-lambda"] },
   { body: "/6529bot media-external", reviewKinds: ["media-external"] },
+  { body: "/6529bot stream-contracts", reviewKinds: ["stream-contracts"] },
   { body: "@6529bot review wcag i18n", reviewKinds: ["wcag", "i18n"] },
 ];
 

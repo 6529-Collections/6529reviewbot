@@ -15,6 +15,7 @@ const REVIEW_KINDS = [
   "auth-api",
   "db-lambda",
   "media-external",
+  "stream-contracts",
   "safe-write",
   "release-deploy",
   "privacy-evidence",

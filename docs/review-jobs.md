@@ -7,8 +7,9 @@ They make fanout explicit before any provider call happens.
 
 A single GitHub event can request more than one unit of work:
 
-- an opened PR can request general, WCAG, i18n, security, configured backend
-  or Safe App specialist reviews, and configured responsiveness reviews;
+- an opened PR can request general, WCAG, i18n, security, configured
+  backend-, contract-, or Safe App-specialized reviews, and configured
+  responsiveness reviews;
 - a synchronize event can request a follow-up review;
 - a maintainer comment can request one kind, multiple kinds, or all default
   kinds;
@@ -22,6 +23,8 @@ A single GitHub event can request more than one unit of work:
 review kind and one lane. Model-backed review kinds use provider/model lanes.
 `responsiveness` uses the deterministic `github:actions-ubuntu-latest` lane so
 GitHub Actions compute is visible to budget and run-control dimensions.
+`stream-contracts` is an ordinary provider-backed lane fanout with a
+6529Stream-specific contract prompt.
 `glm-swarm` uses a fixed `openrouter:z-ai/glm-5.2` lane so it can be enabled
 without changing existing Opus-backed lanes.
 

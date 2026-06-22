@@ -69,7 +69,7 @@ version: 1
 enabled: true
 
 reviewKinds:
-  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, safe-write, release-deploy, privacy-evidence, signer-ux, glm-swarm, responsiveness]
+  allowed: [general, followup, wcag, i18n, security, deploy-actions, auth-api, db-lambda, media-external, stream-contracts, safe-write, release-deploy, privacy-evidence, signer-ux, glm-swarm, responsiveness]
   initial: [general, wcag, i18n, security]
   followup: [followup]
 
@@ -131,6 +131,7 @@ deploy-actions
 auth-api
 db-lambda
 media-external
+stream-contracts
 safe-write
 release-deploy
 privacy-evidence
@@ -147,6 +148,9 @@ repository when their domain matches the target app.
 `glm-swarm` is advisory and uses a fixed OpenRouter GLM 5.2 lane; it is not
 part of the default initial review set unless central or repository policy
 explicitly opts it in.
+`stream-contracts` is the 6529Stream smart-contract specialist. It should be
+enabled only for `6529-Collections/6529Stream` or an intentionally equivalent
+contract repo.
 `responsiveness` runs the deterministic GitHub Actions viewport workflow, not
 a model provider lane.
 
