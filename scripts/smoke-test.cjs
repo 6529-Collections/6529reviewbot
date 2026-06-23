@@ -260,6 +260,30 @@ const glmSynthesisPrompt = glmSwarmReview.buildSynthesisPrompt({
 });
 assert.match(glmSynthesisPrompt.hash, /^[0-9a-f]{64}$/);
 assert(glmSynthesisPrompt.user.includes("The first visible line must be `**Verdict**: Advisory only`."));
+const glmDegradedReviewerResult = glmSwarmReview.normalizeReviewerResult(
+  {
+    text: "",
+    usage: reviewBot.emptyUsage(),
+    providerResponseId: "or-empty",
+    actualCostUsd: 0.003,
+  },
+  glmPrompt,
+  glmThreads[0]
+);
+assert.equal(glmDegradedReviewerResult.degraded, true);
+assert.equal(glmDegradedReviewerResult.degradationReason, "empty_output");
+assert(glmDegradedReviewerResult.text.includes("Reviewer slice unavailable"));
+const glmDegradedSynthesisPrompt = glmSwarmReview.buildSynthesisPrompt({
+  settings: glmSwarmSettings,
+  pr: { number: 7, title: "GLM swarm smoke" },
+  headSha: "abcdef1234567890abcdef1234567890abcdef12",
+  changedFiles: ["src/auth/wallet.ts"],
+  changedLineCount: 2,
+  reviewerResults: [glmDegradedReviewerResult],
+  skippedThreads: [],
+  costCapReached: false,
+});
+assert(glmDegradedSynthesisPrompt.user.includes(`Reviewer threads unavailable: ${glmThreads[0].id}`));
 const glmComment = glmSwarmReview.buildGlmSwarmComment({
   settings: glmSwarmSettings,
   pr: { number: 7 },
@@ -294,6 +318,29 @@ assert(glmComment.includes("**Verdict**: Advisory only"));
 assert(glmComment.includes("\"promptVersion\":\"glm-swarm-v1\""));
 assert(glmComment.includes("\"model\":\"z-ai/glm-5.2\""));
 assert(!glmComment.includes("raw internal reviewer"));
+const glmPartialComment = glmSwarmReview.buildGlmSwarmComment({
+  settings: glmSwarmSettings,
+  pr: { number: 7 },
+  headSha: "abcdef1234567890abcdef1234567890abcdef12",
+  shortSha: "abcdef123456",
+  changedFiles: ["src/auth/wallet.ts"],
+  changedLineCount: 2,
+  reviewerResults: [glmDegradedReviewerResult],
+  synthesisResult: {
+    text: "**Verdict**: Advisory only\n\nThis GLM swarm pass is advisory and complements existing tests plus existing reviewbot lanes; it does not replace them.",
+    promptHash: glmDegradedSynthesisPrompt.hash,
+    providerResponseId: "or-synth",
+  },
+  rawRetention: { mode: "off", uploaded: false },
+  aggregate: {
+    actualCostUsd: 0.003,
+    usage: reviewBot.emptyUsage(),
+  },
+  costCapReached: false,
+});
+assert(glmPartialComment.includes("### Partial reviewer output"));
+assert(glmPartialComment.includes(`\`${glmThreads[0].id}\`: empty_output`));
+assert(glmPartialComment.includes("\"degradedReviewerThreads\""));
 const responsivenessSettings = responsivenessReview.readSettings(
   {},
   {

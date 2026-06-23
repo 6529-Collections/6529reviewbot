@@ -162,10 +162,12 @@ Workers must still enforce engine-level context, token, timeout, and source
 path limits. Job admission is not a substitute for provider-call guardrails.
 The GLM swarm runner adds its own internal thread, per-thread output token,
 synthesis output token, total output token, prompt input, and actual-cost caps
-before and during the internal OpenRouter calls.
-If a live provider call returns no visible review text, the worker fails the
-job instead of posting a generic no-finding comment. Empty model output should
-be investigated as a provider, prompt, or adapter failure.
+before and during the internal OpenRouter calls. A single empty internal
+reviewer output is marked as unavailable and the runner posts a partial
+advisory review from the remaining reviewer output. Empty synthesis output, and
+empty output from ordinary model-backed review jobs, still fails the job instead
+of posting a generic no-finding comment. Those failures should be investigated
+as provider, prompt, or adapter failures.
 
 Workers can also pass the full job JSON to:
 

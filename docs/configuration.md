@@ -450,7 +450,10 @@ input, and actual-cost caps are enforced inside the worker in addition to
 ordinary job budget admission. Local Windows workers may resolve the
 OpenRouter key from Credential Manager target `OPENROUTER_API_KEY` when the
 environment variable is absent; the secret is used only in-process and is never
-printed or written to raw-output artifacts.
+printed or written to raw-output artifacts. If one internal reviewer call
+returns empty text, GLM swarm continues with a partial advisory review and marks
+the unavailable thread in the posted comment. Empty synthesis output still
+fails the job.
 
 The `stream-contracts` review kind is an ordinary provider-backed job with a
 6529Stream-specific smart-contract prompt. Enable it only through repository
