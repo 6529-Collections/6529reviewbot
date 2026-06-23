@@ -101,7 +101,9 @@ Provider requests are bounded by:
 - changed-file and changed-line budget checks;
 - provider timeout;
 - sanitized provider error logging and review-runner fatal output;
-- empty visible provider output failing closed before comment posting.
+- empty visible provider output failing closed before comment posting, except a
+  single unavailable GLM internal-reviewer slice can be marked partial when
+  another GLM reviewer returned usable output.
 
 ### Diagnostic Safety
 

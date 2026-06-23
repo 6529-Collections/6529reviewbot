@@ -197,7 +197,8 @@ Check:
 - `GH_TOKEN` scope;
 - provider key availability;
 - empty provider output, which fails closed instead of posting a generic
-  no-finding comment;
+  no-finding comment except for a partial GLM internal-reviewer slice with
+  remaining usable reviewer output;
 - fork/external PR skip logic;
 - PR draft state;
 - changed-file and changed-line budgets.

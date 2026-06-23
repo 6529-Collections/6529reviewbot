@@ -49,7 +49,8 @@ Ready for community review:
 - native GitHub Actions workflow-dispatch API support with short-lived App
   installation tokens and `gh` fallback for compatibility environments;
 - fail-closed provider output guard so empty live model responses do not become
-  generic no-finding comments;
+  generic no-finding comments, except for the documented partial GLM
+  internal-reviewer case with remaining usable reviewer output;
 - worker diagnostic redaction for common token, sensitive-header,
   alert-webhook, AWS access-key id, AWS ARN, AWS account-id, and private-key
   shapes in local output tails and GitHub API dispatch failure bodies;

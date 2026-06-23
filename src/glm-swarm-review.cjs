@@ -197,13 +197,24 @@ async function runGlmSwarmReview(options = {}) {
           role: "reviewer",
           thread,
         });
-    const normalized = normalizeInternalResult(result, prompt, thread);
+    const normalized = normalizeReviewerResult(result, prompt, thread);
+    if (normalized.degraded) {
+      deps.warn(
+        `GLM swarm reviewer '${thread.id}' returned empty output; continuing with partial advisory review.`
+      );
+    }
     reviewerResults.push(normalized);
     accumulateUsage(aggregate, normalized);
     if (costCapExceeded(settings, aggregate.actualCostUsd)) {
       costCapReached = true;
       break;
     }
+  }
+
+  if (reviewerResults.length > 0 && reviewerResults.every((result) => result.degraded)) {
+    throw new Error(
+      "GLM swarm reviewer output unavailable for every internal reviewer thread; no remaining reviewer output to synthesize."
+    );
   }
 
   const synthesisPrompt = buildSynthesisPrompt({
@@ -283,6 +294,7 @@ async function runGlmSwarmReview(options = {}) {
       marker,
       promptVersion: GLM_SWARM_PROMPT_VERSION,
       reviewerThreads: reviewerResults.map((item) => item.thread.id),
+      degradedReviewerThreads: degradedReviewerThreads(reviewerResults),
       rawOutputRetention: publicRawRetentionSummary(rawRetention),
       costCapReached,
     },
@@ -473,13 +485,15 @@ function buildSynthesisPrompt(input) {
     skippedThreads,
     costCapReached,
   } = input;
+  const degradedReviewers = degradedReviewerThreads(reviewerResults);
   const reviewerText = reviewerResults
     .map((result) =>
       [
         `### ${result.thread.id} - ${result.thread.label}`,
         `Prompt hash: ${result.promptHash}`,
+        result.degraded ? `Reviewer status: unavailable (${result.degradationReason || "unknown"})` : "",
         result.text,
-      ].join("\n")
+      ].filter(Boolean).join("\n")
     )
     .join("\n\n");
   const system = [
@@ -496,7 +510,8 @@ function buildSynthesisPrompt(input) {
       `Head: ${headSha}`,
       `Changed files: ${changedFiles.length}`,
       `Changed lines: ${changedLineCount}`,
-      `Reviewer threads completed: ${reviewerResults.length}`,
+      `Reviewer threads completed: ${reviewerResults.length - degradedReviewers.length}`,
+      `Reviewer threads unavailable: ${degradedReviewers.map((item) => item.id).join(", ") || "none"}`,
       `Reviewer threads skipped: ${skippedThreads.map((thread) => thread.id).join(", ") || "none"}`,
       costCapReached ? "Cost cap reached before all GLM calls completed; synthesize only from completed reviewer outputs." : "",
       "",
@@ -815,6 +830,7 @@ function buildGlmSwarmComment(input) {
       id: result.thread.id,
       files: result.thread.files.slice(0, 10),
     })),
+    degradedReviewerThreads: degradedReviewerThreads(reviewerResults),
     rawOutputRetention: publicRawRetentionSummary(rawRetention),
     costCapReached: Boolean(costCapReached),
     actualCostUsd: aggregate.actualCostUsd,
@@ -826,12 +842,17 @@ function buildGlmSwarmComment(input) {
     createdAt: new Date().toISOString(),
   };
   const visibleBody = normalizedSynthesisBody(synthesisResult.text);
-  return [
+  const partialReviewerBody = partialReviewerOutputBody(reviewerResults);
+  const body = [
     `<!-- ${reviewBot.REVIEW_BOT_MARKER}:${JSON.stringify(metadata)} -->`,
     `## ${GLM_SWARM_TITLE}`,
     "",
     visibleBody,
-  ].join("\n");
+  ];
+  if (partialReviewerBody) {
+    body.push("", partialReviewerBody);
+  }
+  return body.join("\n");
 }
 
 function buildGlmSwarmSkipComment(input) {
@@ -955,6 +976,54 @@ function normalizeInternalResult(result, prompt, thread) {
     providerResponseId: result.providerResponseId || "",
     actualCostUsd: numberOrNull(result.actualCostUsd),
   };
+}
+
+function normalizeReviewerResult(result, prompt, thread) {
+  const text = String(result?.text || "").trim();
+  if (text) {
+    return normalizeInternalResult(result, prompt, thread);
+  }
+  return degradedReviewerResult(result, prompt, thread, "empty_output");
+}
+
+function degradedReviewerResult(result, prompt, thread, reason) {
+  return {
+    thread,
+    text: [
+      "### Reviewer slice unavailable",
+      "This advisory reviewer slice returned no model output, so the synthesis must not infer findings from it.",
+      "",
+      "No high-confidence findings can be inferred from this unavailable reviewer slice.",
+    ].join("\n"),
+    promptHash: prompt.hash,
+    usage: result?.usage || reviewBot.emptyUsage(),
+    providerResponseId: result?.providerResponseId || "",
+    actualCostUsd: numberOrNull(result?.actualCostUsd),
+    degraded: true,
+    degradationReason: reason,
+  };
+}
+
+function degradedReviewerThreads(reviewerResults) {
+  return reviewerResults
+    .filter((result) => result.degraded)
+    .map((result) => ({
+      id: result.thread.id,
+      reason: result.degradationReason || "unavailable",
+    }));
+}
+
+function partialReviewerOutputBody(reviewerResults) {
+  const degraded = degradedReviewerThreads(reviewerResults);
+  if (!degraded.length) {
+    return "";
+  }
+  return [
+    "### Partial reviewer output",
+    "One or more internal advisory reviewer slices were unavailable; the synthesis used the remaining reviewer output.",
+    "",
+    ...degraded.map((item) => `- \`${item.id}\`: ${item.reason}`),
+  ].join("\n");
 }
 
 function dryRunReviewerResult(thread) {
@@ -1169,6 +1238,7 @@ module.exports = {
   main,
   normalizedSynthesisBody,
   parseArgs,
+  normalizeReviewerResult,
   publicRawRetentionSummary,
   rawOutputRetentionSettingsFromEnv,
   readSettings,

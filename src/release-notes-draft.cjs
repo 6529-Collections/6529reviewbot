@@ -159,7 +159,7 @@ function formatReleaseNotesMarkdown(draft) {
     `- Model price source freshness policy: ${TODO}`,
     `- Alert delivery: ${TODO}`,
     `- Alert delivery plan: ${TODO}`,
-    `- Empty provider output fail-closed evidence: ${TODO}`,
+    `- Empty provider output fail-closed or documented GLM partial-review evidence: ${TODO}`,
     `- Worker diagnostic redaction evidence: ${TODO}`,
     `- 6529.io dashboard/admin status: ${TODO}`,
     `- Public dashboard disclosure allowlists: ${TODO}`,

@@ -74,7 +74,7 @@ const requiredTestedConfigurationFields = [
   "Model pricing status:",
   "Model price source freshness policy:",
   "Alert delivery:",
-  "Empty provider output fail-closed evidence:",
+  "Empty provider output fail-closed or documented GLM partial-review evidence:",
   "Worker diagnostic redaction evidence:",
   "6529.io dashboard/admin status:",
   "Public dashboard disclosure allowlists:",

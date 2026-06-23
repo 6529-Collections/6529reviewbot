@@ -31,7 +31,9 @@ repositories.
 - Public-repo trusted-actor admission before model calls.
 - Budget admission and usage telemetry through the isolated reviewbot ledger.
 - Run-control claims for duplicate delivery and concurrency protection.
-- Empty provider output fails closed before comment posting.
+- Empty provider output fails closed before comment posting, with the documented
+  partial GLM internal-reviewer exception only when remaining reviewer output is
+  available.
 - Worker diagnostics redact common token, sensitive-header, alert-webhook, AWS
   access-key id, AWS ARN, AWS account-id, and private-key shapes.
 - Dry-run-by-default Aurora ledger schema tooling.
@@ -62,7 +64,7 @@ repositories.
 - Model price source freshness policy:
 - Alert delivery:
 - Alert delivery plan:
-- Empty provider output fail-closed evidence:
+- Empty provider output fail-closed or documented GLM partial-review evidence:
 - Worker diagnostic redaction evidence:
 - 6529.io dashboard/admin status:
 - Public dashboard disclosure allowlists:
