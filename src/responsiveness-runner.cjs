@@ -693,7 +693,7 @@ async function fetchWithTimeout(url, timeoutMs) {
 }
 
 async function browserPrewarm(baseURL) {
-  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000);
+  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000);
   const deadline = Date.now() + budgetMs;
   const prewarmContexts = selectPrewarmContexts(contexts);
   const browser = await chromium.launch();
@@ -740,10 +740,11 @@ function selectPrewarmContexts(allContexts) {
     if (selected.length > 0) {
       return selected;
     }
-    console.warn("[responsiveness prewarm] no requested contexts matched; falling back to web-desktop");
+    console.warn("[responsiveness prewarm] no requested contexts matched; falling back to default contexts");
   }
-  const desktopContext = allContexts.filter((context) => context.name === "web-desktop").slice(0, 1);
-  return desktopContext.length > 0 ? desktopContext : allContexts.slice(0, 1);
+  const defaultNames = new Set(["web-desktop", "web-mobile"]);
+  const defaultContexts = allContexts.filter((context) => defaultNames.has(context.name));
+  return defaultContexts.length > 0 ? defaultContexts : allContexts.slice(0, 1);
 }
 
 async function visitForPrewarm(page, url, route, deadline) {

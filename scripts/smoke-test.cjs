@@ -596,10 +596,11 @@ assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS |
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
 assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM"));
-assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 120000"));
+assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000"));
 assert(responsivenessGlobalSetup.includes("selectPrewarmContexts(contexts)"));
-assert(responsivenessGlobalSetup.includes('context.name === "web-desktop"'));
+assert(responsivenessGlobalSetup.includes('new Set(["web-desktop", "web-mobile"])'));
+assert(responsivenessGlobalSetup.includes("defaultNames.has(context.name)"));
 assert(responsivenessGlobalSetup.includes('requested.split(",")'));
 assert(responsivenessGlobalSetup.includes("evaluateFailures >= 3"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
