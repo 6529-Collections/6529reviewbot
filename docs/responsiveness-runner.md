@@ -241,12 +241,13 @@ Each context/route check records:
   optimizer requests for remote content images are not treated as build-asset
   leaks.
 - bounded browser-based prewarm before assertions. The runner first performs
-  lightweight HTTP prewarm and then visits planned routes in one Chromium
-  desktop context before parallel checks start. This lets Next.js/Turbopack
-  finish route and client chunk compilation before screenshots are used as
-  evidence without multiplying CI load by every viewport. The prewarm has a
-  default 120s wall-clock budget, a default 30s per-route timeout, and aborts
-  repeated metric-evaluation failures. Set
+  lightweight HTTP prewarm and then visits planned routes in Chromium desktop
+  and web-mobile contexts before parallel checks start. This lets
+  Next.js/Turbopack finish route and client chunk compilation for both the
+  desktop and SmallScreenLayout branches before screenshots are used as
+  evidence without multiplying CI load by every simulated surface. The prewarm
+  has a default 180s wall-clock budget, a default 30s per-route timeout, and
+  aborts repeated metric-evaluation failures. Set
   `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
   debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
   comma-separated context list only when debugging context-specific compilation.
