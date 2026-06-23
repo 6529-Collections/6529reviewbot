@@ -6696,6 +6696,7 @@ appServer.handleGitHubWebhook({
   assert(preparedVisualImage.base64.length > 0);
   const manifestConversionSummary = await runManifestConversionSmoke();
   assert.equal(manifestConversionSummary.credentials.webhookSecret, "set");
+  await runGlmSwarmRunnerSmoke();
   const githubActorContext = await githubActorContextPromise;
   assert.equal(githubActorContext.login, "maintainer");
   assert.equal(githubActorContext.permission, "write");
@@ -9042,6 +9043,144 @@ async function runManifestConversionSmoke() {
     }
   );
   return summary;
+}
+
+async function runGlmSwarmRunnerSmoke() {
+  let reviewerCalls = 0;
+  let synthesisCalls = 0;
+  const partial = glmSwarmRunnerOptions(async (_settings, prompt, options = {}) => {
+    if (options.role === "reviewer") {
+      reviewerCalls += 1;
+      return {
+        text:
+          reviewerCalls === 1
+            ? ""
+            : "### Thread summary\nNo high-confidence findings for this slice.",
+        usage: reviewBot.emptyUsage(),
+        providerResponseId: `or-reviewer-${reviewerCalls}`,
+        actualCostUsd: 0.001,
+      };
+    }
+    synthesisCalls += 1;
+    assert.equal(options.role, "synthesis");
+    assert(prompt.user.includes("Reviewer threads completed: 1"));
+    assert(prompt.user.includes("Reviewer threads unavailable:"));
+    return {
+      text:
+        "**Verdict**: Advisory only\n\nThis GLM swarm pass is advisory and complements existing tests plus existing reviewbot lanes; it does not replace them.",
+      usage: reviewBot.emptyUsage(),
+      providerResponseId: "or-synthesis",
+      actualCostUsd: 0.002,
+    };
+  });
+  const partialResult = await glmSwarmReview.runGlmSwarmReview(partial.options);
+  assert.equal(reviewerCalls, 2);
+  assert.equal(synthesisCalls, 1);
+  assert.equal(partialResult.reviewerResults.length, 2);
+  assert.equal(partialResult.reviewerResults.filter((result) => result.degraded).length, 1);
+  assert(partialResult.comment.includes("### Partial reviewer output"));
+  assert(partialResult.comment.includes("\"degradedReviewerThreads\""));
+  assert.equal(partial.state.usage.metadata.degradedReviewerThreads.length, 1);
+  assert(partial.state.warnings.some((message) => message.includes("returned empty output")));
+
+  const allEmpty = glmSwarmRunnerOptions(async (_settings, _prompt, options = {}) => {
+    assert.equal(options.role, "reviewer");
+    return {
+      text: "",
+      usage: reviewBot.emptyUsage(),
+      providerResponseId: "or-empty",
+      actualCostUsd: 0.001,
+    };
+  });
+  await assert.rejects(
+    () => glmSwarmReview.runGlmSwarmReview(allEmpty.options),
+    /no remaining reviewer output to synthesize/
+  );
+  assert.equal(allEmpty.state.postedComment, "");
+
+  const emptySynthesis = glmSwarmRunnerOptions(async (_settings, _prompt, options = {}) => {
+    if (options.role === "reviewer") {
+      return {
+        text: "### Thread summary\nNo high-confidence findings for this slice.",
+        usage: reviewBot.emptyUsage(),
+        providerResponseId: "or-reviewer",
+        actualCostUsd: 0.001,
+      };
+    }
+    return {
+      text: "",
+      usage: reviewBot.emptyUsage(),
+      providerResponseId: "or-synthesis-empty",
+      actualCostUsd: 0.001,
+    };
+  });
+  await assert.rejects(
+    () => glmSwarmReview.runGlmSwarmReview(emptySynthesis.options),
+    /GLM swarm internal call 'synthesis' returned empty output/
+  );
+  assert.equal(emptySynthesis.state.postedComment, "");
+
+  const providerFailure = glmSwarmRunnerOptions(async () => {
+    throw new Error("provider auth failed");
+  });
+  await assert.rejects(
+    () => glmSwarmReview.runGlmSwarmReview(providerFailure.options),
+    /provider auth failed/
+  );
+  assert.equal(providerFailure.state.postedComment, "");
+}
+
+function glmSwarmRunnerOptions(callModel) {
+  const comments = [];
+  const state = {
+    postedComment: "",
+    usage: null,
+    warnings: [],
+  };
+  const options = {
+    settings: {
+      ...glmSwarmSettings,
+      dryRun: false,
+      printPrompt: false,
+      printComment: false,
+      postSkipComment: false,
+      swarmEnabled: true,
+      headSha: "abcdef1234567890abcdef1234567890abcdef12",
+      maxReviewerThreads: 2,
+      maxFilesPerReviewer: 4,
+      maxChangedFiles: 300,
+      maxChangedLines: 30000,
+      oversizeBehavior: "skip",
+      rawOutputRetention: { mode: "off" },
+    },
+    getPrInfo: () => ({
+      number: 7,
+      title: "GLM swarm smoke",
+      isDraft: false,
+      author: { login: "maintainer" },
+      headRefOid: "abcdef1234567890abcdef1234567890abcdef12",
+      headRepository: { nameWithOwner: "6529-Collections/example" },
+    }),
+    getPrDiffBundle: () => ({
+      diff: glmDiff,
+      changedFiles: ["src/auth/wallet.ts", "components/ProfileCard.tsx"],
+    }),
+    getPrComments: () => comments,
+    postComment: (_settings, comment) => {
+      state.postedComment = comment;
+      comments.push({ body: comment, author: "github-actions[bot]" });
+    },
+    countMarker: (items, marker) =>
+      items.filter((comment) => comment.body.includes(`"marker":"${marker}"`)).length,
+    recordUsage: (_settings, payload) => {
+      state.usage = payload;
+    },
+    uploadRawOutputs: async () => ({ ok: true, mode: "off", uploaded: false }),
+    callModel,
+    log: () => {},
+    warn: (message) => state.warnings.push(message),
+  };
+  return { options, state };
 }
 
 function signedAdminHeadersFor(url, options = {}) {

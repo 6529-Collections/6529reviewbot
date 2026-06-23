@@ -443,7 +443,7 @@ This release is intended for 6529 maintainers dogfooding \`6529bot\`.
 - Model price source freshness policy: reviewed during release candidate
 - Alert delivery: operator-owned channel verified after reviewed alert delivery plan evidence
 - Alert delivery plan: ready
-- Empty provider output fail-closed evidence: smoke and release checks passed
+- Empty provider output fail-closed or documented GLM partial-review evidence: smoke and release checks passed
 - Worker diagnostic redaction evidence: diagnostics redaction checks passed
 - 6529.io dashboard/admin status: public dashboard deployed or deferred
 - Public dashboard disclosure allowlists: reviewed for public repo/org summaries

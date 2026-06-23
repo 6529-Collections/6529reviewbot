@@ -348,11 +348,13 @@ internal reviewer/synthesis outputs only in configured S3 operator
 infrastructure. Raw GLM outputs must not be committed or stored through Git
 LFS.
 
-If one internal GLM reviewer thread returns empty output, the runner keeps the
-job advisory by marking that thread unavailable, warning in worker logs, and
-posting a partial-review note in the synthesized comment metadata/body. Empty
-synthesis output still fails the job because the bot cannot post a trustworthy
-review without a final synthesis.
+If one internal GLM reviewer thread returns empty output while at least one
+other reviewer returned usable output, the runner keeps the job advisory by
+marking that thread unavailable, warning in worker logs, and posting a
+partial-review note in the synthesized comment metadata/body. All-empty
+reviewer output and empty synthesis output still fail the job because the bot
+cannot post a trustworthy review without real reviewer input and a final
+synthesis.
 
 ## Responsiveness Review
 

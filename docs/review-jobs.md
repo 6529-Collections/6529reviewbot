@@ -164,10 +164,11 @@ The GLM swarm runner adds its own internal thread, per-thread output token,
 synthesis output token, total output token, prompt input, and actual-cost caps
 before and during the internal OpenRouter calls. A single empty internal
 reviewer output is marked as unavailable and the runner posts a partial
-advisory review from the remaining reviewer output. Empty synthesis output, and
-empty output from ordinary model-backed review jobs, still fails the job instead
-of posting a generic no-finding comment. Those failures should be investigated
-as provider, prompt, or adapter failures.
+advisory review only when at least one other reviewer returned usable output.
+Empty synthesis output, all-empty GLM reviewer output, and empty output from
+ordinary model-backed review jobs still fail the job instead of posting a
+generic no-finding comment. Those failures should be investigated as provider,
+prompt, or adapter failures.
 
 Workers can also pass the full job JSON to:
 

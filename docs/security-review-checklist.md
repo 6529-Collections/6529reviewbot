@@ -59,7 +59,9 @@ Target deployment:
   untrusted.
 - Provider calls have bounded input, output, timeout, and changed-file limits.
 - Provider errors are sanitized before logs and comments.
-- Empty provider output fails closed before comment posting.
+- Empty provider output fails closed before comment posting, except one empty
+  internal GLM reviewer slice can be marked unavailable when another GLM
+  reviewer returned usable output.
 - Worker diagnostic tails and GitHub API dispatch failure bodies redact common
   token, sensitive-header, alert-webhook, AWS access-key id, AWS ARN,
   AWS account-id, and private-key shapes before they can enter queue results,

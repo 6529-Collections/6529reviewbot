@@ -211,6 +211,12 @@ async function runGlmSwarmReview(options = {}) {
     }
   }
 
+  if (reviewerResults.length > 0 && reviewerResults.every((result) => result.degraded)) {
+    throw new Error(
+      "GLM swarm reviewer output unavailable for every internal reviewer thread; no remaining reviewer output to synthesize."
+    );
+  }
+
   const synthesisPrompt = buildSynthesisPrompt({
     settings,
     pr,
