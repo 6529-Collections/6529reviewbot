@@ -97,6 +97,7 @@ const requiredChecklistSnippets = [
   "Provider errors are sanitized before logs and comments.",
   "Empty provider output fails closed before comment posting, except one empty",
   "internal GLM reviewer slice can be marked unavailable",
+  "when another GLM reviewer returned usable output",
   "Runtime pause controls are evaluated before budget admission, run-control claims, worker dispatch, and provider calls.",
   "Budget admission happens before queueing model jobs.",
   "Central DB budget policy rows are reviewed, applied from operator-owned files, and loaded into admission before worker dispatch.",
