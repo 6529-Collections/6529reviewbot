@@ -275,6 +275,14 @@ Comment command routing:
 See [comment-commands.md](comment-commands.md) for requestor attribution,
 policy gates, dedupe behavior, and examples.
 
+When an admitted comment command would expand into more review jobs than
+`REVIEWBOT_MAX_JOBS_PER_DELIVERY` allows, the app posts a PR comment
+explaining the failure instead of queueing jobs, using the GitHub App
+installation token. A delivery-scoped marker in the comment deduplicates
+webhook redeliveries and inbox retries. The webhook response reports the
+outcome under `commandFailure`; deployments without GitHub App credentials
+skip the comment and report `commentPosted: false`.
+
 The app normalizes events, evaluates admission policy, expands admitted events
 into review jobs, evaluates budget admission per job, claims run-control slots,
 and passes admitted jobs to an injectable queue function. When repository

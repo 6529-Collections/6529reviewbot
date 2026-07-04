@@ -245,6 +245,8 @@ function createGitHubAppIntegration(options = {}) {
     };
   }
 
+  // PR numbers share the issue number space, so event.prNumber addresses the
+  // pull request's conversation thread on the issues comment API.
   async function postIssueComment(event, body, options = {}) {
     if (!event?.repository?.fullName || !event.prNumber || !event.installationId) {
       throw new Error("Issue comment posting requires repository, PR number, and installation context.");
@@ -369,7 +371,27 @@ const MAX_ISSUE_COMMENT_DEDUPE_PAGES = 5;
 async function findIssueCommentWithMarker(fetchImpl, settings, token, repoFullName, issueNumber, marker) {
   const [owner, repo] = splitRepo(repoFullName);
   const baseUrl = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${encodeURIComponent(String(issueNumber))}/comments`;
-  for (let page = 1; page <= MAX_ISSUE_COMMENT_DEDUPE_PAGES; page += 1) {
+  const firstResponse = await githubFetchWithRetry(
+    fetchImpl,
+    settings,
+    `${baseUrl}?per_page=100&page=1`,
+    {
+      headers: githubHeaders(token),
+    }
+  );
+  if (!firstResponse.ok) {
+    throw new Error(`GitHub API returned HTTP ${firstResponse.status}.`);
+  }
+  const firstMatch = issueCommentWithMarker(await firstResponse.json(), marker);
+  if (firstMatch) {
+    return firstMatch;
+  }
+  // The comments API only lists ascending, and a marker comment from an
+  // earlier delivery of the same command is close to the tail of the thread,
+  // so scan the newest pages first instead of paging forward from the start.
+  const lastPage = lastPageFromLinkHeader(firstResponse);
+  const stopPage = Math.max(2, lastPage - (MAX_ISSUE_COMMENT_DEDUPE_PAGES - 1));
+  for (let page = lastPage; page >= stopPage; page -= 1) {
     const comments = await githubFetchJson(
       fetchImpl,
       settings,
@@ -378,18 +400,26 @@ async function findIssueCommentWithMarker(fetchImpl, settings, token, repoFullNa
         headers: githubHeaders(token),
       }
     );
-    if (!Array.isArray(comments) || comments.length === 0) {
-      return null;
-    }
-    const match = comments.find((comment) => String(comment?.body || "").includes(marker));
+    const match = issueCommentWithMarker(comments, marker);
     if (match) {
       return match;
     }
-    if (comments.length < 100) {
-      return null;
-    }
   }
   return null;
+}
+
+function issueCommentWithMarker(comments, marker) {
+  if (!Array.isArray(comments)) {
+    return null;
+  }
+  return comments.find((comment) => String(comment?.body || "").includes(marker)) || null;
+}
+
+function lastPageFromLinkHeader(response) {
+  const link =
+    typeof response?.headers?.get === "function" ? response.headers.get("link") : "";
+  const match = String(link || "").match(/[?&]page=(\d+)[^>]*>;\s*rel="last"/);
+  return match ? Number.parseInt(match[1], 10) : 1;
 }
 
 async function createIssueComment(fetchImpl, settings, token, repoFullName, issueNumber, body) {
