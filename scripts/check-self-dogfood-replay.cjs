@@ -125,19 +125,22 @@ async function checkMaxFanoutGuard() {
     const configPath = writeMultiLaneRepositoryConfig(tempDir, {
       maxJobsPerDelivery: 4,
     });
-    await assert.rejects(
-      () =>
-        replay("templates/self-dogfood-comment-command.payload.json", {
-          eventName: "issue_comment",
-          deliveryId: "self-dogfood-max-fanout",
-          repositoryConfigPath: configPath,
-          env: {
-            REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5",
-            REVIEWBOT_MAX_JOBS_PER_DELIVERY: "1",
-          },
-        }),
-      /above REVIEWBOT_MAX_JOBS_PER_DELIVERY=1/
-    );
+    const replayResult = await replay("templates/self-dogfood-comment-command.payload.json", {
+      eventName: "issue_comment",
+      deliveryId: "self-dogfood-max-fanout",
+      repositoryConfigPath: configPath,
+      env: {
+        REVIEWBOT_REVIEW_LANES: "anthropic:claude-opus-4-8,openai:gpt-5.5",
+        REVIEWBOT_MAX_JOBS_PER_DELIVERY: "1",
+      },
+    });
+    assert.equal(replayResult.statusCode, 200);
+    assert.equal(replayResult.body.enqueued, false);
+    assert.match(replayResult.body.event.reason, /above REVIEWBOT_MAX_JOBS_PER_DELIVERY=1/);
+    assert.equal(replayResult.body.commandFailure.code, "max_jobs_per_delivery_exceeded");
+    assert.equal(replayResult.body.commandFailure.jobCount, 2);
+    assert.equal(replayResult.body.commandFailure.maxJobsPerDelivery, 1);
+    assert.equal(replayResult.body.commandFailure.commentPosted, false);
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

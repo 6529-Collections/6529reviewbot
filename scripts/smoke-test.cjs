@@ -5134,8 +5134,13 @@ const serverWebhookInboxOptions = serverCli.createServerOptionsFromEnv({
 });
 assert.equal(serverWebhookInboxOptions.webhookInbox.settings.enabled, true);
 let serverDispatchRequest = null;
+let serverAppFailureCommentRequest = null;
+const serverAppCommentListRequests = [];
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
+    REVIEWBOT_GITHUB_APP_ID: "12345",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
+    REVIEWBOT_GITHUB_APP_API_URL: "https://api.github.test",
     REVIEWBOT_WORKER_GITHUB_APP_ID: "12345",
     REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
     REVIEWBOT_WORKER_GITHUB_APP_API_URL: "https://api.github.test",
@@ -5168,11 +5173,96 @@ const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
         };
         return { status: 204, text: async () => "" };
       }
+      if (String(url).includes("/repos/6529-Collections/example/issues/12/comments?per_page=")) {
+        serverAppCommentListRequests.push({ url, options });
+        if (String(url).includes("page=3")) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => [
+              {
+                id: 5555,
+                body: "<!-- 6529-review-bot:command-failure:deep-delivery -->\n## 6529bot command not queued",
+              },
+            ],
+          };
+        }
+        if (String(url).includes("page=2")) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => [],
+          };
+        }
+        return {
+          ok: true,
+          status: 200,
+          headers: {
+            get: (name) =>
+              String(name).toLowerCase() === "link"
+                ? '<https://api.github.test/repos/6529-Collections/example/issues/12/comments?per_page=100&page=3>; rel="last"'
+                : null,
+          },
+          json: async () => [
+            {
+              id: 4321,
+              body: "<!-- 6529-review-bot:command-failure:dupe-delivery -->\n## 6529bot command not queued",
+            },
+          ],
+        };
+      }
+      if (String(url).endsWith("/repos/6529-Collections/example/issues/12/comments")) {
+        serverAppFailureCommentRequest = {
+          url,
+          options,
+          body: JSON.parse(options.body),
+        };
+        return {
+          ok: true,
+          status: 201,
+          json: async () => ({ id: 9876 }),
+        };
+      }
       throw new Error(`Unexpected fetch URL: ${url}`);
     },
   }
 );
 const serverAppDispatchPromise = serverAppDispatchOptions.enqueueReviewJobs([forkReviewJob], {});
+const serverAppFailureCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "public fanout failure body"
+);
+const serverAppDedupedCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "duplicate fanout failure body",
+  { dedupeMarker: "<!-- 6529-review-bot:command-failure:dupe-delivery -->" }
+);
+const serverAppFreshCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "public fanout failure body",
+  { dedupeMarker: "<!-- 6529-review-bot:command-failure:fresh-delivery -->" }
+);
+const serverAppDeepDedupedCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "duplicate fanout failure body",
+  { dedupeMarker: "<!-- 6529-review-bot:command-failure:deep-delivery -->" }
+);
 let serverMainAppDispatchRequest = null;
 const serverMainAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
@@ -7404,6 +7494,37 @@ appServer.handleGitHubWebhook({
     "Bearer server-installation-token"
   );
   assert.equal(serverDispatchRequest.body.inputs.run_key, forkReviewJob.runKey);
+  const serverAppFailureCommentResult = await serverAppFailureCommentPromise;
+  assert.equal(serverAppFailureCommentResult.id, 9876);
+  assert.equal(
+    serverAppFailureCommentRequest.options.headers.authorization,
+    "Bearer server-installation-token"
+  );
+  assert.equal(
+    serverAppFailureCommentRequest.url,
+    "https://api.github.test/repos/6529-Collections/example/issues/12/comments"
+  );
+  assert.equal(
+    serverAppFailureCommentRequest.body.body,
+    "public fanout failure body"
+  );
+  const serverAppDedupedCommentResult = await serverAppDedupedCommentPromise;
+  assert.equal(serverAppDedupedCommentResult.skipped, true);
+  assert.equal(serverAppDedupedCommentResult.deduped, true);
+  assert.equal(serverAppDedupedCommentResult.id, 4321);
+  const serverAppFreshCommentResult = await serverAppFreshCommentPromise;
+  assert.equal(serverAppFreshCommentResult.id, 9876);
+  const serverAppDeepDedupedCommentResult = await serverAppDeepDedupedCommentPromise;
+  assert.equal(serverAppDeepDedupedCommentResult.skipped, true);
+  assert.equal(serverAppDeepDedupedCommentResult.deduped, true);
+  assert.equal(serverAppDeepDedupedCommentResult.id, 5555);
+  const serverAppCommentListPages = serverAppCommentListRequests.map((request) =>
+    String(request.url).match(/page=(\d+)$/)[1]
+  );
+  assert.equal(serverAppCommentListPages.filter((page) => page === "1").length, 3);
+  assert.equal(serverAppCommentListPages.filter((page) => page === "3").length, 2);
+  assert.equal(serverAppCommentListPages.filter((page) => page === "2").length, 1);
+  assert.equal(serverAppCommentListRequests.length, 6);
   const serverMainAppDispatchResult = await serverMainAppDispatchPromise;
   assert.equal(serverMainAppDispatchResult.accepted, true);
   assert.equal(serverMainAppDispatchResult.jobs[0].dispatchMode, "api");
@@ -8471,6 +8592,128 @@ appServer.handleGitHubWebhook({
     commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
     ["security:anthropic", "security:openai"]
   );
+  let fanoutFailureQueued = false;
+  const fanoutFailureComments = [];
+  const fanoutFailureResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": githubWebhook.signGitHubWebhook(webhookSecret, commandWebhookBody),
+      "x-github-event": "issue_comment",
+      "x-github-delivery": "delivery-command-fanout",
+    },
+    rawBody: commandWebhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    hydrateEvent: async (event) => ({
+      ...event,
+      headSha: "hydrated-command-head",
+      headRefName: "hydrated-command-branch",
+      baseSha: "hydrated-command-base",
+      headRepoFullName: "6529-Collections/example",
+      baseRepoFullName: "6529-Collections/example",
+      draft: false,
+    }),
+    enqueueReviewJobs: async () => {
+      fanoutFailureQueued = true;
+      return { accepted: true };
+    },
+    postCommandFailureComment: async (event, body, options) => {
+      fanoutFailureComments.push({ event, body, options });
+      return { id: 1234 };
+    },
+    recordJobEvent: async () => {},
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadRepositoryConfig: async () => ({
+      status: "loaded",
+      source: "test",
+      config: parsedRepoConfig,
+    }),
+    jobPolicy: {
+      ...twoLanePolicy,
+      maxJobsPerDelivery: 1,
+    },
+  });
+  assert.equal(fanoutFailureResult.statusCode, 200);
+  assert.equal(fanoutFailureResult.body.enqueued, false);
+  assert.equal(fanoutFailureResult.body.event.kind, "comment_command");
+  assert.equal(webhookInbox.shouldRetryWebhookResult(fanoutFailureResult), false);
+  assert.equal(fanoutFailureResult.body.commandFailure.code, "max_jobs_per_delivery_exceeded");
+  assert.equal(fanoutFailureResult.body.commandFailure.jobCount, 2);
+  assert.equal(fanoutFailureResult.body.commandFailure.maxJobsPerDelivery, 1);
+  assert.equal(fanoutFailureResult.body.commandFailure.commentPosted, true);
+  assert.equal(fanoutFailureQueued, false);
+  assert.equal(fanoutFailureComments.length, 1);
+  assert.match(fanoutFailureComments[0].body, /6529bot command not queued/);
+  assert.match(fanoutFailureComments[0].body, /delivery-command-fanout/);
+  assert.match(fanoutFailureComments[0].body, /Requested jobs: `2`/);
+  assert.match(fanoutFailureComments[0].body, /Current max per delivery: `1`/);
+  assert.equal(
+    fanoutFailureComments[0].options.dedupeMarker,
+    "<!-- 6529-review-bot:command-failure:delivery-command-fanout -->"
+  );
+  assert.equal(
+    appServer.commandFailureMarker({ deliveryId: "de`liv ery-1" }),
+    "<!-- 6529-review-bot:command-failure:delivery-1 -->"
+  );
+  assert.equal(
+    appServer.commandFailureMarker({}),
+    "<!-- 6529-review-bot:command-failure:unknown -->"
+  );
+  const injectionFailureComment = appServer.buildCommandFailureComment(
+    {
+      deliveryId: "delivery-inject",
+      command: { name: "review", args: ["all", "`code`", "safe-arg"] },
+      reviewKinds: ["general"],
+    },
+    { message: "too many jobs", jobCount: 20, maxJobsPerDelivery: 12, reviewKinds: ["general"] }
+  );
+  assert.match(injectionFailureComment, /- Command: `\/6529bot review all code safe-arg`/);
+  const fanoutCommentThrowResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": githubWebhook.signGitHubWebhook(webhookSecret, commandWebhookBody),
+      "x-github-event": "issue_comment",
+      "x-github-delivery": "delivery-command-fanout-throw",
+    },
+    rawBody: commandWebhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    hydrateEvent: async (event) => ({
+      ...event,
+      headSha: "hydrated-command-head",
+      headRefName: "hydrated-command-branch",
+      baseSha: "hydrated-command-base",
+      headRepoFullName: "6529-Collections/example",
+      baseRepoFullName: "6529-Collections/example",
+      draft: false,
+    }),
+    enqueueReviewJobs: async () => {
+      throw new Error("enqueue must not run when fanout fails");
+    },
+    postCommandFailureComment: async () => {
+      throw new Error("GitHub comment API unavailable");
+    },
+    recordJobEvent: async () => {},
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadRepositoryConfig: async () => ({
+      status: "loaded",
+      source: "test",
+      config: parsedRepoConfig,
+    }),
+    jobPolicy: {
+      ...twoLanePolicy,
+      maxJobsPerDelivery: 1,
+    },
+  });
+  assert.equal(fanoutCommentThrowResult.statusCode, 200);
+  assert.equal(fanoutCommentThrowResult.body.enqueued, false);
+  assert.equal(fanoutCommentThrowResult.body.commandFailure.code, "max_jobs_per_delivery_exceeded");
+  assert.equal(fanoutCommentThrowResult.body.commandFailure.commentPosted, false);
+  assert.equal(webhookInbox.shouldRetryWebhookResult(fanoutCommentThrowResult), false);
   const inboxCalls = [];
   const fakeWebhookInbox = {
     settings: { enabled: true, batchSize: 2, maxAttempts: 3 },

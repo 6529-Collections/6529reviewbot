@@ -134,6 +134,7 @@ function createServerOptionsFromEnv(env = process.env, options = {}) {
     serverOptions.resolveActorContext = githubApp.resolveActorContext;
     serverOptions.hydrateEvent = githubApp.hydratePullRequestContext;
     serverOptions.loadRepositoryConfig = githubApp.loadRepositoryConfig;
+    serverOptions.postCommandFailureComment = githubApp.postIssueComment;
   }
   const workerDispatchGitHubAppSettings =
     githubAppAuthSettingsFromWorkerDispatchEnv(env);
