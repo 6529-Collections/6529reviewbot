@@ -86,6 +86,59 @@ function updateRunClaimStatus(settings, job, status, options = {}) {
   }
 }
 
+function beginRunClaimWork(settings, job, options = {}) {
+  if (!settings.enabled) {
+    return { skipped: true, duplicate: false, claimFound: false };
+  }
+  try {
+    assertDataApiSettings(settings, "Run-control ledger");
+    const query = buildRunClaimWorkBegin(settings.schema, job, options);
+    const execute = options.executeStatement || executeStatement;
+    const response = execute(settings, query.sql, query.parameters, {
+      tempPrefix: "6529-run-control-begin-",
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    const record = response.records?.[0];
+    if (!record) {
+      return { skipped: false, duplicate: false, claimFound: false };
+    }
+    const priorStatus = String(fieldValue(record[0]) || "");
+    const started = Boolean(fieldValue(record[1]));
+    return { skipped: false, duplicate: !started, claimFound: true, priorStatus };
+  } catch (error) {
+    return { skipped: false, duplicate: false, claimFound: false, error };
+  }
+}
+
+function buildRunClaimWorkBegin(schema, job, options = {}) {
+  assertClaimableJob(job);
+  return {
+    sql: `
+with existing as (
+  select run_key, status
+  from ${quoteIdent(schema)}.ai_review_run_claims
+  where run_key = :run_key
+),
+updated as (
+  update ${quoteIdent(schema)}.ai_review_run_claims
+  set
+    status = 'running',
+    updated_at = now(),
+    metadata = metadata || cast(:metadata as jsonb)
+  where run_key = :run_key
+    and status <> 'completed'
+  returning run_key
+)
+select existing.status, exists (select 1 from updated) as started
+from existing
+`,
+    parameters: [
+      stringParam("run_key", job.runKey),
+      stringParam("metadata", JSON.stringify(safeMetadata(options.metadata))),
+    ],
+  };
+}
+
 function buildRunClaimQuery(schema, job, policy, options = {}) {
   assertClaimableJob(job);
   const schemaIdent = quoteIdent(schema);
@@ -508,8 +561,10 @@ function safeError(error) {
 }
 
 module.exports = {
+  beginRunClaimWork,
   buildRunClaimQuery,
   buildRunClaimStatusUpdate,
+  buildRunClaimWorkBegin,
   claimReviewJobWithLedger,
   runClaimRecordToDecision,
   runControlLedgerSettingsFromEnv,

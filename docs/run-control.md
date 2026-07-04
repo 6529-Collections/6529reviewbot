@@ -153,6 +153,24 @@ worker and then writes `completed` or `failed` when the worker returns. The
 GitHub Actions worker therefore needs the job `runKey` plus run-control ledger
 environment variables when durable claims are enabled.
 
+### Worker Duplicate-Dispatch Guard
+
+GitHub `workflow_dispatch` is not idempotent. If a dispatch request times out
+or fails after GitHub has already accepted it, App-side dispatch retries can
+start more than one worker run for the same job and run key. When the
+run-control ledger is enabled, the worker runner moves the job's claim to
+`running` and checks the prior claim state in one atomic statement. A claim
+that is already `completed` is treated as a duplicate dispatch: the worker
+exits successfully with `duplicateDispatchSkipped` instead of calling the
+provider or posting a second review comment.
+
+Claims in `claimed`, `dispatching`, `running`, `failed`, `dispatch_failed`,
+`dispatch_error`, or `expired` states still run, so retries of crashed or
+failed jobs keep working. Manual workflow dispatches that mint a fresh
+`run_key` have no claim row and are unaffected. If the ledger is disabled or
+the claim lookup fails, the worker runs normally, keeping review availability
+ahead of duplicate protection.
+
 Private 6529.io admin surfaces can read recent or stale claim rows through:
 
 ```text
