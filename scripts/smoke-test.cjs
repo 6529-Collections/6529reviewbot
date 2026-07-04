@@ -752,7 +752,26 @@ assert.equal(noWrapperWebServer.command, "pnpm run dev");
 assert.equal(noWrapperWebServer.baseUrl, "http://localhost:3001");
 assert.equal(noWrapperWebServer.ignoreHTTPSErrors, false);
 fs.mkdirSync(path.join(safeAppTempDir, "bin"), { recursive: true });
-fs.writeFileSync(path.join(safeAppTempDir, "bin", "6529"), "#!/usr/bin/env bash\n");
+fs.writeFileSync(path.join(safeAppTempDir, "bin", "6529"), "#!/usr/bin/env bash\n", {
+  mode: 0o644,
+});
+if (process.platform !== "win32") {
+  // A present-but-non-executable wrapper must fall through to pnpm, matching
+  // the workflows' [ -x ./bin/6529 ] gate. X_OK is an existence check on
+  // Windows, so this branch is POSIX-only.
+  const nonExecutableWrapperWebServer = responsivenessRunner.resolveWebServer(
+    {
+      installCommand: "",
+      target: safeAppTempDir,
+      baseUrl: "http://localhost:3001",
+      baseUrlProvided: false,
+      port: 3001,
+    },
+    genericResponsivenessProfile
+  );
+  assert.equal(nonExecutableWrapperWebServer.command, "pnpm run dev");
+}
+fs.chmodSync(path.join(safeAppTempDir, "bin", "6529"), 0o755);
 const wrapperWebServer = responsivenessRunner.resolveWebServer(
   {
     installCommand: "",

@@ -217,6 +217,9 @@ jobs:
         working-directory: target
         run: |
           set -euo pipefail
+          # The Playwright browser download comes from the Playwright CDN, not a
+          # package registry, and runs outside Socket Firewall on both branches
+          # (the wrapper forwards to plain pnpm exec too).
           if [ -x ./bin/6529 ]; then
             ./bin/6529 exec playwright install chromium
           else

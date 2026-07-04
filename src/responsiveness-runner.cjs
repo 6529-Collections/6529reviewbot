@@ -247,7 +247,8 @@ const PROFILE_6529_SAFE_APP = {
   packageNames: ["6529-safe-app"],
   // Vite dev server with the basic-ssl plugin: https only, port via CLI flag.
   // pnpm run forwards a literal "--" to vite, which then ignores the flags,
-  // so invoke vite through pnpm exec like the target's own Playwright config.
+  // so invoke vite through pnpm exec. Keep in sync with the webServer command
+  // in 6529-safe-app/playwright.config.ts.
   devServerCommand: "pnpm exec vite --port {port} --strictPort",
   devServerProtocol: "https",
   shellCanaryRoutes: ["/#/"],
@@ -429,12 +430,24 @@ function packageNameForTarget(target) {
   }
 }
 
+function hasExecutable6529Wrapper(target) {
+  // Match the workflows' [ -x ./bin/6529 ] gate; a present-but-non-executable
+  // wrapper must fall through to pnpm on both paths. X_OK degrades to an
+  // existence check on Windows, which only affects local debugging runs.
+  try {
+    fs.accessSync(path.join(target, "bin", "6529"), fs.constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function resolveWebServer(options, profile) {
   let command = String(options.installCommand || "");
   if (!command) {
     if (profile.devServerCommand) {
       command = profile.devServerCommand.replace(/\{port\}/g, String(options.port));
-    } else if (fs.existsSync(path.join(options.target, "bin", "6529"))) {
+    } else if (hasExecutable6529Wrapper(options.target)) {
       command = "./bin/6529 run dev";
     } else {
       command = "pnpm run dev";
