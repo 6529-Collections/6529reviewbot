@@ -11,6 +11,29 @@ lane for GitHub Actions budget accounting. See
 Maintainer comment triggers are documented in
 [comment-commands.md](comment-commands.md).
 
+## Self Review
+
+This repository reviews its own pull requests through GitHub Actions instead
+of the central App webhook. `.github/workflows/self-review.yml` triggers on
+pull request events, maintainer `/6529bot` comments, and manual dispatch, then
+calls the reusable `.github/workflows/review.yml` workflow with review kinds
+planned by `bin/self-review-plan.cjs`:
+
+- Initial reviews (opened, reopened, ready for review): `general`,
+  `security`, `auth-api`, `deploy-actions`, `db-lambda`, and `glm-swarm` —
+  the kinds that match this repository's backend, GitHub App auth, GitHub
+  Actions, and RDS Data API surface.
+- Pushed commits (synchronize): `followup`.
+- Comment commands: parsed with the same `parseReviewCommand` used by the
+  App, restricted to owner, member, or collaborator comment authors.
+
+Draft pull requests are skipped until they are marked ready for review.
+Frontend and repo-specific kinds (`wcag`, `i18n`, `responsiveness`,
+`media-external`, `stream-contracts`, `safe-write`, `release-deploy`,
+`privacy-evidence`, `signer-ux`) stay out of the automatic set but remain
+available through comment commands. `scripts/check-review-workflow-kinds.cjs`
+enforces that the planned kinds stay valid.
+
 ## General PR Review
 
 Entrypoint:

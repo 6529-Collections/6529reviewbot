@@ -34,6 +34,7 @@ const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodTarget = require("../src/dogfood-target.cjs");
 const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
+const selfReviewPlanCli = require("../bin/self-review-plan.cjs");
 const dogfoodTargetContractCheck = require("./check-dogfood-target-contract.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
@@ -4640,6 +4641,102 @@ assert.throws(
       reusableWorkflowText: "missing workflow review-kind defaults",
     }),
   /review workflow kind check found/
+);
+assert.throws(
+  () =>
+    reviewWorkflowKindsCheck.checkReviewWorkflowKinds({
+      quiet: true,
+      selfReviewWorkflowText: "jobs: {}\n",
+    }),
+  /review workflow kind check found/
+);
+const selfReviewPlanEnv = {
+  INITIAL_KINDS_JSON: '["general","security","auth-api"]',
+  SYNCHRONIZE_KINDS_JSON: '["followup"]',
+};
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "pull_request",
+    EVENT_ACTION: "opened",
+    PR_NUMBER: "415",
+    PR_HEAD_SHA: "self-review-head",
+  }),
+  {
+    prNumber: "415",
+    headSha: "self-review-head",
+    eventAction: "opened",
+    reviewKinds: ["general", "security", "auth-api"],
+  }
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "pull_request",
+    EVENT_ACTION: "synchronize",
+    PR_NUMBER: "415",
+    PR_HEAD_SHA: "self-review-head",
+  }).reviewKinds,
+  ["followup"]
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview(
+    {
+      ...selfReviewPlanEnv,
+      EVENT_NAME: "issue_comment",
+      EVENT_ACTION: "created",
+      PR_NUMBER: "415",
+      COMMENT_BODY: "/6529bot review security db-lambda",
+    },
+    { resolveHeadSha: () => "resolved-head" }
+  ),
+  {
+    prNumber: "415",
+    headSha: "resolved-head",
+    eventAction: "created",
+    reviewKinds: ["security", "db-lambda"],
+  }
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    PR_NUMBER: "415",
+    COMMENT_BODY: "looks good to me",
+  }).reviewKinds,
+  []
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview(
+    {
+      ...selfReviewPlanEnv,
+      EVENT_NAME: "workflow_dispatch",
+      PR_NUMBER: "415",
+      REQUESTED_KINDS_JSON: '["deploy-actions"]',
+    },
+    { resolveHeadSha: () => "resolved-head" }
+  ).reviewKinds,
+  ["deploy-actions"]
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      EVENT_NAME: "workflow_dispatch",
+      PR_NUMBER: "415",
+      REQUESTED_KINDS_JSON: '["not-a-kind"]',
+    }),
+  /unknown review kind 'not-a-kind'/
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      EVENT_NAME: "pull_request",
+      EVENT_ACTION: "opened",
+    }),
+  /PR_NUMBER is required/
 );
 assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
 assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");

@@ -1,0 +1,82 @@
+name: 6529bot Self Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number to review.
+        required: true
+        type: string
+      review_kinds_json:
+        description: JSON array of review kinds. Empty uses the initial set.
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  id-token: write
+
+jobs:
+  plan:
+    name: Plan review kinds
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       (startsWith(github.event.comment.body, '/6529bot') || startsWith(github.event.comment.body, '@6529bot')))
+    outputs:
+      pr_number: ${{ steps.plan.outputs.pr_number }}
+      head_sha: ${{ steps.plan.outputs.head_sha }}
+      event_action: ${{ steps.plan.outputs.event_action }}
+      review_kinds_json: ${{ steps.plan.outputs.review_kinds_json }}
+    steps:
+      - name: Checkout bot
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+
+      - name: Plan review kinds
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action || 'manual' }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
+          COMMENT_BODY: ${{ github.event.comment.body || '' }}
+          REQUESTED_KINDS_JSON: ${{ inputs.review_kinds_json || '' }}
+          INITIAL_KINDS_JSON: '["general","security","auth-api","deploy-actions","db-lambda","glm-swarm"]'
+          SYNCHRONIZE_KINDS_JSON: '["followup"]'
+        run: node bin/self-review-plan.cjs
+
+  review:
+    name: Review
+    needs: plan
+    if: ${{ needs.plan.outputs.review_kinds_json != '' && needs.plan.outputs.review_kinds_json != '[]' }}
+    uses: ./.github/workflows/review.yml
+    with:
+      pr_number: ${{ needs.plan.outputs.pr_number }}
+      head_sha: ${{ needs.plan.outputs.head_sha }}
+      event_action: ${{ needs.plan.outputs.event_action }}
+      review_kinds_json: ${{ needs.plan.outputs.review_kinds_json }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
