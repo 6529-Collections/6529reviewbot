@@ -34,6 +34,7 @@ const dataApi = require("../src/data-api.cjs");
 const diagnostics = require("../src/diagnostics.cjs");
 const dogfoodTarget = require("../src/dogfood-target.cjs");
 const dogfoodTargetCli = require("../bin/dogfood-target.cjs");
+const selfReviewPlanCli = require("../bin/self-review-plan.cjs");
 const dogfoodTargetContractCheck = require("./check-dogfood-target-contract.cjs");
 const dogfoodReadiness = require("../src/dogfood-readiness.cjs");
 const dogfoodReadinessCli = require("../bin/dogfood-readiness.cjs");
@@ -4640,6 +4641,210 @@ assert.throws(
       reusableWorkflowText: "missing workflow review-kind defaults",
     }),
   /review workflow kind check found/
+);
+assert.throws(
+  () =>
+    reviewWorkflowKindsCheck.checkReviewWorkflowKinds({
+      quiet: true,
+      selfReviewWorkflowText: "jobs: {}\n",
+    }),
+  /review workflow kind check found/
+);
+const selfReviewPlanEnv = {
+  INITIAL_KINDS_JSON: '["general","security","glm-swarm"]',
+  SYNCHRONIZE_KINDS_JSON: '["followup"]',
+  GITHUB_REPOSITORY: "6529-Collections/6529reviewbot",
+  GITHUB_RUN_ID: "424242",
+  GITHUB_ACTOR: "punk6529",
+  SELF_INSTALLATION_ID: "140321060",
+  PR_NUMBER: "415",
+  PR_HEAD_SHA: "self-review-head",
+  PR_BASE_SHA: "self-review-base",
+  PR_HEAD_REF: "self-review-branch",
+  PR_HEAD_REPO: "6529-Collections/6529reviewbot",
+};
+const selfReviewInitialPlan = selfReviewPlanCli.planSelfReview({
+  ...selfReviewPlanEnv,
+  EVENT_NAME: "pull_request",
+  EVENT_ACTION: "opened",
+});
+assert.equal(selfReviewInitialPlan.trigger, "opened");
+assert.deepEqual(selfReviewInitialPlan.reviewKinds, ["general", "security", "glm-swarm"]);
+assert.equal(selfReviewInitialPlan.jobs.length, 3);
+assert.deepEqual(
+  selfReviewInitialPlan.jobs.map((job) => `${job.reviewKind}:${job.lane}`),
+  [
+    "general:anthropic:claude-opus-4-8",
+    "security:anthropic:claude-opus-4-8",
+    "glm-swarm:openrouter:z-ai-glm-5.2",
+  ]
+);
+for (const job of selfReviewInitialPlan.jobs) {
+  assert.equal(job.installationId, "140321060");
+  assert.equal(job.repository.fullName, "6529-Collections/6529reviewbot");
+  assert.equal(job.headRepoFullName, "6529-Collections/6529reviewbot");
+  assert.equal(job.prNumber, "415");
+  assert.equal(job.headSha, "self-review-head");
+  assert.equal(job.baseSha, "self-review-base");
+  assert.equal(job.headRefName, "self-review-branch");
+  assert.match(job.id, /^rj_[0-9a-f]{24}$/);
+  assert.match(job.runKey, /^rk_[0-9a-f]{24}$/);
+}
+const selfReviewSynchronizePlan = selfReviewPlanCli.planSelfReview({
+  ...selfReviewPlanEnv,
+  EVENT_NAME: "pull_request",
+  EVENT_ACTION: "synchronize",
+});
+assert.deepEqual(selfReviewSynchronizePlan.reviewKinds, ["followup"]);
+assert.equal(selfReviewSynchronizePlan.trigger, "synchronize");
+const selfReviewCommentPlan = selfReviewPlanCli.planSelfReview(
+  {
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    PR_HEAD_SHA: "",
+    PR_BASE_SHA: "",
+    PR_HEAD_REF: "",
+    PR_HEAD_REPO: "",
+    COMMENT_BODY: "/6529bot review security db-lambda",
+  },
+  {
+    resolvePullRequest: () => ({
+      headSha: "resolved-head",
+      baseSha: "resolved-base",
+      headRefName: "resolved-branch",
+      headRepoFullName: "6529-Collections/6529reviewbot",
+    }),
+  }
+);
+assert.deepEqual(selfReviewCommentPlan.reviewKinds, ["security", "db-lambda"]);
+assert.equal(selfReviewCommentPlan.trigger, "comment");
+assert.equal(selfReviewCommentPlan.headSha, "resolved-head");
+assert.equal(selfReviewCommentPlan.jobs[0].baseSha, "resolved-base");
+assert.equal(selfReviewCommentPlan.jobs[0].headRefName, "resolved-branch");
+assert.equal(selfReviewCommentPlan.jobs[0].headRepoFullName, "6529-Collections/6529reviewbot");
+const selfReviewPartialPlan = selfReviewPlanCli.planSelfReview(
+  {
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    PR_BASE_SHA: "",
+    PR_HEAD_REF: "",
+    PR_HEAD_REPO: "",
+    COMMENT_BODY: "/6529bot review security",
+  },
+  {
+    resolvePullRequest: () => ({
+      headSha: "resolved-head",
+      baseSha: "resolved-base",
+      headRefName: "resolved-branch",
+      headRepoFullName: "6529-Collections/6529reviewbot",
+    }),
+  }
+);
+assert.equal(selfReviewPartialPlan.headSha, "self-review-head");
+assert.equal(selfReviewPartialPlan.jobs[0].baseSha, "resolved-base");
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview(
+      {
+        ...selfReviewPlanEnv,
+        EVENT_NAME: "issue_comment",
+        EVENT_ACTION: "created",
+        PR_HEAD_SHA: "",
+        PR_BASE_SHA: "",
+        PR_HEAD_REF: "",
+        PR_HEAD_REPO: "",
+        COMMENT_BODY: "/6529bot review security",
+      },
+      {
+        resolvePullRequest: () => ({
+          headSha: "fork-head",
+          baseSha: "fork-base",
+          headRefName: "fork-branch",
+          headRepoFullName: "attacker/6529reviewbot",
+        }),
+      }
+    ),
+  /Self review only supports branches in 6529-Collections\/6529reviewbot/
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview(
+      {
+        ...selfReviewPlanEnv,
+        EVENT_NAME: "issue_comment",
+        EVENT_ACTION: "created",
+        PR_HEAD_SHA: "",
+        PR_BASE_SHA: "",
+        PR_HEAD_REF: "",
+        PR_HEAD_REPO: "",
+        COMMENT_BODY: "/6529bot review security",
+      },
+      {
+        resolvePullRequest: () => ({
+          headSha: "resolved-head",
+          baseSha: "",
+          headRefName: "resolved-branch",
+          headRepoFullName: "6529-Collections/6529reviewbot",
+        }),
+      }
+    ),
+  /Could not resolve base SHA/
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    COMMENT_BODY: "looks good to me",
+  }),
+  { prNumber: "415", eventAction: "created", trigger: "comment", reviewKinds: [], jobs: [], headSha: "" }
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    COMMENT_BODY: "/6529bot help",
+  }),
+  { prNumber: "415", eventAction: "created", trigger: "comment", reviewKinds: [], jobs: [], headSha: "" }
+);
+const selfReviewDispatchPlan = selfReviewPlanCli.planSelfReview({
+  ...selfReviewPlanEnv,
+  EVENT_NAME: "workflow_dispatch",
+  REQUESTED_KINDS_JSON: '["deploy-actions"]',
+});
+assert.deepEqual(selfReviewDispatchPlan.reviewKinds, ["deploy-actions"]);
+assert.equal(selfReviewDispatchPlan.trigger, "manual");
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      EVENT_NAME: "workflow_dispatch",
+      REQUESTED_KINDS_JSON: '["not-a-kind"]',
+    }),
+  /unknown review kind 'not-a-kind'/
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      PR_NUMBER: "",
+      EVENT_NAME: "pull_request",
+      EVENT_ACTION: "opened",
+    }),
+  /PR_NUMBER is required/
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      SELF_INSTALLATION_ID: "",
+      EVENT_NAME: "pull_request",
+      EVENT_ACTION: "opened",
+    }),
+  /SELF_INSTALLATION_ID is required/
 );
 assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
 assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");

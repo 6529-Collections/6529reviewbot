@@ -20,6 +20,7 @@ const dispatchWorkflowPaths = [
   "templates/review-job-workflow.yml",
 ];
 const reusableWorkflowPath = ".github/workflows/review.yml";
+const selfReviewWorkflowPath = ".github/workflows/self-review.yml";
 const SYNCHRONIZE_REVIEW_KINDS = ["followup"];
 const SPECIAL_WORKFLOW_REVIEW_KINDS = ["responsiveness"];
 
@@ -71,6 +72,12 @@ function checkReviewWorkflowKinds(options = {}) {
     findings
   );
   checkReusableWorkflowCaseStatement(reusableText, providerReviewKinds, reviewKindBins, findings);
+  checkSelfReviewWorkflow(
+    options.selfReviewWorkflowText ||
+      fs.readFileSync(path.join(root, selfReviewWorkflowPath), "utf8"),
+    reviewKinds,
+    findings
+  );
 
   if (findings.length) {
     if (!options.quiet) {
@@ -149,6 +156,74 @@ function checkResponsivenessArtifactUrlHandoff(workflowPath, workflowText, findi
   for (const snippet of requiredSnippets) {
     if (!normalized.includes(normalizeWhitespace(snippet))) {
       findings.push(`${workflowPath} must include '${snippet}'.`);
+    }
+  }
+}
+
+function checkSelfReviewWorkflow(workflowText, reviewKinds, findings) {
+  try {
+    YAML.parse(workflowText);
+  } catch (error) {
+    findings.push(`${selfReviewWorkflowPath} must be valid YAML: ${error.message}`);
+    return;
+  }
+  const normalized = normalizeWhitespace(workflowText);
+  for (const snippet of [
+    "node bin/self-review-plan.cjs",
+    "node bin/github-app-installation-token.cjs",
+    "npm run worker:job",
+    "--job-file job.json",
+    "author_association",
+    "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
+  ]) {
+    if (!normalized.includes(normalizeWhitespace(snippet))) {
+      findings.push(`${selfReviewWorkflowPath} must include '${snippet}'.`);
+    }
+  }
+  if (normalized.includes(normalizeWhitespace("uses: ./.github/workflows/review.yml"))) {
+    findings.push(
+      `${selfReviewWorkflowPath} must post through the worker with installation tokens, not the reusable review workflow.`
+    );
+  }
+  for (const [label, expectNonEmpty] of [
+    ["INITIAL_KINDS_JSON", true],
+    ["SYNCHRONIZE_KINDS_JSON", true],
+  ]) {
+    const match = workflowText.match(new RegExp(`${label}:\\s*'([^']+)'`));
+    if (!match) {
+      findings.push(`${selfReviewWorkflowPath} must define ${label} as a quoted JSON array.`);
+      continue;
+    }
+    let kinds;
+    try {
+      kinds = JSON.parse(match[1]);
+    } catch {
+      kinds = null;
+    }
+    if (!Array.isArray(kinds) || (expectNonEmpty && kinds.length === 0)) {
+      findings.push(`${selfReviewWorkflowPath} ${label} must be a non-empty JSON array.`);
+      continue;
+    }
+    for (const kind of kinds) {
+      if (!reviewKinds.includes(kind)) {
+        findings.push(`${selfReviewWorkflowPath} ${label} includes unknown review kind '${kind}'.`);
+      }
+    }
+  }
+  const synchronizeMatch = workflowText.match(/SYNCHRONIZE_KINDS_JSON:\s*'([^']+)'/);
+  if (synchronizeMatch) {
+    let kinds;
+    try {
+      kinds = JSON.parse(synchronizeMatch[1]);
+    } catch {
+      kinds = null;
+    }
+    if (!arraysEqual(kinds || [], SYNCHRONIZE_REVIEW_KINDS)) {
+      findings.push(
+        `${selfReviewWorkflowPath} SYNCHRONIZE_KINDS_JSON must be ${JSON.stringify(
+          SYNCHRONIZE_REVIEW_KINDS
+        )}.`
+      );
     }
   }
 }
