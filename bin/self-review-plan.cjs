@@ -33,10 +33,12 @@ function planSelfReview(env = process.env, options = {}) {
   } else {
     throw new Error(`Unsupported event '${eventName}'.`);
   }
+  const trigger = eventName === "issue_comment" ? "comment" : eventAction;
   if (reviewKinds.length === 0) {
     return {
       prNumber,
       eventAction,
+      trigger,
       reviewKinds: [],
       jobs: [],
       headSha: "",
@@ -55,20 +57,33 @@ function planSelfReview(env = process.env, options = {}) {
   let headSha = String(env.PR_HEAD_SHA || "").trim();
   let baseSha = String(env.PR_BASE_SHA || "").trim();
   let headRefName = String(env.PR_HEAD_REF || "").trim();
-  if (!headSha || !baseSha || !headRefName) {
+  let headRepoFullName = String(env.PR_HEAD_REPO || "").trim();
+  if (!headSha || !baseSha || !headRefName || !headRepoFullName) {
     const resolvePullRequest = options.resolvePullRequest || resolvePullRequestWithGh;
     const context = resolvePullRequest(prNumber, env);
     headSha = headSha || context.headSha;
     baseSha = baseSha || context.baseSha;
     headRefName = headRefName || context.headRefName;
+    headRepoFullName = headRepoFullName || String(context.headRepoFullName || "").trim();
   }
   if (!headSha) {
     throw new Error(`Could not resolve head SHA for PR #${prNumber}.`);
   }
+  if (!baseSha) {
+    throw new Error(`Could not resolve base SHA for PR #${prNumber}.`);
+  }
+  if (!headRefName) {
+    throw new Error(`Could not resolve head ref for PR #${prNumber}.`);
+  }
+  if (headRepoFullName && headRepoFullName !== repository) {
+    throw new Error(
+      `Self review only supports branches in ${repository}; PR #${prNumber} head is ${headRepoFullName}.`
+    );
+  }
   const deliveryId = `self-review-${String(env.GITHUB_RUN_ID || "").trim() || "manual"}`;
   const event = {
     kind: "self_review",
-    trigger: eventName === "issue_comment" ? "comment" : eventAction,
+    trigger,
     shouldEnqueue: true,
     deliveryId,
     repository: { fullName: repository },
@@ -89,6 +104,7 @@ function planSelfReview(env = process.env, options = {}) {
   return {
     prNumber,
     eventAction,
+    trigger,
     reviewKinds,
     jobs,
     headSha,
@@ -124,7 +140,7 @@ function resolvePullRequestWithGh(prNumber, env = process.env) {
       "api",
       `repos/${repository}/pulls/${prNumber}`,
       "--jq",
-      "{headSha: .head.sha, baseSha: .base.sha, headRefName: .head.ref}",
+      "{headSha: .head.sha, baseSha: .base.sha, headRefName: .head.ref, headRepoFullName: .head.repo.full_name}",
     ],
     { encoding: "utf8" }
   );
@@ -142,6 +158,7 @@ function resolvePullRequestWithGh(prNumber, env = process.env) {
     headSha,
     baseSha: String(context.baseSha || "").trim(),
     headRefName: String(context.headRefName || "").trim(),
+    headRepoFullName: String(context.headRepoFullName || "").trim(),
   };
 }
 

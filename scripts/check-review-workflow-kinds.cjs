@@ -171,13 +171,19 @@ function checkSelfReviewWorkflow(workflowText, reviewKinds, findings) {
   for (const snippet of [
     "node bin/self-review-plan.cjs",
     "node bin/github-app-installation-token.cjs",
-    "npm run worker:job -- -- --job-file job.json",
+    "npm run worker:job",
+    "--job-file job.json",
     "author_association",
     "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
   ]) {
     if (!normalized.includes(normalizeWhitespace(snippet))) {
       findings.push(`${selfReviewWorkflowPath} must include '${snippet}'.`);
     }
+  }
+  if (normalized.includes(normalizeWhitespace("uses: ./.github/workflows/review.yml"))) {
+    findings.push(
+      `${selfReviewWorkflowPath} must post through the worker with installation tokens, not the reusable review workflow.`
+    );
   }
   for (const [label, expectNonEmpty] of [
     ["INITIAL_KINDS_JSON", true],

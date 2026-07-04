@@ -20,12 +20,14 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   plan:
     name: Plan review kinds
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
@@ -58,6 +60,7 @@ jobs:
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || '' }}
           COMMENT_BODY: ${{ github.event.comment.body || '' }}
           REQUESTED_KINDS_JSON: ${{ inputs.review_kinds_json || '' }}
           INITIAL_KINDS_JSON: '["general","security","auth-api","deploy-actions","db-lambda","glm-swarm"]'
@@ -70,6 +73,9 @@ jobs:
     needs: plan
     if: ${{ needs.plan.outputs.jobs_json != '' && needs.plan.outputs.jobs_json != '[]' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: ${{ fromJSON(vars.REVIEWBOT_WORKER_TIMEOUT_MINUTES || '20') }}
     strategy:
       fail-fast: false
