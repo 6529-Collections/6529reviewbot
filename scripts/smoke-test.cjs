@@ -694,6 +694,116 @@ assert.equal(
   responsivenessRunner.detectResponsivenessProfile(profileTempDir).id,
   "6529seize-frontend"
 );
+const safeAppResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.find(
+  (profile) => profile.id === "6529-safe-app"
+);
+assert(safeAppResponsivenessProfile);
+const inferredSafeAppRoutes = responsivenessRunner.inferRoutes(
+  ["src/pages/DelegationPage.tsx", "src/features/transfers/state/transferDraft.ts"],
+  20,
+  safeAppResponsivenessProfile
+);
+assert(inferredSafeAppRoutes.routes.includes("/#/"));
+assert(inferredSafeAppRoutes.routes.includes("/#/delegation"));
+assert(inferredSafeAppRoutes.routes.includes("/#/transfers"));
+const inferredSafeAppShellRoutes = responsivenessRunner.inferRoutes(
+  ["src/app/AppShell.tsx"],
+  20,
+  safeAppResponsivenessProfile
+);
+assert(inferredSafeAppShellRoutes.routes.includes("/#/settings"));
+assert(inferredSafeAppShellRoutes.routes.includes("/#/activity"));
+const safeAppTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "6529-safe-app-target-"));
+fs.writeFileSync(
+  path.join(safeAppTempDir, "package.json"),
+  `${JSON.stringify({ name: "6529-safe-app" })}\n`
+);
+assert.equal(
+  responsivenessRunner.detectResponsivenessProfile(safeAppTempDir).id,
+  "6529-safe-app"
+);
+const safeAppWebServer = responsivenessRunner.resolveWebServer(
+  {
+    installCommand: "",
+    target: safeAppTempDir,
+    baseUrl: "http://localhost:3001",
+    baseUrlProvided: false,
+    port: 3001,
+  },
+  safeAppResponsivenessProfile
+);
+assert.equal(safeAppWebServer.command, "pnpm run dev -- --port 3001 --strictPort");
+assert.equal(safeAppWebServer.baseUrl, "https://localhost:3001");
+assert.equal(safeAppWebServer.ignoreHTTPSErrors, true);
+const genericResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.find(
+  (profile) => profile.id === "generic-next-frontend"
+);
+const noWrapperWebServer = responsivenessRunner.resolveWebServer(
+  {
+    installCommand: "",
+    target: safeAppTempDir,
+    baseUrl: "http://localhost:3001",
+    baseUrlProvided: false,
+    port: 3001,
+  },
+  genericResponsivenessProfile
+);
+assert.equal(noWrapperWebServer.command, "pnpm run dev");
+assert.equal(noWrapperWebServer.baseUrl, "http://localhost:3001");
+assert.equal(noWrapperWebServer.ignoreHTTPSErrors, false);
+fs.mkdirSync(path.join(safeAppTempDir, "bin"), { recursive: true });
+fs.writeFileSync(path.join(safeAppTempDir, "bin", "6529"), "#!/usr/bin/env bash\n");
+const wrapperWebServer = responsivenessRunner.resolveWebServer(
+  {
+    installCommand: "",
+    target: safeAppTempDir,
+    baseUrl: "http://localhost:3001",
+    baseUrlProvided: false,
+    port: 3001,
+  },
+  genericResponsivenessProfile
+);
+assert.equal(wrapperWebServer.command, "./bin/6529 run dev");
+const explicitWebServer = responsivenessRunner.resolveWebServer(
+  {
+    installCommand: "pnpm run dev:custom",
+    target: safeAppTempDir,
+    baseUrl: "https://localhost:4000",
+    baseUrlProvided: true,
+    port: 4000,
+  },
+  safeAppResponsivenessProfile
+);
+assert.equal(explicitWebServer.command, "pnpm run dev:custom");
+assert.equal(explicitWebServer.baseUrl, "https://localhost:4000");
+const safeAppResponsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
+  {
+    contexts: [],
+    routes: [],
+    baseUrl: "https://localhost:3001",
+    webServer: {
+      command: "pnpm run dev -- --port 3001 --strictPort",
+      baseUrl: "https://localhost:3001",
+      ignoreHTTPSErrors: true,
+    },
+  },
+  {
+    outputDir: "/tmp/reviewbot-responsiveness",
+    baseUrl: "http://localhost:3001",
+    target: "/tmp/target",
+    port: 3001,
+    workers: 4,
+    reuseExistingServer: false,
+  }
+);
+assert(safeAppResponsivenessConfig.includes('const baseURL = "https://localhost:3001";'));
+assert(safeAppResponsivenessConfig.includes("ignoreHTTPSErrors: true,"));
+assert(
+  safeAppResponsivenessConfig.includes('command: "pnpm run dev -- --port 3001 --strictPort",')
+);
+assert(!responsivenessConfig.includes("ignoreHTTPSErrors"));
+assert(responsivenessConfig.includes('command: "./bin/6529 run dev",'));
+assert(responsivenessGlobalSetup.includes("ignoreHTTPSErrors: /^https:/i.test(baseURL)"));
 const responsivenessScreenshotManifest =
   responsivenessRunner.buildScreenshotManifest({
     plan: {

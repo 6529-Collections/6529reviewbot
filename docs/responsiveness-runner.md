@@ -1,7 +1,7 @@
 # Responsiveness Runner
 
 The responsiveness runner checks frontend pull requests by installing the target
-repository, starting its local Next.js server, and running a temporary
+repository, starting its local dev server, and running a temporary
 Playwright harness across web desktop, web mobile, native mobile, and Electron
 desktop contexts.
 
@@ -171,6 +171,35 @@ Electron code paths:
   changes;
 - profile probes for the native Capacitor contract, Electron branch, 6529
   layout branch markers, and open-mobile handoff route.
+
+The `6529-safe-app` profile targets the Safe App Vite SPA:
+
+- hash-router routes: `/#/`, `/#/gallery`, `/#/delegation`, `/#/transfers`,
+  `/#/ens`, `/#/settings`, and `/#/activity`;
+- route mappings from `src/pages/*Page` and `src/features/<name>/` to the
+  matching hash route, with app-shell/navigation/runtime/styles/config changes
+  expanding to the full route set;
+- a Vite dev-server command (`pnpm run dev -- --port <port> --strictPort`) and
+  an `https://localhost:<port>` base URL, because the Safe App dev server uses
+  the basic-ssl plugin. The generated Playwright config and prewarm contexts
+  set `ignoreHTTPSErrors` for the self-signed certificate;
+- no 6529 shell probes: native-mobile and electron-desktop stay browser-level
+  simulations without Capacitor/Electron contract assertions.
+
+## Web Server Command
+
+The generated Playwright web server command resolves in this order:
+
+1. an explicit `--install-command`;
+2. the profile dev-server command (`6529-safe-app`);
+3. `./bin/6529 run dev` when the target checkout has an executable
+   `bin/6529` wrapper;
+4. `pnpm run dev` otherwise.
+
+The workflows apply the same wrapper fallback when installing target
+dependencies and Chromium: targets without `bin/6529` use
+`pnpm install --frozen-lockfile` (through Socket Firewall when available) and
+`pnpm exec playwright install chromium`.
 
 ## Route Inference
 

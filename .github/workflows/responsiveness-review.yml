@@ -211,11 +211,27 @@ jobs:
         working-directory: target
         env:
           SFW_BIN: ${{ steps.socket_firewall.outputs.firewall-path-binary }}
-        run: ./bin/6529 install:frozen
+        run: |
+          set -euo pipefail
+          # Targets without the bin/6529 wrapper (e.g. 6529-safe-app) fall back to
+          # plain pnpm, kept behind Socket Firewall when the binary is available.
+          if [ -x ./bin/6529 ]; then
+            ./bin/6529 install:frozen
+          elif [ -n "${SFW_BIN:-}" ]; then
+            "$SFW_BIN" pnpm install --frozen-lockfile
+          else
+            pnpm install --frozen-lockfile
+          fi
 
       - name: Install Chromium for Playwright
         working-directory: target
-        run: ./bin/6529 exec playwright install chromium
+        run: |
+          set -euo pipefail
+          if [ -x ./bin/6529 ]; then
+            ./bin/6529 exec playwright install chromium
+          else
+            pnpm exec playwright install chromium
+          fi
 
       - name: Run responsiveness benchmark
         run: |
