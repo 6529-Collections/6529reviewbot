@@ -5315,6 +5315,48 @@ const lifecycleWorkerResult = runReviewJobCli.runJobWithClaimStatus(reviewJobs[0
 });
 assert.equal(lifecycleWorkerResult.accepted, true);
 assert.deepEqual(workerClaimUpdates.map((item) => item.status), ["running", "completed"]);
+const duplicateClaimUpdates = [];
+let duplicateWorkerRan = false;
+const duplicateDispatchWorkerResult = runReviewJobCli.runJobWithClaimStatus(reviewJobs[0], {
+  runControlSettings: { enabled: true },
+  runReviewJobLocally: () => {
+    duplicateWorkerRan = true;
+    return { accepted: true, adapter: "local", exitCode: 0 };
+  },
+  beginWorkerRunClaim: () => ({
+    skipped: false,
+    duplicate: true,
+    claimFound: true,
+    priorStatus: "completed",
+  }),
+  updateWorkerRunClaim: (settings, job, status, metadata) => {
+    duplicateClaimUpdates.push({ status, metadata });
+    return { skipped: false };
+  },
+});
+assert.equal(duplicateWorkerRan, false);
+assert.equal(duplicateDispatchWorkerResult.accepted, true);
+assert.equal(duplicateDispatchWorkerResult.duplicateDispatchSkipped, true);
+assert.equal(duplicateDispatchWorkerResult.claimStatus, "completed");
+assert.deepEqual(duplicateClaimUpdates, []);
+const beganClaimUpdates = [];
+const beganDispatchWorkerResult = runReviewJobCli.runJobWithClaimStatus(reviewJobs[0], {
+  runControlSettings: { enabled: true },
+  runReviewJobLocally: () => ({ accepted: true, adapter: "local", exitCode: 0 }),
+  beginWorkerRunClaim: () => ({
+    skipped: false,
+    duplicate: false,
+    claimFound: true,
+    priorStatus: "dispatching",
+  }),
+  updateWorkerRunClaim: (settings, job, status, metadata) => {
+    beganClaimUpdates.push({ status, metadata });
+    return { skipped: false };
+  },
+});
+assert.equal(beganDispatchWorkerResult.accepted, true);
+assert.equal(beganDispatchWorkerResult.duplicateDispatchSkipped, undefined);
+assert.deepEqual(beganClaimUpdates.map((item) => item.status), ["completed"]);
 let dispatchedWorkflow = null;
 const forkReviewJob = { ...reviewJobs[0], headRepoFullName: "external/fork" };
 const dispatchResult = workerAdapter.dispatchReviewJobToGitHubActions(forkReviewJob, {
@@ -5782,6 +5824,60 @@ assert.equal(
     .parameters.find((param) => param.name === "status").value.stringValue,
   "failed"
 );
+const runClaimBeginQuery = runControlLedger.buildRunClaimWorkBegin(
+  "reviewbot",
+  reviewJobs[0],
+  { metadata: { worker: "run-review-job" } }
+);
+assert.match(runClaimBeginQuery.sql, /status <> 'completed'/);
+assert.match(runClaimBeginQuery.sql, /ai_review_run_claims/);
+assert.equal(
+  runClaimBeginQuery.parameters.find((param) => param.name === "run_key").value.stringValue,
+  reviewJobs[0].runKey
+);
+assert.equal(
+  runControlLedger.beginRunClaimWork({ enabled: false }, reviewJobs[0]).skipped,
+  true
+);
+let beganRunClaim = null;
+const duplicateBeginResult = runControlLedger.beginRunClaimWork(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  {
+    metadata: { worker: "run-review-job" },
+    executeStatement: (settings, sql, parameters, options) => {
+      beganRunClaim = { settings, sql, parameters, options };
+      return {
+        records: [[{ stringValue: "completed" }, { booleanValue: false }]],
+      };
+    },
+  }
+);
+assert.equal(duplicateBeginResult.duplicate, true);
+assert.equal(duplicateBeginResult.claimFound, true);
+assert.equal(duplicateBeginResult.priorStatus, "completed");
+assert.equal(beganRunClaim.options.tempPrefix, "6529-run-control-begin-");
+const startedBeginResult = runControlLedger.beginRunClaimWork(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  {
+    executeStatement: () => ({
+      records: [[{ stringValue: "dispatching" }, { booleanValue: true }]],
+    }),
+  }
+);
+assert.equal(startedBeginResult.duplicate, false);
+assert.equal(startedBeginResult.claimFound, true);
+assert.equal(startedBeginResult.priorStatus, "dispatching");
+const missingClaimBeginResult = runControlLedger.beginRunClaimWork(
+  runControlLedgerSettings,
+  reviewJobs[0],
+  {
+    executeStatement: () => ({ records: [] }),
+  }
+);
+assert.equal(missingClaimBeginResult.duplicate, false);
+assert.equal(missingClaimBeginResult.claimFound, false);
 let updatedRunClaim = null;
 const updateRunClaimResult = runControlLedger.updateRunClaimStatus(
   runControlLedgerSettings,
