@@ -100,6 +100,8 @@ function createReviewbotServer(options = {}) {
     options.usageApiResponseCache || createUsageApiResponseCache(usageApiSettings);
   const recordJobEvent = options.recordJobEvent || defaultRecordJobEvent;
   const updateRunClaimStatus = options.updateRunClaimStatus || defaultUpdateRunClaimStatus;
+  const postCommandFailureComment =
+    options.postCommandFailureComment || defaultPostCommandFailureComment;
   const webhookInbox = options.webhookInbox || null;
   const responsivenessArtifactSettings =
     options.responsivenessArtifactSettings || responsivenessArtifactSettingsFromEnv();
@@ -126,6 +128,7 @@ function createReviewbotServer(options = {}) {
         usageApiSettings,
         recordJobEvent,
         updateRunClaimStatus,
+        postCommandFailureComment,
         webhookInbox,
         loadUsageEvents: options.loadUsageEvents,
         loadBudgetPolicies: options.loadBudgetPolicies,
@@ -230,6 +233,7 @@ async function handleHttpRequest(request, options) {
     loadRepositoryConfig: options.loadRepositoryConfig,
     recordJobEvent: options.recordJobEvent,
     updateRunClaimStatus: options.updateRunClaimStatus,
+    postCommandFailureComment: options.postCommandFailureComment,
     webhookInbox: options.webhookInbox,
   });
 }
@@ -354,7 +358,38 @@ async function processNormalizedGitHubWebhook(normalizedEvent, input) {
     input.jobPolicy || reviewJobPolicyFromEnv(),
     repositoryConfig
   );
-  const candidateJobs = createReviewJobs(controlledEvent, { admission }, jobPolicy);
+  let candidateJobs;
+  try {
+    candidateJobs = createReviewJobs(controlledEvent, { admission }, jobPolicy);
+  } catch (error) {
+    if (isVisibleCommandFailure(controlledEvent, error)) {
+      const commentBody = buildCommandFailureComment(controlledEvent, error);
+      const postComment =
+        input.postCommandFailureComment || defaultPostCommandFailureComment;
+      let commentResult;
+      try {
+        commentResult = await postComment(controlledEvent, commentBody);
+      } catch (commentError) {
+        commentResult = { skipped: true, error: commentError?.message || "Comment posting failed." };
+      }
+      return {
+        statusCode: 200,
+        body: {
+          ok: true,
+          enqueued: false,
+          event: publicEventSummary({
+            ...controlledEvent,
+            reason: error.message,
+          }),
+          configuration,
+          runtimeControl,
+          admission,
+          commandFailure: publicCommandFailure(error, commentResult),
+        },
+      };
+    }
+    throw error;
+  }
   if (candidateJobs.length === 0) {
     return {
       statusCode: 200,
@@ -702,6 +737,10 @@ async function defaultUpdateRunClaimStatus() {
   return { skipped: true };
 }
 
+async function defaultPostCommandFailureComment() {
+  return { skipped: true };
+}
+
 async function recordRuntimeControlDeniedJobEvents(recordJobEvent, jobs) {
   await recordJobEvents(
     recordJobEvent,
@@ -844,6 +883,67 @@ function normalizeConfigLoadResult(result) {
   return result;
 }
 
+function isVisibleCommandFailure(event, error) {
+  return (
+    event?.kind === "comment_command" &&
+    event.trigger === "comment" &&
+    error?.code === "max_jobs_per_delivery_exceeded"
+  );
+}
+
+function buildCommandFailureComment(event, error) {
+  const marker = `<!-- 6529-review-bot:command-failure:${event.deliveryId || "unknown"} -->`;
+  const reviewKinds = (error.reviewKinds || event.reviewKinds || [])
+    .map((kind) => String(kind || "").trim())
+    .filter(Boolean);
+  const jobCount = Number.isSafeInteger(error.jobCount)
+    ? String(error.jobCount)
+    : "unknown";
+  const maxJobs = Number.isSafeInteger(error.maxJobsPerDelivery)
+    ? String(error.maxJobsPerDelivery)
+    : "unknown";
+  const command = commandLineForEvent(event);
+  return [
+    marker,
+    "## 6529bot command not queued",
+    "",
+    "I received this command, but did not queue review jobs because it exceeds the current fanout limit.",
+    "",
+    command ? `- Command: \`${command}\`` : null,
+    `- Requested review kinds: \`${reviewKinds.join(", ") || "none"}\``,
+    `- Requested jobs: \`${jobCount}\``,
+    `- Current max per delivery: \`${maxJobs}\``,
+    "",
+    "Split the command into smaller batches, or have an operator raise `REVIEWBOT_MAX_JOBS_PER_DELIVERY` before rerunning it.",
+  ]
+    .filter((line) => line !== null)
+    .join("\n");
+}
+
+function publicCommandFailure(error, commentResult = {}) {
+  return {
+    code: error.code || "",
+    reason: error.message || "",
+    jobCount: Number.isSafeInteger(error.jobCount) ? error.jobCount : null,
+    maxJobsPerDelivery: Number.isSafeInteger(error.maxJobsPerDelivery)
+      ? error.maxJobsPerDelivery
+      : null,
+    commentPosted: commentResult?.skipped ? false : true,
+  };
+}
+
+function commandLineForEvent(event = {}) {
+  const command = event.command || {};
+  if (!command.name) {
+    return "";
+  }
+  const args = Array.isArray(command.args) ? command.args : [];
+  return ["/6529bot", command.name, ...args]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean)
+    .join(" ");
+}
+
 function publicEventSummary(event) {
   return {
     kind: event.kind,
@@ -928,6 +1028,7 @@ module.exports = {
   defaultHydrateEvent,
   defaultClaimReviewJob,
   defaultRecordJobEvent,
+  defaultPostCommandFailureComment,
   defaultUpdateRunClaimStatus,
   defaultLoadBudgetPolicy,
   defaultResolveActorContext,
@@ -937,6 +1038,7 @@ module.exports = {
   githubAppOperatorResponse,
   isGitHubAppOperatorPath,
   normalizeConfigLoadResult,
+  buildCommandFailureComment,
   processNormalizedGitHubWebhook,
   processWebhookInboxOnce,
   publicEventSummary,

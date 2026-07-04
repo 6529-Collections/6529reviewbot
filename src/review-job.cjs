@@ -119,7 +119,11 @@ function createReviewJobs(event, controls = {}, policy = reviewJobPolicyFromEnv(
     const error = new Error(
       `Webhook delivery would create ${jobs.length} review jobs, above REVIEWBOT_MAX_JOBS_PER_DELIVERY=${maxJobs}.`
     );
+    error.code = "max_jobs_per_delivery_exceeded";
     error.statusCode = 422;
+    error.jobCount = jobs.length;
+    error.maxJobsPerDelivery = maxJobs;
+    error.reviewKinds = reviewKinds;
     throw error;
   }
 

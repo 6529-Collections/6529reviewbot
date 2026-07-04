@@ -5134,8 +5134,12 @@ const serverWebhookInboxOptions = serverCli.createServerOptionsFromEnv({
 });
 assert.equal(serverWebhookInboxOptions.webhookInbox.settings.enabled, true);
 let serverDispatchRequest = null;
+let serverAppFailureCommentRequest = null;
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
+    REVIEWBOT_GITHUB_APP_ID: "12345",
+    REVIEWBOT_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
+    REVIEWBOT_GITHUB_APP_API_URL: "https://api.github.test",
     REVIEWBOT_WORKER_GITHUB_APP_ID: "12345",
     REVIEWBOT_WORKER_GITHUB_APP_PRIVATE_KEY: githubAppPrivateKey.replace(/\n/g, "\\n"),
     REVIEWBOT_WORKER_GITHUB_APP_API_URL: "https://api.github.test",
@@ -5168,11 +5172,31 @@ const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
         };
         return { status: 204, text: async () => "" };
       }
+      if (String(url).endsWith("/repos/6529-Collections/example/issues/12/comments")) {
+        serverAppFailureCommentRequest = {
+          url,
+          options,
+          body: JSON.parse(options.body),
+        };
+        return {
+          ok: true,
+          status: 201,
+          json: async () => ({ id: 9876 }),
+        };
+      }
       throw new Error(`Unexpected fetch URL: ${url}`);
     },
   }
 );
 const serverAppDispatchPromise = serverAppDispatchOptions.enqueueReviewJobs([forkReviewJob], {});
+const serverAppFailureCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "public fanout failure body"
+);
 let serverMainAppDispatchRequest = null;
 const serverMainAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
@@ -7404,6 +7428,20 @@ appServer.handleGitHubWebhook({
     "Bearer server-installation-token"
   );
   assert.equal(serverDispatchRequest.body.inputs.run_key, forkReviewJob.runKey);
+  const serverAppFailureCommentResult = await serverAppFailureCommentPromise;
+  assert.equal(serverAppFailureCommentResult.id, 9876);
+  assert.equal(
+    serverAppFailureCommentRequest.options.headers.authorization,
+    "Bearer server-installation-token"
+  );
+  assert.equal(
+    serverAppFailureCommentRequest.url,
+    "https://api.github.test/repos/6529-Collections/example/issues/12/comments"
+  );
+  assert.equal(
+    serverAppFailureCommentRequest.body.body,
+    "public fanout failure body"
+  );
   const serverMainAppDispatchResult = await serverMainAppDispatchPromise;
   assert.equal(serverMainAppDispatchResult.accepted, true);
   assert.equal(serverMainAppDispatchResult.jobs[0].dispatchMode, "api");
@@ -8471,6 +8509,61 @@ appServer.handleGitHubWebhook({
     commandJobs.map((job) => `${job.reviewKind}:${job.provider}`),
     ["security:anthropic", "security:openai"]
   );
+  let fanoutFailureQueued = false;
+  const fanoutFailureComments = [];
+  const fanoutFailureResult = await appServer.handleGitHubWebhook({
+    headers: {
+      "x-hub-signature-256": githubWebhook.signGitHubWebhook(webhookSecret, commandWebhookBody),
+      "x-github-event": "issue_comment",
+      "x-github-delivery": "delivery-command-fanout",
+    },
+    rawBody: commandWebhookBody,
+    settings: {
+      webhookSecret,
+      webhookPath: "/webhooks/github",
+      maxBodyBytes: 2048,
+    },
+    hydrateEvent: async (event) => ({
+      ...event,
+      headSha: "hydrated-command-head",
+      headRefName: "hydrated-command-branch",
+      baseSha: "hydrated-command-base",
+      headRepoFullName: "6529-Collections/example",
+      baseRepoFullName: "6529-Collections/example",
+      draft: false,
+    }),
+    enqueueReviewJobs: async () => {
+      fanoutFailureQueued = true;
+      return { accepted: true };
+    },
+    postCommandFailureComment: async (event, body) => {
+      fanoutFailureComments.push({ event, body });
+      return { id: 1234 };
+    },
+    recordJobEvent: async () => {},
+    resolveActorContext: async () => ({ login: "maintainer", permission: "write" }),
+    loadRepositoryConfig: async () => ({
+      status: "loaded",
+      source: "test",
+      config: parsedRepoConfig,
+    }),
+    jobPolicy: {
+      ...twoLanePolicy,
+      maxJobsPerDelivery: 1,
+    },
+  });
+  assert.equal(fanoutFailureResult.statusCode, 200);
+  assert.equal(fanoutFailureResult.body.enqueued, false);
+  assert.equal(fanoutFailureResult.body.commandFailure.code, "max_jobs_per_delivery_exceeded");
+  assert.equal(fanoutFailureResult.body.commandFailure.jobCount, 2);
+  assert.equal(fanoutFailureResult.body.commandFailure.maxJobsPerDelivery, 1);
+  assert.equal(fanoutFailureResult.body.commandFailure.commentPosted, true);
+  assert.equal(fanoutFailureQueued, false);
+  assert.equal(fanoutFailureComments.length, 1);
+  assert.match(fanoutFailureComments[0].body, /6529bot command not queued/);
+  assert.match(fanoutFailureComments[0].body, /delivery-command-fanout/);
+  assert.match(fanoutFailureComments[0].body, /Requested jobs: `2`/);
+  assert.match(fanoutFailureComments[0].body, /Current max per delivery: `1`/);
   const inboxCalls = [];
   const fakeWebhookInbox = {
     settings: { enabled: true, batchSize: 2, maxAttempts: 3 },

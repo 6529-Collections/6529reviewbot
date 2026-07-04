@@ -245,10 +245,26 @@ function createGitHubAppIntegration(options = {}) {
     };
   }
 
+  async function postIssueComment(event, body) {
+    if (!event?.repository?.fullName || !event.prNumber || !event.installationId) {
+      throw new Error("Issue comment posting requires repository, PR number, and installation context.");
+    }
+    const token = await getInstallationToken(event.installationId);
+    return await createIssueComment(
+      fetchImpl,
+      settings,
+      token,
+      event.repository.fullName,
+      event.prNumber,
+      body
+    );
+  }
+
   return {
     getInstallationToken,
     hydratePullRequestContext,
     loadRepositoryConfig,
+    postIssueComment,
     resolveActorContext,
   };
 }
@@ -333,6 +349,24 @@ async function readPullRequest(fetchImpl, settings, token, repoFullName, prNumbe
     throw new Error(`GitHub pull request API returned HTTP ${response.status}.`);
   }
   return await response.json();
+}
+
+async function createIssueComment(fetchImpl, settings, token, repoFullName, issueNumber, body) {
+  const [owner, repo] = splitRepo(repoFullName);
+  const url = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${encodeURIComponent(String(issueNumber))}/comments`;
+  return await githubFetchJson(
+    fetchImpl,
+    settings,
+    url,
+    {
+      method: "POST",
+      headers: {
+        ...githubHeaders(token),
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ body }),
+    }
+  );
 }
 
 function pullRequestContext(pullRequest = {}, event = {}) {
@@ -508,6 +542,7 @@ module.exports = {
   MAX_GITHUB_APP_JWT_TTL_SECONDS,
   createGitHubAppIntegration,
   createGitHubAppJwt,
+  createIssueComment,
   githubAppAuthSettingsFromEnv,
   githubAppAuthSettingsFromWorkerDispatchEnv,
   hasWorkerDispatchGitHubAppCredentialOverride,
