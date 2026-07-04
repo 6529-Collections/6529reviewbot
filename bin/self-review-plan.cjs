@@ -68,7 +68,7 @@ function planSelfReview(env = process.env, options = {}) {
   const deliveryId = `self-review-${String(env.GITHUB_RUN_ID || "").trim() || "manual"}`;
   const event = {
     kind: "self_review",
-    trigger: eventName === "issue_comment" ? "comment" : "self_review",
+    trigger: eventName === "issue_comment" ? "comment" : eventAction,
     shouldEnqueue: true,
     deliveryId,
     repository: { fullName: repository },
@@ -124,17 +124,25 @@ function resolvePullRequestWithGh(prNumber, env = process.env) {
       "api",
       `repos/${repository}/pulls/${prNumber}`,
       "--jq",
-      "[.head.sha, .base.sha, .head.ref] | join(\"\\n\")",
+      "{headSha: .head.sha, baseSha: .base.sha, headRefName: .head.ref}",
     ],
     { encoding: "utf8" }
   );
-  const [headSha = "", baseSha = "", headRefName = ""] = String(output || "")
-    .split("\n")
-    .map((line) => line.trim());
+  let context;
+  try {
+    context = JSON.parse(String(output || ""));
+  } catch (error) {
+    throw new Error(`Could not parse PR #${prNumber} context: ${error.message}`);
+  }
+  const headSha = String(context.headSha || "").trim();
   if (!headSha) {
     throw new Error(`Could not resolve head SHA for PR #${prNumber}.`);
   }
-  return { headSha, baseSha, headRefName };
+  return {
+    headSha,
+    baseSha: String(context.baseSha || "").trim(),
+    headRefName: String(context.headRefName || "").trim(),
+  };
 }
 
 function main() {

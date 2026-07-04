@@ -4730,6 +4730,15 @@ assert.deepEqual(
 assert.deepEqual(
   selfReviewPlanCli.planSelfReview({
     ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    COMMENT_BODY: "/6529bot help",
+  }),
+  { prNumber: "415", eventAction: "created", reviewKinds: [], jobs: [], headSha: "" }
+);
+assert.deepEqual(
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
     EVENT_NAME: "workflow_dispatch",
     REQUESTED_KINDS_JSON: '["deploy-actions"]',
   }).reviewKinds,
