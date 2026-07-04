@@ -161,12 +161,18 @@ jobs:
           cp .reviewbot/pr.json target/.reviewbot-responsiveness/pr.json 2>/dev/null || true
 
       - name: Fetch target PR base commit
+        env:
+          GH_TOKEN: ${{ steps.installation-token.outputs.token }}
+          BASE_REPO: ${{ steps.pr.outputs.base_repo }}
+          BASE_SHA: ${{ inputs.base_sha || steps.pr.outputs.base_sha }}
         run: |
           set -euo pipefail
-          git -C target remote add base "https://github.com/${{ steps.pr.outputs.base_repo }}.git" || \
-            git -C target remote set-url base "https://github.com/${{ steps.pr.outputs.base_repo }}.git"
-          git -C target fetch --no-tags --depth=1 base "${{ inputs.base_sha || steps.pr.outputs.base_sha }}"
-          git -C target cat-file -e "${{ inputs.base_sha || steps.pr.outputs.base_sha }}^{commit}"
+          auth_header="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -C target remote add base "https://github.com/${BASE_REPO}.git" || \
+            git -C target remote set-url base "https://github.com/${BASE_REPO}.git"
+          git -C target -c "http.https://github.com/.extraheader=${auth_header}" \
+            fetch --no-tags --depth=1 base "${BASE_SHA}"
+          git -C target cat-file -e "${BASE_SHA}^{commit}"
 
       - name: Enable pnpm for cache
         working-directory: target
