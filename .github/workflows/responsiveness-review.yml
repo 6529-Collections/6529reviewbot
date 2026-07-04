@@ -112,9 +112,10 @@ jobs:
         env:
           REVIEWBOT_GITHUB_APP_ID: ${{ secrets.REVIEWBOT_GITHUB_APP_ID }}
           REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64: ${{ secrets.REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64 }}
+          INSTALLATION_ID: ${{ inputs.installation_id }}
         run: |
           node bot/bin/github-app-installation-token.cjs \
-            --installation-id "${{ inputs.installation_id }}" \
+            --installation-id "$INSTALLATION_ID" \
             --github-actions-output
 
       - name: Resolve target PR
@@ -136,6 +137,7 @@ jobs:
             base_ref: pr.base.ref,
             head_ref: pr.head.ref,
           };
+          // Newline check is load-bearing: these outputs flow into git remote URLs and config.
           for (const [key, value] of Object.entries(fields)) {
             if (!value || String(value).includes("\n")) {
               throw new Error(`invalid ${key}`);
@@ -161,12 +163,21 @@ jobs:
           cp .reviewbot/pr.json target/.reviewbot-responsiveness/pr.json 2>/dev/null || true
 
       - name: Fetch target PR base commit
+        env:
+          GH_TOKEN: ${{ steps.installation-token.outputs.token }}
+          BASE_REPO: ${{ steps.pr.outputs.base_repo }}
+          BASE_SHA: ${{ inputs.base_sha || steps.pr.outputs.base_sha }}
         run: |
           set -euo pipefail
-          git -C target remote add base "https://github.com/${{ steps.pr.outputs.base_repo }}.git" || \
-            git -C target remote set-url base "https://github.com/${{ steps.pr.outputs.base_repo }}.git"
-          git -C target fetch --no-tags --depth=1 base "${{ inputs.base_sha || steps.pr.outputs.base_sha }}"
-          git -C target cat-file -e "${{ inputs.base_sha || steps.pr.outputs.base_sha }}^{commit}"
+          git -C target remote add base "https://github.com/${BASE_REPO}.git" || \
+            git -C target remote set-url base "https://github.com/${BASE_REPO}.git"
+          # Auth via GIT_CONFIG_* env so the credential never appears in argv or on disk.
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          export GIT_CONFIG_VALUE_0
+          git -C target fetch --no-tags --depth=1 base "${BASE_SHA}"
+          git -C target cat-file -e "${BASE_SHA}^{commit}"
 
       - name: Enable pnpm for cache
         working-directory: target
@@ -320,9 +331,10 @@ jobs:
         env:
           REVIEWBOT_GITHUB_APP_ID: ${{ secrets.REVIEWBOT_GITHUB_APP_ID }}
           REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64: ${{ secrets.REVIEWBOT_GITHUB_APP_PRIVATE_KEY_BASE64 }}
+          INSTALLATION_ID: ${{ inputs.installation_id }}
         run: |
           node bot/bin/github-app-installation-token.cjs \
-            --installation-id "${{ inputs.installation_id }}" \
+            --installation-id "$INSTALLATION_ID" \
             --github-actions-output
 
       - name: Post 6529bot responsiveness review
