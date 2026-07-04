@@ -246,7 +246,9 @@ const PROFILE_6529_SAFE_APP = {
   label: "6529 Safe App",
   packageNames: ["6529-safe-app"],
   // Vite dev server with the basic-ssl plugin: https only, port via CLI flag.
-  devServerCommand: "pnpm run dev -- --port {port} --strictPort",
+  // pnpm run forwards a literal "--" to vite, which then ignores the flags,
+  // so invoke vite through pnpm exec like the target's own Playwright config.
+  devServerCommand: "pnpm exec vite --port {port} --strictPort",
   devServerProtocol: "https",
   shellCanaryRoutes: ["/#/"],
   fallbackRoutes: SAFE_APP_ROUTES,

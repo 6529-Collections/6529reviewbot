@@ -732,7 +732,7 @@ const safeAppWebServer = responsivenessRunner.resolveWebServer(
   },
   safeAppResponsivenessProfile
 );
-assert.equal(safeAppWebServer.command, "pnpm run dev -- --port 3001 --strictPort");
+assert.equal(safeAppWebServer.command, "pnpm exec vite --port 3001 --strictPort");
 assert.equal(safeAppWebServer.baseUrl, "https://localhost:3001");
 assert.equal(safeAppWebServer.ignoreHTTPSErrors, true);
 const genericResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.find(
@@ -782,7 +782,7 @@ const safeAppResponsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
     routes: [],
     baseUrl: "https://localhost:3001",
     webServer: {
-      command: "pnpm run dev -- --port 3001 --strictPort",
+      command: "pnpm exec vite --port 3001 --strictPort",
       baseUrl: "https://localhost:3001",
       ignoreHTTPSErrors: true,
     },
@@ -799,7 +799,7 @@ const safeAppResponsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
 assert(safeAppResponsivenessConfig.includes('const baseURL = "https://localhost:3001";'));
 assert(safeAppResponsivenessConfig.includes("ignoreHTTPSErrors: true,"));
 assert(
-  safeAppResponsivenessConfig.includes('command: "pnpm run dev -- --port 3001 --strictPort",')
+  safeAppResponsivenessConfig.includes('command: "pnpm exec vite --port 3001 --strictPort",')
 );
 assert(!responsivenessConfig.includes("ignoreHTTPSErrors"));
 assert(responsivenessConfig.includes('command: "./bin/6529 run dev",'));

@@ -179,7 +179,7 @@ The `6529-safe-app` profile targets the Safe App Vite SPA:
 - route mappings from `src/pages/*Page` and `src/features/<name>/` to the
   matching hash route, with app-shell/navigation/runtime/styles/config changes
   expanding to the full route set;
-- a Vite dev-server command (`pnpm run dev -- --port <port> --strictPort`) and
+- a Vite dev-server command (`pnpm exec vite --port <port> --strictPort`) and
   an `https://localhost:<port>` base URL, because the Safe App dev server uses
   the basic-ssl plugin. The generated Playwright config and prewarm contexts
   set `ignoreHTTPSErrors` for the self-signed certificate;
