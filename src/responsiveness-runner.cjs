@@ -231,8 +231,64 @@ const PROFILE_6529_SEIZE_FRONTEND = {
   ],
 };
 
+const SAFE_APP_ROUTES = [
+  "/#/",
+  "/#/gallery",
+  "/#/delegation",
+  "/#/transfers",
+  "/#/ens",
+  "/#/settings",
+  "/#/activity",
+];
+
+const PROFILE_6529_SAFE_APP = {
+  id: "6529-safe-app",
+  label: "6529 Safe App",
+  packageNames: ["6529-safe-app"],
+  // Vite dev server with the basic-ssl plugin: https only, port via CLI flag.
+  // pnpm run forwards a literal "--" to vite, which then ignores the flags,
+  // so invoke vite through pnpm exec. Keep in sync with the webServer command
+  // in 6529-safe-app/playwright.config.ts.
+  devServerCommand: "pnpm exec vite --port {port} --strictPort",
+  devServerProtocol: "https",
+  shellCanaryRoutes: ["/#/"],
+  fallbackRoutes: SAFE_APP_ROUTES,
+  globalRoutes: SAFE_APP_ROUTES,
+  routeMappings: [
+    { pattern: /^src[\/\\](?:pages[\/\\]HomePage|features[\/\\]home[\/\\])/, routes: ["/#/"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]GalleryPage|features[\/\\]gallery[\/\\])/, routes: ["/#/gallery"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]DelegationPage|features[\/\\]delegation[\/\\])/, routes: ["/#/delegation"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]TransfersPage|features[\/\\]transfers[\/\\])/, routes: ["/#/transfers"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]EnsPage|features[\/\\]ens[\/\\])/, routes: ["/#/ens"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]SettingsPage|features[\/\\]settings[\/\\])/, routes: ["/#/settings"] },
+    { pattern: /^src[\/\\](?:pages[\/\\]ActivityPage|features[\/\\]activity[\/\\])/, routes: ["/#/activity"] },
+  ],
+  globalPatterns: [
+    /^src[\/\\]app[\/\\]/,
+    /^src[\/\\]components[\/\\]/,
+    /^src[\/\\]features[\/\\]navigation[\/\\]/,
+    /^src[\/\\]features[\/\\]runtime[\/\\]/,
+    /^src[\/\\]safe[\/\\]/,
+    /^src[\/\\]i18n[\/\\]/,
+    /^src[\/\\]styles[\/\\]/,
+    /^index\.html$/,
+    /^vite\.config\./,
+    /^tailwind\.config\./,
+    /^package\.json$/,
+    /^pnpm-lock\.yaml$/,
+  ],
+  platformNotes: [
+    "6529-safe-app is a Vite SPA with hash routing; routes are /#/<page> fragments on one document.",
+    "The dev server uses a self-signed HTTPS certificate, so checks run with ignoreHTTPSErrors.",
+    "Outside a Safe iframe the app renders read-only outside-Safe views; wallet writes are unavailable.",
+    "native-mobile and electron-desktop are browser-level simulations; the Safe App has no native shell.",
+  ],
+  deterministicChecks: [],
+};
+
 const RESPONSIVENESS_PROFILES = [
   PROFILE_6529_SEIZE_FRONTEND,
+  PROFILE_6529_SAFE_APP,
   DEFAULT_PROFILE,
 ];
 
@@ -243,6 +299,7 @@ function parseArgs(argv = []) {
     headRef: "HEAD",
     outputDir: "",
     baseUrl: "http://localhost:3001",
+    baseUrlProvided: false,
     port: 3001,
     maxPages: 12,
     contexts: DEFAULT_CONTEXTS,
@@ -276,6 +333,7 @@ function parseArgs(argv = []) {
       options.outputDir = next();
     } else if (arg === "--base-url") {
       options.baseUrl = next();
+      options.baseUrlProvided = true;
     } else if (arg === "--port") {
       options.port = positiveInt(next(), arg);
     } else if (arg === "--max-pages") {
@@ -372,6 +430,42 @@ function packageNameForTarget(target) {
   }
 }
 
+function hasExecutable6529Wrapper(target) {
+  // Match the workflows' [ -x ./bin/6529 ] gate; a present-but-non-executable
+  // wrapper must fall through to pnpm on both paths. X_OK degrades to an
+  // existence check on Windows, which only affects local debugging runs.
+  try {
+    fs.accessSync(path.join(target, "bin", "6529"), fs.constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function resolveWebServer(options, profile) {
+  let command = String(options.installCommand || "");
+  if (!command) {
+    if (profile.devServerCommand) {
+      command = profile.devServerCommand.replace(/\{port\}/g, String(options.port));
+    } else if (hasExecutable6529Wrapper(options.target)) {
+      command = "./bin/6529 run dev";
+    } else {
+      command = "pnpm run dev";
+    }
+  }
+
+  let baseUrl = options.baseUrl;
+  if (!options.baseUrlProvided && profile.devServerProtocol === "https") {
+    baseUrl = `https://localhost:${options.port}`;
+  }
+
+  return {
+    command,
+    baseUrl,
+    ignoreHTTPSErrors: /^https:/i.test(baseUrl),
+  };
+}
+
 function publicProfile(profile) {
   return {
     id: profile.id,
@@ -420,6 +514,7 @@ function readChangedFiles(filePath) {
 
 function buildPlan(options) {
   const profile = detectResponsivenessProfile(options.target, options.profile);
+  const webServer = resolveWebServer(options, profile);
   const changedFiles = collectChangedFiles(options);
   const inferred = options.pages.length
     ? {
@@ -436,7 +531,8 @@ function buildPlan(options) {
     target: options.target,
     baseRef: options.baseRef,
     headRef: options.headRef,
-    baseUrl: options.baseUrl,
+    baseUrl: webServer.baseUrl,
+    webServer,
     outputDir: options.outputDir,
     profile: publicProfile(profile),
     contexts: options.contexts.map((name) => ({ name, ...CONTEXTS[name] })),
@@ -587,13 +683,17 @@ function prepareHarness(plan, options) {
 }
 
 function buildPlaywrightConfig(plan, options) {
+  const baseUrl = plan.baseUrl || options.baseUrl;
+  const webServerCommand =
+    plan.webServer?.command || options.installCommand || "./bin/6529 run dev";
+  const ignoreHTTPSErrors = /^https:/i.test(baseUrl);
   return `${headerComment()}
 const path = require("node:path");
 const { defineConfig, devices } = require("@playwright/test");
 const contexts = require("./contexts.json");
 
 const outputRoot = ${JSON.stringify(options.outputDir)};
-const baseURL = ${JSON.stringify(options.baseUrl)};
+const baseURL = ${JSON.stringify(baseUrl)};
 const target = ${JSON.stringify(options.target)};
 const port = ${JSON.stringify(String(options.port))};
 
@@ -611,7 +711,7 @@ module.exports = defineConfig({
   ],
   outputDir: path.join(outputRoot, "playwright-output"),
   use: {
-    baseURL,
+    baseURL,${ignoreHTTPSErrors ? "\n    ignoreHTTPSErrors: true," : ""}
     actionTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_ACTION_TIMEOUT_MS || 8000),
     navigationTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000),
     screenshot: "only-on-failure",
@@ -631,9 +731,9 @@ module.exports = defineConfig({
     metadata: context,
   })),
   webServer: {
-    command: ${JSON.stringify(options.installCommand || "./bin/6529 run dev")},
+    command: ${JSON.stringify(webServerCommand)},
     cwd: target,
-    url: baseURL,
+    url: baseURL,${ignoreHTTPSErrors ? "\n    ignoreHTTPSErrors: true," : ""}
     reuseExistingServer: ${JSON.stringify(options.reuseExistingServer)},
     timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_SERVER_TIMEOUT_MS || 180000),
     env: {
@@ -710,6 +810,7 @@ async function browserPrewarm(baseURL) {
         hasTouch: contextInfo.hasTouch,
         deviceScaleFactor: contextInfo.isMobile ? 3 : 1,
         userAgent: devices["Desktop Chrome"].userAgent + (contextInfo.userAgentSuffix || ""),
+        ignoreHTTPSErrors: /^https:/i.test(baseURL),
       });
       try {
         const page = await context.newPage();
@@ -2390,7 +2491,9 @@ Options:
   --workers <number>      Playwright workers. Default: 4.
   --changed-files <file>  Newline-separated changed file list.
   --pages <csv>           Explicit route list, bypassing inference.
-  --install-command <cmd> Web server command. Default: ./bin/6529 run dev.
+  --install-command <cmd> Web server command. Default: profile dev command, else
+                          ./bin/6529 run dev when the target has bin/6529, else
+                          pnpm run dev.
   --reuse-existing-server Reuse a server already listening at --base-url.
   --plan-only             Write plan and skip Playwright.
 `);
@@ -2411,6 +2514,7 @@ module.exports = {
   isNextDevToolsOnlyText,
   parseArgs,
   publicProfile,
+  resolveWebServer,
   runResponsiveness,
   summarizeOverlayText,
 };
