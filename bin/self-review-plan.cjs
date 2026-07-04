@@ -5,6 +5,10 @@
 const fs = require("fs");
 const { execFileSync } = require("child_process");
 const { REVIEW_KINDS, parseReviewCommand } = require("../src/github-webhook.cjs");
+const { createReviewJobs } = require("../src/review-job.cjs");
+
+const SELF_REVIEW_LANES = [{ provider: "anthropic", model: "claude-opus-4-8" }];
+const SELF_REVIEW_MAX_JOBS = 12;
 
 function planSelfReview(env = process.env, options = {}) {
   const eventName = String(env.EVENT_NAME || "").trim();
@@ -29,16 +33,65 @@ function planSelfReview(env = process.env, options = {}) {
   } else {
     throw new Error(`Unsupported event '${eventName}'.`);
   }
-  let headSha = String(env.PR_HEAD_SHA || "").trim();
-  if (!headSha && reviewKinds.length) {
-    const resolveHeadSha = options.resolveHeadSha || resolveHeadShaWithGh;
-    headSha = resolveHeadSha(prNumber, env);
+  if (reviewKinds.length === 0) {
+    return {
+      prNumber,
+      eventAction,
+      reviewKinds: [],
+      jobs: [],
+      headSha: "",
+    };
   }
-  return {
+  const repository = String(env.GITHUB_REPOSITORY || "").trim();
+  if (!repository) {
+    throw new Error("GITHUB_REPOSITORY is required.");
+  }
+  const installationId = String(env.SELF_INSTALLATION_ID || "").trim();
+  if (!installationId) {
+    throw new Error(
+      "SELF_INSTALLATION_ID is required. Set the REVIEWBOT_SELF_INSTALLATION_ID repository variable."
+    );
+  }
+  let headSha = String(env.PR_HEAD_SHA || "").trim();
+  let baseSha = String(env.PR_BASE_SHA || "").trim();
+  let headRefName = String(env.PR_HEAD_REF || "").trim();
+  if (!headSha || !baseSha || !headRefName) {
+    const resolvePullRequest = options.resolvePullRequest || resolvePullRequestWithGh;
+    const context = resolvePullRequest(prNumber, env);
+    headSha = headSha || context.headSha;
+    baseSha = baseSha || context.baseSha;
+    headRefName = headRefName || context.headRefName;
+  }
+  if (!headSha) {
+    throw new Error(`Could not resolve head SHA for PR #${prNumber}.`);
+  }
+  const deliveryId = `self-review-${String(env.GITHUB_RUN_ID || "").trim() || "manual"}`;
+  const event = {
+    kind: "self_review",
+    trigger: eventName === "issue_comment" ? "comment" : "self_review",
+    shouldEnqueue: true,
+    deliveryId,
+    repository: { fullName: repository },
+    headRepoFullName: repository,
     prNumber,
     headSha,
+    baseSha,
+    headRefName,
+    installationId,
+    reviewKinds,
+    actor: String(env.GITHUB_ACTOR || "").trim(),
+  };
+  const jobs = createReviewJobs(
+    event,
+    {},
+    { maxJobsPerDelivery: SELF_REVIEW_MAX_JOBS, lanes: SELF_REVIEW_LANES }
+  );
+  return {
+    prNumber,
     eventAction,
     reviewKinds,
+    jobs,
+    headSha,
   };
 }
 
@@ -60,21 +113,28 @@ function parseKindsJson(value, label) {
   return parsed;
 }
 
-function resolveHeadShaWithGh(prNumber, env = process.env) {
+function resolvePullRequestWithGh(prNumber, env = process.env) {
   const repository = String(env.GITHUB_REPOSITORY || "").trim();
   if (!repository) {
-    throw new Error("GITHUB_REPOSITORY is required to resolve the PR head SHA.");
+    throw new Error("GITHUB_REPOSITORY is required to resolve the PR context.");
   }
   const output = execFileSync(
     "gh",
-    ["api", `repos/${repository}/pulls/${prNumber}`, "--jq", ".head.sha"],
+    [
+      "api",
+      `repos/${repository}/pulls/${prNumber}`,
+      "--jq",
+      "[.head.sha, .base.sha, .head.ref] | join(\"\\n\")",
+    ],
     { encoding: "utf8" }
   );
-  const headSha = String(output || "").trim();
+  const [headSha = "", baseSha = "", headRefName = ""] = String(output || "")
+    .split("\n")
+    .map((line) => line.trim());
   if (!headSha) {
     throw new Error(`Could not resolve head SHA for PR #${prNumber}.`);
   }
-  return headSha;
+  return { headSha, baseSha, headRefName };
 }
 
 function main() {
@@ -85,17 +145,17 @@ function main() {
   }
   const lines = [
     `pr_number=${plan.prNumber}`,
-    `head_sha=${plan.headSha}`,
     `event_action=${plan.eventAction}`,
     `review_kinds_json=${JSON.stringify(plan.reviewKinds)}`,
+    `jobs_json=${JSON.stringify(plan.jobs)}`,
   ];
   fs.appendFileSync(outputPath, `${lines.join("\n")}\n`);
-  if (plan.reviewKinds.length === 0) {
+  if (plan.jobs.length === 0) {
     console.log(`No review kinds requested for PR #${plan.prNumber}; skipping review.`);
     return;
   }
   console.log(
-    `Planned self review for PR #${plan.prNumber} @ ${plan.headSha}: ${plan.reviewKinds.join(", ")}`
+    `Planned ${plan.jobs.length} self review job(s) for PR #${plan.prNumber} @ ${plan.headSha}: ${plan.reviewKinds.join(", ")}`
   );
 }
 

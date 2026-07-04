@@ -15,9 +15,12 @@ Maintainer comment triggers are documented in
 
 This repository reviews its own pull requests through GitHub Actions instead
 of the central App webhook. `.github/workflows/self-review.yml` triggers on
-pull request events, maintainer `/6529bot` comments, and manual dispatch, then
-calls the reusable `.github/workflows/review.yml` workflow with review kinds
-planned by `bin/self-review-plan.cjs`:
+pull request events, maintainer `/6529bot` comments, and manual dispatch.
+`bin/self-review-plan.cjs` plans review kinds and builds worker job payloads
+with the same `createReviewJobs` pipeline the App uses; each job then runs
+`npm run worker:job` with a GitHub App installation token (from the
+`REVIEWBOT_SELF_INSTALLATION_ID` repository variable), so comments post as
+the bot exactly like App-dispatched reviews:
 
 - Initial reviews (opened, reopened, ready for review): `general`,
   `security`, `auth-api`, `deploy-actions`, `db-lambda`, and `glm-swarm` —

@@ -169,8 +169,9 @@ function checkSelfReviewWorkflow(workflowText, reviewKinds, findings) {
   }
   const normalized = normalizeWhitespace(workflowText);
   for (const snippet of [
-    "uses: ./.github/workflows/review.yml",
     "node bin/self-review-plan.cjs",
+    "node bin/github-app-installation-token.cjs",
+    "npm run worker:job -- -- --job-file job.json",
     "author_association",
     "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
   ]) {

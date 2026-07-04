@@ -4651,72 +4651,88 @@ assert.throws(
   /review workflow kind check found/
 );
 const selfReviewPlanEnv = {
-  INITIAL_KINDS_JSON: '["general","security","auth-api"]',
+  INITIAL_KINDS_JSON: '["general","security","glm-swarm"]',
   SYNCHRONIZE_KINDS_JSON: '["followup"]',
+  GITHUB_REPOSITORY: "6529-Collections/6529reviewbot",
+  GITHUB_RUN_ID: "424242",
+  GITHUB_ACTOR: "punk6529",
+  SELF_INSTALLATION_ID: "140321060",
+  PR_NUMBER: "415",
+  PR_HEAD_SHA: "self-review-head",
+  PR_BASE_SHA: "self-review-base",
+  PR_HEAD_REF: "self-review-branch",
 };
+const selfReviewInitialPlan = selfReviewPlanCli.planSelfReview({
+  ...selfReviewPlanEnv,
+  EVENT_NAME: "pull_request",
+  EVENT_ACTION: "opened",
+});
+assert.deepEqual(selfReviewInitialPlan.reviewKinds, ["general", "security", "glm-swarm"]);
+assert.equal(selfReviewInitialPlan.jobs.length, 3);
 assert.deepEqual(
-  selfReviewPlanCli.planSelfReview({
-    ...selfReviewPlanEnv,
-    EVENT_NAME: "pull_request",
-    EVENT_ACTION: "opened",
-    PR_NUMBER: "415",
-    PR_HEAD_SHA: "self-review-head",
-  }),
-  {
-    prNumber: "415",
-    headSha: "self-review-head",
-    eventAction: "opened",
-    reviewKinds: ["general", "security", "auth-api"],
-  }
+  selfReviewInitialPlan.jobs.map((job) => `${job.reviewKind}:${job.lane}`),
+  [
+    "general:anthropic:claude-opus-4-8",
+    "security:anthropic:claude-opus-4-8",
+    "glm-swarm:openrouter:z-ai-glm-5.2",
+  ]
 );
+for (const job of selfReviewInitialPlan.jobs) {
+  assert.equal(job.installationId, "140321060");
+  assert.equal(job.repository.fullName, "6529-Collections/6529reviewbot");
+  assert.equal(job.headRepoFullName, "6529-Collections/6529reviewbot");
+  assert.equal(job.prNumber, "415");
+  assert.equal(job.headSha, "self-review-head");
+  assert.equal(job.baseSha, "self-review-base");
+  assert.equal(job.headRefName, "self-review-branch");
+  assert.match(job.id, /^rj_[0-9a-f]{24}$/);
+  assert.match(job.runKey, /^rk_[0-9a-f]{24}$/);
+}
 assert.deepEqual(
   selfReviewPlanCli.planSelfReview({
     ...selfReviewPlanEnv,
     EVENT_NAME: "pull_request",
     EVENT_ACTION: "synchronize",
-    PR_NUMBER: "415",
-    PR_HEAD_SHA: "self-review-head",
   }).reviewKinds,
   ["followup"]
 );
-assert.deepEqual(
-  selfReviewPlanCli.planSelfReview(
-    {
-      ...selfReviewPlanEnv,
-      EVENT_NAME: "issue_comment",
-      EVENT_ACTION: "created",
-      PR_NUMBER: "415",
-      COMMENT_BODY: "/6529bot review security db-lambda",
-    },
-    { resolveHeadSha: () => "resolved-head" }
-  ),
+const selfReviewCommentPlan = selfReviewPlanCli.planSelfReview(
   {
-    prNumber: "415",
-    headSha: "resolved-head",
-    eventAction: "created",
-    reviewKinds: ["security", "db-lambda"],
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "issue_comment",
+    EVENT_ACTION: "created",
+    PR_HEAD_SHA: "",
+    PR_BASE_SHA: "",
+    PR_HEAD_REF: "",
+    COMMENT_BODY: "/6529bot review security db-lambda",
+  },
+  {
+    resolvePullRequest: () => ({
+      headSha: "resolved-head",
+      baseSha: "resolved-base",
+      headRefName: "resolved-branch",
+    }),
   }
 );
+assert.deepEqual(selfReviewCommentPlan.reviewKinds, ["security", "db-lambda"]);
+assert.equal(selfReviewCommentPlan.headSha, "resolved-head");
+assert.equal(selfReviewCommentPlan.jobs[0].baseSha, "resolved-base");
+assert.equal(selfReviewCommentPlan.jobs[0].headRefName, "resolved-branch");
 assert.deepEqual(
   selfReviewPlanCli.planSelfReview({
     ...selfReviewPlanEnv,
     EVENT_NAME: "issue_comment",
     EVENT_ACTION: "created",
-    PR_NUMBER: "415",
     COMMENT_BODY: "looks good to me",
-  }).reviewKinds,
-  []
+  }),
+  { prNumber: "415", eventAction: "created", reviewKinds: [], jobs: [], headSha: "" }
 );
 assert.deepEqual(
-  selfReviewPlanCli.planSelfReview(
-    {
-      ...selfReviewPlanEnv,
-      EVENT_NAME: "workflow_dispatch",
-      PR_NUMBER: "415",
-      REQUESTED_KINDS_JSON: '["deploy-actions"]',
-    },
-    { resolveHeadSha: () => "resolved-head" }
-  ).reviewKinds,
+  selfReviewPlanCli.planSelfReview({
+    ...selfReviewPlanEnv,
+    EVENT_NAME: "workflow_dispatch",
+    REQUESTED_KINDS_JSON: '["deploy-actions"]',
+  }).reviewKinds,
   ["deploy-actions"]
 );
 assert.throws(
@@ -4724,7 +4740,6 @@ assert.throws(
     selfReviewPlanCli.planSelfReview({
       ...selfReviewPlanEnv,
       EVENT_NAME: "workflow_dispatch",
-      PR_NUMBER: "415",
       REQUESTED_KINDS_JSON: '["not-a-kind"]',
     }),
   /unknown review kind 'not-a-kind'/
@@ -4733,10 +4748,21 @@ assert.throws(
   () =>
     selfReviewPlanCli.planSelfReview({
       ...selfReviewPlanEnv,
+      PR_NUMBER: "",
       EVENT_NAME: "pull_request",
       EVENT_ACTION: "opened",
     }),
   /PR_NUMBER is required/
+);
+assert.throws(
+  () =>
+    selfReviewPlanCli.planSelfReview({
+      ...selfReviewPlanEnv,
+      SELF_INSTALLATION_ID: "",
+      EVENT_NAME: "pull_request",
+      EVENT_ACTION: "opened",
+    }),
+  /SELF_INSTALLATION_ID is required/
 );
 assert.equal(replayWebhook.inferEventName(JSON.parse(webhookBody.toString("utf8"))), "pull_request");
 assert.equal(replayWebhook.parsePayload(Buffer.from(`\uFEFF${webhookBody}`)).action, "opened");
