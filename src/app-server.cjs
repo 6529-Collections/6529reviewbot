@@ -368,7 +368,9 @@ async function processNormalizedGitHubWebhook(normalizedEvent, input) {
         input.postCommandFailureComment || defaultPostCommandFailureComment;
       let commentResult;
       try {
-        commentResult = await postComment(controlledEvent, commentBody);
+        commentResult = await postComment(controlledEvent, commentBody, {
+          dedupeMarker: commandFailureMarker(controlledEvent),
+        });
       } catch (commentError) {
         commentResult = { skipped: true, error: commentError?.message || "Comment posting failed." };
       }
@@ -891,8 +893,13 @@ function isVisibleCommandFailure(event, error) {
   );
 }
 
+function commandFailureMarker(event = {}) {
+  const deliveryId = String(event.deliveryId || "").replace(/[^A-Za-z0-9._-]/g, "");
+  return `<!-- 6529-review-bot:command-failure:${deliveryId || "unknown"} -->`;
+}
+
 function buildCommandFailureComment(event, error) {
-  const marker = `<!-- 6529-review-bot:command-failure:${event.deliveryId || "unknown"} -->`;
+  const marker = commandFailureMarker(event);
   const reviewKinds = (error.reviewKinds || event.reviewKinds || [])
     .map((kind) => String(kind || "").trim())
     .filter(Boolean);
@@ -928,7 +935,7 @@ function publicCommandFailure(error, commentResult = {}) {
     maxJobsPerDelivery: Number.isSafeInteger(error.maxJobsPerDelivery)
       ? error.maxJobsPerDelivery
       : null,
-    commentPosted: commentResult?.skipped ? false : true,
+    commentPosted: commentResult?.deduped ? true : !commentResult?.skipped,
   };
 }
 
@@ -939,7 +946,7 @@ function commandLineForEvent(event = {}) {
   }
   const args = Array.isArray(command.args) ? command.args : [];
   return ["/6529bot", command.name, ...args]
-    .map((part) => String(part || "").trim())
+    .map((part) => String(part || "").replace(/[^A-Za-z0-9@._:/-]/g, "").slice(0, 64))
     .filter(Boolean)
     .join(" ");
 }
@@ -1039,6 +1046,7 @@ module.exports = {
   isGitHubAppOperatorPath,
   normalizeConfigLoadResult,
   buildCommandFailureComment,
+  commandFailureMarker,
   processNormalizedGitHubWebhook,
   processWebhookInboxOnce,
   publicEventSummary,

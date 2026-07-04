@@ -245,11 +245,24 @@ function createGitHubAppIntegration(options = {}) {
     };
   }
 
-  async function postIssueComment(event, body) {
+  async function postIssueComment(event, body, options = {}) {
     if (!event?.repository?.fullName || !event.prNumber || !event.installationId) {
       throw new Error("Issue comment posting requires repository, PR number, and installation context.");
     }
     const token = await getInstallationToken(event.installationId);
+    if (options.dedupeMarker) {
+      const existing = await findIssueCommentWithMarker(
+        fetchImpl,
+        settings,
+        token,
+        event.repository.fullName,
+        event.prNumber,
+        options.dedupeMarker
+      );
+      if (existing) {
+        return { id: existing.id, skipped: true, deduped: true };
+      }
+    }
     return await createIssueComment(
       fetchImpl,
       settings,
@@ -349,6 +362,34 @@ async function readPullRequest(fetchImpl, settings, token, repoFullName, prNumbe
     throw new Error(`GitHub pull request API returned HTTP ${response.status}.`);
   }
   return await response.json();
+}
+
+const MAX_ISSUE_COMMENT_DEDUPE_PAGES = 5;
+
+async function findIssueCommentWithMarker(fetchImpl, settings, token, repoFullName, issueNumber, marker) {
+  const [owner, repo] = splitRepo(repoFullName);
+  const baseUrl = `${settings.apiUrl}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${encodeURIComponent(String(issueNumber))}/comments`;
+  for (let page = 1; page <= MAX_ISSUE_COMMENT_DEDUPE_PAGES; page += 1) {
+    const comments = await githubFetchJson(
+      fetchImpl,
+      settings,
+      `${baseUrl}?per_page=100&page=${page}`,
+      {
+        headers: githubHeaders(token),
+      }
+    );
+    if (!Array.isArray(comments) || comments.length === 0) {
+      return null;
+    }
+    const match = comments.find((comment) => String(comment?.body || "").includes(marker));
+    if (match) {
+      return match;
+    }
+    if (comments.length < 100) {
+      return null;
+    }
+  }
+  return null;
 }
 
 async function createIssueComment(fetchImpl, settings, token, repoFullName, issueNumber, body) {

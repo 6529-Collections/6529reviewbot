@@ -5135,6 +5135,7 @@ const serverWebhookInboxOptions = serverCli.createServerOptionsFromEnv({
 assert.equal(serverWebhookInboxOptions.webhookInbox.settings.enabled, true);
 let serverDispatchRequest = null;
 let serverAppFailureCommentRequest = null;
+const serverAppCommentListRequests = [];
 const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
   {
     REVIEWBOT_GITHUB_APP_ID: "12345",
@@ -5172,6 +5173,19 @@ const serverAppDispatchOptions = serverCli.createServerOptionsFromEnv(
         };
         return { status: 204, text: async () => "" };
       }
+      if (String(url).includes("/repos/6529-Collections/example/issues/12/comments?per_page=")) {
+        serverAppCommentListRequests.push({ url, options });
+        return {
+          ok: true,
+          status: 200,
+          json: async () => [
+            {
+              id: 4321,
+              body: "<!-- 6529-review-bot:command-failure:dupe-delivery -->\n## 6529bot command not queued",
+            },
+          ],
+        };
+      }
       if (String(url).endsWith("/repos/6529-Collections/example/issues/12/comments")) {
         serverAppFailureCommentRequest = {
           url,
@@ -5196,6 +5210,24 @@ const serverAppFailureCommentPromise = serverAppDispatchOptions.postCommandFailu
     installationId: 777,
   },
   "public fanout failure body"
+);
+const serverAppDedupedCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "duplicate fanout failure body",
+  { dedupeMarker: "<!-- 6529-review-bot:command-failure:dupe-delivery -->" }
+);
+const serverAppFreshCommentPromise = serverAppDispatchOptions.postCommandFailureComment(
+  {
+    repository: { fullName: "6529-Collections/example" },
+    prNumber: 12,
+    installationId: 777,
+  },
+  "public fanout failure body",
+  { dedupeMarker: "<!-- 6529-review-bot:command-failure:fresh-delivery -->" }
 );
 let serverMainAppDispatchRequest = null;
 const serverMainAppDispatchOptions = serverCli.createServerOptionsFromEnv(
@@ -7442,6 +7474,14 @@ appServer.handleGitHubWebhook({
     serverAppFailureCommentRequest.body.body,
     "public fanout failure body"
   );
+  const serverAppDedupedCommentResult = await serverAppDedupedCommentPromise;
+  assert.equal(serverAppDedupedCommentResult.skipped, true);
+  assert.equal(serverAppDedupedCommentResult.deduped, true);
+  assert.equal(serverAppDedupedCommentResult.id, 4321);
+  const serverAppFreshCommentResult = await serverAppFreshCommentPromise;
+  assert.equal(serverAppFreshCommentResult.id, 9876);
+  assert.equal(serverAppCommentListRequests.length, 2);
+  assert.match(String(serverAppCommentListRequests[0].url), /per_page=100&page=1/);
   const serverMainAppDispatchResult = await serverMainAppDispatchPromise;
   assert.equal(serverMainAppDispatchResult.accepted, true);
   assert.equal(serverMainAppDispatchResult.jobs[0].dispatchMode, "api");
@@ -8536,8 +8576,8 @@ appServer.handleGitHubWebhook({
       fanoutFailureQueued = true;
       return { accepted: true };
     },
-    postCommandFailureComment: async (event, body) => {
-      fanoutFailureComments.push({ event, body });
+    postCommandFailureComment: async (event, body, options) => {
+      fanoutFailureComments.push({ event, body, options });
       return { id: 1234 };
     },
     recordJobEvent: async () => {},
@@ -8564,6 +8604,27 @@ appServer.handleGitHubWebhook({
   assert.match(fanoutFailureComments[0].body, /delivery-command-fanout/);
   assert.match(fanoutFailureComments[0].body, /Requested jobs: `2`/);
   assert.match(fanoutFailureComments[0].body, /Current max per delivery: `1`/);
+  assert.equal(
+    fanoutFailureComments[0].options.dedupeMarker,
+    "<!-- 6529-review-bot:command-failure:delivery-command-fanout -->"
+  );
+  assert.equal(
+    appServer.commandFailureMarker({ deliveryId: "de`liv ery-1" }),
+    "<!-- 6529-review-bot:command-failure:delivery-1 -->"
+  );
+  assert.equal(
+    appServer.commandFailureMarker({}),
+    "<!-- 6529-review-bot:command-failure:unknown -->"
+  );
+  const injectionFailureComment = appServer.buildCommandFailureComment(
+    {
+      deliveryId: "delivery-inject",
+      command: { name: "review", args: ["all", "`code`", "safe-arg"] },
+      reviewKinds: ["general"],
+    },
+    { message: "too many jobs", jobCount: 20, maxJobsPerDelivery: 12, reviewKinds: ["general"] }
+  );
+  assert.match(injectionFailureComment, /- Command: `\/6529bot review all code safe-arg`/);
   const inboxCalls = [];
   const fakeWebhookInbox = {
     settings: { enabled: true, batchSize: 2, maxAttempts: 3 },
