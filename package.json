@@ -156,7 +156,7 @@
     "release:check": "node scripts/release-check.cjs"
   },
   "dependencies": {
-    "sharp": "^0.35.1",
+    "sharp": "^0.35.3",
     "yaml": "^2.9.0"
   }
 }
