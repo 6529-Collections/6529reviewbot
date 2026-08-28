@@ -779,14 +779,25 @@ const routes = require("./routes.json");
 
 module.exports = async (config) => {
   const baseURL = config.projects?.[0]?.use?.baseURL || "http://localhost:3001";
+  const prewarmBudgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000);
+  const prewarmDeadline = Date.now() + prewarmBudgetMs;
   for (const route of routes) {
+    const remainingMs = Math.max(0, prewarmDeadline - Date.now());
+    if (remainingMs <= 0) {
+      console.warn("[responsiveness prewarm] budget exhausted during HTTP prewarm");
+      break;
+    }
     const url = new URL(route, baseURL).toString();
-    await fetchWithTimeout(url, 20000).catch(() => {});
+    await fetchWithTimeout(url, Math.min(20000, remainingMs)).catch(() => {});
   }
   if (!/^(?:1|true|yes)$/i.test(process.env.REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM || "")) {
-    await browserPrewarm(baseURL).catch((error) => {
-      console.warn("[responsiveness prewarm] browser prewarm skipped: " + sanitizeMessage(error.message || String(error)));
-    });
+    if (Date.now() >= prewarmDeadline) {
+      console.warn("[responsiveness prewarm] budget exhausted before browser prewarm");
+    } else {
+      await browserPrewarm(baseURL, prewarmDeadline).catch((error) => {
+        console.warn("[responsiveness prewarm] browser prewarm skipped: " + sanitizeMessage(error.message || String(error)));
+      });
+    }
   }
 };
 
@@ -806,9 +817,7 @@ async function fetchWithTimeout(url, timeoutMs) {
   }
 }
 
-async function browserPrewarm(baseURL) {
-  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000);
-  const deadline = Date.now() + budgetMs;
+async function browserPrewarm(baseURL, deadline) {
   const prewarmContexts = selectPrewarmContexts(contexts);
   const browser = await chromium.launch();
   try {

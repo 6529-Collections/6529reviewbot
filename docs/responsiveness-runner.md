@@ -281,12 +281,13 @@ Each context/route check records:
   and web-mobile contexts before parallel checks start. This lets
   Next.js/Turbopack finish route and client chunk compilation for both the
   desktop and SmallScreenLayout branches before screenshots are used as
-  evidence without multiplying CI load by every simulated surface. The prewarm
-  has a default 180s wall-clock budget, a default 30s per-route timeout, and
-  aborts repeated metric-evaluation failures. Set
-  `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
-  debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
-  comma-separated context list only when debugging context-specific compilation.
+  evidence without multiplying CI load by every simulated surface. The HTTP
+  and browser stages share one default 180s wall-clock budget, with a default
+  30s per-route browser timeout, and abort repeated metric-evaluation failures.
+  Set `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local
+  harness debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
+  comma-separated context list only when debugging context-specific
+  compilation.
 - transient route retry. After prewarm, a first assertion attempt can still race
   a dev-server route compile. The runner retries only when the first attempt has
   no navigation response, no meaningful content, a blank/near-uniform screenshot,

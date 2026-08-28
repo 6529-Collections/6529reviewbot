@@ -646,9 +646,19 @@ assert.equal(
 );
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
-assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
+assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL, prewarmDeadline)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000"));
+assert.equal(
+  (responsivenessGlobalSetup.match(/REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS/g) || []).length,
+  1
+);
+assert(
+  responsivenessGlobalSetup.includes(
+    "fetchWithTimeout(url, Math.min(20000, remainingMs))"
+  )
+);
+assert(responsivenessGlobalSetup.includes("async function browserPrewarm(baseURL, deadline)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000"));
 assert(responsivenessGlobalSetup.includes("selectPrewarmContexts(contexts)"));
 assert(responsivenessGlobalSetup.includes('new Set(["web-desktop", "web-mobile"])'));
