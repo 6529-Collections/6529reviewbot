@@ -1824,6 +1824,7 @@ function applyProfileContentReadiness(profileInfo, mode, route, metadata, metric
     ...metrics,
     contentReady: Boolean(
       metrics.contentReady &&
+        !metrics.eulaGateVisible &&
         metrics.hasCapacitorNativeClass &&
         (metrics.hasNavigation || metrics.openMobilePromptVisible)
     ),

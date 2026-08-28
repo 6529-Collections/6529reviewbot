@@ -762,6 +762,21 @@ assert.equal(
   applyProfileContentReadiness(
     { id: "6529seize-frontend" },
     "native-ios",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      eulaGateVisible: true,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
     "/access",
     { platformFamily: "native" },
     { ...nativeMetrics }
