@@ -477,6 +477,8 @@ assert(responsivenessSpec.includes("nativePluginAvailableKeyboard"));
 assert(responsivenessSpec.includes("bottomNavigationVisible"));
 assert(responsivenessSpec.includes("__reviewbotCapacitorEmit"));
 assert(responsivenessSpec.includes('isPluginAvailable: (name) => ["App", "Keyboard", "Device"].includes'));
+assert(responsivenessSpec.includes("installProfileContextCookies"));
+assert(responsivenessSpec.includes("applyProfileContentReadiness"));
 assert(responsivenessSpec.includes("profileAwareProbe"));
 assert(
   responsivenessSpec.includes(
@@ -675,6 +677,66 @@ const seizeResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.
   (profile) => profile.id === "6529seize-frontend"
 );
 assert(seizeResponsivenessProfile);
+assert.deepEqual(seizeResponsivenessProfile.contextCookies["native-mobile"], [
+  { name: "native-ios", value: "true" },
+  { name: "eula-consent", value: "2026-08-24" },
+]);
+assert.deepEqual(
+  responsivenessRunner.publicProfile(seizeResponsivenessProfile).contextCookies,
+  seizeResponsivenessProfile.contextCookies
+);
+const profileContentReadinessSource = responsivenessSpec.match(
+  /function applyProfileContentReadiness[\s\S]*?\nasync function installCapacitorShim/
+)[0].replace(/\nasync function installCapacitorShim$/, "");
+const profileContentReadinessContext = {};
+vm.runInNewContext(
+  `${profileContentReadinessSource}
+globalThis.__applyProfileContentReadiness = applyProfileContentReadiness;`,
+  profileContentReadinessContext
+);
+const applyProfileContentReadiness =
+  profileContentReadinessContext.__applyProfileContentReadiness;
+const nativeMetrics = {
+  contentReady: true,
+  hasCapacitorNativeClass: false,
+  hasNavigation: false,
+  openMobilePromptVisible: false,
+  nextErrorOverlay: false,
+};
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "generic-next-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  true
+);
 const inferredSeizeRoutes = responsivenessRunner.inferRoutes(
   [
     "components/user/collected/UserPageCollectedStats.tsx",
