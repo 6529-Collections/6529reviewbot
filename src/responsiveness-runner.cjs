@@ -1816,7 +1816,7 @@ function applyProfileContentReadiness(profileInfo, mode, route, metadata, metric
   const normalizedRoute = String(route || "");
   const shellBypassRoute =
     normalizedRoute.startsWith("/access") || normalizedRoute.startsWith("/restricted");
-  if (!isSeizeNative || shellBypassRoute || metrics.nextErrorOverlay) {
+  if (!isSeizeNative || metrics.nextErrorOverlay) {
     return metrics;
   }
 
@@ -1825,8 +1825,9 @@ function applyProfileContentReadiness(profileInfo, mode, route, metadata, metric
     contentReady: Boolean(
       metrics.contentReady &&
         !metrics.eulaGateVisible &&
-        metrics.hasCapacitorNativeClass &&
-        (metrics.hasNavigation || metrics.openMobilePromptVisible)
+        (shellBypassRoute ||
+          (metrics.hasCapacitorNativeClass &&
+            (metrics.hasNavigation || metrics.openMobilePromptVisible)))
     ),
   };
 }

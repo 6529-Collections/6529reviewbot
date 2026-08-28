@@ -708,6 +708,7 @@ const nativeMetrics = {
   hasCapacitorNativeClass: false,
   hasNavigation: false,
   openMobilePromptVisible: false,
+  eulaGateVisible: false,
   nextErrorOverlay: false,
 };
 assert.equal(
@@ -733,6 +734,16 @@ assert.equal(
     }
   ).contentReady,
   true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/access",
+    { platformFamily: "native" },
+    { ...nativeMetrics, eulaGateVisible: true }
+  ).contentReady,
+  false
 );
 assert.equal(
   applyProfileContentReadiness(
