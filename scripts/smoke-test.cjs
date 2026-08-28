@@ -814,6 +814,48 @@ assert.equal(
   ).contentReady,
   true
 );
+const profileAwareProbeSource = responsivenessSpec.match(
+  /function profileAwareProbe[\s\S]*?\nasync function settlePage/
+)[0].replace(/\nasync function settlePage$/, "");
+const profileAwareProbeContext = {};
+vm.runInNewContext(
+  `${profileAwareProbeSource}
+globalThis.__profileAwareProbe = profileAwareProbe;`,
+  profileAwareProbeContext
+);
+const profileAwareProbe = profileAwareProbeContext.__profileAwareProbe;
+const nativeProfileMetrics = {
+  hasCapacitorNativeClass: false,
+  viewportMeta: "width=device-width, viewport-fit=cover",
+  nativePluginAvailableKeyboard: true,
+  nativePluginAvailableApp: true,
+  bottomNavigationVisible: false,
+  nextErrorOverlay: false,
+};
+assert.deepEqual(
+  Array.from(
+    profileAwareProbe({
+      profile: { id: "6529seize-frontend" },
+      mode: "native-ios",
+      route: "/access",
+      metadata: { platformFamily: "native" },
+      metrics: nativeProfileMetrics,
+    }).failures
+  ),
+  []
+);
+assert.deepEqual(
+  Array.from(
+    profileAwareProbe({
+      profile: { id: "6529seize-frontend" },
+      mode: "native-ios",
+      route: "/waves",
+      metadata: { platformFamily: "native" },
+      metrics: nativeProfileMetrics,
+    }).failures
+  ),
+  ["6529 native profile: body.capacitor-native was not applied"]
+);
 const inferredSeizeRoutes = responsivenessRunner.inferRoutes(
   [
     "components/user/collected/UserPageCollectedStats.tsx",

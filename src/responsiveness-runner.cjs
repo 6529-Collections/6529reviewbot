@@ -1257,7 +1257,7 @@ function profileAwareProbe({ profile, mode, route, metadata, metrics }) {
     normalizedRoute.startsWith("/access") || normalizedRoute.startsWith("/restricted");
 
   if (isNativeContext && !metrics.nextErrorOverlay) {
-    if (!metrics.hasCapacitorNativeClass) {
+    if (!shellBypassRoute && !metrics.hasCapacitorNativeClass) {
       failures.push("6529 native profile: body.capacitor-native was not applied");
     }
     if (!String(metrics.viewportMeta || "").includes("viewport-fit=cover")) {
