@@ -479,6 +479,8 @@ assert(responsivenessSpec.includes("__reviewbotCapacitorEmit"));
 assert(responsivenessSpec.includes('isPluginAvailable: (name) => ["App", "Keyboard", "Device"].includes'));
 assert(responsivenessSpec.includes("installProfileContextCookies"));
 assert(responsivenessSpec.includes("applyProfileContentReadiness"));
+assert(responsivenessSpec.includes('if (isNativeContext) {\n      await installCapacitorShim'));
+assert(responsivenessSpec.includes("native EULA gate is visible"));
 assert(responsivenessSpec.includes("profileAwareProbe"));
 assert(
   responsivenessSpec.includes(
@@ -682,6 +684,11 @@ assert.deepEqual(seizeResponsivenessProfile.contextCookies["native-mobile"], [
   { name: "eula-consent", value: "2026-08-24" },
 ]);
 assert.deepEqual(
+  seizeResponsivenessProfile.contextCookies["native-ios"],
+  seizeResponsivenessProfile.contextCookies["native-mobile"]
+);
+assert.equal(seizeResponsivenessProfile.contextCookies["native-android"], undefined);
+assert.deepEqual(
   responsivenessRunner.publicProfile(seizeResponsivenessProfile).contextCookies,
   seizeResponsivenessProfile.contextCookies
 );
@@ -726,6 +733,50 @@ assert.equal(
     }
   ).contentReady,
   true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-android",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/access",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-android",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics, contentReady: false, nextErrorOverlay: true }
+  ).contentReady,
+  false
 );
 assert.equal(
   applyProfileContentReadiness(

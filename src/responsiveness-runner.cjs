@@ -237,6 +237,10 @@ const PROFILE_6529_SEIZE_FRONTEND = {
       { name: "native-ios", value: "true" },
       { name: "eula-consent", value: "2026-08-24" },
     ],
+    "native-ios": [
+      { name: "native-ios", value: "true" },
+      { name: "eula-consent", value: "2026-08-24" },
+    ],
   },
 };
 
@@ -948,13 +952,15 @@ for (const route of routes) {
   test(route, async ({ page }, testInfo) => {
     const mode = testInfo.project.name;
     const metadata = testInfo.project.metadata || {};
+    const isNativeContext =
+      metadata.platformFamily === "native" || /^native(?:-|$)/.test(String(mode || ""));
     await installProfileContextCookies(
       page.context(),
       profile,
       mode,
       testInfo.project.use?.baseURL || "http://localhost:3001"
     );
-    if (mode === "native-mobile") {
+    if (isNativeContext) {
       await installCapacitorShim(page, metadata.nativePlatform || "ios");
     }
 
@@ -1175,7 +1181,7 @@ for (const route of routes) {
     if (hardPageErrors.length < pageErrors.length) {
       warnings.push(\`\${pageErrors.length - hardPageErrors.length} transient navigation timeout(s) after content rendered\`);
     }
-    if (mode === "native-mobile") {
+    if (isNativeContext) {
       const shimActive = Boolean(metrics.nativeShimActive || metrics.nativeIsNativePlatform || metrics.nativePlatform);
       if (!shimActive) {
         failures.push("native Capacitor shim did not activate");
@@ -1499,6 +1505,10 @@ function contentReadinessFailureReason(metrics, lastError, timeoutMs) {
       : "6529 app shell metrics were unavailable before screenshot";
   }
 
+  if (metrics.eulaGateVisible) {
+    return "6529 native EULA gate is visible; verify the responsiveness profile eula-consent receipt matches the frontend CURRENT_EULA_VERSION";
+  }
+
   const seconds = (timeoutMs / 1000).toFixed(1);
   const signals = (metrics.contentSignals || []).join(", ") || "none";
   return [
@@ -1756,6 +1766,10 @@ async function readMetrics(page, mode, route, metadata) {
           bottomNavigationHeight: bottomNavigation ? Math.round(bottomNavigation.getBoundingClientRect().height) : 0,
           androidKeyboardHeight,
           openMobilePromptVisible: visibleTextIncludes("Opening 6529 Mobile"),
+          eulaGateVisible:
+            visibleTextIncludes("Checking EULA acceptance") ||
+            visibleTextIncludes("End User License Agreement") ||
+            visibleTextIncludes("We couldn't verify your EULA acceptance"),
           scrollWidth,
           clientWidth,
           scrollHeight,
@@ -1792,6 +1806,9 @@ async function readMetrics(page, mode, route, metadata) {
   return { ok: false, error: "page kept navigating while metrics were collected" };
 }
 
+/**
+ * Tighten generic document readiness for the hydrated 6529 native app shell.
+ */
 function applyProfileContentReadiness(profileInfo, mode, route, metadata, metrics) {
   const isSeizeNative =
     profileInfo?.id === "6529seize-frontend" &&
@@ -1803,12 +1820,14 @@ function applyProfileContentReadiness(profileInfo, mode, route, metadata, metric
     return metrics;
   }
 
-  metrics.contentReady = Boolean(
-    metrics.contentReady &&
-      metrics.hasCapacitorNativeClass &&
-      (metrics.hasNavigation || metrics.openMobilePromptVisible)
-  );
-  return metrics;
+  return {
+    ...metrics,
+    contentReady: Boolean(
+      metrics.contentReady &&
+        metrics.hasCapacitorNativeClass &&
+        (metrics.hasNavigation || metrics.openMobilePromptVisible)
+    ),
+  };
 }
 
 function fallbackMetrics(page) {
@@ -1833,6 +1852,7 @@ function fallbackMetrics(page) {
     bottomNavigationHeight: 0,
     androidKeyboardHeight: "",
     openMobilePromptVisible: false,
+    eulaGateVisible: false,
     scrollWidth: 0,
     clientWidth: 0,
     scrollHeight: 0,
@@ -2056,21 +2076,38 @@ async function installCapacitorShim(page, platform) {
   }, platform);
 }
 
+/**
+ * Seed deterministic, non-secret profile cookies before the first navigation.
+ */
 async function installProfileContextCookies(context, profileInfo, mode, baseURL) {
   const configured = profileInfo?.contextCookies?.[mode];
   if (!Array.isArray(configured) || configured.length === 0) {
     return;
   }
 
-  const cookieUrl = new URL("/", baseURL).toString();
-  await context.addCookies(
-    configured.map((cookie) => ({
-      name: String(cookie.name),
-      value: String(cookie.value),
-      url: cookieUrl,
-      sameSite: "Lax",
-    }))
-  );
+  let cookieUrl = "";
+  try {
+    cookieUrl = new URL("/", baseURL).toString();
+  } catch {
+    throw new Error(
+      \`responsiveness profile cookie setup failed for \${mode}: invalid baseURL \${sanitizeMessage(baseURL)}\`
+    );
+  }
+
+  try {
+    await context.addCookies(
+      configured.map((cookie) => ({
+        name: String(cookie.name),
+        value: String(cookie.value),
+        url: cookieUrl,
+        sameSite: "Lax",
+      }))
+    );
+  } catch (error) {
+    throw new Error(
+      \`responsiveness profile cookie setup failed for \${mode}: \${sanitizeMessage(error.message || String(error))}\`
+    );
+  }
 }
 
 function sanitizeMessage(value) {

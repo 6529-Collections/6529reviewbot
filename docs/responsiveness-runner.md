@@ -147,13 +147,15 @@ native assertion follows the actual app contract:
 shimmed native platform, `Capacitor.isPluginAvailable()` must expose the App,
 Keyboard, and Device plugins used by the app shell, `viewport-fit=cover` must
 be present, and `CapacitorSetup` should apply `body.capacitor-native`.
-The 6529 native-mobile profile seeds the native iOS marker and current versioned
-EULA receipt before navigation so the sweep exercises the app shell without an
-app-bootstrap reload or legal-consent interstitial. Keep that receipt version
-in sync with the frontend's `CURRENT_EULA_VERSION`. Native content readiness
-requires the hydrated `body.capacitor-native` class plus either app navigation
-or the open-mobile handoff prompt; a blocking or checking screen is not treated
-as route readiness. Electron checks are also browser-level: they verify that
+The 6529 native-mobile and native-ios profiles seed the native iOS marker and
+current versioned EULA receipt before navigation so the sweep exercises the app
+shell without an app-bootstrap reload or legal-consent interstitial. Keep that
+receipt version in sync with the frontend's `CURRENT_EULA_VERSION`; if an EULA
+screen is detected, the failure names that contract directly. Every native
+context installs the matching Capacitor shim. Native content readiness requires
+the hydrated `body.capacitor-native` class plus either app navigation or the
+open-mobile handoff prompt; a blocking or checking screen is not treated as
+route readiness. Electron checks are also browser-level: they verify that
 the renderer takes the Electron user-agent branch, but do not launch a packaged
 desktop app.
 
