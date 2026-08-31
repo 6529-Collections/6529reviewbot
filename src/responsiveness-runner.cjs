@@ -229,6 +229,19 @@ const PROFILE_6529_SEIZE_FRONTEND = {
     "6529-layout-branch-metrics",
     "open-mobile-deeplink-route",
   ],
+  contextCookies: {
+    // Keep the versioned receipt in sync with CURRENT_EULA_VERSION in the
+    // frontend. The native shell sweep exercises the app shell after consent;
+    // the EULA gate has separate frontend-owned coverage.
+    "native-mobile": [
+      { name: "native-ios", value: "true" },
+      { name: "eula-consent", value: "2026-08-24" },
+    ],
+    "native-ios": [
+      { name: "native-ios", value: "true" },
+      { name: "eula-consent", value: "2026-08-24" },
+    ],
+  },
 };
 
 const SAFE_APP_ROUTES = [
@@ -472,6 +485,7 @@ function publicProfile(profile) {
     label: profile.label,
     platformNotes: profile.platformNotes || [],
     deterministicChecks: profile.deterministicChecks || [],
+    contextCookies: profile.contextCookies || {},
   };
 }
 
@@ -765,14 +779,25 @@ const routes = require("./routes.json");
 
 module.exports = async (config) => {
   const baseURL = config.projects?.[0]?.use?.baseURL || "http://localhost:3001";
+  const prewarmBudgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000);
+  const prewarmDeadline = Date.now() + prewarmBudgetMs;
   for (const route of routes) {
+    const remainingMs = Math.max(0, prewarmDeadline - Date.now());
+    if (remainingMs <= 0) {
+      console.warn("[responsiveness prewarm] budget exhausted during HTTP prewarm");
+      break;
+    }
     const url = new URL(route, baseURL).toString();
-    await fetchWithTimeout(url, 20000).catch(() => {});
+    await fetchWithTimeout(url, Math.min(20000, remainingMs)).catch(() => {});
   }
   if (!/^(?:1|true|yes)$/i.test(process.env.REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM || "")) {
-    await browserPrewarm(baseURL).catch((error) => {
-      console.warn("[responsiveness prewarm] browser prewarm skipped: " + sanitizeMessage(error.message || String(error)));
-    });
+    if (Date.now() >= prewarmDeadline) {
+      console.warn("[responsiveness prewarm] budget exhausted before browser prewarm");
+    } else {
+      await browserPrewarm(baseURL, prewarmDeadline).catch((error) => {
+        console.warn("[responsiveness prewarm] browser prewarm skipped: " + sanitizeMessage(error.message || String(error)));
+      });
+    }
   }
 };
 
@@ -792,9 +817,7 @@ async function fetchWithTimeout(url, timeoutMs) {
   }
 }
 
-async function browserPrewarm(baseURL) {
-  const budgetMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000);
-  const deadline = Date.now() + budgetMs;
+async function browserPrewarm(baseURL, deadline) {
   const prewarmContexts = selectPrewarmContexts(contexts);
   const browser = await chromium.launch();
   try {
@@ -938,7 +961,15 @@ for (const route of routes) {
   test(route, async ({ page }, testInfo) => {
     const mode = testInfo.project.name;
     const metadata = testInfo.project.metadata || {};
-    if (mode === "native-mobile") {
+    const isNativeContext =
+      metadata.platformFamily === "native" || /^native(?:-|$)/.test(String(mode || ""));
+    await installProfileContextCookies(
+      page.context(),
+      profile,
+      mode,
+      testInfo.project.use?.baseURL || "http://localhost:3001"
+    );
+    if (isNativeContext) {
       await installCapacitorShim(page, metadata.nativePlatform || "ios");
     }
 
@@ -1017,7 +1048,7 @@ for (const route of routes) {
       }
 
       try {
-        contentReadiness = await waitForMeaningfulAppContent(page);
+        contentReadiness = await waitForMeaningfulAppContent(page, mode, route, metadata);
       } catch (error) {
         contentReadiness = {
           ok: false,
@@ -1029,7 +1060,7 @@ for (const route of routes) {
 
       const metricsResult = contentReadiness.metrics
         ? { ok: true, metrics: contentReadiness.metrics }
-        : await readMetrics(page);
+        : await readMetrics(page, mode, route, metadata);
       if (!metricsResult.ok) {
         pageErrors.push(\`metrics failed: \${sanitizeMessage(metricsResult.error)}\`);
       }
@@ -1056,7 +1087,7 @@ for (const route of routes) {
           screenshotAnalysis,
         })
       ) {
-        const lateMetricsResult = await readMetrics(page);
+        const lateMetricsResult = await readMetrics(page, mode, route, metadata);
         if (lateMetricsResult.ok) {
           const lateMetrics = lateMetricsResult.metrics || fallbackMetrics(page);
           lateMetrics.nextErrorOverlayText = summarizeOverlayText(lateMetrics.nextErrorOverlayText);
@@ -1159,7 +1190,7 @@ for (const route of routes) {
     if (hardPageErrors.length < pageErrors.length) {
       warnings.push(\`\${pageErrors.length - hardPageErrors.length} transient navigation timeout(s) after content rendered\`);
     }
-    if (mode === "native-mobile") {
+    if (isNativeContext) {
       const shimActive = Boolean(metrics.nativeShimActive || metrics.nativeIsNativePlatform || metrics.nativePlatform);
       if (!shimActive) {
         failures.push("native Capacitor shim did not activate");
@@ -1235,7 +1266,7 @@ function profileAwareProbe({ profile, mode, route, metadata, metrics }) {
     normalizedRoute.startsWith("/access") || normalizedRoute.startsWith("/restricted");
 
   if (isNativeContext && !metrics.nextErrorOverlay) {
-    if (!metrics.hasCapacitorNativeClass) {
+    if (!shellBypassRoute && !metrics.hasCapacitorNativeClass) {
       failures.push("6529 native profile: body.capacitor-native was not applied");
     }
     if (!String(metrics.viewportMeta || "").includes("viewport-fit=cover")) {
@@ -1370,14 +1401,14 @@ async function captureScreenshotWithFallback(page, screenshotPath) {
   }
 }
 
-async function waitForMeaningfulAppContent(page) {
+async function waitForMeaningfulAppContent(page, mode, route, metadata) {
   const timeoutMs = Number(process.env.REVIEWBOT_RESPONSIVENESS_CONTENT_TIMEOUT_MS || 15000);
   const startedAt = Date.now();
   let lastMetrics = null;
   let lastError = "";
 
   while (Date.now() - startedAt <= timeoutMs) {
-    const metricsResult = await readMetrics(page);
+    const metricsResult = await readMetrics(page, mode, route, metadata);
     if (metricsResult.ok) {
       lastMetrics = metricsResult.metrics;
       if (lastMetrics.contentReady) {
@@ -1392,7 +1423,7 @@ async function waitForMeaningfulAppContent(page) {
         if (!summarizeOverlayText(lastMetrics.nextErrorOverlayText)) {
           const expanded = await expandNextOverlayDiagnostics(page);
           if (expanded) {
-            const expandedMetrics = await readMetrics(page);
+            const expandedMetrics = await readMetrics(page, mode, route, metadata);
             if (expandedMetrics.ok) {
               lastMetrics = expandedMetrics.metrics;
             }
@@ -1483,6 +1514,10 @@ function contentReadinessFailureReason(metrics, lastError, timeoutMs) {
       : "6529 app shell metrics were unavailable before screenshot";
   }
 
+  if (metrics.eulaGateVisible) {
+    return "6529 native EULA gate is visible; verify the responsiveness profile eula-consent receipt matches the frontend CURRENT_EULA_VERSION";
+  }
+
   const seconds = (timeoutMs / 1000).toFixed(1);
   const signals = (metrics.contentSignals || []).join(", ") || "none";
   return [
@@ -1494,7 +1529,7 @@ function contentReadinessFailureReason(metrics, lastError, timeoutMs) {
   ].join("; ");
 }
 
-async function readMetrics(page) {
+async function readMetrics(page, mode, route, metadata) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       const metrics = await page.evaluate(() => {
@@ -1740,6 +1775,10 @@ async function readMetrics(page) {
           bottomNavigationHeight: bottomNavigation ? Math.round(bottomNavigation.getBoundingClientRect().height) : 0,
           androidKeyboardHeight,
           openMobilePromptVisible: visibleTextIncludes("Opening 6529 Mobile"),
+          eulaGateVisible:
+            visibleTextIncludes("Checking EULA acceptance") ||
+            visibleTextIncludes("End User License Agreement") ||
+            visibleTextIncludes("We couldn't verify your EULA acceptance"),
           scrollWidth,
           clientWidth,
           scrollHeight,
@@ -1761,7 +1800,10 @@ async function readMetrics(page) {
           nextErrorOverlayText,
         };
       });
-      return { ok: true, metrics };
+      return {
+        ok: true,
+        metrics: applyProfileContentReadiness(profile, mode, route, metadata, metrics),
+      };
     } catch (error) {
       if (isNavigationRace(error)) {
         await page.waitForTimeout(500);
@@ -1771,6 +1813,32 @@ async function readMetrics(page) {
     }
   }
   return { ok: false, error: "page kept navigating while metrics were collected" };
+}
+
+/**
+ * Tighten generic document readiness for the hydrated 6529 native app shell.
+ */
+function applyProfileContentReadiness(profileInfo, mode, route, metadata, metrics) {
+  const isSeizeNative =
+    profileInfo?.id === "6529seize-frontend" &&
+    (metadata?.platformFamily === "native" || /^native(?:-|$)/.test(String(mode || "")));
+  const normalizedRoute = String(route || "");
+  const shellBypassRoute =
+    normalizedRoute.startsWith("/access") || normalizedRoute.startsWith("/restricted");
+  if (!isSeizeNative || metrics.nextErrorOverlay) {
+    return metrics;
+  }
+
+  return {
+    ...metrics,
+    contentReady: Boolean(
+      metrics.contentReady &&
+        !metrics.eulaGateVisible &&
+        (shellBypassRoute ||
+          (metrics.hasCapacitorNativeClass &&
+            (metrics.hasNavigation || metrics.openMobilePromptVisible)))
+    ),
+  };
 }
 
 function fallbackMetrics(page) {
@@ -1795,6 +1863,7 @@ function fallbackMetrics(page) {
     bottomNavigationHeight: 0,
     androidKeyboardHeight: "",
     openMobilePromptVisible: false,
+    eulaGateVisible: false,
     scrollWidth: 0,
     clientWidth: 0,
     scrollHeight: 0,
@@ -2016,6 +2085,40 @@ async function installCapacitorShim(page, platform) {
       };
     }
   }, platform);
+}
+
+/**
+ * Seed deterministic, non-secret profile cookies before the first navigation.
+ */
+async function installProfileContextCookies(context, profileInfo, mode, baseURL) {
+  const configured = profileInfo?.contextCookies?.[mode];
+  if (!Array.isArray(configured) || configured.length === 0) {
+    return;
+  }
+
+  let cookieUrl = "";
+  try {
+    cookieUrl = new URL("/", baseURL).toString();
+  } catch {
+    throw new Error(
+      \`responsiveness profile cookie setup failed for \${mode}: invalid baseURL \${sanitizeMessage(baseURL)}\`
+    );
+  }
+
+  try {
+    await context.addCookies(
+      configured.map((cookie) => ({
+        name: String(cookie.name),
+        value: String(cookie.value),
+        url: cookieUrl,
+        sameSite: "Lax",
+      }))
+    );
+  } catch (error) {
+    throw new Error(
+      \`responsiveness profile cookie setup failed for \${mode}: \${sanitizeMessage(error.message || String(error))}\`
+    );
+  }
 }
 
 function sanitizeMessage(value) {

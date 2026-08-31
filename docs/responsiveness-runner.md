@@ -147,9 +147,16 @@ native assertion follows the actual app contract:
 shimmed native platform, `Capacitor.isPluginAvailable()` must expose the App,
 Keyboard, and Device plugins used by the app shell, `viewport-fit=cover` must
 be present, and `CapacitorSetup` should apply `body.capacitor-native`.
-The native checks also record whether a bottom navigation is visible on normal
-app-shell routes. Electron checks are also browser-level: they verify that the
-renderer takes the Electron user-agent branch, but do not launch a packaged
+The 6529 native-mobile and native-ios profiles seed the native iOS marker and
+current versioned EULA receipt before navigation so the sweep exercises the app
+shell without an app-bootstrap reload or legal-consent interstitial. Keep that
+receipt version in sync with the frontend's `CURRENT_EULA_VERSION`; if an EULA
+screen is detected, the failure names that contract directly. Every native
+context installs the matching Capacitor shim. Native content readiness requires
+the hydrated `body.capacitor-native` class plus either app navigation or the
+open-mobile handoff prompt; a blocking or checking screen is not treated as
+route readiness. Electron checks are also browser-level: they verify that
+the renderer takes the Electron user-agent branch, but do not launch a packaged
 desktop app.
 
 ## Profiles
@@ -274,12 +281,13 @@ Each context/route check records:
   and web-mobile contexts before parallel checks start. This lets
   Next.js/Turbopack finish route and client chunk compilation for both the
   desktop and SmallScreenLayout branches before screenshots are used as
-  evidence without multiplying CI load by every simulated surface. The prewarm
-  has a default 180s wall-clock budget, a default 30s per-route timeout, and
-  aborts repeated metric-evaluation failures. Set
-  `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local harness
-  debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
-  comma-separated context list only when debugging context-specific compilation.
+  evidence without multiplying CI load by every simulated surface. The HTTP
+  and browser stages share one default 180s wall-clock budget, with a default
+  30s per-route browser timeout, and abort repeated metric-evaluation failures.
+  Set `REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM=true` only for local
+  harness debugging; set `REVIEWBOT_RESPONSIVENESS_PREWARM_CONTEXTS=all` or a
+  comma-separated context list only when debugging context-specific
+  compilation.
 - transient route retry. After prewarm, a first assertion attempt can still race
   a dev-server route compile. The runner retries only when the first attempt has
   no navigation response, no meaningful content, a blank/near-uniform screenshot,

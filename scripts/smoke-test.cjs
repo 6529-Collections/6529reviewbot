@@ -477,6 +477,10 @@ assert(responsivenessSpec.includes("nativePluginAvailableKeyboard"));
 assert(responsivenessSpec.includes("bottomNavigationVisible"));
 assert(responsivenessSpec.includes("__reviewbotCapacitorEmit"));
 assert(responsivenessSpec.includes('isPluginAvailable: (name) => ["App", "Keyboard", "Device"].includes'));
+assert(responsivenessSpec.includes("installProfileContextCookies"));
+assert(responsivenessSpec.includes("applyProfileContentReadiness"));
+assert(responsivenessSpec.includes('if (isNativeContext) {\n      await installCapacitorShim'));
+assert(responsivenessSpec.includes("native EULA gate is visible"));
 assert(responsivenessSpec.includes("profileAwareProbe"));
 assert(
   responsivenessSpec.includes(
@@ -642,9 +646,19 @@ assert.equal(
 );
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000"));
 assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_NAVIGATION_TIMEOUT_MS || 20000"));
-assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL)"));
+assert(responsivenessGlobalSetup.includes("browserPrewarm(baseURL, prewarmDeadline)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_SKIP_BROWSER_PREWARM"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS || 180000"));
+assert.equal(
+  (responsivenessGlobalSetup.match(/REVIEWBOT_RESPONSIVENESS_PREWARM_BUDGET_MS/g) || []).length,
+  1
+);
+assert(
+  responsivenessGlobalSetup.includes(
+    "fetchWithTimeout(url, Math.min(20000, remainingMs))"
+  )
+);
+assert(responsivenessGlobalSetup.includes("async function browserPrewarm(baseURL, deadline)"));
 assert(responsivenessGlobalSetup.includes("REVIEWBOT_RESPONSIVENESS_PREWARM_TIMEOUT_MS || 30000"));
 assert(responsivenessGlobalSetup.includes("selectPrewarmContexts(contexts)"));
 assert(responsivenessGlobalSetup.includes('new Set(["web-desktop", "web-mobile"])'));
@@ -675,6 +689,183 @@ const seizeResponsivenessProfile = responsivenessRunner.RESPONSIVENESS_PROFILES.
   (profile) => profile.id === "6529seize-frontend"
 );
 assert(seizeResponsivenessProfile);
+assert.deepEqual(seizeResponsivenessProfile.contextCookies["native-mobile"], [
+  { name: "native-ios", value: "true" },
+  { name: "eula-consent", value: "2026-08-24" },
+]);
+assert.deepEqual(
+  seizeResponsivenessProfile.contextCookies["native-ios"],
+  seizeResponsivenessProfile.contextCookies["native-mobile"]
+);
+assert.equal(seizeResponsivenessProfile.contextCookies["native-android"], undefined);
+assert.deepEqual(
+  responsivenessRunner.publicProfile(seizeResponsivenessProfile).contextCookies,
+  seizeResponsivenessProfile.contextCookies
+);
+const profileContentReadinessSource = responsivenessSpec.match(
+  /function applyProfileContentReadiness[\s\S]*?\nasync function installCapacitorShim/
+)[0].replace(/\nasync function installCapacitorShim$/, "");
+const profileContentReadinessContext = {};
+vm.runInNewContext(
+  `${profileContentReadinessSource}
+globalThis.__applyProfileContentReadiness = applyProfileContentReadiness;`,
+  profileContentReadinessContext
+);
+const applyProfileContentReadiness =
+  profileContentReadinessContext.__applyProfileContentReadiness;
+const nativeMetrics = {
+  contentReady: true,
+  hasCapacitorNativeClass: false,
+  hasNavigation: false,
+  openMobilePromptVisible: false,
+  eulaGateVisible: false,
+  nextErrorOverlay: false,
+};
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/access",
+    { platformFamily: "native" },
+    { ...nativeMetrics, eulaGateVisible: true }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-android",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/waves",
+    { platformFamily: "native" },
+    {
+      ...nativeMetrics,
+      eulaGateVisible: true,
+      hasCapacitorNativeClass: true,
+      hasNavigation: true,
+    }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-ios",
+    "/access",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  true
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "6529seize-frontend" },
+    "native-android",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics, contentReady: false, nextErrorOverlay: true }
+  ).contentReady,
+  false
+);
+assert.equal(
+  applyProfileContentReadiness(
+    { id: "generic-next-frontend" },
+    "native-mobile",
+    "/waves",
+    { platformFamily: "native" },
+    { ...nativeMetrics }
+  ).contentReady,
+  true
+);
+const profileAwareProbeSource = responsivenessSpec.match(
+  /function profileAwareProbe[\s\S]*?\nasync function settlePage/
+)[0].replace(/\nasync function settlePage$/, "");
+const profileAwareProbeContext = {};
+vm.runInNewContext(
+  `${profileAwareProbeSource}
+globalThis.__profileAwareProbe = profileAwareProbe;`,
+  profileAwareProbeContext
+);
+const profileAwareProbe = profileAwareProbeContext.__profileAwareProbe;
+const nativeProfileMetrics = {
+  hasCapacitorNativeClass: false,
+  viewportMeta: "width=device-width, viewport-fit=cover",
+  nativePluginAvailableKeyboard: true,
+  nativePluginAvailableApp: true,
+  bottomNavigationVisible: false,
+  nextErrorOverlay: false,
+};
+assert.deepEqual(
+  Array.from(
+    profileAwareProbe({
+      profile: { id: "6529seize-frontend" },
+      mode: "native-ios",
+      route: "/access",
+      metadata: { platformFamily: "native" },
+      metrics: nativeProfileMetrics,
+    }).failures
+  ),
+  []
+);
+assert.deepEqual(
+  Array.from(
+    profileAwareProbe({
+      profile: { id: "6529seize-frontend" },
+      mode: "native-ios",
+      route: "/waves",
+      metadata: { platformFamily: "native" },
+      metrics: nativeProfileMetrics,
+    }).failures
+  ),
+  ["6529 native profile: body.capacitor-native was not applied"]
+);
 const inferredSeizeRoutes = responsivenessRunner.inferRoutes(
   [
     "components/user/collected/UserPageCollectedStats.tsx",
