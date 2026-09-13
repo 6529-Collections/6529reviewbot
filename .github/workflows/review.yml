@@ -90,7 +90,7 @@ jobs:
 
       - name: Configure AWS credentials for usage ledger
         if: ${{ vars.REVIEW_USAGE_ENABLED == 'true' }}
-        uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
           role-to-assume: ${{ vars.REVIEW_USAGE_AWS_ROLE_ARN }}
           aws-region: ${{ vars.REVIEW_USAGE_AWS_REGION || 'us-east-1' }}
