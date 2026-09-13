@@ -216,7 +216,7 @@ jobs:
           # Targets without the bin/6529 wrapper (e.g. 6529-safe-app) fall back to
           # plain pnpm, kept behind Socket Firewall when the binary is available.
           if [ -x ./bin/6529 ]; then
-            ./bin/6529 install:frozen
+            ./bin/6529 ci
           elif [ -n "${SFW_BIN:-}" ]; then
             "$SFW_BIN" pnpm install --frozen-lockfile
           else

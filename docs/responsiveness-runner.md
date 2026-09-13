@@ -203,8 +203,10 @@ The generated Playwright web server command resolves in this order:
    `bin/6529` wrapper;
 4. `pnpm run dev` otherwise.
 
-The workflows apply the same wrapper fallback when installing target
-dependencies and Chromium: targets without `bin/6529` use
+The workflows install target dependencies with `./bin/6529 ci`, the canonical
+frozen-install command also supported by older wrappers. They apply the same
+wrapper fallback when installing dependencies and Chromium: targets without
+`bin/6529` use
 `pnpm install --frozen-lockfile` (through Socket Firewall when available) and
 `pnpm exec playwright install chromium`.
 
