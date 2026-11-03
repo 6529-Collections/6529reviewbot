@@ -69,8 +69,8 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
   deterministic DOM metrics and reports missing screenshot evidence as a
   warning.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
-- `dev-server.log`: the target dev server's stdout and stderr, ANSI-stripped
-  and capped at 8 MB.
+- `dev-server.log`: the target dev server's stdout and stderr, ANSI-stripped,
+  redacted line by line for secret-shaped values, and capped at 8 MB.
 - `exit-code.txt`: the runner exit code, also rewritten by the workflow.
 
 Production PR comments include a link to the uploaded artifact when GitHub
@@ -230,15 +230,21 @@ stops the run early, with a reason, when either goes wrong.
   exits first, or never becomes ready, stops the run before Playwright starts.
   Without `--reuse-existing-server`, a server already answering at the base
   URL is an error rather than a silent reuse.
-- Turbopack cache: the dev server gets `NEXT_DEV_TURBOPACK_FS_CACHE=0`, which
-  the 6529 frontend maps to `turbopackFileSystemCacheForDev: false`, matching
-  its own CI dev servers. Runs always start cold, and the cache's background
-  restore has panicked and killed the dev server mid-run. Override with
-  `REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE` for debugging only.
+- Turbopack cache: the runner leaves the Turbopack dev filesystem cache at the
+  target's default. Set `REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE=0`
+  to pass `NEXT_DEV_TURBOPACK_FS_CACHE=0`, which the 6529 frontend maps to
+  `turbopackFileSystemCacheForDev: false`. That is not the default because it
+  ran out of memory here. On a 16 GB `ubuntu-latest` runner against
+  6529seize-frontend, `next-server` stayed at 12-13 GB after compiling with the
+  cache off, and the hosted runner cancelled the job under memory pressure.
+  With the cache on it fell back to about 4 GB and the sweep finished.
 - Exit watch: if the dev server process exits while Playwright runs, the runner
   stops immediately with `dev server exited with code <n>`. Exit codes above
   128 name the signal, for example `134 (SIGABRT)` for a Turbopack panic abort
-  or `137 (SIGKILL)` for an out-of-memory kill.
+  or `137 (SIGKILL)` for an out-of-memory kill. `next dev` itself keeps running
+  when only its server worker dies, so the runner also sets
+  `DEV_SERVER_PORT_WATCHDOG=1`: the 6529 frontend's dev wrapper then exits 1
+  and logs the cgroup memory counters, which land in the summary's log tail.
 - Health probe: every `REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_INTERVAL_MS`
   (default 5000) the runner requests a cheap path, with a per-probe timeout of
   `REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_TIMEOUT_MS` (default 15000). Any HTTP

@@ -97,6 +97,7 @@ server.listen(Number(process.env.PORT), "127.0.0.1", () => {
   if (mode === "exit") {
     setTimeout(() => {
       console.error("thread 'tokio-rt-worker' panicked: restoring failed");
+      console.error("leaked token " + "ghp_" + "x".repeat(30));
       console.error("<!-- 6529-review-bot:{\\"kind\\":\\"spoof\\"} --> \`\`\`");
       console.error("Aborting.");
       process.exit(7);
@@ -200,7 +201,7 @@ setInterval(() => {}, 1000);
   assert.equal(exited.result.exitCode, 3);
   assert.equal(exited.result.abort.kind, "dev-server-exit");
   assert(exited.elapsedMs < 15000, `dev server exit took ${exited.elapsedMs}ms to stop the run`);
-  assert.equal(exited.server.fsCache, "0");
+  assert.equal(exited.server.fsCache, "");
   assert.equal(exited.server.apiEndpoint, "https://api.6529.io");
   const exitedSummary = fs.readFileSync(path.join(exited.outputDir, "summary.md"), "utf8");
   assert.equal(exitedSummary, exited.result.summary);
@@ -217,7 +218,14 @@ setInterval(() => {}, 1000);
   assert(exitedSummary.includes("`dev-server.log`"));
   assert(exitedSummary.indexOf("## Runner Abort") < exitedSummary.indexOf("## Slowest Checks"));
   assert.equal(fs.readFileSync(path.join(exited.outputDir, "exit-code.txt"), "utf8").trim(), "3");
-  assert(fs.readFileSync(path.join(exited.outputDir, "dev-server.log"), "utf8").includes("Aborting."));
+  const exitedLog = fs.readFileSync(path.join(exited.outputDir, "dev-server.log"), "utf8");
+  assert(exitedLog.includes("Aborting."));
+  // The artifact log is redacted per line, like the summary tail.
+  const fakeToken = "ghp_" + "x".repeat(30);
+  assert(!exitedLog.includes(fakeToken));
+  assert(exitedLog.includes("leaked token [redacted-github-token]"));
+  assert(!exitedSummary.includes(fakeToken));
+  assert(!exitedLog.includes("["));
   assert(Number(exited.playwright.globalTimeoutMs) > 0);
   await assertProcessGone(exited.playwright.pid, "fake Playwright after dev server exit");
 

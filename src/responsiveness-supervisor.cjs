@@ -293,8 +293,13 @@ function createOutputCapture({ logPath = "", tailLines = DEFAULT_LOG_TAIL_LINES,
     }
   };
 
+  // The log file is uploaded as a workflow artifact, where Actions secret
+  // masking does not apply, so redact each complete line before writing it.
+  // Redacting whole lines keeps a token split across chunks intact for the
+  // patterns to match.
   const pushLine = (stream, line) => {
     const clean = stripAnsi(line).replace(/\s+$/, "");
+    writeLog(`${redactSensitiveText(clean)}\n`);
     if (stream === "stderr" && onStderrLine) {
       onStderrLine(clean);
     }
@@ -311,7 +316,6 @@ function createOutputCapture({ logPath = "", tailLines = DEFAULT_LOG_TAIL_LINES,
     write(stream, chunk) {
       const key = stream === "stderr" ? "stderr" : "stdout";
       const text = decoders[key].write(chunk);
-      writeLog(stripAnsi(text));
       const parts = (partial[key] + text).split(/\r\n|\n|\r/);
       partial[key] = parts.pop();
       for (const part of parts) {
@@ -330,9 +334,10 @@ function createOutputCapture({ logPath = "", tailLines = DEFAULT_LOG_TAIL_LINES,
     },
     close() {
       for (const key of ["stdout", "stderr"]) {
-        const rest = decoders[key].end();
+        const rest = partial[key] + decoders[key].end();
+        partial[key] = "";
         if (rest) {
-          partial[key] += rest;
+          pushLine(key, rest);
         }
       }
       if (fd !== null) {
@@ -658,6 +663,9 @@ async function superviseBenchmark({
       }
     }
   } finally {
+    // From here on, exits and stalls are the teardown itself, not a reason to
+    // abort. Set this first so no later step can classify a finished run.
+    state.stopping = true;
     clearTimeout(deadlineTimer);
     if (monitor) {
       monitor.stop();
@@ -666,7 +674,6 @@ async function superviseBenchmark({
       signalHandlers.remove();
     }
     controller.abort();
-    state.stopping = true;
     if (playwrightChild) {
       if (!state.playwrightExited) {
         await terminateProcessTree(playwrightChild, timings.killGraceMs);

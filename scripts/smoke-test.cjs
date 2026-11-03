@@ -678,7 +678,6 @@ const ambientDevServerEnv = responsivenessRunner.buildDevServerEnv(
     API_ENDPOINT: "http://localhost:3000",
     WS_ENDPOINT: "ws://localhost:3000",
     ASSETS_FROM_S3: "true",
-    NEXT_DEV_TURBOPACK_FS_CACHE: "1",
     KEEP_ME: "kept",
   },
   { baseUrl: "http://localhost:3001", port: 3001 }
@@ -686,7 +685,9 @@ const ambientDevServerEnv = responsivenessRunner.buildDevServerEnv(
 assert.equal(ambientDevServerEnv.API_ENDPOINT, "https://api.6529.io");
 assert.equal(ambientDevServerEnv.WS_ENDPOINT, "wss://ws.6529.io");
 assert.equal(ambientDevServerEnv.ASSETS_FROM_S3, "false");
-assert.equal(ambientDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, "0");
+// The Turbopack dev cache keeps the target default unless explicitly overridden.
+assert.equal(ambientDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, undefined);
+assert.equal(ambientDevServerEnv.DEV_SERVER_PORT_WATCHDOG, "1");
 assert.equal(ambientDevServerEnv.PORT, "3001");
 assert.equal(ambientDevServerEnv.PORT_SEARCH_LIMIT, "1");
 assert.equal(ambientDevServerEnv.BASE_ENDPOINT, "http://localhost:3001");
@@ -697,14 +698,14 @@ const namespacedDevServerEnv = responsivenessRunner.buildDevServerEnv(
     REVIEWBOT_RESPONSIVENESS_API_ENDPOINT: "https://api.staging.example.test",
     REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT: "wss://ws.staging.example.test",
     REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3: "true",
-    REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE: "1",
+    REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE: "0",
   },
   { baseUrl: "https://localhost:4000", port: 4000 }
 );
 assert.equal(namespacedDevServerEnv.API_ENDPOINT, "https://api.staging.example.test");
 assert.equal(namespacedDevServerEnv.WS_ENDPOINT, "wss://ws.staging.example.test");
 assert.equal(namespacedDevServerEnv.ASSETS_FROM_S3, "true");
-assert.equal(namespacedDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, "1");
+assert.equal(namespacedDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, "0");
 assert.equal(namespacedDevServerEnv.PORT, "4000");
 assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).budgetMs, 25 * 60000);
 assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).source, "default");

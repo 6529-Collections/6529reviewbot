@@ -569,12 +569,18 @@ function resolveWebServer(options, profile) {
  * Environment for the target dev server. Ambient target-repo endpoint values
  * are ignored in favor of namespaced REVIEWBOT_RESPONSIVENESS_* overrides with
  * safe remote defaults, so a local shell pointing at localhost cannot hijack a
- * run. The Turbopack dev filesystem cache is off by default, matching the
- * frontend's own CI dev servers: runs always start cold, and its background
- * persistence has panicked and killed the dev server mid-run.
+ * run.
+ *
+ * The Turbopack dev filesystem cache keeps the target's default unless
+ * REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE is set (for example to
+ * "0" to turn it off). Measured on ubuntu-latest (16 GB) against the 6529
+ * frontend, turning it off kept next-server at 12-13 GB after compilation,
+ * and the hosted runner cancelled the job under memory pressure. With the
+ * cache on, next-server fell back to about 4 GB and the sweep finished.
  */
 function buildDevServerEnv(baseEnv, { baseUrl, port }) {
   const env = baseEnv || {};
+  const fsCacheOverride = env.REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE;
   return {
     // Playwright's webServer defaults, kept for parity with earlier runs.
     BROWSER: "none",
@@ -595,7 +601,11 @@ function buildDevServerEnv(baseEnv, { baseUrl, port }) {
     IPFS_GATEWAY_ENDPOINT:
       env.REVIEWBOT_RESPONSIVENESS_IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
     ASSETS_FROM_S3: env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
-    NEXT_DEV_TURBOPACK_FS_CACHE: env.REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE || "0",
+    ...(fsCacheOverride ? { NEXT_DEV_TURBOPACK_FS_CACHE: fsCacheOverride } : {}),
+    // The 6529 frontend's dev wrapper exits 1, logging cgroup memory counters,
+    // when `next dev` keeps running after its server worker died (OOM kill or
+    // Turbopack abort). Without it the port just closes and nothing exits.
+    DEV_SERVER_PORT_WATCHDOG: "1",
     SEIZE_6529_COMMAND: "1",
     USE_TURBO: env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
   };
