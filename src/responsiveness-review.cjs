@@ -308,6 +308,7 @@ function readArtifacts(settings) {
     exitCode,
     metrics,
     verdict,
+    abortReason: abortReasonFromSummary(summary),
   };
 }
 
@@ -377,6 +378,10 @@ function deterministicVisibleBody(settings, artifacts) {
   if (uploadManifestUrl) {
     lines.splice(3, 0, `- Screenshot viewer: [artifact index](${uploadManifestUrl})`);
   }
+  const abortReason = artifacts.abortReason || abortReasonFromSummary(artifacts.summary);
+  if (abortReason) {
+    lines.splice(2, 0, `- Reason: ${abortReason}`);
+  }
 
   if (!artifacts.summary) {
     lines.push(
@@ -405,6 +410,16 @@ function deterministicVisibleBody(settings, artifacts) {
 async function maybeRunVisualReview(settings, artifacts, pr) {
   if (!settings.visualReview.enabled) {
     return { enabled: false };
+  }
+  const abortReason = artifacts.abortReason || abortReasonFromSummary(artifacts.summary);
+  if (abortReason) {
+    // Partial screenshots from a run the runner stopped early are not a fair
+    // basis for a visual verdict, and the provider call would be wasted.
+    return {
+      enabled: true,
+      skipped: true,
+      reason: `The responsiveness runner stopped early: ${abortReason}`,
+    };
   }
   try {
     const images = await collectVisualImages(settings, artifacts);
@@ -869,13 +884,30 @@ function recordVisualUsage(settings, input) {
 }
 
 function verdictFromArtifacts(summary, exitCode) {
-  if (!summary) {
+  if (!summary || abortReasonFromSummary(summary)) {
     return "Review did not run";
   }
   if (/^Status:\s*pass\s*$/im.test(summary) && exitCode === 0) {
     return REVIEW_KIND_CONFIGS[RESPONSIVENESS_REVIEW_KIND].cleanVerdict;
   }
   return "Needs changes";
+}
+
+// The runner writes "Aborted: <reason>" when it stopped the benchmark early
+// (dev server exited or stopped responding, deadline reached). The summary is
+// written next to target-PR code, so treat the reason as untrusted text.
+function abortReasonFromSummary(summary) {
+  const reason = summaryValue(summary, "Aborted");
+  if (!reason) {
+    return "";
+  }
+  return truncate(
+    stripReviewBotMetadata(reason)
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim(),
+    300
+  );
 }
 
 function metricsFromSummary(summary, plan) {

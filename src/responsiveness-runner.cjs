@@ -3,6 +3,20 @@
 const childProcess = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const {
+  resolveSupervisorTimings,
+  superviseBenchmark,
+} = require("./responsiveness-supervisor.cjs");
+
+// Internal wall-clock budget for one run. It must end below the GitHub job
+// timeout so the summary, artifact upload, and PR comment steps still run.
+// The default assumes the production 40-minute job timeout; pass
+// --job-timeout-minutes (or REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES) to track
+// the real job timeout, or --deadline-minutes to set the budget directly.
+const DEFAULT_RUN_DEADLINE_MINUTES = 25;
+// Job time spent before the runner starts (checkout, installs) plus the steps
+// that must still run after it (summary, artifact upload).
+const JOB_TIMEOUT_RESERVE_MINUTES = 6;
 
 const DEFAULT_CONTEXTS = [
   "web-desktop",
@@ -162,6 +176,9 @@ const PROFILE_6529_SEIZE_FRONTEND = {
   id: "6529seize-frontend",
   label: "6529 Seize frontend",
   packageNames: ["6529seize"],
+  // A static public file: answered without compiling or rendering a route and
+  // not request-logged, so health probes stay cheap and out of the log tail.
+  healthProbePath: "/robots.txt",
   shellCanaryRoutes: ["/", "/waves"],
   fallbackRoutes: [
     "/",
@@ -324,6 +341,8 @@ function parseArgs(argv = []) {
     failOnWarning: false,
     installCommand: "",
     reuseExistingServer: false,
+    deadlineMinutes: 0,
+    jobTimeoutMinutes: 0,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -365,6 +384,10 @@ function parseArgs(argv = []) {
       options.installCommand = next();
     } else if (arg === "--reuse-existing-server") {
       options.reuseExistingServer = true;
+    } else if (arg === "--deadline-minutes") {
+      options.deadlineMinutes = positiveNumber(next(), arg);
+    } else if (arg === "--job-timeout-minutes") {
+      options.jobTimeoutMinutes = positiveNumber(next(), arg);
     } else if (arg === "--plan-only") {
       options.planOnly = true;
     } else if (arg === "--fail-on-warning") {
@@ -412,6 +435,68 @@ function positiveInt(value, name) {
     throw new Error(`${name} must be a positive integer.`);
   }
   return parsed;
+}
+
+function positiveNumber(value, name) {
+  const parsed = positiveNumberText(value);
+  if (!parsed) {
+    throw new Error(`${name} must be a positive number.`);
+  }
+  return parsed;
+}
+
+function positiveNumberText(value) {
+  const text = String(value ?? "").trim();
+  if (!/^\d+(?:\.\d+)?$/.test(text)) {
+    return 0;
+  }
+  const parsed = Number(text);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+/**
+ * Resolve the runner's internal deadline. Order: an explicit budget
+ * (--deadline-minutes / REVIEWBOT_RESPONSIVENESS_DEADLINE_MINUTES), then the
+ * GitHub job timeout minus a reserve for setup and the post-benchmark steps
+ * (--job-timeout-minutes / REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES), then the
+ * documented default.
+ */
+function resolveRunDeadline(options = {}, env = process.env) {
+  const explicitMinutes =
+    Number(options.deadlineMinutes) > 0
+      ? Number(options.deadlineMinutes)
+      : positiveNumberText(env?.REVIEWBOT_RESPONSIVENESS_DEADLINE_MINUTES);
+  if (explicitMinutes > 0) {
+    return {
+      budgetMs: Math.round(explicitMinutes * 60000),
+      source: "deadline-minutes",
+      label: `${formatMinutesValue(explicitMinutes)} min budget`,
+    };
+  }
+  const jobTimeoutMinutes =
+    Number(options.jobTimeoutMinutes) > 0
+      ? Number(options.jobTimeoutMinutes)
+      : positiveNumberText(env?.REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES);
+  if (jobTimeoutMinutes > 0) {
+    const budgetMinutes = Math.max(
+      jobTimeoutMinutes - JOB_TIMEOUT_RESERVE_MINUTES,
+      jobTimeoutMinutes / 2
+    );
+    return {
+      budgetMs: Math.round(budgetMinutes * 60000),
+      source: "job-timeout",
+      label: `${formatMinutesValue(budgetMinutes)} min budget for a ${formatMinutesValue(jobTimeoutMinutes)} min job timeout`,
+    };
+  }
+  return {
+    budgetMs: DEFAULT_RUN_DEADLINE_MINUTES * 60000,
+    source: "default",
+    label: `default ${DEFAULT_RUN_DEADLINE_MINUTES} min budget`,
+  };
+}
+
+function formatMinutesValue(minutes) {
+  return String(Number(minutes.toFixed(2)));
 }
 
 function detectResponsivenessProfile(target, explicitProfile = "") {
@@ -476,6 +561,43 @@ function resolveWebServer(options, profile) {
     command,
     baseUrl,
     ignoreHTTPSErrors: /^https:/i.test(baseUrl),
+    healthProbePath: profile.healthProbePath || "/",
+  };
+}
+
+/**
+ * Environment for the target dev server. Ambient target-repo endpoint values
+ * are ignored in favor of namespaced REVIEWBOT_RESPONSIVENESS_* overrides with
+ * safe remote defaults, so a local shell pointing at localhost cannot hijack a
+ * run. The Turbopack dev filesystem cache is off by default, matching the
+ * frontend's own CI dev servers: runs always start cold, and its background
+ * persistence has panicked and killed the dev server mid-run.
+ */
+function buildDevServerEnv(baseEnv, { baseUrl, port }) {
+  const env = baseEnv || {};
+  return {
+    // Playwright's webServer defaults, kept for parity with earlier runs.
+    BROWSER: "none",
+    FORCE_COLOR: "1",
+    DEBUG_COLORS: "1",
+    ...env,
+    PORT: String(port),
+    PORT_SEARCH_LIMIT: "1",
+    API_ENDPOINT: env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io",
+    WS_ENDPOINT: env.REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT || "wss://ws.6529.io",
+    ALLOWLIST_API_ENDPOINT:
+      env.REVIEWBOT_RESPONSIVENESS_ALLOWLIST_API_ENDPOINT || "https://allowlist-api.6529.io",
+    BASE_ENDPOINT: baseUrl,
+    MOBILE_APP_SCHEME: env.REVIEWBOT_RESPONSIVENESS_MOBILE_APP_SCHEME || "mobile6529",
+    CORE_SCHEME: env.REVIEWBOT_RESPONSIVENESS_CORE_SCHEME || "core6529",
+    NEXTGEN_CHAIN_ID: env.REVIEWBOT_RESPONSIVENESS_NEXTGEN_CHAIN_ID || "1",
+    IPFS_API_ENDPOINT: env.REVIEWBOT_RESPONSIVENESS_IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
+    IPFS_GATEWAY_ENDPOINT:
+      env.REVIEWBOT_RESPONSIVENESS_IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
+    ASSETS_FROM_S3: env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
+    NEXT_DEV_TURBOPACK_FS_CACHE: env.REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE || "0",
+    SEIZE_6529_COMMAND: "1",
+    USE_TURBO: env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
   };
 }
 
@@ -698,18 +820,16 @@ function prepareHarness(plan, options) {
 
 function buildPlaywrightConfig(plan, options) {
   const baseUrl = plan.baseUrl || options.baseUrl;
-  const webServerCommand =
-    plan.webServer?.command || options.installCommand || "./bin/6529 run dev";
   const ignoreHTTPSErrors = /^https:/i.test(baseUrl);
   return `${headerComment()}
+// The responsiveness runner starts, health-checks, and stops the target dev
+// server itself, so this config has no webServer block.
 const path = require("node:path");
 const { defineConfig, devices } = require("@playwright/test");
 const contexts = require("./contexts.json");
 
 const outputRoot = ${JSON.stringify(options.outputDir)};
 const baseURL = ${JSON.stringify(baseUrl)};
-const target = ${JSON.stringify(options.target)};
-const port = ${JSON.stringify(String(options.port))};
 
 module.exports = defineConfig({
   testDir: path.join(__dirname, "tests"),
@@ -718,6 +838,9 @@ module.exports = defineConfig({
   fullyParallel: true,
   workers: ${JSON.stringify(options.workers)},
   retries: 0,
+  // Set by the runner a little below its own deadline so Playwright can stop
+  // and write its report before the runner has to kill it.
+  globalTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_PLAYWRIGHT_GLOBAL_TIMEOUT_MS || 0),
   timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000),
   reporter: [
     ["list"],
@@ -744,29 +867,6 @@ module.exports = defineConfig({
     },
     metadata: context,
   })),
-  webServer: {
-    command: ${JSON.stringify(webServerCommand)},
-    cwd: target,
-    url: baseURL,${ignoreHTTPSErrors ? "\n    ignoreHTTPSErrors: true," : ""}
-    reuseExistingServer: ${JSON.stringify(options.reuseExistingServer)},
-    timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_SERVER_TIMEOUT_MS || 180000),
-    env: {
-      PORT: port,
-      PORT_SEARCH_LIMIT: "1",
-      API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io",
-      WS_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT || "wss://ws.6529.io",
-      ALLOWLIST_API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_ALLOWLIST_API_ENDPOINT || "https://allowlist-api.6529.io",
-      BASE_ENDPOINT: baseURL,
-      MOBILE_APP_SCHEME: process.env.REVIEWBOT_RESPONSIVENESS_MOBILE_APP_SCHEME || "mobile6529",
-      CORE_SCHEME: process.env.REVIEWBOT_RESPONSIVENESS_CORE_SCHEME || "core6529",
-      NEXTGEN_CHAIN_ID: process.env.REVIEWBOT_RESPONSIVENESS_NEXTGEN_CHAIN_ID || "1",
-      IPFS_API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_IPFS_API_ENDPOINT || "https://api-ipfs.6529.io",
-      IPFS_GATEWAY_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
-      ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
-      SEIZE_6529_COMMAND: "1",
-      USE_TURBO: process.env.USE_TURBO || (process.platform === "win32" ? "false" : "true"),
-    },
-  },
 });
 `;
 }
@@ -817,26 +917,47 @@ async function fetchWithTimeout(url, timeoutMs) {
   }
 }
 
+// globalSetup has no Playwright test timeout, so every browser call here is
+// individually bounded; a hung renderer or browser cannot stall the run.
+function withTimeout(promise, timeoutMs, label) {
+  let timer = null;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(
+        () => reject(new Error(label + " timed out after " + timeoutMs + "ms")),
+        Math.max(1, timeoutMs)
+      );
+    }),
+  ]).finally(() => clearTimeout(timer));
+}
+
 async function browserPrewarm(baseURL, deadline) {
   const prewarmContexts = selectPrewarmContexts(contexts);
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    timeout: Math.max(1000, Math.min(60000, deadline - Date.now())),
+  });
   try {
     for (const contextInfo of prewarmContexts) {
       if (Date.now() >= deadline) {
         console.warn("[responsiveness prewarm] budget exhausted before " + contextInfo.name);
         return;
       }
-      const context = await browser.newContext({
-        ...devices["Desktop Chrome"],
-        viewport: contextInfo.viewport,
-        isMobile: contextInfo.isMobile,
-        hasTouch: contextInfo.hasTouch,
-        deviceScaleFactor: contextInfo.isMobile ? 3 : 1,
-        userAgent: devices["Desktop Chrome"].userAgent + (contextInfo.userAgentSuffix || ""),
-        ignoreHTTPSErrors: /^https:/i.test(baseURL),
-      });
+      const context = await withTimeout(
+        browser.newContext({
+          ...devices["Desktop Chrome"],
+          viewport: contextInfo.viewport,
+          isMobile: contextInfo.isMobile,
+          hasTouch: contextInfo.hasTouch,
+          deviceScaleFactor: contextInfo.isMobile ? 3 : 1,
+          userAgent: devices["Desktop Chrome"].userAgent + (contextInfo.userAgentSuffix || ""),
+          ignoreHTTPSErrors: /^https:/i.test(baseURL),
+        }),
+        15000,
+        "prewarm browser context"
+      );
       try {
-        const page = await context.newPage();
+        const page = await withTimeout(context.newPage(), 15000, "prewarm page");
         for (const route of routes) {
           if (Date.now() >= deadline) {
             console.warn("[responsiveness prewarm] budget exhausted after " + route);
@@ -845,11 +966,11 @@ async function browserPrewarm(baseURL, deadline) {
           await visitForPrewarm(page, new URL(route, baseURL).toString(), route, deadline);
         }
       } finally {
-        await context.close().catch(() => {});
+        await withTimeout(context.close(), 10000, "prewarm context close").catch(() => {});
       }
     }
   } finally {
-    await browser.close().catch(() => {});
+    await withTimeout(browser.close(), 10000, "prewarm browser close").catch(() => {});
   }
 }
 
@@ -896,7 +1017,8 @@ async function waitForPrewarmReadiness(page, timeoutMs) {
   const startedAt = Date.now();
   let evaluateFailures = 0;
   while (Date.now() - startedAt <= timeoutMs) {
-    const state = await page.evaluate(() => {
+    const evaluateTimeoutMs = Math.max(1000, Math.min(5000, timeoutMs - (Date.now() - startedAt)));
+    const state = await withTimeout(page.evaluate(() => {
       const compact = (value) => String(value || "").replace(/\\s+/g, " ").trim();
       const overlayText = compact(
         Array.from(document.querySelectorAll("nextjs-portal, [data-nextjs-dialog-overlay], [data-nextjs-dialog]"))
@@ -911,7 +1033,7 @@ async function waitForPrewarmReadiness(page, timeoutMs) {
         appReady: appSignals || bodyText.length >= 20,
         compiling: /\\bCompiling\\b/i.test(overlayText),
       };
-    }).catch((error) => {
+    }), evaluateTimeoutMs, "prewarm readiness probe").catch((error) => {
       evaluateFailures += 1;
       return {
         appReady: false,
@@ -2160,8 +2282,19 @@ function safeName(value) {
 `;
 }
 
-function runResponsiveness(options) {
+/**
+ * Run the benchmark. The runner owns the dev server: it starts it, waits for
+ * it, health-probes it while Playwright runs, and enforces an internal
+ * deadline. When the server exits, stops answering, or the deadline passes,
+ * the runner stops every child process tree and still writes summary.md and
+ * exit-code.txt with the reason.
+ *
+ * deps (tests and local tooling): env, playwrightCommand
+ * ({ command, args, shell }), handleSignals, echoDevServerStderr, log.
+ */
+async function runResponsiveness(options, deps = {}) {
   const startedAt = Date.now();
+  const baseEnv = deps.env || process.env;
   const plan = buildPlan(options);
   fs.mkdirSync(options.outputDir, { recursive: true });
   fs.writeFileSync(path.join(options.outputDir, "plan.json"), `${JSON.stringify(plan, null, 2)}\n`);
@@ -2176,44 +2309,98 @@ function runResponsiveness(options) {
     return { plan, exitCode: 0, summary, durationMs: Date.now() - startedAt };
   }
 
+  const deadline = resolveRunDeadline(options, baseEnv);
   const harness = prepareHarness(plan, options);
   const env = {
-    ...process.env,
-    NODE_PATH: [path.join(options.target, "node_modules"), process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+    ...baseEnv,
+    NODE_PATH: [path.join(options.target, "node_modules"), baseEnv.NODE_PATH].filter(Boolean).join(path.delimiter),
     REVIEWBOT_RESPONSIVENESS_OUTPUT_DIR: options.outputDir,
   };
-  const result = childProcess.spawnSync(
-    resolvePnpmCommand(),
-    ["exec", "playwright", "test", "--config", harness.configPath],
-    {
-      cwd: options.target,
-      env,
-      stdio: "inherit",
-      shell: process.platform === "win32",
-    }
-  );
+  const timings = resolveSupervisorTimings(baseEnv);
+  const playwrightCommand = deps.playwrightCommand || {
+    command: resolvePnpmCommand(),
+    args: ["exec", "playwright", "test", "--config", harness.configPath],
+    shell: process.platform === "win32",
+  };
 
+  let supervision;
+  try {
+    supervision = await superviseBenchmark({
+      baseUrl: plan.baseUrl,
+      ignoreHTTPSErrors: Boolean(plan.webServer?.ignoreHTTPSErrors),
+      reuseExistingServer: Boolean(options.reuseExistingServer),
+      devServer: {
+        command: plan.webServer.command,
+        cwd: options.target,
+        env: buildDevServerEnv(env, { baseUrl: plan.baseUrl, port: options.port }),
+      },
+      playwright: { ...playwrightCommand, cwd: options.target, env },
+      startedAt,
+      deadlineAt: startedAt + deadline.budgetMs,
+      deadlineLabel: deadline.label,
+      timings,
+      healthProbePath: timings.healthProbePath || plan.webServer?.healthProbePath || "/",
+      logPath: path.join(options.outputDir, "dev-server.log"),
+      handleSignals: deps.handleSignals !== false,
+      echoDevServerStderr: deps.echoDevServerStderr !== false,
+      ...(deps.log ? { log: deps.log } : {}),
+    });
+  } catch (error) {
+    supervision = {
+      abort: {
+        kind: "runner-error",
+        reason: `runner error: ${String(error?.message || error).replace(/\s+/g, " ").slice(0, 300)}`,
+        exitCode: 1,
+        elapsedMs: Date.now() - startedAt,
+      },
+      playwrightExitCode: null,
+      playwrightStarted: false,
+      devServerStarted: false,
+      reusedServer: false,
+      devServerTail: [],
+      devServerLogPath: "",
+    };
+  }
+
+  const exitCode = supervision.abort
+    ? supervision.abort.exitCode
+    : supervision.playwrightExitCode ?? 1;
   const checkResults = readCheckResults(harness.resultsDir);
   const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
   const summary = summarizeRun({
     plan,
     results: checkResults,
     runErrors,
-    exitCode: result.status ?? 1,
+    exitCode,
     durationMs: Date.now() - startedAt,
+    abort: supervision.abort
+      ? {
+          ...supervision.abort,
+          deadlineLabel: deadline.label,
+          playwrightStarted: supervision.playwrightStarted,
+          devServerStarted: supervision.devServerStarted,
+          reusedServer: supervision.reusedServer,
+          devServerTail: supervision.devServerTail,
+          devServerLog: supervision.devServerLogPath
+            ? path.relative(options.outputDir, supervision.devServerLogPath).replace(/\\/g, "/")
+            : "",
+        }
+      : null,
   });
   fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
   fs.writeFileSync(
     path.join(options.outputDir, "screenshots.json"),
     `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
   );
+  fs.writeFileSync(path.join(options.outputDir, "exit-code.txt"), `${exitCode}\n`);
 
   return {
     plan,
-    exitCode: result.status ?? 1,
+    exitCode,
     summary,
     durationMs: Date.now() - startedAt,
     results: checkResults,
+    abort: supervision.abort,
   };
 }
 
@@ -2307,11 +2494,20 @@ function readCheckResults(resultsDir) {
   if (!fs.existsSync(resultsDir)) {
     return [];
   }
+  // A check killed mid-write (runner abort) can leave a truncated file; skip it
+  // rather than lose the summary.
   return fs
     .readdirSync(resultsDir)
     .filter((file) => file.endsWith(".json"))
     .sort()
-    .map((file) => JSON.parse(fs.readFileSync(path.join(resultsDir, file), "utf8")));
+    .map((file) => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(resultsDir, file), "utf8"));
+      } catch {
+        return null;
+      }
+    })
+    .filter((result) => result && Array.isArray(result.failures) && Array.isArray(result.warnings));
 }
 
 function readPlaywrightErrors(reportPath) {
@@ -2392,22 +2588,29 @@ function summarizePlan(plan) {
   return `${lines.join("\n")}\n`;
 }
 
-function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
+function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs, abort = null }) {
   const failures = results.filter((result) => result.failures.length > 0);
   const warnings = results.filter((result) => result.warnings.length > 0);
   const lines = [
     "# 6529bot Responsiveness Summary",
     "",
-    `Status: ${exitCode === 0 ? "pass" : "fail"}`,
+    `Status: ${exitCode === 0 && !abort ? "pass" : "fail"}`,
+    ...(abort ? [`Aborted: ${singleLine(abort.reason)}`] : []),
     `Duration: ${(durationMs / 1000).toFixed(1)}s`,
     `Profile: ${plan.profile?.label || plan.profile?.id || "none"}`,
     `Contexts: ${plan.contexts.map((context) => `\`${context.name}\``).join(", ")}`,
     `Routes: ${plan.routes.map((route) => `\`${route}\``).join(", ")}`,
     `Checks completed: ${results.length}/${plan.routes.length * plan.contexts.length}`,
-    `Failures: ${failures.length + runErrors.length}`,
+    `Failures: ${failures.length + runErrors.length + (abort ? 1 : 0)}`,
     `Warnings: ${warnings.length}`,
     "",
   ];
+
+  // Keep the abort section first: the PR comment truncates long summaries
+  // from the end.
+  if (abort) {
+    lines.push(...summarizeRunAbort(abort));
+  }
 
   if (runErrors.length > 0) {
     lines.push("## Run Errors", "");
@@ -2481,6 +2684,43 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs }) {
   lines.push("");
 
   return `${lines.join("\n")}\n`;
+}
+
+function summarizeRunAbort(abort) {
+  const lines = [
+    "## Runner Abort",
+    "",
+    `- Reason: ${singleLine(abort.reason)}`,
+    `- Stopped after: ${((abort.elapsedMs || 0) / 1000).toFixed(1)}s`,
+  ];
+  if (abort.deadlineLabel) {
+    lines.push(`- Runner deadline: ${abort.deadlineLabel}`);
+  }
+  lines.push(
+    abort.playwrightStarted
+      ? "- Playwright was stopped before it finished; checks that had not completed are missing from this summary."
+      : "- Playwright did not start, so no checks ran."
+  );
+  if (abort.reusedServer) {
+    lines.push("- The run reused an existing server, so no dev server output was captured.");
+  } else if (abort.devServerStarted && abort.devServerLog) {
+    lines.push(`- Full dev server output: \`${abort.devServerLog}\` in the workflow artifact.`);
+  }
+  lines.push("");
+  const tail = abort.devServerTail || [];
+  if (tail.length > 0) {
+    lines.push(`Last ${tail.length} dev server output line(s):`, "", "```text", ...tail, "```", "");
+  } else if (abort.devServerStarted) {
+    lines.push("The dev server produced no output.", "");
+  }
+  return lines;
+}
+
+function singleLine(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 500);
 }
 
 function distinctOverlayDiagnostics(results) {
@@ -2598,6 +2838,11 @@ Options:
                           ./bin/6529 run dev when the target has bin/6529, else
                           pnpm run dev.
   --reuse-existing-server Reuse a server already listening at --base-url.
+  --deadline-minutes <n>  Internal run budget. Default: --job-timeout-minutes
+                          minus ${JOB_TIMEOUT_RESERVE_MINUTES}, else ${DEFAULT_RUN_DEADLINE_MINUTES}.
+  --job-timeout-minutes <n>
+                          GitHub job timeout the run must finish under. Also
+                          read from REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES.
   --plan-only             Write plan and skip Playwright.
 `);
 }
@@ -2605,7 +2850,10 @@ Options:
 module.exports = {
   CONTEXTS,
   DEFAULT_CONTEXTS,
+  DEFAULT_RUN_DEADLINE_MINUTES,
+  JOB_TIMEOUT_RESERVE_MINUTES,
   RESPONSIVENESS_PROFILES,
+  buildDevServerEnv,
   buildPlan,
   buildPlaywrightConfig,
   buildPlaywrightGlobalSetup,
@@ -2617,7 +2865,10 @@ module.exports = {
   isNextDevToolsOnlyText,
   parseArgs,
   publicProfile,
+  readCheckResults,
+  resolveRunDeadline,
   resolveWebServer,
   runResponsiveness,
   summarizeOverlayText,
+  summarizeRun,
 };
