@@ -98,6 +98,7 @@ runNode("scripts/check-release-tag-plan-contract.cjs");
 runNode("scripts/check-release-operations-map.cjs");
 runNode("scripts/check-self-dogfood-replay.cjs");
 runNode("scripts/smoke-test.cjs");
+runNode("scripts/responsiveness-watchdog-test.cjs");
 runNode("bin/validate-usage-api-openapi.cjs", ["docs/usage-api.openapi.json"]);
 runNode("bin/validate-model-catalog.cjs", ["config/model-catalog.json"]);
 runNode("bin/apply-budget-policies.cjs", ["--file", "config/budget-policies.example.json", "--quiet"]);

@@ -11,7 +11,7 @@ async function main(argv = process.argv.slice(2)) {
     return 0;
   }
 
-  const result = runResponsiveness(options);
+  const result = await runResponsiveness(options);
   process.stdout.write(result.summary);
   return result.exitCode;
 }

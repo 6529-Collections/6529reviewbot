@@ -665,13 +665,81 @@ assert(responsivenessGlobalSetup.includes('new Set(["web-desktop", "web-mobile"]
 assert(responsivenessGlobalSetup.includes("defaultNames.has(context.name)"));
 assert(responsivenessGlobalSetup.includes('requested.split(",")'));
 assert(responsivenessGlobalSetup.includes("evaluateFailures >= 3"));
-assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3"));
-assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_API_ENDPOINT"));
-assert(responsivenessConfig.includes('API_ENDPOINT: process.env.REVIEWBOT_RESPONSIVENESS_API_ENDPOINT || "https://api.6529.io"'));
-assert(responsivenessConfig.includes("REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT"));
-assert(!responsivenessConfig.includes("API_ENDPOINT: process.env.API_ENDPOINT"));
-assert(responsivenessConfig.includes('ASSETS_FROM_S3: process.env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false"'));
-assert(!responsivenessConfig.includes('ASSETS_FROM_S3: process.env.ASSETS_FROM_S3 || "true"'));
+// The runner owns the dev server now; the generated config must not start a
+// second one through Playwright's webServer.
+assert(!responsivenessConfig.includes("webServer:"));
+assert(
+  responsivenessConfig.includes(
+    "globalTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_PLAYWRIGHT_GLOBAL_TIMEOUT_MS || 0)"
+  )
+);
+const ambientDevServerEnv = responsivenessRunner.buildDevServerEnv(
+  {
+    API_ENDPOINT: "http://localhost:3000",
+    WS_ENDPOINT: "ws://localhost:3000",
+    ASSETS_FROM_S3: "true",
+    KEEP_ME: "kept",
+  },
+  { baseUrl: "http://localhost:3001", port: 3001 }
+);
+assert.equal(ambientDevServerEnv.API_ENDPOINT, "https://api.6529.io");
+assert.equal(ambientDevServerEnv.WS_ENDPOINT, "wss://ws.6529.io");
+assert.equal(ambientDevServerEnv.ASSETS_FROM_S3, "false");
+// The Turbopack dev cache keeps the target default unless explicitly overridden.
+assert.equal(ambientDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, undefined);
+assert.equal(ambientDevServerEnv.DEV_SERVER_PORT_WATCHDOG, "1");
+assert.equal(ambientDevServerEnv.PORT, "3001");
+assert.equal(ambientDevServerEnv.PORT_SEARCH_LIMIT, "1");
+assert.equal(ambientDevServerEnv.BASE_ENDPOINT, "http://localhost:3001");
+assert.equal(ambientDevServerEnv.SEIZE_6529_COMMAND, "1");
+assert.equal(ambientDevServerEnv.KEEP_ME, "kept");
+const namespacedDevServerEnv = responsivenessRunner.buildDevServerEnv(
+  {
+    REVIEWBOT_RESPONSIVENESS_API_ENDPOINT: "https://api.staging.example.test",
+    REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT: "wss://ws.staging.example.test",
+    REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3: "true",
+    REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE: "0",
+  },
+  { baseUrl: "https://localhost:4000", port: 4000 }
+);
+assert.equal(namespacedDevServerEnv.API_ENDPOINT, "https://api.staging.example.test");
+assert.equal(namespacedDevServerEnv.WS_ENDPOINT, "wss://ws.staging.example.test");
+assert.equal(namespacedDevServerEnv.ASSETS_FROM_S3, "true");
+assert.equal(namespacedDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, "0");
+assert.equal(namespacedDevServerEnv.PORT, "4000");
+assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).budgetMs, 25 * 60000);
+assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).source, "default");
+assert.equal(
+  responsivenessRunner.resolveRunDeadline({}, { REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES: "40" }).budgetMs,
+  34 * 60000
+);
+assert.equal(
+  responsivenessRunner.resolveRunDeadline({}, { REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES: "8" }).budgetMs,
+  4 * 60000
+);
+assert.equal(
+  responsivenessRunner.resolveRunDeadline(
+    { deadlineMinutes: 12, jobTimeoutMinutes: 40 },
+    { REVIEWBOT_RESPONSIVENESS_DEADLINE_MINUTES: "30" }
+  ).budgetMs,
+  12 * 60000
+);
+assert.equal(
+  responsivenessRunner.resolveRunDeadline({}, { REVIEWBOT_RESPONSIVENESS_DEADLINE_MINUTES: "30", REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES: "40" }).budgetMs,
+  30 * 60000
+);
+assert.equal(
+  responsivenessRunner.resolveRunDeadline({}, { REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES: "forty" }).source,
+  "default"
+);
+assert.equal(
+  responsivenessRunner.parseArgs(["--job-timeout-minutes", "40", "--deadline-minutes", "0.5"]).deadlineMinutes,
+  0.5
+);
+assert.throws(
+  () => responsivenessRunner.parseArgs(["--deadline-minutes", "0"]),
+  /--deadline-minutes must be a positive number/
+);
 assert(responsivenessSpec.includes("visibleAppShellElements"));
 assert(responsivenessSpec.includes("analyzeScreenshot"));
 assert(responsivenessSpec.includes("nextErrorOverlayText"));
@@ -1008,11 +1076,22 @@ const safeAppResponsivenessConfig = responsivenessRunner.buildPlaywrightConfig(
 );
 assert(safeAppResponsivenessConfig.includes('const baseURL = "https://localhost:3001";'));
 assert(safeAppResponsivenessConfig.includes("ignoreHTTPSErrors: true,"));
-assert(
-  safeAppResponsivenessConfig.includes('command: "pnpm exec vite --port 3001 --strictPort",')
-);
+assert(!safeAppResponsivenessConfig.includes("webServer:"));
 assert(!responsivenessConfig.includes("ignoreHTTPSErrors"));
-assert(responsivenessConfig.includes('command: "./bin/6529 run dev",'));
+assert.equal(safeAppWebServer.healthProbePath, "/");
+assert.equal(
+  responsivenessRunner.resolveWebServer(
+    {
+      installCommand: "",
+      target: safeAppTempDir,
+      baseUrl: "http://localhost:3001",
+      baseUrlProvided: false,
+      port: 3001,
+    },
+    seizeResponsivenessProfile
+  ).healthProbePath,
+  "/robots.txt"
+);
 assert(responsivenessGlobalSetup.includes("ignoreHTTPSErrors: /^https:/i.test(baseURL)"));
 const responsivenessScreenshotManifest =
   responsivenessRunner.buildScreenshotManifest({

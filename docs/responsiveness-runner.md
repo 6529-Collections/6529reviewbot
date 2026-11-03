@@ -69,6 +69,9 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
   deterministic DOM metrics and reports missing screenshot evidence as a
   warning.
 - `playwright-report.json` and `playwright-output/`: Playwright output.
+- `dev-server.log`: the target dev server's stdout and stderr, ANSI-stripped,
+  redacted line by line for secret-shaped values, and capped at 8 MB.
+- `exit-code.txt`: the runner exit code, also rewritten by the workflow.
 
 Production PR comments include a link to the uploaded artifact when GitHub
 returns one from `actions/upload-artifact`. Screenshot paths in the slowest
@@ -195,7 +198,9 @@ The `6529-safe-app` profile targets the Safe App Vite SPA:
 
 ## Web Server Command
 
-The generated Playwright web server command resolves in this order:
+The runner starts the target dev server itself; the generated Playwright
+config has no `webServer` block. The dev server command resolves in this
+order:
 
 1. an explicit `--install-command`;
 2. the profile dev-server command (`6529-safe-app`);
@@ -209,6 +214,87 @@ wrapper fallback when installing dependencies and Chromium: targets without
 `bin/6529` use
 `pnpm install --frozen-lockfile` (through Socket Firewall when available) and
 `pnpm exec playwright install chromium`.
+
+## Dev Server Supervision And Deadline
+
+Playwright's `webServer` only watches the server while it starts. A dev server
+that exited or stopped answering later left the run waiting until the GitHub
+job timeout, which cancelled the job before the summary, artifact, and comment
+steps ran. The runner now owns the dev server and the Playwright process and
+stops the run early, with a reason, when either goes wrong.
+
+- Start: the runner spawns the dev server in its own process group and waits
+  for the base URL to answer with HTTP 2xx-403, retrying `/index.html` after a
+  404 on `/` (the same rule Playwright used). The wait is bounded by
+  `REVIEWBOT_RESPONSIVENESS_SERVER_TIMEOUT_MS` (default 180000). A server that
+  exits first, or never becomes ready, stops the run before Playwright starts.
+  Without `--reuse-existing-server`, a server already answering at the base
+  URL is an error rather than a silent reuse.
+- Turbopack cache: the runner leaves the Turbopack dev filesystem cache at the
+  target's default. Set `REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_FS_CACHE=0`
+  to pass `NEXT_DEV_TURBOPACK_FS_CACHE=0`, which the 6529 frontend maps to
+  `turbopackFileSystemCacheForDev: false`. That is not the default because it
+  ran out of memory here. On a 16 GB `ubuntu-latest` runner against
+  6529seize-frontend, `next-server` stayed at 12-13 GB after compiling with the
+  cache off, and the hosted runner cancelled the job under memory pressure.
+  With the cache on it fell back to about 4 GB and the sweep finished.
+- Exit watch: if the dev server process exits while Playwright runs, the runner
+  stops immediately with `dev server exited with code <n>`. Exit codes above
+  128 name the signal, for example `134 (SIGABRT)` for a Turbopack panic abort
+  or `137 (SIGKILL)` for an out-of-memory kill. `next dev` itself keeps running
+  when only its server worker dies, so the runner also sets
+  `DEV_SERVER_PORT_WATCHDOG=1`: the 6529 frontend's dev wrapper then exits 1
+  and logs the cgroup memory counters, which land in the summary's log tail.
+- Health probe: every `REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_INTERVAL_MS`
+  (default 5000) the runner requests a cheap path, with a per-probe timeout of
+  `REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_TIMEOUT_MS` (default 15000). Any HTTP
+  response counts as alive. After `REVIEWBOT_RESPONSIVENESS_HEALTH_STALL_MS`
+  (default 90000) without a response, the run stops with
+  `dev server stopped responding`. The 6529 frontend profile probes
+  `/robots.txt`, a static public file that Next.js serves without rendering a
+  route or writing a request log line; other profiles probe `/`. Set
+  `REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_PATH` to override.
+- Deadline: the runner has an internal wall-clock budget that must end below
+  the GitHub job timeout, so even an unforeseen hang still produces a summary
+  and a PR comment. It resolves in this order:
+  1. `--deadline-minutes <n>` or `REVIEWBOT_RESPONSIVENESS_DEADLINE_MINUTES`;
+  2. `--job-timeout-minutes <n>` or `REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES`,
+     minus a 6-minute reserve for setup steps before the runner and the
+     summary and artifact steps after it (never below half the job timeout);
+  3. a default of 25 minutes, sized for the production 40-minute job timeout.
+     The production workflow does not yet pass its job timeout to the runner
+     step, so it uses this default today. The manual workflow's job timeout
+     is 20 minutes, so there the dev server watch is the effective guard.
+- Playwright global timeout: Playwright receives a `globalTimeout` 90 seconds
+  (or a quarter of the remaining time, if less) below the runner deadline, so
+  it can stop and write its report on its own first.
+- Prewarm bounds: global setup has no per-test timeout, so its browser launch,
+  context, page, readiness `evaluate`, and close calls each carry their own
+  timeout. In-test page calls stay bounded by the per-test timeout.
+
+When the runner stops a run it kills the Playwright and dev server process
+groups (SIGTERM, then SIGKILL after `REVIEWBOT_RESPONSIVENESS_KILL_GRACE_MS`,
+default 5000), then writes the usual artifacts. `summary.md` reports
+`Status: fail` and an `Aborted: <reason>` line, followed by a `Runner Abort`
+section with the elapsed time, the deadline budget, whether Playwright had
+started, and the last 40 non-blank dev server output lines. Those lines are
+redacted for secret-shaped values, stripped of control characters, capped at
+240 characters, and kept inside one code block. Partially written check
+results are skipped. Runner exit codes:
+
+```text
+0    all checks passed
+1    checks failed, or Playwright could not start
+3    dev server exited, stopped responding, or never became ready
+4    runner deadline reached
+130  runner received SIGINT
+143  runner received SIGTERM
+```
+
+The comment job treats an `Aborted:` summary as `Review did not run`, adds a
+`- Reason: <reason>` line under the verdict, keeps the runner summary in the
+details block, and skips the Opus visual pass, because partial screenshots
+from a stopped run are not a fair basis for a visual verdict.
 
 ## Route Inference
 
@@ -296,7 +382,7 @@ Each context/route check records:
   and a `page.goto` commit timeout. Persistent blanks still fail. The default
   attempt limit is two and can be tuned with
   `REVIEWBOT_RESPONSIVENESS_ROUTE_RETRY_ATTEMPTS`.
-- target app endpoint isolation. The generated Playwright web server ignores
+- target app endpoint isolation. The runner-started dev server ignores
   ambient target-repo `API_ENDPOINT` / `WS_ENDPOINT` values and supplies safe
   remote defaults through `REVIEWBOT_RESPONSIVENESS_API_ENDPOINT`,
   `REVIEWBOT_RESPONSIVENESS_WS_ENDPOINT`, and related namespaced overrides.

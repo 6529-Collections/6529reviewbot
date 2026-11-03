@@ -8,6 +8,12 @@ stabilized.
 
 ## Unreleased
 
+- Made the responsiveness runner own and supervise the target dev server: it
+  stops the run promptly when the server exits or stops answering a health
+  probe, and enforces an internal deadline below the job timeout. Stopped runs
+  still write `summary.md` with the reason and the last dev server output
+  lines, and the PR comment shows that reason instead of a bare
+  `Review did not run`.
 - Capped configurable GitHub App JWT TTLs at GitHub's documented 600-second
   maximum while keeping the default at 540 seconds.
 - Added derived usage analysis fields to public and admin usage summaries,
