@@ -2367,12 +2367,17 @@ async function runResponsiveness(options, deps = {}) {
           startedAt,
           exitCode: abortInfo.exitCode,
           abort: abortInfo,
+          bestEffort: true,
         });
         if (abortInfo.kind === "interrupted") {
           // A signal usually means GitHub is stopping the job or the runner
           // host. Put the summary in the job log now, in case teardown is cut
-          // short and the artifact steps never run.
+          // short and the artifact steps never run. This does not depend on
+          // the artifact writes above succeeding.
           (deps.writeStdout || writeStdoutSync)(early.summary);
+        }
+        if (early.writeError) {
+          throw early.writeError;
         }
       },
       ...(deps.log ? { log: deps.log } : {}),
@@ -2431,7 +2436,7 @@ async function runResponsiveness(options, deps = {}) {
  * summary.md, screenshots.json, and exit-code.txt. Summary and exit code are
  * fsynced so a reader sees them even if the runner is killed right after.
  */
-function writeRunArtifacts({ plan, options, harness, deadline, startedAt, exitCode, abort }) {
+function writeRunArtifacts({ plan, options, harness, deadline, startedAt, exitCode, abort, bestEffort = false }) {
   const checkResults = readCheckResults(harness.resultsDir);
   const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
   const summary = summarizeRun({
@@ -2450,22 +2455,60 @@ function writeRunArtifacts({ plan, options, harness, deadline, startedAt, exitCo
         }
       : null,
   });
-  writeFileDurably(path.join(options.outputDir, "summary.md"), summary);
-  fs.writeFileSync(
-    path.join(options.outputDir, "screenshots.json"),
-    `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
-  );
-  writeFileDurably(path.join(options.outputDir, "exit-code.txt"), `${exitCode}\n`);
+  try {
+    writeFileDurably(path.join(options.outputDir, "summary.md"), summary);
+    writeFileDurably(
+      path.join(options.outputDir, "screenshots.json"),
+      `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
+    );
+    writeFileDurably(path.join(options.outputDir, "exit-code.txt"), `${exitCode}\n`);
+  } catch (error) {
+    if (!bestEffort) {
+      throw error;
+    }
+    return { summary, checkResults, writeError: error };
+  }
   return { summary, checkResults };
 }
 
+// Write to a temporary file, fsync it, and rename it over the destination so
+// a reader never sees a truncated file, even if the runner is killed while it
+// replaces the early summary with the final one.
 function writeFileDurably(filePath, content) {
-  const fd = fs.openSync(filePath, "w");
+  const tempPath = `${filePath}.${process.pid}.tmp`;
+  const fd = fs.openSync(tempPath, "w");
   try {
     fs.writeSync(fd, content);
     fs.fsyncSync(fd);
   } finally {
     fs.closeSync(fd);
+  }
+  try {
+    fs.renameSync(tempPath, filePath);
+  } catch (error) {
+    fs.rmSync(tempPath, { force: true });
+    throw error;
+  }
+  syncDirectory(path.dirname(filePath));
+}
+
+function syncDirectory(directory) {
+  // Makes the rename durable on Linux. Windows cannot open directories for
+  // fsync, and the directory sync is only an extra guarantee there.
+  let fd = null;
+  try {
+    fd = fs.openSync(directory, "r");
+    fs.fsyncSync(fd);
+  } catch {
+    // Best effort.
+  } finally {
+    if (fd !== null) {
+      try {
+        fs.closeSync(fd);
+      } catch {
+        // Ignore.
+      }
+    }
   }
 }
 

@@ -316,6 +316,9 @@ setInterval(() => {}, 1000);
   assert(passed.result.summary.includes("Checks completed: 1/1"));
   assert.equal(fs.readFileSync(path.join(passed.outputDir, "exit-code.txt"), "utf8").trim(), "0");
   await assertProcessGone(passed.server.pid, "fake dev server after a passing run");
+  // Artifacts are replaced through a temp file and rename; none may be left behind.
+  assert(!fs.readdirSync(passed.outputDir).some((file) => file.endsWith(".tmp")));
+  assert(!fs.readdirSync(exited.outputDir).some((file) => file.endsWith(".tmp")));
 
   // A SIGTERM from outside (GitHub stopping the job or shutting the runner
   // host down) must leave summary.md and exit-code.txt on disk, and the
