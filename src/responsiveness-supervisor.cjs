@@ -371,6 +371,11 @@ function sanitizeLogLine(value) {
   return text.length > MAX_LOG_LINE_CHARS ? `${text.slice(0, MAX_LOG_LINE_CHARS - 3)}...` : text;
 }
 
+// Children this module started as leaders of their own process group. Group
+// signals go only to these, so teardown can never reach the runner's own
+// group, the step shell, or the Actions runner.
+const OWNED_PROCESS_GROUPS = new WeakSet();
+
 function spawnProcessGroup(command, args, { cwd, env, shell = false, stdio = "inherit" } = {}) {
   const spawnOptions = {
     cwd,
@@ -382,9 +387,14 @@ function spawnProcessGroup(command, args, { cwd, env, shell = false, stdio = "in
     detached: process.platform !== "win32",
     windowsHide: true,
   };
-  return args && args.length > 0
-    ? childProcess.spawn(command, args, spawnOptions)
-    : childProcess.spawn(command, spawnOptions);
+  const child =
+    args && args.length > 0
+      ? childProcess.spawn(command, args, spawnOptions)
+      : childProcess.spawn(command, spawnOptions);
+  if (spawnOptions.detached && child.pid) {
+    OWNED_PROCESS_GROUPS.add(child);
+  }
+  return child;
 }
 
 function isRunning(child) {
@@ -401,6 +411,17 @@ function signalProcessTree(child, signal) {
         stdio: "ignore",
         windowsHide: true,
       });
+    }
+    return;
+  }
+  if (!OWNED_PROCESS_GROUPS.has(child) || child.pid === process.pid) {
+    // Not a group this module created: signal only that one process.
+    if (isRunning(child)) {
+      try {
+        child.kill(signal);
+      } catch {
+        // Already gone.
+      }
     }
     return;
   }
@@ -478,16 +499,16 @@ function playwrightGlobalTimeoutMs(remainingMs) {
   return Math.max(1000, Math.floor(remainingMs - reserve));
 }
 
-function installSignalHandlers(onSignal) {
+function installSignalHandlers(onSignal, source = process) {
   const handlers = ["SIGINT", "SIGTERM"].map((signal) => {
     const handler = () => onSignal(signal);
-    process.on(signal, handler);
+    source.on(signal, handler);
     return [signal, handler];
   });
   return {
     remove() {
       for (const [signal, handler] of handlers) {
-        process.removeListener(signal, handler);
+        source.removeListener(signal, handler);
       }
     },
   };
@@ -506,10 +527,22 @@ async function superviseBenchmark({
   healthProbePath = "/",
   logPath = "",
   handleSignals = true,
+  signalSource = process,
   echoDevServerStderr = true,
+  onAbort = null,
   log = (message) => process.stderr.write(`${message}\n`),
 }) {
   const controller = new AbortController();
+  const capture = createOutputCapture({
+    logPath,
+    onStderrLine: echoDevServerStderr ? (line) => process.stderr.write(`[WebServer] ${line}\n`) : null,
+  });
+  let devServerChild = null;
+  let devServerClosed = null;
+  let playwrightChild = null;
+  let monitor = null;
+  let reusedServer = false;
+  let playwrightResult = null;
   const state = {
     abort: null,
     stopping: false,
@@ -532,6 +565,22 @@ async function superviseBenchmark({
       ...extra,
     };
     log(`[responsiveness runner] stopping the benchmark: ${reason}`);
+    // Record the reason before any teardown starts. A host shutdown can kill
+    // the runner within seconds of its SIGTERM, before the children are down.
+    if (onAbort) {
+      try {
+        onAbort({
+          ...state.abort,
+          playwrightStarted: Boolean(playwrightChild),
+          devServerStarted: Boolean(devServerChild),
+          reusedServer,
+          devServerTail: reusedServer ? [] : capture.tail(),
+          devServerLogPath: reusedServer ? "" : logPath,
+        });
+      } catch (error) {
+        log(`[responsiveness runner] could not write the early summary: ${errorText(error)}`);
+      }
+    }
     controller.abort();
     resolveAbort(state.abort);
   };
@@ -544,21 +593,12 @@ async function superviseBenchmark({
     Math.max(0, deadlineAt - Date.now())
   );
   const signalHandlers = handleSignals
-    ? installSignalHandlers((signal) =>
-        abort("interrupted", `runner received ${signal}`, { exitCode: signal === "SIGINT" ? 130 : 143 })
+    ? installSignalHandlers(
+        (signal) =>
+          abort("interrupted", `runner received ${signal}`, { exitCode: signal === "SIGINT" ? 130 : 143 }),
+        signalSource
       )
     : null;
-  const capture = createOutputCapture({
-    logPath,
-    onStderrLine: echoDevServerStderr ? (line) => process.stderr.write(`[WebServer] ${line}\n`) : null,
-  });
-
-  let devServerChild = null;
-  let devServerClosed = null;
-  let playwrightChild = null;
-  let monitor = null;
-  let reusedServer = false;
-  let playwrightResult = null;
 
   try {
     const alreadyAvailable = await checkServerReady(baseUrl, {
@@ -666,6 +706,9 @@ async function superviseBenchmark({
     // From here on, exits and stalls are the teardown itself, not a reason to
     // abort. Set this first so no later step can classify a finished run.
     state.stopping = true;
+    // After a SIGINT/SIGTERM the host may be shutting down; stop children fast.
+    const killGraceMs =
+      state.abort?.kind === "interrupted" ? Math.min(1000, timings.killGraceMs) : timings.killGraceMs;
     clearTimeout(deadlineTimer);
     if (monitor) {
       monitor.stop();
@@ -676,16 +719,16 @@ async function superviseBenchmark({
     controller.abort();
     if (playwrightChild) {
       if (!state.playwrightExited) {
-        await terminateProcessTree(playwrightChild, timings.killGraceMs);
+        await terminateProcessTree(playwrightChild, killGraceMs);
       }
       playwrightChild.unref();
     }
     if (devServerChild) {
-      await terminateProcessTree(devServerChild, timings.killGraceMs);
+      await terminateProcessTree(devServerChild, killGraceMs);
       // Let the last output (often the crash message) drain, but never wait
       // on a pipe an escaped grandchild still holds open.
       const drainWait = new AbortController();
-      await Promise.race([devServerClosed, sleep(2000, drainWait.signal)]);
+      await Promise.race([devServerClosed, sleep(Math.min(2000, killGraceMs), drainWait.signal)]);
       drainWait.abort();
       for (const stream of [devServerChild.stdin, devServerChild.stdout, devServerChild.stderr]) {
         stream?.destroy();
@@ -738,6 +781,8 @@ module.exports = {
   probeHttp,
   resolveSupervisorTimings,
   sanitizeLogLine,
+  signalProcessTree,
+  spawnProcessGroup,
   stripAnsi,
   superviseBenchmark,
   terminateProcessTree,

@@ -7,6 +7,8 @@
 // clock, which would change event-loop timing inside smoke-test.cjs.
 
 const assert = require("assert");
+const childProcess = require("child_process");
+const { EventEmitter } = require("events");
 const fs = require("fs");
 const net = require("net");
 const os = require("os");
@@ -151,7 +153,7 @@ setInterval(() => {}, 1000);
   });
   const quote = (value) => JSON.stringify(value);
 
-  async function runScenario(name, { serverMode, playwrightMode = "hang", extraArgs = [] }) {
+  async function runScenario(name, { serverMode, playwrightMode = "hang", extraArgs = [], deps = {} }) {
     const port = await freeTcpPort();
     const outputDir = path.join(root, `${name}-output`);
     const serverInfoPath = path.join(root, `${name}-server.json`);
@@ -186,6 +188,7 @@ setInterval(() => {}, 1000);
       handleSignals: false,
       echoDevServerStderr: false,
       log: () => {},
+      ...deps,
     });
     return {
       result,
@@ -194,6 +197,16 @@ setInterval(() => {}, 1000);
       server: readJsonIfPresent(serverInfoPath),
       playwright: readJsonIfPresent(playwrightInfoPath),
     };
+  }
+
+  // Teardown must only signal process groups the supervisor created. If it
+  // ever signalled the runner's own group, this test process would receive the
+  // signal; record any that arrive and assert none did.
+  const signalsSeenByRunner = [];
+  const recordSignal = (signal) => signalsSeenByRunner.push(signal);
+  const watchedSignals = process.platform === "win32" ? ["SIGINT"] : ["SIGINT", "SIGTERM", "SIGHUP"];
+  for (const signal of watchedSignals) {
+    process.on(signal, recordSignal);
   }
 
   // Dev server dies mid-run: abort promptly with its exit code and output.
@@ -303,8 +316,100 @@ setInterval(() => {}, 1000);
   assert(passed.result.summary.includes("Checks completed: 1/1"));
   assert.equal(fs.readFileSync(path.join(passed.outputDir, "exit-code.txt"), "utf8").trim(), "0");
   await assertProcessGone(passed.server.pid, "fake dev server after a passing run");
+  // Artifacts are replaced through a temp file and rename; none may be left behind.
+  assert(!fs.readdirSync(passed.outputDir).some((file) => file.endsWith(".tmp")));
+  assert(!fs.readdirSync(exited.outputDir).some((file) => file.endsWith(".tmp")));
+
+  // A SIGTERM from outside (GitHub stopping the job or shutting the runner
+  // host down) must leave summary.md and exit-code.txt on disk, and the
+  // summary in the step log, before teardown starts. Production runs were
+  // cut off seconds after that SIGTERM.
+  const fakeSignals = new EventEmitter();
+  const interruptedPlaywrightInfo = path.join(root, "interrupted-playwright.json");
+  const interruptedOutputDir = path.join(root, "interrupted-output");
+  const printedEarly = [];
+  let stateWhenPrinted = null;
+  const sendSigtermOncePlaywrightRuns = (async () => {
+    const until = Date.now() + 20000;
+    while (Date.now() < until && !fs.existsSync(interruptedPlaywrightInfo)) {
+      await delay(50);
+    }
+    await delay(200);
+    fakeSignals.emit("SIGTERM");
+  })();
+  const interrupted = await runScenario("interrupted", {
+    serverMode: "healthy",
+    playwrightMode: "ignore-sigterm",
+    deps: {
+      handleSignals: true,
+      signalSource: fakeSignals,
+      writeStdout: (text) => {
+        printedEarly.push(text);
+        // Called inside the stop decision, before any child is signalled.
+        const playwrightPid = readJsonIfPresent(interruptedPlaywrightInfo)?.pid;
+        stateWhenPrinted = {
+          summary: readTextIfPresent(path.join(interruptedOutputDir, "summary.md")),
+          exitCode: readTextIfPresent(path.join(interruptedOutputDir, "exit-code.txt")).trim(),
+          playwrightAlive: isProcessAlive(playwrightPid),
+        };
+      },
+    },
+  });
+  await sendSigtermOncePlaywrightRuns;
+  assert.equal(interrupted.result.exitCode, 143);
+  assert.equal(interrupted.result.abort.kind, "interrupted");
+  assert(stateWhenPrinted, "the early summary was not written for a SIGTERM");
+  assert(stateWhenPrinted.summary.includes("Aborted: runner received SIGTERM"));
+  assert.equal(stateWhenPrinted.exitCode, "143");
+  assert.equal(stateWhenPrinted.playwrightAlive, true);
+  assert.equal(printedEarly.length, 1);
+  assert(printedEarly[0].includes("Aborted: runner received SIGTERM"));
+  assert(interrupted.result.summary.includes("The signal came from outside the runner"));
+  assert(interrupted.elapsedMs < 15000, `SIGTERM took ${interrupted.elapsedMs}ms to stop the run`);
+  assert.equal(fs.readFileSync(path.join(interruptedOutputDir, "exit-code.txt"), "utf8").trim(), "143");
+  await assertProcessGone(interrupted.playwright.pid, "fake Playwright after SIGTERM");
+  await assertProcessGone(interrupted.server.pid, "fake dev server after SIGTERM");
+
+  // A child the supervisor did not start as its own group leader is signalled
+  // alone. A group signal would miss it (it leads no group) or, worse, reach
+  // a group the runner shares with the step shell.
+  const plainChild = childProcess.spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
+    stdio: "ignore",
+  });
+  await new Promise((resolve) => plainChild.once("spawn", resolve));
+  supervisor.signalProcessTree(plainChild, "SIGTERM");
+  await assertProcessGone(plainChild.pid, "non-group child after signalProcessTree");
+
+  for (const signal of watchedSignals) {
+    process.removeListener(signal, recordSignal);
+  }
+  assert.deepEqual(signalsSeenByRunner, [], "teardown signalled the runner's own process group");
 
   fs.rmSync(root, { recursive: true, force: true });
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function readTextIfPresent(filePath) {
+  try {
+    return fs.readFileSync(filePath, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function isProcessAlive(pid) {
+  if (!Number.isInteger(pid) || pid <= 0) {
+    return false;
+  }
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function readJsonIfPresent(filePath) {
