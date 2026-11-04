@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Made the responsiveness runner write `summary.md` and `exit-code.txt` as soon
+  as it decides to stop a run, before tearing down child processes, and print
+  the summary to the step log right away when it receives SIGINT or SIGTERM.
+  Teardown now signals only process groups the runner created.
 - Made the responsiveness runner own and supervise the target dev server: it
   stops the run promptly when the server exits or stops answering a health
   probe, and enforces an internal deadline below the job timeout. Stopped runs

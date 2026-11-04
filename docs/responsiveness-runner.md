@@ -272,9 +272,21 @@ stops the run early, with a reason, when either goes wrong.
   context, page, readiness `evaluate`, and close calls each carry their own
   timeout. In-test page calls stay bounded by the per-test timeout.
 
-When the runner stops a run it kills the Playwright and dev server process
-groups (SIGTERM, then SIGKILL after `REVIEWBOT_RESPONSIVENESS_KILL_GRACE_MS`,
-default 5000), then writes the usual artifacts. `summary.md` reports
+When the runner decides to stop a run, it first writes `summary.md` and
+`exit-code.txt` (fsynced) from the results so far. Then it kills the
+Playwright and dev server process groups: SIGTERM, then SIGKILL after
+`REVIEWBOT_RESPONSIVENESS_KILL_GRACE_MS` (default 5000). It signals only the
+process groups it created itself, never its own group or the step shell's.
+After teardown it rewrites the artifacts with the final results.
+
+A SIGINT or SIGTERM sent to the runner usually means GitHub is stopping the
+job or shutting the runner host down; the job log then also shows
+`The runner has received a shutdown signal`. In that case the runner prints
+the summary to the step log straight away and cuts the kill grace to one
+second. The artifact and comment steps may still never run, because GitHub
+skips them when the host shuts down.
+
+`summary.md` reports
 `Status: fail` and an `Aborted: <reason>` line, followed by a `Runner Abort`
 section with the elapsed time, the deadline budget, whether Playwright had
 started, and the last 40 non-blank dev server output lines. Those lines are

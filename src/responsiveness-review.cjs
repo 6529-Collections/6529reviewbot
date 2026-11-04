@@ -386,7 +386,7 @@ function deterministicVisibleBody(settings, artifacts) {
   if (!artifacts.summary) {
     lines.push(
       "",
-      "The responsiveness workflow did not produce a runner summary. Check the linked workflow run for checkout, dependency install, or Playwright setup failures."
+      "The responsiveness workflow did not produce a runner summary. Check the linked workflow run for checkout, dependency install, or Playwright setup failures. If the benchmark log shows `The runner has received a shutdown signal`, GitHub shut the runner host down mid-run before artifacts could upload; rerun the review."
     );
     return lines.join("\n");
   }

@@ -2300,7 +2300,8 @@ function safeName(value) {
  * exit-code.txt with the reason.
  *
  * deps (tests and local tooling): env, playwrightCommand
- * ({ command, args, shell }), handleSignals, echoDevServerStderr, log.
+ * ({ command, args, shell }), handleSignals, signalSource, echoDevServerStderr,
+ * writeStdout, log.
  */
 async function runResponsiveness(options, deps = {}) {
   const startedAt = Date.now();
@@ -2352,7 +2353,28 @@ async function runResponsiveness(options, deps = {}) {
       healthProbePath: timings.healthProbePath || plan.webServer?.healthProbePath || "/",
       logPath: path.join(options.outputDir, "dev-server.log"),
       handleSignals: deps.handleSignals !== false,
+      ...(deps.signalSource ? { signalSource: deps.signalSource } : {}),
       echoDevServerStderr: deps.echoDevServerStderr !== false,
+      // Write summary.md and exit-code.txt the moment a stop is decided, before
+      // the supervisor tears anything down; the final write below replaces
+      // them once teardown finishes.
+      onAbort: (abortInfo) => {
+        const early = writeRunArtifacts({
+          plan,
+          options,
+          harness,
+          deadline,
+          startedAt,
+          exitCode: abortInfo.exitCode,
+          abort: abortInfo,
+        });
+        if (abortInfo.kind === "interrupted") {
+          // A signal usually means GitHub is stopping the job or the runner
+          // host. Put the summary in the job log now, in case teardown is cut
+          // short and the artifact steps never run.
+          (deps.writeStdout || writeStdoutSync)(early.summary);
+        }
+      },
       ...(deps.log ? { log: deps.log } : {}),
     });
   } catch (error) {
@@ -2375,34 +2397,24 @@ async function runResponsiveness(options, deps = {}) {
   const exitCode = supervision.abort
     ? supervision.abort.exitCode
     : supervision.playwrightExitCode ?? 1;
-  const checkResults = readCheckResults(harness.resultsDir);
-  const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
-  const summary = summarizeRun({
+  const { summary, checkResults } = writeRunArtifacts({
     plan,
-    results: checkResults,
-    runErrors,
+    options,
+    harness,
+    deadline,
+    startedAt,
     exitCode,
-    durationMs: Date.now() - startedAt,
     abort: supervision.abort
       ? {
           ...supervision.abort,
-          deadlineLabel: deadline.label,
           playwrightStarted: supervision.playwrightStarted,
           devServerStarted: supervision.devServerStarted,
           reusedServer: supervision.reusedServer,
           devServerTail: supervision.devServerTail,
-          devServerLog: supervision.devServerLogPath
-            ? path.relative(options.outputDir, supervision.devServerLogPath).replace(/\\/g, "/")
-            : "",
+          devServerLogPath: supervision.devServerLogPath,
         }
       : null,
   });
-  fs.writeFileSync(path.join(options.outputDir, "summary.md"), summary);
-  fs.writeFileSync(
-    path.join(options.outputDir, "screenshots.json"),
-    `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
-  );
-  fs.writeFileSync(path.join(options.outputDir, "exit-code.txt"), `${exitCode}\n`);
 
   return {
     plan,
@@ -2412,6 +2424,61 @@ async function runResponsiveness(options, deps = {}) {
     results: checkResults,
     abort: supervision.abort,
   };
+}
+
+/**
+ * Build the run summary from whatever results exist now and write
+ * summary.md, screenshots.json, and exit-code.txt. Summary and exit code are
+ * fsynced so a reader sees them even if the runner is killed right after.
+ */
+function writeRunArtifacts({ plan, options, harness, deadline, startedAt, exitCode, abort }) {
+  const checkResults = readCheckResults(harness.resultsDir);
+  const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
+  const summary = summarizeRun({
+    plan,
+    results: checkResults,
+    runErrors,
+    exitCode,
+    durationMs: Date.now() - startedAt,
+    abort: abort
+      ? {
+          ...abort,
+          deadlineLabel: deadline.label,
+          devServerLog: abort.devServerLogPath
+            ? path.relative(options.outputDir, abort.devServerLogPath).replace(/\\/g, "/")
+            : "",
+        }
+      : null,
+  });
+  writeFileDurably(path.join(options.outputDir, "summary.md"), summary);
+  fs.writeFileSync(
+    path.join(options.outputDir, "screenshots.json"),
+    `${JSON.stringify(buildScreenshotManifest({ plan, results: checkResults }), null, 2)}\n`
+  );
+  writeFileDurably(path.join(options.outputDir, "exit-code.txt"), `${exitCode}\n`);
+  return { summary, checkResults };
+}
+
+function writeFileDurably(filePath, content) {
+  const fd = fs.openSync(filePath, "w");
+  try {
+    fs.writeSync(fd, content);
+    fs.fsyncSync(fd);
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+
+function writeStdoutSync(text) {
+  const buffer = Buffer.from(text, "utf8");
+  let offset = 0;
+  try {
+    while (offset < buffer.length) {
+      offset += fs.writeSync(1, buffer, offset, buffer.length - offset);
+    }
+  } catch {
+    // The step log is best effort; summary.md is already on disk.
+  }
 }
 
 function buildScreenshotManifest({ plan, results }) {
@@ -2705,6 +2772,11 @@ function summarizeRunAbort(abort) {
   ];
   if (abort.deadlineLabel) {
     lines.push(`- Runner deadline: ${abort.deadlineLabel}`);
+  }
+  if (abort.kind === "interrupted") {
+    lines.push(
+      "- The signal came from outside the runner, usually GitHub stopping the job or the runner host. If the job log also shows `The runner has received a shutdown signal`, the host was shut down mid-run and a rerun is needed."
+    );
   }
   lines.push(
     abort.playwrightStarted
