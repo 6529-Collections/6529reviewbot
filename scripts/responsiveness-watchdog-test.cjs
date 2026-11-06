@@ -80,6 +80,7 @@ fs.writeFileSync(infoPath, JSON.stringify({
   fsCache: process.env.NEXT_DEV_TURBOPACK_FS_CACHE || "",
   apiEndpoint: process.env.API_ENDPOINT || "",
 }));
+fs.appendFileSync(infoPath + ".starts", process.pid + "\\n");
 if (mode === "early-exit") {
   console.error("Error: failed to compile proxy.ts");
   process.exit(1);
@@ -129,6 +130,28 @@ if (mode === "pass") {
   );
   process.exit(0);
 }
+if (mode === "pass-routes" || mode.startsWith("fail-session-")) {
+  const outputDir = process.env.REVIEWBOT_RESPONSIVENESS_OUTPUT_DIR;
+  const suffix = process.env.REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX || "";
+  const routes = JSON.parse(fs.readFileSync(path.join(outputDir, "harness", "routes.json"), "utf8"));
+  fs.appendFileSync(infoPath + ".sessions", JSON.stringify({ routes, suffix }) + "\\n");
+  const sessionNumber = suffix ? Number(suffix.replace("-session-", "")) : 1;
+  if (mode === "fail-session-" + sessionNumber) {
+    fs.writeFileSync(
+      path.join(outputDir, "playwright-report" + suffix + ".json"),
+      JSON.stringify({ errors: [{ message: "session " + sessionNumber + " worker crashed" }], suites: [] })
+    );
+    process.exit(1);
+  }
+  for (const route of routes) {
+    const name = "web-desktop--" + (route === "/" ? "root" : route.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, ""));
+    fs.writeFileSync(
+      path.join(outputDir, "results", name + ".json"),
+      JSON.stringify({ mode: "web-desktop", route, durationMs: 5, failures: [], warnings: [] })
+    );
+  }
+  process.exit(0);
+}
 if (mode === "ignore-sigterm") {
   process.on("SIGTERM", () => {});
 }
@@ -146,14 +169,14 @@ setInterval(() => {}, 1000);
   }
   Object.assign(baseEnv, {
     REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_INTERVAL_MS: "100",
-    REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_TIMEOUT_MS: "300",
-    REVIEWBOT_RESPONSIVENESS_HEALTH_STALL_MS: "1000",
+    REVIEWBOT_RESPONSIVENESS_HEALTH_PROBE_TIMEOUT_MS: "1000",
+    REVIEWBOT_RESPONSIVENESS_HEALTH_STALL_MS: "4000",
     REVIEWBOT_RESPONSIVENESS_SERVER_TIMEOUT_MS: "15000",
     REVIEWBOT_RESPONSIVENESS_KILL_GRACE_MS: "300",
   });
   const quote = (value) => JSON.stringify(value);
 
-  async function runScenario(name, { serverMode, playwrightMode = "hang", extraArgs = [], deps = {} }) {
+  async function runScenario(name, { serverMode, playwrightMode = "hang", extraArgs = [], deps = {}, pages = "/" }) {
     const port = await freeTcpPort();
     const outputDir = path.join(root, `${name}-output`);
     const serverInfoPath = path.join(root, `${name}-server.json`);
@@ -164,7 +187,7 @@ setInterval(() => {}, 1000);
       "--output-dir",
       outputDir,
       "--pages",
-      "/",
+      pages,
       "--contexts",
       "web-desktop",
       "--workers",
@@ -319,6 +342,83 @@ setInterval(() => {}, 1000);
   // Artifacts are replaced through a temp file and rename; none may be left behind.
   assert(!fs.readdirSync(passed.outputDir).some((file) => file.endsWith(".tmp")));
   assert(!fs.readdirSync(exited.outputDir).some((file) => file.endsWith(".tmp")));
+
+  // The sweep runs in two fresh dev-server sessions of consecutive routes by
+  // default; results from both land in one summary.
+  const split = await runScenario("split", {
+    serverMode: "healthy",
+    playwrightMode: "pass-routes",
+    pages: "/,/waves,/network",
+  });
+  assert.equal(split.result.exitCode, 0);
+  assert.equal(split.result.abort, null);
+  assert.deepEqual(split.result.plan.devServerSessions, [["/", "/waves"], ["/network"]]);
+  assert(split.result.summary.includes("Dev server sessions: 2 (2 + 1 routes)"));
+  assert(split.result.summary.includes("Checks completed: 3/3"));
+  assert(split.result.summary.includes("Status: pass"));
+  const splitSessions = fs
+    .readFileSync(path.join(root, "split-playwright.json.sessions"), "utf8")
+    .trim()
+    .split("\n")
+    .map((line) => JSON.parse(line));
+  assert.deepEqual(splitSessions, [
+    { routes: ["/", "/waves"], suffix: "" },
+    { routes: ["/network"], suffix: "-session-2" },
+  ]);
+  const splitServerStarts = fs.readFileSync(path.join(root, "split-server.json.starts"), "utf8").trim().split("\n");
+  assert.equal(splitServerStarts.length, 2);
+  for (const pid of splitServerStarts) {
+    await assertProcessGone(Number(pid), "a split-session dev server");
+  }
+  assert(fs.existsSync(path.join(split.outputDir, "dev-server.log")));
+  assert(fs.existsSync(path.join(split.outputDir, "dev-server-session-2.log")));
+
+  // A Playwright failure in a later session reaches the exit code and the
+  // summary's run errors, read from that session's own report.
+  const failSecond = await runScenario("fail-second", {
+    serverMode: "healthy",
+    playwrightMode: "fail-session-2",
+    pages: "/,/waves,/network",
+  });
+  assert.equal(failSecond.result.exitCode, 1);
+  assert.equal(failSecond.result.abort, null);
+  assert(failSecond.result.summary.includes("Status: fail"));
+  assert(failSecond.result.summary.includes("session 2 worker crashed"));
+  assert(fs.existsSync(path.join(failSecond.outputDir, "playwright-report-session-2.json")));
+
+  // A failure in session 1 does not stop session 2 from running.
+  const failFirst = await runScenario("fail-first", {
+    serverMode: "healthy",
+    playwrightMode: "fail-session-1",
+    pages: "/,/waves,/network",
+  });
+  assert.equal(failFirst.result.exitCode, 1);
+  assert(failFirst.result.summary.includes("session 1 worker crashed"));
+  assert.equal(
+    fs.readFileSync(path.join(root, "fail-first-playwright.json.sessions"), "utf8").trim().split("\n").length,
+    2
+  );
+
+  // One session when asked for, or when there is only one route.
+  const single = await runScenario("single", {
+    serverMode: "healthy",
+    playwrightMode: "pass-routes",
+    pages: "/,/waves",
+    extraArgs: ["--dev-server-sessions", "1"],
+  });
+  assert.equal(single.result.exitCode, 0);
+  assert.deepEqual(single.result.plan.devServerSessions, [["/", "/waves"]]);
+  assert(!single.result.summary.includes("Dev server sessions:"));
+  assert.equal(fs.readFileSync(path.join(root, "single-server.json.starts"), "utf8").trim().split("\n").length, 1);
+
+  // A stop in the first session skips the rest and says so.
+  const splitAbort = await runScenario("split-abort", {
+    serverMode: "exit",
+    pages: "/,/waves",
+  });
+  assert.equal(splitAbort.result.exitCode, 3);
+  assert(splitAbort.result.summary.includes("- Dev server session: 1 of 2; later sessions did not run."));
+  assert.equal(fs.readFileSync(path.join(root, "split-abort-server.json.starts"), "utf8").trim().split("\n").length, 1);
 
   // A SIGTERM from outside (GitHub stopping the job or shutting the runner
   // host down) must leave summary.md and exit-code.txt on disk, and the

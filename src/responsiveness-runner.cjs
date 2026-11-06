@@ -343,6 +343,7 @@ function parseArgs(argv = []) {
     reuseExistingServer: false,
     deadlineMinutes: 0,
     jobTimeoutMinutes: 0,
+    devServerSessions: 0,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -388,6 +389,8 @@ function parseArgs(argv = []) {
       options.deadlineMinutes = positiveNumber(next(), arg);
     } else if (arg === "--job-timeout-minutes") {
       options.jobTimeoutMinutes = positiveNumber(next(), arg);
+    } else if (arg === "--dev-server-sessions") {
+      options.devServerSessions = positiveInt(next(), arg);
     } else if (arg === "--plan-only") {
       options.planOnly = true;
     } else if (arg === "--fail-on-warning") {
@@ -840,6 +843,7 @@ const contexts = require("./contexts.json");
 
 const outputRoot = ${JSON.stringify(options.outputDir)};
 const baseURL = ${JSON.stringify(baseUrl)};
+const sessionSuffix = process.env.REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX || "";
 
 module.exports = defineConfig({
   testDir: path.join(__dirname, "tests"),
@@ -854,9 +858,10 @@ module.exports = defineConfig({
   timeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_TEST_TIMEOUT_MS || 60000),
   reporter: [
     ["list"],
-    ["json", { outputFile: path.join(outputRoot, "playwright-report.json") }],
+    ["json", { outputFile: path.join(outputRoot, "playwright-report" + sessionSuffix + ".json") }],
   ],
-  outputDir: path.join(outputRoot, "playwright-output"),
+  // Per-session names: Playwright clears its outputDir when it starts.
+  outputDir: path.join(outputRoot, "playwright-output" + sessionSuffix),
   use: {
     baseURL,${ignoreHTTPSErrors ? "\n    ignoreHTTPSErrors: true," : ""}
     actionTimeout: Number(process.env.REVIEWBOT_RESPONSIVENESS_ACTION_TIMEOUT_MS || 8000),
@@ -2307,6 +2312,10 @@ async function runResponsiveness(options, deps = {}) {
   const startedAt = Date.now();
   const baseEnv = deps.env || process.env;
   const plan = buildPlan(options);
+  plan.devServerSessions = splitRoutesIntoSessions(
+    plan.routes,
+    resolveDevServerSessions(options, baseEnv)
+  );
   fs.mkdirSync(options.outputDir, { recursive: true });
   fs.writeFileSync(path.join(options.outputDir, "plan.json"), `${JSON.stringify(plan, null, 2)}\n`);
 
@@ -2334,74 +2343,100 @@ async function runResponsiveness(options, deps = {}) {
     shell: process.platform === "win32",
   };
 
-  let supervision;
-  try {
-    supervision = await superviseBenchmark({
-      baseUrl: plan.baseUrl,
-      ignoreHTTPSErrors: Boolean(plan.webServer?.ignoreHTTPSErrors),
-      reuseExistingServer: Boolean(options.reuseExistingServer),
-      devServer: {
-        command: plan.webServer.command,
-        cwd: options.target,
-        env: buildDevServerEnv(env, { baseUrl: plan.baseUrl, port: options.port }),
-      },
-      playwright: { ...playwrightCommand, cwd: options.target, env },
-      startedAt,
-      deadlineAt: startedAt + deadline.budgetMs,
-      deadlineLabel: deadline.label,
-      timings,
-      healthProbePath: timings.healthProbePath || plan.webServer?.healthProbePath || "/",
-      logPath: path.join(options.outputDir, "dev-server.log"),
-      handleSignals: deps.handleSignals !== false,
-      ...(deps.signalSource ? { signalSource: deps.signalSource } : {}),
-      echoDevServerStderr: deps.echoDevServerStderr !== false,
-      // Write summary.md and exit-code.txt the moment a stop is decided, before
-      // the supervisor tears anything down; the final write below replaces
-      // them once teardown finishes.
-      onAbort: (abortInfo) => {
-        const early = writeRunArtifacts({
-          plan,
-          options,
-          harness,
-          deadline,
-          startedAt,
-          exitCode: abortInfo.exitCode,
-          abort: abortInfo,
-          bestEffort: true,
-        });
-        if (abortInfo.kind === "interrupted") {
-          // A signal usually means GitHub is stopping the job or the runner
-          // host. Put the summary in the job log now, in case teardown is cut
-          // short and the artifact steps never run. This does not depend on
-          // the artifact writes above succeeding.
-          (deps.writeStdout || writeStdoutSync)(early.summary);
-        }
-        if (early.writeError) {
-          throw early.writeError;
-        }
-      },
-      ...(deps.log ? { log: deps.log } : {}),
-    });
-  } catch (error) {
-    supervision = {
-      abort: {
-        kind: "runner-error",
-        reason: `runner error: ${String(error?.message || error).replace(/\s+/g, " ").slice(0, 300)}`,
-        exitCode: 1,
-        elapsedMs: Date.now() - startedAt,
-      },
-      playwrightExitCode: null,
-      playwrightStarted: false,
-      devServerStarted: false,
-      reusedServer: false,
-      devServerTail: [],
-      devServerLogPath: "",
-    };
+  // Run the routes in consecutive dev-server sessions, each with a fresh
+  // server. Compiling every route in one `next dev` process peaked at 13-14 GB
+  // on 16 GB runners and got hosts shut down; half the routes per session
+  // peaked at 8.6-10.4 GB with no slower runs (see the runner docs).
+  const sessions = plan.devServerSessions.length > 0 ? plan.devServerSessions : [plan.routes];
+  const deadlineAt = startedAt + deadline.budgetMs;
+  let supervision = null;
+  let playwrightExitCode = 0;
+  for (const [index, sessionRoutes] of sessions.entries()) {
+    const session = { index: index + 1, count: sessions.length };
+    writeSessionRoutes(harness, sessionRoutes);
+    if (session.count > 1) {
+      (deps.log || defaultRunnerLog)(
+        `[responsiveness runner] dev server session ${session.index}/${session.count}: ${sessionRoutes.join(" ")}`
+      );
+    }
+    try {
+      supervision = await superviseBenchmark({
+        baseUrl: plan.baseUrl,
+        ignoreHTTPSErrors: Boolean(plan.webServer?.ignoreHTTPSErrors),
+        reuseExistingServer: Boolean(options.reuseExistingServer),
+        devServer: {
+          command: plan.webServer.command,
+          cwd: options.target,
+          env: buildDevServerEnv(env, { baseUrl: plan.baseUrl, port: options.port }),
+        },
+        playwright: {
+          ...playwrightCommand,
+          cwd: options.target,
+          env: { ...env, REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX: sessionSuffix(session) },
+        },
+        startedAt,
+        deadlineAt,
+        deadlineLabel: deadline.label,
+        timings,
+        healthProbePath: timings.healthProbePath || plan.webServer?.healthProbePath || "/",
+        logPath: path.join(options.outputDir, `dev-server${sessionSuffix(session)}.log`),
+        handleSignals: deps.handleSignals !== false,
+        ...(deps.signalSource ? { signalSource: deps.signalSource } : {}),
+        echoDevServerStderr: deps.echoDevServerStderr !== false,
+        // Write summary.md and exit-code.txt the moment a stop is decided,
+        // before the supervisor tears anything down; the final write below
+        // replaces them once teardown finishes.
+        onAbort: (abortInfo) => {
+          const early = writeRunArtifacts({
+            plan,
+            options,
+            harness,
+            deadline,
+            startedAt,
+            exitCode: abortInfo.exitCode,
+            abort: { ...abortInfo, session },
+            bestEffort: true,
+          });
+          if (abortInfo.kind === "interrupted") {
+            // A signal usually means GitHub is stopping the job or the runner
+            // host. Put the summary in the job log now, in case teardown is
+            // cut short and the artifact steps never run. This does not depend
+            // on the artifact writes above succeeding.
+            (deps.writeStdout || writeStdoutSync)(early.summary);
+          }
+          if (early.writeError) {
+            throw early.writeError;
+          }
+        },
+        ...(deps.log ? { log: deps.log } : {}),
+      });
+    } catch (error) {
+      supervision = {
+        abort: {
+          kind: "runner-error",
+          reason: `runner error: ${String(error?.message || error).replace(/\s+/g, " ").slice(0, 300)}`,
+          exitCode: 1,
+          elapsedMs: Date.now() - startedAt,
+        },
+        playwrightExitCode: null,
+        playwrightStarted: false,
+        devServerStarted: false,
+        reusedServer: false,
+        devServerTail: [],
+        devServerLogPath: "",
+      };
+    }
+    supervision.session = session;
+    if (supervision.abort) {
+      break;
+    }
+    const sessionExitCode = supervision.playwrightExitCode ?? 1;
+    if (sessionExitCode !== 0 && playwrightExitCode === 0) {
+      playwrightExitCode = sessionExitCode;
+    }
   }
 
-  const exitCode = supervision.abort
-    ? supervision.abort.exitCode
-    : supervision.playwrightExitCode ?? 1;
+  const exitCode = supervision.abort ? supervision.abort.exitCode : playwrightExitCode;
   const { summary, checkResults } = writeRunArtifacts({
     plan,
     options,
@@ -2417,6 +2452,7 @@ async function runResponsiveness(options, deps = {}) {
           reusedServer: supervision.reusedServer,
           devServerTail: supervision.devServerTail,
           devServerLogPath: supervision.devServerLogPath,
+          session: supervision.session,
         }
       : null,
   });
@@ -2431,6 +2467,55 @@ async function runResponsiveness(options, deps = {}) {
   };
 }
 
+const DEFAULT_DEV_SERVER_SESSIONS = 2;
+
+function resolveDevServerSessions(options = {}, env = process.env) {
+  if (Number(options.devServerSessions) > 0) {
+    return Number(options.devServerSessions);
+  }
+  const fromEnv = Number.parseInt(String(env?.REVIEWBOT_RESPONSIVENESS_DEV_SERVER_SESSIONS ?? ""), 10);
+  return Number.isSafeInteger(fromEnv) && fromEnv > 0 ? fromEnv : DEFAULT_DEV_SERVER_SESSIONS;
+}
+
+// Split routes into at most `count` consecutive, near-equal groups, keeping
+// their order so the shell canaries stay in the first session.
+function splitRoutesIntoSessions(routes, count) {
+  const list = routes || [];
+  const sessions = Math.max(1, Math.min(Math.floor(count) || 1, list.length));
+  const groups = [];
+  let offset = 0;
+  for (let index = 0; index < sessions; index += 1) {
+    const size = Math.floor(list.length / sessions) + (index < list.length % sessions ? 1 : 0);
+    groups.push(list.slice(offset, offset + size));
+    offset += size;
+  }
+  return groups.filter((group) => group.length > 0);
+}
+
+function sessionSuffix(session) {
+  return session && session.index > 1 ? `-session-${session.index}` : "";
+}
+
+function writeSessionRoutes(harness, routes) {
+  fs.writeFileSync(path.join(harness.harnessDir, "routes.json"), `${JSON.stringify(routes, null, 2)}\n`);
+}
+
+function listPlaywrightReports(outputDir) {
+  try {
+    return fs
+      .readdirSync(outputDir)
+      .filter((file) => /^playwright-report(?:-session-\d+)?\.json$/.test(file))
+      .sort((left, right) => left.length - right.length || left.localeCompare(right))
+      .map((file) => path.join(outputDir, file));
+  } catch {
+    return [];
+  }
+}
+
+function defaultRunnerLog(message) {
+  process.stderr.write(`${message}\n`);
+}
+
 /**
  * Build the run summary from whatever results exist now and write
  * summary.md, screenshots.json, and exit-code.txt. Summary and exit code are
@@ -2438,7 +2523,9 @@ async function runResponsiveness(options, deps = {}) {
  */
 function writeRunArtifacts({ plan, options, harness, deadline, startedAt, exitCode, abort, bestEffort = false }) {
   const checkResults = readCheckResults(harness.resultsDir);
-  const runErrors = readPlaywrightErrors(path.join(options.outputDir, "playwright-report.json"));
+  const runErrors = listPlaywrightReports(options.outputDir)
+    .flatMap((reportPath) => readPlaywrightErrors(reportPath))
+    .slice(0, 20);
   const summary = summarizeRun({
     plan,
     results: checkResults,
@@ -2720,6 +2807,7 @@ function summarizeRun({ plan, results, runErrors = [], exitCode, durationMs, abo
     `Profile: ${plan.profile?.label || plan.profile?.id || "none"}`,
     `Contexts: ${plan.contexts.map((context) => `\`${context.name}\``).join(", ")}`,
     `Routes: ${plan.routes.map((route) => `\`${route}\``).join(", ")}`,
+    ...summarizeDevServerSessions(plan),
     `Checks completed: ${results.length}/${plan.routes.length * plan.contexts.length}`,
     `Failures: ${failures.length + runErrors.length + (abort ? 1 : 0)}`,
     `Warnings: ${warnings.length}`,
@@ -2816,6 +2904,11 @@ function summarizeRunAbort(abort) {
   if (abort.deadlineLabel) {
     lines.push(`- Runner deadline: ${abort.deadlineLabel}`);
   }
+  if (abort.session && abort.session.count > 1) {
+    lines.push(
+      `- Dev server session: ${abort.session.index} of ${abort.session.count}; later sessions did not run.`
+    );
+  }
   if (abort.kind === "interrupted") {
     lines.push(
       "- The signal came from outside the runner, usually GitHub stopping the job or the runner host. If the job log also shows `The runner has received a shutdown signal`, the host was shut down mid-run and a rerun is needed."
@@ -2839,6 +2932,16 @@ function summarizeRunAbort(abort) {
     lines.push("The dev server produced no output.", "");
   }
   return lines;
+}
+
+function summarizeDevServerSessions(plan) {
+  const sessions = plan.devServerSessions || [];
+  if (sessions.length < 2) {
+    return [];
+  }
+  return [
+    `Dev server sessions: ${sessions.length} (${sessions.map((group) => group.length).join(" + ")} routes)`,
+  ];
 }
 
 function singleLine(value) {
@@ -2968,6 +3071,9 @@ Options:
   --job-timeout-minutes <n>
                           GitHub job timeout the run must finish under. Also
                           read from REVIEWBOT_RESPONSIVENESS_TIMEOUT_MINUTES.
+  --dev-server-sessions <n>
+                          Split the routes across n fresh dev servers.
+                          Default: 2 (REVIEWBOT_RESPONSIVENESS_DEV_SERVER_SESSIONS).
   --plan-only             Write plan and skip Playwright.
 `);
 }
@@ -2991,9 +3097,11 @@ module.exports = {
   parseArgs,
   publicProfile,
   readCheckResults,
+  resolveDevServerSessions,
   resolveRunDeadline,
   resolveWebServer,
   runResponsiveness,
   summarizeOverlayText,
+  splitRoutesIntoSessions,
   summarizeRun,
 };

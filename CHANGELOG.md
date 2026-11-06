@@ -8,6 +8,10 @@ stabilized.
 
 ## Unreleased
 
+- Split the responsiveness benchmark into two fresh dev-server sessions by
+  default (`--dev-server-sessions`). One `next dev` process compiling every
+  route peaked at 13-14 GB on 16 GB runners and got hosts shut down; two
+  sessions peaked at 8.6-10.4 GB with no slower runs.
 - Made the responsiveness runner write `summary.md` and `exit-code.txt` as soon
   as it decides to stop a run, before tearing down child processes, and print
   the summary to the step log right away when it receives SIGINT or SIGTERM.
