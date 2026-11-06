@@ -707,6 +707,21 @@ assert.equal(namespacedDevServerEnv.WS_ENDPOINT, "wss://ws.staging.example.test"
 assert.equal(namespacedDevServerEnv.ASSETS_FROM_S3, "true");
 assert.equal(namespacedDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, "0");
 assert.equal(namespacedDevServerEnv.PORT, "4000");
+assert(responsivenessConfig.includes("process.env.REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX"));
+assert(responsivenessConfig.includes('"playwright-report" + sessionSuffix + ".json"'));
+assert(responsivenessConfig.includes('"playwright-output" + sessionSuffix'));
+assert.equal(responsivenessRunner.resolveDevServerSessions({}, {}), 2);
+assert.equal(
+  responsivenessRunner.resolveDevServerSessions({}, { REVIEWBOT_RESPONSIVENESS_DEV_SERVER_SESSIONS: "1" }),
+  1
+);
+assert.equal(responsivenessRunner.resolveDevServerSessions({ devServerSessions: 3 }, {}), 3);
+assert.deepEqual(
+  responsivenessRunner.splitRoutesIntoSessions(["/", "/waves", "/network", "/the-memes", "/meme-lab"], 2),
+  [["/", "/waves", "/network"], ["/the-memes", "/meme-lab"]]
+);
+assert.deepEqual(responsivenessRunner.splitRoutesIntoSessions(["/"], 2), [["/"]]);
+assert.equal(responsivenessRunner.parseArgs(["--dev-server-sessions", "3"]).devServerSessions, 3);
 assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).budgetMs, 25 * 60000);
 assert.equal(responsivenessRunner.resolveRunDeadline({}, {}).source, "default");
 assert.equal(

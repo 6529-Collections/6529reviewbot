@@ -68,9 +68,12 @@ The workflow writes the markdown summary to the GitHub job summary and uploads
   the route has already rendered meaningful content, the run keeps the
   deterministic DOM metrics and reports missing screenshot evidence as a
   warning.
-- `playwright-report.json` and `playwright-output/`: Playwright output.
+- `playwright-report.json` and `playwright-output/`: Playwright output for the
+  first dev-server session; later sessions write
+  `playwright-report-session-<n>.json` and `playwright-output-session-<n>/`.
 - `dev-server.log`: the target dev server's stdout and stderr, ANSI-stripped,
-  redacted line by line for secret-shaped values, and capped at 8 MB.
+  redacted line by line for secret-shaped values, and capped at 8 MB. Later
+  sessions write `dev-server-session-<n>.log`.
 - `exit-code.txt`: the runner exit code, also rewritten by the workflow.
 
 Production PR comments include a link to the uploaded artifact when GitHub
@@ -214,6 +217,30 @@ wrapper fallback when installing dependencies and Chromium: targets without
 `bin/6529` use
 `pnpm install --frozen-lockfile` (through Socket Firewall when available) and
 `pnpm exec playwright install chromium`.
+
+## Dev Server Sessions
+
+The runner splits the planned routes into consecutive groups and checks each
+group against its own fresh dev server. The default is 2 sessions, set with
+`--dev-server-sessions <n>` or `REVIEWBOT_RESPONSIVENESS_DEV_SERVER_SESSIONS`,
+and never more sessions than routes. Each session prewarms and checks only its
+own routes. Results from all sessions go into one summary, which adds a
+`Dev server sessions: 2 (5 + 5 routes)` line. The deadline covers all sessions
+together. If a session is stopped (server exit, stall, deadline or signal),
+later sessions do not run.
+
+Why: compiling all 10 routes of a heavy 6529 frontend PR in one `next dev`
+process drove `next-server` to 13-14 GB on the 16 GB `ubuntu-latest` runner,
+and GitHub shut runner hosts down mid-run. Measured on 6529seize-frontend#4684,
+3 runs per mode run side by side:
+
+| Mode | Peak `next-server` | Min free memory | Swap | Benchmark step | Result |
+| --- | --- | --- | --- | --- | --- |
+| 1 session | 14.0 / 13.8 / 13.0 GB | 0.15 / 0.13 / 0.64 GB | 3.0 / 3.0 / 2.6 GB | 206 / 220 / 374 s | 2 host shutdowns, 1 pass |
+| 2 sessions | 10.4 / 8.6 / 10.4 GB | 1.8 / 4.1 / 2.2 GB | 0 | 360 / 334 / 306 s | 3 passes, 40/40 |
+
+The second session starts faster because it reuses the Turbopack filesystem
+cache that the first one wrote, so splitting did not make runs slower.
 
 ## Dev Server Supervision And Deadline
 
