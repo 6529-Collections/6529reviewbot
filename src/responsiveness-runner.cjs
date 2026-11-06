@@ -602,6 +602,14 @@ function buildDevServerEnv(baseEnv, { baseUrl, port }) {
       env.REVIEWBOT_RESPONSIVENESS_IPFS_GATEWAY_ENDPOINT || "https://ipfs.6529.io",
     ASSETS_FROM_S3: env.REVIEWBOT_RESPONSIVENESS_ASSETS_FROM_S3 || "false",
     ...(fsCacheOverride ? { NEXT_DEV_TURBOPACK_FS_CACHE: fsCacheOverride } : {}),
+    // The 6529 frontend maps this to Next's
+    // `experimental.turbopackMemoryEviction`. "full" drops persisted Turbopack
+    // cache data from memory after every snapshot, to stay clear of the
+    // 12-14 GB next-server peaks that got runner hosts shut down. Next 16.3
+    // has no memory-limit option. Targets that don't read the variable ignore
+    // it.
+    NEXT_DEV_TURBOPACK_MEMORY_EVICTION:
+      env.REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_MEMORY_EVICTION || "full",
     // The 6529 frontend's dev wrapper exits 1, logging cgroup memory counters,
     // when `next dev` keeps running after its server worker died (OOM kill or
     // Turbopack abort). Without it the port just closes and nothing exits.

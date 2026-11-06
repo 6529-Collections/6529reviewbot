@@ -688,6 +688,14 @@ assert.equal(ambientDevServerEnv.ASSETS_FROM_S3, "false");
 // The Turbopack dev cache keeps the target default unless explicitly overridden.
 assert.equal(ambientDevServerEnv.NEXT_DEV_TURBOPACK_FS_CACHE, undefined);
 assert.equal(ambientDevServerEnv.DEV_SERVER_PORT_WATCHDOG, "1");
+assert.equal(ambientDevServerEnv.NEXT_DEV_TURBOPACK_MEMORY_EVICTION, "full");
+assert.equal(
+  responsivenessRunner.buildDevServerEnv(
+    { REVIEWBOT_RESPONSIVENESS_NEXT_DEV_TURBOPACK_MEMORY_EVICTION: "auto" },
+    { baseUrl: "http://localhost:3001", port: 3001 }
+  ).NEXT_DEV_TURBOPACK_MEMORY_EVICTION,
+  "auto"
+);
 assert.equal(ambientDevServerEnv.PORT, "3001");
 assert.equal(ambientDevServerEnv.PORT_SEARCH_LIMIT, "1");
 assert.equal(ambientDevServerEnv.BASE_ENDPOINT, "http://localhost:3001");
