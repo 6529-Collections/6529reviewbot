@@ -2414,7 +2414,7 @@ async function runResponsiveness(options, deps = {}) {
       supervision = {
         abort: {
           kind: "runner-error",
-          reason: `runner error: ${String(error?.message || error).replace(/s+/g, " ").slice(0, 300)}`,
+          reason: `runner error: ${String(error?.message || error).replace(/\s+/g, " ").slice(0, 300)}`,
           exitCode: 1,
           elapsedMs: Date.now() - startedAt,
         },
@@ -2497,15 +2497,14 @@ function sessionSuffix(session) {
 }
 
 function writeSessionRoutes(harness, routes) {
-  fs.writeFileSync(path.join(harness.harnessDir, "routes.json"), `${JSON.stringify(routes, null, 2)}
-`);
+  fs.writeFileSync(path.join(harness.harnessDir, "routes.json"), `${JSON.stringify(routes, null, 2)}\n`);
 }
 
 function listPlaywrightReports(outputDir) {
   try {
     return fs
       .readdirSync(outputDir)
-      .filter((file) => /^playwright-report(?:-session-d+)?.json$/.test(file))
+      .filter((file) => /^playwright-report(?:-session-\d+)?\.json$/.test(file))
       .sort((left, right) => left.length - right.length || left.localeCompare(right))
       .map((file) => path.join(outputDir, file));
   } catch {
@@ -2514,8 +2513,7 @@ function listPlaywrightReports(outputDir) {
 }
 
 function defaultRunnerLog(message) {
-  process.stderr.write(`${message}
-`);
+  process.stderr.write(`${message}\n`);
 }
 
 /**

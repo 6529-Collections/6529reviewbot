@@ -130,13 +130,19 @@ if (mode === "pass") {
   );
   process.exit(0);
 }
-if (mode === "pass-routes") {
+if (mode === "pass-routes" || mode.startsWith("fail-session-")) {
   const outputDir = process.env.REVIEWBOT_RESPONSIVENESS_OUTPUT_DIR;
+  const suffix = process.env.REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX || "";
   const routes = JSON.parse(fs.readFileSync(path.join(outputDir, "harness", "routes.json"), "utf8"));
-  fs.appendFileSync(
-    infoPath + ".sessions",
-    JSON.stringify({ routes, suffix: process.env.REVIEWBOT_RESPONSIVENESS_SESSION_SUFFIX || "" }) + "\\n"
-  );
+  fs.appendFileSync(infoPath + ".sessions", JSON.stringify({ routes, suffix }) + "\\n");
+  const sessionNumber = suffix ? Number(suffix.replace("-session-", "")) : 1;
+  if (mode === "fail-session-" + sessionNumber) {
+    fs.writeFileSync(
+      path.join(outputDir, "playwright-report" + suffix + ".json"),
+      JSON.stringify({ errors: [{ message: "session " + sessionNumber + " worker crashed" }], suites: [] })
+    );
+    process.exit(1);
+  }
   for (const route of routes) {
     const name = "web-desktop--" + (route === "/" ? "root" : route.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, ""));
     fs.writeFileSync(
@@ -366,6 +372,32 @@ setInterval(() => {}, 1000);
   }
   assert(fs.existsSync(path.join(split.outputDir, "dev-server.log")));
   assert(fs.existsSync(path.join(split.outputDir, "dev-server-session-2.log")));
+
+  // A Playwright failure in a later session reaches the exit code and the
+  // summary's run errors, read from that session's own report.
+  const failSecond = await runScenario("fail-second", {
+    serverMode: "healthy",
+    playwrightMode: "fail-session-2",
+    pages: "/,/waves,/network",
+  });
+  assert.equal(failSecond.result.exitCode, 1);
+  assert.equal(failSecond.result.abort, null);
+  assert(failSecond.result.summary.includes("Status: fail"));
+  assert(failSecond.result.summary.includes("session 2 worker crashed"));
+  assert(fs.existsSync(path.join(failSecond.outputDir, "playwright-report-session-2.json")));
+
+  // A failure in session 1 does not stop session 2 from running.
+  const failFirst = await runScenario("fail-first", {
+    serverMode: "healthy",
+    playwrightMode: "fail-session-1",
+    pages: "/,/waves,/network",
+  });
+  assert.equal(failFirst.result.exitCode, 1);
+  assert(failFirst.result.summary.includes("session 1 worker crashed"));
+  assert.equal(
+    fs.readFileSync(path.join(root, "fail-first-playwright.json.sessions"), "utf8").trim().split("\n").length,
+    2
+  );
 
   // One session when asked for, or when there is only one route.
   const single = await runScenario("single", {
